@@ -3,7 +3,7 @@
 	import Echo from '$lib/Echo.svelte';
 	import AccountForm from '$lib/AccountForm.svelte';
 
-	const title = 'gro-template-sveltekit-polka';
+	const title = 'felt-server';
 </script>
 
 <svelte:head><title>{title}</title></svelte:head>

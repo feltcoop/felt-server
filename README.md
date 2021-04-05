@@ -1,16 +1,10 @@
-# gro-template-sveltekit-polka
+# felt-server
 
 > server for Felt, a tool for building and maintaining communities 💚 work in progress
 
 ## usage
 
-> tip: did you know about the "Use this template" button above? (if you're logged in)
-
-> are you lost? go to [nodejs.org](https://nodejs.org)
-
 ```bash
-npx degit ryanatkn/gro-template-sveltekit-polka#main cooltoy
-cd cooltoy
 npm i
 
 # start the SvelteKit/Vite frontend dev build, Node builds with Gro, and Polka API server
@@ -28,8 +22,6 @@ gro test
 ```
 
 > learn more [about Gro](https://github.com/feltcoop/gro)
-
-> why [`degit`](https://github.com/Rich-Harris/degit)?
 
 Each part of the dev build is available as an npm script:
 

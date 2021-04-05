@@ -13,7 +13,7 @@ import type {ClientContext} from './server/ApiServer.js';
 // so we do a hackier detection to see if we're running the final production build:
 // console.log('import.meta.url', import.meta.url);
 // TODO why is this error happening? Vite is giving us a weird `import.meta.url`?
-// TypeError [ERR_INVALID_URL]: Invalid URL: //home/desk/dev/gro-template-sveltekit-polka/src/hooks
+// TypeError [ERR_INVALID_URL]: Invalid URL: //home/desk/dev/felt-server/src/hooks
 // const filePath = fileURLToPath(import.meta.url);
 // const filePath = import.meta.url.slice(1) + '.js';
 // console.log('filePath', filePath);
