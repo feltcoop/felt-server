@@ -80,4 +80,6 @@ PORT=3003 gro start
 [@lukeed\/\*](https://github.com/lukeed)
 & [more](package.json)
 
-# [🐦](https://en.wikipedia.org/wiki/Free_and_open-source_software)
+## license 🐦
+
+[MIT](LICENSE)

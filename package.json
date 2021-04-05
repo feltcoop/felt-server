@@ -1,6 +1,12 @@
 {
   "name": "@ryanatkn/gro-template-sveltekit-polka",
   "version": "0.0.0",
+  "license": "MIT",
+  "author": {
+    "name": "Felt.coop",
+    "email": "team@felt.social",
+    "url": "https://felt.social"
+  },
   "scripts": {
     "dev": "gro dev",
     "build": "gro build",
