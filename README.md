@@ -1,6 +1,6 @@
 # gro-template-sveltekit-polka
 
-> work in progress
+> server for Felt, a tool for building and maintaining communities 💚 work in progress
 
 ## usage
 
