@@ -30,8 +30,6 @@ npm run dev-sveltekit
 npm run dev-gro
 ```
 
-> hint: `gg` is a fine alias for [`gro dev`](https://github.com/feltcoop/gro)
-
 ## build
 
 Build the `dist/` directory for production:
