@@ -28,10 +28,9 @@ jobs:
       - name: Set up NPM
         run: |
           cd $GITHUB_WORKSPACE
-          npm i
+          npm ci
 
       - name: Build & test the project
         run: |
-          npm run build
-          npm run test
-          ls
+          npx gro build
+          npx gro check        
