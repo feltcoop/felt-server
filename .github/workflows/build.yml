@@ -30,5 +30,8 @@ jobs:
           cd $GITHUB_WORKSPACE
           npm i
 
-      - name: Build the project
-        run: npm run build
+      - name: Build & test the project
+        run: |
+          npm run build
+          npm run test
+          ls
