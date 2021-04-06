@@ -61,7 +61,7 @@ export class Database {
 
 		// example: create table
 		const createAccountsTableResult = await sql`
-			CREATE TABLE IF NOT EXISTS accounts ( 
+			create table if not exists accounts (
 				name text,
 				password text
 			)
