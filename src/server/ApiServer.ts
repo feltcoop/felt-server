@@ -1,12 +1,6 @@
-import polka from 'polka';
 import cookieSession from 'cookie-session';
 import type {CookieSessionRequest, CookieSessionObject} from 'cookie-session';
-import type {
-	Polka,
-	Request as PolkaRequest,
-	Middleware as PolkaMiddleware,
-	IOptions as PolkaOptions,
-} from 'polka';
+import type {Polka, Request as PolkaRequest, Middleware as PolkaMiddleware} from 'polka';
 import bodyParser from 'body-parser';
 import send from '@polka/send-type';
 import {Logger} from '@feltcoop/gro/dist/utils/log.js';
@@ -23,19 +17,18 @@ import {
 	API_SERVER_DEFAULT_PORT_PROD,
 } from '@feltcoop/gro/dist/config/defaultBuildConfig.js';
 import {SVELTE_KIT_DIST_PATH} from '@feltcoop/gro/dist/paths.js';
-import {numberFromEnv, stringFromEnv} from '@feltcoop/gro/dist/utils/env.js';
+import {numberFromEnv} from '@feltcoop/gro/dist/utils/env.js';
 
 import {toAttachSessionUserMiddleware} from '../session/attachSessionUserMiddleware.js';
 import {toLoginMiddleware} from '../session/loginMiddleware.js';
 import {toLogoutMiddleware} from '../session/logoutMiddleware.js';
 import type {User} from '../vocab/user/user.js';
-import {Database} from '../db/Database.js';
+import type {Database} from '../db/Database.js';
 
 const log = new Logger([blue('[ApiServer]')]);
 
 // TODO not sure what these types should look like in their final form,
 // there's currently some redundancy and weirdness
-export interface ServerApp extends Polka<Request> {}
 export interface Request extends PolkaRequest, CookieSessionRequest {
 	user?: User;
 	session: ServerSession;
@@ -49,9 +42,10 @@ const dev = process.env.NODE_ENV !== 'production';
 
 const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
 
-export interface ApiServerConfig {
+export interface Options {
 	port?: number;
-	polka?: PolkaOptions<Request> | undefined;
+	app: Polka<Request>;
+	db: Database;
 	loadRender?: () => Promise<RenderSvelteKit | null>;
 }
 
@@ -62,24 +56,12 @@ export interface RenderSvelteKit {
 // TODO review all of this before deploying to production
 
 export class ApiServer {
-	readonly app: ServerApp;
+	readonly app: Polka<Request>;
 	readonly db: Database;
 
-	constructor(public readonly config: ApiServerConfig) {
-		this.app = polka(config.polka);
-		// TODO refactor this config, properly source the values upstream,
-		// probably make `db` and `polka` options (not their configs)
-		this.db = new Database({
-			postgresOptions: {
-				host: stringFromEnv('PGHOST'),
-				port: numberFromEnv('PGPORT', 5432),
-				database: stringFromEnv('PGDATABASE', 'felt'),
-				username: stringFromEnv('PGUSERNAME', stringFromEnv('PGUSER', 'postgres')),
-				password: stringFromEnv('PGPASSWORD', 'password'),
-				idle_timeout: numberFromEnv('PGIDLE_TIMEOUT'),
-				connect_timeout: numberFromEnv('PGCONNECT_TIMEOUT'),
-			},
-		});
+	constructor(public readonly options: Options) {
+		this.app = options.app;
+		this.db = options.db;
 		log.info('created');
 	}
 
@@ -98,7 +80,6 @@ export class ApiServer {
 				log.trace('req', {url: req.url, query: req.query, params: req.params, body: req.body});
 				next();
 			})
-			// .use(config.render ? (Function.prototype as any) : (Function.prototype as any)) // TODO
 			.use(
 				cookieSession({
 					keys: TODO_SERVER_COOKIE_KEYS,
@@ -124,7 +105,7 @@ export class ApiServer {
 
 		// SvelteKit Node adapter, adapted to our production API server
 		// TODO needs a lot of work, especially for production
-		const render = this.config.loadRender && (await this.config.loadRender());
+		const render = this.options.loadRender && (await this.options.loadRender());
 		if (render) {
 			this.app.use(
 				// compression({threshold: 0}), // TODO
@@ -154,7 +135,7 @@ export class ApiServer {
 
 		// Start the app.
 		const port =
-			this.config.port ??
+			this.options.port ??
 			(render || !dev
 				? numberFromEnv('PORT', API_SERVER_DEFAULT_PORT_PROD)
 				: API_SERVER_DEFAULT_PORT_DEV);
