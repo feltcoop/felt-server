@@ -10,9 +10,9 @@
 Felt's database driver is [`postgres`](https://github.com/porsager/postgres).
 See its docs to learn more.
 
-At the moment, the [`server`](../server/server.ts)
-tries to connect to the database `'felt'` as `'postgres'` with password `'password'`.
-It uses the following environment variables if they're defined:
+At the moment, the server [defaults to connecting](../db/postgres.ts)
+to the database `'felt'` as `'postgres'` with password `'password'`.
+It prioritizes the following environment variables if they're defined:
 
 ```
 host = PGHOST
