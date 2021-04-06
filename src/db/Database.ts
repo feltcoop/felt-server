@@ -1,10 +1,12 @@
 import type {Result} from '@feltcoop/gro';
 import {unwrap} from '@feltcoop/gro';
 import {readFileSync, writeFileSync} from 'fs';
+import postgres from 'postgres';
 
 import type {UserSession} from '../session/clientSession.js';
 import type {User} from '../vocab/user/user.js';
 import type {Entity} from '../vocab/entity/entity.js';
+import type {PostgresOptions, PostgresSql} from './postgres.js';
 
 interface Data {
 	users: User[];
@@ -22,7 +24,7 @@ const persistData = async (data: Data): Promise<void> => {
 	try {
 		writeFileSync(DB_FILE, JSON.stringify(data), 'utf8');
 	} catch (err) {
-		console.error('failed to persist db', err);
+		console.error('[db] failed to persist db', err);
 	}
 };
 
@@ -43,12 +45,78 @@ const getInitialData = (): Data => ({
 	users: [],
 });
 
+export interface Options {
+	postgresUrl?: string;
+	postgresOptions?: PostgresOptions;
+}
+
 export class Database {
-	constructor() {
+	sql: PostgresSql;
+
+	constructor({postgresUrl, postgresOptions}: Options = {}) {
 		console.log('[db] create');
+		this.sql = postgresUrl ? postgres(postgresUrl, postgresOptions) : postgres(postgresOptions);
 	}
 	async init(): Promise<void> {
 		console.log('[db] init');
+		const {sql} = this;
+
+		// example: create table
+		const createAccountsTableResult = await sql`
+			CREATE TABLE IF NOT EXISTS accounts ( 
+				name text,
+				password text
+			)
+		`;
+		if (createAccountsTableResult.count) {
+			console.log('[db] createAccountsTableResult', createAccountsTableResult);
+		}
+
+		// example: select
+		interface AccountDoc {
+			name: string;
+			password: string;
+		}
+		const accountDocs: AccountDoc[] = await sql`
+			select name, password from accounts
+		`;
+		console.log('[db] accountDocs', accountDocs);
+
+		// example: insert literal values
+		const account1Doc = accountDocs.find((d) => d.name === 'account1');
+		if (!account1Doc) {
+			const account1InitialData = {name: 'account1', password: 'HASHVALUE1'};
+			const createAccount1Result = await sql`
+				insert into accounts (
+					name, password
+				) values (
+					${account1InitialData.name}, ${account1InitialData.password}
+				)
+			`;
+			console.log('[db] createAccount1Result', createAccount1Result);
+		}
+
+		// example: insert with dynamic query helper
+		const account2Doc = accountDocs.find((d) => d.name === 'account2');
+		if (!account2Doc) {
+			const account2: AccountDoc = {name: 'account2', password: 'HASHVALUE2'};
+			const account2Result = await sql`
+				insert into accounts ${sql(account2, 'name', 'password')}
+			`;
+			console.log('[db] createAccount2Result', account2Result);
+		}
+
+		if (!accountDocs.length) {
+			// example: select after inserting
+			interface AccountDoc {
+				name: string;
+				password: string;
+			}
+			const accountDocs: AccountDoc[] = await sql`
+				select name, password from accounts
+			`;
+			console.log('[db] accountDocs', accountDocs);
+		}
 	}
 	async destroy(): Promise<void> {
 		console.log('[db] destroy');

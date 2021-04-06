@@ -23,13 +23,13 @@ import {
 	API_SERVER_DEFAULT_PORT_PROD,
 } from '@feltcoop/gro/dist/config/defaultBuildConfig.js';
 import {SVELTE_KIT_DIST_PATH} from '@feltcoop/gro/dist/paths.js';
-import {numberFromEnv} from '@feltcoop/gro/dist/utils/env.js';
+import {numberFromEnv, stringFromEnv} from '@feltcoop/gro/dist/utils/env.js';
 
 import {toAttachSessionUserMiddleware} from '../session/attachSessionUserMiddleware.js';
 import {toLoginMiddleware} from '../session/loginMiddleware.js';
 import {toLogoutMiddleware} from '../session/logoutMiddleware.js';
 import type {User} from '../vocab/user/user.js';
-import {db} from '../db/db.js';
+import {Database} from '../db/Database.js';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -63,10 +63,22 @@ export interface RenderSvelteKit {
 
 export class ApiServer {
 	readonly app: ServerApp;
-	readonly db = db;
+	readonly db: Database;
 
 	constructor(public readonly config: ApiServerConfig) {
 		this.app = polka(config.polka);
+		// TODO refactor this config, properly source the values
+		this.db = new Database({
+			postgresOptions: {
+				host: stringFromEnv('PGHOST'),
+				port: numberFromEnv('PGPORT', 5432),
+				database: stringFromEnv('PGDATABASE', 'felt'),
+				username: stringFromEnv('PGUSERNAME', stringFromEnv('PGUSER', 'postgres')),
+				password: stringFromEnv('PGPASSWORD', 'password'),
+				idle_timeout: numberFromEnv('PGIDLE_TIMEOUT'),
+				connect_timeout: numberFromEnv('PGCONNECT_TIMEOUT'),
+			},
+		});
 		log.info('created');
 	}
 
