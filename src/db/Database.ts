@@ -104,8 +104,9 @@ export class Database {
 			console.log('[db] createAccount2Result', account2Result);
 		}
 
+		// example: select after inserting
+		// don't double print:
 		if (!accountDocs.length) {
-			// example: select after inserting
 			interface AccountDoc {
 				name: string;
 				password: string;
