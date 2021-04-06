@@ -43,17 +43,15 @@ const dev = process.env.NODE_ENV !== 'production';
 const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
 
 export interface Options {
-	port?: number;
 	app: Polka<Request>;
 	db: Database;
+	port?: number;
 	loadRender?: () => Promise<RenderSvelteKit | null>;
 }
 
 export interface RenderSvelteKit {
 	<TContext>(request: SvelteKitRequest<TContext>): SvelteKitResponse | Promise<SvelteKitResponse>;
 }
-
-// TODO review all of this before deploying to production
 
 export class ApiServer {
 	readonly app: Polka<Request>;
