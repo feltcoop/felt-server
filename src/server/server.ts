@@ -1,4 +1,5 @@
 import polka from 'polka';
+import postgres from 'postgres';
 import {SVELTE_KIT_DIST_PATH} from '@feltcoop/gro/dist/paths.js';
 
 import {ApiServer} from './ApiServer.js';
@@ -7,7 +8,7 @@ import {toDefaultPostgresOptions} from '../db/postgres.js';
 
 export const server = new ApiServer({
 	app: polka(),
-	db: new Database({postgresOptions: toDefaultPostgresOptions()}),
+	db: new Database({sql: postgres(toDefaultPostgresOptions())}),
 	loadRender: async () => {
 		let importPath = `../${SVELTE_KIT_DIST_PATH}/` + 'app.js'; // don't want Rollup to bundle this
 		try {

@@ -1,6 +1,7 @@
 import polka from 'polka';
 import {suite} from 'uvu';
 import * as t from 'uvu/assert';
+import postgres from 'postgres';
 
 import {ApiServer} from './ApiServer.js';
 import {Database} from '../db/Database.js';
@@ -14,7 +15,7 @@ const test_ApiServer = suite('ApiServer');
 test_ApiServer('init and destroy', async () => {
 	const server = new ApiServer({
 		app: polka(),
-		db: new Database({postgresOptions: toDefaultPostgresOptions()}),
+		db: new Database({sql: postgres(toDefaultPostgresOptions())}),
 		port: TEST_PORT,
 	});
 	t.is(server.options.port, TEST_PORT);

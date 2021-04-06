@@ -1,12 +1,11 @@
 import type {Result} from '@feltcoop/gro';
 import {unwrap} from '@feltcoop/gro';
 import {readFileSync, writeFileSync} from 'fs';
-import postgres from 'postgres';
 
 import type {UserSession} from '../session/clientSession.js';
 import type {User} from '../vocab/user/user.js';
 import type {Entity} from '../vocab/entity/entity.js';
-import type {PostgresOptions, PostgresSql} from './postgres.js';
+import type {PostgresSql} from './postgres.js';
 
 interface Data {
 	users: User[];
@@ -46,15 +45,15 @@ const getInitialData = (): Data => ({
 });
 
 export interface Options {
-	postgresOptions: string | PostgresOptions;
+	sql: PostgresSql;
 }
 
 export class Database {
 	sql: PostgresSql;
 
-	constructor({postgresOptions}: Options) {
+	constructor({sql}: Options) {
 		console.log('[db] create');
-		this.sql = postgres(postgresOptions);
+		this.sql = sql;
 	}
 	async init(): Promise<void> {
 		console.log('[db] init');
