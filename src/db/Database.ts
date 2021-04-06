@@ -107,10 +107,6 @@ export class Database {
 		// example: select after inserting
 		// don't double print:
 		if (!accountDocs.length) {
-			interface AccountDoc {
-				name: string;
-				password: string;
-			}
 			const accountDocs: AccountDoc[] = await sql`
 				select name, password from accounts
 			`;
