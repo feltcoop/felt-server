@@ -46,16 +46,15 @@ const getInitialData = (): Data => ({
 });
 
 export interface Options {
-	postgresUrl?: string;
-	postgresOptions?: PostgresOptions;
+	postgresOptions: string | PostgresOptions;
 }
 
 export class Database {
 	sql: PostgresSql;
 
-	constructor({postgresUrl, postgresOptions}: Options = {}) {
+	constructor({postgresOptions}: Options) {
 		console.log('[db] create');
-		this.sql = postgresUrl ? postgres(postgresUrl, postgresOptions) : postgres(postgresOptions);
+		this.sql = postgres(postgresOptions);
 	}
 	async init(): Promise<void> {
 		console.log('[db] init');
@@ -120,6 +119,7 @@ export class Database {
 	}
 	async destroy(): Promise<void> {
 		console.log('[db] destroy');
+		await this.sql.end();
 	}
 	// TODO declaring like this is weird, should be static, but not sure what interface is best
 	repos = {
