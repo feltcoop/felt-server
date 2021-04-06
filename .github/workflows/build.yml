@@ -29,6 +29,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           npm i
+          npm i -g @feltcoop/gro
 
       - name: Build the project
-        run: npm build
+        run: gro build
