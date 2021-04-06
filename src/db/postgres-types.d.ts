@@ -14,7 +14,7 @@ declare module 'postgres' {
 	 * @returns An utility function to make queries to the server
 	 */
 	declare function postgres<T extends JSToPostgresTypeMap>(
-		options?: postgres.Options<T>,
+		options?: string | postgres.Options<T>,
 	): postgres.Sql<JSToPostgresTypeMap extends T ? {} : T>;
 	/**
 	 * Establish a connection to a PostgreSQL server.
