@@ -1,3 +1,10 @@
+import type {Sql, Options} from 'postgres';
+
+export type PostgresSql = Sql<PostgresTypeMap>;
+export type PostgresOptions = Options<PostgresTypeMap>;
+// TODO use this somehow - will need refactoring
+export type PostgresTypeMap = Record<string, unknown>;
+
 /* 
 
 public domain (The Unlicense)
@@ -43,10 +50,3 @@ idle_timeout 	PGIDLE_TIMEOUT
 connect_timeout 	PGCONNECT_TIMEOUT
 
 */
-
-import type {Sql, Options} from 'postgres';
-
-export type PostgresSql = Sql<PostgresTypeMap>;
-export type PostgresOptions = Options<PostgresTypeMap>;
-// TODO use this somehow - will need refactoring
-export type PostgresTypeMap = Record<string, unknown>;
