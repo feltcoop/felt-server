@@ -67,7 +67,8 @@ export class ApiServer {
 
 	constructor(public readonly config: ApiServerConfig) {
 		this.app = polka(config.polka);
-		// TODO refactor this config, properly source the values upstream
+		// TODO refactor this config, properly source the values upstream,
+		// probably make `db` and `polka` options (not their configs)
 		this.db = new Database({
 			postgresOptions: {
 				host: stringFromEnv('PGHOST'),
