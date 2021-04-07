@@ -8,7 +8,7 @@
 ## postgres
 
 The Felt server has a dependency on [PostgreSQL](https://www.postgresql.org).
-Please see its website for setup instructions.
+You can find [setup instructions](https://www.postgresql.org/download/) on their website.
 
 > TODO what minimum supported version?
 
