@@ -113,7 +113,7 @@ export class ApiServer {
 				assets_handler,
 				prerendered_handler,
 				async (req, res, next) => {
-					const parsed = new URL(req.url || '', `http://localhost`);
+					const parsed = new URL(req.url || '', 'http://localhost');
 					if (this.isApiServerPathname(parsed.pathname)) return next();
 					const rendered = await render({
 						method: req.method,
