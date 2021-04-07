@@ -11,7 +11,7 @@ The Felt server has a dependency on [PostgreSQL](https://www.postgresql.org) 13.
 You can find [setup instructions](https://www.postgresql.org/download/) on their website.
 
 Felt's database driver is [`postgres`](https://github.com/porsager/postgres).
-See its [README](https://github.com/porsager/postgres) to learn more.
+See its [README](https://github.com/porsager/postgres#readme) to learn more.
 
 At the moment, the server [defaults to connecting](../db/postgres.ts)
 to the database with the following values,
