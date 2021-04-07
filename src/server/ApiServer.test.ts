@@ -18,7 +18,7 @@ test_ApiServer('init and destroy', async () => {
 		db: new Database({sql: postgres(toDefaultPostgresOptions())}),
 		port: TEST_PORT,
 	});
-	t.is(server.options.port, TEST_PORT);
+	t.is(server.port, TEST_PORT);
 	await server.init();
 	// TODO make API requests, and look into before/after
 	await server.destroy();

@@ -44,8 +44,8 @@ const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
 
 export interface Options {
 	app: Polka<Request>;
-	db: Database;
 	port?: number;
+	db: Database;
 	loadRender?: () => Promise<RenderSvelteKit | null>;
 }
 
@@ -55,10 +55,13 @@ export interface RenderSvelteKit {
 
 export class ApiServer {
 	readonly app: Polka<Request>;
+	readonly port: number | undefined;
 	readonly db: Database;
+	readonly loadRender?: () => Promise<RenderSvelteKit | null>;
 
-	constructor(public readonly options: Options) {
+	constructor(options: Options) {
 		this.app = options.app;
+		this.port = options.port;
 		this.db = options.db;
 		log.info('created');
 	}
@@ -103,14 +106,14 @@ export class ApiServer {
 
 		// SvelteKit Node adapter, adapted to our production API server
 		// TODO needs a lot of work, especially for production
-		const render = this.options.loadRender && (await this.options.loadRender());
+		const render = this.loadRender && (await this.loadRender());
 		if (render) {
 			this.app.use(
 				// compression({threshold: 0}), // TODO
 				assets_handler,
 				prerendered_handler,
 				async (req, res, next) => {
-					const parsed = new URL(req.url || '', 'http://localhost');
+					const parsed = new URL(req.url || '', `http://localhost`);
 					if (this.isApiServerPathname(parsed.pathname)) return next();
 					const rendered = await render({
 						method: req.method,
@@ -133,21 +136,19 @@ export class ApiServer {
 
 		// Start the app.
 		const port =
-			this.options.port ??
+			this.port ||
 			(render || !dev
 				? numberFromEnv('PORT', API_SERVER_DEFAULT_PORT_PROD)
 				: API_SERVER_DEFAULT_PORT_DEV);
-		await Promise.all([
-			this.db.init(),
-			// TODO Gro utility to get next good port
-			// (wait no that doesn't work, static proxy, hmm... can fix when we switch frontend to Gro)
-			new Promise<void>((resolve) => {
-				this.app.listen(port, () => {
-					log.info(`listening on localhost:${port}`);
-					resolve();
-				});
-			}),
-		]);
+		// TODO Gro utility to get next good port
+		// (wait no that doesn't work, static proxy, hmm... can fix when we switch frontend to Gro)
+		await new Promise<void>((resolve) => {
+			this.app.listen(port, () => {
+				log.info(`listening on localhost:${port}`);
+				resolve();
+			});
+		});
+
 		log.info('inited');
 	}
 
