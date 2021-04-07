@@ -20,11 +20,11 @@ to the database with the following values,
 prioritizing environment variables if they're defined:
 
 ```
-host = PGHOST
-port = PGPORT
 database = PGDATABASE or 'felt'
 username = PGUSERNAME or PGUSER or 'postgres'
 password = PGPASSWORD or 'password'
+host = PGHOST
+port = PGPORT
 idle_timeout = PGIDLE_TIMEOUT
 connect_timeout = PGCONNECT_TIMEOUT
 ```
