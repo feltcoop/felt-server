@@ -13,7 +13,7 @@ You can find [setup instructions](https://www.postgresql.org/download/) on their
 Felt's database driver is [`postgres`](https://github.com/porsager/postgres).
 See its [README](https://github.com/porsager/postgres#readme) to learn more.
 
-At the moment, the server [defaults to connecting](../db/postgres.ts)
+At the moment, the server [defaults to connecting](./postgres.ts)
 to the database with the following values,
 prioritizing environment variables if they're defined:
 
