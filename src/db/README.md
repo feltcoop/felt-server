@@ -28,3 +28,5 @@ password = PGPASSWORD
 idle_timeout = PGIDLE_TIMEOUT
 connect_timeout = PGCONNECT_TIMEOUT
 ```
+
+> TODO figure out config, maybe through `src/gro.config.ts`
