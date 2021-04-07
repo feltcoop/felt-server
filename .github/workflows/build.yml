@@ -2,13 +2,13 @@
 
 name: Build
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -19,6 +19,22 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+
+    services:
+      # Postgres config taken from GitHub Actions help docs:
+      # https://help.github.com/en/actions/configuring-and-managing-workflows/creating-postgresql-service-containers
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: felt
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -33,4 +49,4 @@ jobs:
       - name: Build & test the project
         run: |
           npx gro build
-          npx gro check        
+          npx gro check
