@@ -7,7 +7,7 @@
 
 ## postgres
 
-The Felt server has a dependency on[PostgreSQL](https://www.postgresql.org).
+The Felt server has a dependency on [PostgreSQL](https://www.postgresql.org).
 Please see its website for setup instructions.
 
 > TODO what minimum supported version?
