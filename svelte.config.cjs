@@ -7,17 +7,15 @@ module.exports = {
 	preprocess: typescript(), // TODO mdsvex
 	kit: {
 		adapter: node(),
-
-		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
-
+		appDir: 'app', // import('@feltcoop/gro/dist/paths.js').SVELTE_KIT_APP_DIRNAME
 		vite: {
 			ssr: {
 				noExternal: Object.keys(pkg.dependencies || {}),
 			},
 			server: {
 				proxy: {
-					'/api': 'http://localhost:3001/',
+					'/api': 'http://localhost:3001/', // import('@feltcoop/gro/dist/config/defaultBuildConfig.js').API_SERVER_DEFAULT_PORT_DEV
 				},
 			},
 		},
