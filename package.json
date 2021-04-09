@@ -35,7 +35,7 @@
     "vite": "^2.1.5"
   },
   "dependencies": {
-    "@feltcoop/gro": "^0.12.1",
+    "@feltcoop/gro": "^0.17.1",
     "@polka/send-type": "^0.5.2",
     "body-parser": "^1.19.0",
     "cookie-session": "^1.4.0",

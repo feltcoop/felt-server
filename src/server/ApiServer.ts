@@ -16,8 +16,8 @@ import {
 	API_SERVER_DEFAULT_PORT_DEV,
 	API_SERVER_DEFAULT_PORT_PROD,
 } from '@feltcoop/gro/dist/config/defaultBuildConfig.js';
-import {SVELTE_KIT_DIST_PATH} from '@feltcoop/gro/dist/paths.js';
-import {numberFromEnv} from '@feltcoop/gro/dist/utils/env.js';
+import {SVELTE_KIT_DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
+import {toEnvNumber} from '@feltcoop/gro/dist/utils/env.js';
 
 import {toAttachSessionUserMiddleware} from '../session/attachSessionUserMiddleware.js';
 import {toLoginMiddleware} from '../session/loginMiddleware.js';
@@ -138,7 +138,7 @@ export class ApiServer {
 		const port =
 			this.port ||
 			(render || !dev
-				? numberFromEnv('PORT', API_SERVER_DEFAULT_PORT_PROD)
+				? toEnvNumber('PORT', API_SERVER_DEFAULT_PORT_PROD)
 				: API_SERVER_DEFAULT_PORT_DEV);
 		// TODO Gro utility to get next good port
 		// (wait no that doesn't work, static proxy, hmm... can fix when we switch frontend to Gro)
@@ -178,8 +178,8 @@ export interface ClientGuestContext {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const noop_handler = (_req: any, _res: any, next: () => void) => next();
 const paths = {
-	assets: join(__dirname, `../${SVELTE_KIT_DIST_PATH}/assets`),
-	prerendered: join(__dirname, `../${SVELTE_KIT_DIST_PATH}/prerendered`),
+	assets: join(__dirname, `../${SVELTE_KIT_DIST_DIRNAME}/assets`),
+	prerendered: join(__dirname, `../${SVELTE_KIT_DIST_DIRNAME}/prerendered`),
 };
 
 const mutable = (dir: string) =>

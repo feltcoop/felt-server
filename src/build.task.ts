@@ -4,13 +4,13 @@ import type {
 	TaskEvents as BuildTaskEvents,
 } from '@feltcoop/gro/dist/build.task.js';
 import {spawnProcess, SpawnResult} from '@feltcoop/gro/dist/utils/process.js';
-import {move, remove} from '@feltcoop/gro/dist/fs/nodeFs.js';
+import {move, remove} from '@feltcoop/gro/dist/fs/node.js';
 import {
-	DIST_DIR_NAME,
-	SVELTE_KIT_BUILD_PATH,
-	SVELTE_KIT_DIST_PATH,
+	DIST_DIRNAME,
+	SVELTE_KIT_BUILD_DIRNAME,
+	SVELTE_KIT_DIST_DIRNAME,
 } from '@feltcoop/gro/dist/paths.js';
-import {clean} from '@feltcoop/gro/dist/project/clean.js';
+import {clean} from '@feltcoop/gro/dist/fs/clean.js';
 import type {TaskEvents as ServerTaskEvents} from '@feltcoop/gro/dist/server.task.js';
 import {wait} from '@feltcoop/gro/dist/utils/async.js';
 
@@ -67,8 +67,8 @@ export const task: Task<TaskArgs, TaskEvents> = {
 		await sveltekitKitBuildPromise; // no ur complicated
 
 		// Copy the SvelteKit build output to `dist/`, namespaced in an obvious directory.
-		const svelteKitBuildDir = SVELTE_KIT_BUILD_PATH;
-		const svelteKitDistDir = `${DIST_DIR_NAME}/${SVELTE_KIT_DIST_PATH}`;
+		const svelteKitBuildDir = SVELTE_KIT_BUILD_DIRNAME;
+		const svelteKitDistDir = `${DIST_DIRNAME}/${SVELTE_KIT_DIST_DIRNAME}`;
 		await move(svelteKitBuildDir, svelteKitDistDir);
 		// We implement the adapting Svelte server ourselves in production,
 		// so this line deletes the default Node adapter server app file.
