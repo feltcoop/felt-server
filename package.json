@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "gro dev",
     "build": "gro build",
-    "start": "node dist/server.js",
+    "start": "gro start",
     "test": "gro test",
     "dev-sveltekit": "svelte-kit dev",
     "dev-gro": "gro gro/dev",
