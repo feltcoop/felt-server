@@ -16,7 +16,6 @@ import {
 	API_SERVER_DEFAULT_PORT_DEV,
 	API_SERVER_DEFAULT_PORT_PROD,
 } from '@feltcoop/gro/dist/config/defaultBuildConfig.js';
-import {SVELTE_KIT_DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
 import {toEnvNumber} from '@feltcoop/gro/dist/utils/env.js';
 
 import {toAttachSessionUserMiddleware} from '../session/attachSessionUserMiddleware.js';
@@ -57,12 +56,13 @@ export class ApiServer {
 	readonly app: Polka<Request>;
 	readonly port: number | undefined;
 	readonly db: Database;
-	readonly loadRender?: () => Promise<RenderSvelteKit | null>;
+	readonly loadRender: () => Promise<RenderSvelteKit | null>;
 
 	constructor(options: Options) {
 		this.app = options.app;
 		this.port = options.port;
 		this.db = options.db;
+		this.loadRender = options.loadRender || (async () => null);
 		log.info('created');
 	}
 
@@ -106,7 +106,7 @@ export class ApiServer {
 
 		// SvelteKit Node adapter, adapted to our production API server
 		// TODO needs a lot of work, especially for production
-		const render = this.loadRender && (await this.loadRender());
+		const render = await this.loadRender();
 		if (render) {
 			this.app.use(
 				// compression({threshold: 0}), // TODO
@@ -137,7 +137,10 @@ export class ApiServer {
 		// Start the app.
 		const port =
 			this.port ||
-			(render || !dev
+			// While building for production, `render` will be falsy
+			// and we want to use 3001 while building for prod.
+			// TODO maybe always default to env var `PORT`, upstream and instantiate `ApiServer` with it
+			(render && !dev
 				? toEnvNumber('PORT', API_SERVER_DEFAULT_PORT_PROD)
 				: API_SERVER_DEFAULT_PORT_DEV);
 		// TODO Gro utility to get next good port
@@ -178,8 +181,8 @@ export interface ClientGuestContext {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const noop_handler = (_req: any, _res: any, next: () => void) => next();
 const paths = {
-	assets: join(__dirname, `../${SVELTE_KIT_DIST_DIRNAME}/assets`),
-	prerendered: join(__dirname, `../${SVELTE_KIT_DIST_DIRNAME}/prerendered`),
+	assets: join(__dirname, `../assets`),
+	prerendered: join(__dirname, `../prerendered`),
 };
 
 const mutable = (dir: string) =>

@@ -1,6 +1,5 @@
 import polka from 'polka';
 import postgres from 'postgres';
-import {SVELTE_KIT_DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
 
 import {ApiServer} from './ApiServer.js';
 import {Database} from '../db/Database.js';
@@ -11,8 +10,10 @@ export const server = new ApiServer({
 	app: polka(),
 	db: new Database({sql: postgres(toDefaultPostgresOptions())}),
 	loadRender: async () => {
-		let importPath = `../${SVELTE_KIT_DIST_DIRNAME}/` + 'app.js'; // don't want Rollup to bundle this
 		try {
+			// TODO this is a hack to make Rollup not bundle this - needs refactoring
+			// TODO what can we do with gro here with helpers or constants?
+			const importPath = '../' + 'app.js';
 			const mod = (await import(importPath)) as any;
 			return mod.render || null;
 		} catch (err) {
