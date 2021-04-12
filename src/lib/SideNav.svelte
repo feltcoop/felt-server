@@ -1,7 +1,7 @@
 <script>
 	const submitName = async () => {
 		console.log('button');
-	}
+	};
 </script>
 
 <div class="sidenav">
@@ -17,7 +17,7 @@
 		height: 75px;
 		width: 90%;
 		cursor: pointer;
-		margin: 5%;				
+		margin: 5%;
 	}
 
 	button:active {
