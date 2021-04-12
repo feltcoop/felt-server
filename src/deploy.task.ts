@@ -1,6 +1,6 @@
 import type {Task} from '@feltcoop/gro/dist/task/task.js';
 import {spawnProcess} from '@feltcoop/gro/dist/utils/process.js';
-import {DIST_DIR_NAME, paths} from '@feltcoop/gro/dist/paths.js';
+import {DIST_DIRNAME, paths} from '@feltcoop/gro/dist/paths.js';
 
 export const task: Task = {
 	description: 'deploy felt server to prod',
@@ -9,7 +9,7 @@ export const task: Task = {
 		await spawnProcess('tar', [
 			'-cvf',
 			'deploy.tar',
-			DIST_DIR_NAME,
+			DIST_DIRNAME,
 			'package.json',
 			'package-lock.json',
 		]);
