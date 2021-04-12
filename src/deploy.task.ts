@@ -11,11 +11,8 @@ export const task: Task = {
         //scp to server
         //your ssh key will need to be added to linode account
         await spawnProcess('scp', ['deploy.tar', 'root@96.126.116.174:deploy.tar']);                                            
-        //unpack        
-        //// tar -xvf deploy.tar        
-        //start/restart server
-        //// npm i
-        //// npm start
+        //unpack & start server
+        await spawnProcess('ssh', ['root@96.126.116.174', 'tar -xvf deploy.tar;', 'npm i;'])            
 	},    
 }
 
