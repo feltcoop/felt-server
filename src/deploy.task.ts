@@ -7,7 +7,7 @@ export const task: Task = {
     description: 'deploy felt server to prod',
     run: async ({invokeTask}) => {        
         //TODO - add more dynamic naming
-        await spawnProcess('tar',['-cvf','deploy.tar','dist', 'package.json', 'package-lock.json']);        
+        await spawnProcess('tar',['-cvf','deploy.tar', DIST_DIR_NAME, 'package.json', 'package-lock.json']);        
         //scp to server
         //your ssh key will need to be added to linode account
         await spawnProcess('scp', ['deploy.tar', 'root@96.126.116.174:deploy.tar']);                                            
