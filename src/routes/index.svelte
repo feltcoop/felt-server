@@ -2,6 +2,7 @@
 	import Counter from '$lib/Counter.svelte';
 	import Echo from '$lib/Echo.svelte';
 	import AccountForm from '$lib/AccountForm.svelte';
+	import SideNav from '$lib/SideNav.svelte';
 
 	const title = 'felt-server';
 </script>
@@ -9,7 +10,8 @@
 <svelte:head><title>{title}</title></svelte:head>
 
 <main>
-	<h1>{title}</h1>
+	<SideNav />
+	<h1>{title}</h1>	
 	<section>
 		<Counter />
 	</section>
@@ -31,6 +33,7 @@
 		text-align: center;
 		padding: 1em;
 		margin: 0 auto;
+		padding: 0 auto;
 	}
 
 	h1 {
