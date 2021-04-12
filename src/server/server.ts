@@ -1,12 +1,23 @@
+import type {Server as HttpServer} from 'http';
+import type {Server as HttpsServer} from 'https';
 import polka from 'polka';
 import postgres from 'postgres';
+import {createServer} from 'http';
 
 import {ApiServer} from './ApiServer.js';
 import {Database} from '../db/Database.js';
 import {defaultPostgresOptions} from '../db/postgres.js';
 
-export const server = new ApiServer({
-	app: polka(),
+const createHttpServer = (): HttpServer | HttpsServer => {
+	// TODO support https
+	return createServer();
+};
+
+const server = createHttpServer();
+
+export const apiServer = new ApiServer({
+	server,
+	app: polka({server}),
 	db: new Database({sql: postgres(defaultPostgresOptions)}),
 	loadRender: async () => {
 		try {

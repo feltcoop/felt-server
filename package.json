@@ -37,11 +37,13 @@
   "dependencies": {
     "@feltcoop/gro": "^0.20.0",
     "@polka/send-type": "^0.5.2",
+    "@types/ws": "^7.4.1",
     "body-parser": "^1.19.0",
     "cookie-session": "^1.4.0",
-    "polka": "^1.0.0-next.13",
+    "polka": "^1.0.0-next.14",
     "postgres": "^1.0.2",
-    "sirv": "^1.0.11"
+    "sirv": "^1.0.11",
+    "ws": "^7.4.4"
   },
   "prettier": {
     "useTabs": true,

@@ -37,7 +37,7 @@ const serverPath = `http://localhost:${serverPort}/api/v1/context`; // TODO make
 // import {db} from '$lib/db/db.js';
 
 // TODO this is throwing, it's compiled to cjs by sveltekit or vite I think
-// import {Logger} from '@feltcoop/gro/dist/utils/log.js';
+// import {Logger} from '@feltcoop/gro';
 // const log = new Logger(['[hooks]']);
 
 export const getContext: GetContext<Promise<ClientContext>> = async function ({headers}) {
