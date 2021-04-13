@@ -66,7 +66,7 @@ export const getSession: GetSession<ClientContext, ClientSession> = (ctx) => {
 		: {guest: true}; // TODO is swallowing `context.error`, only return in dev mode? look for "reason"?
 };
 
-export const handle: Handle = async (request, render) => {
+export const handle: Handle = async ({request, render}) => {
 	console.log('[handle]', request.path, request.context?.user?.name);
 	const response = await render(request);
 	return response;
