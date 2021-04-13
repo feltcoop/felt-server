@@ -118,7 +118,7 @@ export const seed = async (server: ApiServer): Promise<void> => {
 
 	const community3Doc = communityDocs.find((d) => d.community_id === 3);
 	if (!community3Doc) {
-		const community3: CommunityDoc = {name: 'dsa'};
+		const community3: CommunityDoc = {name: 'backpackers-anonymous'};
 		const community3Result = await sql`
 		insert into communities ${sql(community3, 'name')}
 		`;
