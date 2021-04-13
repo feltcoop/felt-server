@@ -22,12 +22,7 @@ export const server = new ApiServer({
 	},
 });
 
-server
-	.init()
-	.then(async () => {
-		await seed(server);
-	})
-	.catch((err) => {
-		console.error('server.init() failed', err);
-		throw err;
-	});
+server.init().catch((err) => {
+	console.error('server.init() failed', err);
+	throw err;
+});
