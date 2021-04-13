@@ -1,5 +1,5 @@
-import createKnex from 'knex';
-import {createObtainable} from '@feltcoop/gro/dist/utils/createObtainable.js';
+import {createObtainable} from '@feltcoop/gro/dist/utils/obtainable.js';
+import postgres from 'postgres';
 
 import {getKnexConnectionConfig} from './getKnexConnectionConfig.js';
 
@@ -7,6 +7,7 @@ export type KnexInstance = createKnex<any, unknown[]>;
 
 export const obtainKnex = createObtainable(
 	(): KnexInstance => {
+		sql = postgres(toDefaultPostgresOptions());
 		const knex = createKnex({
 			client: 'pg',
 			connection: getKnexConnectionConfig(),

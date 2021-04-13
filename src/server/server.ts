@@ -4,7 +4,6 @@ import postgres from 'postgres';
 import {ApiServer} from './ApiServer.js';
 import {Database} from '../db/Database.js';
 import {toDefaultPostgresOptions} from '../db/postgres.js';
-import {seed} from '../db/seed.js';
 
 export const server = new ApiServer({
 	app: polka(),

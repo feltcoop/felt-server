@@ -6,10 +6,11 @@ export interface LeyOptions {
 	driver?: string | Driver;
 }
 
-export const LEY_CWD = 'src/db/migrations';
+// TODO where should this go? construct with `DB_DIRNAME`?
+export const MIGRATIONS_DIR = `src/db/migrations`;
 
 export const toDefaultLeyOptions = (): LeyOptions => ({
-	cwd: LEY_CWD,
-	dir: LEY_DIR,
+	// cwd: '.',
+	dir: MIGRATIONS_DIR,
 	driver: 'postgres',
 });
