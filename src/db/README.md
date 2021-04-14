@@ -5,7 +5,7 @@
 - [PostgreSQL](https://www.postgresql.org)
 - [`postgres`](https://github.com/porsager/postgres)
 
-## postgres
+## postgres setup
 
 The Felt server has a dependency on [PostgreSQL](https://www.postgresql.org) 13.2+.
 You can find [setup instructions](https://www.postgresql.org/download/) on their website.
