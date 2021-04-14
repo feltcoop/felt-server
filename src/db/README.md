@@ -28,3 +28,24 @@ connect_timeout = PGCONNECT_TIMEOUT
 ```
 
 > TODO figure out config, maybe through `src/gro.config.ts`
+
+## database tasks
+
+Felt has a number of [Gro](https://github.com/feltcoop/gro) tasks for managing the database.
+To view all of them, run `gro db`.
+
+### db/create
+
+The task `gro db/create` creates the database from scratch.
+It destroys any existing schema and data, runs all migrations (TODO), and seeds the database.
+
+```bash
+gro db/create
+gro db/create --no-seed # creates the database with no initial data
+gro db/create -S # alias for `--no-seed`
+```
+
+The tasks it composes can be run individually:
+
+- `gro db/destroy`
+- `gro db/seed`
