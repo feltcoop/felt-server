@@ -10,7 +10,7 @@ export const task: Task = {
 		await db.sql.unsafe(`
 			drop schema public cascade;
 			create schema public;
-			alter schema public OWNER to postgres;
+			alter schema public owner to postgres;
 			grant all on schema public to postgres;
 			grant all on schema public to ${defaultPostgresOptions.username};
 			grant all on schema public to public;
