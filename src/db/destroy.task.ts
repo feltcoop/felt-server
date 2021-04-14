@@ -7,16 +7,14 @@ export const task: Task = {
 	description: 'destroy the database schema and delete all data',
 	run: async () => {
 		const [db, unobtainDb] = obtainDb();
-
 		await db.sql.unsafe(`
-			DROP SCHEMA public CASCADE;
-			CREATE SCHEMA public;
-			ALTER SCHEMA public OWNER to postgres;
-			GRANT ALL ON SCHEMA public TO postgres;
-			GRANT ALL ON SCHEMA public TO ${defaultPostgresOptions.username};
-			GRANT ALL ON SCHEMA public TO public;
+			drop schema public cascade;
+			create schema public;
+			alter schema public OWNER to postgres;
+			grant all on schema public to postgres;
+			grant all on schema public to ${defaultPostgresOptions.username};
+			grant all on schema public to public;
 		`);
-
 		unobtainDb();
 	},
 };
