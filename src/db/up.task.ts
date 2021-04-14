@@ -9,7 +9,7 @@ export interface TaskArgs {
 }
 
 export const task: Task<TaskArgs> = {
-	description: 'run all migrations',
+	description: 'run all database migrations',
 	run: async ({args}) => {
 		const single = !!args.single;
 		const [_, unobtainDb] = obtainDb();

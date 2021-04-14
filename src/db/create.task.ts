@@ -10,7 +10,7 @@ export interface TaskArgs {
 }
 
 export const task: Task = {
-	description: 'create the database from scratch and reset all data',
+	description: 'create the database from scratch, deleting and seeding data',
 	run: async ({invokeTask, args}) => {
 		const shouldSeed = !(args['no-seed'] || args.S);
 		const [_, unobtainDb] = obtainDb();
