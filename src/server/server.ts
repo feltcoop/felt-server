@@ -3,11 +3,11 @@ import postgres from 'postgres';
 
 import {ApiServer} from './ApiServer.js';
 import {Database} from '../db/Database.js';
-import {toDefaultPostgresOptions} from '../db/postgres.js';
+import {defaultPostgresOptions} from '../db/postgres.js';
 
 export const server = new ApiServer({
 	app: polka(),
-	db: new Database({sql: postgres(toDefaultPostgresOptions())}),
+	db: new Database({sql: postgres(defaultPostgresOptions)}),
 	loadRender: async () => {
 		try {
 			// TODO this is a hack to make Rollup not bundle this - needs refactoring

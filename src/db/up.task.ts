@@ -1,18 +1,19 @@
 import type {Task} from '@feltcoop/gro';
 import ley from 'ley';
 
-import {obtainSql} from './obtainSql.js';
-import {getMigrationConfigWithCustomSource} from './getDbMigrationConfig.js';
+import {obtainDb} from './obtainDb.js';
+import {toLeyUpOptions} from './ley.js';
 
-export const task: Task = {
+export interface TaskArgs {
+	single?: boolean;
+}
+
+export const task: Task<TaskArgs> = {
 	description: 'run all migrations',
-	run: async () => {
-		const [db, unobtainSql] = obtainSql();
-
-		const migrationConfig = getMigrationConfigWithCustomSource();
-
-		await ley.up(migrationConfig);
-
-		unobtainSql();
+	run: async ({args}) => {
+		const single = !!args.single;
+		const [_, unobtainDb] = obtainDb();
+		await ley.up(toLeyUpOptions(single));
+		unobtainDb();
 	},
 };

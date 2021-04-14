@@ -1,7 +1,6 @@
-import type {ApiServer} from 'src/server/ApiServer';
+import type {Database} from 'src/db/Database.js';
 
-export const seed = async (server: ApiServer): Promise<void> => {
-	const {db} = server;
+export const seed = async (db: Database): Promise<void> => {
 	const {sql} = db;
 
 	console.log('[seed] adding initial dataset to database');

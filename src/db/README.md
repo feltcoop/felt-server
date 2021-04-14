@@ -22,7 +22,7 @@ database = PGDATABASE or 'felt'
 username = PGUSERNAME or PGUSER or 'postgres'
 password = PGPASSWORD or 'password'
 host = PGHOST
-port = PGPORT
+port = PGPORT or 5432
 idle_timeout = PGIDLE_TIMEOUT
 connect_timeout = PGCONNECT_TIMEOUT
 ```

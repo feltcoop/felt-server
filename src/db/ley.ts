@@ -1,5 +1,8 @@
 import type {Driver} from 'ley';
 
+// ley: driver agnostic database migrations
+// https://github.com/lukeed/ley
+
 export interface LeyOptions {
 	cwd?: string;
 	dir?: string;
@@ -14,3 +17,5 @@ export const toDefaultLeyOptions = (): LeyOptions => ({
 	dir: MIGRATIONS_DIR,
 	driver: 'postgres',
 });
+
+export const toLeyUpOptions = (single = false) => ({...toDefaultLeyOptions(), single});
