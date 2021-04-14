@@ -21,7 +21,7 @@ prioritizing environment variables if they're defined:
 database = PGDATABASE or 'felt'
 username = PGUSERNAME or PGUSER or 'postgres'
 password = PGPASSWORD or 'password'
-host = PGHOST
+host = PGHOST or 'localhost'
 port = PGPORT or 5432
 idle_timeout = PGIDLE_TIMEOUT
 connect_timeout = PGCONNECT_TIMEOUT
