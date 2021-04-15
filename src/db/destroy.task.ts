@@ -4,7 +4,7 @@ import {obtainDb} from './obtainDb.js';
 import {defaultPostgresOptions} from './postgres.js';
 
 export const task: Task = {
-	description: 'destroy the database schema and delete all data',
+	description: 'destroy the app database schema and delete all data',
 	run: async () => {
 		const [db, unobtainDb] = obtainDb();
 		await db.sql.unsafe(`
