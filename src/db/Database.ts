@@ -135,6 +135,24 @@ export class Database {
 					reason: `No community found with that id: ${community_id}`,
 				};
 			},
+			filterByAccount: async (
+				account: User,
+			): Promise<Result<{value: Community[]}, {type: 'noCommunitiesFound'; reason: string}>> => {
+				console.log(`[db] preparring to query for communities account: ${account}`);
+				//TODO make this actually use the account data
+				const data: Community[] = await this.sql`
+				SELECT c.community_id, c.name FROM communities c JOIN account_communities ac ON c.community_id=ac.community_id AND ac.account_id=1
+				`;
+				console.log('[db] community data', data);
+				if (data) {
+					return {ok: true, value: data};
+				}
+				return {
+					ok: false,
+					type: 'noCommunitiesFound',
+					reason: `No communities found for account: ${account}`,
+				};
+			},
 		},
 	};
 }
