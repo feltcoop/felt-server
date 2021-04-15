@@ -21,6 +21,7 @@ import {toEnvNumber} from '@feltcoop/gro/dist/utils/env.js';
 import {toAttachSessionUserMiddleware} from '../session/attachSessionUserMiddleware.js';
 import {toLoginMiddleware} from '../session/loginMiddleware.js';
 import {toLogoutMiddleware} from '../session/logoutMiddleware.js';
+import {toCommunityMiddleware} from '../communities/communityMiddleware.js';
 import type {User} from '../vocab/user/user.js';
 import type {Database} from '../db/Database.js';
 
@@ -100,7 +101,8 @@ export class ApiServer {
 				send(res, 200, toClientContext(req));
 			})
 			.post('/api/v1/login', toLoginMiddleware(this))
-			.post('/api/v1/logout', toLogoutMiddleware(this));
+			.post('/api/v1/logout', toLogoutMiddleware(this))
+			.get('/api/v1/accounts/:account_id/communities/:community_id', toCommunityMiddleware(this));
 
 		// TODO gro filer middleware (and needs to go after auth)
 

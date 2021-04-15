@@ -3,6 +3,7 @@ import {unwrap} from '@feltcoop/gro';
 import {readFileSync, writeFileSync} from 'fs';
 
 import type {UserSession} from '../session/clientSession.js';
+import type {Community} from '../communities/community.js';
 import type {User} from '../vocab/user/user.js';
 import type {Entity} from '../vocab/entity/entity.js';
 import type {PostgresSql} from './postgres.js';
@@ -113,6 +114,25 @@ export class Database {
 						{type: 'Entity', id: '1', data: {author: name, text: 'hello'}},
 						{type: 'Entity', id: '2', data: {author: name, text: 'world'}},
 					],
+				};
+			},
+		},
+		communities: {
+			findById: async (
+				community_id: string,
+			): Promise<Result<{value: Community[]}, {type: 'noCommunityFound'; reason: string}>> => {
+				console.log(`[db] preparring to query for community id: ${community_id}`);
+				const data: Community[] = await this.sql`
+				select community_id, name from communities where community_id = ${community_id}
+				`;
+				console.log('[db] community data', data);
+				if (data) {
+					return {ok: true, value: data};
+				}
+				return {
+					ok: false,
+					type: 'noCommunityFound',
+					reason: `No community found with that id: ${community_id}`,
 				};
 			},
 		},
