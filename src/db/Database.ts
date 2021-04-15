@@ -122,17 +122,17 @@ export class Database {
 				community_id: string,
 			): Promise<Result<{value: Community[]}, {type: 'noCommunityFound'; reason: string}>> => {
 				console.log(`[db] preparring to query for community id: ${community_id}`);
-				const data: Community[] = await this.sql`
+				const data = await this.sql<Community[]>`
 				select community_id, name from communities where community_id = ${community_id}
 				`;
 				console.log('[db] community data', data);
-				if (data) {
+				if (data.length) {
 					return {ok: true, value: data};
 				}
 				return {
 					ok: false,
 					type: 'noCommunityFound',
-					reason: `No community found with that id: ${community_id}`,
+					reason: `No community found with id: ${community_id}`,
 				};
 			},
 			filterByAccount: async (
@@ -140,11 +140,11 @@ export class Database {
 			): Promise<Result<{value: Community[]}, {type: 'noCommunitiesFound'; reason: string}>> => {
 				console.log(`[db] preparring to query for communities account: ${account}`);
 				//TODO make this actually use the account data
-				const data: Community[] = await this.sql`
+				const data = await this.sql<Community[]>`
 				SELECT c.community_id, c.name FROM communities c JOIN account_communities ac ON c.community_id=ac.community_id AND ac.account_id=1
 				`;
 				console.log('[db] community data', data);
-				if (data) {
+				if (data.length) {
 					return {ok: true, value: data};
 				}
 				return {
