@@ -42,7 +42,6 @@ It destroys any existing schema and data, runs all migrations (TODO), and seeds 
 ```bash
 gro db/create
 gro db/create --no-seed # creates the database with no initial data
-gro db/create -S # alias for `--no-seed`
 ```
 
 The tasks it composes can be run individually:
