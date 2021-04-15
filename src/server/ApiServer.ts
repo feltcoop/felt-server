@@ -18,7 +18,7 @@ import {
 } from '@feltcoop/gro/dist/config/defaultBuildConfig.js';
 import {toEnvNumber} from '@feltcoop/gro/dist/utils/env.js';
 
-import {toSessionUserMiddleware} from '../session/sessionUserMiddleware.js';
+import {toSessionAccountMiddleware} from '../session/sessionAccountMiddleware.js';
 import {toLoginMiddleware} from '../session/loginMiddleware.js';
 import {toLogoutMiddleware} from '../session/logoutMiddleware.js';
 import type {User} from '../vocab/user/user.js';
@@ -90,7 +90,7 @@ export class ApiServer {
 					name: 'session_id',
 				}),
 			)
-			.use(toSessionUserMiddleware(this))
+			.use(toSessionAccountMiddleware(this))
 			// API
 			.post('/api/v1/echo', (req, res) => {
 				log.info('echo', req.body);
