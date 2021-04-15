@@ -18,7 +18,7 @@ import {
 } from '@feltcoop/gro/dist/config/defaultBuildConfig.js';
 import {toEnvNumber} from '@feltcoop/gro/dist/utils/env.js';
 
-import {toAttachSessionUserMiddleware} from '../session/attachSessionUserMiddleware.js';
+import {toSessionAccountMiddleware} from '../session/sessionAccountMiddleware.js';
 import {toLoginMiddleware} from '../session/loginMiddleware.js';
 import {toLogoutMiddleware} from '../session/logoutMiddleware.js';
 import {
@@ -94,7 +94,7 @@ export class ApiServer {
 					name: 'session_id',
 				}),
 			)
-			.use(toAttachSessionUserMiddleware(this))
+			.use(toSessionAccountMiddleware(this))
 			// API
 			.post('/api/v1/echo', (req, res) => {
 				log.info('echo', req.body);
@@ -163,7 +163,7 @@ export class ApiServer {
 
 	async destroy(): Promise<void> {
 		await Promise.all([
-			this.db.destroy(),
+			this.db.close(),
 			new Promise((resolve, reject) =>
 				// TODO remove type casting when polka types are fixed
 				((this.app.server as any) as Server).close((err) => (err ? resolve : reject(err))),

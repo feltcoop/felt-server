@@ -3,12 +3,11 @@ import postgres from 'postgres';
 
 import {ApiServer} from './ApiServer.js';
 import {Database} from '../db/Database.js';
-import {toDefaultPostgresOptions} from '../db/postgres.js';
-import {seed} from '../db/seed.js';
+import {defaultPostgresOptions} from '../db/postgres.js';
 
 export const server = new ApiServer({
 	app: polka(),
-	db: new Database({sql: postgres(toDefaultPostgresOptions())}),
+	db: new Database({sql: postgres(defaultPostgresOptions)}),
 	loadRender: async () => {
 		try {
 			// TODO this is a hack to make Rollup not bundle this - needs refactoring
@@ -22,12 +21,7 @@ export const server = new ApiServer({
 	},
 });
 
-server
-	.init()
-	.then(async () => {
-		await seed(server);
-	})
-	.catch((err) => {
-		console.error('server.init() failed', err);
-		throw err;
-	});
+server.init().catch((err) => {
+	console.error('server.init() failed', err);
+	throw err;
+});

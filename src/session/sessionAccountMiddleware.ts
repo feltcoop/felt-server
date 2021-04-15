@@ -2,14 +2,14 @@ import send from '@polka/send-type';
 
 import type {ApiServer, Middleware} from '../server/ApiServer.js';
 
-export const toAttachSessionUserMiddleware = (server: ApiServer): Middleware => {
+export const toSessionAccountMiddleware = (server: ApiServer): Middleware => {
 	return async (req, res, next) => {
 		if (!req.session.name) {
 			return next();
 		}
 
-		console.log('[attachSessionUserMiddleware]', req.session.name); // TODO logging
-		const findUserResult = await server.db.repos.users.findByName(req.session.name);
+		console.log('[sessionAccountMiddleware]', req.session.name); // TODO logging
+		const findUserResult = await server.db.repos.users.findByName(req.session.name); // TODO users -> accounts
 		if (findUserResult.ok) {
 			req.user = findUserResult.value;
 		} else {
