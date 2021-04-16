@@ -1,13 +1,13 @@
 <script lang="ts">
-	export let communities: {community_id: number; name: string}[];	
-	const submitName = async (name: string) => {		
+	export let communities: {community_id: number; name: string}[];
+	const submitName = async (name: string) => {
 		console.log(name);
 	};
 </script>
 
-<div class="sidenav">	
+<div class="sidenav">
 	{#each communities as {name} (name)}
-		<button type="button"  on:click={submitName(name)}>{ name } </button>
+		<button type="button" on:click={submitName(name)}>{name} </button>
 	{/each}
 </div>
 
