@@ -46,10 +46,10 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 		if (findUserResult.ok) {
 			// There's already an user, so proceed to log in after validating the password.
 			user = findUserResult.value;
-			if (user.secret !== passwordHash) {
+			if (user.password !== passwordHash) {
 				return send(res, 400, {reason: 'wrong password'});
 			}
-		} else if (findUserResult.type === 'noUserFound') {
+		} else if (findUserResult.type === 'noAccountFound') {
 			// There's no user, so create one.
 			const createUserResult = await db.repos.users.create(username, passwordHash);
 			console.log('createUserResult', createUserResult);
