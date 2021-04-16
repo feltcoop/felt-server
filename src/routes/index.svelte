@@ -3,8 +3,17 @@
 	import Echo from '$lib/Echo.svelte';
 	import AccountForm from '$lib/AccountForm.svelte';
 	import SideNav from '$lib/SideNav.svelte';
+	import {onMount} from 'svelte';
 
 	const title = 'felt-server';
+
+	onMount(async () => {
+		const res = await fetch(`/api/v1/communities`);
+		if (res.ok) {
+			const data = await res.json();
+			console.log(data.communities);
+		}
+	});
 </script>
 
 <svelte:head><title>{title}</title></svelte:head>
