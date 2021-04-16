@@ -1,32 +1,32 @@
 import cookieSession from 'cookie-session';
-import type { CookieSessionRequest, CookieSessionObject } from 'cookie-session';
-import type { Polka, Request as PolkaRequest, Middleware as PolkaMiddleware } from 'polka';
+import type {CookieSessionRequest, CookieSessionObject} from 'cookie-session';
+import type {Polka, Request as PolkaRequest, Middleware as PolkaMiddleware} from 'polka';
 import bodyParser from 'body-parser';
 import send from '@polka/send-type';
-import { Logger } from '@feltcoop/gro/dist/utils/log.js';
-import { blue } from '@feltcoop/gro/dist/utils/terminal.js';
+import {Logger} from '@feltcoop/gro/dist/utils/log.js';
+import {blue} from '@feltcoop/gro/dist/utils/terminal.js';
 import sirv from 'sirv';
-import { dirname, join } from 'path';
-import { get_body } from '@sveltejs/kit/http';
-import { URL, fileURLToPath } from 'url';
-import { existsSync } from 'fs';
-import type { Request as SvelteKitRequest, Response as SvelteKitResponse } from '@sveltejs/kit';
-import type { Server } from 'net';
+import {dirname, join} from 'path';
+import {get_body} from '@sveltejs/kit/http';
+import {URL, fileURLToPath} from 'url';
+import {existsSync} from 'fs';
+import type {Request as SvelteKitRequest, Response as SvelteKitResponse} from '@sveltejs/kit';
+import type {Server} from 'net';
 import {
 	API_SERVER_DEFAULT_PORT_DEV,
 	API_SERVER_DEFAULT_PORT_PROD,
 } from '@feltcoop/gro/dist/config/defaultBuildConfig.js';
-import { toEnvNumber } from '@feltcoop/gro/dist/utils/env.js';
+import {toEnvNumber} from '@feltcoop/gro/dist/utils/env.js';
 
-import { toSessionAccountMiddleware } from '../session/sessionAccountMiddleware.js';
-import { toLoginMiddleware } from '../session/loginMiddleware.js';
-import { toLogoutMiddleware } from '../session/logoutMiddleware.js';
+import {toSessionAccountMiddleware} from '../session/sessionAccountMiddleware.js';
+import {toLoginMiddleware} from '../session/loginMiddleware.js';
+import {toLogoutMiddleware} from '../session/logoutMiddleware.js';
 import {
 	toCommunityMiddleware,
 	toCommunitiesMiddleware,
 } from '../communities/communityMiddleware.js';
-import type { User } from '../vocab/user/user.js';
-import type { Database } from '../db/Database.js';
+import type {User} from '../vocab/user/user.js';
+import type {Database} from '../db/Database.js';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -36,7 +36,7 @@ export interface Request extends PolkaRequest, CookieSessionRequest {
 	user?: User;
 	session: ServerSession;
 }
-export interface Middleware extends PolkaMiddleware<Request> { }
+export interface Middleware extends PolkaMiddleware<Request> {}
 export interface ServerSession extends CookieSessionObject {
 	name?: string;
 }
@@ -82,7 +82,7 @@ export class ApiServer {
 			.use(bodyParser.json()) // TODO is deprecated, but doesn't let us `import {json}`
 			.use((req, _res, next) => {
 				// TODO proper logger
-				log.trace('req', { url: req.url, query: req.query, params: req.params, body: req.body });
+				log.trace('req', {url: req.url, query: req.query, params: req.params, body: req.body});
 				next();
 			})
 			.use(
@@ -173,7 +173,7 @@ export class ApiServer {
 }
 
 const toClientContext = (req: Request): ClientContext =>
-	req.user ? { user: req.user } : { guest: true };
+	req.user ? {user: req.user} : {guest: true};
 export type ClientContext = ClientUserContext | ClientGuestContext;
 export interface ClientUserContext {
 	user: User;
@@ -203,7 +203,7 @@ const prerendered_handler = existsSync(paths.prerendered)
 
 const assets_handler = existsSync(paths.assets)
 	? sirv(paths.assets, {
-		maxAge: 31536000,
-		immutable: true,
-	})
+			maxAge: 31536000,
+			immutable: true,
+	  })
 	: noop_handler;
