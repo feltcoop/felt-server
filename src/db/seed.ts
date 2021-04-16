@@ -72,7 +72,10 @@ export const seed = async (db: Database): Promise<void> => {
 	// example: insert literal values
 	const account1Doc = accountDocs.find((d) => d.name === 'account1');
 	if (!account1Doc) {
-		const account1InitialData = {name: 'ryan', password: 'HASHVALUE1'};
+		const account1InitialData = {
+			name: 'ryan',
+			password: '16a9c9b6b4eccccecba5d29c8f58eab9bf1e788a9ffb2be7c46927e91f8a6b4c',
+		};
 		const createAccount1Result = await sql`
     insert into accounts (
       name, password
@@ -86,7 +89,10 @@ export const seed = async (db: Database): Promise<void> => {
 	// example: insert with dynamic query helper
 	const account2Doc = accountDocs.find((d) => d.name === 'account2');
 	if (!account2Doc) {
-		const account2: AccountDoc = {name: 'hamilton', password: 'HASHVALUE2'};
+		const account2: AccountDoc = {
+			name: 'hamilton',
+			password: '16c7c0b684c170830874eec97caf9853f99634ace2431f0990cbf0c3d7a353fd',
+		};
 		const account2Result = await sql`
     insert into accounts ${sql(account2, 'name', 'password')}
   `;

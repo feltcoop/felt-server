@@ -4,13 +4,18 @@ import type {ApiServer, Middleware} from '../server/ApiServer.js';
 export const toCommunitiesMiddleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
+		if (!req.session.name) {
+			//TODO centralize error message strings
+			console.log('[communityMiddleware] no account to search for communities');
+			return send(res, 404, {reason: 'no communities found'});
+		}
 		console.log('[communityMiddleware] account', req.user); // TODO logging
 
 		const findCommunitiesResult = await db.repos.communities.filterByAccount(req.user!);
 		if (findCommunitiesResult.ok) {
 			return send(res, 200, {communities: findCommunitiesResult.value}); // TODO API types
 		} else {
-			console.log('no communities found');
+			console.log('[communityMiddleware] no communities found');
 			const code = findCommunitiesResult.type === 'noCommunitiesFound' ? 404 : 500;
 			return send(res, code, {reason: findCommunitiesResult.reason});
 		}

@@ -9,6 +9,7 @@ export const toSessionAccountMiddleware = (server: ApiServer): Middleware => {
 		}
 
 		console.log('[sessionAccountMiddleware]', req.session.name); // TODO logging
+		console.log(req.session.name);
 		const findUserResult = await server.db.repos.users.findByName(req.session.name); // TODO users -> accounts
 		if (findUserResult.ok) {
 			req.user = findUserResult.value;

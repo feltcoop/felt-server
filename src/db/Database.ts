@@ -57,7 +57,7 @@ export class Database {
 				>
 			> => {
 				const data = await this.sql<User[]>`
-				select name, password from accounts where name = ${name}
+				select account_id, name, password from accounts where name = ${name}
 				`;
 				if (data.length) {
 					return {ok: true, value: data[0]};
