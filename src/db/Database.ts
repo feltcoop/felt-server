@@ -1,49 +1,11 @@
 import type {Result} from '@feltcoop/gro';
 import {unwrap} from '@feltcoop/gro';
-import {readFileSync, writeFileSync} from 'fs';
 
 import type {UserSession} from '../session/clientSession.js';
 import type {Community} from '../communities/community.js';
 import type {User} from '../vocab/user/user.js';
 import type {Entity} from '../vocab/entity/entity.js';
 import type {PostgresSql} from './postgres.js';
-
-interface Data {
-	users: User[];
-}
-
-const DB_FILE = 'db.ignore.json'; // webscale
-const loadData = async (): Promise<Data | null> => {
-	try {
-		return JSON.parse(readFileSync(DB_FILE, 'utf8'));
-	} catch (err) {
-		return null;
-	}
-};
-const persistData = async (data: Data): Promise<void> => {
-	try {
-		writeFileSync(DB_FILE, JSON.stringify(data), 'utf8');
-	} catch (err) {
-		console.error('[db] failed to persist db', err);
-	}
-};
-
-// TODO refactor all of this
-let _data: any;
-const getData = async (initialData = getInitialData()): Promise<Data> => {
-	if (_data) return _data;
-	const savedData = await loadData();
-	_data = savedData || initialData;
-	return _data;
-};
-const saveData = async (): Promise<Data> => {
-	const data = await getData();
-	await persistData(data);
-	return data;
-};
-const getInitialData = (): Data => ({
-	users: [],
-});
 
 export interface Options {
 	sql: PostgresSql;
@@ -76,12 +38,14 @@ export class Database {
 		users: {
 			create: async (
 				name: string,
-				secret: string,
+				password: string,
 			): Promise<Result<{value: User}, {reason: string}>> => {
-				const user = {name, secret};
-				const data = await getData();
-				data.users.push(user);
-				await saveData(); // TODO refactor all of this
+				const user = {name, password};
+				const data = await this.sql`
+				insert into accounts (name, password) values (
+					${name}, ${password}
+				)`;
+				console.log(data);
 				return {ok: true, value: user};
 			},
 			findByName: async (
@@ -89,14 +53,16 @@ export class Database {
 			): Promise<
 				Result<
 					{value: User},
-					{type: 'invalidName'; reason: string} | {type: 'noUserFound'; reason: string}
+					{type: 'invalidName'; reason: string} | {type: 'noAccountFound'; reason: string}
 				>
 			> => {
-				const data = (await getData()).users.find((u) => u.name === name);
-				if (data) {
-					return {ok: true, value: data};
+				const data = await this.sql<User[]>`
+				select name, password from accounts where name = ${name}
+				`;
+				if (data.length) {
+					return {ok: true, value: data[0]};
 				}
-				return {ok: false, type: 'noUserFound', reason: `No user found with name: ${name}`};
+				return {ok: false, type: 'noAccountFound', reason: `No user found with name: ${name}`};
 			},
 		},
 		entities: {
@@ -138,7 +104,7 @@ export class Database {
 			filterByAccount: async (
 				account: User,
 			): Promise<Result<{value: Community[]}, {type: 'noCommunitiesFound'; reason: string}>> => {
-				console.log(`[db] preparring to query for communities account: ${account}`);
+				console.log(`[db] preparring to query for communities account: ${account.name}`);
 				//TODO make this actually use the account data
 				const data = await this.sql<Community[]>`
 				SELECT c.community_id, c.name FROM communities c JOIN account_communities ac ON c.community_id=ac.community_id AND ac.account_id=1
