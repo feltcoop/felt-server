@@ -6,12 +6,14 @@
 	import {onMount} from 'svelte';
 
 	const title = 'felt-server';
+	$: communities = [];	
 
 	onMount(async () => {
 		const res = await fetch(`/api/v1/communities`);
 		if (res.ok) {
 			const data = await res.json();
-			console.log(data.communities);
+			communities = data.communities;
+			console.log(communities);
 		}
 	});
 </script>
@@ -19,7 +21,7 @@
 <svelte:head><title>{title}</title></svelte:head>
 
 <main>
-	<SideNav />
+	<SideNav communities={communities}/>
 	<h1>{title}</h1>
 	<section>
 		<Counter />
