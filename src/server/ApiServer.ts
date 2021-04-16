@@ -163,7 +163,7 @@ export class ApiServer {
 
 	async destroy(): Promise<void> {
 		await Promise.all([
-			this.db.destroy(),
+			this.db.close(),
 			new Promise((resolve, reject) =>
 				// TODO remove type casting when polka types are fixed
 				((this.app.server as any) as Server).close((err) => (err ? resolve : reject(err))),
