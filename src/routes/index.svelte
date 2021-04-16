@@ -1,11 +1,15 @@
 <script lang="ts">
+	import {session} from '$app/stores.js';
 	import Counter from '$lib/Counter.svelte';
 	import Echo from '$lib/Echo.svelte';
 	import AccountForm from '$lib/AccountForm.svelte';
 	import SideNav from '$lib/SideNav.svelte';
 	import {onMount} from 'svelte';
+	import type {ClientSession} from '../session/clientSession.js';
 
 	const title = 'felt-server';
+	let user: ClientSession;
+	$: user = $session?.user;
 	$: communities = [];
 
 	onMount(async () => {
@@ -21,7 +25,9 @@
 <svelte:head><title>{title}</title></svelte:head>
 
 <main>
-	<SideNav {communities} />
+	{#if user && !user.guest}
+		<SideNav {communities} />
+	{/if}
 	<h1>{title}</h1>
 	<section>
 		<Counter />

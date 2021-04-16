@@ -57,7 +57,7 @@ export class Database {
 		this.sql = sql;
 	}
 
-	async close(): Promise<void> {
+	async destroy(): Promise<void> {
 		console.log('[db] destroy');
 		await this.sql.end();
 	}
