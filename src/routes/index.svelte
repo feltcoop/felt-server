@@ -11,8 +11,7 @@
 	const title = 'felt-server';
 	let user: ClientSession;
 	$: user = $session?.user;
-	let communities: Community[];
-	communities = [];
+	let communities: Community[] = [];
 
 	onMount(async () => {
 		const res = await fetch(`/api/v1/communities`);
