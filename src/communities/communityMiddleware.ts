@@ -7,7 +7,7 @@ export const toCommunitiesMiddleware = (server: ApiServer): Middleware => {
 		if (!req.session.name) {
 			//TODO centralize error message strings
 			console.log('[communityMiddleware] no account to search for communities');
-			return send(res, 404, {reason: 'no communities found'});
+			return send(res, 401, {reason: 'not logged in'});
 		}
 		console.log('[communityMiddleware] account', req.user); // TODO logging
 
