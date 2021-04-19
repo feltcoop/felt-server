@@ -9,8 +9,8 @@
 	import type {Community} from 'src/communities/community.js';
 
 	const title = 'felt-server';
-	let clientAccount: ClientAccount;
-	$: clientAccount = $session?.account;
+	let account: ClientAccount;
+	$: account = $session?.account;
 	let communities: Community[] = [];
 
 	onMount(async () => {
@@ -26,7 +26,7 @@
 <svelte:head><title>{title}</title></svelte:head>
 
 <main>
-	{#if clientAccount && !$session.guest}
+	{#if account && !$session.guest}
 		<SideNav {communities} />
 	{/if}
 	<h1>{title}</h1>

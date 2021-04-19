@@ -4,14 +4,14 @@
 	import type {ClientAccount} from 'src/session/clientSession.js';
 	import WaitingAnimation from '$lib/WaitingAnimation.svelte';
 
-	let clientAccount: ClientAccount;
-	$: clientAccount = $session?.account;
-	$: console.log('<LogoutForm> account', clientAccount);
+	let account: ClientAccount;
+	$: account = $session?.account;
+	$: console.log('<LogoutForm> account', account);
 
 	let errorMessage: string | undefined;
 	let submitting: boolean | undefined;
 
-	$: disabled = submitting || !clientAccount;
+	$: disabled = submitting || !account;
 
 	const submitName = async () => {
 		submitting = true;
@@ -41,8 +41,8 @@
 </script>
 
 <!-- TODO well this is weird -->
-{#if clientAccount && !$session.guest}
-	{clientAccount.name}
+{#if account && !$session.guest}
+	{account.name}
 {/if}
 <button type="button" on:click={submitName} {disabled}>
 	{#if submitting}

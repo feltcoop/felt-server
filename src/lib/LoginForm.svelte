@@ -18,7 +18,7 @@
 	const submitName = async () => {
 		if (!accountName) {
 			accountNameEl.focus();
-			errorMessage = 'please enter an accountName';
+			errorMessage = 'please enter an account name';
 			return;
 		}
 		if (!password) {
@@ -73,7 +73,7 @@
 	bind:value={accountName}
 	on:keypress={onKeyPress}
 	{disabled}
-	placeholder="accountName"
+	placeholder="account name"
 />
 <input
 	type="password"
