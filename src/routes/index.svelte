@@ -5,12 +5,12 @@
 	import AccountForm from '$lib/AccountForm.svelte';
 	import SideNav from '$lib/SideNav.svelte';
 	import {onMount} from 'svelte';
-	import type {ClientSession} from 'src/session/clientSession.js';
+	import type {ClientAccount} from 'src/session/clientSession.js';
 	import type {Community} from 'src/communities/community.js';
 
 	const title = 'felt-server';
-	let user: ClientSession;
-	$: user = $session?.user;
+	let clientAccount: ClientAccount;
+	$: clientAccount = $session?.account;
 	let communities: Community[] = [];
 
 	onMount(async () => {
@@ -26,7 +26,7 @@
 <svelte:head><title>{title}</title></svelte:head>
 
 <main>
-	{#if user && !user.guest}
+	{#if clientAccount && !$session.guest}
 		<SideNav {communities} />
 	{/if}
 	<h1>{title}</h1>

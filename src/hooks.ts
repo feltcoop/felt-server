@@ -57,17 +57,17 @@ export const getContext: GetContext<Promise<ClientContext>> = async function ({h
 export const getSession: GetSession<ClientContext, ClientSession> = (ctx) => {
 	console.log('[getSession] authenticated:', !ctx.context.guest);
 	const {context} = ctx;
-	return context && 'user' in context
+	return context && 'account' in context
 		? {
 				// don't expose data that should be on the server only!
-				user: {name: context.user.name},
+				account: {name: context.account.name},
 				entities: [], // TODO load
 		  }
 		: {guest: true}; // TODO is swallowing `context.error`, only return in dev mode? look for "reason"?
 };
 
 export const handle: Handle = async ({request, render}) => {
-	console.log('[handle]', request.path, request.context?.user?.name);
+	console.log('[handle]', request.path, request.context?.account?.name);
 	const response = await render(request);
 	return response;
 	// return {

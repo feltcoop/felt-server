@@ -1,17 +1,17 @@
 <script lang="ts">
 	import {session} from '$app/stores.js';
 
-	import type {ClientSession} from '../session/clientSession.js';
-	import WaitingAnimation from './WaitingAnimation.svelte';
+	import type {ClientAccount} from 'src/session/clientSession.js';
+	import WaitingAnimation from '$lib/WaitingAnimation.svelte';
 
-	let user: ClientSession;
-	$: user = $session?.user;
-	$: console.log('<LogoutForm> user', user);
+	let clientAccount: ClientAccount;
+	$: clientAccount = $session?.account;
+	$: console.log('<LogoutForm> account', clientAccount);
 
 	let errorMessage: string | undefined;
 	let submitting: boolean | undefined;
 
-	$: disabled = submitting || !user;
+	$: disabled = submitting || !clientAccount;
 
 	const submitName = async () => {
 		submitting = true;
@@ -41,8 +41,8 @@
 </script>
 
 <!-- TODO well this is weird -->
-{#if user && !user.guest}
-	{user.name}
+{#if clientAccount && !$session.guest}
+	{clientAccount.name}
 {/if}
 <button type="button" on:click={submitName} {disabled}>
 	{#if submitting}

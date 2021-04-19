@@ -5,9 +5,9 @@
 	import type {LoginRequest} from '../session/loginMiddleware.js';
 	import WaitingAnimation from './WaitingAnimation.svelte';
 
-	let username = '';
+	let accountName = '';
 	let password = '';
-	let usernameEl: HTMLInputElement;
+	let accountNameEl: HTMLInputElement;
 	let passwordEl: HTMLInputElement;
 	let buttonEl: HTMLButtonElement;
 	let errorMessage: string | undefined;
@@ -16,9 +16,9 @@
 	$: disabled = submitting;
 
 	const submitName = async () => {
-		if (!username) {
-			usernameEl.focus();
-			errorMessage = 'please enter a username';
+		if (!accountName) {
+			accountNameEl.focus();
+			errorMessage = 'please enter an accountName';
 			return;
 		}
 		if (!password) {
@@ -29,9 +29,9 @@
 		buttonEl.focus();
 		submitting = true;
 		errorMessage = '';
-		console.log('logging in with username', username);
+		console.log('logging in with accountName', accountName);
 		try {
-			const loginRequest: LoginRequest = {username, password};
+			const loginRequest: LoginRequest = {accountName, password};
 			const response = await fetch('/api/v1/login', {
 				method: 'POST',
 				headers: {'content-type': 'application/json'},
@@ -41,7 +41,7 @@
 			submitting = false;
 			if (response.ok) {
 				console.log('responseData', responseData); // TODO logging
-				username = '';
+				accountName = '';
 				errorMessage = '';
 				if (responseData.session) {
 					$session = responseData.session;
@@ -69,11 +69,11 @@
 
 <input
 	type="text"
-	bind:this={usernameEl}
-	bind:value={username}
+	bind:this={accountNameEl}
+	bind:value={accountName}
 	on:keypress={onKeyPress}
 	{disabled}
-	placeholder="username"
+	placeholder="accountName"
 />
 <input
 	type="password"

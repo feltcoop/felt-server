@@ -10,19 +10,19 @@ export const toSessionAccountMiddleware = (server: ApiServer): Middleware => {
 
 		console.log('[sessionAccountMiddleware]', req.session.name); // TODO logging
 		console.log(req.session.name);
-		const findUserResult = await server.db.repos.users.findByName(req.session.name); // TODO users -> accounts
-		if (findUserResult.ok) {
-			req.user = findUserResult.value;
+		const findAccountResult = await server.db.repos.accounts.findByName(req.session.name);
+		if (findAccountResult.ok) {
+			req.account = findAccountResult.value;
 		} else {
 			console.log('resetting session, none found');
 			req.session = null!;
 			const code =
-				findUserResult.type === 'noAccountFound'
+				findAccountResult.type === 'noAccountFound'
 					? 404
-					: findUserResult.type === 'invalidName'
+					: findAccountResult.type === 'invalidName'
 					? 400
 					: 500;
-			return send(res, code, {reason: findUserResult.reason});
+			return send(res, code, {reason: findAccountResult.reason});
 		}
 
 		next();

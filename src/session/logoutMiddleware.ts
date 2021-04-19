@@ -4,8 +4,8 @@ import type {ApiServer, Middleware} from '../server/ApiServer.js';
 
 export const toLogoutMiddleware = (_server: ApiServer): Middleware => {
 	return async (req, res) => {
-		console.log('[logoutMiddleware] user', req.user?.name); // TODO logging
-		if (!req.user) {
+		console.log('[logoutMiddleware] account', req.account?.name); // TODO logging
+		if (!req.account) {
 			return send(res, 401, {reason: `Not logged in! 😕`});
 		}
 		req.session = null!;

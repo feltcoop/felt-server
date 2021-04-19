@@ -1,4 +1,5 @@
 import type {Database} from 'src/db/Database.js';
+import type {Account} from 'src/vocab/account/account.js';
 
 export const seed = async (db: Database): Promise<void> => {
 	const {sql} = db;
@@ -40,13 +41,7 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] createAccountCommunitiesTableResult', createAccountCommunities);
 	}
 
-	// example: select
-	interface AccountDoc {
-		account_id?: number;
-		name: string;
-		password: string;
-	}
-	const accountDocs: AccountDoc[] = await sql`
+	const accountDocs: Account[] = await sql`
   select account_id, name, password from accounts
 `;
 	console.log('[db] accountDocs', accountDocs);
@@ -89,7 +84,7 @@ export const seed = async (db: Database): Promise<void> => {
 	// example: insert with dynamic query helper
 	const account2Doc = accountDocs.find((d) => d.name === 'account2');
 	if (!account2Doc) {
-		const account2: AccountDoc = {
+		const account2: Account = {
 			name: 'hamilton',
 			password: '16c7c0b684c170830874eec97caf9853f99634ace2431f0990cbf0c3d7a353fd',
 		};
@@ -177,9 +172,9 @@ export const seed = async (db: Database): Promise<void> => {
 	// example: select after inserting
 	// don't double print:
 	if (!accountDocs.length) {
-		const accountDocs: AccountDoc[] = await sql`
+		const accounts: Account[] = await sql`
     select name, password from accounts
   `;
-		console.log('[db] accountDocs', accountDocs);
+		console.log('[db] accounts', accounts);
 	}
 };

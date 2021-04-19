@@ -19,7 +19,7 @@
 	const echo = async () => {
 		if (request) return;
 		const body = {value};
-		// TODO create activity for the echo action by the user
+		// TODO create activity for the echo action
 		request = new Request('/api/v1/echo', {
 			method: 'POST',
 			body: JSON.stringify(body),

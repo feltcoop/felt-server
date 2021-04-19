@@ -1,12 +1,12 @@
-import type {User} from '../vocab/user/user.js';
+import type {Account} from '../vocab/account/account.js';
 import type {Entity} from '../vocab/entity/entity.js';
 
-export type ClientSession = UserSession | GuestSession;
+export type ClientSession = AccountSession | GuestSession;
 
-export type ClientUser = Pick<User, 'name'>;
+export type ClientAccount = Pick<Account, 'name' | 'account_id'>;
 
-export interface UserSession {
-	user: ClientUser;
+export interface AccountSession {
+	account: ClientAccount;
 	entities: Entity[];
 	guest?: false; // is only for types; this property doesn't exist at runtime
 }

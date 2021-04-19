@@ -1,9 +1,9 @@
 import type {Result} from '@feltcoop/gro';
 import {unwrap} from '@feltcoop/gro';
 
-import type {UserSession} from '../session/clientSession.js';
+import type {AccountSession} from '../session/clientSession.js';
 import type {Community} from '../communities/community.js';
-import type {User} from '../vocab/user/user.js';
+import type {Account} from '../vocab/account/account.js';
 import type {Entity} from '../vocab/entity/entity.js';
 import type {PostgresSql} from './postgres.js';
 
@@ -27,51 +27,51 @@ export class Database {
 	// TODO declaring like this is weird, should be static, but not sure what interface is best
 	repos = {
 		session: {
-			loadClientSession: async (name: string): Promise<UserSession> => {
+			loadClientSession: async (name: string): Promise<AccountSession> => {
 				console.log('[db] loadClientSession', name);
 				return {
-					user: unwrap(await this.repos.users.findByName(name)),
-					entities: unwrap(await this.repos.entities.findByUser(name)),
+					account: unwrap(await this.repos.accounts.findByName(name)),
+					entities: unwrap(await this.repos.entities.findByAccount(name)),
 				};
 			},
 		},
-		users: {
+		accounts: {
 			create: async (
 				name: string,
 				password: string,
-			): Promise<Result<{value: User}, {reason: string}>> => {
-				const user = {name, password};
+			): Promise<Result<{value: Account}, {reason: string}>> => {
+				const account = {name, password};
 				const data = await this.sql`
 				insert into accounts (name, password) values (
 					${name}, ${password}
 				)`;
 				console.log(data);
-				return {ok: true, value: user};
+				return {ok: true, value: account};
 			},
 			findByName: async (
 				name: string,
 			): Promise<
 				Result<
-					{value: User},
+					{value: Account},
 					{type: 'invalidName'; reason: string} | {type: 'noAccountFound'; reason: string}
 				>
 			> => {
-				const data = await this.sql<User[]>`
+				const data = await this.sql<Account[]>`
 				select account_id, name, password from accounts where name = ${name}
 				`;
 				if (data.length) {
 					return {ok: true, value: data[0]};
 				}
-				return {ok: false, type: 'noAccountFound', reason: `No user found with name: ${name}`};
+				return {ok: false, type: 'noAccountFound', reason: `No account found with name: ${name}`};
 			},
 		},
 		entities: {
-			findByUser: async (
+			findByAccount: async (
 				name: string,
 			): Promise<
 				Result<
 					{value: Entity[]},
-					{type: 'invalidName'; reason: string} | {type: 'noUserFound'; reason: string}
+					{type: 'invalidName'; reason: string} | {type: 'noAccountFound'; reason: string}
 				>
 			> => {
 				return {
@@ -102,7 +102,7 @@ export class Database {
 				};
 			},
 			filterByAccount: async (
-				account: User,
+				account: Account,
 			): Promise<Result<{value: Community[]}, {type: 'noCommunitiesFound'; reason: string}>> => {
 				console.log(`[db] preparring to query for communities account: ${account.name}`);
 				//TODO make this actually use the account data
