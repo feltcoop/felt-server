@@ -26,6 +26,7 @@
 			if (response.ok) {
 				errorMessage = '';
 				$session = {guest: true};
+				location.reload();
 			} else {
 				console.error('error response', response); // TODO logging
 				errorMessage = responseData.reason;
