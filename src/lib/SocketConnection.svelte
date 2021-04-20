@@ -6,8 +6,6 @@
 	export let url = 'ws://localhost:3000/ws';
 	export let socket: SocketStore;
 
-	let connectEl: HTMLButtonElement;
-
 	onMount(() => {
 		socket.connect(url);
 	});
@@ -20,7 +18,6 @@
 			<button
 				type="button"
 				on:click={() => socket.disconnect()}
-				bind:this={connectEl}
 				disabled={$socket.status === 'pending'}
 			>
 				disconnect
@@ -32,7 +29,6 @@
 			<button
 				type="button"
 				on:click={() => socket.connect(url)}
-				bind:this={connectEl}
 				disabled={$socket.status === 'pending'}
 			>
 				connect
