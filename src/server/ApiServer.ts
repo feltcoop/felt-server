@@ -174,8 +174,8 @@ export class ApiServer {
 
 	async close(): Promise<void> {
 		log.info('close');
-		this.websocketServer.close(); // TODO do we need to await this?
 		await Promise.all([
+			this.websocketServer.close(),
 			this.db.close(),
 			new Promise((resolve, reject) =>
 				// TODO remove type casting when polka types are fixed
