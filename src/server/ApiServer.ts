@@ -86,6 +86,7 @@ export class ApiServer {
 	async init(): Promise<void> {
 		log.info('initing');
 
+		// TODO refactor to paralleize `init` of the various pieces
 		await this.websocketServer.init();
 
 		// Set up the app and its middleware.
