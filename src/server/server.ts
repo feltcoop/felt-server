@@ -32,7 +32,7 @@ export const apiServer = new ApiServer({
 	},
 });
 
-server.init().catch((err) => {
+apiServer.init().catch((err) => {
 	console.error('server.init() failed', err);
 	throw err;
 });
