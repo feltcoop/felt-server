@@ -85,28 +85,31 @@ export class ApiServer {
 	async init(): Promise<void> {
 		log.info('initing');
 
+		// TODO refactor - extract websockets stuff to another module
 		// TODO I'm not sure about this way of creating the server externally and passing it to both polka and ws
 		// const wss = new ws.Server({server: this.server}); // port: 3000
 		const wss = new ws.Server({port: 3002, path: '/ws'}); // TODO
 		console.log('wss.on', wss.on);
 		(this as Assignable<{wss: ws.Server}, 'wss'>).wss = wss;
 		wss.on('connection', (socket, req) => {
-			console.log('[wss] connection req.url', req.url);
-			console.log('[wss] connection req.user', (req as any).user);
+			console.log('[wss] connection req.url', req.url, wss.clients.size);
+			console.log('[wss] connection req.account', (req as any).account); // TODO broken
 			console.log('[wss] connection req.headers', req.headers);
-			console.log('wss.clients.size', wss.clients.size);
 			socket.on('message', (rawMessage) => {
 				let message;
 				try {
 					message = JSON.parse(rawMessage as any);
 				} catch (err) {
-					console.error('bad message', err, 'do not move and they cannot see you');
+					console.error('[message] bad message', err, 'do not move and they cannot see you');
 				}
-				console.log('[wss] message', message);
+				console.log('[wss] [message]', message);
 				if (message.type === 'Create') {
-					console.log('create!!!');
 					// TODO automate all of this
-					const finalMessage = {...message, attributedTo: '$yourname'};
+					const finalMessage = {
+						...message,
+						attributedTo: '$yourname', // some fields must be set by the server
+						id: Math.random().toString().slice(2), // some fields must be set by the server
+					};
 					const serialized = JSON.stringify(finalMessage);
 					for (const client of wss.clients) {
 						client.send(serialized);
@@ -122,12 +125,13 @@ export class ApiServer {
 			socket.on('error', (err) => {
 				console.error('[wss] error', err);
 			});
-			console.log('[server] saying hi');
+			console.log('[server] saying hi to connected socket');
 			socket.send(
 				// the client should understand ActivityStreams vocabulary:
 				JSON.stringify({
-					type: 'Create',
+					id: Math.random().toString().slice(2),
 					attributedTo: 'the_server',
+					type: 'Create',
 					object: {type: 'Chat', content: 'hihi'},
 				}),
 			);
@@ -140,8 +144,7 @@ export class ApiServer {
 		});
 		wss.on('headers', (headers, req) => {
 			// TODO could parse cookies from these headers if we don't connect the `ws.Server` to the `server` above
-			console.log('[wss] headers', headers);
-			console.log('[wss] req.url, req.headers', req.url, req.headers);
+			console.log('[wss] req.url headers', req.url, headers);
 		});
 
 		// Set up the app and its middleware.

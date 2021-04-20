@@ -7,7 +7,8 @@
 	export let socket: SocketStore;
 
 	onMount(() => {
-		socket.connect(url);
+		console.log('created socket store', socket, url);
+		socket.connect(url); // TODO should be reactive to `url` changes
 	});
 </script>
 
@@ -46,12 +47,6 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-	}
-	button {
-		font-size: 32px;
-	}
-	input {
-		font-size: 20px;
 	}
 	form {
 		display: flex;

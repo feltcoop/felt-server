@@ -3,6 +3,8 @@ import type {Json} from '@feltcoop/gro/dist/utils/json.js';
 import {writable} from 'svelte/store';
 import {messages} from './messagesStore';
 
+// This store wraps a browser `WebSocket` connection with all of the Sveltey goodness.
+
 // TODO rename? Connection? SocketConnection?
 // TODO consider xstate, looks like a good usecase
 
@@ -20,18 +22,19 @@ export type SocketStore = ReturnType<typeof createSocketStore>;
 
 export const createSocketStore = () => {
 	const {subscribe, update} = writable<SocketState>(toDefaultSocketState(), () => {
-		console.log('listen socket store');
+		console.log('[socket] listen store');
 		return () => {
-			console.log('unlisten socket store');
+			console.log('[socket] unlisten store');
 			unsubscribe();
 		};
 	});
 	const unsubscribe = subscribe((value) => {
-		console.log('socket store subscriber', value);
+		console.log('[socket] store subscriber', value);
 	});
 
 	const disconnect = (code = 1000): void => {
 		update(($socket) => {
+			console.log('[socket] disconnect', code, $socket.url);
 			if (!$socket.ws) return $socket;
 			$socket.ws.close(code);
 			return {...$socket, status: 'pending', connected: false, ws: null, url: null};
@@ -39,6 +42,7 @@ export const createSocketStore = () => {
 	};
 
 	const connect = (url: string): void => {
+		console.log('[socket] connect', url);
 		update(($socket) => {
 			if ($socket.connected || $socket.ws || $socket.status !== 'initial') {
 				throw Error('socket already connected'); // TODO return errors instead?
@@ -52,7 +56,6 @@ export const createSocketStore = () => {
 				error: null,
 			};
 		});
-		console.log('[socket] connect');
 	};
 
 	const createWebSocket = (url: string): WebSocket => {
@@ -67,7 +70,6 @@ export const createSocketStore = () => {
 			update(($socket) => ({...$socket, status: 'initial', connected: false, ws: null, url: null}));
 		};
 		ws.onmessage = (e) => {
-			console.log('[socket] message', e);
 			let message: any; // TODO types
 			try {
 				message = JSON.parse(e.data);
@@ -75,9 +77,8 @@ export const createSocketStore = () => {
 				console.error('bad payload', e, err);
 				return;
 			}
-			console.log('message', message);
+			console.log('[socket] message', message);
 			if (message.type === 'Create') {
-				console.log('Create message', message);
 				messages.update(($messages) => [message, ...$messages]);
 			}
 		};
@@ -86,7 +87,7 @@ export const createSocketStore = () => {
 			update(($socket) => ({...$socket, status: 'failure', error: 'unknown websocket error'}));
 			status = 'failure';
 		};
-		console.log('[socket]', ws);
+		console.log('[socket] ws', ws);
 
 		return ws;
 	};

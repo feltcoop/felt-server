@@ -5,7 +5,7 @@
 </script>
 
 <ul>
-	{#each messages as message}
+	{#each messages as message (message.id)}
 		<li>
 			<small>{message.attributedTo}</small>:
 			{message.object.content}

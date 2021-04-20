@@ -2,6 +2,7 @@ import {writable} from 'svelte/store';
 
 // TODO ActivityStreams
 export interface MessageState {
+	id: string;
 	type: 'Create';
 	attributedTo: string;
 	object: {
