@@ -27,11 +27,16 @@ export class Database {
 	// TODO declaring like this is weird, should be static, but not sure what interface is best
 	repos = {
 		session: {
-			loadClientSession: async (name: string): Promise<AccountSession> => {
+			loadClientSession: async (name: string): Promise<Result<{value: AccountSession}>> => {
 				console.log('[db] loadClientSession', name);
+				let account: Account = unwrap(await this.repos.accounts.findByName(name));
+				let communities: Community[] = unwrap(
+					await this.repos.communities.filterByAccount(account),
+				);
+				let entities: Entity[] = unwrap(await this.repos.entities.findByAccount(name));
 				return {
-					account: unwrap(await this.repos.accounts.findByName(name)),
-					entities: unwrap(await this.repos.entities.findByAccount(name)),
+					ok: true,
+					value: {account, communities, entities},
 				};
 			},
 		},
@@ -103,11 +108,23 @@ export class Database {
 			},
 			filterByAccount: async (
 				account: Account,
-			): Promise<Result<{value: Community[]}, {type: 'noCommunitiesFound'; reason: string}>> => {
-				console.log(`[db] preparring to query for communities account: ${account.name}`);
-				//TODO make this actually use the account data
+			): Promise<
+				Result<
+					{value: Community[]},
+					{type: 'noCommunitiesFound'; reason: string} | {type: 'missingAccountId'; reason: string}
+				>
+			> => {
+				if (account.account_id == null) {
+					return {
+						ok: false,
+						type: 'missingAccountId',
+						reason: `No id present for account: ${account}`,
+					};
+				}
+
+				console.log(`[db] preparring to query for communities account: ${account.account_id}`);
 				const data = await this.sql<Community[]>`
-				SELECT c.community_id, c.name FROM communities c JOIN account_communities ac ON c.community_id=ac.community_id AND ac.account_id=1
+				SELECT c.community_id, c.name FROM communities c JOIN account_communities ac ON c.community_id=ac.community_id AND ac.account_id= ${account?.account_id}
 				`;
 				console.log('[db] community data', data);
 				if (data.length) {

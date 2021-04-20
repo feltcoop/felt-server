@@ -66,7 +66,11 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 
 		console.log('[login]', account.name); // TODO logging
 		req.session.name = account.name;
-		const clientSession = await db.repos.session.loadClientSession(account.name);
-		return send(res, 200, {session: clientSession}); // TODO API types
+		const clientSessionResult = await db.repos.session.loadClientSession(account.name);
+		if (clientSessionResult.ok) {
+			return send(res, 200, {session: clientSessionResult.value}); // TODO API types
+		} else {
+			return send(res, 500, {reason: 'problem loading client session'});
+		}
 	};
 };

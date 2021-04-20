@@ -45,7 +45,6 @@
 				errorMessage = '';
 				if (responseData.session) {
 					$session = responseData.session;
-					location.reload();
 				}
 			} else {
 				console.error('response not ok', response); // TODO logging

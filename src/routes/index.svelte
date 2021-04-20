@@ -4,7 +4,6 @@
 	import Echo from '$lib/Echo.svelte';
 	import AccountForm from '$lib/AccountForm.svelte';
 	import SideNav from '$lib/SideNav.svelte';
-	import {onMount} from 'svelte';
 	import type {ClientAccount} from 'src/session/clientSession.js';
 	import type {Community} from 'src/communities/community.js';
 
@@ -12,15 +11,7 @@
 	let account: ClientAccount;
 	$: account = $session?.account;
 	let communities: Community[] = [];
-
-	onMount(async () => {
-		const res = await fetch(`/api/v1/communities`);
-		if (res.ok) {
-			const data = await res.json();
-			communities = data.communities;
-			console.log(communities);
-		}
-	});
+	$: communities = $session?.communities;
 </script>
 
 <svelte:head><title>{title}</title></svelte:head>
