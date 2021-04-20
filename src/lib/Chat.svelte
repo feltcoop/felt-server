@@ -1,5 +1,4 @@
 <script lang="ts">
-	import {onMount} from 'svelte';
 	import MessageList from '$lib/MessageList.svelte';
 	import {messages} from '$lib/messagesStore';
 	import type {SocketStore} from './socketStore.js';
@@ -7,11 +6,6 @@
 	export let socket: SocketStore;
 
 	let text = '';
-	let textInputEl: HTMLInputElement;
-
-	onMount(() => {
-		textInputEl.focus();
-	});
 
 	const createChatMessage = () => {
 		if (!$socket.connected) {
@@ -32,13 +26,7 @@
 </script>
 
 <div class="Chat">
-	<input
-		type="text"
-		placeholder="> chat"
-		on:keydown={onKeyDown}
-		bind:value={text}
-		bind:this={textInputEl}
-	/>
+	<input type="text" placeholder="> chat" on:keydown={onKeyDown} bind:value={text} />
 	<MessageList messages={$messages} />
 </div>
 
