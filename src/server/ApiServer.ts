@@ -19,8 +19,6 @@ import {
 	API_SERVER_DEFAULT_PORT_PROD,
 } from '@feltcoop/gro/dist/config/defaultBuildConfig.js';
 import {toEnvNumber} from '@feltcoop/gro/dist/utils/env.js';
-import ws from 'ws';
-import type {Assignable} from '@feltcoop/gro';
 
 import {toSessionAccountMiddleware} from '../session/sessionAccountMiddleware.js';
 import {toLoginMiddleware} from '../session/loginMiddleware.js';
@@ -31,6 +29,7 @@ import {
 } from '../communities/communityMiddleware.js';
 import type {Account} from '../vocab/account/account.js';
 import type {Database} from '../db/Database.js';
+import type {WebsocketServer} from './WebsocketServer.js';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -52,6 +51,7 @@ const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
 export interface Options {
 	server: HttpServer | HttpsServer;
 	app: Polka<Request>;
+	websocketServer: WebsocketServer;
 	port?: number;
 	db: Database;
 	loadRender?: () => Promise<RenderSvelteKit | null>;
@@ -64,7 +64,7 @@ export interface RenderSvelteKit {
 export class ApiServer {
 	readonly server: HttpServer | HttpsServer;
 	readonly app: Polka<Request>;
-	readonly wss!: ws.Server;
+	readonly websocketServer: WebsocketServer;
 	readonly port: number | undefined;
 	readonly db: Database;
 	readonly loadRender: () => Promise<RenderSvelteKit | null>;
@@ -72,6 +72,7 @@ export class ApiServer {
 	constructor(options: Options) {
 		this.server = options.server;
 		this.app = options.app;
+		this.websocketServer = options.websocketServer;
 		this.port = options.port;
 		this.db = options.db;
 		this.loadRender = options.loadRender || (async () => null);
@@ -85,67 +86,7 @@ export class ApiServer {
 	async init(): Promise<void> {
 		log.info('initing');
 
-		// TODO refactor - extract websockets stuff to another module
-		// TODO I'm not sure about this way of creating the server externally and passing it to both polka and ws
-		// const wss = new ws.Server({server: this.server}); // port: 3000
-		const wss = new ws.Server({port: 3002, path: '/ws'}); // TODO
-		console.log('wss.on', wss.on);
-		(this as Assignable<{wss: ws.Server}, 'wss'>).wss = wss;
-		wss.on('connection', (socket, req) => {
-			console.log('[wss] connection req.url', req.url, wss.clients.size);
-			console.log('[wss] connection req.account', (req as any).account); // TODO broken
-			console.log('[wss] connection req.headers', req.headers);
-			socket.on('message', (rawMessage) => {
-				let message;
-				try {
-					message = JSON.parse(rawMessage as any);
-				} catch (err) {
-					console.error('[message] bad message', err, 'do not move and they cannot see you');
-				}
-				console.log('[wss] [message]', message);
-				if (message.type === 'Create') {
-					// TODO automate all of this
-					const finalMessage = {
-						...message,
-						attributedTo: '$yourname', // some fields must be set by the server
-						id: Math.random().toString().slice(2), // some fields must be set by the server
-					};
-					const serialized = JSON.stringify(finalMessage);
-					for (const client of wss.clients) {
-						client.send(serialized);
-					}
-				}
-			});
-			socket.on('open', () => {
-				console.log('[wss] open');
-			});
-			socket.on('close', (code, reason) => {
-				console.log('[wss] close', code, reason);
-			});
-			socket.on('error', (err) => {
-				console.error('[wss] error', err);
-			});
-			console.log('[server] saying hi to connected socket');
-			socket.send(
-				// the client should understand ActivityStreams vocabulary:
-				JSON.stringify({
-					id: Math.random().toString().slice(2),
-					attributedTo: 'the_server',
-					type: 'Create',
-					object: {type: 'Chat', content: 'hihi'},
-				}),
-			);
-		});
-		wss.on('close', () => {
-			console.log('[wss] close');
-		});
-		wss.on('error', (error) => {
-			console.log('[wss] error', error);
-		});
-		wss.on('headers', (headers, req) => {
-			// TODO could parse cookies from these headers if we don't connect the `ws.Server` to the `server` above
-			console.log('[wss] req.url headers', req.url, headers);
-		});
+		await this.websocketServer.init();
 
 		// Set up the app and its middleware.
 		this.app
@@ -233,7 +174,7 @@ export class ApiServer {
 
 	async close(): Promise<void> {
 		log.info('close');
-		this.wss.close(); // TODO do we need to await this?
+		this.websocketServer.close(); // TODO do we need to await this?
 		await Promise.all([
 			this.db.close(),
 			new Promise((resolve, reject) =>

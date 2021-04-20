@@ -7,6 +7,7 @@ import {createServer} from 'http';
 import {ApiServer} from './ApiServer.js';
 import {Database} from '../db/Database.js';
 import {defaultPostgresOptions} from '../db/postgres.js';
+import {WebsocketServer} from './WebsocketServer.js';
 
 const createHttpServer = (): HttpServer | HttpsServer => {
 	// TODO support https
@@ -18,6 +19,7 @@ const server = createHttpServer();
 export const apiServer = new ApiServer({
 	server,
 	app: polka({server}),
+	websocketServer: new WebsocketServer(), // TODO probably pass `{server}` when fixing socket auth
 	db: new Database({sql: postgres(defaultPostgresOptions)}),
 	loadRender: async () => {
 		try {
