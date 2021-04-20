@@ -2,11 +2,12 @@ import ws from 'ws';
 import type {Assignable} from '@feltcoop/gro';
 import {promisify} from 'util';
 
+// TODO needs a lot of work!
+
 export class WebsocketServer {
 	readonly wss!: ws.Server;
 
 	async init(): Promise<void> {
-		// TODO refactor - extract websockets stuff to another module
 		// TODO I'm not sure about this way of creating the server externally and passing it to both polka and ws
 		// const wss = new ws.Server({server: this.server}); // port: 3000
 		const wss = new ws.Server({port: 3002, path: '/ws'}); // TODO
