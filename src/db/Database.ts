@@ -108,17 +108,12 @@ export class Database {
 			},
 			filterByAccount: async (
 				account: Account,
-			): Promise<
-				Result<
-					{value: Community[]},
-					{type: 'noCommunitiesFound'; reason: string} | {type: 'missingAccountId'; reason: string}
-				>
-			> => {
+			): Promise<Result<{value: Community[]}, {type: 'missingAccountId'; reason: string}>> => {
 				if (account.account_id == null) {
 					return {
 						ok: false,
 						type: 'missingAccountId',
-						reason: `No id present for account: ${account}`,
+						reason: `No id present for account: ${account.name}`,
 					};
 				}
 
@@ -127,14 +122,7 @@ export class Database {
 				SELECT c.community_id, c.name FROM communities c JOIN account_communities ac ON c.community_id=ac.community_id AND ac.account_id= ${account?.account_id}
 				`;
 				console.log('[db] community data', data);
-				if (data.length) {
-					return {ok: true, value: data};
-				}
-				return {
-					ok: false,
-					type: 'noCommunitiesFound',
-					reason: `No communities found for account: ${account}`,
-				};
+				return {ok: true, value: data};
 			},
 		},
 	};

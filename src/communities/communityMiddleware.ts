@@ -15,8 +15,8 @@ export const toCommunitiesMiddleware = (server: ApiServer): Middleware => {
 		if (findCommunitiesResult.ok) {
 			return send(res, 200, {communities: findCommunitiesResult.value}); // TODO API types
 		} else {
-			console.log('[communityMiddleware] no communities found');
-			const code = findCommunitiesResult.type === 'noCommunitiesFound' ? 404 : 500;
+			console.log('[communityMiddleware] error while searching for communities');
+			const code = findCommunitiesResult.type === 'missingAccountId' ? 400 : 500;
 			return send(res, code, {reason: findCommunitiesResult.reason});
 		}
 	};

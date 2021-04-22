@@ -17,7 +17,7 @@
 <svelte:head><title>{title}</title></svelte:head>
 
 <main>
-	{#if account && !$session.guest}
+	{#if communities}
 		<SideNav {communities} />
 	{/if}
 	<h1>{title}</h1>
