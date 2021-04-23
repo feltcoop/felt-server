@@ -25,15 +25,16 @@ import {
 	toCommunityMiddleware,
 	toCommunitiesMiddleware,
 } from '../communities/communityMiddleware.js';
-import type {Account} from '../vocab/account/account.js';
+import type {ClientAccount, AccountSession} from '../session/clientSession.js';
 import type {Database} from '../db/Database.js';
+import type {Community} from 'src/communities/community.js';
 
 const log = new Logger([blue('[ApiServer]')]);
 
 // TODO not sure what these types should look like in their final form,
 // there's currently some redundancy and weirdness
 export interface Request extends PolkaRequest, CookieSessionRequest {
-	account?: Account;
+	accountSession?: AccountSession;
 	session: ServerSession;
 }
 export interface Middleware extends PolkaMiddleware<Request> {}
@@ -172,11 +173,19 @@ export class ApiServer {
 	}
 }
 
-const toClientContext = (req: Request): ClientContext =>
-	req.account ? {account: req.account} : {guest: true};
+const toClientContext = (req: Request): ClientContext => {
+	console.log(req.accountSession);
+	let clientContext: ClientContext;
+	clientContext = req.accountSession
+		? {account: req.accountSession.account, communities: req.accountSession.communities}
+		: {guest: true};
+	console.log(clientContext);
+	return clientContext;
+};
 export type ClientContext = ClientAccountContext | ClientGuestContext;
 export interface ClientAccountContext {
-	account: Account;
+	account: ClientAccount;
+	communities: Community[];
 	guest?: false;
 }
 export interface ClientGuestContext {

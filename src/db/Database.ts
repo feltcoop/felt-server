@@ -106,9 +106,7 @@ export class Database {
 					reason: `No community found with id: ${community_id}`,
 				};
 			},
-			filterByAccount: async (
-				accountId: number,
-			): Promise<Result<{value: Community[]}>> => {
+			filterByAccount: async (accountId: number): Promise<Result<{value: Community[]}>> => {
 				console.log(`[db] preparring to query for communities account: ${accountId}`);
 				const data = await this.sql<Community[]>`
 				SELECT c.community_id, c.name FROM communities c JOIN account_communities ac ON c.community_id=ac.community_id AND ac.account_id= ${accountId}
