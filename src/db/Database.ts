@@ -31,7 +31,7 @@ export class Database {
 				console.log('[db] loadClientSession', name);
 				let account: Account = unwrap(await this.repos.accounts.findByName(name));
 				let communities: Community[] = unwrap(
-					await this.repos.communities.filterByAccount(account),
+					await this.repos.communities.filterByAccount(account.account_id!),
 				);
 				let entities: Entity[] = unwrap(await this.repos.entities.findByAccount(name));
 				return {
@@ -107,19 +107,11 @@ export class Database {
 				};
 			},
 			filterByAccount: async (
-				account: Account,
-			): Promise<Result<{value: Community[]}, {type: 'missingAccountId'; reason: string}>> => {
-				if (account.account_id == null) {
-					return {
-						ok: false,
-						type: 'missingAccountId',
-						reason: `No id present for account: ${account.name}`,
-					};
-				}
-
-				console.log(`[db] preparring to query for communities account: ${account.account_id}`);
+				accountId: number,
+			): Promise<Result<{value: Community[]}>> => {
+				console.log(`[db] preparring to query for communities account: ${accountId}`);
 				const data = await this.sql<Community[]>`
-				SELECT c.community_id, c.name FROM communities c JOIN account_communities ac ON c.community_id=ac.community_id AND ac.account_id= ${account?.account_id}
+				SELECT c.community_id, c.name FROM communities c JOIN account_communities ac ON c.community_id=ac.community_id AND ac.account_id= ${accountId}
 				`;
 				console.log('[db] community data', data);
 				return {ok: true, value: data};

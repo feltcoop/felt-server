@@ -11,13 +11,12 @@ export const toCommunitiesMiddleware = (server: ApiServer): Middleware => {
 		}
 		console.log('[communityMiddleware] account', req.account); // TODO logging
 
-		const findCommunitiesResult = await db.repos.communities.filterByAccount(req.account!);
+		const findCommunitiesResult = await db.repos.communities.filterByAccount(req.account?.account_id!);
 		if (findCommunitiesResult.ok) {
 			return send(res, 200, {communities: findCommunitiesResult.value}); // TODO API types
 		} else {
-			console.log('[communityMiddleware] error while searching for communities');
-			const code = findCommunitiesResult.type === 'missingAccountId' ? 400 : 500;
-			return send(res, code, {reason: findCommunitiesResult.reason});
+			console.log('[communityMiddleware] error while searching for communities');			
+			return send(res, 500, {reason: 'error while searching for communities'});
 		}
 	};
 };
