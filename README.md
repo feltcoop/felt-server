@@ -1,5 +1,7 @@
 # felt-server
 
+[<img src="src/static/felt.png" align="right" width="192" height="178">](https://felt.dev)
+
 > server for [Felt](https://github.com/feltcoop/felt),
 > a tool for building and maintaining communities 💚 work in progress
 
