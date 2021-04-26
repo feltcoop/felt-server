@@ -20,7 +20,7 @@ export class Database {
 	}
 
 	async close(): Promise<void> {
-		console.log('[db] destroy');
+		console.log('[db] close');
 		await this.sql.end();
 	}
 
