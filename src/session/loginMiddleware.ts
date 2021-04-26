@@ -31,7 +31,7 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 			} else {
 				return send(res, 400, {
 					reason:
-						`Already logged in with accountName '${req.account.name}'.` +
+						`Already logged in with accountName '${req.accountSession.account.name}'.` +
 						` Please first log out if you wish to log in with accountName '${accountName}'.`,
 				});
 			}
