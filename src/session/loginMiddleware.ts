@@ -25,8 +25,8 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 		// TODO formalize and automate validation and normalization
 		if (!accountName) return send(res, 400, {reason: 'invalid accountName'});
 		if (!password) return send(res, 400, {reason: 'invalid password'});
-		if (req.account) {
-			if (req.account.name === accountName) {
+		if (req.accountSession) {
+			if (req.accountSession.account.name === accountName) {
 				return send(res, 400, {reason: 'already logged in'});
 			} else {
 				return send(res, 400, {

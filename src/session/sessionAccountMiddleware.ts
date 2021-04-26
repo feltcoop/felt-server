@@ -12,10 +12,6 @@ export const toSessionAccountMiddleware = (server: ApiServer): Middleware => {
 		const findSessionResult = await server.db.repos.session.loadClientSession(req.session.name);
 		if (findSessionResult.ok) {
 			req.accountSession = findSessionResult.value;
-		} else {
-			console.log('resetting session, none found');
-			req.session = null!;
-			return send(res, 404, {reason: 'no session found'});
 		}
 		next();
 	};
