@@ -1,5 +1,5 @@
 export interface Space {
-	spaceId?: number;
+	space_id?: number;
 	url: string;
 	mediaType: string;
 	content: string;

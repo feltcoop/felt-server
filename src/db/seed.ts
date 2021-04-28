@@ -44,7 +44,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const createSpacesTableResult = await sql`
 	create table if not exists spaces (
-		spaceId serial primary key,
+		space_id serial primary key,
 		url text,
 		mediaType text,
 		content text
@@ -56,7 +56,7 @@ export const seed = async (db: Database): Promise<void> => {
 	}
 
 	const spaceDocs: Space[] = await sql`
-  select spaceId, url, mediaType, content from spaces
+  select space_id, url, mediaType, content from spaces
 `;
 	console.log('[db] spaceDocs', spaceDocs);
 
@@ -188,7 +188,7 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] createAccountCommunity4Result', accountcommunity4Result);
 	}
 
-	const space1 = spaceDocs.find((d) => d.spaceId === 1);
+	const space1 = spaceDocs.find((d) => d.space_id === 1);
 	if (!space1) {
 		const space1: Space = {
 			url: '/general',
@@ -201,7 +201,7 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] createSpace1Result', space1Result);
 	}
 
-	const space2 = spaceDocs.find((d) => d.spaceId === 2);
+	const space2 = spaceDocs.find((d) => d.space_id === 2);
 	if (!space2) {
 		const space2: Space = {
 			url: '/general/cute',
@@ -214,7 +214,7 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] createSpace2Result', space2Result);
 	}
 
-	const space3 = spaceDocs.find((d) => d.spaceId === 3);
+	const space3 = spaceDocs.find((d) => d.space_id === 3);
 	if (!space3) {
 		const space3: Space = {
 			url: '/dm/ryan',

@@ -122,7 +122,7 @@ export class Database {
 			): Promise<Result<{value: Space[]}, {type: 'noSpaceFound'; reason: string}>> => {
 				console.log(`[db] preparring to query for space id: ${spaceId}`);
 				const data = await this.sql<Space[]>`
-				select spaceId, url, mediaType, content from spaces where spaceId = ${spaceId}
+				select space_id, url, mediaType, content from spaces where space_id = ${spaceId}
 				`;
 				console.log('[db] space data', data);
 				if (data.length) {
