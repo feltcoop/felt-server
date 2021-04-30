@@ -108,8 +108,8 @@ export const seed = async (db: Database): Promise<void> => {
 	const account1Doc = accountDocs.find((d) => d.name === 'account1');
 	if (!account1Doc) {
 		const account1InitialData = {
-			name: 'ryan',
-			password: '16a9c9b6b4eccccecba5d29c8f58eab9bf1e788a9ffb2be7c46927e91f8a6b4c',
+			name: 'a',
+			password: 'ded6a3304309fe718831c3968bdda1b36fb0acae7de54a4cb011ba10923aab71', // 'a' hashed
 		};
 		const createAccount1Result = await sql`
     insert into accounts (
@@ -125,8 +125,8 @@ export const seed = async (db: Database): Promise<void> => {
 	const account2Doc = accountDocs.find((d) => d.name === 'account2');
 	if (!account2Doc) {
 		const account2: Account = {
-			name: 'hamilton',
-			password: '16c7c0b684c170830874eec97caf9853f99634ace2431f0990cbf0c3d7a353fd',
+			name: 'b',
+			password: 'bff5c2262849491dd4047eb7086a7948428885aef62e3b90aa388c9db11d1c1e', // 'b' hashed
 		};
 		const account2Result = await sql`
     insert into accounts ${sql(account2, 'name', 'password')}
@@ -238,9 +238,9 @@ export const seed = async (db: Database): Promise<void> => {
 	const space3 = spaceDocs.find((d) => d.space_id === 3);
 	if (!space3) {
 		const space3: Space = {
-			url: '/dm/ryan',
+			url: '/dm/a',
 			media_type: 'application/json',
-			content: "{type: 'DirectMessage', props: {data: '/dm/ryan/posts'}}",
+			content: "{type: 'DirectMessage', props: {data: '/dm/a/posts'}}",
 		};
 		const space3Result = await sql`
 		insert into spaces ${sql(space3, 'url', 'media_type', 'content')}
