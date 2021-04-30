@@ -136,6 +136,14 @@ export class Database {
 					reason: `No space found with id: ${spaceId}`,
 				};
 			},
+			filterByCommunity: async (communityId: string): Promise<Result<{value: Space[]}>> => {
+				console.log(`[db] preparring to query for community spaces: ${communityId}`);
+				const data = await this.sql<Space[]>`
+				SELECT s.space_id, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id= ${communityId}
+				`;
+				console.log('[db] community data', data);
+				return {ok: true, value: data};
+			},
 		},
 	};
 }

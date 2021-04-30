@@ -55,6 +55,18 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] createSpacesTableResult', createSpacesTableResult);
 	}
 
+	const createCommunitySpaces = await sql`
+	create table if not exists community_spaces (
+		community_id int references communities (community_id) ON UPDATE CASCADE ON DELETE CASCADE,
+		space_id int references spaces (space_id) ON UPDATE CASCADE,
+		CONSTRAINT community_spaces_pkey PRIMARY KEY (community_id,space_id)
+	)	
+`;
+
+	if (createCommunitySpaces.count) {
+		console.log('[db] createCommunitySpacesTableResult', createAccountCommunities);
+	}
+
 	const spaceDocs: Space[] = await sql`
   select space_id, url, media_type, content from spaces
 `;
@@ -82,6 +94,15 @@ export const seed = async (db: Database): Promise<void> => {
 	select account_id,community_id from account_communities
 	`;
 	console.log('[db] accountCommunityDocs', accountCommunityDocs);
+
+	interface CommunitySpacesDoc {
+		community_id: number;
+		space_id: number;
+	}
+	const communitySpacesDocs: CommunitySpacesDoc[] = await sql`
+	select space_id,community_id from community_spaces
+	`;
+	console.log('[db] communitySpacesDocs', communitySpacesDocs);
 
 	// example: insert literal values
 	const account1Doc = accountDocs.find((d) => d.name === 'account1');
@@ -225,6 +246,39 @@ export const seed = async (db: Database): Promise<void> => {
 		insert into spaces ${sql(space3, 'url', 'media_type', 'content')}
 		`;
 		console.log('[db] createSpace3Result', space3Result);
+	}
+
+	const communitySpaces1Doc = communitySpacesDocs.find(
+		(d) => d.space_id === 1 && d.community_id === 1,
+	);
+	if (!communitySpaces1Doc) {
+		const communitySpaces1: CommunitySpacesDoc = {space_id: 1, community_id: 1};
+		const communitySpaces1Result = await sql`
+		insert into community_spaces ${sql(communitySpaces1, 'space_id', 'community_id')}
+		`;
+		console.log('[db] communitySpaces1Result', communitySpaces1Result);
+	}
+
+	const communitySpaces2Doc = communitySpacesDocs.find(
+		(d) => d.space_id === 2 && d.community_id === 1,
+	);
+	if (!communitySpaces2Doc) {
+		const communitySpaces2: CommunitySpacesDoc = {space_id: 2, community_id: 1};
+		const communitySpaces2Result = await sql`
+		insert into community_spaces ${sql(communitySpaces2, 'space_id', 'community_id')}
+		`;
+		console.log('[db] communitySpaces2Result', communitySpaces2Result);
+	}
+
+	const communitySpaces3Doc = communitySpacesDocs.find(
+		(d) => d.space_id === 3 && d.community_id === 1,
+	);
+	if (!communitySpaces3Doc) {
+		const communitySpaces3: CommunitySpacesDoc = {space_id: 3, community_id: 1};
+		const communitySpaces3Result = await sql`
+		insert into community_spaces ${sql(communitySpaces3, 'space_id', 'community_id')}
+		`;
+		console.log('[db] communitySpaces3Result', communitySpaces3Result);
 	}
 
 	// example: select after inserting

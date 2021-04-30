@@ -27,7 +27,7 @@ import {
 	toCommunityMiddleware,
 	toCommunitiesMiddleware,
 } from '../communities/communityMiddleware.js';
-import {toSpaceMiddleware} from '../spaces/spaceMiddleware.js';
+import {toSpaceMiddleware, toSpacesMiddleware} from '../spaces/spaceMiddleware.js';
 import type {ClientAccount, AccountSession} from '../session/clientSession.js';
 import type {Database} from '../db/Database.js';
 import type {Community} from 'src/communities/community.js';
@@ -121,7 +121,8 @@ export class ApiServer {
 			.post('/api/v1/logout', toLogoutMiddleware(this))
 			.get('/api/v1/communities', toCommunitiesMiddleware(this))
 			.get('/api/v1/communities/:community_id', toCommunityMiddleware(this))
-			.get('/api/v1/spaces/:spaceId', toSpaceMiddleware(this));
+			.get('/api/v1/spaces/:spaceId', toSpaceMiddleware(this))
+			.get('/api/v1/communities/:community_id/spaces', toSpacesMiddleware(this));
 
 		// TODO gro filer middleware (and needs to go after auth)
 
