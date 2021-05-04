@@ -110,9 +110,17 @@ export class Database {
 				};
 			},
 			filterByAccount: async (accountId: number): Promise<Result<{value: Community[]}>> => {
-				console.log(`[db] preparring to query for communities account: ${accountId}`);
-				const data = await this.sql<Community[]>`
-				SELECT c.community_id, c.name FROM communities c JOIN account_communities ac ON c.community_id=ac.community_id AND ac.account_id= ${accountId}
+				console.log(`[db] preparring to query for communities & spaces account: ${accountId}`);
+				const data = await this.sql<Community[]>`		
+  					select c.community_id, c.name,
+    				(
+      				select array_to_json(array_agg(row_to_json(d)))
+      				from (
+        				SELECT s.space_id, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id=c.community_id      				
+      				) d
+    				) as spaces
+  				from communities c JOIN account_communities ac
+  				ON c.community_id=ac.community_id AND ac.account_id=${accountId}				
 				`;
 				console.log('[db] community data', data);
 				return {ok: true, value: data};

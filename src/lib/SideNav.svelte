@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type {Community} from '../communities/community.js';
 
-	//TODO there is an issue with the communities prop not properly clearing/updating on login/logout
 	export let communities: Community[];
 	const submitName = async (name: string) => {
 		console.log(name);
