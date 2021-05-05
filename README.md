@@ -54,16 +54,13 @@ PORT=3003 gro start
 
 > TODO
 
-## template
-
-- [SvelteKit](https://github.com/sveltejs/kit)
-- [Polka](https://github.com/lukeed/polka)
-- [Gro](https://github.com/feltcoop/gro)
-
 # :turtle:<sub>:turtle:</sub><sub><sub>:turtle:</sub></sub>
 
+[Polka](https://github.com/lukeed/polka) ∙
 [Svelte](https://github.com/sveltejs/svelte) ∙
+[SvelteKit](https://github.com/sveltejs/kit) ∙
 [Vite](https://github.com/vitejs/vite) ∙
+[Gro](https://github.com/feltcoop/gro) ∙
 [Rollup](https://github.com/rollup/rollup) ∙
 [TypeScript](https://github.com/microsoft/TypeScript) ∙
 [esbuild](https://github.com/evanw/esbuild) ∙
