@@ -4,9 +4,9 @@
 	import type {Community} from 'src/communities/community.js';
 
 	export let communities: Community[];
-	$: selectedCommunity = communities[0];
+	let selectedCommunity = communities[0];
 	const selectCommunity = (community: Community) => {
-		$: selectedCommunity = community;
+		selectedCommunity = community;
 	};
 </script>
 

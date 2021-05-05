@@ -4,15 +4,11 @@
 	export let communities: Community[];
 	export let selectedCommunity: Community;
 	export let selectCommunity: (community: Community) => void;
-	let selectedCommunityIndex: number | null = null;
-	$: selectedCommunity = selectedCommunityIndex ?? communities[selectedCommunityIndex];
 </script>
 
 <div class="sidenav">
-	{#each communities as community, i}
-		<button type="button" on:click={() => selectCommunity(communities[i])}
-			>{community.name}
-		</button>
+	{#each communities as community (community.community_id)}
+		<button type="button" on:click={() => selectCommunity(community)}>{community.name} </button>
 	{/each}
 </div>
 
