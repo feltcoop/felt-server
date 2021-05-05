@@ -16,7 +16,7 @@
 
 <main>
 	{#if communities}
-	<Workspace {communities} />
+		<Workspace {communities} />
 	{/if}
 	<h1>{title}</h1>
 	<section>

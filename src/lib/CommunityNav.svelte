@@ -5,9 +5,8 @@
 	export let selectedCommunity: Community;
 	export let selectCommunity: (community: Community) => void;
 	let selectedCommunityIndex: number | null = null;
-	$: selectedCommunity = selectedCommunityIndex ?? communities[selectedCommunityIndex];	
-	const changeFocus = (index: number) => selectCommunity(communities[index]);	
-	
+	$: selectedCommunity = selectedCommunityIndex ?? communities[selectedCommunityIndex];
+	const changeFocus = (index: number) => selectCommunity(communities[index]);
 </script>
 
 <div class="sidenav">
