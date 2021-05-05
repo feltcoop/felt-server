@@ -4,12 +4,12 @@
 	import type {Community} from 'src/communities/community.js';
 
 	export let communities: Community[];	
-	let selectedCommunity = communities[0];
-  const selectCommunity = (community: Community) => {selectedCommunity = community;};
+	$: selectedCommunity = communities[0];
+  const selectCommunity = (community: Community) => {$: selectedCommunity = community;};  
 </script>
 
 <div class="workspace">
-	<section class="communitynav"><CommunityNav {communities} {selectedCommunity}/></section>
+	<section class="communitynav"><CommunityNav {communities} {selectedCommunity} {selectCommunity}/></section>
 	<section class="spacenav"><SpaceNav spaces={selectedCommunity.spaces} /></section>
 	<div class="viewfinder">"hello this is where a chat box would go"</div>
 </div>

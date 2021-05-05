@@ -8,9 +8,11 @@
 </script>
 
 <div class="sidenav">
-	{#each spaces as {url} (url)}
-		<button type="button" on:click={() => submitName(url)}>{url} </button>
-	{/each}
+	{#if spaces}
+		{#each spaces as {url} (url)}
+			<button type="button" on:click={() => submitName(url)}>{url} </button>
+		{/each}
+	{/if}
 </div>
 
 <style>
