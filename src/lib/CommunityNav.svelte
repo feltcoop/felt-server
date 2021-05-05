@@ -5,13 +5,12 @@
 	export let selectedCommunity: Community;
 	export let selectCommunity: (community: Community) => void;
 	let selectedCommunityIndex: number | null = null;
-	$: selectedCommunity = selectedCommunityIndex ?? communities[selectedCommunityIndex];
-	const changeFocus = (index: number) => selectCommunity(communities[index]);
+	$: selectedCommunity = selectedCommunityIndex ?? communities[selectedCommunityIndex];	
 </script>
 
 <div class="sidenav">
 	{#each communities as community, i}
-		<button type="button" on:click={() => changeFocus(i)}>{community.name} </button>
+		<button type="button" on:click={() => selectCommunity(communities[i])}>{community.name} </button>
 	{/each}
 </div>
 
