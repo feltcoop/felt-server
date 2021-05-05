@@ -2,10 +2,11 @@
 	import type {Community} from '../communities/community.js';
 
 	export let communities: Community[];
-	export let communityFocus: Community;
-	const changeFocus = async (index: number) => {
-		$: communityFocus = communities[index];
-	};
+	export let selectedCommunity: Community;
+	//export const selectCommunity;
+	let selectedCommunityIndex: number | null = null;
+	$: selectedCommunity = selectedCommunityIndex ?? communities[selectedCommunityIndex];
+	const changeFocus = (index: number) => selectedCommunityIndex = index;	
 </script>
 
 <div class="sidenav">

@@ -15,7 +15,9 @@
 <svelte:head><title>{title}</title></svelte:head>
 
 <main>
+	{#if communities}
 	<Workspace {communities} />
+	{/if}
 	<h1>{title}</h1>
 	<section>
 		<AccountForm />
@@ -31,10 +33,6 @@
 	main {
 		text-align: center;
 		padding: 0 auto;
-	}
-
-	body {
-		width: 0px;
 	}
 
 	h1 {
