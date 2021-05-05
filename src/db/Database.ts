@@ -114,7 +114,7 @@ export class Database {
 				const data = await this.sql<Community[]>`		
   					select c.community_id, c.name,
     				(
-      				select array_to_json(array_agg(row_to_json(d)))
+      				select array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
       				from (
         				SELECT s.space_id, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id=c.community_id      				
       				) d
