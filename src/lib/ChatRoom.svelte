@@ -3,13 +3,14 @@
 	import type {Post} from '../posts/post.js';
 
 	export let spaceId: number;
-	export let props: Object;
+    export let props: Object;
+    
+    $: console.log(`[chatRoom] fetching posts for ${spaceId}`);
 
 	let posts: Post[];
 	$: posts = [];
 
 	onMount(async () => {
-		console.log(`[chatRoom] fetching posts for ${spaceId}`);
 		const res = await fetch(`/api/v1/spaces/${spaceId}/posts`);
 		if (res.ok) {
 			const data = await res.json();

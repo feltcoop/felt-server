@@ -13,6 +13,7 @@
 	let selectedSpace = selectedCommunity.spaces[0];
 	const selectSpace = (space: Space) => {
 		selectedSpace = space;
+		console.log(`[ss] ${selectedSpace.url}`);
 	};
 	let selectedSpaceContent: Object;
 	if (selectedSpace.media_type == 'application/json') {
