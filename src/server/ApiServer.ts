@@ -124,7 +124,7 @@ export class ApiServer {
 			.get('/api/v1/communities/:community_id', toCommunityMiddleware(this))
 			.get('/api/v1/spaces/:spaceId', toSpaceMiddleware(this))
 			.get('/api/v1/communities/:community_id/spaces', toSpacesMiddleware(this))
-			.get('/api/v1/:community/:space/posts', toPostsMiddleware(this));
+			.get('/api/v1/spaces/:spaceId/posts', toPostsMiddleware(this));
 
 		// TODO gro filer middleware (and needs to go after auth)
 

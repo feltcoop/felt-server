@@ -15,13 +15,13 @@
 <svelte:head><title>{title}</title></svelte:head>
 
 <main>
-	{#if communities}
-		<Workspace {communities} />
-	{/if}
 	<h1>{title}</h1>
 	<section>
 		<AccountForm />
 	</section>
+	{#if communities}
+		<Workspace {communities} />
+	{/if}
 </main>
 
 <style>
