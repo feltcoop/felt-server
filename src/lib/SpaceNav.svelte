@@ -2,14 +2,13 @@
 	import type {Space} from '../spaces/space.js';
 
 	export let spaces: Space[];
-	const submitName = async (url: string) => {
-		console.log(url);
-	};
+	export let selectedSpace: Space;
+	export let selectSpace: (community: Space) => void;
 </script>
 
 <div class="sidenav">
-	{#each spaces as {url} (url)}
-		<button type="button" on:click={() => submitName(url)}>{url} </button>
+	{#each spaces as space (space.space_id)}
+		<button type="button" on:click={() => selectSpace(space)}>{space.url}</button>
 	{/each}
 </div>
 

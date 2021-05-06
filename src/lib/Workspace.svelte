@@ -24,7 +24,9 @@
 	<section class="communitynav">
 		<CommunityNav {communities} {selectedCommunity} {selectCommunity} />
 	</section>
-	<section class="spacenav"><SpaceNav spaces={selectedCommunity.spaces} /></section>
+	<section class="spacenav">
+		<SpaceNav spaces={selectedCommunity.spaces} {selectedSpace} {selectSpace} />
+	</section>
 	<div class="viewfinder">
 		<ChatRoom spaceId={selectedSpace.space_id} props={selectedSpaceContent.props} />
 	</div>

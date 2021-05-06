@@ -6,9 +6,10 @@
 	export let props: Object;
 
 	let posts: Post[];
-	posts = [];
+	$: posts = [];
 
 	onMount(async () => {
+		console.log(`[chatRoom] fetching posts for ${spaceId}`);
 		const res = await fetch(`/api/v1/spaces/${spaceId}/posts`);
 		if (res.ok) {
 			const data = await res.json();
