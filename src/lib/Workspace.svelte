@@ -16,9 +16,10 @@
 		console.log(`[ss] ${selectedSpace.url}`);
 	};
 	let selectedSpaceContent: Object;
-	if (selectedSpace.media_type == 'application/json') {
-		selectedSpaceContent = JSON.parse(selectedSpace.content);
-	}
+	$: selectedSpaceContent =
+		selectedSpace.media_type === 'application/json'
+			? JSON.parse(selectedSpace.content)
+			: {props: {}};
 </script>
 
 <div class="workspace">
@@ -29,7 +30,7 @@
 		<SpaceNav spaces={selectedCommunity.spaces} {selectedSpace} {selectSpace} />
 	</section>
 	<div class="viewfinder">
-		<ChatRoom spaceId={selectedSpace.space_id} props={selectedSpaceContent.props} />
+		<ChatRoom space={selectedSpace} />
 	</div>
 </div>
 

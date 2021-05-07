@@ -1,15 +1,13 @@
 <script lang="ts">
 	import type {Post} from '../posts/post.js';
 	import {browser} from '$app/env';
-	$: browser && loadPosts(spaceId);
+	import type {Space} from '../spaces/space.js';
 
-	export let spaceId: number;
-	export let props: Object;
+	export let space: Space;
+	$: browser && loadPosts(space.space_id);
+	$: console.log(`[chatRoom] fetching posts for ${space.space_id}`);
 
-	$: console.log(`[chatRoom] fetching posts for ${spaceId}`);
-
-	let posts: Post[];
-	$: posts = [];
+	let posts: Post[] = [];
 
 	const loadPosts = async (spaceId: number) => {
 		const res = await fetch(`/api/v1/spaces/${spaceId}/posts`);
