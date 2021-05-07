@@ -1,23 +1,24 @@
 <script lang="ts">
-	import {onMount} from 'svelte';
 	import type {Post} from '../posts/post.js';
+	import {browser} from '$app/env';
+	$: browser && loadPosts(spaceId);
 
 	export let spaceId: number;
-    export let props: Object;
-    
-    $: console.log(`[chatRoom] fetching posts for ${spaceId}`);
+	export let props: Object;
+
+	$: console.log(`[chatRoom] fetching posts for ${spaceId}`);
 
 	let posts: Post[];
 	$: posts = [];
 
-	onMount(async () => {
+	const loadPosts = async (spaceId: number) => {
 		const res = await fetch(`/api/v1/spaces/${spaceId}/posts`);
 		if (res.ok) {
 			const data = await res.json();
 			posts = data.posts;
 			console.log(posts);
 		}
-	});
+	};
 </script>
 
 <div class="chatRoom">

@@ -326,6 +326,58 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] createpost2Result', post2Result);
 	}
 
+	const post3 = postDocs.find((d) => d.post_id === 3);
+	if (!post3) {
+		const post3: Post = {
+			content: "All the world's a stage.",
+			actor_id: 2,
+			space_id: 2,
+		};
+		const post3Result = await sql`
+		insert into posts ${sql(post3, 'content', 'actor_id', 'space_id')}
+		`;
+		console.log('[db] createpost3Result', post3Result);
+	}
+
+	const post4 = postDocs.find((d) => d.post_id === 4);
+	if (!post4) {
+		const post4: Post = {
+			content: 'And all the men and women merely players.',
+			actor_id: 1,
+			space_id: 2,
+		};
+		const post4Result = await sql`
+		insert into posts ${sql(post4, 'content', 'actor_id', 'space_id')}
+		`;
+		console.log('[db] createpost4Result', post4Result);
+	}
+
+	const post5 = postDocs.find((d) => d.post_id === 5);
+	if (!post5) {
+		const post5: Post = {
+			content: 'If the evidence says you’re wrong, you don’t have the right theory.',
+			actor_id: 1,
+			space_id: 3,
+		};
+		const post5Result = await sql`
+		insert into posts ${sql(post5, 'content', 'actor_id', 'space_id')}
+		`;
+		console.log('[db] createpost5Result', post5Result);
+	}
+
+	const post6 = postDocs.find((d) => d.post_id === 6);
+	if (!post6) {
+		const post6: Post = {
+			content: 'You change the theory, not the evidence.',
+			actor_id: 2,
+			space_id: 3,
+		};
+		const post6Result = await sql`
+		insert into posts ${sql(post6, 'content', 'actor_id', 'space_id')}
+		`;
+		console.log('[db] createpost6Result', post6Result);
+	}
+
 	// example: select after inserting
 	// don't double print:
 	if (!accountDocs.length) {
