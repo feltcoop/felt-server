@@ -22,6 +22,7 @@
 		if (!text) return;
 		const res = await fetch(`/api/v1/spaces/${space.space_id}/posts`, {
 			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({content: text}),
 		});
 		if (res.ok) {

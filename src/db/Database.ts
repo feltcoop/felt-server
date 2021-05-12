@@ -155,10 +155,15 @@ export class Database {
 			},
 		},
 		posts: {
-			insert: async (post: Post): Promise<Result<{value: Post}>> => {
-				console.log(`[db] inserting post ${post}`);
+			insert: async (
+				actor_id: number,
+				space_id: string,
+				content: string,
+			): Promise<Result<{value: Post}>> => {
 				const data = await this.sql<Post[]>`
-					INSERT INTO posts ${this.sql(post, 'content', 'actor_id', 'space_id')}
+					INSERT INTO posts (actor_id, space_id, content) VALUES (
+						${actor_id},${space_id},${content}
+					)
 				`;
 				console.log(data);
 				return {ok: true, value: data[0]};
