@@ -33,9 +33,10 @@
 		text = '';
 	};
 
-	const onKeyDown = (e: KeyboardEvent) => {
+	const onKeyDown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			createPost();
+			await createPost();
+			await loadPosts(space.space_id);
 		}
 	};
 </script>
