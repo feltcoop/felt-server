@@ -8,6 +8,7 @@ import type {Post} from '../posts/post.js';
 import type {Account} from '../vocab/account/account.js';
 import type {Entity} from '../vocab/entity/entity.js';
 import type {PostgresSql} from './postgres.js';
+import {addSyntheticLeadingComment} from 'typescript';
 
 export interface Options {
 	sql: PostgresSql;
@@ -155,6 +156,14 @@ export class Database {
 			},
 		},
 		posts: {
+			insert: async (post: Post): Promise<Result<{value: Post}>> => {
+				console.log(`[db] inserting post ${post}`);
+				const data = await this.sql<Post[]>`
+					INSERT INTO posts ${this.sql(post, 'content', 'actor_id', 'space_id')}
+				`;
+				console.log(data);
+				return {ok: true, value: data[0]};
+			},
 			filterBySpace: async (spaceId: string): Promise<Result<{value: Post[]}>> => {
 				console.log(`[db] preparring to query for space posts: ${spaceId}`);
 				const data = await this.sql<Post[]>`

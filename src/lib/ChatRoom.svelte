@@ -4,6 +4,7 @@
 	import type {Space} from '../spaces/space.js';
 
 	export let space: Space;
+	export let text = '';
 	$: browser && loadPosts(space.space_id);
 	$: console.log(`[chatRoom] fetching posts for ${space.space_id}`);
 
@@ -14,7 +15,27 @@
 		if (res.ok) {
 			const data = await res.json();
 			posts = data.posts;
-			console.log(posts);
+		}
+	};
+
+	const createPost = async () => {
+		if (!text) return;
+		console.log('{"content":"${text}"}');
+		const res = await fetch(`/api/v1/spaces/${space.space_id}/posts`, {
+			method: 'POST',
+			body: JSON.stringify(`{"content":"${text}"}`),
+		});
+		if (res.ok) {
+			console.log('post sent');
+		} else {
+			console.error('error sending post');
+		}
+		text = '';
+	};
+
+	const onKeyDown = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			createPost();
 		}
 	};
 </script>
@@ -23,7 +44,13 @@
 	{#each posts as post (post.post_id)}
 		<div>{post.actor_id} said: {post.content}</div>
 	{/each}
+	<input type="text" placeholder="> chat" on:keydown={onKeyDown} bind:value={text} />
 </div>
 
 <style>
+	.chatRoom {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 </style>
