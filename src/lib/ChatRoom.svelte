@@ -20,10 +20,9 @@
 
 	const createPost = async () => {
 		if (!text) return;
-		console.log('{"content":"${text}"}');
 		const res = await fetch(`/api/v1/spaces/${space.space_id}/posts`, {
 			method: 'POST',
-			body: JSON.stringify(`{"content":"${text}"}`),
+			body: JSON.stringify({content: text}),
 		});
 		if (res.ok) {
 			console.log('post sent');

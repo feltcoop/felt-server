@@ -21,7 +21,7 @@ export const toPostsMiddleware = (server: ApiServer): Middleware => {
 	};
 };
 
-export const createPostMiddleware = (server: ApiServer): Middleware => {
+export const toCreatePostMiddleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
 		if (!req.accountSession) {
