@@ -1,4 +1,4 @@
-import type {PartialOnly} from '@feltcoop/gro';
+import type {OmitStrict} from '@feltcoop/gro';
 
 export interface Space {
 	space_id: number;
@@ -7,4 +7,4 @@ export interface Space {
 	content: string;
 }
 
-export type SpacePartial = PartialOnly<Space, 'space_id'>;
+export type SpacePartial = OmitStrict<Space, 'space_id'>;
