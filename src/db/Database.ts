@@ -8,7 +8,6 @@ import type {Post} from '../posts/post.js';
 import type {Account} from '../vocab/account/account.js';
 import type {Entity} from '../vocab/entity/entity.js';
 import type {PostgresSql} from './postgres.js';
-import {addSyntheticLeadingComment} from 'typescript';
 
 export interface Options {
 	sql: PostgresSql;
