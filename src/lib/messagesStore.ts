@@ -6,7 +6,7 @@ export interface MessageState {
 	type: 'Create';
 	attributedTo: string;
 	object: {
-		type: 'Message';
+		type: 'Post';
 		content: string;
 	};
 }

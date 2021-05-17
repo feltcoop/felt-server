@@ -2,6 +2,11 @@
 	import type {Post} from '../posts/post.js';
 	import {browser} from '$app/env';
 	import type {Space} from '../spaces/space.js';
+	import MessageList from '$lib/MessageList.svelte';
+	import {messages} from '$lib/messagesStore';
+	import type {SocketStore} from './socketStore.js';
+
+	export let socket: SocketStore;
 
 	export let space: Space;
 	export let text = '';
@@ -42,10 +47,8 @@
 </script>
 
 <div class="chatRoom">
-	{#each posts as post (post.post_id)}
-		<div>{post.actor_id} said: {post.content}</div>
-	{/each}
 	<input type="text" placeholder="> chat" on:keydown={onKeyDown} bind:value={text} />
+	<MessageList messages={$messages} />
 </div>
 
 <style>

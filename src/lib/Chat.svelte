@@ -15,7 +15,7 @@
 		if (!text) return;
 		// TODO the type of message created here does *not* include fields like `id`, `attributedTo`, etc - these are added by the server
 		// TODO this should create a client-side tracking object that we can monitor, cancel, organize, etc
-		socket.send({type: 'Create', object: {type: 'Message', content: text}});
+		socket.send({type: 'Create', object: {type: 'Post', content: text}});
 		text = '';
 	};
 

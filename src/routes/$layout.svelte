@@ -16,8 +16,4 @@
 		can't get the right proxy configuration, or something -->
 <SocketConnection {socket} url={socketUrl} />
 
-{#if $socket.connected}
-	<Chat {socket} />
-{/if}
-
 <slot />
