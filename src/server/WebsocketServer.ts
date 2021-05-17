@@ -36,6 +36,10 @@ export class WebsocketServer {
 					for (const client of wss.clients) {
 						client.send(serialized);
 					}
+				} else {
+					for (const client of wss.clients) {
+						client.send(rawMessage);
+					}
 				}
 			});
 			socket.on('open', () => {

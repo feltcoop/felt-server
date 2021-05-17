@@ -2,6 +2,7 @@ import type {AsyncStatus} from '@feltcoop/gro';
 import type {Json} from '@feltcoop/gro/dist/utils/json.js';
 import {writable} from 'svelte/store';
 import {messages} from './messagesStore';
+import {posts} from './postStore';
 
 // This store wraps a browser `WebSocket` connection with all of the Sveltey goodness.
 
@@ -62,7 +63,7 @@ export const createSocketStore = () => {
 		const ws = new WebSocket(url);
 		ws.onopen = (e) => {
 			console.log('[socket] open', e);
-			send('hello world, this is client speaking');
+			//send('hello world, this is client speaking');
 			update(($socket) => ({...$socket, status: 'success', connected: true}));
 		};
 		ws.onclose = (e) => {
@@ -70,6 +71,7 @@ export const createSocketStore = () => {
 			update(($socket) => ({...$socket, status: 'initial', connected: false, ws: null, url: null}));
 		};
 		ws.onmessage = (e) => {
+			console.log('[socket] on message!');
 			let message: any; // TODO types
 			try {
 				message = JSON.parse(e.data);
@@ -80,6 +82,9 @@ export const createSocketStore = () => {
 			console.log('[socket] message', message);
 			if (message.type === 'Create') {
 				messages.update(($messages) => [message, ...$messages]);
+			} else {
+				console.log('[socket] post', message.posts);
+				posts.update(($posts) => [...$posts, message.posts]);
 			}
 		};
 		ws.onerror = (e) => {
@@ -93,6 +98,7 @@ export const createSocketStore = () => {
 	};
 
 	const send = (data: Json) => {
+		console.log('[ws] sending ', data);
 		update(($socket) => {
 			if (!$socket.ws) return $socket;
 			$socket.ws.send(JSON.stringify(data));

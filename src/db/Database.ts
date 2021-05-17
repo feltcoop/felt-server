@@ -163,9 +163,9 @@ export class Database {
 				const data = await this.sql<Post[]>`
 					INSERT INTO posts (actor_id, space_id, content) VALUES (
 						${actor_id},${space_id},${content}
-					)
+					) RETURNING *
 				`;
-				console.log(data);
+				console.log('[db] create post', data);
 				return {ok: true, value: data[0]};
 			},
 			filterBySpace: async (spaceId: string): Promise<Result<{value: Post[]}>> => {

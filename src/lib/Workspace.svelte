@@ -15,11 +15,6 @@
 		selectedSpace = space;
 		console.log(`[ss] ${selectedSpace.url}`);
 	};
-	let selectedSpaceContent: Object;
-	$: selectedSpaceContent =
-		selectedSpace.media_type === 'application/json'
-			? JSON.parse(selectedSpace.content)
-			: {props: {}};
 </script>
 
 <div class="workspace">

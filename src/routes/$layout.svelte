@@ -1,11 +1,11 @@
 <script lang="ts">
-	import Chat from '$lib/Chat.svelte';
-
 	import SocketConnection from '$lib/SocketConnection.svelte';
 	import {createSocketStore} from '$lib/socketStore';
+	import {setContext} from 'svelte';
 
 	const socket = createSocketStore();
 	const socketUrl = 'ws://localhost:3002/ws';
+	setContext('socket', socket);
 </script>
 
 <svelte:head>

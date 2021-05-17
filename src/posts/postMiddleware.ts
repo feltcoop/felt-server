@@ -39,6 +39,7 @@ export const toCreatePostMiddleware = (server: ApiServer): Middleware => {
 			req.params.spaceId,
 			req.body.content,
 		);
+		console.log(findPostsResult);
 		if (findPostsResult.ok) {
 			return send(res, 200, {posts: findPostsResult.value}); // TODO API types
 		} else {
