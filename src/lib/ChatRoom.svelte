@@ -7,8 +7,7 @@
 	import type {SocketStore} from './socketStore.js';
 	import {getContext} from 'svelte';
 
-	export let socket: SocketStore;
-	socket = getContext('socket');
+	const socket: SocketStore = getContext('socket');
 
 	export let space: Space;
 	export let text = '';
@@ -19,7 +18,7 @@
 		const res = await fetch(`/api/v1/spaces/${spaceId}/posts`);
 		if (res.ok) {
 			const data = await res.json();
-			posts.update(() => data.posts);
+			$posts = data.posts;
 		}
 	};
 
@@ -45,7 +44,6 @@
 			console.error('expected socket to be connected to chat');
 			return;
 		}
-		if (!text) return;
 		// TODO the type of message created here does *not* include fields like `id`, `attributedTo`, etc - these are added by the server
 		// TODO this should create a client-side tracking object that we can monitor, cancel, organize, etc
 		socket.send(data);
