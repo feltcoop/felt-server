@@ -4,22 +4,32 @@
 	export let spaces: Space[];
 	export let selectedSpace: Space;
 	export let selectSpace: (community: Space) => void;
+
+	const createSpace = async () => {
+		//Trigger component with input form
+		//Needs to collect url(i.e. name for now), type (currently default json/application), & content (hardcoded JSON struct)
+		//Finally submit as a JSON package to server
+		console.log('create');
+	};
 </script>
 
 <div class="sidenav">
+	<div class="header">
+		<button type="button" class="button-emoji" on:click={() => createSpace()}>➕</button>|
+		<button type="button" class="button-emoji" on:click={() => console.log('search')}>🔍</button>
+	</div>
 	{#each spaces as space (space.space_id)}
-		<button type="button" on:click={() => selectSpace(space)}>{space.url}</button>
+		<button type="button" class="button-nav" on:click={() => selectSpace(space)}>{space.url}</button
+		>
 	{/each}
 </div>
 
 <style>
-	button {
-		border: 1px outset grey;
-		background-color: lightGreen;
-		height: 75px;
-		width: 75px;
+	.button-emoji {
+		background: none;
+		border: none;
 		cursor: pointer;
-		margin: 5%;
+		margin: 0;
 		word-wrap: break-word;
 	}
 

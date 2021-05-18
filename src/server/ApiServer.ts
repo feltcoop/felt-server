@@ -28,7 +28,11 @@ import {
 	toCommunitiesMiddleware,
 } from '../communities/communityMiddleware.js';
 import {toPostsMiddleware, toCreatePostMiddleware} from '../posts/postMiddleware.js';
-import {toSpaceMiddleware, toSpacesMiddleware} from '../spaces/spaceMiddleware.js';
+import {
+	toSpaceMiddleware,
+	toSpacesMiddleware,
+	toCreateSpaceMiddleware,
+} from '../spaces/spaceMiddleware.js';
 import type {ClientAccount, AccountSession} from '../session/clientSession.js';
 import type {Database} from '../db/Database.js';
 import type {Community} from 'src/communities/community.js';
@@ -123,6 +127,7 @@ export class ApiServer {
 			.get('/api/v1/communities', toCommunitiesMiddleware(this))
 			.get('/api/v1/communities/:community_id', toCommunityMiddleware(this))
 			.get('/api/v1/spaces/:spaceId', toSpaceMiddleware(this))
+			.post('/api/v1/communities/:community_id/spaces', toCreateSpaceMiddleware(this))
 			.get('/api/v1/communities/:community_id/spaces', toSpacesMiddleware(this))
 			.post('/api/v1/spaces/:spaceId/posts', toCreatePostMiddleware(this))
 			.get('/api/v1/spaces/:spaceId/posts', toPostsMiddleware(this));

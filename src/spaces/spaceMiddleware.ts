@@ -22,11 +22,33 @@ export const toSpaceMiddleware = (server: ApiServer): Middleware => {
 export const toSpacesMiddleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
-		console.log('[spaceMiddleware] community', req.params.community_id);
+		console.log('[spaceMiddleware] retrieving spaces for community', req.params.community_id);
 
 		const findSpaceResult = await db.repos.spaces.filterByCommunity(req.params.community_id);
 		if (findSpaceResult.ok) {
 			return send(res, 200, {community: findSpaceResult.value}); // TODO API types
+		} else {
+			console.log('[spaceMiddleware] error while searching for community spaces');
+			return send(res, 500, {reason: 'error while searching for community spaces'});
+		}
+	};
+};
+
+//Creates a new space for a given community
+export const toCreateSpaceMiddleware = (server: ApiServer): Middleware => {
+	const {db} = server;
+	return async (req, res) => {
+		console.log('[spaceMiddleware] creating space for community', req.params.community_id);
+		console.log('[postMiddleware] body', req.body);
+
+		const createSpaceResult = await db.repos.spaces.insert(
+			req.params.community_id,
+			req.body.url,
+			req.body.media_type,
+			req.body.content,
+		);
+		if (createSpaceResult.ok) {
+			return send(res, 200, {community: createSpaceResult.value}); // TODO API types
 		} else {
 			console.log('[spaceMiddleware] error while searching for community spaces');
 			return send(res, 500, {reason: 'error while searching for community spaces'});
