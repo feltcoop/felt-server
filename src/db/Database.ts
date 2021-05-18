@@ -165,9 +165,11 @@ export class Database {
 					) RETURNING *
 				`;
 				console.log('[db] created space', data);
-				const association = await this.sql`
+				const space_id: number = data[0].space_id!;
+				console.log(community_id);
+				const association = await this.sql<any>`
 			   INSERT INTO community_spaces (space_id, community_id) VALUES (
-					 ${(data[0].space_id, community_id)}
+					 ${space_id},${community_id}
 				 )
 				`;
 				console.log('[db] created community_space', association);

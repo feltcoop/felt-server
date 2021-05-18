@@ -48,7 +48,7 @@ export const toCreateSpaceMiddleware = (server: ApiServer): Middleware => {
 			req.body.content,
 		);
 		if (createSpaceResult.ok) {
-			return send(res, 200, {community: createSpaceResult.value}); // TODO API types
+			return send(res, 200, {space: createSpaceResult.value}); // TODO API types
 		} else {
 			console.log('[spaceMiddleware] error while searching for community spaces');
 			return send(res, 500, {reason: 'error while searching for community spaces'});

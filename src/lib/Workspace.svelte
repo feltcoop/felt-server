@@ -22,7 +22,12 @@
 		<CommunityNav {communities} {selectedCommunity} {selectCommunity} />
 	</section>
 	<section class="spacenav">
-		<SpaceNav spaces={selectedCommunity.spaces} {selectedSpace} {selectSpace} />
+		<SpaceNav
+			communityId={selectedCommunity.community_id}
+			spaces={selectedCommunity.spaces}
+			{selectedSpace}
+			{selectSpace}
+		/>
 	</section>
 	<div class="viewfinder">
 		<ChatRoom space={selectedSpace} />

@@ -1,15 +1,27 @@
 <script lang="ts">
 	import type {Space} from '../spaces/space.js';
 
+	export let communityId: number;
 	export let spaces: Space[];
 	export let selectedSpace: Space;
 	export let selectSpace: (community: Space) => void;
 
 	const createSpace = async () => {
-		//Trigger component with input form
+		//TODO: Trigger component with input form
 		//Needs to collect url(i.e. name for now), type (currently default json/application), & content (hardcoded JSON struct)
-		//Finally submit as a JSON package to server
-		console.log('create');
+		const url = '/hello/world';
+		const text = {
+			url: url,
+			media_type: 'json/application',
+			content: `{"type": "ChatRoom", "props": {"data": "${url}/posts"}}`,
+		};
+		const res = await fetch(`/api/v1/communities/${communityId}/spaces`, {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify(text),
+		});
+		const data = await res.json();
+		spaces.push(data.space);
 	};
 </script>
 
