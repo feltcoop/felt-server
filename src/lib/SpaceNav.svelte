@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type {Space} from '../spaces/space.js';
+	import Modal from '$lib/Modal.svelte';
 
 	export let communityId: number;
 	export let spaces: Space[];
@@ -24,6 +25,16 @@
 		spaces.push(data.space);
 	};
 </script>
+
+<Modal>
+	<div slot="content">
+		<p>
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique, magni earum ut ex totam
+			corporis unde incidunt deserunt, dolorem voluptatum libero quia. Maiores, provident error vel
+			veritatis itaque nemo commodi.
+		</p>
+	</div>
+</Modal>
 
 <div class="sidenav">
 	<div class="header">
