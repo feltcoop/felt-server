@@ -167,6 +167,7 @@ export class Database {
 				console.log('[db] created space', data);
 				const space_id: number = data[0].space_id!;
 				console.log(community_id);
+				//TODO more robust error handling or condense into single query
 				const association = await this.sql<any>`
 			   INSERT INTO community_spaces (space_id, community_id) VALUES (
 					 ${space_id},${community_id}
