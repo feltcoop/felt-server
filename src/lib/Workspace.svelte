@@ -23,7 +23,7 @@
 	</section>
 	<section class="spacenav">
 		<SpaceNav
-			communityId={selectedCommunity.community_id}
+			community={selectedCommunity}
 			spaces={selectedCommunity.spaces}
 			{selectedSpace}
 			{selectSpace}
