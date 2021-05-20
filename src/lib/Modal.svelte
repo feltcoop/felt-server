@@ -21,7 +21,7 @@
 			<slot name="header">
 				<!-- fallback -->
 				<div>
-					<h1>Your Modal Heading Goes Here...</h1>
+					<h1>Your Modal Heading Goes Here...<button on:click={close}>close</button></h1>
 				</div>
 			</slot>
 
@@ -33,7 +33,6 @@
 				<!-- fallback -->
 				<div>
 					<h1>Your Modal Footer Goes Here...</h1>
-					<button on:click={close}>close</button>
 				</div>
 			</slot>
 		</div>
