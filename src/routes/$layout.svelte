@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '../app.css';
 	import SocketConnection from '$lib/SocketConnection.svelte';
 	import {createSocketStore} from '$lib/socketStore';
 	import {setContext} from 'svelte';
