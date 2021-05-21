@@ -27,35 +27,37 @@
 
 <style>
 	div.modal {
-		--container_padding: 20px;
-
 		position: fixed;
 		top: 0;
 		left: 0;
 		z-index: 1;
 		width: 100%;
 		height: 100%;
-		padding: var(--container_padding);
 		display: flex;
 		justify-content: center;
 		align-items: center;
 	}
 	div.backdrop {
 		position: absolute;
+		z-index: 0;
 		width: 100%;
 		height: 100%;
 		background-color: rgba(0, 0, 0, 0.4);
 	}
 	div.container {
-		z-index: 1;
-		background-color: #fff;
-		border: 1px solid #ccc;
+		position: relative;
+		--container_padding: 40px;
+		margin: var(--container_padding);
 		max-width: calc(100% - var(--container_padding) * 2);
 		max-height: calc(100% - var(--container_padding) * 2);
+		background-color: #fff;
+		border: 1px solid #ccc;
 		overflow: hidden;
+		display: flex;
+		flex-direction: column;
 	}
 	div.content {
-		max-height: 100%; /* is this neeed? */
+		flex: 1;
 		overflow: auto;
 	}
 </style>
