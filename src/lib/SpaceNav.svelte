@@ -9,10 +9,19 @@
 	export let selectedSpace: Space;
 	export let selectSpace: (community: Space) => void;
 
+	let newName = '';
+
+	const onKeyDown = async (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			await createSpace();
+			exit();
+		}
+	};
+
 	const createSpace = async () => {
-		//TODO: Trigger component with input form
+		if (!newName) return;
 		//Needs to collect url(i.e. name for now), type (currently default json/application), & content (hardcoded JSON struct)
-		const url = '/hello/world';
+		const url = `/${newName}`;
 		const doc = {
 			url,
 			media_type: 'json/application',
@@ -25,28 +34,34 @@
 		});
 		const data = await res.json();
 		spaces = spaces.concat(data.space);
+		newName = '';
 	};
 </script>
 
-<Modal>
-	<div slot="content">
-		<p>
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique, magni earum ut ex totam
-			corporis unde incidunt deserunt, dolorem voluptatum libero quia. Maiores, provident error vel
-			veritatis itaque nemo commodi.
-		</p>
-	</div>
-</Modal>
-
 <div class="sidenav">
 	<div class="header">
+		<Modal let:open={trigger} let:close={exit}>
+			<span slot="trigger">
+				<button
+					aria-label="Create Space"
+					type="button"
+					class="button-emoji"
+					on:click={() => trigger()}>➕</button
+				>
+			</span>
+			<div slot="header">
+				<h1>Create a new space</h1>
+			</div>
+
+			<div slot="content">
+				<p>
+					<input type="text" placeholder="> chat" on:keydown={onKeyDown} bind:value={newName} />
+				</p>
+			</div>
+		</Modal>
+
 		<!--TODO: Make an IconButton component in felt and use it here-->
-		<button
-			aria-label="Create Space"
-			type="button"
-			class="button-emoji"
-			on:click={() => createSpace()}>➕</button
-		>|
+		|
 		<button
 			aria-label="Search Spaces"
 			type="button"

@@ -69,4 +69,10 @@
 		max-height: 50vh;
 		overflow: auto;
 	}
+
+	div.trigger {
+		margin: 0;
+		width: 0;
+		background: red;
+	}
 </style>
