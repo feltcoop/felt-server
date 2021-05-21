@@ -11,7 +11,7 @@
 
 	let newName = '';
 
-	const onKeyDown = async (e: KeyboardEvent) => {
+	const onKeyDown = async (e: KeyboardEvent, closeModal: () => void) => {
 		if (e.key === 'Enter') {
 			await createSpace();
 			closeModal();
@@ -55,7 +55,12 @@
 
 			<div slot="content">
 				<p>
-					<input type="text" placeholder="> chat" on:keydown={onKeyDown} bind:value={newName} />
+					<input
+						type="text"
+						placeholder="> chat"
+						on:keydown={(e) => onKeyDown(e, closeModal)}
+						bind:value={newName}
+					/>
 				</p>
 			</div>
 		</Modal>
