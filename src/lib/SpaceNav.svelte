@@ -14,7 +14,7 @@
 	const onKeyDown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
 			await createSpace();
-			exit();
+			closeModal();
 		}
 	};
 
@@ -40,13 +40,13 @@
 
 <div class="sidenav">
 	<div class="header">
-		<Modal let:open={trigger} let:close={exit}>
+		<Modal let:open={openModal} let:close={closeModal}>
 			<span slot="trigger">
 				<button
 					aria-label="Create Space"
 					type="button"
 					class="button-emoji"
-					on:click={() => trigger()}>➕</button
+					on:click={() => openModal()}>➕</button
 				>
 			</span>
 			<div slot="header">

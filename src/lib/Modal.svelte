@@ -1,53 +1,41 @@
 <script lang="ts">
-	let isOpen = false;
-	function open() {
-		isOpen = true;
-	}
-	function close() {
-		isOpen = false;
-	}
+	let opened = false;
+	const open = () => {
+		opened = true;
+	};
+	const close = () => {
+		opened = false;
+	};
 </script>
 
 <slot name="trigger" {open}>
-	<!-- fallback trigger to open the modal -->
-	<button on:click={open}>Open</button>
+	<button on:click={open}>open</button>
 </slot>
 
-{#if isOpen}
+{#if opened}
 	<div class="modal">
 		<div class="backdrop" on:click={close} />
-
-		<div class="content-wrapper">
-			<slot name="header">
-				<!-- fallback -->
-				<div>
-					<h1>Your Modal Heading Goes Here...<button on:click={close}>close</button></h1>
-				</div>
-			</slot>
-
+		<div class="container">
+			<slot name="header" />
 			<div class="content">
 				<slot name="content" />
 			</div>
-
-			<slot name="footer" {close}>
-				<!-- fallback -->
-				<div>
-					<h1>Your Modal Footer Goes Here...</h1>
-				</div>
-			</slot>
+			<slot name="footer" {close} />
 		</div>
 	</div>
 {/if}
 
 <style>
 	div.modal {
+		--container_padding: 20px;
+
 		position: fixed;
 		top: 0;
 		left: 0;
+		z-index: 1;
 		width: 100%;
-		height: 100vh;
-		z-index: 10;
-
+		height: 100%;
+		padding: var(--container_padding);
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -58,21 +46,16 @@
 		height: 100%;
 		background-color: rgba(0, 0, 0, 0.4);
 	}
-	div.content-wrapper {
-		z-index: 10;
-		max-width: 70vw;
-		border-radius: 0.3rem;
-		background-color: white;
+	div.container {
+		z-index: 1;
+		background-color: #fff;
+		border: 1px solid #ccc;
+		max-width: calc(100% - var(--container_padding) * 2);
+		max-height: calc(100% - var(--container_padding) * 2);
 		overflow: hidden;
 	}
 	div.content {
-		max-height: 50vh;
+		max-height: 100%; /* is this neeed? */
 		overflow: auto;
-	}
-
-	div.trigger {
-		margin: 0;
-		width: 0;
-		background: red;
 	}
 </style>
