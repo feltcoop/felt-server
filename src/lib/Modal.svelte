@@ -47,7 +47,6 @@
 	div.container {
 		position: relative;
 		margin: auto;
-		--container_padding: 40px;
 		max-width: calc(100% - 40px);
 		max-height: calc(100% - 40px);
 		background-color: #fff;
