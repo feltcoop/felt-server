@@ -46,10 +46,10 @@
 	}
 	div.container {
 		position: relative;
+		margin: auto;
 		--container_padding: 40px;
-		margin: var(--container_padding);
-		max-width: calc(100% - var(--container_padding) * 2);
-		max-height: calc(100% - var(--container_padding) * 2);
+		max-width: calc(100% - 40px);
+		max-height: calc(100% - 40px);
 		background-color: #fff;
 		border: 1px solid #ccc;
 		overflow: hidden;
