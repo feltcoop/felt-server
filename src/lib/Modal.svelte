@@ -8,7 +8,7 @@
 	};
 </script>
 
-<slot name="trigger" {open}>
+<slot name="trigger" {open} {close}>
 	<button on:click={open}>open</button>
 </slot>
 
@@ -20,7 +20,7 @@
 			<div class="content">
 				<slot name="content" />
 			</div>
-			<slot name="footer" {close} />
+			<slot name="footer" />
 		</div>
 	</div>
 {/if}
