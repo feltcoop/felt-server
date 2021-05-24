@@ -18,7 +18,7 @@
 		<div class="container">
 			<slot name="header" />
 			<div class="content">
-				<slot name="content" />
+				<slot name="content" {open} {close} />
 			</div>
 			<slot name="footer" />
 		</div>
