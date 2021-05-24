@@ -16,11 +16,11 @@
 	<div class="modal">
 		<div class="backdrop" on:click={close} />
 		<div class="container">
-			<slot name="header" />
+			<slot name="header" {open} {close} />
 			<div class="content">
 				<slot name="content" {open} {close} />
 			</div>
-			<slot name="footer" />
+			<slot name="footer" {open} {close} />
 		</div>
 	</div>
 {/if}
