@@ -11,10 +11,10 @@
 
 	let newName = '';
 
-	const onKeyDown = async (e: KeyboardEvent) => {
+	const onKeyDown = async (e: KeyboardEvent, closeModal: () => void) => {
 		if (e.key === 'Enter') {
 			await createSpace();
-			exit();
+			closeModal();
 		}
 	};
 
@@ -40,13 +40,13 @@
 
 <div class="sidenav">
 	<div class="header">
-		<Modal let:open={trigger} let:close={exit}>
+		<Modal let:open={openModal} let:close={closeModal}>
 			<span slot="trigger">
 				<button
 					aria-label="Create Space"
 					type="button"
 					class="button-emoji"
-					on:click={() => trigger()}>➕</button
+					on:click={() => openModal()}>➕</button
 				>
 			</span>
 			<div slot="header">
@@ -55,7 +55,12 @@
 
 			<div slot="content">
 				<p>
-					<input type="text" placeholder="> chat" on:keydown={onKeyDown} bind:value={newName} />
+					<input
+						type="text"
+						placeholder="> chat"
+						on:keydown={(e) => onKeyDown(e, closeModal)}
+						bind:value={newName}
+					/>
 				</p>
 			</div>
 		</Modal>
