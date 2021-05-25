@@ -10,16 +10,17 @@
 
 	const onKeyDown = async (e: KeyboardEvent, closeModal: () => void) => {
 		if (e.key === 'Enter') {
-			await createCommunity();
+			await createCommunity(newName);
+			newName = '';
 			closeModal();
 		}
 	};
 
-	const createCommunity = async () => {
-		if (!newName) return;
+	const createCommunity = async (name: string) => {
+		if (!name) return;
 		//Needs to collect name
 		const doc = {
-			name: `${newName}`,
+			name,
 		};
 		const res = await fetch(`/api/v1/communities`, {
 			method: 'POST',
@@ -29,7 +30,6 @@
 		const data = await res.json();
 		console.log(data);
 		communities = communities.concat(data.community);
-		newName = '';
 	};
 </script>
 
