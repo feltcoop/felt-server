@@ -26,6 +26,7 @@ import {toLogoutMiddleware} from '../session/logoutMiddleware.js';
 import {
 	toCommunityMiddleware,
 	toCommunitiesMiddleware,
+	toCreateCommunityMiddleware,
 } from '../communities/communityMiddleware.js';
 import {toPostsMiddleware, toCreatePostMiddleware} from '../posts/postMiddleware.js';
 import {
@@ -125,6 +126,7 @@ export class ApiServer {
 			.post('/api/v1/login', toLoginMiddleware(this))
 			.post('/api/v1/logout', toLogoutMiddleware(this))
 			.get('/api/v1/communities', toCommunitiesMiddleware(this))
+			.post('/api/v1/communities', toCreateCommunityMiddleware(this))
 			.get('/api/v1/communities/:community_id', toCommunityMiddleware(this))
 			.get('/api/v1/spaces/:spaceId', toSpaceMiddleware(this))
 			.post('/api/v1/communities/:community_id/spaces', toCreateSpaceMiddleware(this))

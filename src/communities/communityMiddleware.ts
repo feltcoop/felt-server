@@ -27,6 +27,12 @@ export const toCommunitiesMiddleware = (server: ApiServer): Middleware => {
 export const toCommunityMiddleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
+		if (!req.accountSession) {
+			//TODO centralize error message strings
+			console.log('[communityMiddleware] no account to search for communities');
+			return send(res, 401, {reason: 'not logged in'});
+		}
+
 		console.log('[communityMiddleware] account', req.accountSession?.account.account_id!); // TODO logging
 		console.log('[communityMiddleware] community', req.params.community_id);
 
@@ -37,6 +43,25 @@ export const toCommunityMiddleware = (server: ApiServer): Middleware => {
 			console.log('no community found');
 			const code = findCommunityResult.type === 'noCommunityFound' ? 404 : 500;
 			return send(res, code, {reason: findCommunityResult.reason});
+		}
+	};
+};
+
+//Creates a new community for an instance
+export const toCreateCommunityMiddleware = (server: ApiServer): Middleware => {
+	const {db} = server;
+	return async (req, res) => {
+		console.log('[communityMiddleware] creating community', req.body);
+
+		const createCommunityResult = await db.repos.communities.insert(
+			req.body.name,
+			req.accountSession?.account.account_id!,
+		);
+		if (createCommunityResult.ok) {
+			return send(res, 200, {community: createCommunityResult.value}); // TODO API types
+		} else {
+			console.log('[communityMiddleware] error while creating community');
+			return send(res, 500, {reason: ' error while creating community'});
 		}
 	};
 };

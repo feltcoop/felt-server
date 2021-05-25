@@ -126,6 +126,26 @@ export class Database {
 				console.log('[db] community data', data);
 				return {ok: true, value: data};
 			},
+			insert: async (name: string, account_id: number): Promise<Result<{value: Community}>> => {
+				const data = await this.sql<Community[]>`
+					INSERT INTO communities (name) VALUES (
+						${name}
+					) RETURNING *
+				`;
+				console.log('[db] created community', data);
+				//TODO is there a way to do this via sql? Or do we just add a default `/general` space to all new communities?
+				data[0].spaces = [];
+				const community_id: number = data[0].community_id!;
+				console.log(community_id);
+				//TODO more robust error handling or condense into single query
+				const association = await this.sql<any>`
+			   INSERT INTO account_communities (account_id, community_id) VALUES (
+					 ${account_id},${community_id}
+				 )
+				`;
+				console.log('[db] created account_communities', association);
+				return {ok: true, value: data[0]};
+			},
 		},
 		spaces: {
 			findById: async (
