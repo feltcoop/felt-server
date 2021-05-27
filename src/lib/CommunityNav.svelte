@@ -62,12 +62,19 @@
 
 		<!--TODO: Make an IconButton component in felt and use it here-->
 		|
-		<button
-			aria-label="Search Spaces"
-			type="button"
-			class="button-emoji"
-			on:click={() => console.log('search')}>🔍</button
-		>
+		<Modal let:open={openModal} let:close={closeModal}>
+			<span slot="trigger">
+				<button
+					aria-label="Invite users to community"
+					type="button"
+					class="button-emoji"
+					on:click={() => openModal()}>✉️</button
+				>
+			</span>
+			<div slot="header">
+				<h1>Invite users to community</h1>
+			</div>
+		</Modal>
 	</div>
 	{#each communities as community (community.community_id)}
 		<button type="button" class="button-nav" on:click={() => selectCommunity(community)}

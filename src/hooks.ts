@@ -62,6 +62,7 @@ export const getSession: GetSession<ClientContext, ClientSession> = (ctx) => {
 				// don't expose data that should be on the server only!
 				account: {name: context.account.name, account_id: context.account.account_id},
 				communities: context.communities,
+				friends: context.friends,
 				entities: [], // TODO load
 		  }
 		: {guest: true}; // TODO is swallowing `context.error`, only return in dev mode? look for "reason"?

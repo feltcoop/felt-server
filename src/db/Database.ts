@@ -5,6 +5,7 @@ import type {AccountSession} from '../session/clientSession.js';
 import type {Community} from '../communities/community.js';
 import type {Space} from '../spaces/space.js';
 import type {Post} from '../posts/post.js';
+import type {Member} from '../members/member.js';
 import type {Account} from '../vocab/account/account.js';
 import type {Entity} from '../vocab/entity/entity.js';
 import type {PostgresSql} from './postgres.js';
@@ -37,10 +38,11 @@ export class Database {
 				let communities: Community[] = unwrap(
 					await this.repos.communities.filterByAccount(account.account_id!),
 				);
+				let friends: Member[] = unwrap(await this.repos.members.getAll());
 				let entities: Entity[] = unwrap(await this.repos.entities.findByAccount(name));
 				return {
 					ok: true,
-					value: {account, communities, entities},
+					value: {account, communities, friends, entities},
 				};
 			},
 		},
@@ -72,6 +74,14 @@ export class Database {
 					return {ok: true, value: data[0]};
 				}
 				return {ok: false, type: 'noAccountFound', reason: `No account found with name: ${name}`};
+			},
+		},
+		members: {
+			getAll: async (): Promise<Result<{value: Member[]}, {reason: string}>> => {
+				const data = await this.sql<Member[]>`
+				select account_id, name from accounts
+				`;
+				return {ok: true, value: data};
 			},
 		},
 		entities: {
@@ -119,7 +129,13 @@ export class Database {
       				from (
         				SELECT s.space_id, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id=c.community_id      				
       				) d
-    				) as spaces
+    				) as spaces,
+						(
+							select array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
+							from (
+								SELECT a.account_id, a.name FROM accounts a JOIN account_communities ac ON a.account_id=ac.account_id AND ac.community_id=c.community_id
+							) d
+						) as members 
   				from communities c JOIN account_communities ac
   				ON c.community_id=ac.community_id AND ac.account_id=${accountId}				
 				`;

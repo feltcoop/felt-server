@@ -34,6 +34,7 @@ import {
 	toSpacesMiddleware,
 	toCreateSpaceMiddleware,
 } from '../spaces/spaceMiddleware.js';
+import type {Member} from '../members/member.js';
 import type {ClientAccount, AccountSession} from '../session/clientSession.js';
 import type {Database} from '../db/Database.js';
 import type {Community} from 'src/communities/community.js';
@@ -204,7 +205,11 @@ const toClientContext = (req: Request): ClientContext => {
 	console.log(req.accountSession);
 	let clientContext: ClientContext;
 	clientContext = req.accountSession
-		? {account: req.accountSession.account, communities: req.accountSession.communities}
+		? {
+				account: req.accountSession.account,
+				communities: req.accountSession.communities,
+				friends: req.accountSession.friends,
+		  }
 		: {guest: true};
 	console.log(clientContext);
 	return clientContext;
@@ -213,6 +218,7 @@ export type ClientContext = ClientAccountContext | ClientGuestContext;
 export interface ClientAccountContext {
 	account: ClientAccount;
 	communities: Community[];
+	friends: Member[];
 	guest?: false;
 }
 export interface ClientGuestContext {
