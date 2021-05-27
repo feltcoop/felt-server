@@ -4,7 +4,9 @@
 	import ChatRoom from '$lib/ChatRoom.svelte';
 	import type {Community} from 'src/communities/community.js';
 	import type {Space} from 'src/spaces/space.js';
+	import type {Member} from 'src/members/member.js';
 
+	export let friends: Member[];
 	export let communities: Community[];
 	let selectedCommunity = communities[0];
 	const selectCommunity = (community: Community) => {
@@ -19,7 +21,7 @@
 
 <div class="workspace">
 	<section class="communitynav">
-		<CommunityNav {communities} {selectedCommunity} {selectCommunity} />
+		<CommunityNav {friends} {communities} {selectedCommunity} {selectCommunity} />
 	</section>
 	<section class="spacenav">
 		<SpaceNav

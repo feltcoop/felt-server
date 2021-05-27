@@ -4,12 +4,15 @@
 	import Workspace from '$lib/Workspace.svelte';
 	import type {ClientAccount} from 'src/session/clientSession.js';
 	import type {Community} from 'src/communities/community.js';
+	import type {Member} from 'src/members/member.js';
 
 	const title = 'felt-server';
 	let account: ClientAccount;
 	$: account = $session?.account;
 	let communities: Community[] = [];
 	$: communities = $session?.communities;
+	let friends: Member[] = [];
+	$: friends = $session?.friends;
 </script>
 
 <svelte:head><title>{title}</title></svelte:head>
@@ -20,7 +23,7 @@
 		<AccountForm />
 	</section>
 	{#if communities}
-		<Workspace {communities} />
+		<Workspace {friends} {communities} />
 	{/if}
 </main>
 
