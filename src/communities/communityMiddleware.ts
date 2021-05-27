@@ -70,3 +70,31 @@ export const toCreateCommunityMiddleware = (server: ApiServer): Middleware => {
 		}
 	};
 };
+
+//Creates a new member relation for a community
+export const toCreateMemberMiddleware = (server: ApiServer): Middleware => {
+	const {db} = server;
+	return async (req, res) => {
+		if (!req.accountSession) {
+			//TODO centralize error message strings
+			console.log('[communityMiddleware] no account to search for communities');
+			return send(res, 401, {reason: 'not logged in'});
+		}
+		console.log(
+			'[communityMiddleware] creating member',
+			req.params.community_id,
+			req.body.account_id,
+		);
+
+		const createMemberResult = await db.repos.members.create(
+			req.body.account_id,
+			req.params.community_id,
+		);
+		if (createMemberResult.ok) {
+			return send(res, 200, {}); // TODO API types
+		} else {
+			console.log('[communityMiddleware] error while creating member');
+			return send(res, 500, {reason: ' error while creating member'});
+		}
+	};
+};

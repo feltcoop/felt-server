@@ -83,6 +83,15 @@ export class Database {
 				`;
 				return {ok: true, value: data};
 			},
+			create: async (account_id: number, community_id: string): Promise<Result<{value: any}>> => {
+				const data = await this.sql`
+				INSERT INTO account_communities (account_id, community_id) VALUES (
+					${account_id},${community_id}
+				) RETURNING *			
+				`;
+				console.log('[db] created account_communities', data);
+				return {ok: true, value: data};
+			},
 		},
 		entities: {
 			findByAccount: async (

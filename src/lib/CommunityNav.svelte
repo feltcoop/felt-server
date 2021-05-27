@@ -44,8 +44,20 @@
 	 */
 	const inviteFriend = async (friend: Member) => {
 		if (!friend) return;
+		const doc = {
+			account_id: friend.account_id,
+		};
 
-		console.log(`Inviting friend ${friend.name}`);
+		const res = await fetch(`/api/v1/communities/${selectedCommunity.community_id}/members`, {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify(doc),
+		});
+
+		const data = await res.json();
+		console.log(data);
+
+		invitableFriends = invitableFriends.filter((x) => x.account_id !== friend.account_id);
 	};
 </script>
 

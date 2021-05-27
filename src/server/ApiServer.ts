@@ -27,6 +27,7 @@ import {
 	toCommunityMiddleware,
 	toCommunitiesMiddleware,
 	toCreateCommunityMiddleware,
+	toCreateMemberMiddleware,
 } from '../communities/communityMiddleware.js';
 import {toPostsMiddleware, toCreatePostMiddleware} from '../posts/postMiddleware.js';
 import {
@@ -129,6 +130,7 @@ export class ApiServer {
 			.get('/api/v1/communities', toCommunitiesMiddleware(this))
 			.post('/api/v1/communities', toCreateCommunityMiddleware(this))
 			.get('/api/v1/communities/:community_id', toCommunityMiddleware(this))
+			.post('/api/v1/communities/:community_id/members', toCreateMemberMiddleware(this))
 			.get('/api/v1/spaces/:spaceId', toSpaceMiddleware(this))
 			.post('/api/v1/communities/:community_id/spaces', toCreateSpaceMiddleware(this))
 			.get('/api/v1/communities/:community_id/spaces', toSpacesMiddleware(this))
