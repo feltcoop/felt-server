@@ -8,7 +8,7 @@
 	export let selectedCommunity: Community;
 	export let selectCommunity: (community: Community) => void;
 
-	let invitableFriends = friends.filter(
+	$: invitableFriends = friends.filter(
 		(x) => !selectedCommunity.members.some((y) => x.account_id == y.account_id),
 	);
 

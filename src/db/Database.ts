@@ -77,12 +77,15 @@ export class Database {
 			},
 		},
 		members: {
+			//TODO: this is a hack to stub out "friends" for inviting to a Community.
+			//This should use a community_id to filter or something
 			getAll: async (): Promise<Result<{value: Member[]}, {reason: string}>> => {
 				const data = await this.sql<Member[]>`
 				select account_id, name from accounts
 				`;
 				return {ok: true, value: data};
 			},
+			//TODO: refactor this code to return 'Member'
 			create: async (account_id: number, community_id: string): Promise<Result<{value: any}>> => {
 				const data = await this.sql`
 				INSERT INTO account_communities (account_id, community_id) VALUES (
