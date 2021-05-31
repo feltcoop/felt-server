@@ -35,7 +35,7 @@
 		});
 		const data = await res.json();
 		console.log(data);
-		communities = communities.concat(data.community);
+		communities = data.community;
 	};
 
 	/**
