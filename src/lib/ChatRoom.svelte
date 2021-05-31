@@ -57,14 +57,14 @@
 </script>
 
 <div class="chatRoom">
-	<input type="text" placeholder="> chat" on:keydown={onKeyDown} bind:value={text} />
 	<PostList posts={$posts} />
+	<input type="text" placeholder="> chat" on:keydown={onKeyDown} bind:value={text} />
 </div>
 
 <style>
 	.chatRoom {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
+		align-items: left;
 	}
 </style>

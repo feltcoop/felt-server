@@ -8,9 +8,9 @@
 	export let selectedCommunity: Community;
 	export let selectCommunity: (community: Community) => void;
 
-	$: invitableFriends = friends.filter(
-		(x) => !selectedCommunity.members.some((y) => x.account_id == y.account_id),
-	);
+	$: invitableFriends = selectedCommunity
+		? friends.filter((x) => !selectedCommunity.members.some((y) => x.account_id == y.account_id))
+		: [];
 
 	let newName = '';
 
@@ -89,29 +89,31 @@
 		</Modal>
 
 		<!--TODO: Make an IconButton component in felt and use it here-->
-		|
-		<Modal let:open={openModal} let:close={closeModal}>
-			<span slot="trigger">
-				<button
-					aria-label="Invite users to {selectedCommunity.name}"
-					type="button"
-					class="button-emoji"
-					on:click={() => openModal()}>✉️</button
-				>
-			</span>
-			<div slot="header">
-				<h1>Invite users to {selectedCommunity.name}</h1>
-			</div>
-			<div slot="content">
-				{#each invitableFriends as friend (friend.account_id)}
-					<p>
-						<button type="button" class="button-join" on:click={() => inviteFriend(friend)}>
-							{friend.name}
-						</button>
-					</p>
-				{/each}
-			</div>
-		</Modal>
+		{#if selectedCommunity}
+			|
+			<Modal let:open={openModal} let:close={closeModal}>
+				<span slot="trigger">
+					<button
+						aria-label="Invite users to {selectedCommunity.name}"
+						type="button"
+						class="button-emoji"
+						on:click={() => openModal()}>✉️</button
+					>
+				</span>
+				<div slot="header">
+					<h1>Invite users to {selectedCommunity.name}</h1>
+				</div>
+				<div slot="content">
+					{#each invitableFriends as friend (friend.account_id)}
+						<p>
+							<button type="button" class="button-join" on:click={() => inviteFriend(friend)}>
+								{friend.name}
+							</button>
+						</p>
+					{/each}
+				</div>
+			</Modal>
+		{/if}
 	</div>
 	{#each communities as community (community.community_id)}
 		<button type="button" class="button-nav" on:click={() => selectCommunity(community)}>
@@ -147,5 +149,6 @@
 		width: 85px;
 		height: 100%;
 		position: fixed;
+		background: #3bbb3b;
 	}
 </style>

@@ -64,15 +64,6 @@
 				</p>
 			</div>
 		</Modal>
-
-		<!--TODO: Make an IconButton component in felt and use it here-->
-		|
-		<button
-			aria-label="Search Spaces"
-			type="button"
-			class="button-emoji"
-			on:click={() => console.log('search')}>🔍</button
-		>
 	</div>
 	{#each spaces as space (space.space_id)}
 		<button type="button" class="button-nav" on:click={() => selectSpace(space)}>{space.url}</button
