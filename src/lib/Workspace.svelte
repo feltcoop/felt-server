@@ -8,20 +8,16 @@
 
 	export let friends: Member[];
 	export let communities: Community[];
-	let selectedCommunity = communities ? communities[0] : {};
-	let selectedCommunitySpaces = selectedCommunity ? selectedCommunity.spaces : [];
+	let selectedCommunity = communities[0] || null;
+	$: selectedCommunitySpaces = selectedCommunity?.spaces || null;
 	const selectCommunity = (community: Community) => {
 		selectedCommunity = community;
-		selectedCommunitySpaces = community.spaces;
 	};
 	let selectedSpace = selectedCommunity ? selectedCommunity.spaces[0] : null;
 	const selectSpace = (space: Space) => {
 		selectedSpace = space;
 		console.log(`[ss] ${selectedSpace.url}`);
 	};
-	if (selectedSpace) {
-		console.log('selectedSpace', selectedSpace);
-	}
 </script>
 
 <div class="workspace">
