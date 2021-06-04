@@ -3,7 +3,9 @@
 # felt-server
 
 > server for [Felt](https://github.com/feltcoop/felt),
-> a tool for building and maintaining communities 💚 work in progress
+> a tool for building and maintaining communities 💚
+
+> **work in progress**: pre-pre-alpha
 
 ## usage
 
