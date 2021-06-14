@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "^1.0.0-next.12",
-    "@sveltejs/kit": "^1.0.0-next.68",
+    "@sveltejs/kit": "^1.0.0-next.70",
     "@types/body-parser": "^1.19.0",
     "esbuild": "^0.9.3",
     "prettier": "^2.2.1",
@@ -39,13 +39,13 @@
     "@polka/send-type": "^0.5.2",
     "@types/ws": "^7.4.1",
     "body-parser": "^1.19.0",
+    "bufferutil": "^4.0.1",
     "cookie-session": "^1.4.0",
     "polka": "^1.0.0-next.14",
     "postgres": "^1.0.2",
     "sirv": "^1.0.11",
-    "ws": "^7.4.4",
-    "bufferutil": "^4.0.1",
-    "utf-8-validate": "^5.0.2"
+    "utf-8-validate": "^5.0.2",
+    "ws": "^7.4.4"
   },
   "prettier": {
     "useTabs": true,
