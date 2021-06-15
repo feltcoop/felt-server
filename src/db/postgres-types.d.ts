@@ -384,7 +384,7 @@ declare module 'postgres' {
 			 */
 			<
 				T extends object | readonly object[],
-				U extends SerializableKeys<T extends readonly object[] ? T[number] : T>
+				U extends SerializableKeys<T extends readonly object[] ? T[number] : T>,
 			>(
 				objOrArray: T,
 				...keys: U[]
