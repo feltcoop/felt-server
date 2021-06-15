@@ -11,18 +11,19 @@ import type {ClientContext} from './server/ApiServer.js';
 // const log = new Logger(['[hooks]']);
 
 export const getSession: GetSession<ClientContext, ClientSession> = (request) => {
-	console.log('[getSession] authenticated:', request.session);
+	console.log('[getSession] authenticated:', request);
 	//console.log('[getSession] authenticated:', !request.context.guest);
-	const {context} = request;
-	return context && 'account' in context
-		? {
-				// don't expose data that should be on the server only!
-				account: {name: context.account.name, account_id: context.account.account_id},
-				communities: context.communities,
-				friends: context.friends,
-				entities: [], // TODO load
-		  }
-		: {guest: true}; // TODO is swallowing `context.error`, only return in dev mode? look for "reason"?
+	// const {context} = request;
+	// return context && 'account' in context
+	// 	? {
+	// 			// don't expose data that should be on the server only!
+	// 			account: {name: context.account.name, account_id: context.account.account_id},
+	// 			communities: context.communities,
+	// 			friends: context.friends,
+	// 			entities: [], // TODO load
+	// 	  }
+	// 	: {guest: true}; // TODO is swallowing `context.error`, only return in dev mode? look for "reason"?
+	return {guest: true}; //Hack until cookies are working again...
 };
 
 export const handle: Handle = async ({request, resolve}) => {
