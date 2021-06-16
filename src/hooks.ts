@@ -1,8 +1,8 @@
 import type {GetSession, Handle} from '@sveltejs/kit';
+import type Cookie_Session from 'cookie-session';
 
 import type {ClientSession} from './session/clientSession.js';
-import type {ClientContext} from './server/ApiServer.js';
-import tryGetSession from 'cookie-session';
+import {hack_server_import} from './hack_server_import';
 
 // TODO how to import this without breaking everything silently?
 // import {db} from '$lib/db/db.js';
@@ -15,9 +15,11 @@ import tryGetSession from 'cookie-session';
 const dev = process.env.NODE_ENV !== 'production';
 const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
 
-export const getSession: GetSession<CookieSessionRequest, ClientSession> = (req) => {
+export const getSession: GetSession<{}, ClientSession> = async (req) => {
 	//console.log('[getSession] authenticated:', parse(request.headers.cookie));
-	tryGetSession({
+	const cookie_session: typeof Cookie_Session = (await hack_server_import('cookie-session'))
+		.default;
+	cookie_session({
 		keys: TODO_SERVER_COOKIE_KEYS,
 		maxAge: 1000 * 60 * 60 * 24 * 7 * 6, // 6 weeks
 		secure: !dev, // this makes cookies break in prod unless https! see letsencrypt
