@@ -27,6 +27,17 @@ idle_timeout = PGIDLE_TIMEOUT
 connect_timeout = PGCONNECT_TIMEOUT
 ```
 
+To set up the database with the expected defaults:
+
+```bash
+sudo -u postgres psql
+# in psql:
+# postgres=#
+create database felt; # notice the semicolon
+\password
+<enter "password">
+```
+
 > TODO figure out config, maybe through `src/gro.config.ts`
 
 ## database tasks
