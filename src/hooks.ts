@@ -1,7 +1,8 @@
 import type {GetSession, Handle} from '@sveltejs/kit';
 
 import type {ClientSession} from './session/clientSession.js';
-import type {ClientContext} from './server/ApiServer.js';
+import type {CookieSessionRequest} from 'cookie-session';
+
 import tryGetSession from 'cookie-session';
 
 // TODO how to import this without breaking everything silently?
