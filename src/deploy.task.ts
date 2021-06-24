@@ -1,5 +1,5 @@
 import type {Task} from '@feltcoop/gro/dist/task/task.js';
-import {spawnProcess} from '@feltcoop/gro/dist/utils/process.js';
+import {spawnProcess} from '@feltcoop/gro/dist/util/process.js';
 import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
 
 export const task: Task = {
