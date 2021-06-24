@@ -9,13 +9,13 @@ export interface TaskArgs {
 }
 
 export const task: Task = {
-	description: 'create the database from scratch, deleting and seeding data',
-	run: async ({invokeTask, args}) => {
+	summary: 'create the database from scratch, deleting and seeding data',
+	run: async ({invoke_task, args}) => {
 		const shouldSeed = !args['no-seed'];
 		const [_, unobtainDb] = obtainDb();
-		await invokeTask('db/destroy');
-		// await invokeTask('db/up'); // TODO add task that migrates up using `ley`
-		if (shouldSeed) await invokeTask('db/seed');
+		await invoke_task('db/destroy');
+		// await invoke_task('db/up'); // TODO add task that migrates up using `ley`
+		if (shouldSeed) await invoke_task('db/seed');
 		unobtainDb();
 	},
 };

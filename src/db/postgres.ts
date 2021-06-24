@@ -1,5 +1,5 @@
 import type {Sql, Options} from 'postgres';
-import {toEnvNumber, toEnvString} from '@feltcoop/gro/dist/utils/env.js';
+import {to_env_number, to_env_string} from '@feltcoop/felt/util/env.js';
 
 // Postgres.js - PostgreSQL client for Node.js
 // https://github.com/porsager/postgres
@@ -19,13 +19,13 @@ export interface PostgresOptions extends Options<PostgresTypeMap> {
 export type PostgresTypeMap = Record<string, unknown>;
 
 const toDefaultPostgresOptions = (): PostgresOptions => ({
-	host: toEnvString('PGHOST', 'localhost'),
-	port: toEnvNumber('PGPORT', 5432),
-	database: toEnvString('PGDATABASE', 'felt'),
-	username: toEnvString('PGUSERNAME', toEnvString('PGUSER', 'postgres')),
-	password: toEnvString('PGPASSWORD', 'password'),
-	idle_timeout: toEnvNumber('PGIDLE_TIMEOUT'),
-	connect_timeout: toEnvNumber('PGCONNECT_TIMEOUT'),
+	host: to_env_string('PGHOST', 'localhost'),
+	port: to_env_number('PGPORT', 5432),
+	database: to_env_string('PGDATABASE', 'felt'),
+	username: to_env_string('PGUSERNAME', to_env_string('PGUSER', 'postgres')),
+	password: to_env_string('PGPASSWORD', 'password'),
+	idle_timeout: to_env_number('PGIDLE_TIMEOUT'),
+	connect_timeout: to_env_number('PGCONNECT_TIMEOUT'),
 });
 
 export const defaultPostgresOptions = toDefaultPostgresOptions();
