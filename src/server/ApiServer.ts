@@ -17,7 +17,7 @@ import type {Server} from 'net';
 import {
 	API_SERVER_DEFAULT_PORT_DEV,
 	API_SERVER_DEFAULT_PORT_PROD,
-} from '@feltcoop/gro/dist/config/defaultBuildConfig.js';
+} from '@feltcoop/gro/dist/build/default_build_config.js';
 import {to_env_number} from '@feltcoop/felt/util/env.js';
 
 import {toSessionAccountMiddleware} from '../session/sessionAccountMiddleware.js';
@@ -176,7 +176,7 @@ export class ApiServer {
 			// and we want to use 3001 while building for prod.
 			// TODO maybe always default to env var `PORT`, upstream and instantiate `ApiServer` with it
 			(render && !dev
-				? toEnvNumber('PORT', API_SERVER_DEFAULT_PORT_PROD)
+				? to_env_number('PORT', API_SERVER_DEFAULT_PORT_PROD)
 				: API_SERVER_DEFAULT_PORT_DEV);
 		// TODO Gro utility to get next good port
 		// (wait no that doesn't work, static proxy, hmm... can fix when we switch frontend to Gro)

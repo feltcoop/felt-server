@@ -2,8 +2,6 @@ import type {GetSession} from '@sveltejs/kit';
 
 import type {ClientSession} from './session/clientSession.js';
 import type {CookieSessionRequest} from 'cookie-session';
-import {Database} from './db/Database';
-import {defaultPostgresOptions} from './db/postgres';
 
 import tryGetSession from 'cookie-session';
 
@@ -17,7 +15,6 @@ import tryGetSession from 'cookie-session';
 //TODO source this from wherever ApiServer.js does
 const dev = process.env.NODE_ENV !== 'production';
 const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
-let db = new Database({sql: postgres(defaultPostgresOptions)})
 
 export const getSession: GetSession<CookieSessionRequest, ClientSession> = (req) => {
 	tryGetSession({
@@ -27,7 +24,7 @@ export const getSession: GetSession<CookieSessionRequest, ClientSession> = (req)
 		sameSite: dev ? 'lax' : false,
 		name: 'session_id',
 	})(req, {}, function () {});
-	console.log('[getSession] authenticated:', req.session.name);	
+	console.log('[getSession] authenticated:', req.session.name);
 	//let session = ApiServer.db.repos.session.loadClientSession(req.session.name);
 
 	//return session ? session : {guest: true}; // TODO is swallowing `context.error`, only return in dev mode? look for "reason"?

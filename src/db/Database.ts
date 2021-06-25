@@ -1,5 +1,5 @@
-import type {Result} from '@feltcoop/gro';
-import {unwrap} from '@feltcoop/gro';
+import type {Result} from '@feltcoop/felt/util/types.js';
+import {unwrap} from '@feltcoop/felt/util/types.js';
 
 import type {AccountSession} from '../session/clientSession.js';
 import type {Community} from '../communities/community.js';

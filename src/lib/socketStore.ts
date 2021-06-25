@@ -1,5 +1,5 @@
-import type {AsyncStatus} from '@feltcoop/gro';
-import type {Json} from '@feltcoop/gro/dist/utils/json.js';
+import type {Async_Status} from '@feltcoop/felt/util/async.js';
+import type {Json} from '@feltcoop/felt/util/json.js';
 import {writable} from 'svelte/store';
 import {messages} from './messagesStore';
 import {posts} from './postStore';
@@ -13,7 +13,7 @@ export interface SocketState {
 	url: string | null;
 	ws: WebSocket | null;
 	connected: boolean;
-	status: AsyncStatus; // rename? `connectionStatus`? `connection`?
+	status: Async_Status; // rename? `connectionStatus`? `connection`?
 	error: string | null;
 	sendCount: number;
 }

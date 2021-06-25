@@ -1,5 +1,5 @@
 import ws from 'ws';
-import type {Assignable} from '@feltcoop/gro';
+import type {Assignable} from '@feltcoop/felt/util/types.js';
 import {promisify} from 'util';
 
 // TODO needs a lot of work!

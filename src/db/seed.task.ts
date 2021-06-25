@@ -4,7 +4,7 @@ import {obtainDb} from './obtainDb.js';
 import {seed} from './seed.js';
 
 export const task: Task = {
-	description: 'add initial dataset to the the database',
+	summary: 'add initial dataset to the the database',
 	run: async () => {
 		const [db, unobtainDb] = obtainDb();
 		await seed(db);
