@@ -1,7 +1,7 @@
 import type {GetSession} from '@sveltejs/kit';
 
 import type {ClientSession} from './session/clientSession.js';
-import type {CookieSessionRequest} from 'cookie-session';
+import type {Request} from '@sveltejs/kit';
 
 import postgres from 'postgres';
 import cookieSession from 'cookie-session';
@@ -15,13 +15,21 @@ import {defaultPostgresOptions} from './db/postgres';
 // import {Logger} from '@feltcoop/gro';
 // const log = new Logger(['[hooks]']);
 
+export interface SessionRequest extends Request {
+	session?: SessionObject;
+}
+
+export interface SessionObject {
+	name: string;
+}
+
 //TODO source this from wherever ApiServer.js does
 const dev = process.env.NODE_ENV !== 'production';
 const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
 const db = new Database({sql: postgres(defaultPostgresOptions)});
 
-export const getSession: GetSession<CookieSessionRequest, ClientSession> = async (req) => {
-	let request: CookieSessionRequest = Object.assign(req);
+export const getSession: GetSession<SessionRequest, ClientSession> = async (req) => {
+	let request: SessionRequest = Object.assign(req);
 	cookieSession({
 		keys: TODO_SERVER_COOKIE_KEYS,
 		maxAge: 1000 * 60 * 60 * 24 * 7 * 6, // 6 weeks
