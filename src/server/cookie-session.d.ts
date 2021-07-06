@@ -7,14 +7,13 @@ declare module 'cookie-session' {
 	import type {Request} from '@sveltejs/kit';
 
 	export interface CookieSessionRequest extends Request {
-		session?: CookieSessionObject;
+		session: CookieSessionObject;
 	}
 
 	export interface CookieSessionObject {
 		isNew?: boolean;
 		populated?: boolean;
-		[propertyName: string]: any;
-		name: string;
+		[propertyName: string]: any;		
 	}
 
 	export interface CookieSessionConfig {
