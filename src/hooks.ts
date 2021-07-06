@@ -4,7 +4,7 @@ import type {ClientSession} from './session/clientSession.js';
 import type {CookieSessionRequest} from 'cookie-session';
 
 import postgres from 'postgres';
-import tryGetSession from 'cookie-session';
+import cookieSession from 'cookie-session';
 import {Database} from './db/Database';
 import {defaultPostgresOptions} from './db/postgres';
 
@@ -20,20 +20,23 @@ const dev = process.env.NODE_ENV !== 'production';
 const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
 const db = new Database({sql: postgres(defaultPostgresOptions)});
 
-export const getSession: GetSession<CookieSessionRequest, ClientSession> = (req) => {
-	tryGetSession({
+export const getSession: GetSession<CookieSessionRequest, ClientSession> = async (req) => {
+	let request: CookieSessionRequest = Object.assign(req);
+	cookieSession({
 		keys: TODO_SERVER_COOKIE_KEYS,
 		maxAge: 1000 * 60 * 60 * 24 * 7 * 6, // 6 weeks
 		secure: !dev, // this makes cookies break in prod unless https! see letsencrypt
 		sameSite: dev ? 'lax' : false,
 		name: 'session_id',
-	})(req, {}, function () {});
-	console.log('[getSession] authenticated:', req.session.name);
-	let session = db.repos.session.loadClientSession(req.session.name);
-
-	return session.then((result) => {
-		return result.ok ? result.value : {guest: true};
+	})(request, {}, function () {
+		return;
 	});
-
 	// TODO is swallowing `context.error`, only return in dev mode? look for "reason"?
+	if (request.session?.name) {
+		let sessionStore = db.repos.session.loadClientSession(request.session.name);
+		const result = await sessionStore;
+		return result.ok ? result.value : {guest: true};
+	} else {
+		return {guest: true};
+	}
 };

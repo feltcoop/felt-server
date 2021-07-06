@@ -4,15 +4,17 @@
 // https://www.npmjs.com/package/cookie-session
 declare module 'cookie-session' {
 	import type {Middleware} from 'polka';
+	import type {Request} from '@sveltejs/kit';
 
-	export interface CookieSessionRequest {
-		session: CookieSessionObject;
+	export interface CookieSessionRequest extends Request {
+		session?: CookieSessionObject;
 	}
 
 	export interface CookieSessionObject {
 		isNew?: boolean;
 		populated?: boolean;
 		[propertyName: string]: any;
+		name: string;
 	}
 
 	export interface CookieSessionConfig {
