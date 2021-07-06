@@ -18,8 +18,7 @@ import {defaultPostgresOptions} from './db/postgres';
 //TODO source this from wherever ApiServer.js does
 const dev = process.env.NODE_ENV !== 'production';
 const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
-const db = 	new Database({sql: postgres(defaultPostgresOptions)});
-
+const db = new Database({sql: postgres(defaultPostgresOptions)});
 
 export const getSession: GetSession<CookieSessionRequest, ClientSession> = (req) => {
 	tryGetSession({
@@ -30,11 +29,11 @@ export const getSession: GetSession<CookieSessionRequest, ClientSession> = (req)
 		name: 'session_id',
 	})(req, {}, function () {});
 	console.log('[getSession] authenticated:', req.session.name);
-	let session = db.repos.session.loadClientSession(req.session.name);	
+	let session = db.repos.session.loadClientSession(req.session.name);
 
 	return session.then((result) => {
 		return result.ok ? result.value : {guest: true};
 	});
 
-	// TODO is swallowing `context.error`, only return in dev mode? look for "reason"?	
+	// TODO is swallowing `context.error`, only return in dev mode? look for "reason"?
 };
