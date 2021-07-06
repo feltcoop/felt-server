@@ -6,7 +6,7 @@ declare module 'cookie-session' {
 	import type {Middleware} from 'polka';
 	import type {Request} from '@sveltejs/kit';
 
-	export interface CookieSessionRequest extends Request {
+	export interface CookieSessionRequest {
 		session: CookieSessionObject;
 	}
 
