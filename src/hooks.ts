@@ -3,7 +3,10 @@ import type {GetSession} from '@sveltejs/kit';
 import type {ClientSession} from './session/clientSession.js';
 import type {CookieSessionRequest} from 'cookie-session';
 
+import postgres from 'postgres';
 import tryGetSession from 'cookie-session';
+import {Database} from './db/Database';
+import {defaultPostgresOptions} from './db/postgres';
 
 // TODO how to import this without breaking everything silently?
 // import {db} from '$lib/db/db.js';
@@ -15,6 +18,8 @@ import tryGetSession from 'cookie-session';
 //TODO source this from wherever ApiServer.js does
 const dev = process.env.NODE_ENV !== 'production';
 const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
+const db = 	new Database({sql: postgres(defaultPostgresOptions)});
+
 
 export const getSession: GetSession<CookieSessionRequest, ClientSession> = (req) => {
 	tryGetSession({
@@ -25,8 +30,11 @@ export const getSession: GetSession<CookieSessionRequest, ClientSession> = (req)
 		name: 'session_id',
 	})(req, {}, function () {});
 	console.log('[getSession] authenticated:', req.session.name);
-	//let session = ApiServer.db.repos.session.loadClientSession(req.session.name);
+	let session = db.repos.session.loadClientSession(req.session.name);	
 
-	//return session ? session : {guest: true}; // TODO is swallowing `context.error`, only return in dev mode? look for "reason"?
-	return {guest: true};
+	return session.then((result) => {
+		return result.ok ? result.value : {guest: true};
+	});
+
+	// TODO is swallowing `context.error`, only return in dev mode? look for "reason"?	
 };

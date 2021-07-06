@@ -9,6 +9,7 @@
 	const title = 'felt-server';
 	let account: ClientAccount;
 	$: account = $session?.account;
+	console.log('<index> session', $session);
 	$: communities = $session?.communities;
 	$: friends = $session?.friends;
 </script>

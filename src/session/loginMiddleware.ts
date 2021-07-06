@@ -40,8 +40,8 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 		const passwordHash = await toHash(password);
 
 		// First see if the account already exists.
-		const findAccountResult = await db.repos.accounts.findByName(accountName);
-		console.log('findAccountResult', findAccountResult);
+		const findAccountResult = await db.repos.accounts.findByName(accountName);		
+		console.log('[loginMiddleware] findAccountResult', findAccountResult);
 		let account: Account;
 		if (findAccountResult.ok) {
 			// There's already an account, so proceed to log in after validating the password.
