@@ -28,8 +28,7 @@
 		{#if selectedCommunity}
 			<SpaceNav
 				community={selectedCommunity}
-				spaces={selectedCommunitySpaces}
-				{selectedSpace}
+				spaces={selectedCommunitySpaces}				
 				{selectSpace}
 			/>
 		{/if}
