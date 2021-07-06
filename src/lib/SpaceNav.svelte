@@ -5,7 +5,7 @@
 	import type {Community} from '../communities/community.js';
 
 	export let community: Community;
-	export let spaces: Space[];	
+	export let spaces: Space[];
 	export let selectSpace: (community: Space) => void;
 
 	let newName = '';

@@ -13,7 +13,7 @@ declare module 'cookie-session' {
 	export interface CookieSessionObject {
 		isNew?: boolean;
 		populated?: boolean;
-		[propertyName: string]: any;		
+		[propertyName: string]: any;
 	}
 
 	export interface CookieSessionConfig {

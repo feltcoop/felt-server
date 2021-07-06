@@ -26,11 +26,7 @@
 	</section>
 	<section class="spacenav">
 		{#if selectedCommunity}
-			<SpaceNav
-				community={selectedCommunity}
-				spaces={selectedCommunitySpaces}				
-				{selectSpace}
-			/>
+			<SpaceNav community={selectedCommunity} spaces={selectedCommunitySpaces} {selectSpace} />
 		{/if}
 	</section>
 	<div class="viewfinder">
