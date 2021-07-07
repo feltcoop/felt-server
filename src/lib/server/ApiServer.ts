@@ -20,25 +20,25 @@ import {
 } from '@feltcoop/gro/dist/build/default_build_config.js';
 import {to_env_number} from '@feltcoop/felt/util/env.js';
 
-import {toSessionAccountMiddleware} from '../session/sessionAccountMiddleware.js';
-import {toLoginMiddleware} from '../session/loginMiddleware.js';
-import {toLogoutMiddleware} from '../session/logoutMiddleware.js';
+import {toSessionAccountMiddleware} from '$lib/session/sessionAccountMiddleware.js';
+import {toLoginMiddleware} from '$lib/session/loginMiddleware.js';
+import {toLogoutMiddleware} from '$lib/session/logoutMiddleware.js';
 import {
 	toCommunityMiddleware,
 	toCommunitiesMiddleware,
 	toCreateCommunityMiddleware,
 	toCreateMemberMiddleware,
-} from '../communities/communityMiddleware.js';
-import {toPostsMiddleware, toCreatePostMiddleware} from '../posts/postMiddleware.js';
+} from '$lib/communities/communityMiddleware.js';
+import {toPostsMiddleware, toCreatePostMiddleware} from '$lib/posts/postMiddleware.js';
 import {
 	toSpaceMiddleware,
 	toSpacesMiddleware,
 	toCreateSpaceMiddleware,
-} from '../spaces/spaceMiddleware.js';
-import type {Member} from '../members/member.js';
-import type {ClientAccount, AccountSession} from '../session/clientSession.js';
-import type {Database} from '../db/Database.js';
-import type {Community} from 'src/communities/community.js';
+} from '$lib/spaces/spaceMiddleware.js';
+import type {Member} from '$lib/members/member.js';
+import type {ClientAccount, AccountSession} from '$lib/session/clientSession.js';
+import type {Database} from '$lib/db/Database.js';
+import type {Community} from '$lib/communities/community.js';
 import type {WebsocketServer} from './WebsocketServer.js';
 
 const log = new Logger([blue('[ApiServer]')]);

@@ -1,6 +1,6 @@
 import send from '@polka/send-type';
 
-import type {ApiServer, Middleware} from '../server/ApiServer.js';
+import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 
 export const toLogoutMiddleware = (_server: ApiServer): Middleware => {
 	return async (req, res) => {

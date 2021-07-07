@@ -1,9 +1,9 @@
 <script lang="ts">
-	import {session} from '$app/stores.js';
+	import {session} from '$app/stores';
 	import {tick} from 'svelte';
 
-	import type {LoginRequest} from '../session/loginMiddleware.js';
-	import WaitingAnimation from './WaitingAnimation.svelte';
+	import type {LoginRequest} from '$lib/session/loginMiddleware.js';
+	import WaitingAnimation from '$lib/WaitingAnimation.svelte';
 
 	let accountName = '';
 	let password = '';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {session} from '$app/stores.js';
+	import {session} from '$app/stores';
 
 	import LoginForm from '$lib/LoginForm.svelte';
 	import LogoutForm from '$lib/LogoutForm.svelte';

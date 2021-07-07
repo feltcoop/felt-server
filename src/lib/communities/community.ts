@@ -1,5 +1,5 @@
-import type {Space} from '../spaces/space.js';
-import type {Member} from '../members/member.js';
+import type {Space} from '$lib/spaces/space.js';
+import type {Member} from '$lib/members/member.js';
 
 export interface Community {
 	community_id?: number;

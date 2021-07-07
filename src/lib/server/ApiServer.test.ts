@@ -5,8 +5,8 @@ import postgres from 'postgres';
 import {createServer} from 'http';
 
 import {ApiServer} from './ApiServer.js';
-import {Database} from '../db/Database.js';
-import {defaultPostgresOptions} from '../db/postgres.js';
+import {Database} from '$lib/db/Database.js';
+import {defaultPostgresOptions} from '$lib/db/postgres.js';
 import {WebsocketServer} from './WebsocketServer.js';
 
 const TEST_PORT = 3003; // TODO

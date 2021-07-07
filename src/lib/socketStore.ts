@@ -1,8 +1,8 @@
 import type {Async_Status} from '@feltcoop/felt';
 import type {Json} from '@feltcoop/felt/util/json.js';
 import {writable} from 'svelte/store';
-import {messages} from './messagesStore';
-import {posts} from './postStore';
+import {messages} from '$lib/messagesStore';
+import {posts} from '$lib/postStore';
 
 // This store wraps a browser `WebSocket` connection with all of the Sveltey goodness.
 

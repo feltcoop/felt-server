@@ -1,15 +1,14 @@
 <script lang="ts">
-	import {session} from '$app/stores.js';
+	import {session} from '$app/stores';
 	import AccountForm from '$lib/AccountForm.svelte';
 	import Workspace from '$lib/Workspace.svelte';
-	import type {ClientAccount} from 'src/session/clientSession.js';
-	import type {Community} from 'src/communities/community.js';
-	import type {Member} from 'src/members/member.js';
+	import type {ClientAccount} from '$lib/session/clientSession.js';
 
 	const title = 'felt-server';
 	let account: ClientAccount;
 	$: account = $session?.account;
-	console.log('<index> session', $session);
+	$: console.log('<index> $session', $session);
+	$: console.log('<index> account', account);
 	$: communities = $session?.communities;
 	$: friends = $session?.friends;
 </script>

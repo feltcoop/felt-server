@@ -1,7 +1,7 @@
 <script lang="ts">
-	import {session} from '$app/stores.js';
+	import {session} from '$app/stores';
 
-	import type {ClientAccount} from 'src/session/clientSession.js';
+	import type {ClientAccount} from '$lib/session/clientSession.js';
 	import WaitingAnimation from '$lib/WaitingAnimation.svelte';
 
 	let account: ClientAccount;

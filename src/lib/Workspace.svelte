@@ -2,9 +2,9 @@
 	import CommunityNav from '$lib/CommunityNav.svelte';
 	import SpaceNav from '$lib/SpaceNav.svelte';
 	import ChatRoom from '$lib/ChatRoom.svelte';
-	import type {Community} from 'src/communities/community.js';
-	import type {Space} from 'src/spaces/space.js';
-	import type {Member} from 'src/members/member.js';
+	import type {Community} from '$lib/communities/community.js';
+	import type {Space} from '$lib/spaces/space.js';
+	import type {Member} from '$lib/members/member.js';
 
 	export let friends: Member[];
 	export let communities: Community[];

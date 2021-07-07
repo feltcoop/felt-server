@@ -1,7 +1,7 @@
-import type {Community} from 'src/communities/community.js';
-import type {Account} from '../vocab/account/account.js';
-import type {Entity} from '../vocab/entity/entity.js';
-import type {Member} from 'src/members/member.js';
+import type {Community} from '$lib/communities/community.js';
+import type {Account} from '$lib/vocab/account/account.js';
+import type {Entity} from '$lib/vocab/entity/entity.js';
+import type {Member} from '$lib/members/member.js';
 
 export type ClientSession = AccountSession | GuestSession;
 

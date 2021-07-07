@@ -1,7 +1,7 @@
-import type {Database} from 'src/db/Database.js';
-import type {Account} from 'src/vocab/account/account.js';
-import type {Space} from 'src/spaces/space.js';
-import type {Post} from 'src/posts/post.js';
+import type {Database} from '$lib/db/Database.js';
+import type {Account} from '$lib/vocab/account/account.js';
+import type {Space} from '$lib/spaces/space.js';
+import type {Post} from '$lib/posts/post.js';
 
 export const seed = async (db: Database): Promise<void> => {
 	const {sql} = db;

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import MessageList from '$lib/MessageList.svelte';
 	import {messages} from '$lib/messagesStore';
-	import type {SocketStore} from './socketStore.js';
+	import type {SocketStore} from '$lib/socketStore.js';
 
 	export let socket: SocketStore;
 

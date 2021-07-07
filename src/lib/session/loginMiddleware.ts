@@ -2,8 +2,8 @@ import send from '@polka/send-type';
 import {scrypt} from 'crypto';
 import {promisify} from 'util';
 
-import type {ApiServer, Middleware} from '../server/ApiServer.js';
-import type {Account} from '../vocab/account/account.js';
+import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
+import type {Account} from '$lib/vocab/account/account.js';
 
 // TODO move this?
 const salt = 'TODO_SALT_SECRET';

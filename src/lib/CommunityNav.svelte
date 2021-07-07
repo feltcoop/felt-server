@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type {Community} from '../communities/community.js';
+	import type {Community} from '$lib/communities/community.js';
 	import Modal from '$lib/Modal.svelte';
-	import type {Member} from 'src/members/';
+	import type {Member} from '$lib/members/';
 
 	export let friends: Member[];
 	export let communities: Community[];

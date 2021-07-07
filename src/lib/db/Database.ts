@@ -1,13 +1,13 @@
 import type {Result} from '@feltcoop/felt';
 import {unwrap} from '@feltcoop/felt';
 
-import type {AccountSession} from '../session/clientSession.js';
-import type {Community} from '../communities/community.js';
-import type {Space} from '../spaces/space.js';
-import type {Post} from '../posts/post.js';
-import type {Member} from '../members/member.js';
-import type {Account} from '../vocab/account/account.js';
-import type {Entity} from '../vocab/entity/entity.js';
+import type {AccountSession} from '$lib/session/clientSession.js';
+import type {Community} from '$lib/communities/community.js';
+import type {Space} from '$lib/spaces/space.js';
+import type {Post} from '$lib/posts/post.js';
+import type {Member} from '$lib/members/member.js';
+import type {Account} from '$lib/vocab/account/account.js';
+import type {Entity} from '$lib/vocab/entity/entity.js';
 import type {PostgresSql} from './postgres.js';
 
 export interface Options {
