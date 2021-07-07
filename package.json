@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@feltcoop/felt": "^0.4.1",
-    "@feltcoop/gro": "^0.29.0",
+    "@feltcoop/gro": "^0.30.0",
     "@polka/send-type": "^0.5.2",
     "@types/ws": "^7.4.4",
     "body-parser": "^1.19.0",
