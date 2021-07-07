@@ -1,10 +1,9 @@
 <script lang="ts">
-	import type {Async_Status} from '@feltcoop/gro/dist/utils/async.js';
-	import type {Obj} from '@feltcoop/gro';
+	import type {Async_Status} from '@feltcoop/felt';
 
 	let value = 'world';
 
-	let responseData: Obj | null = null;
+	let responseData: Record<string, any> | null = null;
 	$: console.log('echo responseData', responseData);
 	$: serializedResponseData = responseData ? JSON.stringify(responseData, null, 2) : '';
 

@@ -1,4 +1,4 @@
-import type {Async_Status} from '@feltcoop/felt/util/async.js';
+import type {Async_Status} from '@feltcoop/felt';
 import type {Json} from '@feltcoop/felt/util/json.js';
 import {writable} from 'svelte/store';
 import {messages} from './messagesStore';

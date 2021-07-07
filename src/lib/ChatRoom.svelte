@@ -3,7 +3,7 @@
 	import type {Space} from '../spaces/space.js';
 	import PostList from '$lib/PostList.svelte';
 	import {posts} from '$lib/postStore';
-	import type {Json} from '@feltcoop/gro/dist/utils/json.js';
+	import type {Json} from '@feltcoop/felt/util/json.js';
 	import type {SocketStore} from './socketStore.js';
 	import {getContext} from 'svelte';
 

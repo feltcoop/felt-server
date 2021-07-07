@@ -8,13 +8,6 @@ import cookieSession from 'cookie-session';
 import {Database} from './db/Database';
 import {defaultPostgresOptions} from './db/postgres';
 
-// TODO how to import this without breaking everything silently?
-// import {db} from '$lib/db/db.js';
-
-// TODO this is throwing, it's compiled to cjs by sveltekit or vite I think
-// import {Logger} from '@feltcoop/gro';
-// const log = new Logger(['[hooks]']);
-
 export interface SessionRequest extends Request {
 	session?: SessionObject;
 }
