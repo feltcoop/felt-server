@@ -1,7 +1,7 @@
 <script lang="ts">
-	import CommunityNav from '$lib/CommunityNav.svelte';
-	import SpaceNav from '$lib/SpaceNav.svelte';
-	import ChatRoom from '$lib/ChatRoom.svelte';
+	import CommunityNav from '$lib/ui/Community_Nav.svelte';
+	import SpaceNav from '$lib/ui/Space_Nav.svelte';
+	import ChatRoom from '$lib/ui/Chat_Room.svelte';
 	import type {Community} from '$lib/communities/community.js';
 	import type {Space} from '$lib/spaces/space.js';
 	import type {Member} from '$lib/members/member.js';

@@ -1,4 +1,5 @@
 import send from '@polka/send-type';
+
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 
 export const toPostsMiddleware = (server: ApiServer): Middleware => {

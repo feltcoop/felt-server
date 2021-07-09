@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type {Space} from '$lib/spaces/space.js';
-	import Modal from '$lib/Modal.svelte';
+	import Modal from '$lib/ui/Modal.svelte';
 	import type {Community} from '$lib/communities/community.js';
 
 	export let community: Community;

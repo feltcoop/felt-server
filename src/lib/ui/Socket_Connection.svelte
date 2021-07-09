@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {onMount} from 'svelte';
 
-	import type {SocketStore} from '$lib/socketStore.js';
+	import type {SocketStore} from '$lib/ui/socket_store.js';
 
 	export let url = 'ws://localhost:3000/ws';
 	export let socket: SocketStore;

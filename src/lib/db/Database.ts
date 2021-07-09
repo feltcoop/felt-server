@@ -8,7 +8,7 @@ import type {Post} from '$lib/posts/post.js';
 import type {Member} from '$lib/members/member.js';
 import type {Account} from '$lib/vocab/account/account.js';
 import type {Entity} from '$lib/vocab/entity/entity.js';
-import type {PostgresSql} from './postgres.js';
+import type {PostgresSql} from '$lib/db/postgres.js';
 
 export interface Options {
 	sql: PostgresSql;

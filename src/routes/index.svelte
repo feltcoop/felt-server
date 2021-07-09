@@ -1,7 +1,8 @@
 <script lang="ts">
 	import {session} from '$app/stores';
-	import AccountForm from '$lib/AccountForm.svelte';
-	import Workspace from '$lib/Workspace.svelte';
+
+	import AccountForm from '$lib/ui/Account_Form.svelte';
+	import Workspace from '$lib/ui/Workspace.svelte';
 	import type {ClientAccount} from '$lib/session/clientSession.js';
 
 	const title = 'felt-server';

@@ -2,7 +2,7 @@
 	import {session} from '$app/stores';
 
 	import type {ClientAccount} from '$lib/session/clientSession.js';
-	import WaitingAnimation from '$lib/WaitingAnimation.svelte';
+	import WaitingAnimation from '$lib/ui/Waiting_Animation.svelte';
 
 	let account: ClientAccount;
 	$: account = $session?.account;

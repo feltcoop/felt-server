@@ -1,8 +1,8 @@
 <script lang="ts">
 	import {session} from '$app/stores';
 
-	import LoginForm from '$lib/LoginForm.svelte';
-	import LogoutForm from '$lib/LogoutForm.svelte';
+	import LoginForm from '$lib/ui/Login_Form.svelte';
+	import LogoutForm from '$lib/ui/Logout_Form.svelte';
 
 	$: console.log('<AccountForm> $session', $session);
 </script>

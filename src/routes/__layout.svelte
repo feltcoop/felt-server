@@ -1,8 +1,9 @@
 <script lang="ts">
 	import '../app.css';
-	import SocketConnection from '$lib/SocketConnection.svelte';
-	import {createSocketStore} from '$lib/socketStore';
 	import {setContext} from 'svelte';
+
+	import SocketConnection from '$lib/ui/Socket_Connection.svelte';
+	import {createSocketStore} from '$lib/ui/socket_store';
 
 	const socket = createSocketStore();
 	const socketUrl = 'ws://localhost:3002/ws';

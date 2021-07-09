@@ -1,7 +1,7 @@
 import type {Task} from '@feltcoop/gro';
 
-import {obtainDb} from './obtainDb.js';
-import {defaultPostgresOptions} from './postgres.js';
+import {obtainDb} from '$lib/db/obtainDb.js';
+import {defaultPostgresOptions} from '$lib/db/postgres.js';
 
 export const task: Task = {
 	summary: 'destroy the app database schema and delete all data',

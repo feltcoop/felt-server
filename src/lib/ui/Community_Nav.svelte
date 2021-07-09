@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {Community} from '$lib/communities/community.js';
-	import Modal from '$lib/Modal.svelte';
-	import type {Member} from '$lib/members/';
+	import Modal from '$lib/ui/Modal.svelte';
+	import type {Member} from '$lib/members/member.js';
 
 	export let friends: Member[];
 	export let communities: Community[];
@@ -91,7 +91,7 @@
 		<!--TODO: Make an IconButton component in felt and use it here-->
 		{#if selectedCommunity}
 			|
-			<Modal let:open={openModal} let:close={closeModal}>
+			<Modal let:open={openModal}>
 				<span slot="trigger">
 					<button
 						aria-label="Invite users to {selectedCommunity.name}"

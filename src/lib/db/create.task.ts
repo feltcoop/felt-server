@@ -1,6 +1,6 @@
 import type {Task} from '@feltcoop/gro';
 
-import {obtainDb} from './obtainDb.js';
+import {obtainDb} from '$lib/db/obtainDb.js';
 
 // name? maybe `init` or `reset` is clearer?
 

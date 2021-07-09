@@ -4,9 +4,9 @@
 	import {getContext} from 'svelte';
 
 	import type {Space} from '$lib/spaces/space.js';
-	import PostList from '$lib/PostList.svelte';
-	import {posts} from '$lib/postStore';
-	import type {SocketStore} from '$lib/socketStore.js';
+	import PostList from '$lib/ui/Post_List.svelte';
+	import {posts} from '$lib/ui/post_store';
+	import type {SocketStore} from '$lib/ui/socket_store.js';
 
 	const socket: SocketStore = getContext('socket');
 

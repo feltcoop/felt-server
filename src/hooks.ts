@@ -2,9 +2,9 @@ import type {Request, GetSession} from '@sveltejs/kit';
 import postgres from 'postgres';
 import cookieSession from 'cookie-session';
 
-import type {ClientSession} from './lib/session/clientSession.js';
-import {Database} from './lib/db/Database';
-import {defaultPostgresOptions} from './lib/db/postgres';
+import type {ClientSession} from '$lib/session/clientSession.js';
+import {Database} from '$lib/db/Database';
+import {defaultPostgresOptions} from '$lib/db/postgres';
 
 export interface SessionRequest extends Request {
 	session?: SessionObject;

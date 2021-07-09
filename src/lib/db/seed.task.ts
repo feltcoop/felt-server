@@ -1,7 +1,7 @@
 import type {Task} from '@feltcoop/gro';
 
-import {obtainDb} from './obtainDb.js';
-import {seed} from './seed.js';
+import {obtainDb} from '$lib/db/obtainDb.js';
+import {seed} from '$lib/db/seed.js';
 
 export const task: Task = {
 	summary: 'add initial dataset to the the database',

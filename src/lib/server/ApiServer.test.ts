@@ -4,10 +4,10 @@ import * as t from 'uvu/assert';
 import postgres from 'postgres';
 import {createServer} from 'http';
 
-import {ApiServer} from './ApiServer.js';
+import {ApiServer} from '$lib/server/ApiServer.js';
 import {Database} from '$lib/db/Database.js';
 import {defaultPostgresOptions} from '$lib/db/postgres.js';
-import {WebsocketServer} from './WebsocketServer.js';
+import {WebsocketServer} from '$lib/server/WebsocketServer.js';
 
 const TEST_PORT = 3003; // TODO
 

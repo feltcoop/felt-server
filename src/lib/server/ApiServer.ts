@@ -39,7 +39,7 @@ import type {Member} from '$lib/members/member.js';
 import type {ClientAccount, AccountSession} from '$lib/session/clientSession.js';
 import type {Database} from '$lib/db/Database.js';
 import type {Community} from '$lib/communities/community.js';
-import type {WebsocketServer} from './WebsocketServer.js';
+import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
 
 const log = new Logger([blue('[ApiServer]')]);
 

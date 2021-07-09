@@ -3,7 +3,7 @@
 	import {tick} from 'svelte';
 
 	import type {LoginRequest} from '$lib/session/loginMiddleware.js';
-	import WaitingAnimation from '$lib/WaitingAnimation.svelte';
+	import WaitingAnimation from '$lib/ui/Waiting_Animation.svelte';
 
 	let accountName = '';
 	let password = '';
