@@ -5,24 +5,24 @@
 
 	export let friends: Member[];
 	export let communities: Community[];
-	export let selectedCommunity: Community;
-	export let selectCommunity: (community: Community) => void;
+	export let selected_community: Community;
+	export let select_community: (community: Community) => void;
 
-	$: invitableFriends = selectedCommunity
-		? friends.filter((x) => !selectedCommunity.members.some((y) => x.account_id == y.account_id))
+	$: invitable_friends = selected_community
+		? friends.filter((x) => !selected_community.members.some((y) => x.account_id == y.account_id))
 		: [];
 
-	let newName = '';
+	let new_name = '';
 
-	const onKeyDown = async (e: KeyboardEvent, closeModal: () => void) => {
+	const on_keydown = async (e: KeyboardEvent, close_modal: () => void) => {
 		if (e.key === 'Enter') {
-			await createCommunity(newName);
-			newName = '';
-			closeModal();
+			await create_community(new_name);
+			new_name = '';
+			close_modal();
 		}
 	};
 
-	const createCommunity = async (name: string) => {
+	const create_community = async (name: string) => {
 		if (!name) return;
 		//Needs to collect name
 		const doc = {
@@ -42,13 +42,13 @@
 	 * TODO: This implementation is currently non-consensual
 	 * and does not give a friend an opportunity to deny an invite.
 	 */
-	const inviteFriend = async (friend: Member) => {
+	const invite_friend = async (friend: Member) => {
 		if (!friend) return;
 		const doc = {
 			account_id: friend.account_id,
 		};
 
-		const res = await fetch(`/api/v1/communities/${selectedCommunity.community_id}/members`, {
+		const res = await fetch(`/api/v1/communities/${selected_community.community_id}/members`, {
 			method: 'POST',
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify(doc),
@@ -57,19 +57,19 @@
 		const data = await res.json();
 		console.log(data);
 
-		invitableFriends = invitableFriends.filter((x) => x.account_id !== friend.account_id);
+		invitable_friends = invitable_friends.filter((x) => x.account_id !== friend.account_id);
 	};
 </script>
 
 <div class="sidenav">
 	<div class="header">
-		<Modal let:open={openModal} let:close={closeModal}>
+		<Modal let:open={open_modal} let:close={close_modal}>
 			<span slot="trigger">
 				<button
 					aria-label="Create Community"
 					type="button"
 					class="button-emoji"
-					on:click={() => openModal()}>➕</button
+					on:click={() => open_modal()}>➕</button
 				>
 			</span>
 			<div slot="header">
@@ -81,32 +81,32 @@
 					<input
 						type="text"
 						placeholder="> name"
-						on:keydown={(e) => onKeyDown(e, closeModal)}
-						bind:value={newName}
+						on:keydown={(e) => on_keydown(e, close_modal)}
+						bind:value={new_name}
 					/>
 				</p>
 			</div>
 		</Modal>
 
 		<!--TODO: Make an IconButton component in felt and use it here-->
-		{#if selectedCommunity}
+		{#if selected_community}
 			|
-			<Modal let:open={openModal}>
+			<Modal let:open={open_modal}>
 				<span slot="trigger">
 					<button
-						aria-label="Invite users to {selectedCommunity.name}"
+						aria-label="Invite users to {selected_community.name}"
 						type="button"
 						class="button-emoji"
-						on:click={() => openModal()}>✉️</button
+						on:click={() => open_modal()}>✉️</button
 					>
 				</span>
 				<div slot="header">
-					<h1>Invite users to {selectedCommunity.name}</h1>
+					<h1>Invite users to {selected_community.name}</h1>
 				</div>
 				<div slot="content">
-					{#each invitableFriends as friend (friend.account_id)}
+					{#each invitable_friends as friend (friend.account_id)}
 						<p>
-							<button type="button" class="button-join" on:click={() => inviteFriend(friend)}>
+							<button type="button" class="button-join" on:click={() => invite_friend(friend)}>
 								{friend.name}
 							</button>
 						</p>
@@ -116,7 +116,7 @@
 		{/if}
 	</div>
 	{#each communities as community (community.community_id)}
-		<button type="button" class="button-nav" on:click={() => selectCommunity(community)}>
+		<button type="button" class="button-nav" on:click={() => select_community(community)}>
 			{community.name}
 		</button>
 	{/each}

@@ -5,7 +5,7 @@ import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
 export const task: Task = {
 	summary: 'deploy felt server to prod',
 	run: async ({}) => {
-		//TODO - add more dynamic naming
+		// TODO - add more dynamic naming
 		await spawn('tar', ['-cvf', 'deploy.tar', DIST_DIRNAME, 'package.json', 'package-lock.json']);
 		//scp to server
 		//your ssh key will need to be added to linode account

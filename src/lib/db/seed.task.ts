@@ -1,13 +1,13 @@
 import type {Task} from '@feltcoop/gro';
 
-import {obtainDb} from '$lib/db/obtainDb.js';
+import {obtain_db} from '$lib/db/obtain_db.js';
 import {seed} from '$lib/db/seed.js';
 
 export const task: Task = {
 	summary: 'add initial dataset to the the database',
 	run: async () => {
-		const [db, unobtainDb] = obtainDb();
+		const [db, unobtain_db] = obtain_db();
 		await seed(db);
-		unobtainDb();
+		unobtain_db();
 	},
 };

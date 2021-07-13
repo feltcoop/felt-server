@@ -7,23 +7,23 @@ import {posts} from '$lib/ui/post_store';
 
 // This store wraps a browser `WebSocket` connection with all of the Sveltey goodness.
 
-// TODO rename? Connection? SocketConnection?
+// TODO rename? Connection? Socket_Connection?
 // TODO consider xstate, looks like a good usecase
 
-export interface SocketState {
+export interface Socket_State {
 	url: string | null;
 	ws: WebSocket | null;
 	connected: boolean;
-	status: Async_Status; // rename? `connectionStatus`? `connection`?
+	status: Async_Status; // rename? `connection_status`?
 	error: string | null;
-	sendCount: number;
+	send_count: number;
 }
 
 // TODO is this the preferred type definition?
-export type SocketStore = ReturnType<typeof createSocketStore>;
+export type Socket_Store = ReturnType<typeof create_socket_store>;
 
-export const createSocketStore = () => {
-	const {subscribe, update} = writable<SocketState>(toDefaultSocketState(), () => {
+export const create_socket_store = () => {
+	const {subscribe, update} = writable<Socket_State>(to_default_socket_state(), () => {
 		console.log('[socket] listen store');
 		return () => {
 			console.log('[socket] unlisten store');
@@ -54,13 +54,13 @@ export const createSocketStore = () => {
 				url,
 				connected: false,
 				status: 'pending',
-				ws: createWebSocket(url),
+				ws: create_web_socket(url),
 				error: null,
 			};
 		});
 	};
 
-	const createWebSocket = (url: string): WebSocket => {
+	const create_web_socket = (url: string): WebSocket => {
 		const ws = new WebSocket(url);
 		ws.onopen = (e) => {
 			console.log('[socket] open', e);
@@ -103,18 +103,18 @@ export const createSocketStore = () => {
 		update(($socket) => {
 			if (!$socket.ws) return $socket;
 			$socket.ws.send(JSON.stringify(data));
-			return {...$socket, sendCount: $socket.sendCount + 1};
+			return {...$socket, send_count: $socket.send_count + 1};
 		});
 	};
 
 	return {subscribe, disconnect, connect, send};
 };
 
-const toDefaultSocketState = (): SocketState => ({
+const to_default_socket_state = (): Socket_State => ({
 	url: null,
 	ws: null,
 	connected: false,
 	status: 'initial',
 	error: null,
-	sendCount: 0,
+	send_count: 0,
 });

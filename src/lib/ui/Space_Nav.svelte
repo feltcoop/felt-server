@@ -5,21 +5,21 @@
 
 	export let community: Community;
 	export let spaces: Space[];
-	export let selectSpace: (community: Space) => void;
+	export let select_space: (community: Space) => void;
 
-	let newName = '';
+	let new_name = '';
 
-	const onKeyDown = async (e: KeyboardEvent, closeModal: () => void) => {
+	const on_keydown = async (e: KeyboardEvent, close_modal: () => void) => {
 		if (e.key === 'Enter') {
-			await createSpace();
-			closeModal();
+			await create_space();
+			close_modal();
 		}
 	};
 
-	const createSpace = async () => {
-		if (!newName) return;
+	const create_space = async () => {
+		if (!new_name) return;
 		//Needs to collect url(i.e. name for now), type (currently default json/application), & content (hardcoded JSON struct)
-		const url = `/${newName}`;
+		const url = `/${new_name}`;
 		const doc = {
 			url,
 			media_type: 'json/application',
@@ -32,19 +32,19 @@
 		});
 		const data = await res.json();
 		spaces = spaces.concat(data.space);
-		newName = '';
+		new_name = '';
 	};
 </script>
 
 <div class="sidenav">
 	<div class="header">
-		<Modal let:open={openModal} let:close={closeModal}>
+		<Modal let:open={open_modal} let:close={close_modal}>
 			<span slot="trigger">
 				<button
 					aria-label="Create Space"
 					type="button"
 					class="button-emoji"
-					on:click={() => openModal()}>➕</button
+					on:click={() => open_modal()}>➕</button
 				>
 			</span>
 			<div slot="header">
@@ -56,15 +56,16 @@
 					<input
 						type="text"
 						placeholder="> chat"
-						on:keydown={(e) => onKeyDown(e, closeModal)}
-						bind:value={newName}
+						on:keydown={(e) => on_keydown(e, close_modal)}
+						bind:value={new_name}
 					/>
 				</p>
 			</div>
 		</Modal>
 	</div>
 	{#each spaces as space (space.space_id)}
-		<button type="button" class="button-nav" on:click={() => selectSpace(space)}>{space.url}</button
+		<button type="button" class="button-nav" on:click={() => select_space(space)}
+			>{space.url}</button
 		>
 	{/each}
 </div>

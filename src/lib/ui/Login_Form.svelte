@@ -2,93 +2,93 @@
 	import {session} from '$app/stores';
 	import {tick} from 'svelte';
 
-	import type {LoginRequest} from '$lib/session/loginMiddleware.js';
-	import WaitingAnimation from '$lib/ui/Waiting_Animation.svelte';
+	import Waiting_Animation from '$lib/ui/Waiting_Animation.svelte';
+	import type {Login_Request} from '$lib/session/login_middleware.js';
 
-	let accountName = '';
+	let account_name = '';
 	let password = '';
-	let accountNameEl: HTMLInputElement;
-	let passwordEl: HTMLInputElement;
-	let buttonEl: HTMLButtonElement;
-	let errorMessage: string | undefined;
+	let account_name_el: HTMLInputElement;
+	let password_el: HTMLInputElement;
+	let button_el: HTMLButtonElement;
+	let error_message: string | undefined;
 	let submitting: boolean | undefined;
 
 	$: disabled = submitting;
 
-	const submitName = async () => {
-		if (!accountName) {
-			accountNameEl.focus();
-			errorMessage = 'please enter an account name';
+	const submit_name = async () => {
+		if (!account_name) {
+			account_name_el.focus();
+			error_message = 'please enter an account name';
 			return;
 		}
 		if (!password) {
-			passwordEl.focus();
-			errorMessage = 'please enter a password';
+			password_el.focus();
+			error_message = 'please enter a password';
 			return;
 		}
-		buttonEl.focus();
+		button_el.focus();
 		submitting = true;
-		errorMessage = '';
-		console.log('logging in with accountName', accountName);
+		error_message = '';
+		console.log('logging in with account_name', account_name);
 		try {
-			const loginRequest: LoginRequest = {accountName, password};
+			const login_request: Login_Request = {account_name, password};
 			const response = await fetch('/api/v1/login', {
 				method: 'POST',
 				headers: {'content-type': 'application/json'},
-				body: JSON.stringify(loginRequest),
+				body: JSON.stringify(login_request),
 			});
-			const responseData = await response.json();
+			const response_data = await response.json();
 			submitting = false;
 			if (response.ok) {
-				console.log('responseData', responseData); // TODO logging
-				accountName = '';
-				errorMessage = '';
-				if (responseData.session) {
-					$session = responseData.session;
+				console.log('response_data', response_data); // TODO logging
+				account_name = '';
+				error_message = '';
+				if (response_data.session) {
+					$session = response_data.session;
 				}
 			} else {
 				console.error('response not ok', response); // TODO logging
-				errorMessage = responseData.reason;
+				error_message = response_data.reason;
 				await tick();
-				passwordEl.select(); // wait a tick to let the DOM update (the input is disabled when fetching)
+				password_el.select(); // wait a tick to let the DOM update (the input is disabled when fetching)
 			}
 		} catch (err) {
 			submitting = false;
 			console.error('error logging in', err); // TODO logging
-			errorMessage = `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again.`;
+			error_message = `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again.`;
 		}
 	};
 
-	const onKeyPress = (e: KeyboardEvent) => {
+	const on_keypress = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			submitName();
+			submit_name();
 		}
 	};
 </script>
 
 <input
 	type="text"
-	bind:this={accountNameEl}
-	bind:value={accountName}
-	on:keypress={onKeyPress}
+	bind:this={account_name_el}
+	bind:value={account_name}
+	on:keypress={on_keypress}
 	{disabled}
 	placeholder="account name"
 />
 <input
 	type="password"
-	bind:this={passwordEl}
+	bind:this={password_el}
 	bind:value={password}
-	on:keypress={onKeyPress}
+	on:keypress={on_keypress}
 	{disabled}
 	placeholder="password"
 />
-<button type="button" bind:this={buttonEl} on:click={submitName} {disabled}>
+<button type="button" bind:this={button_el} on:click={submit_name} {disabled}>
 	{#if submitting}
-		<WaitingAnimation />
+		<Waiting_Animation />
 	{:else}log in{/if}
 </button>
-{#if errorMessage}
-	<div class="error">{errorMessage}</div>
+{#if error_message}
+	<div class="error">{error_message}</div>
 {/if}
 
 <style>

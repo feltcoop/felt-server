@@ -13,24 +13,24 @@ declare module 'postgres' {
 	 * @param options Connection options - default to the same as psql
 	 * @returns An utility function to make queries to the server
 	 */
-	declare function postgres<T extends JSToPostgresTypeMap>(
+	declare function postgres<T extends JSToPostgres_Type_Map>(
 		options?: string | postgres.Options<T>,
-	): postgres.Sql<JSToPostgresTypeMap extends T ? {} : T>;
+	): postgres.Sql<JSToPostgres_Type_Map extends T ? {} : T>;
 	/**
 	 * Establish a connection to a PostgreSQL server.
 	 * @param url Connection string used for authentication
 	 * @param options Connection options - default to the same as psql
 	 * @returns An utility function to make queries to the server
 	 */
-	declare function postgres<T extends JSToPostgresTypeMap>(
+	declare function postgres<T extends JSToPostgres_Type_Map>(
 		url: string,
 		options?: postgres.Options<T>,
-	): postgres.Sql<JSToPostgresTypeMap extends T ? {} : T>;
+	): postgres.Sql<JSToPostgres_Type_Map extends T ? {} : T>;
 
 	/**
 	 * Connection options of Postgres.
 	 */
-	interface BaseOptions<T extends JSToPostgresTypeMap> {
+	interface BaseOptions<T extends JSToPostgres_Type_Map> {
 		/** Postgres ip address or domain name */
 		host: string | string[];
 		/** Postgres server port */
@@ -76,7 +76,7 @@ declare module 'postgres' {
 			: postgres.PostgresType;
 	};
 
-	interface JSToPostgresTypeMap {
+	interface JSToPostgres_Type_Map {
 		[name: string]: unknown;
 	}
 
@@ -145,7 +145,7 @@ declare module 'postgres' {
 			[name: string]: any;
 		}
 
-		interface Options<T extends JSToPostgresTypeMap> extends Partial<BaseOptions<T>> {
+		interface Options<T extends JSToPostgres_Type_Map> extends Partial<BaseOptions<T>> {
 			/** @inheritdoc */
 			host?: string;
 			/** @inheritdoc */
@@ -164,7 +164,7 @@ declare module 'postgres' {
 			hostname?: Options<T>['host'];
 		}
 
-		interface ParsedOptions<T extends JSToPostgresTypeMap> extends BaseOptions<T> {
+		interface ParsedOptions<T extends JSToPostgres_Type_Map> extends BaseOptions<T> {
 			/** @inheritdoc */
 			host: string[];
 			/** @inheritdoc */
@@ -356,7 +356,7 @@ declare module 'postgres' {
 			rest: U;
 		}
 
-		interface Sql<TTypes extends JSToPostgresTypeMap> {
+		interface Sql<TTypes extends JSToPostgres_Type_Map> {
 			/**
 			 * Execute the SQL query passed as a template string. Can only be used as template string tag.
 			 * @param template The template generated from the template string
@@ -427,7 +427,7 @@ declare module 'postgres' {
 			): PendingQuery<AsRowList<T>>;
 		}
 
-		interface TransactionSql<TTypes extends JSToPostgresTypeMap> extends Sql<TTypes> {
+		interface TransactionSql<TTypes extends JSToPostgres_Type_Map> extends Sql<TTypes> {
 			savepoint<T>(
 				cb: (sql: TransactionSql<TTypes>) => T | Promise<T>,
 			): Promise<UnwrapPromiseArray<T>>;

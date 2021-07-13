@@ -4,26 +4,26 @@
 	import {getContext} from 'svelte';
 
 	import type {Space} from '$lib/spaces/space.js';
-	import PostList from '$lib/ui/Post_List.svelte';
+	import Post_List from '$lib/ui/Post_List.svelte';
 	import {posts} from '$lib/ui/post_store';
-	import type {SocketStore} from '$lib/ui/socket_store.js';
+	import type {Socket_Store} from '$lib/ui/socket_store.js';
 
-	const socket: SocketStore = getContext('socket');
+	const socket: Socket_Store = getContext('socket');
 
 	export let space: Space;
 	export let text = '';
-	$: browser && loadPosts(space.space_id);
-	$: console.log(`[chatRoom] fetching posts for ${space.space_id}`);
+	$: browser && load_posts(space.space_id);
+	$: console.log(`[chat_room] fetching posts for ${space.space_id}`);
 
-	const loadPosts = async (spaceId: number) => {
-		const res = await fetch(`/api/v1/spaces/${spaceId}/posts`);
+	const load_posts = async (space_id: number) => {
+		const res = await fetch(`/api/v1/spaces/${space_id}/posts`);
 		if (res.ok) {
 			const data = await res.json();
 			$posts = data.posts;
 		}
 	};
 
-	const createPost = async () => {
+	const create_post = async () => {
 		if (!text) return;
 		const res = await fetch(`/api/v1/spaces/${space.space_id}/posts`, {
 			method: 'POST',
@@ -33,37 +33,37 @@
 		if (res.ok) {
 			console.log('post sent, broadcasting to server');
 			const data = await res.json();
-			broadcastPost(data);
+			broadcast_post(data);
 		} else {
 			console.error('error sending post');
 		}
 		text = '';
 	};
 
-	const broadcastPost = async (data: Json) => {
+	const broadcast_post = async (data: Json) => {
 		if (!$socket.connected) {
 			console.error('expected socket to be connected to chat');
 			return;
 		}
-		// TODO the type of message created here does *not* include fields like `id`, `attributedTo`, etc - these are added by the server
+		// TODO the type of message created here does *not* include fields like `id`, `attributed_to`, etc - these are added by the server
 		// TODO this should create a client-side tracking object that we can monitor, cancel, organize, etc
 		socket.send(data);
 	};
 
-	const onKeyDown = async (e: KeyboardEvent) => {
+	const on_keydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await createPost();
+			await create_post();
 		}
 	};
 </script>
 
-<div class="chatRoom">
-	<PostList posts={$posts} />
-	<input type="text" placeholder="> chat" on:keydown={onKeyDown} bind:value={text} />
+<div class="chat-room">
+	<Post_List posts={$posts} />
+	<input type="text" placeholder="> chat" on:keydown={on_keydown} bind:value={text} />
 </div>
 
 <style>
-	.chatRoom {
+	.chat-room {
 		display: flex;
 		flex-direction: column;
 		align-items: left;

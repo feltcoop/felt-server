@@ -3,15 +3,15 @@
 
 	let value = 'world';
 
-	let responseData: Record<string, any> | null = null;
-	$: console.log('echo responseData', responseData);
-	$: serializedResponseData = responseData ? JSON.stringify(responseData, null, 2) : '';
+	let response_data: Record<string, any> | null = null;
+	$: console.log('echo response_data', response_data);
+	$: serialized_response_data = response_data ? JSON.stringify(response_data, null, 2) : '';
 
-	let fetchState: Async_Status = 'initial';
-	let fetchError: string | null = null;
+	let fetch_state: Async_Status = 'initial';
+	let fetch_error: string | null = null;
 
 	// TODO state machine? xstate in another template?
-	$: disabled = fetchState === 'pending';
+	$: disabled = fetch_state === 'pending';
 
 	let request: Request | null = null;
 
@@ -24,18 +24,18 @@
 			body: JSON.stringify(body),
 			headers: {'content-type': 'application/json'},
 		});
-		fetchError = null;
-		responseData = null;
-		fetchState = 'pending';
+		fetch_error = null;
+		response_data = null;
+		fetch_state = 'pending';
 		try {
 			const response = await fetch(request);
 			// TODO create activity for the echo response,
 			// and have it tied somehow to the initial activity above
-			responseData = await response.json();
-			fetchState = 'success';
+			response_data = await response.json();
+			fetch_state = 'success';
 		} catch (err) {
-			fetchError = err.message;
-			fetchState = 'failure';
+			fetch_error = err.message;
+			fetch_state = 'failure';
 		} finally {
 			request = null;
 		}
@@ -46,11 +46,11 @@
 	<input type="text" bind:value />
 	<button type="button" on:click={echo} {disabled}>echo</button>
 	<div>
-		{#if serializedResponseData}
-			<code>{serializedResponseData}</code>
+		{#if serialized_response_data}
+			<code>{serialized_response_data}</code>
 		{/if}
-		{#if fetchError}
-			<span class="error">{fetchError}</span>
+		{#if fetch_error}
+			<span class="error">{fetch_error}</span>
 		{/if}
 	</div>
 </form>

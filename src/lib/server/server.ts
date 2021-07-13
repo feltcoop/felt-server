@@ -4,29 +4,29 @@ import polka from 'polka';
 import postgres from 'postgres';
 import {createServer} from 'http';
 
-import {ApiServer} from '$lib/server/ApiServer.js';
+import {Api_Server} from '$lib/server/Api_Server.js';
 import {Database} from '$lib/db/Database.js';
-import {defaultPostgresOptions} from '$lib/db/postgres.js';
-import {WebsocketServer} from '$lib/server/WebsocketServer.js';
+import {default_postgres_options} from '$lib/db/postgres.js';
+import {Websocket_Server} from '$lib/server/Websocket_Server.js';
 
-const createHttpServer = (): HttpServer | HttpsServer => {
+const create_http_server = (): HttpServer | HttpsServer => {
 	// TODO support https
 	return createServer();
 };
 
-const server = createHttpServer();
+const server = create_http_server();
 
-export const apiServer = new ApiServer({
+export const api_server = new Api_Server({
 	server,
 	app: polka({server}),
-	websocketServer: new WebsocketServer(), // TODO probably pass `{server}` when fixing socket auth
-	db: new Database({sql: postgres(defaultPostgresOptions)}),
-	loadRender: async () => {
+	websocket_server: new Websocket_Server(), // TODO probably pass `{server}` when fixing socket auth
+	db: new Database({sql: postgres(default_postgres_options)}),
+	load_render: async () => {
 		try {
 			// TODO this is a hack to make Rollup not bundle this - needs refactoring
 			// TODO what can we do with gro here with helpers or constants?
-			const importPath = '../' + 'app.js';
-			const mod = (await import(importPath)) as any;
+			const import_path = '../' + 'app.js';
+			const mod = (await import(import_path)) as any;
 			return mod.render || null;
 		} catch (err) {
 			return null;
@@ -34,7 +34,7 @@ export const apiServer = new ApiServer({
 	},
 });
 
-apiServer.init().catch((err) => {
+api_server.init().catch((err) => {
 	console.error('server.init() failed', err);
 	throw err;
 });

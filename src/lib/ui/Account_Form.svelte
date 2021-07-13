@@ -1,17 +1,17 @@
 <script lang="ts">
 	import {session} from '$app/stores';
 
-	import LoginForm from '$lib/ui/Login_Form.svelte';
-	import LogoutForm from '$lib/ui/Logout_Form.svelte';
+	import Login_Form from '$lib/ui/Login_Form.svelte';
+	import Logout_Form from '$lib/ui/Logout_Form.svelte';
 
-	$: console.log('<AccountForm> $session', $session);
+	$: console.log('<Account_Form> $session', $session);
 </script>
 
 <form>
 	{#if $session.guest}
-		<LoginForm />
+		<Login_Form />
 	{:else}
-		<LogoutForm />
+		<Logout_Form />
 	{/if}
 </form>
 

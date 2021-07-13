@@ -1,9 +1,9 @@
 import type {Server as HttpServer} from 'http';
 import type {Server as HttpsServer} from 'https';
-import cookieSession from 'cookie-session';
+import cookie_session from 'cookie-session';
 import type {CookieSessionRequest, CookieSessionObject} from 'cookie-session';
 import type {Polka, Request as PolkaRequest, Middleware as PolkaMiddleware} from 'polka';
-import bodyParser from 'body-parser';
+import body_parser from 'body-parser';
 import send from '@polka/send-type';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue} from '@feltcoop/felt/util/terminal.js';
@@ -12,7 +12,7 @@ import {dirname, join} from 'path';
 import {getRawBody} from '@sveltejs/kit/node';
 import {URL, fileURLToPath} from 'url';
 import {existsSync} from 'fs';
-import type {Request as SvelteKitRequest, Response as SvelteKitResponse} from '@sveltejs/kit';
+import type {Request as SveltekitRequest, Response as SveltekitResponse} from '@sveltejs/kit';
 import type {Server} from 'net';
 import {
 	API_SERVER_DEFAULT_PORT_DEV,
@@ -20,33 +20,33 @@ import {
 } from '@feltcoop/gro/dist/build/default_build_config.js';
 import {to_env_number} from '@feltcoop/felt/util/env.js';
 
-import {toSessionAccountMiddleware} from '$lib/session/sessionAccountMiddleware.js';
-import {toLoginMiddleware} from '$lib/session/loginMiddleware.js';
-import {toLogoutMiddleware} from '$lib/session/logoutMiddleware.js';
+import {to_session_account_middleware} from '$lib/session/session_account_middleware.js';
+import {to_login_middleware} from '$lib/session/login_middleware.js';
+import {to_logout_middleware} from '$lib/session/logout_middleware.js';
 import {
-	toCommunityMiddleware,
-	toCommunitiesMiddleware,
-	toCreateCommunityMiddleware,
-	toCreateMemberMiddleware,
-} from '$lib/communities/communityMiddleware.js';
-import {toPostsMiddleware, toCreatePostMiddleware} from '$lib/posts/postMiddleware.js';
+	to_community_middleware,
+	to_communities_middleware,
+	to_create_community_middleware,
+	to_create_member_middleware,
+} from '$lib/communities/community_middleware.js';
+import {to_posts_middleware, to_create_post_middleware} from '$lib/posts/post_middleware.js';
 import {
-	toSpaceMiddleware,
-	toSpacesMiddleware,
-	toCreateSpaceMiddleware,
-} from '$lib/spaces/spaceMiddleware.js';
+	to_space_middleware,
+	to_spaces_middleware,
+	to_create_space_middleware,
+} from '$lib/spaces/space_middleware.js';
 import type {Member} from '$lib/members/member.js';
-import type {ClientAccount, AccountSession} from '$lib/session/clientSession.js';
+import type {Client_Account, Account_Session} from '$lib/session/client_session.js';
 import type {Database} from '$lib/db/Database.js';
 import type {Community} from '$lib/communities/community.js';
-import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
+import type {Websocket_Server} from '$lib/server/Websocket_Server.js';
 
-const log = new Logger([blue('[ApiServer]')]);
+const log = new Logger([blue('[Api_Server]')]);
 
 // TODO not sure what these types should look like in their final form,
 // there's currently some redundancy and weirdness
 export interface Request extends PolkaRequest, CookieSessionRequest {
-	accountSession?: AccountSession;
+	account_session?: Account_Session;
 	session: ServerSession;
 }
 export interface Middleware extends PolkaMiddleware<Request> {}
@@ -61,35 +61,35 @@ const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
 export interface Options {
 	server: HttpServer | HttpsServer;
 	app: Polka<Request>;
-	websocketServer: WebsocketServer;
+	websocket_server: Websocket_Server;
 	port?: number;
 	db: Database;
-	loadRender?: () => Promise<RenderSvelteKit | null>;
+	load_render?: () => Promise<Render_Sveltekit | null>;
 }
 
-export interface RenderSvelteKit {
-	<TContext>(request: SvelteKitRequest<TContext>): SvelteKitResponse | Promise<SvelteKitResponse>;
+export interface Render_Sveltekit {
+	<TContext>(request: SveltekitRequest<TContext>): SveltekitResponse | Promise<SveltekitResponse>;
 }
 
-export class ApiServer {
+export class Api_Server {
 	readonly server: HttpServer | HttpsServer;
 	readonly app: Polka<Request>;
-	readonly websocketServer: WebsocketServer;
+	readonly websocket_server: Websocket_Server;
 	readonly port: number | undefined;
 	readonly db: Database;
-	readonly loadRender: () => Promise<RenderSvelteKit | null>;
+	readonly load_render: () => Promise<Render_Sveltekit | null>;
 
 	constructor(options: Options) {
 		this.server = options.server;
 		this.app = options.app;
-		this.websocketServer = options.websocketServer;
+		this.websocket_server = options.websocket_server;
 		this.port = options.port;
 		this.db = options.db;
-		this.loadRender = options.loadRender || (async () => null);
+		this.load_render = options.load_render || (async () => null);
 		log.info('created');
 	}
 
-	isApiServerPathname(pathname: string): boolean {
+	is_api_server_pathname(pathname: string): boolean {
 		return pathname.startsWith('/api/');
 	}
 
@@ -97,18 +97,18 @@ export class ApiServer {
 		log.info('initing');
 
 		// TODO refactor to paralleize `init` of the various pieces
-		await this.websocketServer.init();
+		await this.websocket_server.init();
 
 		// Set up the app and its middleware.
 		this.app
-			.use(bodyParser.json()) // TODO is deprecated, but doesn't let us `import {json}`
+			.use(body_parser.json()) // TODO is deprecated, but doesn't let us `import {json}`
 			.use((req, _res, next) => {
 				// TODO proper logger
 				log.trace('req', {url: req.url, query: req.query, params: req.params, body: req.body});
 				next();
 			})
 			.use(
-				cookieSession({
+				cookie_session({
 					keys: TODO_SERVER_COOKIE_KEYS,
 					maxAge: 1000 * 60 * 60 * 24 * 7 * 6, // 6 weeks
 					secure: !dev, // this makes cookies break in prod unless https! see letsencrypt
@@ -116,32 +116,33 @@ export class ApiServer {
 					name: 'session_id',
 				}),
 			)
-			.use(toSessionAccountMiddleware(this))
+			.use(to_session_account_middleware(this))
 			// API
 			.post('/api/v1/echo', (req, res) => {
 				log.info('echo', req.body);
 				send(res, 200, req.body);
 			})
 			.get('/api/v1/context', (req, res) => {
-				send(res, 200, toClientContext(req));
+				send(res, 200, to_client_context(req));
 			})
-			.post('/api/v1/login', toLoginMiddleware(this))
-			.post('/api/v1/logout', toLogoutMiddleware(this))
-			.get('/api/v1/communities', toCommunitiesMiddleware(this))
-			.post('/api/v1/communities', toCreateCommunityMiddleware(this))
-			.get('/api/v1/communities/:community_id', toCommunityMiddleware(this))
-			.post('/api/v1/communities/:community_id/members', toCreateMemberMiddleware(this))
-			.get('/api/v1/spaces/:spaceId', toSpaceMiddleware(this))
-			.post('/api/v1/communities/:community_id/spaces', toCreateSpaceMiddleware(this))
-			.get('/api/v1/communities/:community_id/spaces', toSpacesMiddleware(this))
-			.post('/api/v1/spaces/:spaceId/posts', toCreatePostMiddleware(this))
-			.get('/api/v1/spaces/:spaceId/posts', toPostsMiddleware(this));
+			.post('/api/v1/login', to_login_middleware(this))
+			.post('/api/v1/logout', to_logout_middleware(this))
+			// TODO replace these with a single resource middleware
+			.get('/api/v1/communities', to_communities_middleware(this))
+			.post('/api/v1/communities', to_create_community_middleware(this))
+			.get('/api/v1/communities/:community_id', to_community_middleware(this))
+			.post('/api/v1/communities/:community_id/members', to_create_member_middleware(this))
+			.get('/api/v1/spaces/:space_id', to_space_middleware(this))
+			.post('/api/v1/communities/:community_id/spaces', to_create_space_middleware(this))
+			.get('/api/v1/communities/:community_id/spaces', to_spaces_middleware(this))
+			.post('/api/v1/spaces/:space_id/posts', to_create_post_middleware(this))
+			.get('/api/v1/spaces/:space_id/posts', to_posts_middleware(this));
 
 		// TODO gro filer middleware (and needs to go after auth)
 
 		// SvelteKit Node adapter, adapted to our production API server
 		// TODO needs a lot of work, especially for production
-		const render = await this.loadRender();
+		const render = await this.load_render();
 		if (render) {
 			this.app.use(
 				// compression({threshold: 0}), // TODO
@@ -149,7 +150,7 @@ export class ApiServer {
 				prerendered_handler,
 				async (req, res, next) => {
 					const parsed = new URL(req.url || '', 'http://localhost');
-					if (this.isApiServerPathname(parsed.pathname)) return next();
+					if (this.is_api_server_pathname(parsed.pathname)) return next();
 					const rendered = await render({
 						method: req.method,
 						headers: req.headers, // TODO: what about repeated headers, i.e. string[]
@@ -174,7 +175,7 @@ export class ApiServer {
 			this.port ||
 			// While building for production, `render` will be falsy
 			// and we want to use 3001 while building for prod.
-			// TODO maybe always default to env var `PORT`, upstream and instantiate `ApiServer` with it
+			// TODO maybe always default to env var `PORT`, upstream and instantiate `Api_Server` with it
 			(render && !dev
 				? to_env_number('PORT', API_SERVER_DEFAULT_PORT_PROD)
 				: API_SERVER_DEFAULT_PORT_DEV);
@@ -193,7 +194,7 @@ export class ApiServer {
 	async close(): Promise<void> {
 		log.info('close');
 		await Promise.all([
-			this.websocketServer.close(),
+			this.websocket_server.close(),
 			this.db.close(),
 			new Promise((resolve, reject) =>
 				// TODO remove type casting when polka types are fixed
@@ -203,27 +204,27 @@ export class ApiServer {
 	}
 }
 
-const toClientContext = (req: Request): ClientContext => {
-	console.log(req.accountSession);
-	let clientContext: ClientContext;
-	clientContext = req.accountSession
+const to_client_context = (req: Request): Client_Context => {
+	console.log(req.account_session);
+	let client_context: Client_Context;
+	client_context = req.account_session
 		? {
-				account: req.accountSession.account,
-				communities: req.accountSession.communities,
-				friends: req.accountSession.friends,
+				account: req.account_session.account,
+				communities: req.account_session.communities,
+				friends: req.account_session.friends,
 		  }
 		: {guest: true};
-	console.log(clientContext);
-	return clientContext;
+	console.log(client_context);
+	return client_context;
 };
-export type ClientContext = ClientAccountContext | ClientGuestContext;
-export interface ClientAccountContext {
-	account: ClientAccount;
+export type Client_Context = Client_Account_Context | Client_Guest_Context;
+export interface Client_Account_Context {
+	account: Client_Account;
 	communities: Community[];
 	friends: Member[];
 	guest?: false;
 }
-export interface ClientGuestContext {
+export interface Client_Guest_Context {
 	guest: true;
 	error?: Error;
 }
