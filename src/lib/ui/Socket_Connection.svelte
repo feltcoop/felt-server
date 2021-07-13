@@ -7,7 +7,7 @@
 	export let socket: Socket_Store;
 
 	onMount(() => {
-		let hostname = window.location.hostname;
+		const {hostname} = window.location;
 		console.log(hostname);
 		url = `ws://${hostname}:3002/ws`;
 		console.log('created socket store', socket, url);
