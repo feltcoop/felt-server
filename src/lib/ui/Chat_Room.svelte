@@ -4,6 +4,7 @@
 	import {getContext} from 'svelte';
 
 	import type {Space} from '$lib/spaces/space.js';
+	import type {Member} from '$lib/members/member.js';
 	import Post_List from '$lib/ui/Post_List.svelte';
 	import {posts} from '$lib/ui/post_store';
 	import type {Socket_Store} from '$lib/ui/socket_store.js';
@@ -11,6 +12,7 @@
 	const socket: Socket_Store = getContext('socket');
 
 	export let space: Space;
+	export let members: Member[];
 	export let text = '';
 	$: browser && load_posts(space.space_id);
 	$: console.log(`[chat_room] fetching posts for ${space.space_id}`);
@@ -58,7 +60,7 @@
 </script>
 
 <div class="chat-room">
-	<Post_List posts={$posts} />
+	<Post_List posts={$posts} {members} />
 	<input type="text" placeholder="> chat" on:keydown={on_keydown} bind:value={text} />
 </div>
 
