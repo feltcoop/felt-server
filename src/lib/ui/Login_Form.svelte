@@ -1,8 +1,8 @@
 <script lang="ts">
 	import {session} from '$app/stores';
 	import {tick} from 'svelte';
+	import Pending_Animation from '@feltcoop/felt/ui/Pending_Animation.svelte';
 
-	import Waiting_Animation from '$lib/ui/Waiting_Animation.svelte';
 	import type {Login_Request} from '$lib/session/login_middleware.js';
 
 	let account_name = '';
@@ -84,7 +84,7 @@
 />
 <button type="button" bind:this={button_el} on:click={submit_name} {disabled}>
 	{#if submitting}
-		<Waiting_Animation />
+		<Pending_Animation />
 	{:else}log in{/if}
 </button>
 {#if error_message}

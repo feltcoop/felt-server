@@ -17,7 +17,7 @@ import type {Server} from 'net';
 import {
 	API_SERVER_DEFAULT_PORT_DEV,
 	API_SERVER_DEFAULT_PORT_PROD,
-} from '@feltcoop/gro/dist/build/default_build_config.js';
+} from '@feltcoop/gro/dist/build/build_config_defaults.js';
 import {to_env_number} from '@feltcoop/felt/util/env.js';
 
 import {to_session_account_middleware} from '$lib/session/session_account_middleware.js';

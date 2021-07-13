@@ -2,7 +2,7 @@
 	import {session} from '$app/stores';
 
 	import type {Client_Account} from '$lib/session/client_session.js';
-	import Waiting_Animation from '$lib/ui/Waiting_Animation.svelte';
+	import Pending_Animation from '$lib/ui/Pending_Animation.svelte';
 
 	let account: Client_Account;
 	$: account = $session?.account;
@@ -45,7 +45,7 @@
 {/if}
 <button type="button" on:click={submit_name} {disabled}>
 	{#if submitting}
-		<Waiting_Animation />
+		<Pending_Animation />
 	{:else}log out{/if}
 </button>
 {#if error_message}
