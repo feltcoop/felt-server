@@ -28,7 +28,7 @@ export const task: Task = {
 // sudo apt -y install nginx
 // systemctl start nginx
 // sudo unlink /etc/nginx/sites-enabled/default
-// >> copy configured nginx file here to /etc/nginx/sites-available/felt-server.conf 
+// >> copy configured nginx file here to /etc/nginx/sites-available/felt-server.conf
 // server {
 //	listen 80;
 //

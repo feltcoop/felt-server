@@ -5,7 +5,7 @@
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
 	import {create_socket_store} from '$lib/ui/socket_store';
 
-	const socket = create_socket_store();	
+	const socket = create_socket_store();
 	setContext('socket', socket);
 </script>
 
