@@ -4,8 +4,7 @@
 	import {createSocketStore} from '$lib/socketStore';
 	import {setContext} from 'svelte';
 
-	const socket = createSocketStore();
-	const socketUrl = 'ws://localhost:3002/ws';
+	const socket = createSocketStore();	
 	setContext('socket', socket);
 </script>
 
@@ -15,6 +14,6 @@
 
 <!-- TODO get this working with port 3000 as the default -
 		can't get the right proxy configuration, or something -->
-<SocketConnection {socket} url={socketUrl} />
+<SocketConnection {socket} />
 
 <slot />

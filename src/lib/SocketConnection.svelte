@@ -3,10 +3,13 @@
 
 	import type {SocketStore} from '$lib/socketStore.js';
 
-	export let url = 'ws://localhost:3000/ws';
+	let url = `ws://localhost:3002/ws`;
 	export let socket: SocketStore;
 
 	onMount(() => {
+		let hostname = window.location.hostname;
+		console.log(hostname);
+		url = `ws://${hostname}:3002/ws`;
 		console.log('created socket store', socket, url);
 		socket.connect(url); // TODO should be reactive to `url` changes
 	});

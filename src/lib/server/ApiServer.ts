@@ -111,7 +111,7 @@ export class ApiServer {
 				cookieSession({
 					keys: TODO_SERVER_COOKIE_KEYS,
 					maxAge: 1000 * 60 * 60 * 24 * 7 * 6, // 6 weeks
-					secure: !dev, // this makes cookies break in prod unless https! see letsencrypt
+					secure: false, // this should be `dev!` but we need https in prod first
 					sameSite: dev ? 'lax' : false,
 					name: 'session_id',
 				}),
