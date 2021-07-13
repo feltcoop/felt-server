@@ -3,7 +3,7 @@
 public domain (The Unlicense)
 https://github.com/porsager/postgres
 
-I am stumped - are these published?
+TODO remove when upgrading to v2
 https://github.com/porsager/postgres/blob/master/types/index.d.ts
 
 */

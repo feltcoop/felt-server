@@ -1,10 +1,11 @@
 <script lang="ts">
 	import '../app.css';
-	import SocketConnection from '$lib/SocketConnection.svelte';
-	import {createSocketStore} from '$lib/socketStore';
 	import {setContext} from 'svelte';
 
-	const socket = createSocketStore();	
+	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
+	import {create_socket_store} from '$lib/ui/socket_store';
+
+	const socket = create_socket_store();	
 	setContext('socket', socket);
 </script>
 
@@ -14,6 +15,6 @@
 
 <!-- TODO get this working with port 3000 as the default -
 		can't get the right proxy configuration, or something -->
-<SocketConnection {socket} />
+<Socket_Connection {socket} />
 
 <slot />

@@ -43,19 +43,19 @@ create database felt; # notice the semicolon
 ## database tasks
 
 Felt has a number of [Gro](https://github.com/feltcoop/gro) tasks for managing the database.
-To view all of them, run `gro db`.
+To view all of them, run `gro lib/db`.
 
-### db/create
+### lib/db/create
 
-The task `gro db/create` creates the database from scratch.
+The task `gro lib/db/create` creates the database from scratch.
 It destroys any existing schema and data, runs all migrations (TODO), and seeds the database.
 
 ```bash
-gro db/create
-gro db/create --no-seed # creates the database with no initial data
+gro lib/db/create
+gro lib/db/create --no-seed # creates the database with no initial data
 ```
 
 The tasks it composes can be run individually:
 
-- `gro db/destroy`
-- `gro db/seed`
+- `gro lib/db/destroy`
+- `gro lib/db/seed`

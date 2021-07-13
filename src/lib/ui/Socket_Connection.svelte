@@ -1,10 +1,10 @@
 <script lang="ts">
 	import {onMount} from 'svelte';
 
-	import type {SocketStore} from '$lib/socketStore.js';
+	import type {Socket_Store} from '$lib/ui/socket_store.js';
 
 	let url = `ws://localhost:3002/ws`;
-	export let socket: SocketStore;
+	export let socket: Socket_Store;
 
 	onMount(() => {
 		let hostname = window.location.hostname;
@@ -15,7 +15,7 @@
 	});
 </script>
 
-<div class="SocketConnection">
+<div class="socket-connection">
 	{#if $socket.connected}
 		<form>
 			<input bind:value={url} type="text" disabled />
@@ -46,7 +46,7 @@
 </div>
 
 <style>
-	.SocketConnection {
+	.socket-connection {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
