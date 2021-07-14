@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../app.css';
+	import '@feltcoop/felt/ui/style.css';
 	import {setContext} from 'svelte';
 
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
