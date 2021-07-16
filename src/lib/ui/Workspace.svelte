@@ -9,7 +9,6 @@
 	export let friends: Member[];
 	export let communities: Community[];
 	let selected_community = communities[0] || null;
-	$: selected_community_members = selected_community.members;
 
 	$: selected_community_spaces = selected_community?.spaces || null;
 	const select_community = (community: Community) => {
