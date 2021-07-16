@@ -9,7 +9,7 @@
 <ul>
 	{#each posts as post (post.post_id)}
 		<li>
-			<small>{members.find((member) => member.account_id == post.actor_id)?.name}</small>:
+			<small>{members.find((member) => member.account_id === post.actor_id)?.name}</small>:
 			{post.content}
 		</li>
 	{/each}
