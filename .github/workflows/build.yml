@@ -38,15 +38,13 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      - name: Set up NPM
-        run: |
-          cd $GITHUB_WORKSPACE
-          npm ci
-
-      - name: Build & test the project
-        run: |
-          npx gro build
-          npx gro check
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - run: npx gro check
+        env:
+          CI: true
+      - run: npx gro build
