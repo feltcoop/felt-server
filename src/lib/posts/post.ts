@@ -3,4 +3,5 @@ export interface Post {
 	content: string;
 	actor_id: number;
 	space_id: number;
+	name: string;
 }

@@ -222,7 +222,7 @@ export class Database {
 			filter_by_space: async (space_id: string): Promise<Result<{value: Post[]}>> => {
 				console.log(`[db] preparing to query for space posts: ${space_id}`);
 				const data = await this.sql<Post[]>`
-					SELECT p.post_id, p.content, p.actor_id, p.space_id FROM posts p WHERE p.space_id= ${space_id}
+				SELECT p.post_id, p.content, p.actor_id, p.space_id, a.name FROM posts p JOIN accounts a ON p.actor_id=a.account_id WHERE p.space_id=${space_id}
 				`;
 				console.log('[db] space posts', data);
 				return {ok: true, value: data};

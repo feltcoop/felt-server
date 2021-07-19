@@ -32,7 +32,7 @@
 	</section>
 	<div class="viewfinder">
 		{#if selected_space}
-			<Chat_Room space={selected_space} members={selected_community.members} />
+			<Chat_Room space={selected_space} />
 		{/if}
 	</div>
 </div>
