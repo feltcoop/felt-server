@@ -7,7 +7,6 @@ import type {Space} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
 import type {Member} from '$lib/members/member.js';
 import type {Account} from '$lib/vocab/account/account.js';
-import type {Entity} from '$lib/vocab/entity/entity.js';
 import type {Postgres_Sql} from '$lib/db/postgres.js';
 
 export interface Options {
@@ -39,10 +38,9 @@ export class Database {
 					await this.repos.communities.filter_by_account(account.account_id!),
 				);
 				let friends: Member[] = unwrap(await this.repos.members.get_all());
-				let entities: Entity[] = unwrap(await this.repos.entities.find_by_account(name));
 				return {
 					ok: true,
-					value: {account, communities, friends, entities},
+					value: {account, communities, friends},
 				};
 			},
 		},
@@ -94,24 +92,6 @@ export class Database {
 				`;
 				console.log('[db] created account_communities', data);
 				return {ok: true, value: data};
-			},
-		},
-		entities: {
-			find_by_account: async (
-				name: string,
-			): Promise<
-				Result<
-					{value: Entity[]},
-					{type: 'invalid_name'; reason: string} | {type: 'no_account_found'; reason: string}
-				>
-			> => {
-				return {
-					ok: true,
-					value: [
-						{type: 'Entity', id: '1', data: {author: name, text: 'hello'}},
-						{type: 'Entity', id: '2', data: {author: name, text: 'world'}},
-					],
-				};
 			},
 		},
 		communities: {
