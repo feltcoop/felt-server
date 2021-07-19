@@ -2,6 +2,7 @@
 	import '@feltcoop/felt/ui/style.css';
 	import {setContext} from 'svelte';
 
+	import '$lib/ui/style.css';
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
 	import {create_socket_store} from '$lib/ui/socket_store';
 

@@ -3,10 +3,10 @@ import node from '@sveltejs/adapter-node';
 
 /** @type {import('@sveltejs/kit').Config} */
 export default {
-	preprocess: typescript(), // TODO mdsvex
+	preprocess: typescript(),
 	kit: {
 		adapter: node(),
-		target: '#svelte',
+		target: '#root',
 		files: {assets: 'src/static'},
 		vite: {
 			server: {
