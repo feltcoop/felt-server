@@ -45,6 +45,4 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npx gro check
-        env:
-          CI: true
       - run: npx gro build
