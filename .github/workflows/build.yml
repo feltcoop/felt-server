@@ -35,7 +35,6 @@ jobs:
         ports:
           - 5432:5432
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
