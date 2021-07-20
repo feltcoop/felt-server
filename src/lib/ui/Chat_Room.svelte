@@ -12,7 +12,7 @@
 	const socket: Socket_Store = getContext('socket');
 
 	export let space: Space;
-	export let members_by_id: Map<number,Member>;
+	export let members_by_id: Map<number, Member>;
 	export let text = '';
 	$: browser && load_posts(space.space_id);
 	$: console.log(`[chat_room] fetching posts for ${space.space_id}`);

@@ -3,7 +3,7 @@
 	import type {Member} from '$lib/members/member.js';
 
 	export let posts: Post[];
-	export let members_by_id: Map<number,Member>;
+	export let members_by_id: Map<number, Member>;
 </script>
 
 <ul>
