@@ -90,7 +90,6 @@
 
 		<!--TODO: Make an IconButton component in felt and use it here-->
 		{#if selected_community}
-			|
 			<Modal let:open={open_modal}>
 				<span slot="trigger">
 					<button

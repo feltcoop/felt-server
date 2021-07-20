@@ -12,7 +12,7 @@
 	const socket: Socket_Store = getContext('socket');
 
 	export let space: Space;
-	export let members: Member[];
+	export let members_by_id: Map<number,Member>;
 	export let text = '';
 	$: browser && load_posts(space.space_id);
 	$: console.log(`[chat_room] fetching posts for ${space.space_id}`);
@@ -60,7 +60,7 @@
 </script>
 
 <div class="chat-room">
-	<Post_List posts={$posts} {members} />
+	<Post_List posts={$posts} {members_by_id} />
 	<input type="text" placeholder="> chat" on:keydown={on_keydown} bind:value={text} />
 </div>
 

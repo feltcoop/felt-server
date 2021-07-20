@@ -6,4 +6,5 @@ export interface Community {
 	name: string;
 	spaces: Space[];
 	members: Member[];
+	members_by_id?: Map<number, Member>;
 }

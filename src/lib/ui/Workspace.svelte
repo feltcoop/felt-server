@@ -14,6 +14,7 @@
 	const select_community = (community: Community) => {
 		selected_community = community;
 	};
+	$: members_by_id = selected_community.members_by_id!;
 	let selected_space = selected_community ? selected_community.spaces[0] : null;
 	const select_space = (space: Space) => {
 		selected_space = space;
@@ -32,7 +33,7 @@
 	</section>
 	<div class="viewfinder">
 		{#if selected_space}
-			<Chat_Room space={selected_space} members={selected_community.members} />
+			<Chat_Room space={selected_space} {members_by_id} />
 		{/if}
 	</div>
 </div>
