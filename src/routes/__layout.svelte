@@ -1,6 +1,8 @@
 <script lang="ts">
 	import '@feltcoop/felt/ui/style.css';
 	import {setContext} from 'svelte';
+	import {set_devmode} from '@feltcoop/felt/ui/devmode.js';
+	import Devmode from '@feltcoop/felt/ui/Devmode.svelte';
 
 	import '$lib/ui/style.css';
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
@@ -8,6 +10,8 @@
 
 	const socket = create_socket_store();
 	setContext('socket', socket);
+
+	const devmode = set_devmode();
 </script>
 
 <svelte:head>
@@ -19,3 +23,5 @@
 <Socket_Connection {socket} />
 
 <slot />
+
+<Devmode {devmode} />
