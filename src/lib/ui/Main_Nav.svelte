@@ -25,11 +25,11 @@
 		  ) || null
 		: null;
 
-	$: console.log('[Main_Nav] $data', $data);
-	$: console.log('[Main_Nav] $ui', $ui);
-	$: console.log('[Main_Nav] communities', communities);
-	$: console.log('[Main_Nav] selected_community', selected_community);
-	$: console.log('[Main_Nav] selected_space', selected_space);
+	// $: console.log('[Main_Nav] $data', $data);
+	// $: console.log('[Main_Nav] $ui', $ui);
+	// $: console.log('[Main_Nav] communities', communities);
+	// $: console.log('[Main_Nav] selected_community', selected_community);
+	// $: console.log('[Main_Nav] selected_space', selected_space);
 
 	const select_community = (community: Community) => {
 		ui.select_community(community.community_id!);

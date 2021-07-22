@@ -28,15 +28,26 @@ export const to_ui_store = () => {
 		set_data: (data: Data_State | null) => {
 			console.log('[ui.set_data] data', {data});
 			update(($ui) => {
+				// TODO this needs to be rethought, it's just preserving the existing ui state
+				// when new data gets set, which happens when e.g. a new community is created --
+				// most likely `set_data` *should* wipe away UI state by default,
+				// and should not be called when data changes, only when a new session's data is set,
+				// so the naming is misleading
 				if (data) {
-					const selected_community = data.communities[0] || null;
+					const selected_community =
+						($ui.selected_community_id !== null &&
+							data.communities.find((c) => c.community_id === $ui.selected_community_id)) ||
+						data.communities[0] ||
+						null;
 					return {
 						...$ui,
-						selected_community_id: selected_community?.community_id || null,
+						selected_community_id: selected_community?.community_id ?? null,
 						selected_space_id_by_community: Object.fromEntries(
 							data.communities.map((community) => [
 								community.community_id!,
-								community.spaces[0]?.space_id || null,
+								$ui.selected_space_id_by_community[community.community_id!] ??
+									community.spaces[0]?.space_id ??
+									null,
 							]),
 						),
 					};

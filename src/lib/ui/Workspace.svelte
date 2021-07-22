@@ -18,8 +18,8 @@
 		: null;
 	$: members_by_id = selected_community?.members_by_id;
 
-	$: console.log('[Workspace] selected_community', selected_community);
-	$: console.log('[Workspace] selected_space', selected_space);
+	// $: console.log('[Workspace] selected_community', selected_community);
+	// $: console.log('[Workspace] selected_space', selected_space);
 </script>
 
 <div class="workspace">
