@@ -32,6 +32,7 @@
 			body: JSON.stringify(doc),
 		});
 		const data = await res.json();
+		// TODO call `data.add_space`
 		spaces = spaces.concat(data.space);
 		new_name = '';
 	};

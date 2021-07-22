@@ -4,6 +4,7 @@
 	import Community_Nav from '$lib/ui/Community_Nav.svelte';
 	import Space_Nav from '$lib/ui/Space_Nav.svelte';
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
+	import Account_Form from '$lib/ui/Account_Form.svelte';
 	import {get_socket} from '$lib/ui/socket';
 	import type {Community} from '$lib/communities/community.js';
 	import type {Space} from '$lib/spaces/space.js';
@@ -67,32 +68,41 @@
 <Socket_Connection {socket} />
 
 <div class="main-nav">
-	{#if selected_community}
-		<Community_Nav
-			{friends}
-			{communities}
-			{selected_community}
-			{select_community}
-			{create_community}
-		/>
-		{#if selected_space}
-			<Space_Nav
-				community={selected_community}
-				spaces={selected_community.spaces}
-				{selected_space}
-				{select_space}
+	<Account_Form />
+	<div class="explorer">
+		{#if selected_community}
+			<Community_Nav
+				{friends}
+				{communities}
+				{selected_community}
+				{select_community}
+				{create_community}
 			/>
+			{#if selected_space}
+				<Space_Nav
+					community={selected_community}
+					spaces={selected_community.spaces}
+					{selected_space}
+					{select_space}
+				/>
+			{:else}
+				<code>[[TODO handle case where community has no spaces]]</code>
+			{/if}
 		{:else}
-			<code>[[TODO handle case where community has no spaces]]</code>
+			<code>[[TODO handle case where user has joined no communities, if that's a valid state]]</code
+			>
 		{/if}
-	{:else}
-		<code>[[TODO handle case where user has joined no communities, if that's a valid state]]</code>
-	{/if}
+	</div>
 </div>
 
 <style>
 	.main-nav {
 		height: 100%;
 		display: flex;
+		flex-direction: column;
+	}
+	.explorer {
+		display: flex;
+		flex: 1;
 	}
 </style>

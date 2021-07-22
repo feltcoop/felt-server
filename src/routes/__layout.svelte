@@ -25,7 +25,7 @@
 </svelte:head>
 
 <div class="layout">
-	{#if $data}
+	{#if !$session.guest}
 		<Main_Nav />
 	{/if}
 	<slot />
@@ -37,6 +37,6 @@
 		height: 100%;
 		width: 100%;
 		display: flex;
-		align-items: stretch;
+		/* align-items: stretch; */
 	}
 </style>

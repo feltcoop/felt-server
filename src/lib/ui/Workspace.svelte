@@ -9,6 +9,7 @@
 	$: communities = $data.communities;
 
 	// TODO speed up these lookups, probably with a map of all entities by id
+	// $: selected_community = data.entities.get($ui.selected_community_id);
 	$: selected_community =
 		communities.find((c) => c.community_id === $ui.selected_community_id) || null;
 	$: selected_space = selected_community
