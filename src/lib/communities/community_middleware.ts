@@ -63,12 +63,18 @@ export const to_create_community_middleware = (server: Api_Server): Middleware =
 			req.body.name,
 			req.account_session.account.account_id!,
 		);
+		console.log('create_community_result', create_community_result);
 		if (create_community_result.ok) {
+			// TODO optimize this to return `create_community_result.value` instead of making another db call,
+			// needs to populate members, but we probably want to normalize the data, returning only ids
 			const community_data = await db.repos.communities.filter_by_account(
 				req.account_session.account.account_id!,
 			);
 			if (community_data.ok) {
-				return send(res, 200, {community: community_data.value}); // TODO API types
+				const {community_id} = create_community_result.value;
+				return send(res, 200, {
+					community: community_data.value.find((c) => c.community_id === community_id),
+				}); // TODO API types
 			} else {
 				console.log('[community_middleware] error retrieving community data');
 				return send(res, 500, {reason: 'error retrieving community data'});

@@ -26,6 +26,7 @@ export const to_ui_store = () => {
 	return {
 		subscribe,
 		set_data: (data: Data_State | null) => {
+			console.log('[ui.set_data] data', {data});
 			update(($ui) => {
 				if (data) {
 					const selected_community = data.communities[0] || null;
@@ -50,9 +51,11 @@ export const to_ui_store = () => {
 			});
 		},
 		select_community: (community_id: number | null) => {
+			console.log('[ui.select_space] community_id', {community_id});
 			update(($ui) => ({...$ui, selected_community_id: community_id}));
 		},
 		select_space: (community_id: number, space_id: number | null) => {
+			console.log('[ui.select_space] community_id, space_id', {community_id, space_id});
 			update(($ui) => {
 				// TODO speed this up using stores maybe?
 				return {

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type {Result} from '@feltcoop/felt';
+
 	import type {Community} from '$lib/communities/community.js';
 	import Modal from '$lib/ui/Modal.svelte';
 	import type {Member} from '$lib/members/member.js';
@@ -7,6 +9,9 @@
 	export let communities: Community[];
 	export let selected_community: Community;
 	export let select_community: (community: Community) => void;
+	export let create_community: (
+		name: string,
+	) => Promise<Result<{value: {community: Community}}, {reason: string}>>;
 
 	$: invitable_friends = selected_community
 		? friends.filter((x) => !selected_community.members.some((y) => x.account_id == y.account_id))
@@ -20,22 +25,6 @@
 			new_name = '';
 			close_modal();
 		}
-	};
-
-	const create_community = async (name: string) => {
-		if (!name) return;
-		//Needs to collect name
-		const doc = {
-			name,
-		};
-		const res = await fetch(`/api/v1/communities`, {
-			method: 'POST',
-			headers: {'Content-Type': 'application/json'},
-			body: JSON.stringify(doc),
-		});
-		const data = await res.json();
-		console.log(data);
-		communities = data.community;
 	};
 
 	/**

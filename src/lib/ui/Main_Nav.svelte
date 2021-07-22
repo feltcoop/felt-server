@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type {Result} from '@feltcoop/felt';
+
 	import Community_Nav from '$lib/ui/Community_Nav.svelte';
 	import Space_Nav from '$lib/ui/Space_Nav.svelte';
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
@@ -35,6 +37,29 @@
 	const select_space = (space: Space) => {
 		ui.select_space(selected_community!.community_id!, space.space_id!);
 	};
+	// TODO refactor this, maybe into `data` or `api`
+	const create_community = async (
+		name: string,
+	): Promise<Result<{value: {community: Community}}, {reason: string}>> => {
+		if (!name) return {ok: false, reason: 'invalid name'};
+		//Needs to collect name
+		const doc = {
+			name,
+		};
+		const res = await fetch(`/api/v1/communities`, {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify(doc),
+		});
+		try {
+			const result: {community: Community} = await res.json(); // TODO api types
+			console.log('create community result', result);
+			data.add_community(result.community);
+			return {ok: true, value: result};
+		} catch (err) {
+			return {ok: false, reason: err.message};
+		}
+	};
 
 	const socket = get_socket();
 </script>
@@ -43,7 +68,13 @@
 
 <div class="main-nav">
 	{#if selected_community}
-		<Community_Nav {friends} {communities} {selected_community} {select_community} />
+		<Community_Nav
+			{friends}
+			{communities}
+			{selected_community}
+			{select_community}
+			{create_community}
+		/>
 		{#if selected_space}
 			<Space_Nav
 				community={selected_community}
