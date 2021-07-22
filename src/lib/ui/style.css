@@ -1,5 +1,10 @@
 /* global styles that override Felt's */
 
+body,
+#root {
+	height: 100%;
+}
+
 main {
 	width: 100%;
 }

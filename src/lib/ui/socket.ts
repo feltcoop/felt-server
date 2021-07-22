@@ -1,9 +1,19 @@
 import type {Async_Status} from '@feltcoop/felt';
 import type {Json} from '@feltcoop/felt/util/json.js';
 import {writable} from 'svelte/store';
+import {setContext, getContext} from 'svelte';
 
 import {messages} from '$lib/ui/messages_store';
 import {posts} from '$lib/ui/post_store';
+
+const KEY = Symbol();
+
+export const get_socket = (): Socket_Store => getContext(KEY);
+
+export const set_socket = (store: Socket_Store = to_socket_store()): Socket_Store => {
+	setContext(KEY, store);
+	return store;
+};
 
 // This store wraps a browser `WebSocket` connection with all of the Sveltey goodness.
 
@@ -20,9 +30,9 @@ export interface Socket_State {
 }
 
 // TODO is this the preferred type definition?
-export type Socket_Store = ReturnType<typeof create_socket_store>;
+export type Socket_Store = ReturnType<typeof to_socket_store>;
 
-export const create_socket_store = () => {
+export const to_socket_store = () => {
 	const {subscribe, update} = writable<Socket_State>(to_default_socket_state(), () => {
 		console.log('[socket] listen store');
 		return () => {

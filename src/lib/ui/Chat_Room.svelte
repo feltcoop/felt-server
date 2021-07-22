@@ -1,19 +1,20 @@
 <script lang="ts">
 	import {browser} from '$app/env';
 	import type {Json} from '@feltcoop/felt/util/json.js';
-	import {getContext} from 'svelte';
 
 	import type {Space} from '$lib/spaces/space.js';
 	import type {Member} from '$lib/members/member.js';
 	import Post_List from '$lib/ui/Post_List.svelte';
 	import {posts} from '$lib/ui/post_store';
-	import type {Socket_Store} from '$lib/ui/socket_store.js';
+	import {get_socket} from '$lib/ui/socket';
 
-	const socket: Socket_Store = getContext('socket');
+	const socket = get_socket();
 
 	export let space: Space;
 	export let members_by_id: Map<number, Member>;
-	export let text = '';
+
+	let text = '';
+
 	$: browser && load_posts(space.space_id);
 	$: console.log(`[chat_room] fetching posts for ${space.space_id}`);
 
@@ -60,7 +61,9 @@
 </script>
 
 <div class="chat-room">
-	<Post_List posts={$posts} {members_by_id} />
+	<div class="posts">
+		<Post_List posts={$posts} {members_by_id} />
+	</div>
 	<input type="text" placeholder="> chat" on:keydown={on_keydown} bind:value={text} />
 </div>
 
@@ -68,6 +71,11 @@
 	.chat-room {
 		display: flex;
 		flex-direction: column;
-		align-items: left;
+	}
+	.posts {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
 	}
 </style>

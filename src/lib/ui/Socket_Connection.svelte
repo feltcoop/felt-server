@@ -2,7 +2,7 @@
 	import {onMount} from 'svelte';
 	import {get_devmode} from '@feltcoop/felt/ui/devmode.js';
 
-	import type {Socket_Store} from '$lib/ui/socket_store.js';
+	import type {Socket_Store} from '$lib/ui/socket.js';
 
 	const devmode = get_devmode();
 

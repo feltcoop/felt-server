@@ -5,6 +5,7 @@
 
 	export let community: Community;
 	export let spaces: Space[];
+	export let selected_space: Space;
 	export let select_space: (community: Space) => void;
 
 	let new_name = '';
@@ -36,7 +37,7 @@
 	};
 </script>
 
-<div class="sidenav">
+<div class="space-nav">
 	<div class="header">
 		<Modal let:open={open_modal} let:close={close_modal}>
 			<span slot="trigger">
@@ -64,42 +65,25 @@
 		</Modal>
 	</div>
 	{#each spaces as space (space.space_id)}
-		<button type="button" class="button-nav" on:click={() => select_space(space)}
-			>{space.url}</button
+		<button
+			class:selected={space === selected_space}
+			disabled={space === selected_space}
+			on:click={() => select_space(space)}>{space.url}</button
 		>
 	{/each}
 </div>
 
 <style>
+	.space-nav {
+		height: 100%;
+		width: 150px;
+	}
+
 	.button-emoji {
 		background: none;
 		border: none;
 		cursor: pointer;
 		margin: 0;
 		word-wrap: break-word;
-	}
-
-	.button-nav {
-		background: none;
-		border: none;
-		font-weight: bold;
-	}
-
-	.button-nav:hover {
-		background-color: lightGreen;
-	}
-
-	.button-nav:active {
-		background-color: grey;
-	}
-
-	button:active {
-		background-color: grey;
-	}
-
-	.sidenav {
-		width: 85px;
-		height: 100%;
-		position: fixed;
 	}
 </style>

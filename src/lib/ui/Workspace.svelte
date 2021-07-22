@@ -1,58 +1,39 @@
 <script lang="ts">
-	import Community_Nav from '$lib/ui/Community_Nav.svelte';
-	import Space_Nav from '$lib/ui/Space_Nav.svelte';
 	import Chat_Room from '$lib/ui/Chat_Room.svelte';
-	import type {Community} from '$lib/communities/community.js';
-	import type {Space} from '$lib/spaces/space.js';
-	import type {Member} from '$lib/members/member.js';
+	import {get_data} from '$lib/ui/data';
+	import {get_ui} from '$lib/ui/ui';
 
-	export let friends: Member[];
-	export let communities: Community[];
-	let selected_community = communities[0] || null;
+	const data = get_data();
+	const ui = get_ui();
 
-	$: selected_community_spaces = selected_community?.spaces || null;
-	const select_community = (community: Community) => {
-		selected_community = community;
-	};
-	$: members_by_id = selected_community.members_by_id!;
-	let selected_space = selected_community ? selected_community.spaces[0] : null;
-	const select_space = (space: Space) => {
-		selected_space = space;
-		console.log(`[ss] ${selected_space.url}`);
-	};
+	$: communities = $data.communities;
+
+	// TODO speed up these lookups, probably with a map of all entities by id
+	$: selected_community =
+		communities.find((c) => c.community_id === $ui.selected_community_id) || null;
+	$: selected_space = selected_community
+		? selected_community.spaces.find(
+				(s) => s.space_id === $ui.selected_space_id_by_community[selected_community!.community_id!],
+		  )
+		: null;
+	$: members_by_id = selected_community?.members_by_id;
+
+	$: console.log('[Workspace] selected_community', selected_community);
+	$: console.log('[Workspace] selected_space', selected_space);
 </script>
 
 <div class="workspace">
-	<section class="communitynav">
-		<Community_Nav {friends} {communities} {selected_community} {select_community} />
-	</section>
-	<section class="spacenav">
-		{#if selected_community}
-			<Space_Nav community={selected_community} spaces={selected_community_spaces} {select_space} />
-		{/if}
-	</section>
-	<div class="viewfinder">
-		{#if selected_space}
-			<Chat_Room space={selected_space} {members_by_id} />
-		{/if}
-	</div>
+	{#if selected_space && members_by_id}
+		<Chat_Room space={selected_space} {members_by_id} />
+	{:else}
+		<code>[[TODO no space selected]]</code>
+	{/if}
 </div>
 
 <style>
 	.workspace {
 		height: 100%;
 		display: flex;
-	}
-
-	section {
-		height: 100%;
 		flex: 1;
-		border: 1px solid #ccc;
-	}
-
-	.viewfinder {
-		height: 100%;
-		border: 1px solid #ccc;
-		width: 80%;
 	}
 </style>

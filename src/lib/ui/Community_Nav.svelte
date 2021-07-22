@@ -115,7 +115,12 @@
 		{/if}
 	</div>
 	{#each communities as community (community.community_id)}
-		<button type="button" class="button-nav" on:click={() => select_community(community)}>
+		<button
+			type="button"
+			class:selected={community === selected_community}
+			disabled={community === selected_community}
+			on:click={() => select_community(community)}
+		>
 			{community.name}
 		</button>
 	{/each}
@@ -130,24 +135,8 @@
 		word-wrap: break-word;
 	}
 
-	.button-nav {
-		border: 1px outset grey;
-		background-color: lightGreen;
-		height: 75px;
-		width: 75px;
-		cursor: pointer;
-		margin: 5%;
-		word-wrap: break-word;
-	}
-
-	button:active {
-		background-color: grey;
-	}
-
 	.sidenav {
-		width: 85px;
 		height: 100%;
-		position: fixed;
-		background: #3bbb3b;
+		width: 85px;
 	}
 </style>
