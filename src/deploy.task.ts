@@ -24,12 +24,14 @@ export const task: Task = {
 // fnm install 14.16.0
 // sudo apt-get npm
 
-// NOTES ON NGINX
+// NOTES ON NGINX & HTTPS
+// apt-get install python3-certbot-nginx
 // sudo apt -y install nginx
 // systemctl start nginx
 // sudo unlink /etc/nginx/sites-enabled/default
 // >> copy configured nginx file here to /etc/nginx/sites-available/felt-server.conf
 // server {
+//  server_name staging.felt.dev;
 //	listen 80;
 //
 //	location /api/ {

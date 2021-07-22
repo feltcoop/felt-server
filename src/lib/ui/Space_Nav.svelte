@@ -77,7 +77,14 @@
 <style>
 	.space-nav {
 		height: 100%;
-		width: 150px;
+		width: 15rem;
+		border-top: var(--border);
+		display: flex;
+		flex-direction: column;
+	}
+
+	.header {
+		display: flex;
 	}
 
 	.button-emoji {

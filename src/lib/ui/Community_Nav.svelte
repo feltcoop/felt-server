@@ -50,7 +50,7 @@
 	};
 </script>
 
-<div class="sidenav">
+<div class="community-nav">
 	<div class="header">
 		<Modal let:open={open_modal} let:close={close_modal}>
 			<span slot="trigger">
@@ -124,8 +124,16 @@
 		word-wrap: break-word;
 	}
 
-	.sidenav {
+	.header {
+		display: flex;
+	}
+
+	.community-nav {
 		height: 100%;
-		width: 85px;
+		width: 8.5rem;
+		border-top: var(--border);
+		border-right: var(--border);
+		display: flex;
+		flex-direction: column;
 	}
 </style>

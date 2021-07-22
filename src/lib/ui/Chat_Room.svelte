@@ -71,6 +71,7 @@
 	.chat-room {
 		display: flex;
 		flex-direction: column;
+		flex: 1;
 	}
 	.posts {
 		flex: 1;

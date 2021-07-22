@@ -100,9 +100,11 @@
 		height: 100%;
 		display: flex;
 		flex-direction: column;
+		border: var(--border);
 	}
 	.explorer {
 		display: flex;
 		flex: 1;
+		max-width: 32rem;
 	}
 </style>

@@ -1,6 +1,14 @@
 /* global styles that override Felt's */
+:root {
+	--bg_hue: 24;
+	--bg_saturation: 40%;
+	--bg_lightness: 95%;
+}
 
-body,
+body {
+	height: 100%;
+	background-color: hsl(var(--bg_hue), var(--bg_saturation), var(--bg_lightness));
+}
 #root {
 	height: 100%;
 }
