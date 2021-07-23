@@ -1,6 +1,7 @@
 import type {Async_Status} from '@feltcoop/felt';
 import type {Json} from '@feltcoop/felt/util/json.js';
 import {writable} from 'svelte/store';
+import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 import {messages} from '$lib/ui/messages_store';
@@ -29,8 +30,12 @@ export interface Socket_State {
 	send_count: number;
 }
 
-// TODO is this the preferred type definition?
-export type Socket_Store = ReturnType<typeof to_socket_store>;
+export interface Socket_Store {
+	subscribe: Readable<Socket_State>['subscribe'];
+	disconnect: (code?: number) => void;
+	connect: (url: string) => void;
+	send: (data: Json) => void;
+}
 
 export const to_socket_store = () => {
 	const {subscribe, update} = writable<Socket_State>(to_default_socket_state(), () => {
@@ -43,32 +48,6 @@ export const to_socket_store = () => {
 	const unsubscribe = subscribe((value) => {
 		console.log('[socket] store subscriber', value);
 	});
-
-	const disconnect = (code = 1000): void => {
-		update(($socket) => {
-			console.log('[socket] disconnect', code, $socket.url);
-			if (!$socket.ws) return $socket;
-			$socket.ws.close(code);
-			return {...$socket, status: 'pending', connected: false, ws: null, url: null};
-		});
-	};
-
-	const connect = (url: string): void => {
-		console.log('[socket] connect', url);
-		update(($socket) => {
-			if ($socket.connected || $socket.ws || $socket.status !== 'initial') {
-				throw Error('socket already connected'); // TODO return errors instead?
-			}
-			return {
-				...$socket,
-				url,
-				connected: false,
-				status: 'pending',
-				ws: create_web_socket(url),
-				error: null,
-			};
-		});
-	};
 
 	const create_web_socket = (url: string): WebSocket => {
 		const ws = new WebSocket(url);
@@ -108,16 +87,45 @@ export const to_socket_store = () => {
 		return ws;
 	};
 
-	const send = (data: Json) => {
-		console.log('[ws] sending ', data);
-		update(($socket) => {
-			if (!$socket.ws) return $socket;
-			$socket.ws.send(JSON.stringify(data));
-			return {...$socket, send_count: $socket.send_count + 1};
-		});
+	const store: Socket_Store = {
+		subscribe,
+		disconnect: (code = 1000) => {
+			update(($socket) => {
+				console.log('[socket] disconnect', code, $socket);
+				if (!$socket.connected || !$socket.ws || $socket.status !== 'success') {
+					throw Error('Socket cannot disconnect because it is not connected'); // TODO return errors instead?
+				}
+				$socket.ws.close(code);
+				return {...$socket, status: 'pending', connected: false, ws: null, url: null};
+			});
+		},
+		connect: (url) => {
+			update(($socket) => {
+				console.log('[socket] connect', $socket);
+				if ($socket.connected || $socket.ws || $socket.status !== 'initial') {
+					throw Error('Socket cannot connect because it is already connected'); // TODO return errors instead?
+				}
+				return {
+					...$socket,
+					url,
+					connected: false,
+					status: 'pending',
+					ws: create_web_socket(url),
+					error: null,
+				};
+			});
+		},
+		send: (data) => {
+			update(($socket) => {
+				console.log('[ws] send', data, $socket);
+				if (!$socket.ws) return $socket;
+				$socket.ws.send(JSON.stringify(data));
+				return {...$socket, send_count: $socket.send_count + 1};
+			});
+		},
 	};
 
-	return {subscribe, disconnect, connect, send};
+	return store;
 };
 
 const to_default_socket_state = (): Socket_State => ({

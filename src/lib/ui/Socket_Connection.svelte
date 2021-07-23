@@ -2,12 +2,13 @@
 	import {onMount} from 'svelte';
 	import {get_devmode} from '@feltcoop/felt/ui/devmode.js';
 
-	import type {Socket_Store} from '$lib/ui/socket.js';
+	import {get_socket} from '$lib/ui/socket';
+
+	const socket = get_socket();
 
 	const devmode = get_devmode();
 
 	let url = `ws://localhost:3002/ws`;
-	export let socket: Socket_Store;
 
 	onMount(() => {
 		const {hostname} = window.location;
@@ -15,6 +16,9 @@
 		url = `ws://${hostname}:3002/ws`;
 		console.log('created socket store', socket, url);
 		socket.connect(url); // TODO should be reactive to `url` changes
+		return () => {
+			socket.disconnect();
+		};
 	});
 </script>
 

@@ -3,7 +3,6 @@
 	import Space_Nav from '$lib/ui/Space_Nav.svelte';
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
 	import Account_Form from '$lib/ui/Account_Form.svelte';
-	import {get_socket} from '$lib/ui/socket';
 	import {get_data} from '$lib/ui/data';
 	import {get_ui} from '$lib/ui/ui';
 
@@ -27,12 +26,10 @@
 	// $: console.log('[Main_Nav] communities', communities);
 	// $: console.log('[Main_Nav] selected_community', selected_community);
 	// $: console.log('[Main_Nav] selected_space', selected_space);
-
-	const socket = get_socket();
 </script>
 
 <div class="main-nav">
-	<Socket_Connection {socket} />
+	<Socket_Connection />
 	<Account_Form />
 	<div class="explorer">
 		{#if selected_community}
