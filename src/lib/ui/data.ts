@@ -30,7 +30,7 @@ export interface Data_Store {
 	subscribe: Readable<Data_State>['subscribe'];
 	update_session: (session: Client_Session) => void;
 	add_community: (community: Community_Model) => void;
-	add_space: (space: Space) => void;
+	add_space: (space: Space, community_id: number) => void;
 	add_member: (member: Member) => void;
 }
 
@@ -48,10 +48,21 @@ export const to_data_store = (initial_session: Client_Session): Data_Store => {
 			console.log('[data.add_community]', community);
 			update(($data) => ({...$data, communities: $data.communities.concat(community)}));
 		},
-		add_space: (space) => {
+		add_space: (space, community_id) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.add_space]', space);
-			update(($data) => ({...$data, spaces: $data.spaces.concat(space)}));
+			update(($data) => ({
+				...$data,
+				spaces: $data.spaces.concat(space),
+				communities: $data.communities.map((community) =>
+					community.community_id !== community_id
+						? community
+						: {
+								...community,
+								spaces: community.spaces.concat(space),
+						  },
+				),
+			}));
 		},
 		add_member: (member) => {
 			// TODO instead of this, probably want to set more granularly with nested stores

@@ -99,7 +99,7 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store): Api_Store => {
 			try {
 				const result: {space: Space} = await res.json(); // TODO api types
 				console.log('create_space result', result);
-				data.add_space(result.space);
+				data.add_space(result.space, community_id);
 				return {ok: true, value: result};
 			} catch (err) {
 				return {ok: false, reason: err.message};

@@ -189,7 +189,7 @@ export class Database {
 			): Promise<Result<{value: Space}>> => {
 				const {name, content, media_type, url} = params;
 				const data = await this.sql<Space[]>`
-					INSERT INTO spaces (url, media_type, content) VALUES (
+					INSERT INTO spaces (name, url, media_type, content) VALUES (
 						${name},${url},${media_type},${content}
 					) RETURNING *
 				`;
