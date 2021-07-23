@@ -3,6 +3,7 @@
 	import Modal from '$lib/ui/Modal.svelte';
 	import type {Member} from '$lib/members/member.js';
 	import {get_api} from '$lib/ui/api';
+	import {autofocus} from '$lib/ui/actions';
 
 	const api = get_api();
 
@@ -38,6 +39,7 @@
 				placeholder="> name"
 				on:keydown={(e) => on_keydown(e, close)}
 				bind:value={new_name}
+				use:autofocus
 			/>
 		</p>
 	</div>
@@ -54,10 +56,8 @@
 				on:click={() => open_modal()}>✉️</button
 			>
 		</span>
-		<div slot="header">
-			<h1>Invite users to {selected_community.name}</h1>
-		</div>
 		<div slot="content">
+			<h1>Invite users to {selected_community.name}</h1>
 			{#each invitable_members as member (member.account_id)}
 				<p>
 					<button
