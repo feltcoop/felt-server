@@ -105,7 +105,7 @@ export const to_create_member_middleware = (server: Api_Server): Middleware => {
 			member.community_id,
 		);
 		if (create_member_result.ok) {
-			return send(res, 200, {}); // TODO API types
+			return send(res, 200, {member: create_member_result.value}); // TODO API types
 		} else {
 			console.log('[community_middleware] error creating member');
 			return send(res, 500, {reason: 'error creating member'});
