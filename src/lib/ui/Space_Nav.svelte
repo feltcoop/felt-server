@@ -8,7 +8,7 @@
 
 	export let community: Community_Model;
 	export let spaces: Space[];
-	export let selected_space: Space;
+	export let selected_space: Space | null;
 </script>
 
 <div class="space-nav">

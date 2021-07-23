@@ -36,7 +36,7 @@
 <Modal>
 	<div slot="trigger" let:open>
 		<button aria-label="Create Space" type="button" class="button-emoji" on:click={() => open()}>
-			➕
+			<slot>➕</slot>
 		</button>
 	</div>
 	<div slot="content" let:close>

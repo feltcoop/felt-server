@@ -34,18 +34,11 @@
 	<div class="explorer">
 		{#if selected_community}
 			<Community_Nav {members} {communities} {selected_community} />
-			{#if selected_space}
-				<Space_Nav
-					community={selected_community}
-					spaces={selected_community.spaces}
-					{selected_space}
-				/>
-			{:else}
-				<code>[[TODO handle case where community has no spaces]]</code>
-			{/if}
-		{:else}
-			<code>[[TODO handle case where user has joined no communities, if that's a valid state]]</code
-			>
+			<Space_Nav
+				community={selected_community}
+				spaces={selected_community.spaces}
+				{selected_space}
+			/>
 		{/if}
 	</div>
 </div>

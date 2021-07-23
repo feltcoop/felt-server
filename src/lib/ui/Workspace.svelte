@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Chat_Room from '$lib/ui/Chat_Room.svelte';
+	import Space_Input from '$lib/ui/Space_Input.svelte';
 	import {get_data} from '$lib/ui/data';
 	import {get_ui} from '$lib/ui/ui';
 
@@ -26,8 +27,8 @@
 <div class="workspace">
 	{#if selected_space && members_by_id}
 		<Chat_Room space={selected_space} {members_by_id} />
-	{:else}
-		<code>[[TODO no space selected]]</code>
+	{:else if selected_community}
+		<Space_Input community={selected_community}>Create a new space</Space_Input>
 	{/if}
 </div>
 
