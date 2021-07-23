@@ -4,6 +4,7 @@
 	import Pending_Animation from '@feltcoop/felt/ui/Pending_Animation.svelte';
 
 	import type {Login_Request} from '$lib/session/login_middleware.js';
+	import {autofocus} from '$lib/ui/actions';
 
 	let account_name = '';
 	let password = '';
@@ -67,7 +68,7 @@
 </script>
 
 <div class="login-wrapper">
-	<img src="/favicon.png" />
+	<img src="/favicon.png" alt="felt heart" />
 	<form>
 		<input
 			type="text"
@@ -76,6 +77,7 @@
 			on:keypress={on_keypress}
 			{disabled}
 			placeholder="account name"
+			use:autofocus
 		/>
 		<input
 			type="password"
