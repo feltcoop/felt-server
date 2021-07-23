@@ -3,7 +3,7 @@ import {unwrap} from '@feltcoop/felt';
 
 import type {Account_Session} from '$lib/session/client_session.js';
 import type {Community} from '$lib/communities/community.js';
-import type {Space} from '$lib/spaces/space.js';
+import type {Space, Space_Params} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
 import type {Member} from '$lib/members/member.js';
 import type {Account} from '$lib/vocab/account/account.js';
@@ -99,14 +99,14 @@ export class Database {
 		communities: {
 			find_by_id: async (
 				community_id: string,
-			): Promise<Result<{value: Community[]}, {type: 'no_community_found'; reason: string}>> => {
+			): Promise<Result<{value: Community}, {type: 'no_community_found'; reason: string}>> => {
 				console.log(`[db] preparing to query for community id: ${community_id}`);
 				const data = await this.sql<Community[]>`
 					select community_id, name from communities where community_id = ${community_id}
 				`;
 				console.log('[db] community data', data);
 				if (data.length) {
-					return {ok: true, value: data};
+					return {ok: true, value: data[0]};
 				}
 				return {
 					ok: false,
@@ -160,14 +160,14 @@ export class Database {
 		spaces: {
 			find_by_id: async (
 				space_id: string,
-			): Promise<Result<{value: Space[]}, {type: 'no_space_found'; reason: string}>> => {
+			): Promise<Result<{value: Space}, {type: 'no_space_found'; reason: string}>> => {
 				console.log(`[db] preparing to query for space id: ${space_id}`);
 				const data = await this.sql<Space[]>`
 					select space_id, url, media_type, content from spaces where space_id = ${space_id}
 				`;
 				console.log('[db] space data', data);
 				if (data.length) {
-					return {ok: true, value: data};
+					return {ok: true, value: data[0]};
 				}
 				return {
 					ok: false,
@@ -185,18 +185,17 @@ export class Database {
 			},
 			insert: async (
 				community_id: string,
-				url: string,
-				media_type: string,
-				content: string,
+				params: Space_Params,
 			): Promise<Result<{value: Space}>> => {
+				const {name, content, media_type, url} = params;
 				const data = await this.sql<Space[]>`
 					INSERT INTO spaces (url, media_type, content) VALUES (
-						${url},${media_type},${content}
+						${name},${url},${media_type},${content}
 					) RETURNING *
 				`;
 				console.log('[db] created space', data);
 				const space_id: number = data[0].space_id!;
-				console.log(community_id);
+				console.log('[db] creating community space', community_id, space_id);
 				// TODO more robust error handling or condense into single query
 				const association = await this.sql<any>`
 					INSERT INTO community_spaces (space_id, community_id) VALUES (

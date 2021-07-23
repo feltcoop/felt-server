@@ -1,7 +1,13 @@
 import type {Database} from '$lib/db/Database.js';
 import type {Account} from '$lib/vocab/account/account.js';
-import type {Space} from '$lib/spaces/space.js';
+import type {Space, Space_Params} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
+import type {
+	Account_Community,
+	Account_Community_Params,
+	Community_Spaces,
+	Community_Spaces_Params,
+} from '$lib/communities/community';
 
 export const seed = async (db: Database): Promise<void> => {
 	const {sql} = db;
@@ -46,6 +52,7 @@ export const seed = async (db: Database): Promise<void> => {
 	const create_spaces_table_result = await sql`
 		create table if not exists spaces (
 			space_id serial primary key,
+			name text,
 			url text,
 			media_type text,
 			content text
@@ -81,17 +88,17 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] create_posts_table_result', create_posts_table_result);
 	}
 
-	const space_docs: Space[] = await sql`
+	const space_docs = await sql<Space[]>`
 		select space_id, url, media_type, content from spaces
 	`;
 	console.log('[db] space_docs', space_docs);
 
-	const account_docs: Account[] = await sql`
+	const account_docs = await sql<Account[]>`
 		select account_id, name, password from accounts
 	`;
 	console.log('[db] account_docs', account_docs);
 
-	const post_docs: Post[] = await sql`
+	const post_docs = await sql<Post[]>`
 		select post_id, content, actor_id, space_id from posts
 	`;
 	console.log('[db] post_docs', post_docs);
@@ -100,26 +107,18 @@ export const seed = async (db: Database): Promise<void> => {
 		community_id?: number;
 		name: string;
 	}
-	const community_docs: Community_Doc[] = await sql`
+	const community_docs = await sql<Community_Doc[]>`
 		select community_id, name from communities
 	`;
 	console.log('[db] community_docs', community_docs);
 
-	interface Account_Community_Doc {
-		account_id: number;
-		community_id: number;
-	}
-	const account_community_docs: Account_Community_Doc[] = await sql`
+	const account_community_docs = await sql<Account_Community[]>`
 		select account_id,community_id from account_communities
 	`;
 	console.log('[db] account_community_docs', account_community_docs);
 
-	interface Community_Spaces_Doc {
-		community_id: number;
-		space_id: number;
-	}
-	const community_spaces_docs: Community_Spaces_Doc[] = await sql`
-	select space_id,community_id from community_spaces
+	const community_spaces_docs = await sql<Community_Spaces[]>`
+		select space_id,community_id from community_spaces
 	`;
 	console.log('[db] community_spaces_docs', community_spaces_docs);
 
@@ -188,7 +187,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.account_id === 1 && d.community_id === 1,
 	);
 	if (!account_community1_doc) {
-		const account_community1: Account_Community_Doc = {account_id: 1, community_id: 1};
+		const account_community1: Account_Community_Params = {account_id: 1, community_id: 1};
 		const account_community1_result = await sql`
 			insert into account_communities ${sql(account_community1, 'account_id', 'community_id')}
 		`;
@@ -199,7 +198,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.account_id === 1 && d.community_id === 2,
 	);
 	if (!account_community2_doc) {
-		const account_community2: Account_Community_Doc = {account_id: 1, community_id: 2};
+		const account_community2: Account_Community_Params = {account_id: 1, community_id: 2};
 		const account_community2_result = await sql`
 			insert into account_communities ${sql(account_community2, 'account_id', 'community_id')}
 		`;
@@ -210,7 +209,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.account_id === 2 && d.community_id === 1,
 	);
 	if (!account_community3_doc) {
-		const account_community3: Account_Community_Doc = {account_id: 2, community_id: 1};
+		const account_community3: Account_Community_Params = {account_id: 2, community_id: 1};
 		const account_community3_result = await sql`
 			insert into account_communities ${sql(account_community3, 'account_id', 'community_id')}
 		`;
@@ -221,7 +220,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.account_id === 2 && d.community_id === 3,
 	);
 	if (!account_community4_doc) {
-		const account_community4: Account_Community_Doc = {account_id: 2, community_id: 3};
+		const account_community4: Account_Community_Params = {account_id: 2, community_id: 3};
 		const account_community4_result = await sql`
 			insert into account_communities ${sql(account_community4, 'account_id', 'community_id')}
 		`;
@@ -230,7 +229,8 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const space1 = space_docs.find((d) => d.space_id === 1);
 	if (!space1) {
-		const space1: Space = {
+		const space1: Space_Params = {
+			name: 'general',
 			url: '/general',
 			media_type: 'application/json',
 			content: '{"type": "Chat_Room", "props": {"data": "/general/posts"}}',
@@ -243,7 +243,8 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const space2 = space_docs.find((d) => d.space_id === 2);
 	if (!space2) {
-		const space2: Space = {
+		const space2: Space_Params = {
+			name: 'general/cute',
 			url: '/general/cute',
 			media_type: 'application/json',
 			content: '{"type": "Chat_Room", "props": {"data": "/general/cute/posts"}}',
@@ -256,7 +257,8 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const space3 = space_docs.find((d) => d.space_id === 3);
 	if (!space3) {
-		const space3: Space = {
+		const space3: Space_Params = {
+			name: 'dm/a',
 			url: '/dm/a',
 			media_type: 'application/json',
 			content: '{"type": "DirectMessage", "props": {"data": "/dm/a/posts"}}',
@@ -271,7 +273,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.space_id === 1 && d.community_id === 1,
 	);
 	if (!community_spaces1_doc) {
-		const community_spaces1: Community_Spaces_Doc = {space_id: 1, community_id: 1};
+		const community_spaces1: Community_Spaces_Params = {space_id: 1, community_id: 1};
 		const community_spaces1_result = await sql`
 			insert into community_spaces ${sql(community_spaces1, 'space_id', 'community_id')}
 		`;
@@ -282,7 +284,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.space_id === 2 && d.community_id === 1,
 	);
 	if (!community_spaces2_doc) {
-		const community_spaces2: Community_Spaces_Doc = {space_id: 2, community_id: 1};
+		const community_spaces2: Community_Spaces_Params = {space_id: 2, community_id: 1};
 		const community_spaces2_result = await sql`
 			insert into community_spaces ${sql(community_spaces2, 'space_id', 'community_id')}
 		`;
@@ -293,7 +295,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.space_id === 3 && d.community_id === 1,
 	);
 	if (!community_spaces3_doc) {
-		const community_spaces3: Community_Spaces_Doc = {space_id: 3, community_id: 1};
+		const community_spaces3: Community_Spaces_Params = {space_id: 3, community_id: 1};
 		const community_spaces3_result = await sql`
 			insert into community_spaces ${sql(community_spaces3, 'space_id', 'community_id')}
 		`;

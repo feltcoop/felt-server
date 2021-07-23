@@ -86,7 +86,6 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store): Api_Store => {
 			if (!content) return {ok: false, reason: 'invalid content'};
 			//Needs to collect name
 			const doc: Space_Params = {
-				community_id,
 				name,
 				url,
 				media_type,

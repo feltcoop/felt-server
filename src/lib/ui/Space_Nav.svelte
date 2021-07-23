@@ -64,7 +64,9 @@
 		<button
 			class:selected={space === selected_space}
 			disabled={space === selected_space}
-			on:click={() => api.select_space(space.space_id, space.community_id)}>{space.url}</button
+			on:click={() => (
+				console.log('space', space), api.select_space(space.space_id, community.community_id)
+			)}>{space.url}</button
 		>
 	{/each}
 </div>
