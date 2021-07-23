@@ -40,10 +40,10 @@
 	.header {
 		display: flex;
 		flex-direction: column;
-		align-items: stretch;
+		align-items: center;
 		width: 100%;
 	}
-	.header > * {
+	.header :global(button) {
 		width: 100%;
 	}
 

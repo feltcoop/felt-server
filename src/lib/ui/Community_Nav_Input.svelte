@@ -25,11 +25,11 @@
 </script>
 
 <Modal>
-	<span slot="trigger" let:open>
+	<div slot="trigger" let:open>
 		<button aria-label="Create Community" type="button" class="button-emoji" on:click={() => open()}
 			>➕</button
 		>
-	</span>
+	</div>
 	<div slot="content" let:close>
 		<h1>Create a new community</h1>
 		<p>

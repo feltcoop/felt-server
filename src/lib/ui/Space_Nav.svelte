@@ -37,11 +37,11 @@
 <div class="space-nav">
 	<div class="header">
 		<Modal>
-			<span slot="trigger" let:open>
+			<div slot="trigger" let:open>
 				<button aria-label="Create Space" type="button" class="button-emoji" on:click={() => open()}
 					>➕</button
 				>
-			</span>
+			</div>
 			<div slot="content" let:close>
 				<h1>Create a new space</h1>
 				<p>
@@ -69,7 +69,7 @@
 <style>
 	.space-nav {
 		height: 100%;
-		width: 15rem;
+		flex: 1;
 		border-top: var(--border);
 		display: flex;
 		flex-direction: column;

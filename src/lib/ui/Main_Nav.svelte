@@ -6,11 +6,9 @@
 	import {get_socket} from '$lib/ui/socket';
 	import {get_data} from '$lib/ui/data';
 	import {get_ui} from '$lib/ui/ui';
-	import {get_api} from '$lib/ui/api';
 
 	const data = get_data();
 	const ui = get_ui();
-	const api = get_api();
 
 	$: members = $data.members;
 	$: communities = $data.communities;
