@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type {Result} from '@feltcoop/felt';
+
 	import type {Space} from '$lib/spaces/space.js';
 	import Modal from '$lib/ui/Modal.svelte';
 	import type {Community} from '$lib/communities/community.js';
@@ -7,33 +9,30 @@
 	export let spaces: Space[];
 	export let selected_space: Space;
 	export let select_space: (community: Space) => void;
+	export let create_space: (
+		url: string,
+		media_type: string,
+		content: string,
+	) => Promise<Result<{value: {space: Space}}, {reason: string}>>;
 
 	let new_name = '';
 
 	const on_keydown = async (e: KeyboardEvent, close_modal: () => void) => {
 		if (e.key === 'Enter') {
-			await create_space();
+			await create();
 			close_modal();
 		}
 	};
 
-	const create_space = async () => {
+	const create = async () => {
 		if (!new_name) return;
-		//Needs to collect url(i.e. name for now), type (currently default json/application), & content (hardcoded JSON struct)
+		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
 		const url = `/${new_name}`;
-		const doc = {
+		await create_space(
 			url,
-			media_type: 'json/application',
-			content: `{"type": "ChatRoom", "props": {"data": "${url}/posts"}}`,
-		};
-		const res = await fetch(`/api/v1/communities/${community.community_id}/spaces`, {
-			method: 'POST',
-			headers: {'Content-Type': 'application/json'},
-			body: JSON.stringify(doc),
-		});
-		const data = await res.json();
-		// TODO call `data.add_space`
-		spaces = spaces.concat(data.space);
+			'application/json',
+			`{"type": "ChatRoom", "props": {"data": "${url}/posts"}}`,
+		);
 		new_name = '';
 	};
 </script>

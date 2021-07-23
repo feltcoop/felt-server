@@ -9,6 +9,7 @@
 	import Main_Nav from '$lib/ui/Main_Nav.svelte';
 	import {set_data} from '$lib/ui/data';
 	import {set_ui} from '$lib/ui/ui';
+	import {set_api, to_api_store} from '$lib/ui/api';
 
 	const devmode = set_devmode();
 	set_socket();
@@ -16,6 +17,9 @@
 	$: data.set_session($session);
 	const ui = set_ui();
 	$: ui.set_data($data);
+	const api = set_api(to_api_store(ui, data));
+	$: api.set_ui($data);
+	$: api.set_data($data);
 
 	console.log('$data', $data);
 </script>

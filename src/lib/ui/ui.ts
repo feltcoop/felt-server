@@ -1,4 +1,4 @@
-import {writable} from 'svelte/store';
+import {Readable, writable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 import type {Data_State} from '$lib/ui/data';
 
@@ -17,8 +17,12 @@ export interface Ui_State {
 	selected_space_id_by_community: {[key: number]: number | null};
 }
 
-// TODO is this the preferred type definition?
-export type Ui_Store = ReturnType<typeof to_ui_store>;
+export interface Ui_Store {
+	subscribe: Readable<Ui_State>['subscribe'];
+	set_data: (data: Data_State | null) => void;
+	select_community: (community_id: number | null) => void;
+	select_space: (community_id: number, space_id: number | null) => void;
+}
 
 export const to_ui_store = () => {
 	const {subscribe, update} = writable<Ui_State>(to_default_ui_state());

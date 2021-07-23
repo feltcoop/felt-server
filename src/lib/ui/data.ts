@@ -3,8 +3,9 @@ import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 import type {Client_Account, Client_Session} from '$lib/session/client_session';
-import type {Community} from '$lib/communities/community';
+import type {Community, Community_Client_Doc} from '$lib/communities/community';
 import type {Member} from '$lib/members/member';
+import type {Space} from '$lib/spaces/space';
 
 const KEY = Symbol();
 
@@ -18,14 +19,17 @@ export const set_data = (session: Client_Session): Data_Store => {
 
 export interface Data_State {
 	account: Client_Account;
-	communities: Community[];
-	friends: Member[];
+	communities: Community_Client_Doc[];
+	spaces: Space[];
+	members: Member[];
 }
 
 export interface Data_Store {
 	subscribe: Readable<Data_State>['subscribe'];
 	set_session: (session: Client_Session) => void;
 	add_community: (community: Community) => void;
+	add_space: (space: Space) => void;
+	add_member: (member: Member) => void;
 }
 
 // TODO probably don't want to pass `initial_session` because it'll never be GC'd
@@ -41,6 +45,16 @@ export const to_data_store = (initial_session: Client_Session): Data_Store => {
 			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.add_community]', community);
 			update(($data) => ({...$data, communities: $data.communities.concat(community)}));
+		},
+		add_space: (space: Space): void => {
+			// TODO instead of this, probably want to set more granularly with nested stores
+			console.log('[data.add_space]', space);
+			update(($data) => ({...$data, spaces: $data.spaces.concat(space)}));
+		},
+		add_member: (member: Member): void => {
+			// TODO instead of this, probably want to set more granularly with nested stores
+			console.log('[data.add_member]', member);
+			update(($data) => ({...$data, members: $data.members.concat(member)}));
 		},
 	};
 	return store;
@@ -58,7 +72,13 @@ const to_default_data = (session: Client_Session): Data_State => {
 				);
 				return community;
 			}),
-			friends: session.friends,
+			spaces: session.communities.flatMap((community) => {
+				community.members_by_id = new Map(
+					community.members.map((member) => [member.account_id, member]),
+				);
+				return community.spaces;
+			}),
+			members: session.members,
 		};
 	}
 };
