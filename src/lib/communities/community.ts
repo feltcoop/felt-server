@@ -30,6 +30,7 @@ export interface Community_Spaces {
 	community_id: number;
 	space_id: number;
 }
+
 export type Community_Spaces_Params = Community_Spaces;
 
 export interface Account_Community {

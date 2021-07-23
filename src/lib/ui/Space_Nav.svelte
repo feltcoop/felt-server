@@ -38,9 +38,14 @@
 	<div class="header">
 		<Modal>
 			<div slot="trigger" let:open>
-				<button aria-label="Create Space" type="button" class="button-emoji" on:click={() => open()}
-					>➕</button
+				<button
+					aria-label="Create Space"
+					type="button"
+					class="button-emoji"
+					on:click={() => open()}
 				>
+					➕
+				</button>
 			</div>
 			<div slot="content" let:close>
 				<h1>Create a new space</h1>
@@ -59,10 +64,10 @@
 		<button
 			class:selected={space === selected_space}
 			disabled={space === selected_space}
-			on:click={() => (
-				console.log('space', space), api.select_space(space.space_id, community.community_id)
-			)}>{space.url}</button
+			on:click={() => api.select_space(community.community_id, space.space_id)}
 		>
+			{space.url}
+		</button>
 	{/each}
 </div>
 
