@@ -15,18 +15,14 @@
 {#if opened}
 	<div class="modal">
 		<div class="backdrop" on:click={close} />
-		<div class="container">
-			<slot name="header" {open} {close} />
-			<div class="content">
-				<slot name="content" {open} {close} />
-			</div>
-			<slot name="footer" {open} {close} />
+		<div class="content">
+			<slot name="content" {open} {close} />
 		</div>
 	</div>
 {/if}
 
 <style>
-	div.modal {
+	.modal {
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -37,14 +33,14 @@
 		justify-content: center;
 		align-items: center;
 	}
-	div.backdrop {
+	.backdrop {
 		position: absolute;
 		z-index: 0;
 		width: 100%;
 		height: 100%;
 		background-color: rgba(0, 0, 0, 0.4);
 	}
-	div.container {
+	.content {
 		position: relative;
 		margin: auto;
 		max-width: calc(100% - 40px);
@@ -54,9 +50,6 @@
 		overflow: hidden;
 		display: flex;
 		flex-direction: column;
-	}
-	div.content {
-		flex: 1;
 		overflow: auto;
 	}
 </style>

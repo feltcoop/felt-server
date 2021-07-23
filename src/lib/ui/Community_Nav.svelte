@@ -16,13 +16,13 @@
 		<Community_Nav_Input {members} {selected_community} />
 	</div>
 	{#each communities as community (community.community_id)}
+		<!-- TODO make these links <a>...</a> -->
 		<button
-			type="button"
 			class:selected={community === selected_community}
 			disabled={community === selected_community}
 			on:click={() => api.select_community(community.community_id)}
 		>
-			{community.name}
+			{community.name.substring(0, 4)}
 		</button>
 	{/each}
 </div>
@@ -30,14 +30,25 @@
 <style>
 	.community-nav {
 		height: 100%;
-		width: 8.5rem;
 		border-top: var(--border);
 		border-right: var(--border);
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 	}
 
 	.header {
 		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		width: 100%;
+	}
+	.header > * {
+		width: 100%;
+	}
+
+	button {
+		width: 6.4rem;
+		height: 6.4rem;
 	}
 </style>

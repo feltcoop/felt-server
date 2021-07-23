@@ -36,24 +36,19 @@
 
 <div class="space-nav">
 	<div class="header">
-		<Modal let:open={open_modal} let:close={close_modal}>
-			<span slot="trigger">
-				<button
-					aria-label="Create Space"
-					type="button"
-					class="button-emoji"
-					on:click={() => open_modal()}>➕</button
+		<Modal>
+			<span slot="trigger" let:open>
+				<button aria-label="Create Space" type="button" class="button-emoji" on:click={() => open()}
+					>➕</button
 				>
 			</span>
-			<div slot="header">
+			<div slot="content" let:close>
 				<h1>Create a new space</h1>
-			</div>
-			<div slot="content">
 				<p>
 					<input
 						type="text"
 						placeholder="> name"
-						on:keydown={(e) => on_keydown(e, close_modal)}
+						on:keydown={(e) => on_keydown(e, close)}
 						bind:value={new_name}
 					/>
 				</p>

@@ -61,11 +61,13 @@
 		height: 100%;
 		display: flex;
 		flex-direction: column;
-		border: var(--border);
+		border-left: var(--border);
+		border-right: var(--border);
 	}
 	.explorer {
 		display: flex;
 		flex: 1;
+		width: 32rem;
 		max-width: 32rem;
 	}
 </style>
