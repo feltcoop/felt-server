@@ -79,4 +79,10 @@
 		flex-direction: column;
 		justify-content: flex-end;
 	}
+	input {
+		border-left: none;
+		border-right: none;
+		border-bottom: none;
+		border-radius: 0;
+	}
 </style>
