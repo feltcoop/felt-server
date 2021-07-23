@@ -3,9 +3,11 @@ import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 import type {Client_Account, Client_Session} from '$lib/session/client_session';
-import type {Community, Community_Client_Doc} from '$lib/communities/community';
+import type {Community, Community_Model} from '$lib/communities/community';
 import type {Member} from '$lib/members/member';
 import type {Space} from '$lib/spaces/space';
+
+// TODO name? maybe `db`?
 
 const KEY = Symbol();
 
@@ -19,7 +21,7 @@ export const set_data = (session: Client_Session): Data_Store => {
 
 export interface Data_State {
 	account: Client_Account;
-	communities: Community_Client_Doc[];
+	communities: Community_Model[];
 	spaces: Space[];
 	members: Member[];
 }

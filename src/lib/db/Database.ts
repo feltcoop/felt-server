@@ -83,15 +83,17 @@ export class Database {
 				`;
 				return {ok: true, value: data};
 			},
-			// TODO: refactor this code to return 'Member'
-			create: async (account_id: number, community_id: string): Promise<Result<{value: any}>> => {
-				const data = await this.sql`
+			create: async (
+				account_id: number,
+				community_id: number,
+			): Promise<Result<{value: Member}>> => {
+				const data = await this.sql<Member[]>`
 					INSERT INTO account_communities (account_id, community_id) VALUES (
 						${account_id},${community_id}
 					) RETURNING *			
 				`;
 				console.log('[db] created account_communities', data);
-				return {ok: true, value: data};
+				return {ok: true, value: data[0]};
 			},
 		},
 		communities: {

@@ -1,7 +1,7 @@
 import send from '@polka/send-type';
 
 import type {Api_Server, Middleware} from '$lib/server/Api_Server.js';
-import type {Member_Api_Doc} from '$lib/members/member';
+import type {Member_Params} from '$lib/members/member';
 
 export const to_communities_middleware = (server: Api_Server): Middleware => {
 	const {db} = server;
@@ -102,11 +102,11 @@ export const to_create_member_middleware = (server: Api_Server): Middleware => {
 			req.body.account_id,
 		);
 
-		const {params} = req as typeof req & {params: Member_Api_Doc};
+		const {params: member} = req as typeof req & {params: Member_Params}; // TODO move this type
 
 		const create_member_result = await db.repos.members.create(
-			req.body.account_id,
-			params.community_id,
+			member.account_id,
+			member.community_id,
 		);
 		if (create_member_result.ok) {
 			return send(res, 200, {}); // TODO API types

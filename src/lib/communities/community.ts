@@ -8,16 +8,16 @@ export interface Community {
 	members: Member[];
 }
 
-export interface Community_Api_Doc {
+export interface Community_Params {
 	name: string;
 	spaces: Space[];
 	members: Member[];
 }
 
-export interface Community_Client_Doc {
+export interface Community_Model {
 	community_id: number;
 	name: string;
 	spaces: Space[];
 	members: Member[];
-	members_by_id?: Map<number, Member>;
+	members_by_id: Map<number, Member>;
 }

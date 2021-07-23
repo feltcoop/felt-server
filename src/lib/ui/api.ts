@@ -6,7 +6,7 @@ import type {Result} from '@feltcoop/felt';
 import type {Data_Store} from '$lib/ui/data';
 import type {Ui_Store} from '$lib/ui/ui';
 import type {Community} from '$lib/communities/community';
-import type {Space, Space_Client_Doc} from '$lib/spaces/space';
+import type {Space, Space_Model} from '$lib/spaces/space';
 import type {Member} from '$lib/members/member';
 
 const KEY = Symbol();
@@ -80,7 +80,7 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store): Api_Store => {
 			if (!media_type) return {ok: false, reason: 'invalid meta_type'};
 			if (!content) return {ok: false, reason: 'invalid content'};
 			//Needs to collect name
-			const doc: Space_Client_Doc = {
+			const doc: Space_Model = {
 				community_id,
 				name,
 				url,
