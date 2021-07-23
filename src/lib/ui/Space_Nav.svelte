@@ -48,12 +48,11 @@
 			<div slot="header">
 				<h1>Create a new space</h1>
 			</div>
-
 			<div slot="content">
 				<p>
 					<input
 						type="text"
-						placeholder="> chat"
+						placeholder="> name"
 						on:keydown={(e) => on_keydown(e, close_modal)}
 						bind:value={new_name}
 					/>

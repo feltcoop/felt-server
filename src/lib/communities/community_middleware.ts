@@ -96,13 +96,9 @@ export const to_create_member_middleware = (server: Api_Server): Middleware => {
 			console.log('[community_middleware] no account to search for communities');
 			return send(res, 401, {reason: 'not logged in'});
 		}
-		console.log(
-			'[community_middleware] creating member',
-			req.params.community_id,
-			req.body.account_id,
-		);
 
-		const {params: member} = req as typeof req & {params: Member_Params}; // TODO move this type
+		const member: Member_Params = req.body; // TODO move this type
+		console.log('[community_middleware] creating member', member);
 
 		const create_member_result = await db.repos.members.create(
 			member.account_id,

@@ -8,7 +8,7 @@ import type {Ui_State, Ui_Store} from '$lib/ui/ui';
 import type {Community, Community_Model, Community_Params} from '$lib/communities/community';
 import {to_community_model} from '$lib/communities/community';
 import type {Space, Space_Params} from '$lib/spaces/space';
-import type {Member} from '$lib/members/member';
+import type {Member, Member_Params} from '$lib/members/member';
 
 const KEY = Symbol();
 
@@ -42,7 +42,8 @@ export interface Api_Store {
 }
 
 export const to_api_store = (ui: Ui_Store, data: Data_Store): Api_Store => {
-	const {subscribe, update} = writable<Api_State>(to_default_api_state());
+	// TODO set the `api` state with progress of remote calls
+	const {subscribe} = writable<Api_State>(to_default_api_state());
 
 	let $ui: Ui_State;
 	let $data: Data_State;
@@ -109,17 +110,19 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store): Api_Store => {
 		// because does not give the potential member an opportunity to deny an invite
 		invite_member: async (
 			community_id: number,
-			account_id: Member, // TODO `persona_id`
+			account_id: number, // TODO `persona_id`
 		): Promise<Result<{value: {member: Member}}, {reason: string}>> => {
 			// TODO proper automated validation
 			if (community_id == null) return {ok: false, reason: 'invalid url'};
 			if (!account_id) return {ok: false, reason: 'invalid member'};
 
-			const doc = {
+			const doc: Member_Params = {
 				account_id,
+				community_id,
 			};
 
-			const res = await fetch(`/api/v1/communities/${community_id}/members`, {
+			// TODO change this input, consider `/api/v1/invitations`
+			const res = await fetch(`/api/v1/members`, {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify(doc),
