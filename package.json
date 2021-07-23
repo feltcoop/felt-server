@@ -33,7 +33,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "@feltcoop/felt": "^0.5.1",
+    "@feltcoop/felt": "^0.5.2",
     "@polka/send-type": "^0.5.2",
     "@types/ws": "^7.4.4",
     "body-parser": "^1.19.0",

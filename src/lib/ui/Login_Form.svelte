@@ -66,34 +66,54 @@
 	};
 </script>
 
-<input
-	type="text"
-	bind:this={account_name_el}
-	bind:value={account_name}
-	on:keypress={on_keypress}
-	{disabled}
-	placeholder="account name"
-/>
-<input
-	type="password"
-	bind:this={password_el}
-	bind:value={password}
-	on:keypress={on_keypress}
-	{disabled}
-	placeholder="password"
-/>
-<button type="button" bind:this={button_el} on:click={submit_name} {disabled}>
-	{#if submitting}
-		<Pending_Animation />
-	{:else}log in{/if}
-</button>
-{#if error_message}
-	<div class="error">{error_message}</div>
-{/if}
+<div class="login-wrapper">
+	<img src="/favicon.png" />
+	<form>
+		<input
+			type="text"
+			bind:this={account_name_el}
+			bind:value={account_name}
+			on:keypress={on_keypress}
+			{disabled}
+			placeholder="account name"
+		/>
+		<input
+			type="password"
+			bind:this={password_el}
+			bind:value={password}
+			on:keypress={on_keypress}
+			{disabled}
+			placeholder="password"
+		/>
+		<button type="button" bind:this={button_el} on:click={submit_name} {disabled}>
+			{#if submitting}
+				<Pending_Animation />
+			{:else}log in{/if}
+		</button>
+		{#if error_message}
+			<div class="error">{error_message}</div>
+		{/if}
+	</form>
+</div>
 
 <style>
+	.login-wrapper {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+	}
 	.error {
 		font-weight: bold;
 		color: rgb(73, 84, 153);
+	}
+
+	form {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 	}
 </style>

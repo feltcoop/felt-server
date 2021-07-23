@@ -39,23 +39,32 @@
 	};
 </script>
 
-<!-- TODO well this is weird -->
-{#if account && !$session.guest}
-	{account.name}
-{/if}
-<button type="button" on:click={submit_name} {disabled}>
-	{#if submitting}
-		<Pending_Animation />
-	{:else}log out{/if}
-</button>
-{#if error_message}
-	<div>
-		<p class="error">{error_message}</p>
-	</div>
-{/if}
+<form>
+	<!-- TODO well this is weird -->
+	{#if account && !$session.guest}
+		{account.name}
+	{/if}
+	<button type="button" on:click={submit_name} {disabled}>
+		{#if submitting}
+			<Pending_Animation />
+		{:else}log out{/if}
+	</button>
+	{#if error_message}
+		<div>
+			<p class="error">{error_message}</p>
+		</div>
+	{/if}
+</form>
 
 <style>
 	/*  TODO global classes? */
+	form {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
 	.error {
 		font-weight: bold;
 		color: rgb(73, 84, 153);
