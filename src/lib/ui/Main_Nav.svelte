@@ -31,9 +31,8 @@
 	const socket = get_socket();
 </script>
 
-<Socket_Connection {socket} />
-
 <div class="main-nav">
+	<Socket_Connection {socket} />
 	<Account_Form />
 	<div class="explorer">
 		{#if selected_community}
