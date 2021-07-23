@@ -1,19 +1,14 @@
 <script lang="ts">
-	import type {Result} from '@feltcoop/felt';
-
 	import type {Space} from '$lib/spaces/space.js';
 	import Modal from '$lib/ui/Modal.svelte';
-	import type {Community} from '$lib/communities/community.js';
+	import type {Community_Model} from '$lib/communities/community.js';
+	import {get_api} from '$lib/ui/api';
 
-	export let community: Community;
+	const api = get_api();
+
+	export let community: Community_Model;
 	export let spaces: Space[];
 	export let selected_space: Space;
-	export let select_space: (community: Space) => void;
-	export let create_space: (
-		url: string,
-		media_type: string,
-		content: string,
-	) => Promise<Result<{value: {space: Space}}, {reason: string}>>;
 
 	let new_name = '';
 
@@ -28,10 +23,12 @@
 		if (!new_name) return;
 		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
 		const url = `/${new_name}`;
-		await create_space(
+		await api.create_space(
+			community.community_id,
+			new_name,
 			url,
 			'application/json',
-			`{"type": "ChatRoom", "props": {"data": "${url}/posts"}}`,
+			`{"type": "Chat_Room", "props": {"data": "${url}/posts"}}`,
 		);
 		new_name = '';
 	};
@@ -68,7 +65,7 @@
 		<button
 			class:selected={space === selected_space}
 			disabled={space === selected_space}
-			on:click={() => select_space(space)}>{space.url}</button
+			on:click={() => api.select_space(space.space_id, space.community_id)}>{space.url}</button
 		>
 	{/each}
 </div>

@@ -3,7 +3,7 @@ import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 import type {Client_Account, Client_Session} from '$lib/session/client_session';
-import type {Community, Community_Model} from '$lib/communities/community';
+import {Community_Model, to_community_model} from '$lib/communities/community';
 import type {Member} from '$lib/members/member';
 import type {Space} from '$lib/spaces/space';
 
@@ -28,8 +28,8 @@ export interface Data_State {
 
 export interface Data_Store {
 	subscribe: Readable<Data_State>['subscribe'];
-	set_session: (session: Client_Session) => void;
-	add_community: (community: Community) => void;
+	update_session: (session: Client_Session) => void;
+	add_community: (community: Community_Model) => void;
 	add_space: (space: Space) => void;
 	add_member: (member: Member) => void;
 }
@@ -39,21 +39,21 @@ export const to_data_store = (initial_session: Client_Session): Data_Store => {
 	const {subscribe, set, update} = writable(to_default_data(initial_session));
 	const store: Data_Store = {
 		subscribe,
-		set_session: (session: Client_Session): void => {
-			console.log('[data.set_session]', session);
+		update_session: (session) => {
+			console.log('[data.update_session]', session);
 			set(to_default_data(session));
 		},
-		add_community: (community: Community): void => {
+		add_community: (community) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.add_community]', community);
 			update(($data) => ({...$data, communities: $data.communities.concat(community)}));
 		},
-		add_space: (space: Space): void => {
+		add_space: (space) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.add_space]', space);
 			update(($data) => ({...$data, spaces: $data.spaces.concat(space)}));
 		},
-		add_member: (member: Member): void => {
+		add_member: (member) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.add_member]', member);
 			update(($data) => ({...$data, members: $data.members.concat(member)}));
@@ -68,18 +68,9 @@ const to_default_data = (session: Client_Session): Data_State => {
 	} else {
 		return {
 			account: session.account,
-			communities: session.communities.map((community) => {
-				community.members_by_id = new Map(
-					community.members.map((member) => [member.account_id, member]),
-				);
-				return community;
-			}),
-			spaces: session.communities.flatMap((community) => {
-				community.members_by_id = new Map(
-					community.members.map((member) => [member.account_id, member]),
-				);
-				return community.spaces;
-			}),
+			communities: session.communities.map((community) => to_community_model(community)),
+			// TODO session should already have a flat array of spaces
+			spaces: session.communities.flatMap((community) => community.spaces),
 			members: session.members,
 		};
 	}

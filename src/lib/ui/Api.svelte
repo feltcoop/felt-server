@@ -12,6 +12,7 @@
 		<li>
 			<!-- TODO linkify -->
 			{key}
+			<!-- TODO render types -->
 		</li>
 	{/each}
 </ul>

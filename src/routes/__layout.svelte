@@ -14,12 +14,10 @@
 	const devmode = set_devmode();
 	set_socket();
 	const data = set_data($session);
-	$: data.set_session($session);
+	$: data.update_session($session);
 	const ui = set_ui();
-	$: ui.set_data($data);
-	const api = set_api(to_api_store(ui, data));
-	$: api.set_ui($data);
-	$: api.set_data($data);
+	$: ui.update_data($data); // TODO this or make it an arg to `set_ui`?
+	set_api(to_api_store(ui, data));
 
 	console.log('$data', $data);
 </script>
@@ -31,6 +29,16 @@
 <div class="layout">
 	{#if !$session.guest}
 		<Main_Nav />
+		<!-- TODO consider higher order components instead of linking stores together like this,
+			continuing component-level composition:
+			<Ui>
+				<Data>
+					<Api>
+						<Main_Nav />
+					</Api>
+				</Data>
+			</Ui>
+		-->
 	{/if}
 	<slot />
 	<Devmode {devmode} />

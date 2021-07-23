@@ -39,20 +39,12 @@
 	<Account_Form />
 	<div class="explorer">
 		{#if selected_community}
-			<Community_Nav
-				{members}
-				{communities}
-				{selected_community}
-				{select_community}
-				{create_community}
-			/>
+			<Community_Nav {members} {communities} {selected_community} />
 			{#if selected_space}
 				<Space_Nav
 					community={selected_community}
 					spaces={selected_community.spaces}
 					{selected_space}
-					{select_space}
-					{create_space}
 				/>
 			{:else}
 				<code>[[TODO handle case where community has no spaces]]</code>

@@ -10,7 +10,7 @@ export interface Account_Session {
 	account: Client_Account;
 	communities: Community[];
 	//Stub for a Friends feature in future release, for now just returns all users in an instance
-	friends: Member[];
+	members: Member[];
 	guest?: false; // is only for types; this property doesn't exist at runtime
 }
 

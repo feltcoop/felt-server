@@ -211,7 +211,7 @@ const to_client_context = (req: Request): Client_Context => {
 		? {
 				account: req.account_session.account,
 				communities: req.account_session.communities,
-				friends: req.account_session.friends,
+				members: req.account_session.members,
 		  }
 		: {guest: true};
 	console.log(client_context);
@@ -221,7 +221,7 @@ export type Client_Context = Client_Account_Context | Client_Guest_Context;
 export interface Client_Account_Context {
 	account: Client_Account;
 	communities: Community[];
-	friends: Member[];
+	members: Member[];
 	guest?: false;
 }
 export interface Client_Guest_Context {

@@ -37,10 +37,10 @@ export class Database {
 				let communities: Community[] = unwrap(
 					await this.repos.communities.filter_by_account(account.account_id!),
 				);
-				let friends: Member[] = unwrap(await this.repos.members.get_all());
+				let members: Member[] = unwrap(await this.repos.members.get_all());
 				return {
 					ok: true,
-					value: {account, communities, friends},
+					value: {account, communities, members},
 				};
 			},
 		},
@@ -75,7 +75,7 @@ export class Database {
 			},
 		},
 		members: {
-			// TODO: this is a hack to stub out "friends" for inviting to a Community.
+			// TODO: this is a hack to stub out "members" for inviting to a Community.
 			//This should use a community_id to filter or something
 			get_all: async (): Promise<Result<{value: Member[]}, {reason: string}>> => {
 				const data = await this.sql<Member[]>`

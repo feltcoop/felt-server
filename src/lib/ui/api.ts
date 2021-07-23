@@ -3,10 +3,11 @@ import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 import type {Result} from '@feltcoop/felt';
 
-import type {Data_Store} from '$lib/ui/data';
-import type {Ui_Store} from '$lib/ui/ui';
-import type {Community} from '$lib/communities/community';
-import type {Space, Space_Model} from '$lib/spaces/space';
+import type {Data_State, Data_Store} from '$lib/ui/data';
+import type {Ui_State, Ui_Store} from '$lib/ui/ui';
+import type {Community, Community_Model, Community_Params} from '$lib/communities/community';
+import {to_community_model} from '$lib/communities/community';
+import type {Space, Space_Params} from '$lib/spaces/space';
 import type {Member} from '$lib/members/member';
 
 const KEY = Symbol();
@@ -26,7 +27,7 @@ export interface Api_Store {
 	select_space: (community_id: number, space: number | null) => void;
 	create_community: (
 		name: string,
-	) => Promise<Result<{value: {community: Community}}, {reason: string}>>;
+	) => Promise<Result<{value: {community: Community_Model}}, {reason: string}>>;
 	create_space: (
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
 		name: string,
@@ -43,31 +44,34 @@ export interface Api_Store {
 export const to_api_store = (ui: Ui_Store, data: Data_Store): Api_Store => {
 	const {subscribe, update} = writable<Api_State>(to_default_api_state());
 
+	let $ui: Ui_State;
+	let $data: Data_State;
+	ui.subscribe(($u) => ($ui = $u));
+	data.subscribe(($d) => ($data = $d));
+
 	const store: Api_Store = {
 		subscribe,
-		select_community: (community_id) => {
-			ui.select_community(community_id!);
-		},
-		select_space: (community_id, space_id) => {
-			ui.select_space(community_id, space_id);
-		},
+		// TODO these are just directly proxying
+		select_community: ui.select_community,
+		select_space: ui.select_space,
 		// TODO refactor this, maybe into `data` or `api`
 		create_community: async (name) => {
 			if (!name) return {ok: false, reason: 'invalid name'};
 			//Needs to collect name
-			const doc = {
+			const community_params: Community_Params = {
 				name,
 			};
 			const res = await fetch(`/api/v1/communities`, {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify(doc),
+				body: JSON.stringify(community_params),
 			});
 			try {
 				const result: {community: Community} = await res.json(); // TODO api types
 				console.log('create_community result', result);
-				data.add_community(result.community);
-				return {ok: true, value: result};
+				const community = to_community_model(result.community);
+				data.add_community(community);
+				return {ok: true, value: {community}};
 			} catch (err) {
 				return {ok: false, reason: err.message};
 			}
@@ -80,7 +84,7 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store): Api_Store => {
 			if (!media_type) return {ok: false, reason: 'invalid meta_type'};
 			if (!content) return {ok: false, reason: 'invalid content'};
 			//Needs to collect name
-			const doc: Space_Model = {
+			const doc: Space_Params = {
 				community_id,
 				name,
 				url,

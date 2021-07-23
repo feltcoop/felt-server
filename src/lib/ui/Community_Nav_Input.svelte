@@ -7,7 +7,6 @@
 	const api = get_api();
 
 	export let members: Member[];
-	export let communities: Community[];
 	export let selected_community: Community;
 
 	$: invitable_members = selected_community
@@ -72,7 +71,7 @@
 						class="button-join"
 						on:click={() => api.invite_member(selected_community.community_id, member.account_id)}
 					>
-						{member.name}
+						[[TODO persona name: {member.account_id}]]
 					</button>
 				</p>
 			{/each}

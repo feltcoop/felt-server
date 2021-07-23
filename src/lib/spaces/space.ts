@@ -2,19 +2,14 @@ export interface Space {
 	space_id: number;
 	community_id: number;
 	name: string;
+	url: string; // TODO should this be computed from the name/community? or is it more useful to cache with both the names of the space and community?
 	media_type: string; // TODO discuss
 	content: string; // TODO discuss
 }
 
-// TODO think about `Space_Server_Doc`, `Space_Db_Doc`,
-export interface Space_Model {
+export interface Space_Params {
 	community_id: number;
 	name: string;
-	media_type: string;
-	content: string;
-}
-
-export interface Space_Model {
 	url: string;
 	media_type: string;
 	content: string;

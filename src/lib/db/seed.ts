@@ -233,7 +233,7 @@ export const seed = async (db: Database): Promise<void> => {
 		const space1: Space = {
 			url: '/general',
 			media_type: 'application/json',
-			content: '{"type": "ChatRoom", "props": {"data": "/general/posts"}}',
+			content: '{"type": "Chat_Room", "props": {"data": "/general/posts"}}',
 		};
 		const space1_result = await sql`
 			insert into spaces ${sql(space1, 'url', 'media_type', 'content')}
@@ -246,7 +246,7 @@ export const seed = async (db: Database): Promise<void> => {
 		const space2: Space = {
 			url: '/general/cute',
 			media_type: 'application/json',
-			content: '{"type": "ChatRoom", "props": {"data": "/general/cute/posts"}}',
+			content: '{"type": "Chat_Room", "props": {"data": "/general/cute/posts"}}',
 		};
 		const space2_result = await sql`
 			insert into spaces ${sql(space2, 'url', 'media_type', 'content')}

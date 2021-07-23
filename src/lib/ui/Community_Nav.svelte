@@ -1,18 +1,20 @@
 <script lang="ts">
 	import type {Community} from '$lib/communities/community.js';
 	import type {Member} from '$lib/members/member.js';
-	import Community_Nav_Input from '$lib/Community_Nav_Input.svelte';
+	import Community_Nav_Input from '$lib/ui/Community_Nav_Input.svelte';
 	import {get_api} from '$lib/ui/api';
 
 	const api = get_api();
 
-	export let friends: Member[];
+	export let members: Member[];
 	export let communities: Community[];
 	export let selected_community: Community;
 </script>
 
 <div class="community-nav">
-	<div class="header"><Community_Nav_Input /></div>
+	<div class="header">
+		<Community_Nav_Input {members} {selected_community} />
+	</div>
 	{#each communities as community (community.community_id)}
 		<button
 			type="button"
@@ -26,10 +28,6 @@
 </div>
 
 <style>
-	.header {
-		display: flex;
-	}
-
 	.community-nav {
 		height: 100%;
 		width: 8.5rem;
@@ -37,5 +35,9 @@
 		border-right: var(--border);
 		display: flex;
 		flex-direction: column;
+	}
+
+	.header {
+		display: flex;
 	}
 </style>

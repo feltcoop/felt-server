@@ -19,7 +19,7 @@ export interface Ui_State {
 
 export interface Ui_Store {
 	subscribe: Readable<Ui_State>['subscribe'];
-	set_data: (data: Data_State | null) => void;
+	update_data: (data: Data_State | null) => void;
 	select_community: (community_id: number | null) => void;
 	select_space: (community_id: number, space_id: number | null) => void;
 }
@@ -29,12 +29,12 @@ export const to_ui_store = () => {
 
 	return {
 		subscribe,
-		set_data: (data: Data_State | null) => {
-			console.log('[ui.set_data] data', {data});
+		update_data: (data: Data_State | null) => {
+			console.log('[ui.update_data] data', {data});
 			update(($ui) => {
 				// TODO this needs to be rethought, it's just preserving the existing ui state
 				// when new data gets set, which happens when e.g. a new community is created --
-				// most likely `set_data` *should* wipe away UI state by default,
+				// most likely `update_data` *should* wipe away UI state by default,
 				// and should not be called when data changes, only when a new session's data is set,
 				// so the naming is misleading
 				if (data) {
