@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {Community} from '$lib/communities/community.js';
 	import Modal from '$lib/ui/Modal.svelte';
+	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import type {Member} from '$lib/members/member.js';
 	import {get_api} from '$lib/ui/api';
 
@@ -21,22 +22,28 @@
 			aria-label="Invite users to {community.name}"
 			type="button"
 			class="button-emoji"
-			on:click={() => open()}>✉️</button
+			on:click={() => open()}
 		>
+			✉️
+		</button>
 	</span>
 	<div slot="content">
-		<h1>Invite users to {community.name}</h1>
-		{#each invitable_members as member (member.account_id)}
-			<p>
-				<button
-					type="button"
-					class="button-join"
-					on:click={() => api.invite_member(community.community_id, member.account_id)}
-				>
-					[[TODO persona name: {member.account_id}]]
-				</button>
-			</p>
-		{/each}
+		<Markup>
+			<h1>Invite users to {community.name}</h1>
+			{#each invitable_members as member (member.account_id)}
+				<p>
+					<button
+						type="button"
+						class="button-join"
+						on:click={() => api.invite_member(community.community_id, member.account_id)}
+					>
+						[[TODO persona name: {member.account_id}]]
+					</button>
+				</p>
+			{:else}
+				<p>There's no one new to invite</p>
+			{/each}
+		</Markup>
 	</div>
 </Modal>
 

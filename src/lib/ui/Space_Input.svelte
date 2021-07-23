@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Modal from '$lib/ui/Modal.svelte';
+	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import type {Community_Model} from '$lib/communities/community.js';
 	import {get_api} from '$lib/ui/api';
 	import {autofocus} from '$lib/ui/actions';
@@ -39,16 +40,18 @@
 		</button>
 	</div>
 	<div slot="content" let:close>
-		<h1>Create a new space</h1>
-		<p>
-			<input
-				type="text"
-				placeholder="> name"
-				on:keydown={(e) => on_keydown(e, close)}
-				bind:value={new_name}
-				use:autofocus
-			/>
-		</p>
+		<Markup>
+			<h1>Create a new space</h1>
+			<p>
+				<input
+					type="text"
+					placeholder="> name"
+					on:keydown={(e) => on_keydown(e, close)}
+					bind:value={new_name}
+					use:autofocus
+				/>
+			</p>
+		</Markup>
 	</div>
 </Modal>
 

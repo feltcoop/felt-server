@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Modal from '$lib/ui/Modal.svelte';
+	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {get_api} from '$lib/ui/api';
 	import {autofocus} from '$lib/ui/actions';
 
@@ -19,21 +20,28 @@
 <!--TODO: Make an Icon_Button component in felt and use it here-->
 <Modal>
 	<div slot="trigger" let:open>
-		<button aria-label="Create Community" type="button" class="button-emoji" on:click={() => open()}
-			>➕</button
+		<button
+			aria-label="Create Community"
+			type="button"
+			class="button-emoji"
+			on:click={() => open()}
 		>
+			➕
+		</button>
 	</div>
 	<div slot="content" let:close>
-		<h1>Create a new community</h1>
-		<p>
-			<input
-				type="text"
-				placeholder="> name"
-				on:keydown={(e) => on_keydown(e, close)}
-				bind:value={new_name}
-				use:autofocus
-			/>
-		</p>
+		<Markup>
+			<h1>Create a new community</h1>
+			<p>
+				<input
+					type="text"
+					placeholder="> name"
+					on:keydown={(e) => on_keydown(e, close)}
+					bind:value={new_name}
+					use:autofocus
+				/>
+			</p>
+		</Markup>
 	</div>
 </Modal>
 
