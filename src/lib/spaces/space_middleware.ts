@@ -45,7 +45,10 @@ export const to_create_space_middleware = (server: Api_Server): Middleware => {
 
 		const space: Space_Params = req.body;
 
-		const create_space_result = await db.repos.spaces.insert(req.params.community_id, space);
+		const create_space_result = await db.repos.spaces.insert(
+			Number(req.params.community_id),
+			space,
+		);
 		if (create_space_result.ok) {
 			return send(res, 200, {space: create_space_result.value}); // TODO API types
 		} else {

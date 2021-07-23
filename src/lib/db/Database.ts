@@ -8,7 +8,6 @@ import type {Post} from '$lib/posts/post.js';
 import type {Member} from '$lib/members/member.js';
 import type {Account} from '$lib/vocab/account/account.js';
 import type {Postgres_Sql} from '$lib/db/postgres.js';
-import type {Community} from '../communities/community';
 
 export interface Options {
 	sql: Postgres_Sql;
@@ -56,7 +55,7 @@ export class Database {
 					) RETURNING *`;
 				console.log(data);
 				const account = data[0];
-				const result = await this.repos.communities.insert(name, account.account_id);
+				const result = await this.repos.communities.insert(name, account.account_id!);
 				if (!result.ok) {
 					return {ok: false, reason: 'Failed to create initial user community'};
 				}
