@@ -91,6 +91,7 @@ export const to_socket_store = () => {
 		subscribe,
 		disconnect: (code = 1000) => {
 			update(($socket) => {
+				// TODO this is buggy if `connect` is still pending
 				console.log('[socket] disconnect', code, $socket);
 				if (!$socket.connected || !$socket.ws || $socket.status !== 'success') {
 					throw Error('Socket cannot disconnect because it is not connected'); // TODO return errors instead?
