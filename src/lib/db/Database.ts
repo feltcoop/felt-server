@@ -49,13 +49,17 @@ export class Database {
 				name: string,
 				password: string,
 			): Promise<Result<{value: Account}, {reason: string}>> => {
-				const account = {name, password};
-				const data = await this.sql`
+				const data = await this.sql<Account[]>`
 					insert into accounts (name, password) values (
 						${name}, ${password}
-					)`;
+					) RETURNING *`;
 				console.log(data);
-				return {ok: true, value: account};
+				const account = data[0];
+				const result = await this.repos.communities.insert(name, account.account_id);
+				if (!result.ok) {
+					return {ok: false, reason: 'Failed to create initial user community'};
+				}
+				return {ok: true, value: data};
 			},
 			find_by_name: async (
 				name: string,
