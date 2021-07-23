@@ -16,7 +16,7 @@
 	const data = set_data($session);
 	$: data.update_session($session);
 	const ui = set_ui();
-	$: ui.update_data($data); // TODO this or make it an arg to `set_ui`?
+	$: ui.update_data($data); // TODO this or make it an arg to the ui store?
 	set_api(to_api_store(ui, data));
 
 	console.log('$data', $data);
