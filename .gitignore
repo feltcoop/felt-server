@@ -9,4 +9,4 @@ node_modules
 *.ignore.*
 ignore/
 *.pem
-deploy.tar
+felt_server*.tar

@@ -6,14 +6,36 @@ export const task: Task = {
 	summary: 'deploy felt server to prod',
 	dev: false,
 	run: async ({invoke_task}) => {
+		await invoke_task('clean');
 		await invoke_task('build');
-		//TODO - add more dynamic naming
-		await spawn('tar', ['-cvf', 'deploy.tar', DIST_DIRNAME, 'package.json', 'package-lock.json']);
+		//TODO - Investigate why this is only returning 3 digits when called.
+		let timestamp = Date.now();
+		let artifact_name = `felt_server_${timestamp}`;
+		console.log(`Working with artifact: ${artifact_name}`);
+		await spawn('tar', [
+			'-cvf',
+			`${artifact_name}.tar`,
+			DIST_DIRNAME,
+			'package.json',
+			'package-lock.json',
+		]);
 		//scp to server
 		//your ssh key will need to be added to linode account
-		await spawn('scp', ['deploy.tar', 'root@96.126.116.174:deploy.tar']);
+		//TODO extract IP to env var
+		//TODO create server account for running system
+		await spawn('scp', [`${artifact_name}.tar`, `root@96.126.116.174:${artifact_name}.tar`]);
 		//unpack & start server
-		await spawn('ssh', ['root@96.126.116.174', 'tar -xvf deploy.tar;', 'npm i;']);
+		await spawn('ssh', [
+			'root@96.126.116.174',
+			`mkdir deploy_${artifact_name};
+			mv ${artifact_name}.tar deploy_${artifact_name}/;
+			cd deploy_${artifact_name};,
+			tar -xvf ${artifact_name}.tar;
+			npm i;
+			ln -s ${artifact_name}/ deploy_felt_server_current;`,
+		]);
+
+		await invoke_task('restart_prod');
 	},
 };
 
