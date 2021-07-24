@@ -34,7 +34,6 @@
 	.space-nav {
 		height: 100%;
 		flex: 1;
-		border-top: var(--border);
 		display: flex;
 		flex-direction: column;
 	}

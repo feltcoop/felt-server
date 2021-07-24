@@ -12,6 +12,8 @@
 	$: members = $data.members;
 	$: communities = $data.communities;
 
+	let view: 'explorer' | 'account' = 'explorer';
+
 	// TODO speed up these lookups, probably with a map of all entities by id
 	$: selected_community =
 		communities.find((c) => c.community_id === $ui.selected_community_id) || null;
@@ -29,33 +31,68 @@
 </script>
 
 <div class="main-nav">
-	<Socket_Connection />
-	<Account_Form />
-	<div class="explorer">
-		{#if selected_community}
-			<Community_Nav {members} {communities} {selected_community} />
-			<Space_Nav
-				community={selected_community}
-				spaces={selected_community.spaces}
-				{selected_space}
-				{members}
-			/>
-		{/if}
+	<div class="header">
+		<button
+			on:click={() => (view = 'explorer')}
+			class:selected={view === 'explorer'}
+			disabled={view === 'explorer'}
+			class="explorer-button"
+		>
+			<img src="/favicon.png" alt="show explorer" />
+		</button>
+		<button
+			on:click={() => (view = 'account')}
+			class:selected={view === 'account'}
+			disabled={view === 'account'}
+			class="account-button"
+		>
+			{$data.account.name}
+		</button>
+		<Socket_Connection />
 	</div>
+	{#if view === 'explorer'}
+		<div class="explorer">
+			{#if selected_community}
+				<Community_Nav {members} {communities} {selected_community} />
+				<Space_Nav
+					community={selected_community}
+					spaces={selected_community.spaces}
+					{selected_space}
+					{members}
+				/>
+			{/if}
+		</div>
+	{:else if view === 'account'}
+		<Account_Form />
+	{/if}
 </div>
 
 <style>
 	.main-nav {
 		height: 100%;
+		width: var(--column_width_min);
+		overflow: auto;
 		display: flex;
 		flex-direction: column;
+		flex-shrink: 0;
 		border-left: var(--border);
 		border-right: var(--border);
+	}
+	.header {
+		display: flex;
+		height: calc(var(--navbar_size) + var(--border_width));
+		border-bottom: var(--border);
+		width: 100%;
 	}
 	.explorer {
 		display: flex;
 		flex: 1;
-		width: 32rem;
-		max-width: 32rem;
+	}
+	.explorer-button {
+		width: var(--navbar_size);
+		height: var(--navbar_size);
+	}
+	.account-button {
+		flex: 1;
 	}
 </style>

@@ -32,7 +32,6 @@
 <style>
 	.community-nav {
 		height: 100%;
-		border-top: var(--border);
 		border-right: var(--border);
 		display: flex;
 		flex-direction: column;

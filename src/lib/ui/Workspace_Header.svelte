@@ -11,7 +11,7 @@
 <style>
 	.workspace-header {
 		display: flex;
-		height: var(--top_bar_height);
+		height: var(--navbar_size);
 		width: 100%;
 	}
 </style>
