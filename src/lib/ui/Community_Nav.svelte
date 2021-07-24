@@ -2,7 +2,6 @@
 	import type {Community} from '$lib/communities/community.js';
 	import type {Member} from '$lib/members/member.js';
 	import Community_Input from '$lib/ui/Community_Input.svelte';
-	import Member_Input from '$lib/ui/Member_Input.svelte';
 	import {get_api} from '$lib/ui/api';
 
 	const api = get_api();
@@ -15,8 +14,6 @@
 <div class="community-nav">
 	<div class="header">
 		<Community_Input />
-		<!-- TODO probably move this to the area that's currently the space nav -->
-		<Member_Input {members} community={selected_community} />
 	</div>
 	<div>
 		{#each communities as community (community.community_id)}
@@ -53,7 +50,7 @@
 	}
 
 	button {
-		width: 6.4rem;
-		height: 6.4rem;
+		width: var(--icon_size);
+		height: var(--icon_size);
 	}
 </style>

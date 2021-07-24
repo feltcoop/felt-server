@@ -38,6 +38,7 @@
 				community={selected_community}
 				spaces={selected_community.spaces}
 				{selected_space}
+				{members}
 			/>
 		{/if}
 	</div>

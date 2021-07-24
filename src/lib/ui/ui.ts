@@ -15,6 +15,7 @@ export interface Ui_State {
 	// TODO should these be store references instead of ids?
 	selected_community_id: number | null;
 	selected_space_id_by_community: {[key: number]: number | null};
+	expand_main_nav: boolean;
 }
 
 export interface Ui_Store {
@@ -22,6 +23,7 @@ export interface Ui_Store {
 	update_data: (data: Data_State | null) => void;
 	select_community: (community_id: number | null) => void;
 	select_space: (community_id: number, space_id: number | null) => void;
+	toggle_main_nav: () => void;
 }
 
 export const to_ui_store = () => {
@@ -82,10 +84,14 @@ export const to_ui_store = () => {
 				};
 			});
 		},
+		toggle_main_nav: () => {
+			update(($ui) => ({...$ui, expand_main_nav: !$ui.expand_main_nav}));
+		},
 	};
 };
 
 const to_default_ui_state = (): Ui_State => ({
 	selected_community_id: null,
 	selected_space_id_by_community: {},
+	expand_main_nav: true,
 });

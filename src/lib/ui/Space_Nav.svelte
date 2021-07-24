@@ -3,17 +3,21 @@
 	import Space_Input from '$lib/ui/Space_Input.svelte';
 	import type {Community_Model} from '$lib/communities/community.js';
 	import {get_api} from '$lib/ui/api';
+	import Member_Input from '$lib/ui/Member_Input.svelte';
+	import type {Member} from '$lib/members/member.js';
 
 	const api = get_api();
 
 	export let community: Community_Model;
 	export let spaces: Space[];
 	export let selected_space: Space | null;
+	export let members: Member[];
 </script>
 
 <div class="space-nav">
 	<div class="header">
 		<Space_Input {community} />
+		<Member_Input {community} {members} />
 	</div>
 	{#each spaces as space (space.space_id)}
 		<button

@@ -3,6 +3,8 @@
 	--bg_hue: 24;
 	--bg_saturation: 40%;
 	--bg_lightness: 95%;
+	--icon_size: 6.4rem;
+	--top_bar_height: var(--spacing_xl6);
 }
 
 body {

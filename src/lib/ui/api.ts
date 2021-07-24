@@ -25,6 +25,7 @@ export interface Api_Store {
 	subscribe: Readable<Api_State>['subscribe'];
 	select_community: (community_id: number) => void;
 	select_space: (community_id: number, space: number | null) => void;
+	toggle_main_nav: () => void;
 	create_community: (
 		name: string,
 	) => Promise<Result<{value: {community: Community_Model}}, {reason: string}>>;
@@ -55,6 +56,7 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store): Api_Store => {
 		// TODO these are just directly proxying
 		select_community: ui.select_community,
 		select_space: ui.select_space,
+		toggle_main_nav: ui.toggle_main_nav,
 		// TODO refactor this, maybe into `data` or `api`
 		create_community: async (name) => {
 			if (!name) return {ok: false, reason: 'invalid name'};

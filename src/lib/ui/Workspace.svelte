@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Chat_Room from '$lib/ui/Chat_Room.svelte';
 	import Space_Input from '$lib/ui/Space_Input.svelte';
+	import Workspace_Header from '$lib/ui/Workspace_Header.svelte';
 	import {get_data} from '$lib/ui/data';
 	import {get_ui} from '$lib/ui/ui';
 
@@ -25,6 +26,7 @@
 </script>
 
 <div class="workspace">
+	<Workspace_Header />
 	{#if selected_space && members_by_id}
 		<Chat_Room space={selected_space} {members_by_id} />
 	{:else if selected_community}
@@ -37,5 +39,6 @@
 		height: 100%;
 		display: flex;
 		flex: 1;
+		flex-direction: column;
 	}
 </style>
