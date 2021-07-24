@@ -12,8 +12,6 @@
 	$: members = $data.members;
 	$: communities = $data.communities;
 
-	let view: 'explorer' | 'account' = 'explorer';
-
 	// TODO speed up these lookups, probably with a map of all entities by id
 	$: selected_community =
 		communities.find((c) => c.community_id === $ui.selected_community_id) || null;
@@ -33,24 +31,24 @@
 <div class="main-nav">
 	<div class="header">
 		<button
-			on:click={() => (view = 'explorer')}
-			class:selected={view === 'explorer'}
-			disabled={view === 'explorer'}
+			on:click={() => ui.set_main_nav_view('explorer')}
+			class:selected={$ui.main_nav_view === 'explorer'}
+			disabled={$ui.main_nav_view === 'explorer'}
 			class="explorer-button"
 		>
 			<img src="/favicon.png" alt="show explorer" />
 		</button>
 		<button
-			on:click={() => (view = 'account')}
-			class:selected={view === 'account'}
-			disabled={view === 'account'}
+			on:click={() => ui.set_main_nav_view('account')}
+			class:selected={$ui.main_nav_view === 'account'}
+			disabled={$ui.main_nav_view === 'account'}
 			class="account-button"
 		>
 			{$data.account.name}
 		</button>
 		<Socket_Connection />
 	</div>
-	{#if view === 'explorer'}
+	{#if $ui.main_nav_view === 'explorer'}
 		<div class="explorer">
 			{#if selected_community}
 				<Community_Nav {members} {communities} {selected_community} />
@@ -62,7 +60,7 @@
 				/>
 			{/if}
 		</div>
-	{:else if view === 'account'}
+	{:else if $ui.main_nav_view === 'account'}
 		<Account_Form />
 	{/if}
 </div>

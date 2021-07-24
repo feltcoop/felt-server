@@ -5,7 +5,7 @@
 </script>
 
 <div class="workspace-header">
-	<button on:click={() => api.toggle_main_nav()}>☰</button>
+	<button on:click={() => api.toggle_main_nav()}> ☰ </button>
 </div>
 
 <style>
@@ -13,5 +13,9 @@
 		display: flex;
 		height: var(--navbar_size);
 		width: 100%;
+	}
+	button {
+		width: var(--navbar_size);
+		height: var(--navbar_size);
 	}
 </style>

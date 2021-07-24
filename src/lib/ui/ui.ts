@@ -16,6 +16,7 @@ export interface Ui_State {
 	selected_community_id: number | null;
 	selected_space_id_by_community: {[key: number]: number | null};
 	expand_main_nav: boolean;
+	main_nav_view: Main_Nav_View;
 }
 
 export interface Ui_Store {
@@ -24,12 +25,13 @@ export interface Ui_Store {
 	select_community: (community_id: number | null) => void;
 	select_space: (community_id: number, space_id: number | null) => void;
 	toggle_main_nav: () => void;
+	set_main_nav_view: (main_nav_view: Main_Nav_View) => void;
 }
 
 export const to_ui_store = () => {
 	const {subscribe, update} = writable<Ui_State>(to_default_ui_state());
 
-	return {
+	const store: Ui_Store = {
 		subscribe,
 		update_data: (data: Data_State | null) => {
 			console.log('[ui.update_data] data', {data});
@@ -87,11 +89,18 @@ export const to_ui_store = () => {
 		toggle_main_nav: () => {
 			update(($ui) => ({...$ui, expand_main_nav: !$ui.expand_main_nav}));
 		},
+		set_main_nav_view: (main_nav_view) => {
+			update(($ui) => ({...$ui, main_nav_view}));
+		},
 	};
+	return store;
 };
 
 const to_default_ui_state = (): Ui_State => ({
 	selected_community_id: null,
 	selected_space_id_by_community: {},
 	expand_main_nav: true,
+	main_nav_view: 'explorer',
 });
+
+export type Main_Nav_View = 'explorer' | 'account';

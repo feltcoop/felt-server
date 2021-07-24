@@ -40,10 +40,6 @@
 </script>
 
 <form>
-	<!-- TODO well this is weird -->
-	{#if account && !$session.guest}
-		{account.name}
-	{/if}
 	<button type="button" on:click={submit_name} {disabled}>
 		{#if submitting}
 			<Pending_Animation />
