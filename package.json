@@ -14,7 +14,8 @@
     "test": "gro test",
     "dev-sveltekit": "svelte-kit dev",
     "dev-gro": "gro gro/dev",
-    "dev-server": "gro server"
+    "dev-server": "gro server",
+    "deploy": "gro deploy"
   },
   "type": "module",
   "engines": {

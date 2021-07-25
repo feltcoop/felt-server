@@ -8,12 +8,12 @@
 
 	const devmode = get_devmode();
 
-	let url = `ws://localhost:3002/ws`;
+	$: url = '';
 
 	onMount(() => {
 		const {hostname} = window.location;
 		console.log(hostname);
-		url = `ws://${hostname}:3002/ws`;
+		url = `wss://${hostname}:3002`;
 		console.log('created socket store', socket, url);
 		socket.connect(url); // TODO should be reactive to `url` changes
 		return () => {

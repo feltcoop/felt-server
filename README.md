@@ -54,7 +54,15 @@ PORT=3003 gro start
 
 ## deploy
 
-> TODO
+> Deploy will execute a build on the local machine, package the output into a tar, and attempt to deploy it to a remote instance:
+
+```bash
+npm run deploy
+# or
+gro deploy
+
+# TODO support custom deployment URLs
+```
 
 ## credits 🐢<sub>🐢</sub><sub><sub>🐢</sub></sub>
 

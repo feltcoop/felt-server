@@ -12,11 +12,15 @@ export class Websocket_Server {
 	async init(): Promise<void> {
 		// TODO I'm not sure about this way of creating the server externally and passing it to both polka and ws
 		// const wss = new ws.Server({server: this.server}); // port: 3000
-		const server = https.createServer({
-			cert: fs.readFileSync('/etc/letsencrypt/live/staging.felt.dev/fullchain.pem'),
-			key: fs.readFileSync('/etc/letsencrypt/live/staging.felt.dev/privkey.pem'),
-		});
-		const wss = new ws.Server({port: 3002, path: '/ws', server}); // TODO
+		const server = https
+			.createServer({
+				//cert: fs.readFileSync('/etc/letsencrypt/live/staging.felt.dev/fullchain.pem'),
+				//key: fs.readFileSync('/etc/letsencrypt/live/staging.felt.dev/privkey.pem'),
+				cert: fs.readFileSync('localhost.crt'),
+				key: fs.readFileSync('localhost.key'),
+			})
+			.listen(3002);
+		const wss = new ws.Server({server}); // TODO
 		console.log('wss.on', wss.on);
 		(this as Assignable<{wss: ws.Server}, 'wss'>).wss = wss;
 		wss.on('connection', (socket, req) => {
