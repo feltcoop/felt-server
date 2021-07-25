@@ -12,6 +12,7 @@
 	export let spaces: Space[];
 	export let selected_space: Space | null;
 	export let members: Member[];
+	$: console.log('spaces', spaces);
 </script>
 
 <div class="space-nav">
@@ -25,7 +26,7 @@
 			disabled={space === selected_space}
 			on:click={() => api.select_space(community.community_id, space.space_id)}
 		>
-			{space.url}
+			{space.name}
 		</button>
 	{/each}
 </div>
@@ -40,13 +41,5 @@
 
 	.header {
 		display: flex;
-	}
-
-	.button-emoji {
-		background: none;
-		border: none;
-		cursor: pointer;
-		margin: 0;
-		word-wrap: break-word;
 	}
 </style>
