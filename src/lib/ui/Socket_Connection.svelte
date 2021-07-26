@@ -6,16 +6,15 @@
 	import {get_socket} from '$lib/ui/socket';
 
 	const socket = get_socket();
-	const API_SERVER_DEFAULT_PORT_DEV = 3001;
 	const devmode = get_devmode();
 
 	$: url = '';
 
 	onMount(() => {
 		if (dev) {
-			url = `ws://localhost:${API_SERVER_DEFAULT_PORT_DEV}`;
+			url = `ws://localhost:3000/ws`;
 		} else {
-			url = `wss://staging.felt.dev`;
+			url = `wss://staging.felt.dev/ws`;
 		}
 		console.log('created socket store', socket, url);
 		socket.connect(url); // TODO should be reactive to `url` changes

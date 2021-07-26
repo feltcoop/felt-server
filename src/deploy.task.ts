@@ -30,12 +30,12 @@ export const task: Task = {
 			`mkdir deploy_${artifact_name};
 			mv ${artifact_name}.tar deploy_${artifact_name}/;
 			cd deploy_${artifact_name};
-			tar -xvf ${artifact_name}.tar;
-			npm i;
-			ln -sf ${artifact_name}/ deploy_felt_server_current;`,
+			tar -xvf ${artifact_name}.tar;`,
+			//npm i;
+			//ln -sf ${artifact_name}/ deploy_felt_server_current;`,
 		]);
 
-		await invoke_task('restart_prod');
+		//await invoke_task('restart_prod');
 	},
 };
 
