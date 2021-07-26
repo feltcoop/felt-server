@@ -1,28 +1,24 @@
 import ws from 'ws';
-import https from 'https';
-import fs from 'fs';
-import type {Assignable} from '@feltcoop/felt';
 import {promisify} from 'util';
+import type {Server as HttpServer} from 'http';
+import type {Server as HttpsServer} from 'https';
 
 // TODO needs a lot of work!
 
 export class Websocket_Server {
-	readonly wss!: ws.Server;
+	readonly wss: ws.Server;
+	readonly server: HttpServer | HttpsServer;
+
+	constructor(server: HttpServer | HttpsServer) {
+		this.server = server;
+		this.wss = new ws.Server({server});
+	}
 
 	async init(): Promise<void> {
 		// TODO I'm not sure about this way of creating the server externally and passing it to both polka and ws
 		// const wss = new ws.Server({server: this.server}); // port: 3000
-		const server = https
-			.createServer({
-				//cert: fs.readFileSync('/etc/letsencrypt/live/staging.felt.dev/fullchain.pem'),
-				//key: fs.readFileSync('/etc/letsencrypt/live/staging.felt.dev/privkey.pem'),
-				cert: fs.readFileSync('localhost.crt'),
-				key: fs.readFileSync('localhost.key'),
-			})
-			.listen(3002);
-		const wss = new ws.Server({server}); // TODO
+		const {wss} = this;
 		console.log('wss.on', wss.on);
-		(this as Assignable<{wss: ws.Server}, 'wss'>).wss = wss;
 		wss.on('connection', (socket, req) => {
 			console.log('[wss] connection req.url', req.url, wss.clients.size);
 			console.log('[wss] connection req.account', (req as any).account); // TODO broken

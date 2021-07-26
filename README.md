@@ -7,6 +7,8 @@
 
 > **work in progress**: pre-pre-alpha
 
+For development docs, please see [Contributing](/src/lib/docs/contributing.md)
+
 ## usage
 
 ```bash

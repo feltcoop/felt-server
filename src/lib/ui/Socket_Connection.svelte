@@ -5,7 +5,7 @@
 	import {get_socket} from '$lib/ui/socket';
 
 	const socket = get_socket();
-
+	const API_SERVER_DEFAULT_PORT_DEV = 3001;
 	const devmode = get_devmode();
 
 	$: url = '';
@@ -13,7 +13,11 @@
 	onMount(() => {
 		const {hostname} = window.location;
 		console.log(hostname);
-		url = `wss://${hostname}:3002`;
+		if (import.meta.env.PROD) {
+			url = `wss://${import.meta.env.VITE_HOSTNAME}`;
+		} else {
+			url = `ws://${import.meta.env.VITE_HOSTNAME}:${API_SERVER_DEFAULT_PORT_DEV}`;
+		}
 		console.log('created socket store', socket, url);
 		socket.connect(url); // TODO should be reactive to `url` changes
 		return () => {
