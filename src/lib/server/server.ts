@@ -32,13 +32,13 @@ export const api_server = new Api_Server({
 	app: polka({server}),
 	websocket_server: new Websocket_Server(server), // TODO probably pass `{server}` when fixing socket auth
 	db: new Database({sql: postgres(default_postgres_options)}),
-	load_render: async () => {
+	load_instance: async () => {
 		try {
 			// TODO this is a hack to make Rollup not bundle this - needs refactoring
 			// TODO what can we do with gro here with helpers or constants?
 			const import_path = '../../../svelte-kit/' + 'index.js';
 			const mod = (await import(import_path)) as any;
-			return mod.render || null;
+			return mod.instance || null;
 		} catch (err) {
 			return null;
 		}

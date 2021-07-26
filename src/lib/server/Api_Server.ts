@@ -7,18 +7,6 @@ import body_parser from 'body-parser';
 import send from '@polka/send-type';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue} from '@feltcoop/felt/util/terminal.js';
-import sirv from 'sirv';
-import {dirname, join} from 'path';
-import {getRawBody} from '@sveltejs/kit/node';
-import {URL, fileURLToPath} from 'url';
-import {existsSync} from 'fs';
-import type {Request as SveltekitRequest, Response as SveltekitResponse} from '@sveltejs/kit';
-import type {Server} from 'net';
-import {
-	API_SERVER_DEFAULT_PORT_DEV,
-	API_SERVER_DEFAULT_PORT_PROD,
-} from '@feltcoop/gro/dist/build/build_config_defaults.js';
-import {to_env_number} from '@feltcoop/felt/util/env.js';
 
 import {to_session_account_middleware} from '$lib/session/session_account_middleware.js';
 import {to_login_middleware} from '$lib/session/login_middleware.js';
@@ -64,11 +52,7 @@ export interface Options {
 	websocket_server: Websocket_Server;
 	port?: number;
 	db: Database;
-	load_render?: () => Promise<Render_Sveltekit | null>;
-}
-
-export interface Render_Sveltekit {
-	<TContext>(request: SveltekitRequest<TContext>): SveltekitResponse | Promise<SveltekitResponse>;
+	load_instance?: () => Promise<Polka | null>;
 }
 
 export class Api_Server {
@@ -77,7 +61,7 @@ export class Api_Server {
 	readonly websocket_server: Websocket_Server;
 	readonly port: number | undefined;
 	readonly db: Database;
-	readonly load_render: () => Promise<Render_Sveltekit | null>;
+	readonly load_instance: () => Promise<Polka | null>;
 
 	constructor(options: Options) {
 		this.server = options.server;
@@ -85,7 +69,7 @@ export class Api_Server {
 		this.websocket_server = options.websocket_server;
 		this.port = options.port;
 		this.db = options.db;
-		this.load_render = options.load_render || (async () => null);
+		this.load_instance = options.load_instance || (async () => null);
 		log.info('created');
 	}
 
@@ -142,43 +126,19 @@ export class Api_Server {
 
 		// SvelteKit Node adapter, adapted to our production API server
 		// TODO needs a lot of work, especially for production
-		const render = await this.load_render();
-		if (render) {
-			this.app.use(
-				// compression({threshold: 0}), // TODO
-				assets_handler,
-				prerendered_handler,
-				async (req, res, next) => {
-					const parsed = new URL(req.url || '', 'http://localhost');
-					if (this.is_api_server_pathname(parsed.pathname)) return next();
-					const rendered = await render({
-						method: req.method,
-						headers: req.headers, // TODO: what about repeated headers, i.e. string[]
-						path: parsed.pathname,
-						body: await getRawBody(req),
-						query: parsed.searchParams,
-					} as any); // TODO why the type casting?
-
-					if (rendered) {
-						res.writeHead(rendered.status!, rendered.headers); // TODO can it be undefined?
-						res.end(rendered.body);
-					} else {
-						res.statusCode = 404;
-						res.end('Not found');
-					}
-				},
-			);
+		const instance = await this.load_instance();
+		if (instance) {
+			this.app.use(instance.handler);
 		}
 
 		// Start the app.
-		const port =
-			this.port ||
-			// While building for production, `render` will be falsy
-			// and we want to use 3001 while building for prod.
-			// TODO maybe always default to env var `PORT`, upstream and instantiate `Api_Server` with it
-			(render && !dev
-				? to_env_number('PORT', API_SERVER_DEFAULT_PORT_PROD)
-				: API_SERVER_DEFAULT_PORT_DEV);
+		const port = this.port || 3001;
+		// While building for production, `render` will be falsy
+		// and we want to use 3001 while building for prod.
+		// TODO maybe always default to env var `PORT`, upstream and instantiate `Api_Server` with it
+		// (instance && !dev
+		// 	? to_env_number('PORT', API_SERVER_DEFAULT_PORT_PROD)
+		// 	: API_SERVER_DEFAULT_PORT_DEV);
 		// TODO Gro utility to get next good port
 		// (wait no that doesn't work, static proxy, hmm... can fix when we switch frontend to Gro)
 		await new Promise<void>((resolve) => {
@@ -228,27 +188,3 @@ export interface Client_Guest_Context {
 	guest: true;
 	error?: Error;
 }
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const noop_handler = (_req: any, _res: any, next: () => void) => next();
-const paths = {
-	assets: join(__dirname, `../assets`),
-	prerendered: join(__dirname, `../prerendered`),
-};
-
-const mutable = (dir: string) =>
-	sirv(dir, {
-		etag: true,
-		maxAge: 0,
-	});
-
-const prerendered_handler = existsSync(paths.prerendered)
-	? mutable(paths.prerendered)
-	: noop_handler;
-
-const assets_handler = existsSync(paths.assets)
-	? sirv(paths.assets, {
-			maxAge: 31536000,
-			immutable: true,
-	  })
-	: noop_handler;
