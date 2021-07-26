@@ -26,7 +26,8 @@
 			disabled={space === selected_space}
 			on:click={() => api.select_space(community.community_id, space.space_id)}
 		>
-			{space.name}
+			<!-- TODO {space.name} -->
+			{space.url}
 		</button>
 	{/each}
 </div>
