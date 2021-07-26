@@ -29,10 +29,10 @@ export const task: Task = {
 			'root@96.126.116.174',
 			`mkdir deploy_${artifact_name};
 			mv ${artifact_name}.tar deploy_${artifact_name}/;
-			cd deploy_${artifact_name};,
+			cd deploy_${artifact_name};
 			tar -xvf ${artifact_name}.tar;
 			npm i;
-			ln -s ${artifact_name}/ deploy_felt_server_current;`,
+			ln -sf ${artifact_name}/ deploy_felt_server_current;`,
 		]);
 
 		await invoke_task('restart_prod');
