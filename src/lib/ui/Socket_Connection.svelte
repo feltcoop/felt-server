@@ -1,4 +1,5 @@
 <script lang="ts">
+	import {dev} from '$app/env';
 	import {onMount} from 'svelte';
 	import {get_devmode} from '@feltcoop/felt/ui/devmode.js';
 
@@ -11,12 +12,10 @@
 	$: url = '';
 
 	onMount(() => {
-		const {hostname} = window.location;
-		console.log(hostname);
-		if (import.meta.env.PROD) {
-			url = `wss://${import.meta.env.VITE_HOSTNAME}`;
+		if (dev) {
+			url = `ws://localhost:${API_SERVER_DEFAULT_PORT_DEV}`;
 		} else {
-			url = `ws://${import.meta.env.VITE_HOSTNAME}:${API_SERVER_DEFAULT_PORT_DEV}`;
+			url = `wss://staging.felt.dev`;
 		}
 		console.log('created socket store', socket, url);
 		socket.connect(url); // TODO should be reactive to `url` changes
