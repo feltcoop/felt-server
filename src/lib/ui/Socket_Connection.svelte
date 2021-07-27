@@ -12,7 +12,7 @@
 
 	onMount(() => {
 		if (dev) {
-			url = `ws://localhost:3000/ws`;
+			url = `ws://localhost:3001/ws`;
 		} else {
 			url = `wss://staging.felt.dev/ws`;
 		}
