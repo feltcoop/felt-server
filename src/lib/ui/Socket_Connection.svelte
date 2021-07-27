@@ -1,6 +1,4 @@
 <script lang="ts">
-	import {dev} from '$app/env';
-	import {onMount} from 'svelte';
 	import {get_devmode} from '@feltcoop/felt/ui/devmode.js';
 
 	import {get_socket} from '$lib/ui/socket';
@@ -8,27 +6,16 @@
 	const socket = get_socket();
 	const devmode = get_devmode();
 
-	$: url = '';
-
-	onMount(() => {
-		if (dev) {
-			url = `ws://localhost:3000/ws`;
-		} else {
-			url = `wss://staging.felt.dev/ws`;
-		}
-		console.log('created socket store', socket, url);
-		socket.connect(url); // TODO should be reactive to `url` changes
-		return () => {
-			socket.disconnect();
-		};
-	});
+	let new_url = $socket.url || '';
+	const reset_url = () => (new_url = $socket.url || '');
+	$: if ($socket.connected) reset_url();
 </script>
 
 {#if $devmode}
 	<div class="socket-connection">
 		{#if $socket.connected}
 			<form>
-				<input bind:value={url} type="text" disabled />
+				<input bind:value={new_url} type="text" disabled />
 				<button
 					type="button"
 					on:click={() => socket.disconnect()}
@@ -39,10 +26,10 @@
 			</form>
 		{:else}
 			<form>
-				<input bind:value={url} type="text" disabled={$socket.status === 'pending'} />
+				<input bind:value={new_url} type="text" disabled={$socket.status === 'pending'} />
 				<button
 					type="button"
-					on:click={() => socket.connect(url)}
+					on:click={() => socket.connect(new_url)}
 					disabled={$socket.status === 'pending'}
 				>
 					connect

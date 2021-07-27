@@ -3,7 +3,9 @@
 	import '@feltcoop/felt/ui/style.css';
 	import {set_devmode} from '@feltcoop/felt/ui/devmode.js';
 	import Devmode from '@feltcoop/felt/ui/Devmode.svelte';
+	import {onMount} from 'svelte';
 	import {session} from '$app/stores';
+	import {dev} from '$app/env';
 
 	import {set_socket} from '$lib/ui/socket';
 	import Main_Nav from '$lib/ui/Main_Nav.svelte';
@@ -12,7 +14,7 @@
 	import {set_api, to_api_store} from '$lib/ui/api';
 
 	const devmode = set_devmode();
-	set_socket();
+	const socket = set_socket();
 	const data = set_data($session);
 	$: data.update_session($session);
 	const ui = set_ui();
@@ -29,6 +31,15 @@
 	// 	</Ui>
 
 	console.log('$data', $data);
+
+	onMount(() => {
+		const url = dev ? `ws://localhost:3001/ws` : `wss://staging.felt.dev/ws`;
+		console.log('created socket store', $socket, url);
+		socket.connect(url); // TODO should be reactive to `url` changes
+		return () => {
+			socket.disconnect();
+		};
+	});
 </script>
 
 <svelte:head>

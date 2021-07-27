@@ -46,7 +46,6 @@
 		>
 			{$data.account.name}
 		</button>
-		<Socket_Connection />
 	</div>
 	{#if $ui.main_nav_view === 'explorer'}
 		<div class="explorer">
@@ -62,6 +61,7 @@
 		</div>
 	{:else if $ui.main_nav_view === 'account'}
 		<Account_Form />
+		<Socket_Connection />
 	{/if}
 </div>
 
