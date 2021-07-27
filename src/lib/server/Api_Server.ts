@@ -158,7 +158,7 @@ export class Api_Server {
 			this.db.close(),
 			new Promise((resolve, reject) =>
 				// TODO remove type casting when polka types are fixed
-				(this.app.server as any as Server).close((err) => (err ? resolve : reject(err))),
+				(this.app.server as any as HttpServer).close((err) => (err ? resolve : reject(err))),
 			),
 		]);
 	}

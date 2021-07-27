@@ -19,7 +19,7 @@ test_api_server('init and close', async () => {
 	const api_server = new Api_Server({
 		server,
 		app: polka({server}),
-		websocket_server: new Websocket_Server(),
+		websocket_server: new Websocket_Server(server),
 		db: new Database({sql: postgres(default_postgres_options)}),
 		port: TEST_PORT,
 	});
