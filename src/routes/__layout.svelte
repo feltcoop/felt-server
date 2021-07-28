@@ -20,22 +20,10 @@
 	const ui = set_ui();
 	$: ui.update_data($data); // TODO this or make it an arg to the ui store?
 	set_api(to_api_store(ui, data));
-	// TODO consider higher order components instead of linking stores together like this,
-	// 	continuing component-level composition:
-	// 	<Ui>
-	// 		<Data>
-	// 			<Api>
-	// 				<Main_Nav />
-	// 			</Api>
-	// 		</Data>
-	// 	</Ui>
-
-	console.log('$data', $data);
 
 	onMount(() => {
-		const url = dev ? `ws://localhost:3001/ws` : `wss://staging.felt.dev/ws`;
-		console.log('created socket store', $socket, url);
-		socket.connect(url); // TODO should be reactive to `url` changes
+		const socket_url = dev ? `ws://localhost:3001/ws` : `wss://staging.felt.dev/ws`;
+		socket.connect(socket_url);
 		return () => {
 			socket.disconnect();
 		};
