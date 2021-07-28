@@ -12,7 +12,6 @@ export default {
 			server: {
 				proxy: {
 					'/api': 'http://localhost:3001/', // import('@feltcoop/gro/dist/config/defaultBuildConfig.js').API_SERVER_DEFAULT_PORT_DEV
-					'/ws': {target: 'ws://localhost:3001', ws: true, secure: false},
 				},
 			},
 			optimizeDeps: {
