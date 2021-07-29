@@ -4,23 +4,20 @@
 </script>
 
 {#if icon}
-	<img src={icon} alt="icon for {name}" />
+	<img class="actor-icon" src={icon} alt="icon for {name}" />
 {:else}
-	<div class="generated-icon">
+	<div class="actor-icon">
 		{name[0]}
 	</div>
 {/if}
 
 <style>
-	img {
+	.actor-icon {
 		height: var(--icon_size_md);
 		width: var(--icon_size_md);
 		min-width: var(--icon_size_md);
 	}
-	.generated-icon {
-		height: var(--icon_size_md);
-		width: var(--icon_size_md);
-		min-width: var(--icon_size_md);
+	div {
 		background-color: hsl(var(--hue), 50%, 50%);
 		border-radius: 50%;
 		color: white;
