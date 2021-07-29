@@ -13,12 +13,14 @@
 
 <style>
 	img {
-		width: var(--icon_size_md);
 		height: var(--icon_size_md);
+		width: var(--icon_size_md);
+		min-width: var(--icon_size_md);
 	}
 	.generated-icon {
-		width: var(--icon_size_md);
 		height: var(--icon_size_md);
+		width: var(--icon_size_md);
+		min-width: var(--icon_size_md);
 		background-color: hsl(var(--hue), 50%, 50%);
 		border-radius: 50%;
 		color: white;

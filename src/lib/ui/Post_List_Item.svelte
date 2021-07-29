@@ -38,6 +38,6 @@
 	}
 
 	.content {
-		padding-left: var(--spacing_md);
+		padding-left: var(--spacing_sm);
 	}
 </style>
