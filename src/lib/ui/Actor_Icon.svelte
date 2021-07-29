@@ -3,26 +3,22 @@
 	export let icon: string | null = null;
 </script>
 
-<div class="actor-icon">
-	{#if icon}
-		<img src={icon} alt="icon for {name}" />
-	{:else}
-		<div class="generated-icon">
-			{name[0]}
-		</div>
-	{/if}
-</div>
+{#if icon}
+	<img src={icon} alt="icon for {name}" />
+{:else}
+	<div class="generated-icon">
+		{name[0]}
+	</div>
+{/if}
 
 <style>
-	.actor-icon {
-		width: var(--icon_size_md);
-		height: var(--icon_size_md);
-	}
 	img {
 		width: var(--icon_size_md);
 		height: var(--icon_size_md);
 	}
 	.generated-icon {
+		width: var(--icon_size_md);
+		height: var(--icon_size_md);
 		background-color: hsl(var(--hue), 50%, 50%);
 		border-radius: 50%;
 		color: white;
@@ -31,7 +27,5 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: var(--icon_size_md);
-		height: var(--icon_size_md);
 	}
 </style>
