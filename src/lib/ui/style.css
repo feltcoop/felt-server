@@ -3,6 +3,7 @@
 	--bg_hue: 24;
 	--bg_saturation: 23%;
 	--bg_lightness: 96%;
+	--bg_color_lightness: 91%; /* TODO ? */
 	/* TODO upgrade felt@0.6.1 and delete these */
 	--icon_size_xl: 6.4rem;
 	--icon_size_lg: 4.8rem;
