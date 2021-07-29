@@ -23,7 +23,6 @@
 	{#each spaces as space (space.space_id)}
 		<button
 			class:selected={space === selected_space}
-			disabled={space === selected_space}
 			on:click={() => api.select_space(community.community_id, space.space_id)}
 		>
 			<!-- TODO {space.name} -->

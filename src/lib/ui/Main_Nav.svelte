@@ -33,7 +33,6 @@
 		<button
 			on:click={() => ui.set_main_nav_view('explorer')}
 			class:selected={$ui.main_nav_view === 'explorer'}
-			disabled={$ui.main_nav_view === 'explorer'}
 			class="explorer-button"
 		>
 			<img src="/favicon.png" alt="show explorer" />
@@ -41,7 +40,6 @@
 		<button
 			on:click={() => ui.set_main_nav_view('account')}
 			class:selected={$ui.main_nav_view === 'account'}
-			disabled={$ui.main_nav_view === 'account'}
 			class="account-button"
 		>
 			{$data.account.name}

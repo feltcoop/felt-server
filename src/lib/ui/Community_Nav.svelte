@@ -20,7 +20,6 @@
 			<!-- TODO make these links <a>...</a> -->
 			<button
 				class:selected={community === selected_community}
-				disabled={community === selected_community}
 				on:click={() => api.select_community(community.community_id)}
 			>
 				{community.name.substring(0, 4)}
@@ -49,7 +48,7 @@
 	}
 
 	button {
-		width: var(--icon_size);
-		height: var(--icon_size);
+		width: var(--icon_size_lg);
+		height: var(--icon_size_lg);
 	}
 </style>
