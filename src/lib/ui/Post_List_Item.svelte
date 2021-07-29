@@ -15,7 +15,7 @@
 
 <li style="--hue: {hue}">
 	<Actor_Icon name={member.name} {icon} />
-	<div class="body">
+	<div class="content">
 		<div>
 			<span class="actor">{member.name}</span>
 		</div>
@@ -36,7 +36,7 @@
 		font-weight: var(--font_weight_4);
 	}
 
-	.body {
+	.content {
 		padding-left: var(--spacing_md);
 	}
 </style>
