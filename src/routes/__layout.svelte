@@ -3,7 +3,9 @@
 	import '@feltcoop/felt/ui/style.css';
 	import {set_devmode} from '@feltcoop/felt/ui/devmode.js';
 	import Devmode from '@feltcoop/felt/ui/Devmode.svelte';
+	import {onMount} from 'svelte';
 	import {session} from '$app/stores';
+	import {dev} from '$app/env';
 
 	import {set_socket} from '$lib/ui/socket';
 	import Main_Nav from '$lib/ui/Main_Nav.svelte';
@@ -12,23 +14,20 @@
 	import {set_api, to_api_store} from '$lib/ui/api';
 
 	const devmode = set_devmode();
-	set_socket();
+	const socket = set_socket();
 	const data = set_data($session);
 	$: data.update_session($session);
 	const ui = set_ui();
 	$: ui.update_data($data); // TODO this or make it an arg to the ui store?
 	set_api(to_api_store(ui, data));
-	// TODO consider higher order components instead of linking stores together like this,
-	// 	continuing component-level composition:
-	// 	<Ui>
-	// 		<Data>
-	// 			<Api>
-	// 				<Main_Nav />
-	// 			</Api>
-	// 		</Data>
-	// 	</Ui>
 
-	console.log('$data', $data);
+	onMount(() => {
+		const socket_url = dev ? `ws://localhost:3001/ws` : `wss://staging.felt.dev/ws`;
+		socket.connect(socket_url);
+		return () => {
+			socket.disconnect();
+		};
+	});
 </script>
 
 <svelte:head>
