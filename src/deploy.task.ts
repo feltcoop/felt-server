@@ -57,7 +57,7 @@ export const task: Task = {
 // 	server_name staging.felt.dev;
 
 // 	location /api {
-// 					proxy_pass https://localhost:3001;
+// 					proxy_pass http://localhost:3001;
 // 	}
 
 // 	location /ws {
@@ -66,7 +66,7 @@ export const task: Task = {
 // 					proxy_http_version 1.1;
 // 					proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 // 					proxy_set_header Host $host;
-// 					proxy_pass https://localhost:3001;
+// 					proxy_pass http://localhost:3001;
 // 	}
 
 // 	location / {

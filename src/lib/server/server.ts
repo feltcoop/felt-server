@@ -1,31 +1,13 @@
-import type {Server as HttpServer} from 'http';
-import type {Server as HttpsServer} from 'https';
-import {createServer as create_https_server} from 'https';
 import polka from 'polka';
 import postgres from 'postgres';
 import {createServer as create_http_server} from 'http';
-import fs from 'fs';
 
 import {Api_Server} from '$lib/server/Api_Server.js';
 import {Database} from '$lib/db/Database.js';
 import {default_postgres_options} from '$lib/db/postgres.js';
 import {Websocket_Server} from '$lib/server/Websocket_Server.js';
 
-const create_server = (): HttpServer | HttpsServer => {
-	if (process.env.NODE_ENV === 'production') {
-		return create_https_server({
-			//TODO double check this aligns with GRO standard (load_https_credentials)
-			//cert: fs.readFileSync('/etc/letsencrypt/live/staging.felt.dev/fullchain.pem'),
-			//key: fs.readFileSync('/etc/letsencrypt/live/staging.felt.dev/privkey.pem'),
-			cert: fs.readFileSync('localhost.crt'),
-			key: fs.readFileSync('localhost.key'),
-		});
-	} else {
-		return create_http_server();
-	}
-};
-
-const server = create_server();
+const server = create_http_server();
 
 //TODO I think we still need to pass an https server in prod
 
