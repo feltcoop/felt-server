@@ -35,8 +35,6 @@ export const task: Task = {
 			cd ../;
 			ln -sfn deploy_${artifact_name}/ deploy_felt_server_current;`,
 		]);
-
-		//await invoke_task('restart_prod');
 	},
 };
 
