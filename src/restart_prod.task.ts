@@ -8,7 +8,7 @@ export const task: Task = {
 		await spawn('ssh', [
 			'root@96.126.116.174',
 			`kill $(ps aux | grep 'node' | awk '{print $2}');
-      node deploy_felt_server_current/dist/server/lib/server/server.js &`,
+      node deploy_felt_server_current/dist/server/lib/server/server.js &;`,
 		]);
 	},
 };
