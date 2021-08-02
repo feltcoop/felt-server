@@ -10,6 +10,8 @@ import {to_community_model} from '$lib/communities/community';
 import type {Space, Space_Params} from '$lib/spaces/space';
 import type {Member, Member_Params} from '$lib/members/member';
 
+// TODO refactor/rethink
+
 const KEY = Symbol();
 
 export const get_api = (): Api_Store => getContext(KEY);
