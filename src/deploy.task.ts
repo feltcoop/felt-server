@@ -43,7 +43,7 @@ export const task: Task = {
 // sudo apt-get unzip
 // curl -fsSL https://fnm.vercel.app/install | bash
 // source /root/.bashrc
-// fnm install 14.16.0
+// fnm install 16.6.0
 // sudo apt-get npm
 
 // NOTES ON NGINX & HTTPS

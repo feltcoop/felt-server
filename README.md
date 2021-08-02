@@ -12,6 +12,7 @@ For development docs, please see [Contributing](/src/lib/docs/contributing.md)
 ## usage
 
 ```bash
+# node >=16.6
 npm i
 
 # start the SvelteKit/Vite frontend dev build, Node builds with Gro, and Polka API server
