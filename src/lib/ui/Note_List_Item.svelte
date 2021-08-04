@@ -11,6 +11,10 @@
 <style>
 	li {
 		padding: var(--spacing_sm);
-		border-bottom: var(--border);
+		border: var(--border);
+		max-width: var(--column_width_min);
+		margin: 10px;
+		padding: 10px;
+		background-color: var(--input_bg_color);
 	}
 </style>

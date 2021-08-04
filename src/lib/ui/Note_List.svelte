@@ -12,3 +12,11 @@
 		<Note_List_Item {post} />
 	{/each}
 </ul>
+
+<style>
+	ul {
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: row;
+	}
+</style>
