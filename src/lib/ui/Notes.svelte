@@ -56,7 +56,6 @@
 		border-right: none;
 		border-top: none;
 		border-radius: 0;
-		margin: 0; /* TODO remove in felt@6.1.0 */
 	}
 	.posts {
 		flex: 1;

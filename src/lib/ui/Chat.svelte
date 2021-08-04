@@ -65,6 +65,5 @@
 		border-right: none;
 		border-bottom: none;
 		border-radius: 0;
-		margin: 0; /* TODO remove in felt@0.6.1 */
 	}
 </style>
