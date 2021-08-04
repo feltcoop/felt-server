@@ -289,7 +289,7 @@ export const seed = async (db: Database): Promise<void> => {
 			name: 'felt library',
 			url: '/felt-library',
 			media_type: 'application/fuz+json',
-			content: '{"type": "Iframe", "props": {"url": "https://www.felt.dev/sketch/library"}}',
+			content: '{"type": "Iframe", "props": {"url": "https://www.dealt.dev/tar"}}',
 		};
 		const space5_result = await sql`
 			insert into spaces ${sql(space5, 'url', 'media_type', 'content')}
