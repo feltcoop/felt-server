@@ -218,19 +218,19 @@ export class Database {
 					this.repos.spaces.insert(community_id, {
 						name: 'chat',
 						url: '/chat',
-						media_type: 'application/json',
+						media_type: 'application/fuz+json',
 						content: '{"type": "Chat", "props": {"data": "/chat/posts"}}',
 					}),
 					this.repos.spaces.insert(community_id, {
 						name: 'board',
 						url: '/board',
-						media_type: 'application/json',
+						media_type: 'application/fuz+json',
 						content: '{"type": "Board", "props": {"data": "/board/posts"}}',
 					}),
 					this.repos.spaces.insert(community_id, {
 						name: 'voice',
 						url: '/voice',
-						media_type: 'application/json',
+						media_type: 'application/fuz+json',
 						content: '{"type": "Voice", "props": {"data": "/voice/stream"}}',
 					}),
 				]);

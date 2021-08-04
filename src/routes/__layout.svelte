@@ -19,7 +19,7 @@
 	$: data.update_session($session);
 	const ui = set_ui();
 	$: ui.update_data($data); // TODO this or make it an arg to the ui store?
-	set_api(to_api_store(ui, data));
+	set_api(to_api_store(ui, data, socket));
 
 	onMount(() => {
 		const socket_url = dev ? `ws://localhost:3001/ws` : `wss://staging.felt.dev/ws`;

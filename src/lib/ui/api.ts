@@ -9,6 +9,8 @@ import type {Community, Community_Model, Community_Params} from '$lib/communitie
 import {to_community_model} from '$lib/communities/community';
 import type {Space, Space_Params} from '$lib/spaces/space';
 import type {Member, Member_Params} from '$lib/members/member';
+import type {Post} from '$lib/posts/post';
+import type {Socket_Store} from '$lib/ui/socket';
 
 // TODO refactor/rethink
 
@@ -42,9 +44,13 @@ export interface Api_Store {
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
 		account_id: number,
 	) => Promise<Result<{value: {member: Member}}, {reason: string}>>;
+	create_post: (
+		space: Space,
+		content: string,
+	) => Promise<Result<{value: {post: Post}}, {reason: string}>>;
 }
 
-export const to_api_store = (ui: Ui_Store, data: Data_Store): Api_Store => {
+export const to_api_store = (ui: Ui_Store, data: Data_Store, socket: Socket_Store): Api_Store => {
 	// TODO set the `api` state with progress of remote calls
 	const {subscribe} = writable<Api_State>(to_default_api_state());
 
@@ -112,9 +118,9 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store): Api_Store => {
 		// TODO: This implementation is currently unconsentful,
 		// because does not give the potential member an opportunity to deny an invite
 		invite_member: async (
-			community_id: number,
-			account_id: number, // TODO `persona_id`
-		): Promise<Result<{value: {member: Member}}, {reason: string}>> => {
+			community_id,
+			account_id, // TODO `persona_id`
+		) => {
 			// TODO proper automated validation
 			if (community_id == null) return {ok: false, reason: 'invalid url'};
 			if (!account_id) return {ok: false, reason: 'invalid member'};
@@ -137,6 +143,21 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store): Api_Store => {
 				return {ok: true, value: result};
 			} catch (err) {
 				return {ok: false, reason: err.message};
+			}
+		},
+		create_post: async (space, content) => {
+			const res = await fetch(`/api/v1/spaces/${space.space_id}/posts`, {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({content}),
+			});
+			if (res.ok) {
+				console.log('post sent, broadcasting to server');
+				const data = await res.json();
+				socket.send(data); // TODO refactor
+				return {ok: true, value: data};
+			} else {
+				throw Error(`error sending post: ${res.status}: ${res.statusText}`);
 			}
 		},
 	};
