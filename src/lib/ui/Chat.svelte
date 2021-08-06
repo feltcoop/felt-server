@@ -54,11 +54,11 @@
 		overflow: hidden; /* make the content scroll */
 	}
 	.posts {
+		overflow: auto;
 		flex: 1;
 		display: flex;
-		flex-direction: column;
-		justify-content: flex-end;
-		overflow: auto;
+		/* makes scrolling start at the bottom */
+		flex-direction: column-reverse;
 	}
 	input {
 		border-left: none;
