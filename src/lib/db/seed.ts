@@ -286,8 +286,8 @@ export const seed = async (db: Database): Promise<void> => {
 	const space5 = space_docs.find((d) => d.space_id === 5);
 	if (!space5) {
 		const space5: Space_Params = {
-			name: 'felt library',
-			url: '/felt-library',
+			name: 'dealt: tar',
+			url: '/tar',
 			media_type: 'application/fuz+json',
 			content: '{"type": "Iframe", "props": {"url": "https://www.dealt.dev/tar"}}',
 		};
