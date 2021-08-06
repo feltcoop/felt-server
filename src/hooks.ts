@@ -31,6 +31,7 @@ export const getSession: GetSession<SessionRequest, Client_Session> = async (req
 		return;
 	});
 	// TODO is swallowing `context.error`, only return in dev mode? look for "reason"?
+	// TODO need a better long term solution for managing account+persona stuff
 	if (request.session?.name) {
 		const result = await db.repos.session.load_client_session(request.session.name);
 		return result.ok ? result.value : {guest: true};

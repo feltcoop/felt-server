@@ -26,6 +26,18 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] create_accounts_table_result', create_accounts_table_result);
 	}
 
+	const create_personas_table_result = await sql`
+		create table if not exists personas (
+			persona_id serial primary key,
+			account_id int,
+			name text
+		)
+	`;
+
+	if (create_personas_table_result.count) {
+		console.log('[db] create_personas_table_result', create_personas_table_result);
+	}
+
 	const create_communities_table_result = await sql`
 		create table if not exists communities (
 			community_id serial primary key,

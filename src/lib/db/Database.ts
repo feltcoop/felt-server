@@ -2,6 +2,7 @@ import type {Result} from '@feltcoop/felt';
 import {unwrap} from '@feltcoop/felt';
 
 import type {Account_Session} from '$lib/session/client_session.js';
+import type {Persona} from '$lib/personas/persona.js';
 import type {Community} from '$lib/communities/community.js';
 import type {Space, Space_Params} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
@@ -55,6 +56,10 @@ export class Database {
 					) RETURNING *`;
 				console.log(data);
 				const account = data[0];
+				const persona_response = await this.repos.personas.create(name, account.account_id!);
+				if (!persona_response.ok) {
+					return {ok: false, reason: 'Failed to create initial user persona'};
+				}
 				const result = await this.repos.communities.insert(name, account.account_id!);
 				if (!result.ok) {
 					return {ok: false, reason: 'Failed to create initial user community'};
@@ -76,6 +81,20 @@ export class Database {
 					return {ok: true, value: data[0]};
 				}
 				return {ok: false, type: 'no_account_found', reason: `No account found with name: ${name}`};
+			},
+		},
+		personas: {
+			create: async (
+				name: string,
+				account_id: number,
+			): Promise<Result<{value: Persona}, {reason: string}>> => {
+				const data = await this.sql<Persona[]>`
+					insert into personas (name, account_id) values (
+						${name}, ${account_id}
+					) RETURNING *`;
+				console.log(data);
+				const persona = data[0];
+				return {ok: true, value: persona};
 			},
 		},
 		members: {
