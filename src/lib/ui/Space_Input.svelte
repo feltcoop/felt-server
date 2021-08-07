@@ -26,7 +26,7 @@
 			community.community_id,
 			new_name,
 			url,
-//TODO : add space type picker
+			//TODO : add space type picker
 			'application/fuz+json',
 			`{"type": "Chat", "props": {"data": "${url}/posts"}}`,
 		);
