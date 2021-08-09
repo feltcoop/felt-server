@@ -9,6 +9,11 @@
 
 	const {data, ui, api} = get_app();
 
+	// TODO share these vars with CSS
+	const MAIN_NAV_WIDTH = 320; // TODO this is the same as `column_width_min`
+	const NAV_TRANSITION_IN_DURATION = 410;
+	const BG_TRANSITION_IN_DURATION = 237;
+
 	$: members = $data.members;
 	$: communities = $data.communities;
 
@@ -30,10 +35,10 @@
 
 <div
 	class="main-nav-bg"
-	in:fade={{duration: 237}}
+	in:fade={{duration: BG_TRANSITION_IN_DURATION}}
 	on:click={() => ($ui.expand_main_nav ? api.toggle_main_nav() : null)}
 />
-<div class="main-nav" in:fly={{x: -320, duration: 410}}>
+<div class="main-nav" in:fly={{x: -MAIN_NAV_WIDTH, duration: NAV_TRANSITION_IN_DURATION}}>
 	<div class="header">
 		<button class="icon-button" on:click={() => api.toggle_main_nav()}> ☰ </button>
 		<button
@@ -91,7 +96,8 @@
 		/* TODO from felt */
 		background-color: rgba(0, 0, 0, 0.6);
 	}
-	@media (max-width: 800px) {
+	/* `50rem` in media queries is the same as `800px`, which is `--column_width` */
+	@media (max-width: 50rem) {
 		.main-nav {
 			z-index: 1;
 			position: fixed;
@@ -99,7 +105,7 @@
 			top: 0;
 		}
 		.main-nav-bg {
-			display: flex;
+			display: block;
 		}
 	}
 	.header {
