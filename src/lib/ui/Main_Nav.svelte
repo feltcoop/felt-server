@@ -9,7 +9,7 @@
 
 	const {data, ui, api} = get_app();
 
-	// TODO share these vars with CSS
+	// TODO upstream these vars to Felt and share with CSS
 	const MAIN_NAV_WIDTH = 320; // TODO this is the same as `column_width_min`
 	const NAV_TRANSITION_IN_DURATION = 410;
 	const BG_TRANSITION_IN_DURATION = 237;
