@@ -8,6 +8,7 @@
 	import {dev} from '$app/env';
 
 	import {set_socket} from '$lib/ui/socket';
+	import Luggage from '$lib/ui/Luggage.svelte';
 	import Main_Nav from '$lib/ui/Main_Nav.svelte';
 	import {set_data} from '$lib/ui/data';
 	import {set_ui} from '$lib/ui/ui';
@@ -38,8 +39,12 @@
 </svelte:head>
 
 <div class="layout">
-	{#if !$session.guest && $ui.expand_main_nav}
-		<Main_Nav />
+	{#if !$session.guest}
+		<Luggage />
+		<!-- TODO probably always render this, and have it hide offscreen -->
+		{#if $ui.expand_main_nav}
+			<Main_Nav />
+		{/if}
 	{/if}
 	<slot />
 	<Devmode {devmode} />

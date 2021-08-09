@@ -4,7 +4,8 @@
 	--bg_saturation: 23%;
 	--bg_lightness: 96%;
 	--bg_color_lightness: 91%; /* TODO ? */
-	--navbar_size: var(--icon_size_md);
+	--luggage_size: var(--icon_size_md);
+	--navbar_size: var(--luggage_size);
 
 	--transition_duration_md: 0.32s;
 	--transition_duration_sm: 0.24s;

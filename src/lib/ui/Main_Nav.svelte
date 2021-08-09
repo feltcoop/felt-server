@@ -33,7 +33,8 @@
 />
 <div class="main-nav" class:expanded={$ui.expand_main_nav}>
 	<div class="header">
-		<button class="icon-button" on:click={() => api.toggle_main_nav()}> ☰ </button>
+		<!-- TODO how to do this? -->
+		<div class="icon-button button-placeholder" />
 		<button
 			on:click={() => ui.set_main_nav_view('explorer')}
 			class:selected={$ui.main_nav_view === 'explorer'}
