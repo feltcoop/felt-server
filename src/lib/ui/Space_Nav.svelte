@@ -2,11 +2,11 @@
 	import type {Space} from '$lib/spaces/space.js';
 	import Space_Input from '$lib/ui/Space_Input.svelte';
 	import type {Community_Model} from '$lib/communities/community.js';
-	import {get_api} from '$lib/ui/api';
 	import Member_Input from '$lib/ui/Member_Input.svelte';
 	import type {Member} from '$lib/members/member.js';
+	import {get_app} from '$lib/ui/app';
 
-	const api = get_api();
+	const {api} = get_app();
 
 	export let community: Community_Model;
 	export let spaces: Space[];

@@ -2,9 +2,9 @@
 	import type {Community} from '$lib/communities/community.js';
 	import type {Member} from '$lib/members/member.js';
 	import Community_Input from '$lib/ui/Community_Input.svelte';
-	import {get_api} from '$lib/ui/api';
+	import {get_app} from '$lib/ui/app';
 
-	const api = get_api();
+	const {api} = get_app();
 
 	export let members: Member[];
 	export let communities: Community[];

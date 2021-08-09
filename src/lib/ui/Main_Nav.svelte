@@ -5,13 +5,9 @@
 	import Space_Nav from '$lib/ui/Space_Nav.svelte';
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
 	import Account_Form from '$lib/ui/Account_Form.svelte';
-	import {get_data} from '$lib/ui/data';
-	import {get_ui} from '$lib/ui/ui';
-	import {get_api} from '$lib/ui/api';
+	import {get_app} from '$lib/ui/app';
 
-	const data = get_data();
-	const ui = get_ui();
-	const api = get_api();
+	const {data, ui, api} = get_app();
 
 	$: members = $data.members;
 	$: communities = $data.communities;

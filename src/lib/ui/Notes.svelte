@@ -4,9 +4,9 @@
 	import type {Space} from '$lib/spaces/space.js';
 	import Note_List from '$lib/ui/Note_List.svelte';
 	import {posts} from '$lib/ui/post_store';
-	import {get_api} from '$lib/ui/api';
+	import {get_app} from '$lib/ui/app';
 
-	const api = get_api();
+	const {api} = get_app();
 
 	export let space: Space;
 

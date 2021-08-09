@@ -1,10 +1,8 @@
 <script lang="ts">
-	import {get_api} from '$lib/ui/api';
-	import {get_ui} from '$lib/ui/ui';
 	import type {Space} from '$lib/spaces/space';
+	import {get_app} from '$lib/ui/app';
 
-	const api = get_api();
-	const ui = get_ui();
+	const {ui, api} = get_app();
 
 	export let space: Space | null | undefined;
 </script>

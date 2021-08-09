@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Modal from '$lib/ui/Modal.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
-	import {get_api} from '$lib/ui/api';
 	import {autofocus} from '$lib/ui/actions';
+	import {get_app} from '$lib/ui/app';
 
-	const api = get_api();
+	const {api} = get_app();
 
 	let new_name = '';
 

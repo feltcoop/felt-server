@@ -12,6 +12,7 @@
 	import {set_data} from '$lib/ui/data';
 	import {set_ui} from '$lib/ui/ui';
 	import {set_api, to_api_store} from '$lib/ui/api';
+	import {set_app} from '$lib/ui/app';
 
 	const devmode = set_devmode();
 	const socket = set_socket();
@@ -19,7 +20,9 @@
 	$: data.update_session($session);
 	const ui = set_ui();
 	$: ui.update_data($data); // TODO this or make it an arg to the ui store?
-	set_api(to_api_store(ui, data, socket));
+	const api = set_api(to_api_store(ui, data, socket));
+	const app = set_app({data, ui, api, devmode, socket});
+	console.log('app', app);
 
 	onMount(() => {
 		const socket_url = dev ? `ws://localhost:3001/ws` : `wss://staging.felt.dev/ws`;

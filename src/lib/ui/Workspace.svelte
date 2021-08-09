@@ -2,11 +2,9 @@
 	import Space_Input from '$lib/ui/Space_Input.svelte';
 	import Space_View from '$lib/ui/Space_View.svelte';
 	import Workspace_Header from '$lib/ui/Workspace_Header.svelte';
-	import {get_data} from '$lib/ui/data';
-	import {get_ui} from '$lib/ui/ui';
+	import {get_app} from '$lib/ui/app';
 
-	const data = get_data();
-	const ui = get_ui();
+	const {data, ui} = get_app();
 
 	$: communities = $data.communities;
 
