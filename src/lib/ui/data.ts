@@ -7,6 +7,8 @@ import {Community_Model, to_community_model} from '$lib/communities/community';
 import type {Member} from '$lib/members/member';
 import type {Space} from '$lib/spaces/space';
 
+// TODO refactor/rethink
+
 // TODO name? maybe `db`? do we need more abstractions?
 
 const KEY = Symbol();

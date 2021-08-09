@@ -1,13 +1,17 @@
 <script lang="ts">
+	import {fly, fade} from 'svelte/transition';
+
 	import Community_Nav from '$lib/ui/Community_Nav.svelte';
 	import Space_Nav from '$lib/ui/Space_Nav.svelte';
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
 	import Account_Form from '$lib/ui/Account_Form.svelte';
 	import {get_data} from '$lib/ui/data';
 	import {get_ui} from '$lib/ui/ui';
+	import {get_api} from '$lib/ui/api';
 
 	const data = get_data();
 	const ui = get_ui();
+	const api = get_api();
 
 	$: members = $data.members;
 	$: communities = $data.communities;
@@ -28,8 +32,14 @@
 	// $: console.log('[Main_Nav] selected_space', selected_space);
 </script>
 
-<div class="main-nav">
+<div
+	class="main-nav-bg"
+	in:fade={{duration: 237}}
+	on:click={() => ($ui.expand_main_nav ? api.toggle_main_nav() : null)}
+/>
+<div class="main-nav" in:fly={{x: -320, duration: 410}}>
 	<div class="header">
+		<button class="icon-button" on:click={() => api.toggle_main_nav()}> ☰ </button>
 		<button
 			on:click={() => ui.set_main_nav_view('explorer')}
 			class:selected={$ui.main_nav_view === 'explorer'}
@@ -73,6 +83,28 @@
 		flex-shrink: 0;
 		border-left: var(--border);
 		border-right: var(--border);
+		background-color: var(--bg);
+	}
+	.main-nav-bg {
+		display: none;
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		left: 0;
+		top: 0;
+		/* TODO from felt */
+		background-color: rgba(0, 0, 0, 0.6);
+	}
+	@media (max-width: 800px) {
+		.main-nav {
+			z-index: 1;
+			position: fixed;
+			left: 0;
+			top: 0;
+		}
+		.main-nav-bg {
+			display: flex;
+		}
 	}
 	.header {
 		display: flex;

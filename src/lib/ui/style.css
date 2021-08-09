@@ -18,3 +18,9 @@ body {
 main {
 	width: 100%;
 }
+
+/* TODO refactor or upstream */
+.icon-button {
+	width: var(--navbar_size);
+	height: var(--navbar_size);
+}

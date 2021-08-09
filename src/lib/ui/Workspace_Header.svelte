@@ -1,14 +1,16 @@
 <script lang="ts">
 	import {get_api} from '$lib/ui/api';
+	import {get_ui} from '$lib/ui/ui';
 	import type {Space} from '$lib/spaces/space';
 
 	const api = get_api();
+	const ui = get_ui();
 
 	export let space: Space | null | undefined;
 </script>
 
-<div class="workspace-header">
-	<button on:click={() => api.toggle_main_nav()}> ☰ </button>
+<div class="workspace-header" class:expanded-nav={$ui.expand_main_nav}>
+	<button class="icon-button" on:click={() => api.toggle_main_nav()}> ☰ </button>
 	<div>{space?.url}</div>
 </div>
 
@@ -21,9 +23,16 @@
 		border-bottom: var(--border);
 		font-size: var(--font_size_xl);
 	}
-	button {
-		width: var(--navbar_size);
-		height: var(--navbar_size);
+	.icon-button {
+		display: block;
 		margin-right: var(--spacing_lg);
+	}
+	.expanded-nav .icon-button {
+		display: none;
+	}
+	@media (max-width: 800px) {
+		.workspace-header .icon-button {
+			display: block;
+		}
 	}
 </style>
