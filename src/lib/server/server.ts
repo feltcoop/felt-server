@@ -9,6 +9,8 @@ import {Websocket_Server} from '$lib/server/Websocket_Server.js';
 
 const server = create_http_server();
 
+//TODO I think we still need to pass an https server in prod
+
 export const api_server = new Api_Server({
 	server,
 	app: polka({server}),

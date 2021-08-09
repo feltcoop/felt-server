@@ -1,10 +1,16 @@
 /* global styles that override Felt's */
 :root {
 	--bg_hue: 24;
-	--bg_saturation: 40%;
-	--bg_lightness: 95%;
-	--icon_size: 6.4rem;
-	--navbar_size: var(--icon_size);
+	--bg_saturation: 23%;
+	--bg_lightness: 96%;
+	--bg_color_lightness: 91%; /* TODO ? */
+	/* TODO upgrade felt@0.6.1 and delete these */
+	--icon_size_xl: 6.4rem;
+	--icon_size_lg: 4.8rem;
+	--icon_size_md: 3.2rem;
+	--icon_size_sm: 2.4rem;
+	--icon_size_xs: 1.8rem;
+	--navbar_size: var(--icon_size_lg);
 }
 
 body {
