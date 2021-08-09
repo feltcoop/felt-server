@@ -22,7 +22,6 @@
 		font-size: var(--font_size_xl);
 	}
 	.icon-button {
-		display: block;
 		margin-right: var(--spacing_lg);
 	}
 	.expanded-nav .icon-button {

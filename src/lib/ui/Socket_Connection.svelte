@@ -1,10 +1,7 @@
 <script lang="ts">
-	import {get_devmode} from '@feltcoop/felt/ui/devmode.js';
+	import {get_app} from '$lib/ui/app';
 
-	import {get_socket} from '$lib/ui/socket';
-
-	const socket = get_socket();
-	const devmode = get_devmode();
+	const {socket, devmode} = get_app();
 
 	let new_url = $socket.url || '';
 	const reset_url = () => (new_url = $socket.url || '');
