@@ -35,13 +35,16 @@ export class Database {
 			load_client_session: async (name: string): Promise<Result<{value: Account_Session}>> => {
 				console.log('[db] load_client_session', name);
 				let account: Account = unwrap(await this.repos.accounts.find_by_name(name));
+				let personas: Persona[] = unwrap(
+					await this.repos.personas.filter_by_account(account.account_id!),
+				);
 				let communities: Community[] = unwrap(
 					await this.repos.communities.filter_by_account(account.account_id!),
 				);
 				let members: Member[] = unwrap(await this.repos.members.get_all());
 				return {
 					ok: true,
-					value: {account, communities, members},
+					value: {account, personas, communities, members},
 				};
 			},
 		},
@@ -95,6 +98,20 @@ export class Database {
 				console.log(data);
 				const persona = data[0];
 				return {ok: true, value: persona};
+			},
+			filter_by_account: async (
+				account_id: number,
+			): Promise<Result<{value: Persona[]}, {reason: string}>> => {
+				const data = await this.sql<Persona[]>`
+				  select persona_id, account_id, name from personas where account_id = ${account_id}
+					`;
+				if (data.length) {
+					return {ok: true, value: data};
+				}
+				return {
+					ok: false,
+					reason: `No Personas found for account: ${account_id}`,
+				};
 			},
 		},
 		members: {

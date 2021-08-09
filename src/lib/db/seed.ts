@@ -149,6 +149,16 @@ export const seed = async (db: Database): Promise<void> => {
 			)
 		`;
 		console.log('[db] create_account1_result', create_account1_result);
+
+		const create_persona1_result = await sql`
+				insert into personas (
+					account_id, name
+				) values (
+					1, ${account1_initial_data.name}
+				)
+		`;
+
+		console.log('[db] create_persona1_result', create_persona1_result);
 	}
 
 	// example: insert with dynamic query helper
@@ -162,6 +172,16 @@ export const seed = async (db: Database): Promise<void> => {
 			insert into accounts ${sql(account2, 'name', 'password')}
 		`;
 		console.log('[db] create_account2_result', account2_result);
+
+		const create_persona2_result = await sql`
+				insert into personas (
+					account_id, name
+				) values (
+					2, ${account2.name}
+				)
+		`;
+
+		console.log('[db] create_persona2_result', create_persona2_result);
 	}
 
 	const community1_doc = community_docs.find((d) => d.community_id === 1);
