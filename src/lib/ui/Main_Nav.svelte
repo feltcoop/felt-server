@@ -1,6 +1,4 @@
 <script lang="ts">
-	import {fly, fade} from 'svelte/transition';
-
 	import Community_Nav from '$lib/ui/Community_Nav.svelte';
 	import Space_Nav from '$lib/ui/Space_Nav.svelte';
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
@@ -8,11 +6,6 @@
 	import {get_app} from '$lib/ui/app';
 
 	const {data, ui, api} = get_app();
-
-	// TODO upstream these vars to Felt and share with CSS
-	const MAIN_NAV_WIDTH = 320; // TODO this is the same as `column_width_min`
-	const NAV_TRANSITION_IN_DURATION = 410;
-	const BG_TRANSITION_IN_DURATION = 237;
 
 	$: members = $data.members;
 	$: communities = $data.communities;
@@ -35,10 +28,10 @@
 
 <div
 	class="main-nav-bg"
-	in:fade={{duration: BG_TRANSITION_IN_DURATION}}
+	class:expanded={$ui.expand_main_nav}
 	on:click={() => ($ui.expand_main_nav ? api.toggle_main_nav() : null)}
 />
-<div class="main-nav" in:fly={{x: -MAIN_NAV_WIDTH, duration: NAV_TRANSITION_IN_DURATION}}>
+<div class="main-nav" class:expanded={$ui.expand_main_nav}>
 	<div class="header">
 		<button class="icon-button" on:click={() => api.toggle_main_nav()}> ☰ </button>
 		<button
@@ -76,6 +69,8 @@
 
 <style>
 	.main-nav {
+		position: relative;
+		z-index: 1;
 		height: 100%;
 		width: var(--column_width_min);
 		overflow: auto;
@@ -86,7 +81,11 @@
 		border-right: var(--border);
 		background-color: var(--bg);
 	}
+	.main-nav.expanded {
+		animation: fly-in var(--transition_duration_md) ease-out;
+	}
 	.main-nav-bg {
+		z-index: 1;
 		display: none;
 		position: fixed;
 		width: 100%;
@@ -106,6 +105,9 @@
 		}
 		.main-nav-bg {
 			display: block;
+		}
+		.main-nav-bg.expanded {
+			animation: fade-in var(--transition_duration_sm) linear;
 		}
 	}
 	.header {
