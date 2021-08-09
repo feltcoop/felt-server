@@ -2,6 +2,7 @@
 	import {session} from '$app/stores';
 	import {tick} from 'svelte';
 	import Pending_Animation from '@feltcoop/felt/ui/Pending_Animation.svelte';
+	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	import type {Login_Request} from '$lib/session/login_middleware.js';
 	import {autofocus} from '$lib/ui/actions';
@@ -69,33 +70,35 @@
 
 <div class="login-wrapper">
 	<img src="/favicon.png" alt="felt heart" />
-	<form>
-		<input
-			type="text"
-			bind:this={account_name_el}
-			bind:value={account_name}
-			on:keypress={on_keypress}
-			{disabled}
-			placeholder="account name"
-			use:autofocus
-		/>
-		<input
-			type="password"
-			bind:this={password_el}
-			bind:value={password}
-			on:keypress={on_keypress}
-			{disabled}
-			placeholder="password"
-		/>
-		<button type="button" bind:this={button_el} on:click={submit_name} {disabled}>
-			{#if submitting}
-				<Pending_Animation />
-			{:else}log in{/if}
-		</button>
-		{#if error_message}
-			<div class="error">{error_message}</div>
-		{/if}
-	</form>
+	<Markup>
+		<form>
+			<input
+				type="text"
+				bind:this={account_name_el}
+				bind:value={account_name}
+				on:keypress={on_keypress}
+				{disabled}
+				placeholder="account name"
+				use:autofocus
+			/>
+			<input
+				type="password"
+				bind:this={password_el}
+				bind:value={password}
+				on:keypress={on_keypress}
+				{disabled}
+				placeholder="password"
+			/>
+			<button type="button" bind:this={button_el} on:click={submit_name} {disabled}>
+				{#if submitting}
+					<Pending_Animation />
+				{:else}log in{/if}
+			</button>
+			{#if error_message}
+				<div class="error">{error_message}</div>
+			{/if}
+		</form>
+	</Markup>
 </div>
 
 <style>
@@ -111,7 +114,6 @@
 		font-weight: bold;
 		color: rgb(73, 84, 153);
 	}
-
 	form {
 		display: flex;
 		flex-direction: column;
