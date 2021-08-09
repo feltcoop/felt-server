@@ -27,7 +27,8 @@
 	.expanded-nav .icon-button {
 		display: none;
 	}
-	@media (max-width: 800px) {
+	/* `50rem` in media queries is the same as `800px`, which is `--column_width` */
+	@media (max-width: 50rem) {
 		.workspace-header .icon-button {
 			display: block;
 		}
