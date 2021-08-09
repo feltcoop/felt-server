@@ -1,11 +1,10 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
-import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
 
 export const task: Task = {
-	summary: 'scaffold a clean server to prepare for a felt-server deploy',
+	summary: 'setup a clean server to prepare for a felt-server deploy',
 	dev: false,
-	run: async ({invoke_task}) => {
+	run: async ({}) => {
 		//TODO set up initial user accounts & directory syste
 		//Install initial tools for Node ecosystem
 		await spawn('ssh', [
@@ -15,11 +14,7 @@ export const task: Task = {
       curl -fsSL https://fnm.vercel.app/install | bash;`,
 		]);
 		//Splitting these tasks here let's fnm get picked up from the bash profile
-		await spawn('ssh', [
-			'root@50.116.30.248',
-			`fnm install 16.6.0;
-		 	apt install npm;`,
-		]);
+		await spawn('ssh', ['root@50.116.30.248', `fnm install 16;`]);
 		//This chunk manages the NGINX & HTTPS config
 		await spawn('ssh', [
 			'root@50.116.30.248',
