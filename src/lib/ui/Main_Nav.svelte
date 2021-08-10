@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Markup from '@feltcoop/felt/ui/Markup.svelte';
+
 	import Community_Nav from '$lib/ui/Community_Nav.svelte';
 	import Space_Nav from '$lib/ui/Space_Nav.svelte';
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
@@ -63,7 +65,9 @@
 			{/if}
 		</div>
 	{:else if $ui.main_nav_view === 'account'}
-		<Account_Form />
+		<Markup>
+			<Account_Form />
+		</Markup>
 		<Socket_Connection />
 	{/if}
 </div>
@@ -80,10 +84,10 @@
 		flex-shrink: 0;
 		border-left: var(--border);
 		border-right: var(--border);
-		background-color: var(--bg);
+		transform-origin: top left;
 	}
 	.main-nav.expanded {
-		animation: fly-in var(--transition_duration_md) ease-out;
+		animation: fly-in var(--transition_duration_sm) ease-out;
 	}
 	.main-nav-bg {
 		z-index: 1;
@@ -108,7 +112,7 @@
 			display: block;
 		}
 		.main-nav-bg.expanded {
-			animation: fade-in var(--transition_duration_sm) linear;
+			animation: fade-in var(--transition_duration_md) linear;
 		}
 	}
 	.header {

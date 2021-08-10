@@ -54,6 +54,7 @@
 		overflow: hidden; /* make the content scroll */
 	}
 	.posts {
+		max-width: var(--column_width);
 		overflow: auto;
 		flex: 1;
 		display: flex;

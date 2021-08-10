@@ -2,7 +2,7 @@
 	import {session} from '$app/stores';
 	import {tick} from 'svelte';
 	import Pending_Animation from '@feltcoop/felt/ui/Pending_Animation.svelte';
-	import Markup from '@feltcoop/felt/ui/Markup.svelte';
+	import {icons} from '@feltcoop/felt';
 
 	import type {Login_Request} from '$lib/session/login_middleware.js';
 	import {autofocus} from '$lib/ui/actions';
@@ -68,48 +68,36 @@
 	};
 </script>
 
-<div class="login-wrapper">
+<div class="icon">
 	<img src="/favicon.png" alt="felt heart" />
-	<Markup>
-		<form>
-			<input
-				type="text"
-				bind:this={account_name_el}
-				bind:value={account_name}
-				on:keypress={on_keypress}
-				{disabled}
-				placeholder="account name"
-				use:autofocus
-			/>
-			<input
-				type="password"
-				bind:this={password_el}
-				bind:value={password}
-				on:keypress={on_keypress}
-				{disabled}
-				placeholder="password"
-			/>
-			<button type="button" bind:this={button_el} on:click={submit_name} {disabled}>
-				{#if submitting}
-					<Pending_Animation />
-				{:else}log in{/if}
-			</button>
-			{#if error_message}
-				<div class="error">{error_message}</div>
-			{/if}
-		</form>
-	</Markup>
 </div>
+<form>
+	<input
+		type="text"
+		bind:this={account_name_el}
+		bind:value={account_name}
+		on:keypress={on_keypress}
+		{disabled}
+		placeholder="account name"
+		use:autofocus
+	/>
+	<input
+		type="password"
+		bind:this={password_el}
+		bind:value={password}
+		on:keypress={on_keypress}
+		{disabled}
+		placeholder="password"
+	/>
+	<button type="button" bind:this={button_el} on:click={submit_name} {disabled}>
+		{#if submitting}
+			<Pending_Animation />
+		{:else}log in{/if}
+	</button>
+	<div class:error={!!error_message}>{error_message || icons.felt}</div>
+</form>
 
 <style>
-	.login-wrapper {
-		height: 100%;
-		width: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-direction: column;
-	}
 	.error {
 		font-weight: bold;
 		color: rgb(73, 84, 153);
@@ -119,5 +107,13 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+	}
+	.icon {
+		display: flex;
+		justify-content: center;
+		padding: var(--spacing_lg);
+	}
+	.icon img {
+		width: var(--icon_size_md);
 	}
 </style>
