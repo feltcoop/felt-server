@@ -4,7 +4,9 @@
 	const {api} = get_app();
 </script>
 
-<button class="luggage icon-button" on:click={() => api.toggle_main_nav()}> ☰ </button>
+<div class="luggage">
+	<button class="icon-button" on:click={() => api.toggle_main_nav()}> ☰ </button>
+</div>
 
 <style>
 	.luggage {
