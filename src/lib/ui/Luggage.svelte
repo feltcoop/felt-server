@@ -4,12 +4,12 @@
 	const {api} = get_app();
 </script>
 
-<button class="icon-button" on:click={() => api.toggle_main_nav()}> ☰ </button>
+<button class="luggage icon-button" on:click={() => api.toggle_main_nav()}> ☰ </button>
 
 <style>
-	button {
+	.luggage {
 		z-index: 9;
-		position: fixed;
+		position: absolute;
 		left: 0;
 		top: 0;
 	}

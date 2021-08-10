@@ -85,6 +85,7 @@
 		border-left: var(--border);
 		border-right: var(--border);
 		transform-origin: top left;
+		background-color: hsl(var(--bg_hue), var(--bg_saturation), var(--bg_lightness));
 	}
 	.main-nav.expanded {
 		animation: fly-in var(--transition_duration_sm) ease-out;
