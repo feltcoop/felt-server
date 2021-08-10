@@ -23,7 +23,7 @@ export interface Community_Model {
 
 export const to_community_model = (community: Community): Community_Model => ({
 	...community,
-	members_by_id: new Map(community.members.map((member) => [member.account_id, member])),
+	members_by_id: new Map(community.members.map((member) => [member.persona_id, member])),
 });
 
 export interface Community_Spaces {
@@ -33,9 +33,9 @@ export interface Community_Spaces {
 
 export type Community_Spaces_Params = Community_Spaces;
 
-export interface Account_Community {
-	account_id: number;
+export interface Persona_Community {
+	persona_id: number;
 	community_id: number;
 }
 
-export type Account_Community_Params = Account_Community;
+export type Persona_Community_Params = Persona_Community;

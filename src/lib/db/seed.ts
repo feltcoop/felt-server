@@ -3,8 +3,8 @@ import type {Account} from '$lib/vocab/account/account.js';
 import type {Space, Space_Params} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
 import type {
-	Account_Community,
-	Account_Community_Params,
+	Persona_Community,
+	Persona_Community_Params,
 	Community_Spaces,
 	Community_Spaces_Params,
 } from '$lib/communities/community';
@@ -49,16 +49,16 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] create_communities_table_result', create_communities_table_result);
 	}
 
-	const create_account_communities_result = await sql`
-		create table if not exists account_communities (
-			account_id int references accounts (account_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	const create_persona_communities_result = await sql`
+		create table if not exists persona_communities (
+			persona_id int references personas (persona_id) ON UPDATE CASCADE ON DELETE CASCADE,
 			community_id int references communities (community_id) ON UPDATE CASCADE,
-			CONSTRAINT account_community_pkey PRIMARY KEY (account_id,community_id)
+			CONSTRAINT persona_community_pkey PRIMARY KEY (persona_id,community_id)
 		)	
 	`;
 
-	if (create_account_communities_result.count) {
-		console.log('[db] create_account_communities_result', create_account_communities_result);
+	if (create_persona_communities_result.count) {
+		console.log('[db] create_persona_communities_result', create_persona_communities_result);
 	}
 
 	const create_spaces_table_result = await sql`
@@ -124,10 +124,10 @@ export const seed = async (db: Database): Promise<void> => {
 	`;
 	console.log('[db] community_docs', community_docs);
 
-	const account_community_docs = await sql<Account_Community[]>`
-		select account_id,community_id from account_communities
+	const persona_community_docs = await sql<Persona_Community[]>`
+		select persona_id,community_id from persona_communities
 	`;
-	console.log('[db] account_community_docs', account_community_docs);
+	console.log('[db] persona_community_docs', persona_community_docs);
 
 	const community_spaces_docs = await sql<Community_Spaces[]>`
 		select space_id,community_id from community_spaces
@@ -215,48 +215,48 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] create_community3_result', community3_result);
 	}
 
-	const account_community1_doc = account_community_docs.find(
-		(d) => d.account_id === 1 && d.community_id === 1,
+	const persona_community1_doc = persona_community_docs.find(
+		(d) => d.persona_id === 1 && d.community_id === 1,
 	);
-	if (!account_community1_doc) {
-		const account_community1: Account_Community_Params = {account_id: 1, community_id: 1};
-		const account_community1_result = await sql`
-			insert into account_communities ${sql(account_community1, 'account_id', 'community_id')}
+	if (!persona_community1_doc) {
+		const persona_community1: Persona_Community_Params = {persona_id: 1, community_id: 1};
+		const persona_community1_result = await sql`
+			insert into persona_communities ${sql(persona_community1, 'persona_id', 'community_id')}
 		`;
-		console.log('[db] create_account_community1_result', account_community1_result);
+		console.log('[db] create_persona_community1_result', persona_community1_result);
 	}
 
-	const account_community2_doc = account_community_docs.find(
-		(d) => d.account_id === 1 && d.community_id === 2,
+	const persona_community2_doc = persona_community_docs.find(
+		(d) => d.persona_id === 1 && d.community_id === 2,
 	);
-	if (!account_community2_doc) {
-		const account_community2: Account_Community_Params = {account_id: 1, community_id: 2};
-		const account_community2_result = await sql`
-			insert into account_communities ${sql(account_community2, 'account_id', 'community_id')}
+	if (!persona_community2_doc) {
+		const persona_community2: Persona_Community_Params = {persona_id: 1, community_id: 2};
+		const persona_community2_result = await sql`
+			insert into persona_communities ${sql(persona_community2, 'persona_id', 'community_id')}
 		`;
-		console.log('[db] create_account_community2_result', account_community2_result);
+		console.log('[db] create_persona_community2_result', persona_community2_result);
 	}
 
-	const account_community3_doc = account_community_docs.find(
-		(d) => d.account_id === 2 && d.community_id === 1,
+	const persona_community3_doc = persona_community_docs.find(
+		(d) => d.persona_id === 2 && d.community_id === 1,
 	);
-	if (!account_community3_doc) {
-		const account_community3: Account_Community_Params = {account_id: 2, community_id: 1};
-		const account_community3_result = await sql`
-			insert into account_communities ${sql(account_community3, 'account_id', 'community_id')}
+	if (!persona_community3_doc) {
+		const persona_community3: Persona_Community_Params = {persona_id: 2, community_id: 1};
+		const persona_community3_result = await sql`
+			insert into persona_communities ${sql(persona_community3, 'persona_id', 'community_id')}
 		`;
-		console.log('[db] create_account_community3_result', account_community3_result);
+		console.log('[db] create_persona_community3_result', persona_community3_result);
 	}
 
-	const account_community4_doc = account_community_docs.find(
-		(d) => d.account_id === 2 && d.community_id === 3,
+	const persona_community4_doc = persona_community_docs.find(
+		(d) => d.persona_id === 2 && d.community_id === 3,
 	);
-	if (!account_community4_doc) {
-		const account_community4: Account_Community_Params = {account_id: 2, community_id: 3};
-		const account_community4_result = await sql`
-			insert into account_communities ${sql(account_community4, 'account_id', 'community_id')}
+	if (!persona_community4_doc) {
+		const persona_community4: Persona_Community_Params = {persona_id: 2, community_id: 3};
+		const persona_community4_result = await sql`
+			insert into persona_communities ${sql(persona_community4, 'persona_id', 'community_id')}
 		`;
-		console.log('[db] create_account_community4_result', account_community4_result);
+		console.log('[db] create_persona_community4_result', persona_community4_result);
 	}
 
 	const space1 = space_docs.find((d) => d.space_id === 1);

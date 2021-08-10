@@ -39,6 +39,7 @@ export interface Request extends PolkaRequest, CookieSessionRequest {
 }
 export interface Middleware extends PolkaMiddleware<Request> {}
 export interface ServerSession extends CookieSessionObject {
+	active_persona?: number;
 	name?: string;
 }
 

@@ -32,14 +32,17 @@ export class Database {
 	// TODO declaring like this is weird, should be static, but not sure what interface is best
 	repos = {
 		session: {
-			load_client_session: async (name: string): Promise<Result<{value: Account_Session}>> => {
+			load_client_session: async (
+				name: string,
+				active_persona: number,
+			): Promise<Result<{value: Account_Session}>> => {
 				console.log('[db] load_client_session', name);
 				let account: Account = unwrap(await this.repos.accounts.find_by_name(name));
 				let personas: Persona[] = unwrap(
 					await this.repos.personas.filter_by_account(account.account_id!),
 				);
 				let communities: Community[] = unwrap(
-					await this.repos.communities.filter_by_account(account.account_id!),
+					await this.repos.communities.filter_by_persona(active_persona),
 				);
 				let members: Member[] = unwrap(await this.repos.members.get_all());
 				return {
@@ -63,7 +66,10 @@ export class Database {
 				if (!persona_response.ok) {
 					return {ok: false, reason: 'Failed to create initial user persona'};
 				}
-				const result = await this.repos.communities.insert(name, account.account_id!);
+				const result = await this.repos.communities.insert(
+					name,
+					persona_response.value.persona_id!,
+				);
 				if (!result.ok) {
 					return {ok: false, reason: 'Failed to create initial user community'};
 				}
@@ -119,20 +125,20 @@ export class Database {
 			//This should use a community_id to filter or something
 			get_all: async (): Promise<Result<{value: Member[]}, {reason: string}>> => {
 				const data = await this.sql<Member[]>`
-					select account_id, name from accounts
+					select persona_id, name from personas
 				`;
 				return {ok: true, value: data};
 			},
 			create: async (
-				account_id: number,
+				persona_id: number,
 				community_id: number,
 			): Promise<Result<{value: Member}>> => {
 				const data = await this.sql<Member[]>`
-					INSERT INTO account_communities (account_id, community_id) VALUES (
-						${account_id},${community_id}
+					INSERT INTO persona_communities (persona_id, community_id) VALUES (
+						${persona_id},${community_id}
 					) RETURNING *			
 				`;
-				console.log('[db] created account_communities', data);
+				console.log('[db] created persona_communities', data);
 				return {ok: true, value: data[0]};
 			},
 		},
@@ -154,8 +160,8 @@ export class Database {
 					reason: `No community found with id: ${community_id}`,
 				};
 			},
-			filter_by_account: async (account_id: number): Promise<Result<{value: Community[]}>> => {
-				console.log(`[db] preparing to query for communities & spaces account: ${account_id}`);
+			filter_by_persona: async (persona_id: number): Promise<Result<{value: Community[]}>> => {
+				console.log(`[db] preparing to query for communities & spaces persona: ${persona_id}`);
 				const data = await this.sql<Community[]>`		
 					select c.community_id, c.name,
     				(
@@ -167,16 +173,16 @@ export class Database {
 						(
 							select array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
 							from (
-								SELECT a.account_id, a.name FROM accounts a JOIN account_communities ac ON a.account_id=ac.account_id AND ac.community_id=c.community_id
+								SELECT p.persona_id, p.name FROM personas p JOIN persona_communities pc ON p.persona_id=pc.persona_id AND pc.community_id=c.community_id
 							) d
 						) as members 
-  				from communities c JOIN account_communities ac
-  				ON c.community_id=ac.community_id AND ac.account_id=${account_id}				
+  				from communities c JOIN persona_communities pc
+  				ON c.community_id=pc.community_id AND pc.persona_id=${persona_id}				
 				`;
 				console.log('[db] community data', data);
 				return {ok: true, value: data};
 			},
-			insert: async (name: string, account_id: number): Promise<Result<{value: Community}>> => {
+			insert: async (name: string, persona_id: number): Promise<Result<{value: Community}>> => {
 				const data = await this.sql<Community[]>`
 					INSERT INTO communities (name) VALUES (
 						${name}
@@ -188,11 +194,11 @@ export class Database {
 				console.log(community_id);
 				// TODO more robust error handling or condense into single query
 				const association = await this.sql<any>`
-					INSERT INTO account_communities (account_id, community_id) VALUES (
-					${account_id},${community_id}
+					INSERT INTO persona_communities (persona_id, community_id) VALUES (
+					${persona_id},${community_id}
 					)
 				`;
-				console.log('[db] created account_communities', association);
+				console.log('[db] created persona_communities', association);
 				const spaces_result = await this.repos.spaces.insert_default_spaces(community_id);
 				if (!spaces_result.ok) return spaces_result;
 				community.spaces = spaces_result.value;

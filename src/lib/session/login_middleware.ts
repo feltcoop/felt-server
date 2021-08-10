@@ -64,9 +64,21 @@ export const to_login_middleware = (server: Api_Server): Middleware => {
 			return send(res, 400, {reason: find_account_result.reason});
 		}
 
+		const find_account_persona_results = await db.repos.personas.filter_by_account(
+			account.account_id!,
+		);
+
+		if (!find_account_persona_results.ok) {
+			return send(res, 400, {reason: find_account_persona_results.reason});
+		}
+
 		console.log('[login]', account.name); // TODO logging
 		req.session.name = account.name;
-		const client_session_result = await db.repos.session.load_client_session(account.name);
+		req.session.active_persona = find_account_persona_results.value[0].persona_id;
+		const client_session_result = await db.repos.session.load_client_session(
+			account.name,
+			req.session.active_persona!,
+		);
 		if (client_session_result.ok) {
 			return send(res, 200, {session: client_session_result.value}); // TODO API types
 		} else {

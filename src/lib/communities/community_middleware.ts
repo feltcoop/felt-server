@@ -13,8 +13,8 @@ export const to_communities_middleware = (server: Api_Server): Middleware => {
 		}
 		console.log('[community_middleware] account', req.account_session); // TODO logging
 
-		const find_communities_result = await db.repos.communities.filter_by_account(
-			req.account_session.account.account_id!,
+		const find_communities_result = await db.repos.communities.filter_by_persona(
+			req.session.active_persona!,
 		);
 		if (find_communities_result.ok) {
 			return send(res, 200, {communities: find_communities_result.value}); // TODO API types
@@ -68,8 +68,8 @@ export const to_create_community_middleware = (server: Api_Server): Middleware =
 		if (create_community_result.ok) {
 			// TODO optimize this to return `create_community_result.value` instead of making another db call,
 			// needs to populate members, but we probably want to normalize the data, returning only ids
-			const community_data = await db.repos.communities.filter_by_account(
-				req.account_session.account.account_id!,
+			const community_data = await db.repos.communities.filter_by_persona(
+				req.session.active_persona!,
 			);
 			if (community_data.ok) {
 				const {community_id} = create_community_result.value;
@@ -101,7 +101,7 @@ export const to_create_member_middleware = (server: Api_Server): Middleware => {
 		console.log('[community_middleware] creating member', member);
 
 		const create_member_result = await db.repos.members.create(
-			member.account_id,
+			member.persona_id,
 			member.community_id,
 		);
 		if (create_member_result.ok) {
