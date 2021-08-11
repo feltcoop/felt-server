@@ -31,7 +31,6 @@
 				style="--hue: {to_random_hue(community.name)}"
 			>
 				<Actor_Icon name={community.name} />
-				{community.name.substring(0, 1)}
 			</button>
 		{/each}
 	</div>
