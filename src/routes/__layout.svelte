@@ -41,10 +41,7 @@
 <div class="layout">
 	{#if !$session.guest}
 		<Luggage />
-		<!-- TODO probably always render this, and have it hide offscreen -->
-		{#if $ui.expand_main_nav}
-			<Main_Nav />
-		{/if}
+		<Main_Nav />
 	{/if}
 	<slot />
 	<Devmode {devmode} />
