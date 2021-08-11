@@ -65,7 +65,7 @@ export const to_login_middleware = (server: Api_Server): Middleware => {
 		}
 
 		console.log('[login]', account.account_id); // TODO logging
-		req.session.name = account.account_id;
+		req.session.account_id = account.account_id;
 		const client_session_result = await db.repos.session.load_client_session(account.account_id);
 		if (client_session_result.ok) {
 			return send(res, 200, {session: client_session_result.value}); // TODO API types

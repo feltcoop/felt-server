@@ -39,7 +39,7 @@ export interface Request extends PolkaRequest, CookieSessionRequest {
 }
 export interface Middleware extends PolkaMiddleware<Request> {}
 export interface ServerSession extends CookieSessionObject {
-	name?: string;
+	account_id?: number;
 }
 
 const dev = process.env.NODE_ENV !== 'production';
