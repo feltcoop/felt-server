@@ -1,7 +1,10 @@
 <script lang="ts">
+	import {to_random_seeded} from '@feltcoop/felt/util/random_seeded.js';
+
 	import type {Community} from '$lib/communities/community.js';
 	import type {Member} from '$lib/members/member.js';
 	import Community_Input from '$lib/ui/Community_Input.svelte';
+	import Actor_Icon from '$lib/ui/Actor_Icon.svelte';
 	import {get_app} from '$lib/ui/app';
 
 	const {api} = get_app();
@@ -9,6 +12,10 @@
 	export let members: Member[];
 	export let communities: Community[];
 	export let selected_community: Community;
+
+	// TODO not sure about this `--hue` api -- see in 2 places
+	// TODO refactor to some client view-model for the actor
+	const to_random_hue = (seed: any) => to_random_seeded(seed)() * 360; // TODO random int
 </script>
 
 <div class="community-nav">
@@ -21,8 +28,10 @@
 			<button
 				class:selected={community === selected_community}
 				on:click={() => api.select_community(community.community_id)}
+				style="--hue: {to_random_hue(community.name)}"
 			>
-				{community.name.substring(0, 4)}
+				<Actor_Icon name={community.name} />
+				{community.name.substring(0, 1)}
 			</button>
 		{/each}
 	</div>

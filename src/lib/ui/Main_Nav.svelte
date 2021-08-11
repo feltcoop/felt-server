@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {icons} from '@feltcoop/felt';
+	import {to_random_seeded} from '@feltcoop/felt/util/random_seeded.js';
 
 	import Actor_Icon from '$lib/ui/Actor_Icon.svelte';
 	import Community_Nav from '$lib/ui/Community_Nav.svelte';
@@ -8,7 +9,6 @@
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
 	import Account_Form from '$lib/ui/Account_Form.svelte';
 	import {get_app} from '$lib/ui/app';
-	import {to_random_seeded} from '@feltcoop/felt/util/random_seeded.js';
 
 	const {data, ui, api} = get_app();
 
