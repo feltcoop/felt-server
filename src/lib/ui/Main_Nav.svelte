@@ -1,11 +1,14 @@
 <script lang="ts">
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
+	import {icons} from '@feltcoop/felt';
 
+	import Actor_Icon from '$lib/ui/Actor_Icon.svelte';
 	import Community_Nav from '$lib/ui/Community_Nav.svelte';
 	import Space_Nav from '$lib/ui/Space_Nav.svelte';
 	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
 	import Account_Form from '$lib/ui/Account_Form.svelte';
 	import {get_app} from '$lib/ui/app';
+	import {to_random_seeded} from '@feltcoop/felt/util/random_seeded.js';
 
 	const {data, ui, api} = get_app();
 
@@ -26,12 +29,16 @@
 	// $: console.log('[Main_Nav] communities', communities);
 	// $: console.log('[Main_Nav] selected_community', selected_community);
 	// $: console.log('[Main_Nav] selected_space', selected_space);
+
+	// TODO not sure about this `--hue` api -- see in 2 places
+	// TODO refactor to some client view-model for the actor
+	$: hue = to_random_seeded($data.account.name)() * 360; // TODO random int
 </script>
 
 {#if $ui.expand_main_nav}
 	<div class="main-nav-bg" on:click={() => ($ui.expand_main_nav ? api.toggle_main_nav() : null)} />
 {/if}
-<div class="main-nav-panel" class:expanded={$ui.expand_main_nav}>
+<div class="main-nav-panel" class:expanded={$ui.expand_main_nav} style="--hue: {hue}">
 	<div class="main-nav">
 		<div class="header">
 			<!-- TODO how to do this? -->
@@ -41,14 +48,18 @@
 				class:selected={$ui.main_nav_view === 'explorer'}
 				class="explorer-button"
 			>
-				<img src="/favicon.png" alt="show explorer" />
+				<Actor_Icon name={$data.account.name} />
+				<div class="explorer-button-text">
+					{$data.account.name}
+				</div>
 			</button>
 			<button
 				on:click={() => ui.set_main_nav_view('account')}
 				class:selected={$ui.main_nav_view === 'account'}
 				class="account-button"
 			>
-				{$data.account.name}
+				<!-- TODO `icons.dot_dot_dot` -->
+				{icons.bullet_point}{icons.bullet_point}{icons.bullet_point}
 			</button>
 		</div>
 		{#if $ui.main_nav_view === 'explorer'}
@@ -137,10 +148,16 @@
 		flex: 1;
 	}
 	.explorer-button {
-		width: var(--navbar_size);
+		justify-content: flex-start;
 		height: var(--navbar_size);
+		flex: 1;
+		padding: var(--spacing_xs);
+	}
+	.explorer-button-text {
+		padding-left: var(--spacing_md);
 	}
 	.account-button {
-		flex: 1;
+		height: var(--navbar_size);
+		width: var(--navbar_size);
 	}
 </style>

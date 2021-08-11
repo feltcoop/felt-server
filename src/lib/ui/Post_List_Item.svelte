@@ -10,6 +10,7 @@
 	// TODO shouldn't need this
 	$: icon = (member as any).icon || null;
 
+	// TODO not sure about this `--hue` api -- see in 2 places
 	// TODO refactor to some client view-model for the actor
 	$: hue = to_random_seeded(member.name)() * 360; // TODO random int
 </script>
