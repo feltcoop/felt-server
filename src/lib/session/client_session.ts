@@ -1,13 +1,11 @@
 import type {Community} from '$lib/communities/community.js';
-import type {Account} from '$lib/vocab/account/account.js';
+import type {Account_Model} from '$lib/vocab/account/account.js';
 import type {Member} from '$lib/members/member.js';
 
 export type Client_Session = Account_Session | Guest_Session;
 
-export type Client_Account = Pick<Account, 'name' | 'account_id'>;
-
 export interface Account_Session {
-	account: Client_Account;
+	account: Account_Model;
 	communities: Community[];
 	//Stub for a Friends feature in future release, for now just returns all users in an instance
 	members: Member[];

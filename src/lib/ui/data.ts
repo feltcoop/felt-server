@@ -2,10 +2,11 @@ import {writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
-import type {Client_Account, Client_Session} from '$lib/session/client_session';
+import type {Client_Session} from '$lib/session/client_session';
 import {Community_Model, to_community_model} from '$lib/communities/community';
 import type {Member} from '$lib/members/member';
 import type {Space} from '$lib/spaces/space';
+import type {Account_Model} from '$lib/vocab/account/account';
 
 // TODO refactor/rethink
 
@@ -22,7 +23,7 @@ export const set_data = (session: Client_Session): Data_Store => {
 };
 
 export interface Data_State {
-	account: Client_Account;
+	account: Account_Model;
 	communities: Community_Model[];
 	spaces: Space[];
 	members: Member[];

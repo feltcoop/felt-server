@@ -1,5 +1,5 @@
 import type {Database} from '$lib/db/Database.js';
-import type {Account} from '$lib/vocab/account/account.js';
+import type {Account, Account_Params} from '$lib/vocab/account/account.js';
 import type {Space, Space_Params} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
 import type {
@@ -125,7 +125,7 @@ export const seed = async (db: Database): Promise<void> => {
 	// example: insert literal values
 	const account1_doc = account_docs.find((d) => d.name === 'account1');
 	if (!account1_doc) {
-		const account1_initial_data = {
+		const account1: Account_Params = {
 			name: 'a',
 			password: 'ded6a3304309fe718831c3968bdda1b36fb0acae7de54a4cb011ba10923aab71', // 'a' hashed
 		};
@@ -133,7 +133,7 @@ export const seed = async (db: Database): Promise<void> => {
 			insert into accounts (
 				name, password
 			) values (
-				${account1_initial_data.name}, ${account1_initial_data.password}
+				${account1.name}, ${account1.password}
 			)
 		`;
 		console.log('[db] create_account1_result', create_account1_result);
@@ -142,7 +142,7 @@ export const seed = async (db: Database): Promise<void> => {
 	// example: insert with dynamic query helper
 	const account2_doc = account_docs.find((d) => d.name === 'account2');
 	if (!account2_doc) {
-		const account2: Account = {
+		const account2: Account_Params = {
 			name: 'b',
 			password: 'bff5c2262849491dd4047eb7086a7948428885aef62e3b90aa388c9db11d1c1e', // 'b' hashed
 		};

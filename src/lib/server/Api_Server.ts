@@ -23,10 +23,8 @@ import {
 	to_spaces_middleware,
 	to_create_space_middleware,
 } from '$lib/spaces/space_middleware.js';
-import type {Member} from '$lib/members/member.js';
-import type {Client_Account, Account_Session} from '$lib/session/client_session.js';
+import type {Account_Session} from '$lib/session/client_session.js';
 import type {Database} from '$lib/db/Database.js';
-import type {Community} from '$lib/communities/community.js';
 import type {Websocket_Server} from '$lib/server/Websocket_Server.js';
 
 const log = new Logger([blue('[Api_Server]')]);
@@ -106,9 +104,6 @@ export class Api_Server {
 				log.info('echo', req.body);
 				send(res, 200, req.body);
 			})
-			.get('/api/v1/context', (req, res) => {
-				send(res, 200, to_client_context(req));
-			})
 			.post('/api/v1/login', to_login_middleware(this))
 			.post('/api/v1/logout', to_logout_middleware(this))
 			// TODO replace these with a single resource middleware
@@ -162,29 +157,4 @@ export class Api_Server {
 			),
 		]);
 	}
-}
-
-const to_client_context = (req: Request): Client_Context => {
-	console.log(req.account_session);
-	let client_context: Client_Context;
-	client_context = req.account_session
-		? {
-				account: req.account_session.account,
-				communities: req.account_session.communities,
-				members: req.account_session.members,
-		  }
-		: {guest: true};
-	console.log(client_context);
-	return client_context;
-};
-export type Client_Context = Client_Account_Context | Client_Guest_Context;
-export interface Client_Account_Context {
-	account: Client_Account;
-	communities: Community[];
-	members: Member[];
-	guest?: false;
-}
-export interface Client_Guest_Context {
-	guest: true;
-	error?: Error;
 }

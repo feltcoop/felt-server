@@ -2,9 +2,9 @@
 	import {session} from '$app/stores';
 	import Pending_Animation from '@feltcoop/felt/ui/Pending_Animation.svelte';
 
-	import type {Client_Account} from '$lib/session/client_session.js';
+	import type {Account_Model} from '$lib/vocab/account/account';
 
-	let account: Client_Account;
+	let account: Account_Model;
 	$: account = $session?.account;
 	$: console.log('<Logout_Form> account', account);
 

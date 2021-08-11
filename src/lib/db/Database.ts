@@ -6,7 +6,7 @@ import type {Community} from '$lib/communities/community.js';
 import type {Space, Space_Params} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
 import type {Member} from '$lib/members/member.js';
-import type {Account} from '$lib/vocab/account/account.js';
+import type {Account, Account_Model} from '$lib/vocab/account/account.js';
 import type {Postgres_Sql} from '$lib/db/postgres.js';
 
 export interface Options {
@@ -35,11 +35,14 @@ export class Database {
 				account_id: number,
 			): Promise<Result<{value: Account_Session}>> => {
 				console.log('[db] load_client_session', account_id);
-				let account: Account = unwrap(await this.repos.accounts.find_by_id(account_id));
-				let communities: Community[] = unwrap(
-					await this.repos.communities.filter_by_account(account.account_id!),
+				// TODO refactor this hardcoded array with `Account_Model` data, make typesafe with columns
+				const account: Account_Model = unwrap(
+					await this.repos.accounts.find_by_id(account_id, ['account_id', 'name']),
 				);
-				let members: Member[] = unwrap(await this.repos.members.get_all());
+				const communities: Community[] = unwrap(
+					await this.repos.communities.filter_by_account(account.account_id),
+				);
+				const members: Member[] = unwrap(await this.repos.members.get_all());
 				return {
 					ok: true,
 					value: {account, communities, members},
@@ -65,9 +68,10 @@ export class Database {
 			},
 			find_by_id: async (
 				account_id: number,
+				columns: string[] = ['account_id', 'name', 'password'],
 			): Promise<Result<{value: Account}, {type: 'no_account_found'; reason: string}>> => {
 				const data = await this.sql<Account[]>`
-					select account_id, name, password from accounts where account_id = ${account_id}
+					select ${this.sql(columns)} from accounts where account_id = ${account_id}
 				`;
 				if (data.length) {
 					return {ok: true, value: data[0]};

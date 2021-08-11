@@ -17,7 +17,8 @@
 
 	$: disabled = submitting;
 
-	const submit_name = async () => {
+	const log_in = async () => {
+		if (submitting) return;
 		if (!account_name) {
 			account_name_el.focus();
 			error_message = 'please enter an account name';
@@ -63,7 +64,7 @@
 
 	const on_keypress = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			submit_name();
+			log_in();
 		}
 	};
 </script>
@@ -89,7 +90,7 @@
 		{disabled}
 		placeholder="password"
 	/>
-	<button type="button" bind:this={button_el} on:click={submit_name} {disabled}>
+	<button type="button" bind:this={button_el} on:click={log_in}>
 		{#if submitting}
 			<Pending_Animation />
 		{:else}log in{/if}
