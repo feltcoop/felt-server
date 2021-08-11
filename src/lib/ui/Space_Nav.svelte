@@ -42,4 +42,7 @@
 	.header {
 		display: flex;
 	}
+	button {
+		justify-content: flex-start;
+	}
 </style>
