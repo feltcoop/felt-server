@@ -16,4 +16,4 @@ export interface Account_Model {
 }
 
 // TODO improve type so it's exhaustive (maybe via schema/codegen)
-export const account_model_client_fields: (keyof Account_Model)[] = ['account_id', 'name'];
+export const account_model_properties: (keyof Account_Model)[] = ['account_id', 'name'];
