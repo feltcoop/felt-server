@@ -51,7 +51,10 @@ export const to_login_middleware = (server: Api_Server): Middleware => {
 			}
 		} else if (find_account_result.type === 'no_account_found') {
 			// There's no accoun, so create one.
-			const find_account_result = await db.repos.accounts.create(account_name, password_hash);
+			const find_account_result = await db.repos.accounts.create({
+				name: account_name,
+				password: password_hash,
+			});
 			console.log('createAccountResult', find_account_result);
 			if (find_account_result.ok) {
 				account = find_account_result.value;

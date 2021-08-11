@@ -6,7 +6,7 @@ import type {Community} from '$lib/communities/community.js';
 import type {Space, Space_Params} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
 import type {Member} from '$lib/members/member.js';
-import type {Account, Account_Model} from '$lib/vocab/account/account.js';
+import type {Account, Account_Model, Account_Params} from '$lib/vocab/account/account.js';
 import {account_model_client_fields} from '$lib/vocab/account/account';
 import type {Postgres_Sql} from '$lib/db/postgres.js';
 
@@ -51,10 +51,10 @@ export class Database {
 			},
 		},
 		accounts: {
-			create: async (
-				name: string,
-				password: string,
-			): Promise<Result<{value: Account}, {reason: string}>> => {
+			create: async ({
+				name,
+				password,
+			}: Account_Params): Promise<Result<{value: Account}, {reason: string}>> => {
 				const data = await this.sql<Account[]>`
 					insert into accounts (name, password) values (
 						${name}, ${password}
