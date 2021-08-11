@@ -7,6 +7,7 @@ import type {Space, Space_Params} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
 import type {Member} from '$lib/members/member.js';
 import type {Account, Account_Model} from '$lib/vocab/account/account.js';
+import {account_model_client_fields} from '$lib/vocab/account/account';
 import type {Postgres_Sql} from '$lib/db/postgres.js';
 
 export interface Options {
@@ -37,7 +38,7 @@ export class Database {
 				console.log('[db] load_client_session', account_id);
 				// TODO refactor this hardcoded array with `Account_Model` data, make typesafe with columns
 				const account: Account_Model = unwrap(
-					await this.repos.accounts.find_by_id(account_id, ['account_id', 'name']),
+					await this.repos.accounts.find_by_id(account_id, account_model_client_fields),
 				);
 				const communities: Community[] = unwrap(
 					await this.repos.communities.filter_by_account(account.account_id),

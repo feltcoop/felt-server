@@ -14,3 +14,6 @@ export interface Account_Model {
 	account_id: number;
 	name: string;
 }
+
+// TODO improve type so it's exhaustive (maybe via schema/codegen)
+export const account_model_client_fields: (keyof Account_Model)[] = ['account_id', 'name'];

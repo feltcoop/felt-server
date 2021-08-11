@@ -47,7 +47,7 @@ export const to_login_middleware = (server: Api_Server): Middleware => {
 			// There's already an account, so proceed to log in after validating the password.
 			account = find_account_result.value;
 			if (account.password !== password_hash) {
-				return send(res, 400, {reason: 'wrong password'});
+				return send(res, 400, {reason: 'invalid account name or password'});
 			}
 		} else if (find_account_result.type === 'no_account_found') {
 			// There's no accoun, so create one.
