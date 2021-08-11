@@ -12,7 +12,7 @@
 
 <main>
 	{#if $session.guest}
-		<div>
+		<div class="column">
 			<Markup>
 				<Account_Form />
 			</Markup>

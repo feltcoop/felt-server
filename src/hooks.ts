@@ -11,7 +11,7 @@ export interface SessionRequest extends Request {
 }
 
 export interface SessionObject {
-	name: string;
+	account_id: number;
 }
 
 // TODO source this from wherever Api_Server.js does
@@ -31,8 +31,8 @@ export const getSession: GetSession<SessionRequest, Client_Session> = async (req
 		return;
 	});
 	// TODO is swallowing `context.error`, only return in dev mode? look for "reason"?
-	if (request.session?.name) {
-		const result = await db.repos.session.load_client_session(request.session.name);
+	if (request.session?.account_id !== undefined) {
+		const result = await db.repos.session.load_client_session(request.session.account_id);
 		return result.ok ? result.value : {guest: true};
 	} else {
 		return {guest: true};

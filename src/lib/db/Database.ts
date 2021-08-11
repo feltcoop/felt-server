@@ -31,9 +31,11 @@ export class Database {
 	// TODO declaring like this is weird, should be static, but not sure what interface is best
 	repos = {
 		session: {
-			load_client_session: async (name: string): Promise<Result<{value: Account_Session}>> => {
-				console.log('[db] load_client_session', name);
-				let account: Account = unwrap(await this.repos.accounts.find_by_name(name));
+			load_client_session: async (
+				account_id: number,
+			): Promise<Result<{value: Account_Session}>> => {
+				console.log('[db] load_client_session', account_id);
+				let account: Account = unwrap(await this.repos.accounts.find_by_id(account_id));
 				let communities: Community[] = unwrap(
 					await this.repos.communities.filter_by_account(account.account_id!),
 				);
@@ -61,14 +63,24 @@ export class Database {
 				}
 				return {ok: true, value: account};
 			},
+			find_by_id: async (
+				account_id: number,
+			): Promise<Result<{value: Account}, {type: 'no_account_found'; reason: string}>> => {
+				const data = await this.sql<Account[]>`
+					select account_id, name, password from accounts where account_id = ${account_id}
+				`;
+				if (data.length) {
+					return {ok: true, value: data[0]};
+				}
+				return {
+					ok: false,
+					type: 'no_account_found',
+					reason: `No account found with account_id: ${account_id}`,
+				};
+			},
 			find_by_name: async (
 				name: string,
-			): Promise<
-				Result<
-					{value: Account},
-					{type: 'invalid_name'; reason: string} | {type: 'no_account_found'; reason: string}
-				>
-			> => {
+			): Promise<Result<{value: Account}, {type: 'no_account_found'; reason: string}>> => {
 				const data = await this.sql<Account[]>`
 					select account_id, name, password from accounts where name = ${name}
 				`;
