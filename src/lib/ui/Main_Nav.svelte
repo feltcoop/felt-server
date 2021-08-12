@@ -119,7 +119,7 @@
 		left: 0;
 		top: 0;
 		/* TODO from felt */
-		background-color: rgba(0, 0, 0, 0.6);
+		background-color: rgba(0, 0, 0, 0.4);
 	}
 	/* `50rem` in media queries is the same as `800px`, which is `--column_width` */
 	@media (max-width: 50rem) {
