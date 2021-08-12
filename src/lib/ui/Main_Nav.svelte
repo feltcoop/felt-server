@@ -131,7 +131,7 @@
 		}
 		.main-nav-bg {
 			display: block;
-			animation: fade-in var(--transition_duration_lg) ease-out;
+			animation: fade-in var(--transition_duration_xl) ease-out;
 		}
 		.main-nav-panel.expanded {
 			width: 0;
