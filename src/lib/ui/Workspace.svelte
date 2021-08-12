@@ -21,7 +21,7 @@
 </script>
 
 <div class="workspace">
-	<Workspace_Header space={selected_space} />
+	<Workspace_Header space={selected_space} community={selected_community} />
 	{#if selected_space && members_by_id}
 		<Space_View space={selected_space} {members_by_id} />
 	{:else if selected_community}
