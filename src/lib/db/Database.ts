@@ -7,7 +7,7 @@ import type {Space, Space_Params} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
 import type {Member} from '$lib/members/member.js';
 import type {Account, Account_Model, Account_Params} from '$lib/vocab/account/account.js';
-import {account_model_properties} from '$lib/vocab/account/account';
+import {account_properties, account_model_properties} from '$lib/vocab/account/account';
 import type {Postgres_Sql} from '$lib/db/postgres.js';
 
 export interface Options {
@@ -36,7 +36,6 @@ export class Database {
 				account_id: number,
 			): Promise<Result<{value: Account_Session}>> => {
 				console.log('[db] load_client_session', account_id);
-				// TODO refactor this hardcoded array with `Account_Model` data, make typesafe with columns
 				const account: Account_Model = unwrap(
 					await this.repos.accounts.find_by_id(account_id, account_model_properties),
 				);
@@ -69,7 +68,7 @@ export class Database {
 			},
 			find_by_id: async (
 				account_id: number,
-				columns: string[] = ['account_id', 'name', 'password'],
+				columns: string[] = account_properties,
 			): Promise<Result<{value: Account}, {type: 'no_account_found'; reason: string}>> => {
 				const data = await this.sql<Account[]>`
 					select ${this.sql(columns)} from accounts where account_id = ${account_id}
