@@ -229,149 +229,64 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] create_account_community4_result', account_community4_result);
 	}
 
-	if (!space_docs.find((d) => d.space_id === 1)) {
-		const space1: Space_Params = {
-			name: 'chat',
-			url: '/chat',
-			media_type: 'application/fuz+json',
-			content: '{"type": "Chat", "props": {"data": "/chat/posts"}}',
-		};
-		const space1_result = await sql`
-			insert into spaces ${sql(space1, 'url', 'media_type', 'content')}
+	const create_space = async (
+		space_id: number,
+		community_id: number,
+		params: Space_Params,
+	): Promise<void> => {
+		if (!space_docs.find((d) => d.space_id === space_id)) {
+			const insert_result = await sql`
+				insert into spaces ${sql(params, 'name', 'url', 'media_type', 'content')}
+			`;
+			console.log(`[db] create_space_${space_id}_result`, insert_result);
+		}
+		if (
+			!community_spaces_docs.find((d) => d.space_id === space_id && d.community_id === community_id)
+		) {
+			const community_spaces: Community_Spaces_Params = {space_id, community_id};
+			const community_spaces_result = await sql`
+			insert into community_spaces ${sql(community_spaces, 'space_id', 'community_id')}
 		`;
-		console.log('[db] create_space1_result', space1_result);
-	}
+			console.log('[db] community_spaces_result', community_spaces_result);
+		}
+	};
 
-	if (!space_docs.find((d) => d.space_id === 2)) {
-		const space2: Space_Params = {
-			name: 'board',
-			url: '/board',
-			media_type: 'application/fuz+json',
-			content: '{"type": "Board", "props": {"data": "/board/posts"}}',
-		};
-		const space2_result = await sql`
-			insert into spaces ${sql(space2, 'url', 'media_type', 'content')}
-		`;
-		console.log('[db] create_space2_result', space2_result);
-	}
-
-	if (!space_docs.find((d) => d.space_id === 3)) {
-		const space3: Space_Params = {
-			name: 'forum',
-			url: '/forum',
-			media_type: 'application/fuz+json',
-			content: '{"type": "Forum", "props": {"data": "/forum/posts"}}',
-		};
-		const space3_result = await sql`
-			insert into spaces ${sql(space3, 'url', 'media_type', 'content')}
-		`;
-		console.log('[db] create_space3_result', space3_result);
-	}
-
-	if (!space_docs.find((d) => d.space_id === 4)) {
-		const space4: Space_Params = {
-			name: 'dm/a',
-			url: '/dm/a',
-			media_type: 'application/fuz+json',
-			content: '{"type": "Chat", "props": {"data": "/dm/a/posts"}}',
-		};
-		const space4_result = await sql`
-			insert into spaces ${sql(space4, 'url', 'media_type', 'content')}
-		`;
-		console.log('[db] create_space4_result', space4_result);
-	}
-
-	if (!space_docs.find((d) => d.space_id === 5)) {
-		const space5: Space_Params = {
-			name: 'notes',
-			url: '/notes',
-			media_type: 'application/fuz+json',
-			content: '{"type": "Notes", "props": {"data": "/notes"}}',
-		};
-		const space5_result = await sql`
-			insert into spaces ${sql(space5, 'url', 'media_type', 'content')}
-		`;
-		console.log('[db] create_space5_result', space5_result);
-	}
-
-	if (!space_docs.find((d) => d.space_id === 6)) {
-		const space6: Space_Params = {
-			name: 'dealt: tar',
-			url: '/tar',
-			media_type: 'application/fuz+json',
-			content: '{"type": "Iframe", "props": {"url": "https://www.dealt.dev/tar"}}',
-		};
-		const space6_result = await sql`
-			insert into spaces ${sql(space6, 'url', 'media_type', 'content')}
-		`;
-		console.log('[db] create_space6_result', space6_result);
-	}
-
-	const community_spaces1_doc = community_spaces_docs.find(
-		(d) => d.space_id === 1 && d.community_id === 1,
-	);
-	if (!community_spaces1_doc) {
-		const community_spaces1: Community_Spaces_Params = {space_id: 1, community_id: 1};
-		const community_spaces1_result = await sql`
-			insert into community_spaces ${sql(community_spaces1, 'space_id', 'community_id')}
-		`;
-		console.log('[db] community_spaces1_result', community_spaces1_result);
-	}
-
-	const community_spaces2_doc = community_spaces_docs.find(
-		(d) => d.space_id === 2 && d.community_id === 1,
-	);
-	if (!community_spaces2_doc) {
-		const community_spaces2: Community_Spaces_Params = {space_id: 2, community_id: 1};
-		const community_spaces2_result = await sql`
-			insert into community_spaces ${sql(community_spaces2, 'space_id', 'community_id')}
-		`;
-		console.log('[db] community_spaces2_result', community_spaces2_result);
-	}
-
-	const community_spaces3_doc = community_spaces_docs.find(
-		(d) => d.space_id === 3 && d.community_id === 1,
-	);
-	if (!community_spaces3_doc) {
-		const community_spaces3: Community_Spaces_Params = {space_id: 3, community_id: 1};
-		const community_spaces3_result = await sql`
-			insert into community_spaces ${sql(community_spaces3, 'space_id', 'community_id')}
-		`;
-		console.log('[db] community_spaces3_result', community_spaces3_result);
-	}
-
-	const community_spaces4_doc = community_spaces_docs.find(
-		(d) => d.space_id === 4 && d.community_id === 1,
-	);
-	if (!community_spaces4_doc) {
-		const community_spaces4: Community_Spaces_Params = {space_id: 4, community_id: 1};
-		const community_spaces4_result = await sql`
-			insert into community_spaces ${sql(community_spaces4, 'space_id', 'community_id')}
-		`;
-		console.log('[db] community_spaces4_result', community_spaces4_result);
-	}
-
-	const community_spaces5_doc = community_spaces_docs.find(
-		(d) => d.space_id === 5 && d.community_id === 1,
-	);
-	if (!community_spaces5_doc) {
-		const community_spaces5: Community_Spaces_Params = {space_id: 5, community_id: 1};
-		const community_spaces5_result = await sql`
-			insert into community_spaces ${sql(community_spaces5, 'space_id', 'community_id')}
-		`;
-		console.log('[db] community_spaces5_result', community_spaces5_result);
-	}
-
-	const community_spaces6_doc = community_spaces_docs.find(
-		(d) => d.space_id === 6 && d.community_id === 1,
-	);
-	if (!community_spaces6_doc) {
-		const community_spaces6: Community_Spaces_Params = {space_id: 6, community_id: 1};
-		const community_spaces6_result = await sql`
-			insert into community_spaces ${sql(community_spaces6, 'space_id', 'community_id')}
-		`;
-		console.log('[db] community_spaces6_result', community_spaces6_result);
-	}
+	await create_space(1, 1, {
+		name: 'chat',
+		url: '/chat',
+		media_type: 'application/fuz+json',
+		content: '{"type": "Chat", "props": {"data": "/chat/posts"}}',
+	});
+	await create_space(2, 1, {
+		name: 'board',
+		url: '/board',
+		media_type: 'application/fuz+json',
+		content: '{"type": "Board", "props": {"data": "/board/posts"}}',
+	});
+	await create_space(3, 1, {
+		name: 'forum',
+		url: '/forum',
+		media_type: 'application/fuz+json',
+		content: '{"type": "Forum", "props": {"data": "/forum/posts"}}',
+	});
+	await create_space(4, 1, {
+		name: 'dm/a',
+		url: '/dm/a',
+		media_type: 'application/fuz+json',
+		content: '{"type": "Chat", "props": {"data": "/dm/a/posts"}}',
+	});
+	await create_space(5, 1, {
+		name: 'notes',
+		url: '/notes',
+		media_type: 'application/fuz+json',
+		content: '{"type": "Notes", "props": {"data": "/notes"}}',
+	});
+	await create_space(6, 1, {
+		name: 'dealt: tar',
+		url: '/tar',
+		media_type: 'application/fuz+json',
+		content: '{"type": "Iframe", "props": {"url": "https://www.dealt.dev/tar"}}',
+	});
 
 	const post1 = post_docs.find((d) => d.post_id === 1);
 	if (!post1) {
