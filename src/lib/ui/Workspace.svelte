@@ -21,9 +21,11 @@
 </script>
 
 <div class="workspace">
-	<Workspace_Header space={selected_space} community={selected_community} />
 	{#if selected_space && members_by_id}
-		<Space_View space={selected_space} {members_by_id} />
+		<div class="column">
+			<Workspace_Header space={selected_space} community={selected_community} />
+			<Space_View space={selected_space} {members_by_id} />
+		</div>
 	{:else if selected_community}
 		<Space_Input community={selected_community}>Create a new space</Space_Input>
 	{/if}
@@ -36,5 +38,11 @@
 		display: flex;
 		flex: 1;
 		flex-direction: column;
+	}
+	.column {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		border-right: var(--border);
 	}
 </style>
