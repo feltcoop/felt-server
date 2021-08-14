@@ -19,6 +19,7 @@
 
 	// TODO refactor
 	const load_posts = async (space_id: number) => {
+		$posts = [];
 		const res = await fetch(`/api/v1/spaces/${space_id}/posts`);
 		if (res.ok) {
 			const data = await res.json();
@@ -39,7 +40,7 @@
 	};
 </script>
 
-<div class="chat-room">
+<div class="chat">
 	<div class="posts">
 		<Post_List posts={$posts} {members_by_id} />
 	</div>
@@ -47,7 +48,7 @@
 </div>
 
 <style>
-	.chat-room {
+	.chat {
 		display: flex;
 		flex-direction: column;
 		flex: 1;

@@ -29,7 +29,7 @@ export class Database {
 		await this.sql.end();
 	}
 
-	// TODO declaring like this is weird, should be static, but not sure what interface is best
+	// TODO refactor
 	repos = {
 		session: {
 			load_client_session: async (
@@ -242,6 +242,18 @@ export class Database {
 						url: '/board',
 						media_type: 'application/fuz+json',
 						content: '{"type": "Board", "props": {"data": "/board/posts"}}',
+					}),
+					this.repos.spaces.insert(community_id, {
+						name: 'forum',
+						url: '/forum',
+						media_type: 'application/fuz+json',
+						content: '{"type": "Forum", "props": {"data": "/forum/posts"}}',
+					}),
+					this.repos.spaces.insert(community_id, {
+						name: 'notes',
+						url: '/notes',
+						media_type: 'application/fuz+json',
+						content: '{"type": "Notes", "props": {"data": "/notes/posts"}}',
 					}),
 					this.repos.spaces.insert(community_id, {
 						name: 'voice',
