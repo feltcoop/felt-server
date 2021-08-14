@@ -9,21 +9,13 @@ Thanks for your interest in contributing! Before you get started you'll need to 
 
 ## Getting Started
 
-1. Configure your environment to the Node & NPM versions listed in [/package.json]
-1. Install Gro
-1. [Install Postgresql](/src/db/README.md)
-1. Set up a local https cert
+1. Configure your environment to the Node & NPM versions listed in [package.json](/package.json)
+1. Run `npm i`
+1. Install [Gro](https://github.com/feltcoop/gro)
+   globally to [run tasks](https://github.com/feltcoop/gro/tree/main/src/task#readme):
+   `npm i -g @feltcoop/gro`
+1. [Install Postgresql](/src/lib/db/README.md)
+1. Run `gro lib/db/create` to initialize the database'
 1. Run `gro dev` and navigate to localhost:3000 to start!
 
-## Setting up a local https cert
-
-1. Run
-
-```
-openssl req -x509 -out localhost.crt -keyout localhost.key \
-  -newkey rsa:2048 -nodes -sha256 \
-  -subj '/CN=localhost' -extensions EXT -config <( \
-   printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
-```
-
-to generate a localhost set of keys & add it to your configs.
+> TODO deployment instructions
