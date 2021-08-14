@@ -13,9 +13,9 @@
 
 <style>
 	.actor-icon {
-		height: var(--icon_size_md);
-		width: var(--icon_size_md);
-		min-width: var(--icon_size_md);
+		height: var(--icon_size);
+		width: var(--icon_size);
+		min-width: var(--icon_size);
 	}
 	div {
 		background-color: hsl(var(--hue), 50%, 50%);

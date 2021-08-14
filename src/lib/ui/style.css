@@ -1,3 +1,4 @@
+/* TODO upstream to Felt */
 /* global styles that override Felt's */
 :root {
 	--bg_hue: 24;
@@ -6,6 +7,7 @@
 	--bg_color_lightness: 91%; /* TODO ? */
 	--luggage_size: var(--icon_size_md);
 	--navbar_size: var(--luggage_size);
+	--icon_size: var(--icon_size_md);
 
 	/* TODO upstream to felt */
 	--transition_duration_xl: 0.75s;
