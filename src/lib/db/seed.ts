@@ -235,19 +235,7 @@ export const seed = async (db: Database): Promise<void> => {
 		params: Space_Params,
 	): Promise<void> => {
 		if (!space_docs.find((d) => d.space_id === space_id)) {
-			const insert_result = await sql`
-				insert into spaces ${sql(params, 'name', 'url', 'media_type', 'content')}
-			`;
-			console.log(`[db] create_space_${space_id}_result`, insert_result);
-		}
-		if (
-			!community_spaces_docs.find((d) => d.space_id === space_id && d.community_id === community_id)
-		) {
-			const community_spaces: Community_Spaces_Params = {space_id, community_id};
-			const community_spaces_result = await sql`
-			insert into community_spaces ${sql(community_spaces, 'space_id', 'community_id')}
-		`;
-			console.log('[db] community_spaces_result', community_spaces_result);
+			await db.repos.spaces.insert(community_id, params);
 		}
 	};
 
