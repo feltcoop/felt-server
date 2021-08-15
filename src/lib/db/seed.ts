@@ -6,7 +6,6 @@ import type {
 	Account_Community,
 	Account_Community_Params,
 	Community_Spaces,
-	Community_Spaces_Params,
 } from '$lib/communities/community';
 
 // TODO extract seed helpers and db methods
