@@ -40,8 +40,8 @@ export class Database {
 				const account: Account_Model = unwrap(
 					await this.repos.accounts.find_by_id(account_id, account_model_properties),
 				);
-        let personas: Persona[] = unwrap(
-					await this.repos.personas.filter_by_account(account.account_id!),
+				let personas: Persona[] = unwrap(
+					await this.repos.personas.filter_by_account(account.account_id),
 				);
 				const communities: Community[] = unwrap(
 					await this.repos.communities.filter_by_account(account.account_id),
@@ -122,7 +122,16 @@ export class Database {
 				account_id: number,
 			): Promise<Result<{value: Persona[]}, {reason: string}>> => {
 				const data = await this.sql<Persona[]>`
-				  select persona_id, account_id, name from personas where account_id = ${account_id}
+				  select p.persona_id, p.account_id, p.name,
+
+					(
+						select array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
+						from (
+							SELECT pc.community_id FROM persona_communities pc WHERE pc.persona_id = p.persona_id
+						) d
+					) as communities 
+					
+					from personas p where p.account_id = ${account_id}
 					`;
 				if (data.length) {
 					return {ok: true, value: data};
@@ -173,24 +182,26 @@ export class Database {
 					reason: `No community found with id: ${community_id}`,
 				};
 			},
-			filter_by_persona: async (persona_id: number): Promise<Result<{value: Community[]}>> => {
-				console.log(`[db] preparing to query for communities & spaces persona: ${persona_id}`);
+			filter_by_account: async (account_id: number): Promise<Result<{value: Community[]}>> => {
+				console.log(`[db] preparing to query for communities & spaces persona: ${account_id}`);
 				const data = await this.sql<Community[]>`		
-					select c.community_id, c.name,
-    				(
-      				select array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
-      				from (
-        				SELECT s.space_id, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id=c.community_id      				
-      				) d
-    				) as spaces,
-						(
-							select array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
-							from (
-								SELECT p.persona_id, p.name FROM personas p JOIN persona_communities pc ON p.persona_id=pc.persona_id AND pc.community_id=c.community_id
-							) d
-						) as members 
-  				from communities c JOIN persona_communities pc
-  				ON c.community_id=pc.community_id AND pc.persona_id=${persona_id}				
+				select c.community_id, c.name,
+				(
+					select array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
+					from (
+						SELECT s.space_id, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id=c.community_id      				
+					) d
+				) as spaces,
+				(
+					select array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
+					from (
+						SELECT p.persona_id, p.name FROM personas p JOIN persona_communities pc ON p.persona_id=pc.persona_id AND pc.community_id=c.community_id
+					) d
+				) as members 
+			from communities c JOIN (
+				SELECT DISTINCT pc.community_id FROM personas p JOIN persona_communities pc ON p.persona_id=pc.persona_id AND p.account_id = ${account_id}
+			) apc
+			ON c.community_id=apc.community_id;			
 				`;
 				console.log('[db] community data', data);
 				return {ok: true, value: data};
