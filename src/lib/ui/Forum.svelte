@@ -3,7 +3,7 @@
 
 	import type {Space} from '$lib/spaces/space.js';
 	import type {Member} from '$lib/members/member.js';
-	import Forum_List from '$lib/ui/Forum_List.svelte';
+	import Forum_Items from '$lib/ui/Forum_Items.svelte';
 	import {posts} from '$lib/ui/post_store';
 	import {get_app} from '$lib/ui/app';
 
@@ -43,7 +43,7 @@
 <div class="forum">
 	<textarea placeholder="> new topic" on:keydown={on_keydown} bind:value={text} />
 	<div class="posts">
-		<Forum_List posts={$posts} {members_by_id} />
+		<Forum_Items posts={$posts} {members_by_id} />
 	</div>
 </div>
 

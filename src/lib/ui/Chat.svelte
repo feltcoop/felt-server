@@ -3,7 +3,7 @@
 
 	import type {Space} from '$lib/spaces/space.js';
 	import type {Member} from '$lib/members/member.js';
-	import Post_List from '$lib/ui/Post_List.svelte';
+	import Chat_Items from '$lib/ui/Chat_Items.svelte';
 	import {posts} from '$lib/ui/post_store';
 	import {get_app} from '$lib/ui/app';
 
@@ -42,7 +42,7 @@
 
 <div class="chat">
 	<div class="posts">
-		<Post_List posts={$posts} {members_by_id} />
+		<Chat_Items posts={$posts} {members_by_id} />
 	</div>
 	<input type="text" placeholder="> chat" on:keydown={on_keydown} bind:value={text} />
 </div>

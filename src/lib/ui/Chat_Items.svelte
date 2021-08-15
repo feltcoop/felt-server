@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {Post} from '$lib/posts/post.js';
 	import type {Member} from '$lib/members/member.js';
-	import Post_List_Item from '$lib/ui/Post_List_Item.svelte';
+	import Chat_Item from '$lib/ui/Chat_Item.svelte';
 
 	export let posts: Post[];
 	export let members_by_id: Map<number, Member>;
@@ -17,6 +17,6 @@
 <!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->
 <ul>
 	{#each posts as post (post.post_id)}
-		<Post_List_Item {post} member={to_member(post.actor_id)} />
+		<Chat_Item {post} member={to_member(post.actor_id)} />
 	{/each}
 </ul>

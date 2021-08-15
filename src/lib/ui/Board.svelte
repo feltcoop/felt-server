@@ -3,7 +3,7 @@
 
 	import type {Space} from '$lib/spaces/space.js';
 	import type {Member} from '$lib/members/member.js';
-	import Board_List from '$lib/ui/Board_List.svelte';
+	import Board_Items from '$lib/ui/Board_Items.svelte';
 	import {posts} from '$lib/ui/post_store';
 	import {get_app} from '$lib/ui/app';
 
@@ -43,7 +43,7 @@
 <div class="board">
 	<textarea placeholder="> post" on:keydown={on_keydown} bind:value={text} />
 	<div class="posts">
-		<Board_List posts={$posts} {members_by_id} />
+		<Board_Items posts={$posts} {members_by_id} />
 	</div>
 </div>
 
