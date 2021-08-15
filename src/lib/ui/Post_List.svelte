@@ -14,6 +14,7 @@
 	};
 </script>
 
+<!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->
 <ul>
 	{#each posts as post (post.post_id)}
 		<Post_List_Item {post} member={to_member(post.actor_id)} />

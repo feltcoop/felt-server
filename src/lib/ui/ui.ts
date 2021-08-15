@@ -2,6 +2,8 @@ import {Readable, writable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 import type {Data_State} from '$lib/ui/data';
 
+// TODO refactor/rethink
+
 const KEY = Symbol();
 
 export const get_ui = (): Ui_Store => getContext(KEY);

@@ -1,14 +1,13 @@
 <script lang="ts">
 	import {browser} from '$app/env';
-	import type {Json} from '@feltcoop/felt/util/json.js';
 
 	import type {Space} from '$lib/spaces/space.js';
 	import type {Member} from '$lib/members/member.js';
 	import Post_List from '$lib/ui/Post_List.svelte';
 	import {posts} from '$lib/ui/post_store';
-	import {get_socket} from '$lib/ui/socket';
+	import {get_app} from '$lib/ui/app';
 
-	const socket = get_socket();
+	const {api} = get_app();
 
 	export let space: Space;
 	export let members_by_id: Map<number, Member>;
@@ -16,8 +15,9 @@
 	let text = '';
 
 	$: browser && load_posts(space.space_id);
-	$: console.log(`[chat_room] fetching posts for ${space.space_id}`);
+	$: console.log(`[Chat] fetching posts for ${space.space_id}`);
 
+	// TODO refactor
 	const load_posts = async (space_id: number) => {
 		const res = await fetch(`/api/v1/spaces/${space_id}/posts`);
 		if (res.ok) {
@@ -28,29 +28,8 @@
 
 	const create_post = async () => {
 		if (!text) return;
-		const res = await fetch(`/api/v1/spaces/${space.space_id}/posts`, {
-			method: 'POST',
-			headers: {'Content-Type': 'application/json'},
-			body: JSON.stringify({content: text}),
-		});
-		if (res.ok) {
-			console.log('post sent, broadcasting to server');
-			const data = await res.json();
-			broadcast_post(data);
-		} else {
-			console.error('error sending post');
-		}
+		await api.create_post(space, text);
 		text = '';
-	};
-
-	const broadcast_post = async (data: Json) => {
-		if (!$socket.connected) {
-			console.error('expected socket to be connected to chat');
-			return;
-		}
-		// TODO the type of message created here does *not* include fields like `id`, `attributed_to`, etc - these are added by the server
-		// TODO this should create a client-side tracking object that we can monitor, cancel, organize, etc
-		socket.send(data);
 	};
 
 	const on_keydown = async (e: KeyboardEvent) => {
@@ -72,12 +51,15 @@
 		display: flex;
 		flex-direction: column;
 		flex: 1;
+		overflow: hidden; /* make the content scroll */
 	}
 	.posts {
+		max-width: var(--column_width);
+		overflow: auto;
 		flex: 1;
 		display: flex;
-		flex-direction: column;
-		justify-content: flex-end;
+		/* makes scrolling start at the bottom */
+		flex-direction: column-reverse;
 	}
 	input {
 		border-left: none;

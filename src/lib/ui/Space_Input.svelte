@@ -2,10 +2,10 @@
 	import Modal from '$lib/ui/Modal.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import type {Community_Model} from '$lib/communities/community.js';
-	import {get_api} from '$lib/ui/api';
 	import {autofocus} from '$lib/ui/actions';
+	import {get_app} from '$lib/ui/app';
 
-	const api = get_api();
+	const {api} = get_app();
 
 	export let community: Community_Model;
 
@@ -26,8 +26,9 @@
 			community.community_id,
 			new_name,
 			url,
-			'application/json',
-			`{"type": "Chat_Room", "props": {"data": "${url}/posts"}}`,
+			//TODO : add space type picker
+			'application/fuz+json',
+			`{"type": "Chat", "props": {"data": "${url}/posts"}}`,
 		);
 		new_name = '';
 	};

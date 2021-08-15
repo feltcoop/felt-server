@@ -1,12 +1,10 @@
 <script lang="ts">
-	import Chat_Room from '$lib/ui/Chat_Room.svelte';
 	import Space_Input from '$lib/ui/Space_Input.svelte';
+	import Space_View from '$lib/ui/Space_View.svelte';
 	import Workspace_Header from '$lib/ui/Workspace_Header.svelte';
-	import {get_data} from '$lib/ui/data';
-	import {get_ui} from '$lib/ui/ui';
+	import {get_app} from '$lib/ui/app';
 
-	const data = get_data();
-	const ui = get_ui();
+	const {data, ui} = get_app();
 
 	$: communities = $data.communities;
 
@@ -20,15 +18,12 @@
 		  )
 		: null;
 	$: members_by_id = selected_community?.members_by_id;
-
-	// $: console.log('[Workspace] selected_community', selected_community);
-	// $: console.log('[Workspace] selected_space', selected_space);
 </script>
 
 <div class="workspace">
-	<Workspace_Header space={selected_space} />
+	<Workspace_Header space={selected_space} community={selected_community} />
 	{#if selected_space && members_by_id}
-		<Chat_Room space={selected_space} {members_by_id} />
+		<Space_View space={selected_space} {members_by_id} />
 	{:else if selected_community}
 		<Space_Input community={selected_community}>Create a new space</Space_Input>
 	{/if}
@@ -37,6 +32,7 @@
 <style>
 	.workspace {
 		height: 100%;
+		width: 100%;
 		display: flex;
 		flex: 1;
 		flex-direction: column;

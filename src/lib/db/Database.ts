@@ -7,7 +7,8 @@ import type {Community} from '$lib/communities/community.js';
 import type {Space, Space_Params} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
 import type {Member} from '$lib/members/member.js';
-import type {Account} from '$lib/vocab/account/account.js';
+import type {Account, Account_Model, Account_Params} from '$lib/vocab/account/account.js';
+import {account_properties, account_model_properties} from '$lib/vocab/account/account';
 import type {Postgres_Sql} from '$lib/db/postgres.js';
 
 export interface Options {
@@ -33,18 +34,19 @@ export class Database {
 	repos = {
 		session: {
 			load_client_session: async (
-				name: string,
-				active_persona: number,
+				account_id: number,
 			): Promise<Result<{value: Account_Session}>> => {
-				console.log('[db] load_client_session', name);
-				let account: Account = unwrap(await this.repos.accounts.find_by_name(name));
-				let personas: Persona[] = unwrap(
+				console.log('[db] load_client_session', account_id);
+				const account: Account_Model = unwrap(
+					await this.repos.accounts.find_by_id(account_id, account_model_properties),
+				);
+        let personas: Persona[] = unwrap(
 					await this.repos.personas.filter_by_account(account.account_id!),
 				);
-				let communities: Community[] = unwrap(
-					await this.repos.communities.filter_by_persona(active_persona),
+				const communities: Community[] = unwrap(
+					await this.repos.communities.filter_by_account(account.account_id),
 				);
-				let members: Member[] = unwrap(await this.repos.members.get_all());
+				const members: Member[] = unwrap(await this.repos.members.get_all());
 				return {
 					ok: true,
 					value: {account, personas, communities, members},
@@ -52,10 +54,10 @@ export class Database {
 			},
 		},
 		accounts: {
-			create: async (
-				name: string,
-				password: string,
-			): Promise<Result<{value: Account}, {reason: string}>> => {
+			create: async ({
+				name,
+				password,
+			}: Account_Params): Promise<Result<{value: Account}, {reason: string}>> => {
 				const data = await this.sql<Account[]>`
 					insert into accounts (name, password) values (
 						${name}, ${password}
@@ -75,14 +77,25 @@ export class Database {
 				}
 				return {ok: true, value: account};
 			},
+			find_by_id: async (
+				account_id: number,
+				columns: string[] = account_properties,
+			): Promise<Result<{value: Account}, {type: 'no_account_found'; reason: string}>> => {
+				const data = await this.sql<Account[]>`
+					select ${this.sql(columns)} from accounts where account_id = ${account_id}
+				`;
+				if (data.length) {
+					return {ok: true, value: data[0]};
+				}
+				return {
+					ok: false,
+					type: 'no_account_found',
+					reason: `No account found with account_id: ${account_id}`,
+				};
+			},
 			find_by_name: async (
 				name: string,
-			): Promise<
-				Result<
-					{value: Account},
-					{type: 'invalid_name'; reason: string} | {type: 'no_account_found'; reason: string}
-				>
-			> => {
+			): Promise<Result<{value: Account}, {type: 'no_account_found'; reason: string}>> => {
 				const data = await this.sql<Account[]>`
 					select account_id, name, password from accounts where name = ${name}
 				`;
@@ -260,19 +273,19 @@ export class Database {
 					this.repos.spaces.insert(community_id, {
 						name: 'chat',
 						url: '/chat',
-						media_type: 'application/json',
+						media_type: 'application/fuz+json',
 						content: '{"type": "Chat", "props": {"data": "/chat/posts"}}',
 					}),
 					this.repos.spaces.insert(community_id, {
 						name: 'board',
 						url: '/board',
-						media_type: 'application/json',
+						media_type: 'application/fuz+json',
 						content: '{"type": "Board", "props": {"data": "/board/posts"}}',
 					}),
 					this.repos.spaces.insert(community_id, {
 						name: 'voice',
 						url: '/voice',
-						media_type: 'application/json',
+						media_type: 'application/fuz+json',
 						content: '{"type": "Voice", "props": {"data": "/voice/stream"}}',
 					}),
 				]);

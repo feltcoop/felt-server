@@ -2,7 +2,7 @@
 	import type {Post} from '$lib/posts/post.js';
 	import type {Member} from '$lib/members/member.js';
 	import Actor_Icon from '$lib/ui/Actor_Icon.svelte';
-	import {to_random_seeded} from '@feltcoop/felt/util/random_seeded.js';
+	import {random_hue} from '$lib/ui/color';
 
 	export let post: Post;
 	export let member: Member; // TODO should this be `Actor`?
@@ -11,7 +11,7 @@
 	$: icon = (member as any).icon || null;
 
 	// TODO refactor to some client view-model for the actor
-	$: hue = to_random_seeded(member.name)() * 360; // TODO random int
+	$: hue = random_hue(member.name);
 </script>
 
 <li style="--hue: {hue}">

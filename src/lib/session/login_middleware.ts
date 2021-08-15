@@ -47,11 +47,14 @@ export const to_login_middleware = (server: Api_Server): Middleware => {
 			// There's already an account, so proceed to log in after validating the password.
 			account = find_account_result.value;
 			if (account.password !== password_hash) {
-				return send(res, 400, {reason: 'wrong password'});
+				return send(res, 400, {reason: 'invalid account name or password'});
 			}
 		} else if (find_account_result.type === 'no_account_found') {
 			// There's no accoun, so create one.
-			const find_account_result = await db.repos.accounts.create(account_name, password_hash);
+			const find_account_result = await db.repos.accounts.create({
+				name: account_name,
+				password: password_hash,
+			});
 			console.log('createAccountResult', find_account_result);
 			if (find_account_result.ok) {
 				account = find_account_result.value;
@@ -64,21 +67,10 @@ export const to_login_middleware = (server: Api_Server): Middleware => {
 			return send(res, 400, {reason: find_account_result.reason});
 		}
 
-		const find_account_persona_results = await db.repos.personas.filter_by_account(
-			account.account_id!,
-		);
-
-		if (!find_account_persona_results.ok) {
-			return send(res, 400, {reason: find_account_persona_results.reason});
-		}
-
-		console.log('[login]', account.name); // TODO logging
-		req.session.name = account.name;
-		req.session.active_persona = find_account_persona_results.value[0].persona_id;
-		const client_session_result = await db.repos.session.load_client_session(
-			account.name,
-			req.session.active_persona!,
-		);
+		console.log('[login]', account.account_id); // TODO logging
+		req.session.account_id = account.account_id;
+		const client_session_result = await db.repos.session.load_client_session(account.account_id);
+    
 		if (client_session_result.ok) {
 			return send(res, 200, {session: client_session_result.value}); // TODO API types
 		} else {

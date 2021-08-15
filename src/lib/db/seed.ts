@@ -1,5 +1,5 @@
 import type {Database} from '$lib/db/Database.js';
-import type {Account} from '$lib/vocab/account/account.js';
+import type {Account, Account_Params} from '$lib/vocab/account/account.js';
 import type {Space, Space_Params} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
 import type {
@@ -137,7 +137,7 @@ export const seed = async (db: Database): Promise<void> => {
 	// example: insert literal values
 	const account1_doc = account_docs.find((d) => d.name === 'account1');
 	if (!account1_doc) {
-		const account1_initial_data = {
+		const account1: Account_Params = {
 			name: 'a',
 			password: 'ded6a3304309fe718831c3968bdda1b36fb0acae7de54a4cb011ba10923aab71', // 'a' hashed
 		};
@@ -145,7 +145,7 @@ export const seed = async (db: Database): Promise<void> => {
 			insert into accounts (
 				name, password
 			) values (
-				${account1_initial_data.name}, ${account1_initial_data.password}
+				${account1.name}, ${account1.password}
 			)
 		`;
 		console.log('[db] create_account1_result', create_account1_result);
@@ -164,7 +164,7 @@ export const seed = async (db: Database): Promise<void> => {
 	// example: insert with dynamic query helper
 	const account2_doc = account_docs.find((d) => d.name === 'account2');
 	if (!account2_doc) {
-		const account2: Account = {
+		const account2: Account_Params = {
 			name: 'b',
 			password: 'bff5c2262849491dd4047eb7086a7948428885aef62e3b90aa388c9db11d1c1e', // 'b' hashed
 		};
@@ -264,8 +264,8 @@ export const seed = async (db: Database): Promise<void> => {
 		const space1: Space_Params = {
 			name: 'general',
 			url: '/general',
-			media_type: 'application/json',
-			content: '{"type": "Chat_Room", "props": {"data": "/general/posts"}}',
+			media_type: 'application/fuz+json',
+			content: '{"type": "Chat", "props": {"data": "/general/posts"}}',
 		};
 		const space1_result = await sql`
 			insert into spaces ${sql(space1, 'url', 'media_type', 'content')}
@@ -278,8 +278,8 @@ export const seed = async (db: Database): Promise<void> => {
 		const space2: Space_Params = {
 			name: 'general/cute',
 			url: '/general/cute',
-			media_type: 'application/json',
-			content: '{"type": "Chat_Room", "props": {"data": "/general/cute/posts"}}',
+			media_type: 'application/fuz+json',
+			content: '{"type": "Chat", "props": {"data": "/general/cute/posts"}}',
 		};
 		const space2_result = await sql`
 			insert into spaces ${sql(space2, 'url', 'media_type', 'content')}
@@ -292,13 +292,41 @@ export const seed = async (db: Database): Promise<void> => {
 		const space3: Space_Params = {
 			name: 'dm/a',
 			url: '/dm/a',
-			media_type: 'application/json',
-			content: '{"type": "DirectMessage", "props": {"data": "/dm/a/posts"}}',
+			media_type: 'application/fuz+json',
+			content: '{"type": "Chat", "props": {"data": "/dm/a/posts"}}',
 		};
 		const space3_result = await sql`
 			insert into spaces ${sql(space3, 'url', 'media_type', 'content')}
 		`;
 		console.log('[db] create_space3_result', space3_result);
+	}
+
+	const space4 = space_docs.find((d) => d.space_id === 4);
+	if (!space4) {
+		const space4: Space_Params = {
+			name: 'notes',
+			url: '/notes',
+			media_type: 'application/fuz+json',
+			content: '{"type": "Notes", "props": {"data": "/notes"}}',
+		};
+		const space4_result = await sql`
+			insert into spaces ${sql(space4, 'url', 'media_type', 'content')}
+		`;
+		console.log('[db] create_space4_result', space4_result);
+	}
+
+	const space5 = space_docs.find((d) => d.space_id === 5);
+	if (!space5) {
+		const space5: Space_Params = {
+			name: 'dealt: tar',
+			url: '/tar',
+			media_type: 'application/fuz+json',
+			content: '{"type": "Iframe", "props": {"url": "https://www.dealt.dev/tar"}}',
+		};
+		const space5_result = await sql`
+			insert into spaces ${sql(space5, 'url', 'media_type', 'content')}
+		`;
+		console.log('[db] create_space5_result', space5_result);
 	}
 
 	const community_spaces1_doc = community_spaces_docs.find(
@@ -332,6 +360,28 @@ export const seed = async (db: Database): Promise<void> => {
 			insert into community_spaces ${sql(community_spaces3, 'space_id', 'community_id')}
 		`;
 		console.log('[db] community_spaces3_result', community_spaces3_result);
+	}
+
+	const community_spaces4_doc = community_spaces_docs.find(
+		(d) => d.space_id === 4 && d.community_id === 1,
+	);
+	if (!community_spaces4_doc) {
+		const community_spaces4: Community_Spaces_Params = {space_id: 4, community_id: 1};
+		const community_spaces4_result = await sql`
+			insert into community_spaces ${sql(community_spaces4, 'space_id', 'community_id')}
+		`;
+		console.log('[db] community_spaces4_result', community_spaces4_result);
+	}
+
+	const community_spaces5_doc = community_spaces_docs.find(
+		(d) => d.space_id === 5 && d.community_id === 1,
+	);
+	if (!community_spaces5_doc) {
+		const community_spaces5: Community_Spaces_Params = {space_id: 5, community_id: 1};
+		const community_spaces5_result = await sql`
+			insert into community_spaces ${sql(community_spaces5, 'space_id', 'community_id')}
+		`;
+		console.log('[db] community_spaces5_result', community_spaces5_result);
 	}
 
 	const post1 = post_docs.find((d) => d.post_id === 1);
