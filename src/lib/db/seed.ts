@@ -169,7 +169,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const community2_doc = community_docs.find((d) => d.community_id === 2);
 	if (!community2_doc) {
-		const community2: Community_Doc = {name: 'svelte'};
+		const community2: Community_Doc = {name: 'dev'};
 		const community2_result = await sql`
 			insert into communities ${sql(community2, 'name')}
 		`;
