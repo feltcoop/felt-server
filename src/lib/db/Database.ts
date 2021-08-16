@@ -33,9 +33,7 @@ export class Database {
 	// TODO refactor
 	repos = {
 		session: {
-			load_client_session: async (
-				account_id: number,
-			): Promise<Result<{value: AccountSession}>> => {
+			load_client_session: async (account_id: number): Promise<Result<{value: AccountSession}>> => {
 				console.log('[db] load_client_session', account_id);
 				const account: AccountModel = unwrap(
 					await this.repos.accounts.find_by_id(account_id, account_model_properties),
