@@ -1,13 +1,13 @@
 <script lang="ts">
 	import Modal from '$lib/ui/Modal.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
-	import type {Community_Model} from '$lib/communities/community.js';
+	import type {CommunityModel} from '$lib/communities/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {get_app} from '$lib/ui/app';
 
 	const {api} = get_app();
 
-	export let community: Community_Model;
+	export let community: CommunityModel;
 
 	let new_name = '';
 

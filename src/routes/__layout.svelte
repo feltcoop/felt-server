@@ -9,7 +9,7 @@
 
 	import {set_socket} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
-	import Main_Nav from '$lib/ui/Main_Nav.svelte';
+	import MainNav from '$lib/ui/MainNav.svelte';
 	import {set_data} from '$lib/ui/data';
 	import {set_ui} from '$lib/ui/ui';
 	import {set_api, to_api_store} from '$lib/ui/api';
@@ -41,7 +41,7 @@
 <div class="layout">
 	{#if !$session.guest}
 		<Luggage />
-		<Main_Nav />
+		<MainNav />
 	{/if}
 	<slot />
 	<Devmode {devmode} />

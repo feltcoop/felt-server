@@ -1,41 +1,42 @@
-import {Readable, writable} from 'svelte/store';
+import type {Readable} from 'svelte/store';
+import {writable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
-import type {Data_State} from '$lib/ui/data';
+import type {DataState} from '$lib/ui/data';
 
 // TODO refactor/rethink
 
 const KEY = Symbol();
 
-export const get_ui = (): Ui_Store => getContext(KEY);
+export const get_ui = (): UiStore => getContext(KEY);
 
-export const set_ui = (store: Ui_Store = to_ui_store()): Ui_Store => {
+export const set_ui = (store: UiStore = to_ui_store()): UiStore => {
 	setContext(KEY, store);
 	return store;
 };
 
-export interface Ui_State {
+export interface UiState {
 	// TODO should these be store references instead of ids?
 	selected_community_id: number | null;
 	selected_space_id_by_community: {[key: number]: number | null};
 	expand_main_nav: boolean;
-	main_nav_view: Main_Nav_View;
+	main_nav_view: MainNavView;
 }
 
-export interface Ui_Store {
-	subscribe: Readable<Ui_State>['subscribe'];
-	update_data: (data: Data_State | null) => void;
+export interface UiStore {
+	subscribe: Readable<UiState>['subscribe'];
+	update_data: (data: DataState | null) => void;
 	select_community: (community_id: number | null) => void;
 	select_space: (community_id: number, space_id: number | null) => void;
 	toggle_main_nav: () => void;
-	set_main_nav_view: (main_nav_view: Main_Nav_View) => void;
+	set_main_nav_view: (main_nav_view: MainNavView) => void;
 }
 
 export const to_ui_store = () => {
-	const {subscribe, update} = writable<Ui_State>(to_default_ui_state());
+	const {subscribe, update} = writable<UiState>(to_default_ui_state());
 
-	const store: Ui_Store = {
+	const store: UiStore = {
 		subscribe,
-		update_data: (data: Data_State | null) => {
+		update_data: (data: DataState | null) => {
 			console.log('[ui.update_data] data', {data});
 			update(($ui) => {
 				// TODO this needs to be rethought, it's just preserving the existing ui state
@@ -98,11 +99,11 @@ export const to_ui_store = () => {
 	return store;
 };
 
-const to_default_ui_state = (): Ui_State => ({
+const to_default_ui_state = (): UiState => ({
 	selected_community_id: null,
 	selected_space_id_by_community: {},
 	expand_main_nav: true,
 	main_nav_view: 'explorer',
 });
 
-export type Main_Nav_View = 'explorer' | 'account';
+export type MainNavView = 'explorer' | 'account';

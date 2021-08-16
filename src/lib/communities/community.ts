@@ -8,12 +8,12 @@ export interface Community {
 	members: Member[];
 }
 
-export interface Community_Params {
+export interface CommunityParams {
 	name: string;
 }
 
 // TODO think through alternatives to this, probably caching `members_by_id` on `data`
-export interface Community_Model {
+export interface CommunityModel {
 	community_id: number;
 	name: string;
 	spaces: Space[];
@@ -21,21 +21,21 @@ export interface Community_Model {
 	members_by_id: Map<number, Member>;
 }
 
-export const to_community_model = (community: Community): Community_Model => ({
+export const to_community_model = (community: Community): CommunityModel => ({
 	...community,
 	members_by_id: new Map(community.members.map((member) => [member.persona_id, member])),
 });
 
-export interface Community_Spaces {
+export interface CommunitySpaces {
 	community_id: number;
 	space_id: number;
 }
 
-export type Community_Spaces_Params = Community_Spaces;
+export type CommunitySpacesParams = CommunitySpaces;
 
-export interface Persona_Community {
+export interface PersonaCommunity {
 	persona_id: number;
 	community_id: number;
 }
 
-export type Persona_Community_Params = Persona_Community;
+export type PersonaCommunityParams = PersonaCommunity;

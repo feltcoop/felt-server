@@ -2,7 +2,7 @@
 	import {browser} from '$app/env';
 
 	import type {Space} from '$lib/spaces/space.js';
-	import Note_Items from '$lib/ui/Notes_Items.svelte';
+	import NoteItems from '$lib/ui/NotesItems.svelte';
 	import {posts} from '$lib/ui/post_store';
 	import {get_app} from '$lib/ui/app';
 
@@ -41,7 +41,7 @@
 <div class="notes">
 	<textarea type="text" placeholder="> note" on:keydown={on_keydown} bind:value={text} />
 	<div class="posts">
-		<Note_Items posts={$posts} />
+		<NoteItems posts={$posts} />
 	</div>
 </div>
 

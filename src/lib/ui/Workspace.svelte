@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Space_Input from '$lib/ui/Space_Input.svelte';
-	import Space_View from '$lib/ui/Space_View.svelte';
-	import Workspace_Header from '$lib/ui/Workspace_Header.svelte';
+	import SpaceInput from '$lib/ui/SpaceInput.svelte';
+	import SpaceView from '$lib/ui/SpaceView.svelte';
+	import WorkspaceHeader from '$lib/ui/WorkspaceHeader.svelte';
 	import {get_app} from '$lib/ui/app';
 
 	const {data, ui} = get_app();
@@ -22,11 +22,11 @@
 
 <div class="workspace">
 	<div class="column">
-		<Workspace_Header space={selected_space} community={selected_community} />
+		<WorkspaceHeader space={selected_space} community={selected_community} />
 		{#if selected_space && members_by_id}
-			<Space_View space={selected_space} {members_by_id} />
+			<SpaceView space={selected_space} {members_by_id} />
 		{:else if selected_community}
-			<Space_Input community={selected_community}>Create a new space</Space_Input>
+			<SpaceInput community={selected_community}>Create a new space</SpaceInput>
 		{/if}
 	</div>
 </div>

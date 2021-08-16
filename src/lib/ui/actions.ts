@@ -1,12 +1,12 @@
 // TODO extract to felt
 
-export interface Action<T_Parameters = undefined> {
+export interface Action<TParameters = undefined> {
 	(node: HTMLElement): void | {
 		update?: () => void;
 		destroy?: () => void;
 	};
-	(node: HTMLElement, parameters: T_Parameters): void | {
-		update?: (parameters: T_Parameters) => void;
+	(node: HTMLElement, parameters: TParameters): void | {
+		update?: (parameters: TParameters) => void;
 		destroy?: () => void;
 	};
 }

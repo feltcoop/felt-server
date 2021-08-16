@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type {Post} from '$lib/posts/post.js';
-	import Notes_Item from '$lib/ui/Notes_Item.svelte';
+	import NotesItem from '$lib/ui/NotesItem.svelte';
 
 	// TODO this should possibly be a generic component instead of this named one
 
@@ -11,7 +11,7 @@
 
 <ul>
 	{#each notes as post (post.post_id)}
-		<Notes_Item {post} />
+		<NotesItem {post} />
 	{/each}
 </ul>
 

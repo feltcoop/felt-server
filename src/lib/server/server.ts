@@ -2,19 +2,19 @@ import polka from 'polka';
 import postgres from 'postgres';
 import {createServer as create_http_server} from 'http';
 
-import {Api_Server} from '$lib/server/Api_Server.js';
+import {ApiServer} from '$lib/server/ApiServer.js';
 import {Database} from '$lib/db/Database.js';
 import {default_postgres_options} from '$lib/db/postgres.js';
-import {Websocket_Server} from '$lib/server/Websocket_Server.js';
+import {WebsocketServer} from '$lib/server/WebsocketServer.js';
 
 const server = create_http_server();
 
 //TODO I think we still need to pass an https server in prod
 
-export const api_server = new Api_Server({
+export const api_server = new ApiServer({
 	server,
 	app: polka({server}),
-	websocket_server: new Websocket_Server(server), // TODO probably pass `{server}` when fixing socket auth
+	websocket_server: new WebsocketServer(server), // TODO probably pass `{server}` when fixing socket auth
 	db: new Database({sql: postgres(default_postgres_options)}),
 	load_instance: async () => {
 		try {

@@ -3,7 +3,7 @@
 
 	import type {Post} from '$lib/posts/post.js';
 	import type {Member} from '$lib/members/member.js';
-	import Actor_Icon from '$lib/ui/Actor_Icon.svelte';
+	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import {random_hue} from '$lib/ui/color';
 
 	export let post: Post;
@@ -23,7 +23,7 @@
 		</p>
 	</Markup>
 	<div class="about">
-		<Actor_Icon name={member.name} {icon} />
+		<ActorIcon name={member.name} {icon} />
 		<span class="actor">{member.name}</span>
 	</div>
 </li>

@@ -4,10 +4,10 @@ import {to_env_number, to_env_string} from '@feltcoop/felt/util/env.js';
 // Postgres.js - PostgreSQL client for Node.js
 // https://github.com/porsager/postgres
 
-export type Postgres_Sql = Sql<Postgres_Type_Map>;
+export type PostgresSql = Sql<PostgresTypeMap>;
 
 // was using a type helper here, but worsens usage because of the complexity
-export interface Postgres_Options extends Options<Postgres_Type_Map> {
+export interface PostgresOptions extends Options<PostgresTypeMap> {
 	host: string;
 	port: number;
 	database: string;
@@ -16,9 +16,9 @@ export interface Postgres_Options extends Options<Postgres_Type_Map> {
 }
 
 // TODO use this to pass through custom types
-export type Postgres_Type_Map = Record<string, unknown>;
+export type PostgresTypeMap = Record<string, unknown>;
 
-const to_default_postgres_options = (): Postgres_Options => ({
+const to_default_postgres_options = (): PostgresOptions => ({
 	host: to_env_string('PGHOST', 'localhost'),
 	port: to_env_number('PGPORT', 5432),
 	database: to_env_string('PGDATABASE', 'felt'),

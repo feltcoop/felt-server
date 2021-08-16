@@ -3,36 +3,36 @@ import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 import type {Result} from '@feltcoop/felt';
 
-import type {Data_Store} from '$lib/ui/data';
-import type {Ui_Store} from '$lib/ui/ui';
-import type {Community, Community_Model, Community_Params} from '$lib/communities/community';
+import type {DataStore} from '$lib/ui/data';
+import type {UiStore} from '$lib/ui/ui';
+import type {Community, CommunityModel, CommunityParams} from '$lib/communities/community';
 import {to_community_model} from '$lib/communities/community';
-import type {Space, Space_Params} from '$lib/spaces/space';
-import type {Member, Member_Params} from '$lib/members/member';
+import type {Space, SpaceParams} from '$lib/spaces/space';
+import type {Member, MemberParams} from '$lib/members/member';
 import type {Post} from '$lib/posts/post';
-import type {Socket_Store} from '$lib/ui/socket';
+import type {SocketStore} from '$lib/ui/socket';
 
 // TODO refactor/rethink
 
 const KEY = Symbol();
 
-export const get_api = (): Api_Store => getContext(KEY);
+export const get_api = (): ApiStore => getContext(KEY);
 
-export const set_api = (store: Api_Store): Api_Store => {
+export const set_api = (store: ApiStore): ApiStore => {
 	setContext(KEY, store);
 	return store;
 };
 
-export interface Api_State {}
+export interface ApiState {}
 
-export interface Api_Store {
-	subscribe: Readable<Api_State>['subscribe'];
+export interface ApiStore {
+	subscribe: Readable<ApiState>['subscribe'];
 	select_community: (community_id: number) => void;
 	select_space: (community_id: number, space: number | null) => void;
 	toggle_main_nav: () => void;
 	create_community: (
 		name: string,
-	) => Promise<Result<{value: {community: Community_Model}}, {reason: string}>>;
+	) => Promise<Result<{value: {community: CommunityModel}}, {reason: string}>>;
 	create_space: (
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
 		name: string,
@@ -50,16 +50,16 @@ export interface Api_Store {
 	) => Promise<Result<{value: {post: Post}}, {reason: string}>>;
 }
 
-export const to_api_store = (ui: Ui_Store, data: Data_Store, socket: Socket_Store): Api_Store => {
+export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore): ApiStore => {
 	// TODO set the `api` state with progress of remote calls
-	const {subscribe} = writable<Api_State>(to_default_api_state());
+	const {subscribe} = writable<ApiState>(to_default_api_state());
 
-	// let $ui: Ui_State;
-	// let $data: Data_State;
+	// let $ui: UiState;
+	// let $data: DataState;
 	// ui.subscribe(($u) => ($ui = $u));
 	// data.subscribe(($d) => ($data = $d));
 
-	const store: Api_Store = {
+	const store: ApiStore = {
 		subscribe,
 		// TODO these are just directly proxying
 		select_community: ui.select_community,
@@ -69,7 +69,7 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store, socket: Socket_Stor
 		create_community: async (name) => {
 			if (!name) return {ok: false, reason: 'invalid name'};
 			//Needs to collect name
-			const community_params: Community_Params = {
+			const community_params: CommunityParams = {
 				name,
 			};
 			const res = await fetch(`/api/v1/communities`, {
@@ -95,7 +95,7 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store, socket: Socket_Stor
 			if (!media_type) return {ok: false, reason: 'invalid meta_type'};
 			if (!content) return {ok: false, reason: 'invalid content'};
 			//Needs to collect name
-			const doc: Space_Params = {
+			const doc: SpaceParams = {
 				name,
 				url,
 				media_type,
@@ -125,7 +125,7 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store, socket: Socket_Stor
 			if (community_id == null) return {ok: false, reason: 'invalid url'};
 			if (!persona_id) return {ok: false, reason: 'invalid persona'};
 
-			const doc: Member_Params = {
+			const doc: MemberParams = {
 				persona_id,
 				community_id,
 			};
@@ -164,7 +164,7 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store, socket: Socket_Stor
 	return store;
 };
 
-const to_default_api_state = (): Api_State => ({
+const to_default_api_state = (): ApiState => ({
 	selected_community_id: null,
 	selected_space_id_by_community: {},
 });

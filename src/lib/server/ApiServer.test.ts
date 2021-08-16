@@ -4,22 +4,22 @@ import * as t from 'uvu/assert';
 import postgres from 'postgres';
 import {createServer} from 'http';
 
-import {Api_Server} from '$lib/server/Api_Server.js';
+import {ApiServer} from '$lib/server/ApiServer.js';
 import {Database} from '$lib/db/Database.js';
 import {default_postgres_options} from '$lib/db/postgres.js';
-import {Websocket_Server} from '$lib/server/Websocket_Server.js';
+import {WebsocketServer} from '$lib/server/WebsocketServer.js';
 
 const TEST_PORT = 3003; // TODO
 
 /* test_api_server */
-const test_api_server = suite('Api_Server');
+const test_api_server = suite('ApiServer');
 
 test_api_server('init and close', async () => {
 	const server = createServer();
-	const api_server = new Api_Server({
+	const api_server = new ApiServer({
 		server,
 		app: polka({server}),
-		websocket_server: new Websocket_Server(server),
+		websocket_server: new WebsocketServer(server),
 		db: new Database({sql: postgres(default_postgres_options)}),
 		port: TEST_PORT,
 	});

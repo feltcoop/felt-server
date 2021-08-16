@@ -1,10 +1,10 @@
 <script lang="ts">
 	import {session} from '$app/stores';
 	import {tick} from 'svelte';
-	import Pending_Animation from '@feltcoop/felt/ui/Pending_Animation.svelte';
+	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 	import {icons} from '@feltcoop/felt';
 
-	import type {Login_Request} from '$lib/session/login_middleware.js';
+	import type {LoginRequest} from '$lib/session/login_middleware.js';
 	import {autofocus} from '$lib/ui/actions';
 
 	let account_name = '';
@@ -34,7 +34,7 @@
 		error_message = '';
 		console.log('logging in with account_name', account_name);
 		try {
-			const login_request: Login_Request = {account_name, password};
+			const login_request: LoginRequest = {account_name, password};
 			const response = await fetch('/api/v1/login', {
 				method: 'POST',
 				headers: {'content-type': 'application/json'},
@@ -92,7 +92,7 @@
 	/>
 	<button type="button" bind:this={button_el} on:click={log_in}>
 		{#if submitting}
-			<Pending_Animation />
+			<PendingAnimation />
 		{:else}log in{/if}
 	</button>
 	<div class:error={!!error_message}>{error_message || icons.felt}</div>

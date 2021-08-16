@@ -5,7 +5,7 @@ export interface Persona {
 	communities: number[];
 }
 
-export interface Persona_Params {
+export interface PersonaParams {
 	account_id: number;
 	name: string;
 }

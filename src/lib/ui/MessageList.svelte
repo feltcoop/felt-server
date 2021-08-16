@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type {Message_State} from '$lib/ui/messages_store.js';
+	import type {MessageState} from '$lib/ui/messages_store.js';
 
-	export let messages: Message_State[];
+	export let messages: MessageState[];
 </script>
 
 <ul>

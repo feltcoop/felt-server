@@ -1,12 +1,12 @@
 <script lang="ts">
 	import {session} from '$app/stores';
-	import Pending_Animation from '@feltcoop/felt/ui/Pending_Animation.svelte';
+	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 
-	import type {Account_Model} from '$lib/vocab/account/account';
+	import type {AccountModel} from '$lib/vocab/account/account';
 
-	let account: Account_Model;
+	let account: AccountModel;
 	$: account = $session?.account;
-	$: console.log('<Logout_Form> account', account);
+	$: console.log('<LogoutForm> account', account);
 
 	let error_message: string | undefined;
 	let submitting: boolean | undefined;
@@ -42,7 +42,7 @@
 <form>
 	<button type="button" on:click={submit_name} {disabled}>
 		{#if submitting}
-			<Pending_Animation />
+			<PendingAnimation />
 		{:else}log out{/if}
 	</button>
 	{#if error_message}

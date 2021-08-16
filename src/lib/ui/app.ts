@@ -1,26 +1,26 @@
 import {setContext, getContext} from 'svelte';
 import type {Writable} from 'svelte/store';
 
-import type {Data_Store} from '$lib/ui/data';
-import type {Ui_Store} from '$lib/ui/ui';
-import type {Api_Store} from '$lib/ui/api';
-import type {Socket_Store} from '$lib/ui/socket';
+import type {DataStore} from '$lib/ui/data';
+import type {UiStore} from '$lib/ui/ui';
+import type {ApiStore} from '$lib/ui/api';
+import type {SocketStore} from '$lib/ui/socket';
 
 // TODO refactor/rethink
 
-export interface App_Stores {
-	api: Api_Store;
-	data: Data_Store;
-	ui: Ui_Store;
-	socket: Socket_Store;
+export interface AppStores {
+	api: ApiStore;
+	data: DataStore;
+	ui: UiStore;
+	socket: SocketStore;
 	devmode: Writable<boolean>;
 }
 
 const KEY = Symbol();
 
-export const get_app = (): App_Stores => getContext(KEY);
+export const get_app = (): AppStores => getContext(KEY);
 
-export const set_app = (stores: App_Stores): App_Stores => {
+export const set_app = (stores: AppStores): AppStores => {
 	setContext(KEY, stores);
 	return stores;
 };

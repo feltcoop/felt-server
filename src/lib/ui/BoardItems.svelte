@@ -1,7 +1,9 @@
 <script lang="ts">
 	import type {Post} from '$lib/posts/post.js';
 	import type {Member} from '$lib/members/member.js';
-	import Chat_Item from '$lib/ui/Chat_Item.svelte';
+	import BoardItem from '$lib/ui/BoardItem.svelte';
+
+	// TODO this should possibly be a generic component instead of this named one
 
 	export let posts: Post[];
 	export let members_by_id: Map<number, Member>;
@@ -17,6 +19,6 @@
 <!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->
 <ul>
 	{#each posts as post (post.post_id)}
-		<Chat_Item {post} member={to_member(post.actor_id)} />
+		<BoardItem {post} member={to_member(post.actor_id)} />
 	{/each}
 </ul>
