@@ -19,6 +19,7 @@
 
 	// TODO refactor
 	const load_posts = async (space_id: number) => {
+		$posts = [];
 		const res = await fetch(`/api/v1/spaces/${space_id}/posts`);
 		if (res.ok) {
 			const data = await res.json();

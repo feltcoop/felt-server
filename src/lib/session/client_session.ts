@@ -6,7 +6,6 @@ import type {Persona} from '$lib/personas/persona.js';
 export type Client_Session = Account_Session | Guest_Session;
 
 export interface Account_Session {
-	account: Client_Account;
 	personas: Persona[];
 	account: Account_Model;
 	communities: Community[];
