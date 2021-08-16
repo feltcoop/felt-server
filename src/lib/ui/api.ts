@@ -42,7 +42,7 @@ export interface Api_Store {
 	) => Promise<Result<{value: {space: Space}}, {reason: string}>>;
 	invite_member: (
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
-		account_id: number,
+		persona_id: number,
 	) => Promise<Result<{value: {member: Member}}, {reason: string}>>;
 	create_post: (
 		space: Space,
@@ -119,14 +119,14 @@ export const to_api_store = (ui: Ui_Store, data: Data_Store, socket: Socket_Stor
 		// because does not give the potential member an opportunity to deny an invite
 		invite_member: async (
 			community_id,
-			account_id, // TODO `persona_id`
+			persona_id, // TODO `persona_id`
 		) => {
 			// TODO proper automated validation
 			if (community_id == null) return {ok: false, reason: 'invalid url'};
-			if (!account_id) return {ok: false, reason: 'invalid member'};
+			if (!persona_id) return {ok: false, reason: 'invalid persona'};
 
 			const doc: Member_Params = {
-				account_id,
+				persona_id,
 				community_id,
 			};
 
