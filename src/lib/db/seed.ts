@@ -154,7 +154,7 @@ export const seed = async (db: Database): Promise<void> => {
 				insert into personas (
 					account_id, name
 				) values (
-					1, ${account1_initial_data.name}
+					1, ${account1.name}
 				)
 		`;
 
