@@ -269,6 +269,12 @@ export const seed = async (db: Database): Promise<void> => {
 		content: '{"type": "Notes", "props": {"data": "/notes"}}',
 	});
 	await create_space(6, 1, {
+		name: 'felt library',
+		url: '/library',
+		media_type: 'application/fuz+json',
+		content: '{"type": "Iframe", "props": {"url": "https://www.felt.dev/sketch/library"}}',
+	});
+	await create_space(7, 1, {
 		name: 'dealt: tar',
 		url: '/tar',
 		media_type: 'application/fuz+json',
