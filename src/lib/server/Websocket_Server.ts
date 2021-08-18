@@ -25,10 +25,16 @@ export class Websocket_Server {
 			console.log('[wss] connection req.headers', req.headers);
 			let request: SessionIncomingMessage = Object.assign(req);
 			validateSession(request);
-			console.log('[wss] connection account', request.session?.account_id);
+			if (request.session?.account_id == undefined) {
+				console.log('[wss] request to open connection was unauthenticated');
+				socket.close();
+				return;
+			}
+			const {account_id} = request.session!;
 			//TODO where to store the authorized account for a given websocket connection
 			//to prevent actions on other actors resources?
 			socket.on('message', (raw_message) => {
+				console.log('account-id', account_id);
 				let message;
 				try {
 					message = JSON.parse(raw_message as any);
