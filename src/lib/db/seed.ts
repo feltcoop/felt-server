@@ -155,11 +155,21 @@ export const seed = async (db: Database): Promise<void> => {
 				insert into personas (
 					account_id, name
 				) values (
-					1, ${account1.name}
+					1, 'andy'
 				)
 		`;
 
 		console.log('[db] create_persona1_result', create_persona1_result);
+
+		const create_persona2_result = await sql`
+				insert into personas (
+					account_id, name
+				) values (
+					1, 'alice'
+				)
+		`;
+
+		console.log('[db] create_persona2_result', create_persona2_result);
 	}
 
 	// example: insert with dynamic query helper
@@ -174,15 +184,25 @@ export const seed = async (db: Database): Promise<void> => {
 		`;
 		console.log('[db] create_account2_result', account2_result);
 
-		const create_persona2_result = await sql`
+		const create_persona3_result = await sql`
 				insert into personas (
 					account_id, name
 				) values (
-					2, ${account2.name}
+					2, 'bob'
 				)
 		`;
 
-		console.log('[db] create_persona2_result', create_persona2_result);
+		console.log('[db] create_persona3_result', create_persona3_result);
+
+		const create_persona4_result = await sql`
+				insert into personas (
+					account_id, name
+				) values (
+					2, 'betty'
+				)
+		`;
+
+		console.log('[db] create_persona4_result', create_persona4_result);
 	}
 
 	const community1_doc = community_docs.find((d) => d.community_id === 1);
@@ -231,7 +251,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.persona_id === 1 && d.community_id === 2,
 	);
 	if (!persona_community2_doc) {
-		const persona_community2: PersonaCommunityParams = {persona_id: 1, community_id: 2};
+		const persona_community2: PersonaCommunityParams = {persona_id: 2, community_id: 2};
 		const persona_community2_result = await sql`
 			insert into persona_communities ${sql(persona_community2, 'persona_id', 'community_id')}
 		`;
@@ -242,7 +262,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.persona_id === 2 && d.community_id === 1,
 	);
 	if (!persona_community3_doc) {
-		const persona_community3: PersonaCommunityParams = {persona_id: 2, community_id: 1};
+		const persona_community3: PersonaCommunityParams = {persona_id: 3, community_id: 1};
 		const persona_community3_result = await sql`
 			insert into persona_communities ${sql(persona_community3, 'persona_id', 'community_id')}
 		`;
@@ -253,7 +273,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.persona_id === 2 && d.community_id === 3,
 	);
 	if (!persona_community4_doc) {
-		const persona_community4: PersonaCommunityParams = {persona_id: 2, community_id: 3};
+		const persona_community4: PersonaCommunityParams = {persona_id: 4, community_id: 3};
 		const persona_community4_result = await sql`
 			insert into persona_communities ${sql(persona_community4, 'persona_id', 'community_id')}
 		`;
@@ -330,7 +350,7 @@ export const seed = async (db: Database): Promise<void> => {
 	if (!post2) {
 		const post2: Post = {
 			content: 'Those who speak do not know.',
-			actor_id: 2,
+			actor_id: 3,
 			space_id: 1,
 		};
 		const post2_result = await sql`
@@ -343,7 +363,7 @@ export const seed = async (db: Database): Promise<void> => {
 	if (!post3) {
 		const post3: Post = {
 			content: "All the world's a stage.",
-			actor_id: 2,
+			actor_id: 3,
 			space_id: 2,
 		};
 		const post3_result = await sql`
@@ -382,7 +402,7 @@ export const seed = async (db: Database): Promise<void> => {
 	if (!post6) {
 		const post6: Post = {
 			content: 'You change the theory, not the evidence.',
-			actor_id: 2,
+			actor_id: 3,
 			space_id: 3,
 		};
 		const post6_result = await sql`
