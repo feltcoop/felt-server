@@ -11,7 +11,7 @@
 	export let community: Community;
 
 	$: invitable_members = community
-		? members.filter((x) => !community.members.some((y) => x.account_id == y.account_id))
+		? members.filter((x) => !community.members.some((y) => x.persona_id == y.persona_id))
 		: [];
 </script>
 
@@ -30,14 +30,14 @@
 	<div slot="content">
 		<Markup>
 			<h1>Invite users to {community.name}</h1>
-			{#each invitable_members as member (member.account_id)}
+			{#each invitable_members as member (member.persona_id)}
 				<p>
 					<button
 						type="button"
 						class="button-join"
-						on:click={() => api.invite_member(community.community_id, member.account_id)}
+						on:click={() => api.invite_member(community.community_id, member.persona_id)}
 					>
-						[[TODO persona name: {member.account_id}]]
+						{member.name}
 					</button>
 				</p>
 			{:else}
