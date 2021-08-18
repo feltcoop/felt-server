@@ -23,16 +23,16 @@ import {
 	to_spaces_middleware,
 	to_create_space_middleware,
 } from '$lib/spaces/space_middleware.js';
-import type {Account_Session} from '$lib/session/client_session.js';
+import type {AccountSession} from '$lib/session/client_session.js';
 import type {Database} from '$lib/db/Database.js';
-import type {Websocket_Server} from '$lib/server/Websocket_Server.js';
+import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
 
-const log = new Logger([blue('[Api_Server]')]);
+const log = new Logger([blue('[ApiServer]')]);
 
 // TODO not sure what these types should look like in their final form,
 // there's currently some redundancy and weirdness
 export interface Request extends PolkaRequest, CookieSessionRequest {
-	account_session?: Account_Session;
+	account_session?: AccountSession;
 	session: ServerSession;
 }
 export interface Middleware extends PolkaMiddleware<Request> {}
@@ -47,16 +47,16 @@ const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
 export interface Options {
 	server: HttpServer | HttpsServer;
 	app: Polka<Request>;
-	websocket_server: Websocket_Server;
+	websocket_server: WebsocketServer;
 	port?: number;
 	db: Database;
 	load_instance?: () => Promise<Polka | null>;
 }
 
-export class Api_Server {
+export class ApiServer {
 	readonly server: HttpServer | HttpsServer;
 	readonly app: Polka<Request>;
-	readonly websocket_server: Websocket_Server;
+	readonly websocket_server: WebsocketServer;
 	readonly port: number | undefined;
 	readonly db: Database;
 	readonly load_instance: () => Promise<Polka | null>;
@@ -130,7 +130,7 @@ export class Api_Server {
 		const port = this.port || 3001;
 		// While building for production, `render` will be falsy
 		// and we want to use 3001 while building for prod.
-		// TODO maybe always default to env var `PORT`, upstream and instantiate `Api_Server` with it
+		// TODO maybe always default to env var `PORT`, upstream and instantiate `ApiServer` with it
 		// (instance && !dev
 		// 	? to_env_number('PORT', API_SERVER_DEFAULT_PORT_PROD)
 		// 	: API_SERVER_DEFAULT_PORT_DEV);

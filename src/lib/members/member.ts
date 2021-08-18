@@ -4,7 +4,7 @@ export interface Member {
 	name: string;
 }
 
-export interface Member_Params {
+export interface MemberParams {
 	persona_id: number;
 	community_id: number;
 }

@@ -1,11 +1,11 @@
 import type {Database} from '$lib/db/Database.js';
-import type {Account, Account_Params} from '$lib/vocab/account/account.js';
-import type {Space, Space_Params} from '$lib/spaces/space.js';
+import type {Account, AccountParams} from '$lib/vocab/account/account.js';
+import type {Space, SpaceParams} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
 import type {
-	Persona_Community,
-	Persona_Community_Params,
-	Community_Spaces,
+	PersonaCommunity,
+	PersonaCommunityParams,
+	CommunitySpaces,
 } from '$lib/communities/community';
 
 // TODO extract seed helpers and db methods
@@ -116,21 +116,21 @@ export const seed = async (db: Database): Promise<void> => {
 	`;
 	console.log('[db] post_docs', post_docs);
 
-	interface Community_Doc {
+	interface CommunityDoc {
 		community_id?: number;
 		name: string;
 	}
-	const community_docs = await sql<Community_Doc[]>`
+	const community_docs = await sql<CommunityDoc[]>`
 		select community_id, name from communities
 	`;
 	console.log('[db] community_docs', community_docs);
 
-	const persona_community_docs = await sql<Persona_Community[]>`
+	const persona_community_docs = await sql<PersonaCommunity[]>`
 		select persona_id,community_id from persona_communities
 	`;
 	console.log('[db] persona_community_docs', persona_community_docs);
 
-	const community_spaces_docs = await sql<Community_Spaces[]>`
+	const community_spaces_docs = await sql<CommunitySpaces[]>`
 		select space_id,community_id from community_spaces
 	`;
 	console.log('[db] community_spaces_docs', community_spaces_docs);
@@ -138,7 +138,7 @@ export const seed = async (db: Database): Promise<void> => {
 	// example: insert literal values
 	const account1_doc = account_docs.find((d) => d.name === 'account1');
 	if (!account1_doc) {
-		const account1: Account_Params = {
+		const account1: AccountParams = {
 			name: 'a',
 			password: 'ded6a3304309fe718831c3968bdda1b36fb0acae7de54a4cb011ba10923aab71', // 'a' hashed
 		};
@@ -165,7 +165,7 @@ export const seed = async (db: Database): Promise<void> => {
 	// example: insert with dynamic query helper
 	const account2_doc = account_docs.find((d) => d.name === 'account2');
 	if (!account2_doc) {
-		const account2: Account_Params = {
+		const account2: AccountParams = {
 			name: 'b',
 			password: 'bff5c2262849491dd4047eb7086a7948428885aef62e3b90aa388c9db11d1c1e', // 'b' hashed
 		};
@@ -200,7 +200,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const community2_doc = community_docs.find((d) => d.community_id === 2);
 	if (!community2_doc) {
-		const community2: Community_Doc = {name: 'dev'};
+		const community2: CommunityDoc = {name: 'dev'};
 		const community2_result = await sql`
 			insert into communities ${sql(community2, 'name')}
 		`;
@@ -209,7 +209,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const community3_doc = community_docs.find((d) => d.community_id === 3);
 	if (!community3_doc) {
-		const community3: Community_Doc = {name: 'backpackers-anonymous'};
+		const community3: CommunityDoc = {name: 'backpackers-anonymous'};
 		const community3_result = await sql`
 			insert into communities ${sql(community3, 'name')}
 		`;
@@ -220,7 +220,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.persona_id === 1 && d.community_id === 1,
 	);
 	if (!persona_community1_doc) {
-		const persona_community1: Persona_Community_Params = {persona_id: 1, community_id: 1};
+		const persona_community1: PersonaCommunityParams = {persona_id: 1, community_id: 1};
 		const persona_community1_result = await sql`
 			insert into persona_communities ${sql(persona_community1, 'persona_id', 'community_id')}
 		`;
@@ -231,7 +231,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.persona_id === 1 && d.community_id === 2,
 	);
 	if (!persona_community2_doc) {
-		const persona_community2: Persona_Community_Params = {persona_id: 1, community_id: 2};
+		const persona_community2: PersonaCommunityParams = {persona_id: 1, community_id: 2};
 		const persona_community2_result = await sql`
 			insert into persona_communities ${sql(persona_community2, 'persona_id', 'community_id')}
 		`;
@@ -242,7 +242,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.persona_id === 2 && d.community_id === 1,
 	);
 	if (!persona_community3_doc) {
-		const persona_community3: Persona_Community_Params = {persona_id: 2, community_id: 1};
+		const persona_community3: PersonaCommunityParams = {persona_id: 2, community_id: 1};
 		const persona_community3_result = await sql`
 			insert into persona_communities ${sql(persona_community3, 'persona_id', 'community_id')}
 		`;
@@ -253,7 +253,7 @@ export const seed = async (db: Database): Promise<void> => {
 		(d) => d.persona_id === 2 && d.community_id === 3,
 	);
 	if (!persona_community4_doc) {
-		const persona_community4: Persona_Community_Params = {persona_id: 2, community_id: 3};
+		const persona_community4: PersonaCommunityParams = {persona_id: 2, community_id: 3};
 		const persona_community4_result = await sql`
 			insert into persona_communities ${sql(persona_community4, 'persona_id', 'community_id')}
 		`;
@@ -263,7 +263,7 @@ export const seed = async (db: Database): Promise<void> => {
 	const create_space = async (
 		space_id: number,
 		community_id: number,
-		params: Space_Params,
+		params: SpaceParams,
 	): Promise<void> => {
 		if (!space_docs.find((d) => d.space_id === space_id)) {
 			await db.repos.spaces.insert(community_id, params);

@@ -6,7 +6,7 @@ import {SessionIncomingMessage, validateSession} from '$lib/session/client_sessi
 
 // TODO needs a lot of work!
 
-export class Websocket_Server {
+export class WebsocketServer {
 	readonly wss: ws.Server;
 	readonly server: HttpServer | HttpsServer;
 

@@ -1,9 +1,9 @@
 import send from '@polka/send-type';
 
-import type {Api_Server, Middleware} from '$lib/server/Api_Server.js';
-import type {Member_Params} from '$lib/members/member';
+import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
+import type {MemberParams} from '$lib/members/member';
 
-export const to_communities_middleware = (server: Api_Server): Middleware => {
+export const to_communities_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
 		if (!req.account_session) {
@@ -26,7 +26,7 @@ export const to_communities_middleware = (server: Api_Server): Middleware => {
 };
 
 //Returns a single community object
-export const to_community_middleware = (server: Api_Server): Middleware => {
+export const to_community_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
 		if (!req.account_session) {
@@ -50,7 +50,7 @@ export const to_community_middleware = (server: Api_Server): Middleware => {
 };
 
 //Creates a new community for an instance
-export const to_create_community_middleware = (server: Api_Server): Middleware => {
+export const to_create_community_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
 		if (!req.account_session) {
@@ -86,7 +86,7 @@ export const to_create_community_middleware = (server: Api_Server): Middleware =
 };
 
 //Creates a new member relation for a community
-export const to_create_member_middleware = (server: Api_Server): Middleware => {
+export const to_create_member_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
 		if (!req.account_session) {
@@ -95,7 +95,7 @@ export const to_create_member_middleware = (server: Api_Server): Middleware => {
 			return send(res, 401, {reason: 'not logged in'});
 		}
 
-		const member: Member_Params = req.body; // TODO move this type
+		const member: MemberParams = req.body; // TODO move this type
 		console.log('[community_middleware] creating member', member);
 
 		const create_member_result = await db.repos.members.create(

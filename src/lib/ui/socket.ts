@@ -1,4 +1,4 @@
-import type {Async_Status} from '@feltcoop/felt';
+import type {AsyncStatus} from '@feltcoop/felt';
 import type {Json} from '@feltcoop/felt/util/json.js';
 import {writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
@@ -9,36 +9,36 @@ import {posts} from '$lib/ui/post_store';
 
 const KEY = Symbol();
 
-export const get_socket = (): Socket_Store => getContext(KEY);
+export const get_socket = (): SocketStore => getContext(KEY);
 
-export const set_socket = (store: Socket_Store = to_socket_store()): Socket_Store => {
+export const set_socket = (store: SocketStore = to_socket_store()): SocketStore => {
 	setContext(KEY, store);
 	return store;
 };
 
 // This store wraps a browser `WebSocket` connection with all of the Sveltey goodness.
 
-// TODO rename? Connection? Socket_Connection?
+// TODO rename? Connection? SocketConnection?
 // TODO consider xstate, looks like a good usecase
 
-export interface Socket_State {
+export interface SocketState {
 	url: string | null;
 	ws: WebSocket | null;
 	connected: boolean;
-	status: Async_Status; // rename? `connection_status`?
+	status: AsyncStatus; // rename? `connection_status`?
 	error: string | null;
 	send_count: number;
 }
 
-export interface Socket_Store {
-	subscribe: Readable<Socket_State>['subscribe'];
+export interface SocketStore {
+	subscribe: Readable<SocketState>['subscribe'];
 	disconnect: (code?: number) => void;
 	connect: (url: string) => void;
 	send: (data: Json) => void;
 }
 
 export const to_socket_store = () => {
-	const {subscribe, update} = writable<Socket_State>(to_default_socket_state(), () => {
+	const {subscribe, update} = writable<SocketState>(to_default_socket_state(), () => {
 		console.log('[socket] listen store');
 		return () => {
 			console.log('[socket] unlisten store');
@@ -87,7 +87,7 @@ export const to_socket_store = () => {
 		return ws;
 	};
 
-	const store: Socket_Store = {
+	const store: SocketStore = {
 		subscribe,
 		disconnect: (code = 1000) => {
 			update(($socket) => {
@@ -129,7 +129,7 @@ export const to_socket_store = () => {
 	return store;
 };
 
-const to_default_socket_state = (): Socket_State => ({
+const to_default_socket_state = (): SocketState => ({
 	url: null,
 	ws: null,
 	connected: false,

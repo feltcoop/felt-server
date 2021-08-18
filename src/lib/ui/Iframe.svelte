@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type {Space} from '$lib/spaces/space.js';
-	import Pending_Animation_Overlay from '$lib/ui/Pending_Animation_Overlay.svelte';
+	import PendingAnimationOverlay from '$lib/ui/PendingAnimationOverlay.svelte';
 
 	export let space: Space;
 	export let url: string; // TODO type
@@ -19,7 +19,7 @@
 		on:load={() => (loaded = true)}
 	/>
 	{#if !loaded}
-		<Pending_Animation_Overlay />
+		<PendingAnimationOverlay />
 	{/if}
 </div>
 

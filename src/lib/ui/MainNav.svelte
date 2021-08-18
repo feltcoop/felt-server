@@ -2,11 +2,11 @@
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {icons} from '@feltcoop/felt';
 
-	import Actor_Icon from '$lib/ui/Actor_Icon.svelte';
-	import Community_Nav from '$lib/ui/Community_Nav.svelte';
-	import Space_Nav from '$lib/ui/Space_Nav.svelte';
-	import Socket_Connection from '$lib/ui/Socket_Connection.svelte';
-	import Account_Form from '$lib/ui/Account_Form.svelte';
+	import ActorIcon from '$lib/ui/ActorIcon.svelte';
+	import CommunityNav from '$lib/ui/CommunityNav.svelte';
+	import SpaceNav from '$lib/ui/SpaceNav.svelte';
+	import SocketConnection from '$lib/ui/SocketConnection.svelte';
+	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {get_app} from '$lib/ui/app';
 	import {random_hue} from '$lib/ui/color';
 
@@ -24,11 +24,11 @@
 		  ) || null
 		: null;
 
-	// $: console.log('[Main_Nav] $data', $data);
-	// $: console.log('[Main_Nav] $ui', $ui);
-	// $: console.log('[Main_Nav] communities', communities);
-	// $: console.log('[Main_Nav] selected_community', selected_community);
-	// $: console.log('[Main_Nav] selected_space', selected_space);
+	// $: console.log('[MainNav] $data', $data);
+	// $: console.log('[MainNav] $ui', $ui);
+	// $: console.log('[MainNav] communities', communities);
+	// $: console.log('[MainNav] selected_community', selected_community);
+	// $: console.log('[MainNav] selected_space', selected_space);
 
 	// TODO refactor to some client view-model for the account
 	$: hue = random_hue($data.account.name);
@@ -47,7 +47,7 @@
 				class:selected={$ui.main_nav_view === 'explorer'}
 				class="explorer-button"
 			>
-				<Actor_Icon name={$data.account.name} />
+				<ActorIcon name={$data.account.name} />
 				<div class="explorer-button-text">
 					{$data.account.name}
 				</div>
@@ -64,8 +64,8 @@
 		{#if $ui.main_nav_view === 'explorer'}
 			<div class="explorer">
 				{#if selected_community}
-					<Community_Nav {members} {communities} {selected_community} />
-					<Space_Nav
+					<CommunityNav {members} {communities} {selected_community} />
+					<SpaceNav
 						community={selected_community}
 						spaces={selected_community.spaces}
 						{selected_space}
@@ -75,9 +75,9 @@
 			</div>
 		{:else if $ui.main_nav_view === 'account'}
 			<Markup>
-				<Account_Form />
+				<AccountForm />
 			</Markup>
-			<Socket_Connection />
+			<SocketConnection />
 		{/if}
 	</div>
 </div>

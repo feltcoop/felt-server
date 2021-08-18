@@ -1,24 +1,24 @@
 import type {Result} from '@feltcoop/felt';
 import {unwrap} from '@feltcoop/felt';
 
-import type {Account_Session} from '$lib/session/client_session.js';
+import type {AccountSession} from '$lib/session/client_session.js';
 import type {Persona} from '$lib/personas/persona.js';
 import type {Community} from '$lib/communities/community.js';
-import type {Space, Space_Params} from '$lib/spaces/space.js';
+import type {Space, SpaceParams} from '$lib/spaces/space.js';
 import type {Post} from '$lib/posts/post.js';
 import type {Member} from '$lib/members/member.js';
-import type {Account, Account_Model, Account_Params} from '$lib/vocab/account/account.js';
+import type {Account, AccountModel, AccountParams} from '$lib/vocab/account/account.js';
 import {account_properties, account_model_properties} from '$lib/vocab/account/account';
-import type {Postgres_Sql} from '$lib/db/postgres.js';
+import type {PostgresSql} from '$lib/db/postgres.js';
 
 export interface Options {
-	sql: Postgres_Sql;
+	sql: PostgresSql;
 }
 
 // TODO create seperate models used by the front end (w/ camelCase attributes) from the repo models
 // and snake_case for the DB stuff
 export class Database {
-	sql: Postgres_Sql;
+	sql: PostgresSql;
 
 	constructor({sql}: Options) {
 		console.log('[db] create');
@@ -33,11 +33,9 @@ export class Database {
 	// TODO refactor
 	repos = {
 		session: {
-			load_client_session: async (
-				account_id: number,
-			): Promise<Result<{value: Account_Session}>> => {
+			load_client_session: async (account_id: number): Promise<Result<{value: AccountSession}>> => {
 				console.log('[db] load_client_session', account_id);
-				const account: Account_Model = unwrap(
+				const account: AccountModel = unwrap(
 					await this.repos.accounts.find_by_id(account_id, account_model_properties),
 				);
 				let personas: Persona[] = unwrap(
@@ -57,7 +55,7 @@ export class Database {
 			create: async ({
 				name,
 				password,
-			}: Account_Params): Promise<Result<{value: Account}, {reason: string}>> => {
+			}: AccountParams): Promise<Result<{value: Account}, {reason: string}>> => {
 				const data = await this.sql<Account[]>`
 					insert into accounts (name, password) values (
 						${name}, ${password}
@@ -257,7 +255,7 @@ export class Database {
 			},
 			insert: async (
 				community_id: number,
-				params: Space_Params,
+				params: SpaceParams,
 			): Promise<Result<{value: Space}>> => {
 				const {name, content, media_type, url} = params;
 				const data = await this.sql<Space[]>`

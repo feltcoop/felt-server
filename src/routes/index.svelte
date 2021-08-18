@@ -2,7 +2,7 @@
 	import {session} from '$app/stores';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
-	import Account_Form from '$lib/ui/Account_Form.svelte';
+	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import Workspace from '$lib/ui/Workspace.svelte';
 
 	const title = 'felt-server';
@@ -14,7 +14,7 @@
 	{#if $session.guest}
 		<div class="column">
 			<Markup>
-				<Account_Form />
+				<AccountForm />
 			</Markup>
 		</div>
 	{:else}

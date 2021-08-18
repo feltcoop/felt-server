@@ -17,7 +17,7 @@
 	};
 </script>
 
-<!--TODO: Make an Icon_Button component in felt and use it here-->
+<!--TODO: Make an IconButton component in felt and use it here-->
 <Modal>
 	<div slot="trigger" let:open>
 		<button

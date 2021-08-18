@@ -6,7 +6,7 @@ export interface Space {
 	content: string;
 }
 
-export interface Space_Params {
+export interface SpaceParams {
 	name: string;
 	url: string;
 	media_type: string;

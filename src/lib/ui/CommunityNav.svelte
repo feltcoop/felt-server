@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type {Community} from '$lib/communities/community.js';
 	import type {Member} from '$lib/members/member.js';
-	import Community_Input from '$lib/ui/Community_Input.svelte';
-	import Actor_Icon from '$lib/ui/Actor_Icon.svelte';
+	import CommunityInput from '$lib/ui/CommunityInput.svelte';
+	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import {get_app} from '$lib/ui/app';
 	import {random_hue} from '$lib/ui/color';
 
@@ -15,7 +15,7 @@
 
 <div class="community-nav">
 	<div class="header">
-		<Community_Input />
+		<CommunityInput />
 	</div>
 	<div>
 		{#each communities as community (community.community_id)}
@@ -25,7 +25,7 @@
 				on:click={() => api.select_community(community.community_id)}
 				style="--hue: {random_hue(community.name)}"
 			>
-				<Actor_Icon name={community.name} />
+				<ActorIcon name={community.name} />
 			</button>
 		{/each}
 	</div>

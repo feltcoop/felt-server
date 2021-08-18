@@ -1,8 +1,8 @@
 import send from '@polka/send-type';
 
-import type {Api_Server, Middleware} from '$lib/server/Api_Server.js';
+import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 
-export const to_session_account_middleware = (server: Api_Server): Middleware => {
+export const to_session_account_middleware = (server: ApiServer): Middleware => {
 	return async (req, res, next) => {
 		if (req.account_session) {
 			return send(res, 500, {reason: 'invalid server configuration'});

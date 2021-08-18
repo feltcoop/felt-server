@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Async_Status} from '@feltcoop/felt';
+	import type {AsyncStatus} from '@feltcoop/felt';
 
 	let value = 'world';
 
@@ -7,7 +7,7 @@
 	$: console.log('echo response_data', response_data);
 	$: serialized_response_data = response_data ? JSON.stringify(response_data, null, 2) : '';
 
-	let fetch_state: Async_Status = 'initial';
+	let fetch_state: AsyncStatus = 'initial';
 	let fetch_error: string | null = null;
 
 	// TODO state machine? xstate in another template?

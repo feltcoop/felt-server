@@ -1,8 +1,8 @@
 import send from '@polka/send-type';
 
-import type {Api_Server, Middleware} from '$lib/server/Api_Server.js';
+import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 
-export const to_posts_middleware = (server: Api_Server): Middleware => {
+export const to_posts_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
 		if (!req.account_session) {
@@ -22,7 +22,7 @@ export const to_posts_middleware = (server: Api_Server): Middleware => {
 	};
 };
 
-export const to_create_post_middleware = (server: Api_Server): Middleware => {
+export const to_create_post_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
 		if (!req.account_session) {

@@ -2,7 +2,7 @@ import send from '@polka/send-type';
 import {scrypt} from 'crypto';
 import {promisify} from 'util';
 
-import type {Api_Server, Middleware} from '$lib/server/Api_Server.js';
+import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Account} from '$lib/vocab/account/account.js';
 
 // TODO move this?
@@ -11,15 +11,15 @@ const to_scrypt = promisify(scrypt);
 const to_hash = async (password: string): Promise<string> =>
 	((await to_scrypt(password, salt, 32)) as any).toString('hex'); // TODO why is the type cast needed?
 
-export interface Login_Request {
+export interface LoginRequest {
 	account_name: string;
 	password: string; // 🤫
 }
 
-export const to_login_middleware = (server: Api_Server): Middleware => {
+export const to_login_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
-		const login_request: Login_Request = req.body as any; // TODO validate with JSON schema and generate `Login_Request`
+		const login_request: LoginRequest = req.body as any; // TODO validate with JSON schema and generate `LoginRequest`
 		const {account_name, password} = login_request;
 		console.log('[login_middleware] req.body', account_name); // TODO logging
 		// TODO formalize and automate validation and normalization

@@ -15,7 +15,7 @@
 		: [];
 </script>
 
-<!--TODO: Make an Icon_Button component in felt and use it here-->
+<!--TODO: Make an IconButton component in felt and use it here-->
 <Modal>
 	<span slot="trigger" let:open>
 		<button

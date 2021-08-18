@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type {Space} from '$lib/spaces/space.js';
-	import Space_Input from '$lib/ui/Space_Input.svelte';
-	import type {Community_Model} from '$lib/communities/community.js';
-	import Member_Input from '$lib/ui/Member_Input.svelte';
+	import SpaceInput from '$lib/ui/SpaceInput.svelte';
+	import type {CommunityModel} from '$lib/communities/community.js';
+	import MemberInput from '$lib/ui/MemberInput.svelte';
 	import type {Member} from '$lib/members/member.js';
 	import {get_app} from '$lib/ui/app';
 
 	const {api} = get_app();
 
-	export let community: Community_Model;
+	export let community: CommunityModel;
 	export let spaces: Space[];
 	export let selected_space: Space | null;
 	export let members: Member[];
@@ -17,8 +17,8 @@
 
 <div class="space-nav">
 	<div class="header">
-		<Space_Input {community} />
-		<Member_Input {community} {members} />
+		<SpaceInput {community} />
+		<MemberInput {community} {members} />
 	</div>
 	{#each spaces as space (space.space_id)}
 		<button

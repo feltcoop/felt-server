@@ -1,8 +1,8 @@
 import send from '@polka/send-type';
 
-import type {Api_Server, Middleware} from '$lib/server/Api_Server.js';
+import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 
-export const to_logout_middleware = (_server: Api_Server): Middleware => {
+export const to_logout_middleware = (_server: ApiServer): Middleware => {
 	return async (req, res) => {
 		console.log('[logout_middleware] account', req.account_session?.account.name); // TODO logging
 		if (!req.account_session) {

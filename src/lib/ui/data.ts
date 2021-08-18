@@ -2,11 +2,12 @@ import {writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
-import type {Client_Session} from '$lib/session/client_session';
-import {Community_Model, to_community_model} from '$lib/communities/community';
+import type {ClientSession} from '$lib/session/client_session';
+import {to_community_model} from '$lib/communities/community';
+import type {CommunityModel} from '$lib/communities/community';
 import type {Member} from '$lib/members/member';
 import type {Space} from '$lib/spaces/space';
-import type {Account_Model} from '$lib/vocab/account/account';
+import type {AccountModel} from '$lib/vocab/account/account';
 
 // TODO refactor/rethink
 
@@ -14,33 +15,33 @@ import type {Account_Model} from '$lib/vocab/account/account';
 
 const KEY = Symbol();
 
-export const get_data = (): Data_Store => getContext(KEY);
+export const get_data = (): DataStore => getContext(KEY);
 
-export const set_data = (session: Client_Session): Data_Store => {
+export const set_data = (session: ClientSession): DataStore => {
 	const store = to_data_store(session);
 	setContext(KEY, store);
 	return store;
 };
 
-export interface Data_State {
-	account: Account_Model;
-	communities: Community_Model[];
+export interface DataState {
+	account: AccountModel;
+	communities: CommunityModel[];
 	spaces: Space[];
 	members: Member[];
 }
 
-export interface Data_Store {
-	subscribe: Readable<Data_State>['subscribe'];
-	update_session: (session: Client_Session) => void;
-	add_community: (community: Community_Model) => void;
+export interface DataStore {
+	subscribe: Readable<DataState>['subscribe'];
+	update_session: (session: ClientSession) => void;
+	add_community: (community: CommunityModel) => void;
 	add_space: (space: Space, community_id: number) => void;
 	add_member: (member: Member) => void;
 }
 
 // TODO probably don't want to pass `initial_session` because it'll never be GC'd
-export const to_data_store = (initial_session: Client_Session): Data_Store => {
+export const to_data_store = (initial_session: ClientSession): DataStore => {
 	const {subscribe, set, update} = writable(to_default_data(initial_session));
-	const store: Data_Store = {
+	const store: DataStore = {
 		subscribe,
 		update_session: (session) => {
 			console.log('[data.update_session]', session);
@@ -76,7 +77,7 @@ export const to_data_store = (initial_session: Client_Session): Data_Store => {
 	return store;
 };
 
-const to_default_data = (session: Client_Session): Data_State => {
+const to_default_data = (session: ClientSession): DataState => {
 	if (session.guest) {
 		return null as any;
 	} else {

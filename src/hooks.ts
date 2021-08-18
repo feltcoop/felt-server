@@ -2,14 +2,14 @@ import type {GetSession} from '@sveltejs/kit';
 import postgres from 'postgres';
 import {validateSession} from '$lib/session/client_session';
 
-import type {SessionRequest, Client_Session} from '$lib/session/client_session.js';
+import type {SessionRequest, ClientSession} from '$lib/session/client_session.js';
 import {Database} from '$lib/db/Database';
 import {default_postgres_options} from '$lib/db/postgres';
 
 // TODO source this from wherever Api_Server.js does
 const db = new Database({sql: postgres(default_postgres_options)});
 
-export const getSession: GetSession<SessionRequest, Client_Session> = async (req) => {
+export const getSession: GetSession<SessionRequest, ClientSession> = async (req) => {
 	let request: SessionRequest = Object.assign(req);
 	validateSession(request);
 	// TODO is swallowing `context.error`, only return in dev mode? look for "reason"?
