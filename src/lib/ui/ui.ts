@@ -18,7 +18,8 @@ export interface UiState {
 	// TODO should these be store references instead of ids?
 	selected_community_id: number | null;
 	selected_space_id_by_community: {[key: number]: number | null};
-	active_persona_id: number | null;
+	selected_persona_id: number | null;
+	selected_community_id_by_persona: {[key: number]: number};
 	expand_main_nav: boolean;
 	main_nav_view: MainNavView;
 }
@@ -69,6 +70,8 @@ export const to_ui_store = () => {
 						...$ui,
 						selected_community_id: null,
 						selected_space_id_by_community: {},
+						selected_persona_id: null,
+						selected_community_id_by_persona: {},
 					};
 				}
 			});
@@ -102,8 +105,9 @@ export const to_ui_store = () => {
 
 const to_default_ui_state = (): UiState => ({
 	selected_community_id: null,
-	active_persona_id: null,
+	selected_persona_id: null,
 	selected_space_id_by_community: {},
+	selected_community_id_by_persona: {},
 	expand_main_nav: true,
 	main_nav_view: 'explorer',
 });
