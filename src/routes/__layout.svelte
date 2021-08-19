@@ -6,6 +6,7 @@
 	import {onMount} from 'svelte';
 	import {session} from '$app/stores';
 	import {dev} from '$app/env';
+	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	import {set_socket} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
@@ -14,6 +15,8 @@
 	import {set_ui} from '$lib/ui/ui';
 	import {set_api, to_api_store} from '$lib/ui/api';
 	import {set_app} from '$lib/ui/app';
+	import AccountForm from '$lib/ui/AccountForm.svelte';
+	import Workspace from '$lib/ui/Workspace.svelte';
 
 	const devmode = set_devmode();
 	const socket = set_socket();
@@ -43,7 +46,17 @@
 		<Luggage />
 		<MainNav />
 	{/if}
-	<slot />
+	<main>
+		{#if $session.guest}
+			<div class="column">
+				<Markup>
+					<AccountForm />
+				</Markup>
+			</div>
+		{:else}
+			<Workspace />
+		{/if}
+	</main>
 	<Devmode {devmode} />
 </div>
 
@@ -54,5 +67,14 @@
 		display: flex;
 		position: relative;
 		/* align-items: stretch; */
+	}
+
+	main {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
 	}
 </style>

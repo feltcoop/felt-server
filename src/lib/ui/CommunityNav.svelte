@@ -20,13 +20,14 @@
 	<div>
 		{#each communities as community (community.community_id)}
 			<!-- TODO make these links <a>...</a> -->
-			<button
+			<a
+				href="/{community.name}"
 				class:selected={community === selected_community}
 				on:click={() => api.select_community(community.community_id)}
 				style="--hue: {random_hue(community.name)}"
 			>
 				<ActorIcon name={community.name} />
-			</button>
+			</a>
 		{/each}
 	</div>
 </div>

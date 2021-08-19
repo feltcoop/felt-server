@@ -20,14 +20,15 @@
 		<SpaceInput {community} />
 		<MemberInput {community} {members} />
 	</div>
+	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
-		<button
+		<a
+			href="/{community.name}{space.url}"
 			class:selected={space === selected_space}
 			on:click={() => api.select_space(community.community_id, space.space_id)}
 		>
-			<!-- TODO {space.name} -->
-			{space.url}
-		</button>
+			{space.name}
+		</a>
 	{/each}
 </div>
 
@@ -42,7 +43,8 @@
 	.header {
 		display: flex;
 	}
-	button {
-		justify-content: flex-start;
+
+	a {
+		padding: var(--spacing_xs) var(--spacing_sm);
 	}
 </style>

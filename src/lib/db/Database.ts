@@ -187,7 +187,7 @@ export class Database {
 				(
 					select array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
 					from (
-						SELECT s.space_id, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id=c.community_id      				
+						SELECT s.space_id, s.name, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id=c.community_id
 					) d
 				) as spaces,
 				(
@@ -233,7 +233,7 @@ export class Database {
 			): Promise<Result<{value: Space}, {type: 'no_space_found'; reason: string}>> => {
 				console.log(`[db] preparing to query for space id: ${space_id}`);
 				const data = await this.sql<Space[]>`
-					select space_id, url, media_type, content from spaces where space_id = ${space_id}
+					select space_id, name, url, media_type, content from spaces where space_id = ${space_id}
 				`;
 				console.log('[db] space data', data);
 				if (data.length) {
@@ -248,9 +248,9 @@ export class Database {
 			filter_by_community: async (community_id: string): Promise<Result<{value: Space[]}>> => {
 				console.log(`[db] preparing to query for community spaces: ${community_id}`);
 				const data = await this.sql<Space[]>`
-					SELECT s.space_id, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id= ${community_id}
+					SELECT s.space_id, s.name, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id= ${community_id}
 				`;
-				console.log('[db] community data', data);
+				console.log('[db] spaces data', data);
 				return {ok: true, value: data};
 			},
 			insert: async (
