@@ -18,13 +18,11 @@
 			throw Error('Failed to resolve Portal target: ' + target);
 		}
 		target_el.appendChild(el);
-		// TODO can we remove the `hidden` attribute here and remove the wrapping div?
-		el.removeAttribute('hidden');
 		on_move?.(el, target_el);
 	};
 </script>
 
-<div>
+<div hidden>
 	<div class="portal" bind:this={el}>
 		<slot />
 	</div>
