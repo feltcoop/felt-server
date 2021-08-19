@@ -64,7 +64,7 @@
 	textarea {
 		border-left: none;
 		border-right: none;
-		border-bottom: none;
+		border-top: none;
 		border-radius: 0;
 	}
 </style>
