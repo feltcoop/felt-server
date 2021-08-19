@@ -27,4 +27,5 @@ export const to_cookie_session_middleware = () =>
 		keys: TODO_SERVER_COOKIE_KEYS,
 		maxAge: 1000 * 60 * 60 * 24 * 7 * 6, // 6 weeks
 		secure: !dev, // this makes cookies break in prod unless https! see letsencrypt
+		sameSite: 'lax',
 	});
