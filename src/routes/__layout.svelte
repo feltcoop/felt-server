@@ -7,6 +7,7 @@
 	import {session} from '$app/stores';
 	import {dev} from '$app/env';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
+	import {page} from '$app/stores';
 
 	import {set_socket} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
@@ -16,7 +17,6 @@
 	import {set_api, to_api_store} from '$lib/ui/api';
 	import {set_app} from '$lib/ui/app';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
-	import Workspace from '$lib/ui/Workspace.svelte';
 
 	const devmode = set_devmode();
 	const socket = set_socket();
@@ -27,6 +27,26 @@
 	const api = set_api(to_api_store(ui, data, socket));
 	const app = set_app({data, ui, api, devmode, socket});
 	console.log('app', app);
+
+	// TODO refactor
+	$: update_state_from_page_params($page.params);
+	const update_state_from_page_params = (params: {community?: string; space?: string}) => {
+		const community = $data.communities.find((c) => c.name === params.community);
+		if (!community) throw Error(`TODO Unable to find community: ${params.community}`);
+		const {community_id} = community;
+		if (community_id !== $ui.selected_community_id) {
+			api.select_community(community_id);
+		}
+		if (community_id && params.space) {
+			const space_url = '/' + params.space;
+			const space = $data.spaces.find((s) => s.url === space_url);
+			if (!space) throw Error(`TODO Unable to find space: ${space_url}`);
+			const {space_id} = space;
+			if (space_id !== $ui.selected_space_id_by_community[community_id]) {
+				api.select_space(community_id, space_id);
+			}
+		}
+	};
 
 	onMount(() => {
 		const socket_url = dev ? `ws://localhost:3001/ws` : `wss://staging.felt.dev/ws`;
@@ -54,7 +74,7 @@
 				</Markup>
 			</div>
 		{:else}
-			<Workspace />
+			<slot />
 		{/if}
 	</main>
 	<Devmode {devmode} />

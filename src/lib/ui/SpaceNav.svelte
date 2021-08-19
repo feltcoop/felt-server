@@ -4,9 +4,6 @@
 	import type {CommunityModel} from '$lib/communities/community.js';
 	import MemberInput from '$lib/ui/MemberInput.svelte';
 	import type {Member} from '$lib/members/member.js';
-	import {get_app} from '$lib/ui/app';
-
-	const {api} = get_app();
 
 	export let community: CommunityModel;
 	export let spaces: Space[];
@@ -22,11 +19,7 @@
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
-		<a
-			href="/{community.name}{space.url}"
-			class:selected={space === selected_space}
-			on:click={() => api.select_space(community.community_id, space.space_id)}
-		>
+		<a href="/{community.name}{space.url}" class:selected={space === selected_space}>
 			{space.name}
 		</a>
 	{/each}

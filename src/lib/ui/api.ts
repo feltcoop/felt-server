@@ -27,7 +27,7 @@ export interface ApiState {}
 
 export interface ApiStore {
 	subscribe: Readable<ApiState>['subscribe'];
-	select_community: (community_id: number) => void;
+	select_community: (community_id: number | null) => void;
 	select_space: (community_id: number, space: number | null) => void;
 	toggle_main_nav: () => void;
 	create_community: (

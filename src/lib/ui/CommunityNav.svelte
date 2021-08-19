@@ -3,10 +3,7 @@
 	import type {Member} from '$lib/members/member.js';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
-	import {get_app} from '$lib/ui/app';
 	import {random_hue} from '$lib/ui/color';
-
-	const {api} = get_app();
 
 	export let members: Member[];
 	export let communities: Community[];
@@ -23,7 +20,6 @@
 			<a
 				href="/{community.name}"
 				class:selected={community === selected_community}
-				on:click={() => api.select_community(community.community_id)}
 				style="--hue: {random_hue(community.name)}"
 			>
 				<ActorIcon name={community.name} />
