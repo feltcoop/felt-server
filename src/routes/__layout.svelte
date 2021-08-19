@@ -66,7 +66,6 @@
 		width: 100%;
 		display: flex;
 		position: relative;
-		/* align-items: stretch; */
 	}
 
 	main {
