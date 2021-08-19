@@ -14,6 +14,7 @@
 
 	$: members = $data.members;
 	$: communities = $data.communities;
+	$: personas = $data.personas;
 
 	// TODO speed up these lookups, probably with a map of all entities by id
 	$: selected_community =
@@ -47,6 +48,7 @@
 				class:selected={$ui.main_nav_view === 'explorer'}
 				class="explorer-button"
 			>
+				<!-- TODO figure out how to use active_persona_id here-->
 				<ActorIcon name={$data.account.name} />
 				<div class="explorer-button-text">
 					{$data.account.name}

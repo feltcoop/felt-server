@@ -18,6 +18,7 @@ export interface UiState {
 	// TODO should these be store references instead of ids?
 	selected_community_id: number | null;
 	selected_space_id_by_community: {[key: number]: number | null};
+	active_persona_id: number | null;
 	expand_main_nav: boolean;
 	main_nav_view: MainNavView;
 }
@@ -101,6 +102,7 @@ export const to_ui_store = () => {
 
 const to_default_ui_state = (): UiState => ({
 	selected_community_id: null,
+	active_persona_id: null,
 	selected_space_id_by_community: {},
 	expand_main_nav: true,
 	main_nav_view: 'explorer',

@@ -8,6 +8,7 @@ import type {CommunityModel} from '$lib/communities/community';
 import type {Member} from '$lib/members/member';
 import type {Space} from '$lib/spaces/space';
 import type {AccountModel} from '$lib/vocab/account/account';
+import type {Persona} from '$lib/personas/persona';
 
 // TODO refactor/rethink
 
@@ -28,6 +29,7 @@ export interface DataState {
 	communities: CommunityModel[];
 	spaces: Space[];
 	members: Member[];
+	personas: Persona[];
 }
 
 export interface DataStore {
@@ -87,6 +89,7 @@ const to_default_data = (session: ClientSession): DataState => {
 			// TODO session should already have a flat array of spaces
 			spaces: session.communities.flatMap((community) => community.spaces),
 			members: session.members,
+			personas: session.personas,
 		};
 	}
 };
