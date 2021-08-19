@@ -1,55 +1,53 @@
 <script lang="ts">
-	let opened = false;
-	const open = () => {
-		opened = true;
-	};
-	const close = () => {
-		opened = false;
+	import {is_editable} from '@feltcoop/felt/util/dom.js';
+	import {fade} from 'svelte/transition';
+
+	import Portal from '$lib/ui/Portal.svelte';
+
+	export let close: () => void;
+	export let target: HTMLElement | string = '#modal-wrapper';
+
+	let el: HTMLElement;
+
+	// TODO hook into a ui input system
+	const on_window_keydown = (e: KeyboardEvent) => {
+		if (!(e.target instanceof HTMLElement && is_editable(e.target))) {
+			if (e.key === 'Escape') {
+				close();
+			}
+		}
 	};
 </script>
 
-<slot name="trigger" {open} {close}>
-	<button on:click={open}>open</button>
-</slot>
+<svelte:window on:keydown={on_window_keydown} />
 
-{#if opened}
-	<div class="modal">
-		<div class="backdrop" on:click={close} />
-		<div class="content">
-			<slot name="content" {open} {close} />
+<!-- the `tabindex` enables scrolling because SvelteKit puts it on the body -->
+<Portal {target} on_move={() => el.focus()}>
+	<div class="modal" on:click={close} bind:this={el} tabindex="-1">
+		<div class="pane" on:click|stopPropagation in:fade={{duration: 85}}>
+			<slot />
 		</div>
 	</div>
-{/if}
+</Portal>
 
 <style>
 	.modal {
+		overflow-y: scroll;
+		height: 100%;
+		width: 100%;
 		position: fixed;
-		top: 0;
 		left: 0;
-		z-index: 3;
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-	.backdrop {
-		position: absolute;
-		z-index: 0;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0, 0, 0, 0.4);
-	}
-	.content {
-		position: relative;
-		margin: auto;
-		max-width: calc(100% - 40px);
-		max-height: calc(100% - 40px);
-		background-color: #fff;
-		border: 1px solid #ccc;
-		overflow: hidden;
+		top: 0;
+		z-index: 4;
+		background-color: var(--overlay_bg);
 		display: flex;
 		flex-direction: column;
-		overflow: auto;
+		align-items: center;
+		padding: 40px;
+	}
+	.pane {
+		max-width: var(--column_width);
+		background-color: var(--bg);
+		box-shadow: 0px 6px 24px hsla(0, 100%, 0%, 0.8);
 	}
 </style>

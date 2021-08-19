@@ -45,6 +45,7 @@
 	{/if}
 	<slot />
 	<Devmode {devmode} />
+	<div id="modal-wrapper" />
 </div>
 
 <style>

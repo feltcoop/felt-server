@@ -10,7 +10,7 @@
 
 <style>
 	.luggage {
-		z-index: 9;
+		z-index: 3;
 		position: absolute;
 		left: 0;
 		top: 0;

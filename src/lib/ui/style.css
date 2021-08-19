@@ -1,6 +1,7 @@
 /* TODO upstream to Felt */
 /* global styles that override Felt's */
 :root {
+	--overlay_bg: hsla(0, 0%, 0%, 0.65); /* TODO delete after upgrading Felt */
 	--bg_hue: 24;
 	--bg_saturation: 23%;
 	--bg_lightness: 96%;
