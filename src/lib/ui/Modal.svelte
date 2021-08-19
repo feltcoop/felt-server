@@ -17,15 +17,27 @@
 			}
 		}
 	};
+
+	// The modal isn't "ready" until the portal moves it.
+	// Rendering the the modal's slot only once it's ready fixes things like `autofocus`.
+	let ready = false;
 </script>
 
 <svelte:window on:keydown={on_window_keydown} />
 
 <!-- the `tabindex` enables scrolling because SvelteKit puts it on the body -->
-<Portal {target} on_move={() => el.focus()}>
+<Portal
+	{target}
+	on:move={() => {
+		ready = true;
+		el.focus();
+	}}
+>
 	<div class="modal" on:click={close} bind:this={el} tabindex="-1">
 		<div class="pane" on:click|stopPropagation in:fade={{duration: 85}}>
-			<slot />
+			{#if ready}
+				<slot />
+			{/if}
 		</div>
 	</div>
 </Portal>

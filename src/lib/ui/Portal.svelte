@@ -1,8 +1,9 @@
 <script lang="ts">
-	import {onDestroy} from 'svelte';
+	import {onDestroy, createEventDispatcher} from 'svelte';
+
+	const dispatch = createEventDispatcher<{move: {el: Element; target_el: Element}}>();
 
 	export let target: Element | string = 'body';
-	export let on_move: ((el: Element, target: Element) => void) | null = null;
 
 	let el: Element;
 
@@ -18,7 +19,7 @@
 			throw Error('Failed to resolve Portal target: ' + target);
 		}
 		target_el.appendChild(el);
-		on_move?.(el, target_el);
+		dispatch('move', {el, target_el});
 	};
 </script>
 
