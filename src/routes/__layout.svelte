@@ -23,7 +23,6 @@
 	$: ui.update_data($data); // TODO this or make it an arg to the ui store?
 	const api = set_api(to_api_store(ui, data, socket));
 	const app = set_app({data, ui, api, devmode, socket});
-	$: console.log('$ui', $ui);
 	console.log('app', app);
 
 	onMount(() => {
