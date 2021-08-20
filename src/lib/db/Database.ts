@@ -10,6 +10,7 @@ import type {Member} from '$lib/members/member.js';
 import type {Account, AccountModel, AccountParams} from '$lib/vocab/account/account.js';
 import {account_properties, account_model_properties} from '$lib/vocab/account/account';
 import type {PostgresSql} from '$lib/db/postgres.js';
+import {default_spaces} from '$lib/spaces/default_spaces';
 
 export interface Options {
 	sql: PostgresSql;
@@ -278,44 +279,14 @@ export class Database {
 			insert_default_spaces: async (
 				community_id: number,
 			): Promise<Result<{value: Space[]}, {reason: string}>> => {
-				const result = await Promise.all([
-					this.repos.spaces.insert(community_id, {
-						name: 'chat',
-						url: '/chat',
-						media_type: 'application/fuz+json',
-						content: '{"type": "Chat", "props": {"data": "/chat/posts"}}',
-					}),
-					this.repos.spaces.insert(community_id, {
-						name: 'board',
-						url: '/board',
-						media_type: 'application/fuz+json',
-						content: '{"type": "Board", "props": {"data": "/board/posts"}}',
-					}),
-					this.repos.spaces.insert(community_id, {
-						name: 'forum',
-						url: '/forum',
-						media_type: 'application/fuz+json',
-						content: '{"type": "Forum", "props": {"data": "/forum/posts"}}',
-					}),
-					this.repos.spaces.insert(community_id, {
-						name: 'notes',
-						url: '/notes',
-						media_type: 'application/fuz+json',
-						content: '{"type": "Notes", "props": {"data": "/notes/posts"}}',
-					}),
-					this.repos.spaces.insert(community_id, {
-						name: 'voice',
-						url: '/voice',
-						media_type: 'application/fuz+json',
-						content: '{"type": "Voice", "props": {"data": "/voice/stream"}}',
-					}),
-				]);
-				console.log('[db] created default spaces', community_id, result);
 				const spaces: Space[] = [];
-				for (const r of result) {
-					if (!r.ok) return {ok: false, reason: 'Failed to create default spaces for community.'};
-					spaces.push(r.value);
+				for (const space_params of default_spaces) {
+					const result = await this.repos.spaces.insert(community_id, space_params);
+					if (!result.ok)
+						return {ok: false, reason: 'Failed to create default spaces for community.'};
+					spaces.push(result.value);
 				}
+				console.log('[db] created default spaces', community_id, spaces);
 				return {ok: true, value: spaces};
 			},
 		},
