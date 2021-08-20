@@ -36,7 +36,7 @@ export const to_create_post_middleware = (server: ApiServer): Middleware => {
 		// TODO take content from body & build post to pass along with it
 
 		const find_posts_result = await db.repos.posts.insert(
-			req.account_session.account.account_id!,
+			req.account_session.account.account_id,
 			req.params.space_id,
 			req.body.content,
 		);

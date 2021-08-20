@@ -16,10 +16,10 @@ export const set_ui = (store: UiStore = to_ui_store()): UiStore => {
 
 export interface UiState {
 	// TODO should these be store references instead of ids?
-	selected_community_id: number | null;
-	selected_space_id_by_community: {[key: number]: number | null};
 	selected_persona_id: number | null;
+	selected_community_id: number | null;
 	selected_community_id_by_persona: {[key: number]: number};
+	selected_space_id_by_community: {[key: number]: number | null};
 	expand_main_nav: boolean;
 	main_nav_view: MainNavView;
 }
@@ -47,6 +47,11 @@ export const to_ui_store = () => {
 				// and should not be called when data changes, only when a new session's data is set,
 				// so the naming is misleading
 				if (data) {
+					const selected_persona =
+						($ui.selected_persona_id !== null &&
+							data.personas.find((c) => c.persona_id === $ui.selected_persona_id)) ||
+						data.personas[0] ||
+						null;
 					const selected_community =
 						($ui.selected_community_id !== null &&
 							data.communities.find((c) => c.community_id === $ui.selected_community_id)) ||
@@ -54,11 +59,21 @@ export const to_ui_store = () => {
 						null;
 					return {
 						...$ui,
+						selected_persona_id: selected_persona?.persona_id ?? null,
 						selected_community_id: selected_community?.community_id ?? null,
+						selected_community_id_by_persona: Object.fromEntries(
+							data.personas.map((persona) => [
+								persona.persona_id,
+								$ui.selected_community_id_by_persona[persona.persona_id] ??
+									// TODO this type is wrong, need to change the postgres query probably
+									(persona.communities[0] as any)?.community_id ??
+									null,
+							]),
+						),
 						selected_space_id_by_community: Object.fromEntries(
 							data.communities.map((community) => [
-								community.community_id!,
-								$ui.selected_space_id_by_community[community.community_id!] ??
+								community.community_id,
+								$ui.selected_space_id_by_community[community.community_id] ??
 									community.spaces[0]?.space_id ??
 									null,
 							]),
@@ -68,17 +83,27 @@ export const to_ui_store = () => {
 					// might want to preserve some state, so this doesn't use `to_default_ui_state`
 					return {
 						...$ui,
-						selected_community_id: null,
-						selected_space_id_by_community: {},
 						selected_persona_id: null,
+						selected_community_id: null,
 						selected_community_id_by_persona: {},
+						selected_space_id_by_community: {},
 					};
 				}
 			});
 		},
 		select_community: (community_id: number | null) => {
 			console.log('[ui.select_space] community_id', {community_id});
-			update(($ui) => ({...$ui, selected_community_id: community_id}));
+			update(($ui) => ({
+				...$ui,
+				selected_community_id: community_id,
+				selected_community_id_by_persona:
+					community_id === null || $ui.selected_persona_id === null
+						? $ui.selected_community_id_by_persona
+						: {
+								...$ui.selected_community_id_by_persona,
+								[$ui.selected_persona_id]: community_id,
+						  },
+			}));
 		},
 		select_space: (community_id: number, space_id: number | null) => {
 			console.log('[ui.select_space] community_id, space_id', {community_id, space_id});
@@ -104,10 +129,10 @@ export const to_ui_store = () => {
 };
 
 const to_default_ui_state = (): UiState => ({
-	selected_community_id: null,
 	selected_persona_id: null,
-	selected_space_id_by_community: {},
+	selected_community_id: null,
 	selected_community_id_by_persona: {},
+	selected_space_id_by_community: {},
 	expand_main_nav: true,
 	main_nav_view: 'explorer',
 });
