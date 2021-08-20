@@ -47,8 +47,12 @@
 		width: 100%;
 	}
 
-	button {
-		width: var(--icon_size_md);
-		height: var(--icon_size_md);
+	a {
+		display: block;
+		border: 2px solid transparent;
+	}
+	.selected {
+		border-color: var(--active_color);
+		background-color: var(--bg);
 	}
 </style>
