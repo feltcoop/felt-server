@@ -40,7 +40,7 @@
 		}
 		if (community_id && params.space) {
 			const space_url = '/' + params.space;
-			const space = $data.spaces.find((s) => s.url === space_url);
+			const space = community.spaces.find((s) => s.url === space_url);
 			if (!space) throw Error(`TODO Unable to find space: ${space_url}`);
 			const {space_id} = space;
 			if (space_id !== $ui.selected_space_id_by_community[community_id]) {
