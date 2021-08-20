@@ -49,7 +49,8 @@
 
 	a {
 		display: block;
-		border: 2px solid transparent;
+		/* TODO better way to have active state? this makes the community nav wider than the luggage button! */
+		border: 1px solid transparent;
 	}
 	.selected {
 		border-color: var(--active_color);
