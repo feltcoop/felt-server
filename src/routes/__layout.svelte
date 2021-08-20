@@ -28,7 +28,7 @@
 	const app = set_app({data, ui, api, devmode, socket});
 	console.log('app', app);
 
-	// TODO refactor
+	// TODO refactor -- where should this logic go?
 	$: update_state_from_page_params($page.params);
 	const update_state_from_page_params = (params: {community?: string; space?: string}) => {
 		if (!params.community) return;
@@ -59,7 +59,7 @@
 </script>
 
 <svelte:head>
-	<link rel="shortcut icon" href="favicon.png" />
+	<link rel="shortcut icon" href="/favicon.png" />
 </svelte:head>
 
 <div class="layout">
