@@ -31,6 +31,7 @@
 	// TODO refactor
 	$: update_state_from_page_params($page.params);
 	const update_state_from_page_params = (params: {community?: string; space?: string}) => {
+		if (!params.community) return;
 		const community = $data.communities.find((c) => c.name === params.community);
 		if (!community) throw Error(`TODO Unable to find community: ${params.community}`);
 		const {community_id} = community;
