@@ -153,9 +153,9 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 			});
 			if (res.ok) {
 				console.log('post sent, broadcasting to server');
-				const data = await res.json();
-				socket.send(data); // TODO refactor
-				return {ok: true, value: data};
+				const json = await res.json();
+				socket.send(json); // TODO refactor
+				return {ok: true, value: json};
 			} else {
 				throw Error(`error sending post: ${res.status}: ${res.statusText}`);
 			}

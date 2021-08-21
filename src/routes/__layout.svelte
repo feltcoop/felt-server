@@ -7,7 +7,7 @@
 	import {session} from '$app/stores';
 	import {dev} from '$app/env';
 
-	import {set_socket} from '$lib/ui/socket';
+	import {set_socket, to_socket_store} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
 	import MainNav from '$lib/ui/MainNav.svelte';
 	import {set_data} from '$lib/ui/data';
@@ -16,9 +16,9 @@
 	import {set_app} from '$lib/ui/app';
 
 	const devmode = set_devmode();
-	const socket = set_socket();
 	const data = set_data($session);
 	$: data.update_session($session);
+	const socket = set_socket(to_socket_store(data));
 	const ui = set_ui();
 	$: ui.update_data($data); // TODO this or make it an arg to the ui store?
 	const api = set_api(to_api_store(ui, data, socket));

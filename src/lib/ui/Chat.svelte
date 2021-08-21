@@ -4,10 +4,9 @@
 	import type {Space} from '$lib/spaces/space.js';
 	import type {Member} from '$lib/members/member.js';
 	import ChatItems from '$lib/ui/ChatItems.svelte';
-	import {posts} from '$lib/ui/post_store';
 	import {get_app} from '$lib/ui/app';
 
-	const {api} = get_app();
+	const {api, data} = get_app();
 
 	export let space: Space;
 	export let members_by_id: Map<number, Member>;
@@ -19,11 +18,11 @@
 
 	// TODO refactor
 	const load_posts = async (space_id: number) => {
-		$posts = [];
+		data.set_posts(space_id, []);
 		const res = await fetch(`/api/v1/spaces/${space_id}/posts`);
 		if (res.ok) {
-			const data = await res.json();
-			$posts = data.posts;
+			const json = await res.json();
+			data.set_posts(space_id, json.posts);
 		}
 	};
 
@@ -38,11 +37,13 @@
 			await create_post();
 		}
 	};
+
+	$: posts = $data.posts_by_space[space.space_id] || [];
 </script>
 
 <div class="chat">
 	<div class="posts">
-		<ChatItems posts={$posts} {members_by_id} />
+		<ChatItems {posts} {members_by_id} />
 	</div>
 	<input type="text" placeholder="> chat" on:keydown={on_keydown} bind:value={text} />
 </div>
