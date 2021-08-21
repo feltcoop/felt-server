@@ -48,6 +48,7 @@ export interface ApiStore {
 		space: Space,
 		content: string,
 	) => Promise<Result<{value: {post: Post}}, {reason: string}>>;
+	load_posts: (space_id: number) => Promise<Result<{value: {post: Post[]}}, {reason: string}>>;
 }
 
 export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore): ApiStore => {
@@ -77,14 +78,18 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify(community_params),
 			});
-			try {
-				const result: {community: Community} = await res.json(); // TODO api types
-				console.log('create_community result', result);
-				const community = to_community_model(result.community);
-				data.add_community(community);
-				return {ok: true, value: {community}};
-			} catch (err) {
-				return {ok: false, reason: err.message};
+			if (res.ok) {
+				try {
+					const result: {community: Community} = await res.json(); // TODO api types
+					console.log('create_community result', result);
+					const community = to_community_model(result.community);
+					data.add_community(community);
+					return {ok: true, value: {community}};
+				} catch (err) {
+					return {ok: false, reason: err.message};
+				}
+			} else {
+				throw Error(`error: ${res.status}: ${res.statusText}`);
 			}
 		},
 		create_space: async (community_id, name, url, media_type, content) => {
@@ -106,13 +111,17 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify(doc),
 			});
-			try {
-				const result: {space: Space} = await res.json(); // TODO api types
-				console.log('create_space result', result);
-				data.add_space(result.space, community_id);
-				return {ok: true, value: result};
-			} catch (err) {
-				return {ok: false, reason: err.message};
+			if (res.ok) {
+				try {
+					const result: {space: Space} = await res.json(); // TODO api types
+					console.log('create_space result', result);
+					data.add_space(result.space, community_id);
+					return {ok: true, value: result};
+				} catch (err) {
+					return {ok: false, reason: err.message};
+				}
+			} else {
+				throw Error(`error: ${res.status}: ${res.statusText}`);
 			}
 		},
 		// TODO: This implementation is currently unconsentful,
@@ -136,13 +145,17 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify(doc),
 			});
-			try {
-				const result: {member: Member} = await res.json(); // TODO api types
-				console.log('invite_member result', result);
-				data.add_member(result.member);
-				return {ok: true, value: result};
-			} catch (err) {
-				return {ok: false, reason: err.message};
+			if (res.ok) {
+				try {
+					const result: {member: Member} = await res.json(); // TODO api types
+					console.log('invite_member result', result);
+					data.add_member(result.member);
+					return {ok: true, value: result};
+				} catch (err) {
+					return {ok: false, reason: err.message};
+				}
+			} else {
+				throw Error(`error: ${res.status}: ${res.statusText}`);
 			}
 		},
 		create_post: async (space, content) => {
@@ -152,12 +165,31 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				body: JSON.stringify({content}),
 			});
 			if (res.ok) {
-				console.log('post sent, broadcasting to server');
-				const json = await res.json();
-				socket.send(json); // TODO refactor
-				return {ok: true, value: json};
+				try {
+					console.log('post sent, broadcasting to server');
+					const json = await res.json();
+					socket.send(json); // TODO refactor
+					return {ok: true, value: json};
+				} catch (err) {
+					return {ok: false, reason: err.message};
+				}
 			} else {
 				throw Error(`error sending post: ${res.status}: ${res.statusText}`);
+			}
+		},
+		load_posts: async (space_id: number) => {
+			data.set_posts(space_id, []);
+			const res = await fetch(`/api/v1/spaces/${space_id}/posts`);
+			if (res.ok) {
+				try {
+					const json = await res.json();
+					data.set_posts(space_id, json.posts);
+					return {ok: true, value: json};
+				} catch (err) {
+					return {ok: false, reason: err.message};
+				}
+			} else {
+				throw Error(`error loading posts: ${res.status}: ${res.statusText}`);
 			}
 		},
 	};

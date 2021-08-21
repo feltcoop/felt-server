@@ -11,18 +11,8 @@
 
 	let text = '';
 
-	$: browser && load_posts(space.space_id);
+	$: browser && api.load_posts(space.space_id);
 	$: console.log(`[Notes] fetching posts for ${space.space_id}`);
-
-	// TODO refactor
-	const load_posts = async (space_id: number) => {
-		data.set_posts(space_id, []);
-		const res = await fetch(`/api/v1/spaces/${space_id}/posts`);
-		if (res.ok) {
-			const json = await res.json();
-			data.set_posts(space_id, json.posts);
-		}
-	};
 
 	const create_post = async () => {
 		if (!text) return;
