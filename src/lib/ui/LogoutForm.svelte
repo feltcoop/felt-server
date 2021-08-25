@@ -17,14 +17,12 @@
 
 	$: disabled = submitting || !account;
 
-	const logout = async () => {
+	const log_out = async () => {
 		submitting = true;
 		error_message = '';
-		const result = await api.logout();
-		console.log('<LogoutForm> logout result', result);
-		if (result.ok) {
-			$session = {guest: true};
-		} else {
+		const result = await api.log_out();
+		console.log('<LogoutForm> log_out result', result);
+		if (!result.ok) {
 			error_message = result.reason;
 		}
 		submitting = false;
@@ -33,7 +31,7 @@
 
 <form>
 	<!-- TODO extract an `AsyncButton` or something that correctly sizes the overlay -->
-	<button type="button" on:click={logout} {disabled}>
+	<button type="button" on:click={log_out} {disabled}>
 		{#if submitting}
 			<PendingAnimation />
 		{:else}log out{/if}

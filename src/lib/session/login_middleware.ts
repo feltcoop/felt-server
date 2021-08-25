@@ -50,7 +50,7 @@ export const to_login_middleware = (server: ApiServer): Middleware => {
 				return send(res, 400, {reason: 'invalid account name or password'});
 			}
 		} else if (find_account_result.type === 'no_account_found') {
-			// There's no accoun, so create one.
+			// There's no account, so create one.
 			const find_account_result = await db.repos.accounts.create({
 				name: account_name,
 				password: password_hash,
