@@ -4,9 +4,9 @@
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import type {AccountModel} from '$lib/vocab/account/account';
-	import {get_app} from '$lib/ui/app';
+	import type {ApiStore} from '$lib/ui/api';
 
-	const {api} = get_app();
+	export let log_out: ApiStore['log_out'];
 
 	let account: AccountModel;
 	$: account = $session?.account;
@@ -17,10 +17,10 @@
 
 	$: disabled = submitting || !account;
 
-	const log_out = async () => {
+	const do_log_out = async () => {
 		submitting = true;
 		error_message = '';
-		const result = await api.log_out();
+		const result = await log_out();
 		console.log('<LogoutForm> log_out result', result);
 		if (!result.ok) {
 			error_message = result.reason;
@@ -31,7 +31,7 @@
 
 <form>
 	<!-- TODO extract an `AsyncButton` or something that correctly sizes the overlay -->
-	<button type="button" on:click={log_out} {disabled}>
+	<button type="button" on:click={do_log_out} {disabled}>
 		{#if submitting}
 			<PendingAnimation />
 		{:else}log out{/if}

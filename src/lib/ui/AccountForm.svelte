@@ -1,14 +1,15 @@
 <script lang="ts">
-	import {session} from '$app/stores';
-
 	import LoginForm from '$lib/ui/LoginForm.svelte';
 	import LogoutForm from '$lib/ui/LogoutForm.svelte';
+	import type {ApiStore} from '$lib/ui/api';
 
-	$: console.log('<AccountForm> $session', $session);
+	export let guest: boolean;
+	export let log_in: ApiStore['log_in'];
+	export let log_out: ApiStore['log_out'];
 </script>
 
-{#if $session.guest}
-	<LoginForm />
+{#if guest}
+	<LoginForm {log_in} />
 {:else}
-	<LogoutForm />
+	<LogoutForm {log_out} />
 {/if}

@@ -4,9 +4,9 @@
 	import {icons} from '@feltcoop/felt';
 
 	import {autofocus} from '$lib/ui/actions';
-	import {get_app} from '$lib/ui/app';
+	import type {ApiStore} from '$lib/ui/api';
 
-	const {api} = get_app();
+	export let log_in: ApiStore['log_in'];
 
 	let account_name = '';
 	let password = '';
@@ -18,7 +18,7 @@
 
 	$: disabled = submitting;
 
-	const log_in = async () => {
+	const do_log_in = async () => {
 		if (submitting) return;
 		if (!account_name) {
 			account_name_el.focus();
@@ -34,7 +34,7 @@
 		submitting = true;
 		error_message = '';
 		console.log('logging in with account_name', account_name);
-		const result = await api.log_in(account_name, password);
+		const result = await log_in(account_name, password);
 		submitting = false;
 		if (!result.ok) {
 			error_message = result.reason;
@@ -45,7 +45,7 @@
 
 	const on_keypress = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			log_in();
+			do_log_in();
 		}
 	};
 </script>
@@ -71,7 +71,7 @@
 		{disabled}
 		placeholder="password"
 	/>
-	<button type="button" bind:this={button_el} on:click={log_in}>
+	<button type="button" bind:this={button_el} on:click={do_log_in}>
 		{#if submitting}
 			<PendingAnimation />
 		{:else}log in{/if}
