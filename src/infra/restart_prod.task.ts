@@ -6,7 +6,7 @@ export const task: Task = {
 	dev: false,
 	run: async ({}) => {
 		await spawn('ssh', [
-			'root@96.126.116.174',
+			'root@96.126.116.174', // TODO env
 			`kill $(ps aux | grep 'node' | awk '{print $2}');
       node deploy_felt_server_current/dist/server/lib/server/server.js &;`,
 		]);
