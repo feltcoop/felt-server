@@ -27,6 +27,7 @@ export interface ApiState {}
 
 export interface ApiStore {
 	subscribe: Readable<ApiState>['subscribe'];
+	logout: () => Promise<Result<{}, {reason: string}>>;
 	select_community: (community_id: number) => void;
 	select_space: (community_id: number, space: number | null) => void;
 	toggle_main_nav: () => void;
@@ -65,6 +66,28 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 		select_community: ui.select_community,
 		select_space: ui.select_space,
 		toggle_main_nav: ui.toggle_main_nav,
+		logout: async () => {
+			try {
+				const response = await fetch('/api/v1/logout', {
+					method: 'POST',
+					headers: {'content-type': 'application/json'},
+				});
+				const response_data = await response.json();
+				console.log('[logout] response', response_data); // TODO logging
+				if (response.ok) {
+					return {ok: true};
+				} else {
+					console.error('[logout] error', response); // TODO logging
+					return {ok: false, reason: response_data.reason};
+				}
+			} catch (err) {
+				console.error('[logout] err', err); // TODO logging
+				return {
+					ok: false,
+					reason: `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again!`,
+				};
+			}
+		},
 		// TODO refactor this, maybe into `data` or `api`
 		create_community: async (name) => {
 			if (!name) return {ok: false, reason: 'invalid name'};
