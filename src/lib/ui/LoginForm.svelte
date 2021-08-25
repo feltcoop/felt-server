@@ -1,11 +1,11 @@
 <script lang="ts">
 	import {session} from '$app/stores';
 	import {tick} from 'svelte';
-	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 	import {icons} from '@feltcoop/felt';
 
 	import type {LoginRequest} from '$lib/session/login_middleware.js';
 	import {autofocus} from '$lib/ui/actions';
+	import PendingButton from '$lib/ui/PendingButton.svelte';
 
 	let account_name = '';
 	let password = '';
@@ -90,11 +90,9 @@
 		{disabled}
 		placeholder="password"
 	/>
-	<button type="button" bind:this={button_el} on:click={log_in}>
-		{#if submitting}
-			<PendingAnimation />
-		{:else}log in{/if}
-	</button>
+	<PendingButton pending={!!submitting} bind:el={button_el} type="button" on:click={log_in}>
+		log in
+	</PendingButton>
 	<div class:error={!!error_message}>{error_message || icons.felt}</div>
 </form>
 

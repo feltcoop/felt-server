@@ -1,8 +1,8 @@
 <script lang="ts">
 	import {session} from '$app/stores';
-	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 
 	import type {AccountModel} from '$lib/vocab/account/account';
+	import PendingButton from '$lib/ui/PendingButton.svelte';
 
 	let account: AccountModel;
 	$: account = $session?.account;
@@ -11,7 +11,7 @@
 	let error_message: string | undefined;
 	let submitting: boolean | undefined;
 
-	$: disabled = submitting || !account;
+	$: disabled = !account;
 
 	const submit_name = async () => {
 		submitting = true;
@@ -40,11 +40,9 @@
 </script>
 
 <form>
-	<button type="button" on:click={submit_name} {disabled}>
-		{#if submitting}
-			<PendingAnimation />
-		{:else}log out{/if}
-	</button>
+	<PendingButton pending={!!submitting} type="button" on:click={submit_name} {disabled}>
+		log out
+	</PendingButton>
 	{#if error_message}
 		<div>
 			<p class="error">{error_message}</p>
