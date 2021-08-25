@@ -6,7 +6,7 @@
 	import type {AccountModel} from '$lib/vocab/account/account';
 	import {get_app} from '$lib/ui/app';
 
-	const {api} = get_app();
+	const {api, ui} = get_app();
 
 	let account: AccountModel;
 	$: account = $session?.account;
@@ -21,9 +21,10 @@
 		submitting = true;
 		error_message = '';
 		const result = await api.logout();
-		console.log('logout result', result);
+		console.log('<LogoutForm> logout result', result);
 		if (result.ok) {
 			$session = {guest: true};
+			ui.set_main_nav_view('explorer'); // TODO better place to do this? maybe on login? load layout from profile?
 		} else {
 			error_message = result.reason;
 		}
