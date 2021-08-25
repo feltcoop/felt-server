@@ -86,9 +86,7 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				if (response.ok) {
 					console.log('[log_in] response_data', response_data); // TODO logging
 					account_name = '';
-					if (response_data.session) {
-						session.set(response_data.session);
-					}
+					session.set(response_data.session);
 					return {ok: true, value: response_data};
 				} else {
 					console.error('[log_in] response not ok', response); // TODO logging
