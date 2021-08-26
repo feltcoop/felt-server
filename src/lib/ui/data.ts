@@ -8,6 +8,7 @@ import type {CommunityModel} from '$lib/communities/community';
 import type {Member} from '$lib/members/member';
 import type {Space} from '$lib/spaces/space';
 import type {AccountModel} from '$lib/vocab/account/account';
+import type {Post} from '$lib/posts/post';
 
 // TODO refactor/rethink
 
@@ -28,6 +29,7 @@ export interface DataState {
 	communities: CommunityModel[];
 	spaces: Space[];
 	members: Member[];
+	posts_by_space: Record<number, Post[]>;
 }
 
 export interface DataStore {
@@ -36,6 +38,8 @@ export interface DataStore {
 	add_community: (community: CommunityModel) => void;
 	add_space: (space: Space, community_id: number) => void;
 	add_member: (member: Member) => void;
+	add_post: (post: Post) => void;
+	set_posts: (space_id: number, posts: Post[]) => void;
 }
 
 // TODO probably don't want to pass `initial_session` because it'll never be GC'd
@@ -73,6 +77,26 @@ export const to_data_store = (initial_session: ClientSession): DataStore => {
 			console.log('[data.add_member]', member);
 			update(($data) => ({...$data, members: $data.members.concat(member)}));
 		},
+		add_post: (post) => {
+			console.log('[data.add_post]', post);
+			update(($data) => ({
+				...$data,
+				posts_by_space: {
+					...$data.posts_by_space,
+					[post.space_id]: ($data.posts_by_space[post.space_id] || []).concat(post),
+				},
+			}));
+		},
+		set_posts: (space_id, posts) => {
+			console.log('[data.set_posts]', posts);
+			update(($data) => ({
+				...$data,
+				posts_by_space: {
+					...$data.posts_by_space,
+					[space_id]: posts,
+				},
+			}));
+		},
 	};
 	return store;
 };
@@ -87,6 +111,7 @@ const to_default_data = (session: ClientSession): DataState => {
 			// TODO session should already have a flat array of spaces
 			spaces: session.communities.flatMap((community) => community.spaces),
 			members: session.members,
+			posts_by_space: {},
 		};
 	}
 };

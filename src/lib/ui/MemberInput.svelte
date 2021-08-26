@@ -10,24 +10,24 @@
 	export let members: Member[];
 	export let community: Community;
 
+	let open = false;
+
 	$: invitable_members = community
 		? members.filter((x) => !community.members.some((y) => x.account_id == y.account_id))
 		: [];
 </script>
 
 <!--TODO: Make an IconButton component in felt and use it here-->
-<Modal>
-	<span slot="trigger" let:open>
-		<button
-			aria-label="Invite users to {community.name}"
-			type="button"
-			class="button-emoji"
-			on:click={() => open()}
-		>
-			✉️
-		</button>
-	</span>
-	<div slot="content">
+<button
+	aria-label="Invite users to {community.name}"
+	type="button"
+	class="button-emoji"
+	on:click={() => (open = true)}
+>
+	✉️
+</button>
+{#if open}
+	<Modal close={() => (open = false)}>
 		<Markup>
 			<h1>Invite users to {community.name}</h1>
 			{#each invitable_members as member (member.account_id)}
@@ -44,8 +44,8 @@
 				<p>There's no one new to invite</p>
 			{/each}
 		</Markup>
-	</div>
-</Modal>
+	</Modal>
+{/if}
 
 <style>
 	.button-emoji {

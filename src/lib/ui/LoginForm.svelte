@@ -1,11 +1,12 @@
 <script lang="ts">
-	import {session} from '$app/stores';
 	import {tick} from 'svelte';
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 	import {icons} from '@feltcoop/felt';
 
-	import type {LoginRequest} from '$lib/session/login_middleware.js';
 	import {autofocus} from '$lib/ui/actions';
+	import type {ApiStore} from '$lib/ui/api';
+
+	export let log_in: ApiStore['log_in'];
 
 	let account_name = '';
 	let password = '';
@@ -17,7 +18,7 @@
 
 	$: disabled = submitting;
 
-	const log_in = async () => {
+	const do_log_in = async () => {
 		if (submitting) return;
 		if (!account_name) {
 			account_name_el.focus();
@@ -33,38 +34,18 @@
 		submitting = true;
 		error_message = '';
 		console.log('logging in with account_name', account_name);
-		try {
-			const login_request: LoginRequest = {account_name, password};
-			const response = await fetch('/api/v1/login', {
-				method: 'POST',
-				headers: {'content-type': 'application/json'},
-				body: JSON.stringify(login_request),
-			});
-			const response_data = await response.json();
-			submitting = false;
-			if (response.ok) {
-				console.log('response_data', response_data); // TODO logging
-				account_name = '';
-				error_message = '';
-				if (response_data.session) {
-					$session = response_data.session;
-				}
-			} else {
-				console.error('response not ok', response); // TODO logging
-				error_message = response_data.reason;
-				await tick();
-				password_el.select(); // wait a tick to let the DOM update (the input is disabled when fetching)
-			}
-		} catch (err) {
-			submitting = false;
-			console.error('error logging in', err); // TODO logging
-			error_message = `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again.`;
+		const result = await log_in(account_name, password);
+		submitting = false;
+		if (!result.ok) {
+			error_message = result.reason;
+			await tick();
+			password_el.select(); // wait a tick to let the DOM update (the input is disabled when fetching)
 		}
 	};
 
 	const on_keypress = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			log_in();
+			do_log_in();
 		}
 	};
 </script>
@@ -90,7 +71,7 @@
 		{disabled}
 		placeholder="password"
 	/>
-	<button type="button" bind:this={button_el} on:click={log_in}>
+	<button type="button" bind:this={button_el} on:click={do_log_in}>
 		{#if submitting}
 			<PendingAnimation />
 		{:else}log in{/if}

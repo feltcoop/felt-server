@@ -6,7 +6,7 @@ import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Account} from '$lib/vocab/account/account.js';
 
 // TODO move this?
-const salt = 'TODO_SALT_SECRET';
+const salt = 'TODO_SALT_SECRET'; // TODO env
 const to_scrypt = promisify(scrypt);
 const to_hash = async (password: string): Promise<string> =>
 	((await to_scrypt(password, salt, 32)) as any).toString('hex'); // TODO why is the type cast needed?
@@ -50,7 +50,7 @@ export const to_login_middleware = (server: ApiServer): Middleware => {
 				return send(res, 400, {reason: 'invalid account name or password'});
 			}
 		} else if (find_account_result.type === 'no_account_found') {
-			// There's no accoun, so create one.
+			// There's no account, so create one.
 			const find_account_result = await db.repos.accounts.create({
 				name: account_name,
 				password: password_hash,

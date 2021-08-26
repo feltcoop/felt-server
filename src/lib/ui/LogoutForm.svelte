@@ -1,8 +1,12 @@
 <script lang="ts">
 	import {session} from '$app/stores';
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
+	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import type {AccountModel} from '$lib/vocab/account/account';
+	import type {ApiStore} from '$lib/ui/api';
+
+	export let log_out: ApiStore['log_out'];
 
 	let account: AccountModel;
 	$: account = $session?.account;
@@ -13,42 +17,27 @@
 
 	$: disabled = submitting || !account;
 
-	const submit_name = async () => {
+	const do_log_out = async () => {
 		submitting = true;
 		error_message = '';
-		try {
-			const response = await fetch('/api/v1/logout', {
-				method: 'POST',
-				headers: {'content-type': 'application/json'},
-			});
-			const response_data = await response.json();
-			console.log('response_data', response_data); // TODO logging
-			if (response.ok) {
-				error_message = '';
-				$session = {guest: true};
-			} else {
-				console.error('error response', response); // TODO logging
-				error_message = response_data.reason;
-			}
-		} catch (err) {
-			console.error('err', err); // TODO logging
-			error_message = `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again!`;
-		} finally {
-			submitting = false;
+		const result = await log_out();
+		console.log('<LogoutForm> log_out result', result);
+		if (!result.ok) {
+			error_message = result.reason;
 		}
+		submitting = false;
 	};
 </script>
 
 <form>
-	<button type="button" on:click={submit_name} {disabled}>
+	<!-- TODO extract an `AsyncButton` or something that correctly sizes the overlay -->
+	<button type="button" on:click={do_log_out} {disabled}>
 		{#if submitting}
 			<PendingAnimation />
 		{:else}log out{/if}
 	</button>
 	{#if error_message}
-		<div>
-			<p class="error">{error_message}</p>
-		</div>
+		<Message status="error">{error_message}</Message>
 	{/if}
 </form>
 
@@ -59,10 +48,5 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-	}
-
-	.error {
-		font-weight: bold;
-		color: rgb(73, 84, 153);
 	}
 </style>

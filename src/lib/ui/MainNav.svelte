@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {icons} from '@feltcoop/felt';
+	import {session} from '$app/stores';
 
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import CommunityNav from '$lib/ui/CommunityNav.svelte';
@@ -75,7 +76,7 @@
 			</div>
 		{:else if $ui.main_nav_view === 'account'}
 			<Markup>
-				<AccountForm />
+				<AccountForm guest={$session.guest} log_in={api.log_in} log_out={api.log_out} />
 			</Markup>
 			<SocketConnection />
 		{/if}

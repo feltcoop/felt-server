@@ -3,27 +3,16 @@
 
 	import type {Space} from '$lib/spaces/space.js';
 	import NoteItems from '$lib/ui/NotesItems.svelte';
-	import {posts} from '$lib/ui/post_store';
 	import {get_app} from '$lib/ui/app';
 
-	const {api} = get_app();
+	const {api, data} = get_app();
 
 	export let space: Space;
 
 	let text = '';
 
-	$: browser && load_posts(space.space_id);
+	$: browser && api.load_posts(space.space_id);
 	$: console.log(`[Notes] fetching posts for ${space.space_id}`);
-
-	// TODO refactor
-	const load_posts = async (space_id: number) => {
-		$posts = [];
-		const res = await fetch(`/api/v1/spaces/${space_id}/posts`);
-		if (res.ok) {
-			const data = await res.json();
-			$posts = data.posts;
-		}
-	};
 
 	const create_post = async () => {
 		if (!text) return;
@@ -36,12 +25,14 @@
 			await create_post();
 		}
 	};
+
+	$: posts = $data.posts_by_space[space.space_id] || [];
 </script>
 
 <div class="notes">
 	<textarea type="text" placeholder="> note" on:keydown={on_keydown} bind:value={text} />
 	<div class="posts">
-		<NoteItems posts={$posts} />
+		<NoteItems {posts} />
 	</div>
 </div>
 

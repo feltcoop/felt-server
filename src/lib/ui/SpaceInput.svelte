@@ -9,12 +9,13 @@
 
 	export let community: CommunityModel;
 
+	let open = false;
 	let new_name = '';
 
-	const on_keydown = async (e: KeyboardEvent, close_modal: () => void) => {
+	const on_keydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
 			await create();
-			close_modal();
+			open = false;
 		}
 	};
 
@@ -34,27 +35,27 @@
 	};
 </script>
 
-<Modal>
-	<div slot="trigger" let:open>
-		<button aria-label="Create Space" type="button" class="button-emoji" on:click={() => open()}>
-			<slot>➕</slot>
-		</button>
-	</div>
-	<div slot="content" let:close>
-		<Markup>
-			<h1>Create a new space</h1>
-			<p>
-				<input
-					type="text"
-					placeholder="> name"
-					on:keydown={(e) => on_keydown(e, close)}
-					bind:value={new_name}
-					use:autofocus
-				/>
-			</p>
-		</Markup>
-	</div>
-</Modal>
+<button aria-label="Create Space" type="button" class="button-emoji" on:click={() => (open = true)}>
+	➕
+</button>
+{#if open}
+	<Modal close={() => (open = false)}>
+		<div>
+			<Markup>
+				<h1>Create a new space</h1>
+				<p>
+					<input
+						type="text"
+						placeholder="> name"
+						on:keydown={on_keydown}
+						bind:value={new_name}
+						use:autofocus
+					/>
+				</p>
+			</Markup>
+		</div>
+	</Modal>
+{/if}
 
 <style>
 	.button-emoji {
