@@ -6,44 +6,43 @@
 
 	const {api} = get_app();
 
+	let open = false;
 	let new_name = '';
 
-	const on_keydown = async (e: KeyboardEvent, close_modal: () => void) => {
+	const on_keydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
 			await api.create_community(new_name);
 			new_name = '';
-			close_modal();
+			open = false;
 		}
 	};
 </script>
 
 <!--TODO: Make an IconButton component in felt and use it here-->
-<Modal>
-	<div slot="trigger" let:open>
-		<button
-			aria-label="Create Community"
-			type="button"
-			class="button-emoji"
-			on:click={() => open()}
-		>
-			➕
-		</button>
-	</div>
-	<div slot="content" let:close>
+<button
+	aria-label="Create Community"
+	type="button"
+	class="button-emoji"
+	on:click={() => (open = true)}
+>
+	➕
+</button>
+{#if open}
+	<Modal close={() => (open = false)}>
 		<Markup>
 			<h1>Create a new community</h1>
 			<p>
 				<input
 					type="text"
 					placeholder="> name"
-					on:keydown={(e) => on_keydown(e, close)}
+					on:keydown={on_keydown}
 					bind:value={new_name}
 					use:autofocus
 				/>
 			</p>
 		</Markup>
-	</div>
-</Modal>
+	</Modal>
+{/if}
 
 <style>
 	.button-emoji {

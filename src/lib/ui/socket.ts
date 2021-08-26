@@ -4,14 +4,13 @@ import {writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
-import {messages} from '$lib/ui/messages_store';
-import {posts} from '$lib/ui/post_store';
+import type {DataStore} from '$lib/ui/data';
 
 const KEY = Symbol();
 
 export const get_socket = (): SocketStore => getContext(KEY);
 
-export const set_socket = (store: SocketStore = to_socket_store()): SocketStore => {
+export const set_socket = (store: SocketStore): SocketStore => {
 	setContext(KEY, store);
 	return store;
 };
@@ -37,7 +36,7 @@ export interface SocketStore {
 	send: (data: Json) => void;
 }
 
-export const to_socket_store = () => {
+export const to_socket_store = (data: DataStore) => {
 	const {subscribe, update} = writable<SocketState>(to_default_socket_state(), () => {
 		console.log('[socket] listen store');
 		return () => {
@@ -70,11 +69,10 @@ export const to_socket_store = () => {
 				return;
 			}
 			console.log('[socket] message', message);
-			if (message.type === 'Create') {
-				messages.update(($messages) => [message, ...$messages]);
+			if (message.post) {
+				data.add_post(message.post);
 			} else {
-				console.log('[socket] post', message.posts);
-				posts.update(($posts) => [...$posts, message.posts]);
+				console.warn('TODO unhandled message', message);
 			}
 		};
 		ws.onerror = (e) => {

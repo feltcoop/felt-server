@@ -1,6 +1,7 @@
 import {writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
+import {session} from '$app/stores';
 import type {Result} from '@feltcoop/felt';
 
 import type {DataStore} from '$lib/ui/data';
@@ -11,6 +12,8 @@ import type {Space, SpaceParams} from '$lib/spaces/space';
 import type {Member, MemberParams} from '$lib/members/member';
 import type {Post} from '$lib/posts/post';
 import type {SocketStore} from '$lib/ui/socket';
+import type {LoginRequest} from '$lib/session/login_middleware.js';
+import type {AccountSession} from '$lib/session/client_session';
 
 // TODO refactor/rethink
 
@@ -27,6 +30,11 @@ export interface ApiState {}
 
 export interface ApiStore {
 	subscribe: Readable<ApiState>['subscribe'];
+	log_in: (
+		account_name: string,
+		password: string,
+	) => Promise<Result<{value: {session: AccountSession}}, {reason: string}>>;
+	log_out: () => Promise<Result<{}, {reason: string}>>;
 	select_community: (community_id: number) => void;
 	select_space: (community_id: number, space: number | null) => void;
 	toggle_main_nav: () => void;
@@ -48,6 +56,7 @@ export interface ApiStore {
 		space: Space,
 		content: string,
 	) => Promise<Result<{value: {post: Post}}, {reason: string}>>;
+	load_posts: (space_id: number) => Promise<Result<{value: {post: Post[]}}, {reason: string}>>;
 }
 
 export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore): ApiStore => {
@@ -65,6 +74,57 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 		select_community: ui.select_community,
 		select_space: ui.select_space,
 		toggle_main_nav: ui.toggle_main_nav,
+		log_in: async (account_name, password) => {
+			console.log('[log_in] logging in with account_name', account_name); // TODO logging
+			try {
+				const login_request: LoginRequest = {account_name, password};
+				const response = await fetch('/api/v1/login', {
+					method: 'POST',
+					headers: {'content-type': 'application/json'},
+					body: JSON.stringify(login_request),
+				});
+				const response_data = await response.json();
+				if (response.ok) {
+					console.log('[log_in] response_data', response_data); // TODO logging
+					account_name = '';
+					session.set(response_data.session);
+					return {ok: true, value: response_data};
+				} else {
+					console.error('[log_in] response not ok', response); // TODO logging
+					return {ok: false, reason: response_data.reason};
+				}
+			} catch (err) {
+				console.error('[log_in] error', err); // TODO logging
+				return {
+					ok: false,
+					reason: `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again.`,
+				};
+			}
+		},
+		log_out: async () => {
+			try {
+				console.log('[log_out] logging out'); // TODO logging
+				const response = await fetch('/api/v1/logout', {
+					method: 'POST',
+					headers: {'content-type': 'application/json'},
+				});
+				const response_data = await response.json();
+				console.log('[log_out] response', response_data); // TODO logging
+				if (response.ok) {
+					session.set({guest: true});
+					return {ok: true};
+				} else {
+					console.error('[log_out] response not ok', response); // TODO logging
+					return {ok: false, reason: response_data.reason};
+				}
+			} catch (err) {
+				console.error('[log_out] err', err); // TODO logging
+				return {
+					ok: false,
+					reason: `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again!`,
+				};
+			}
+		},
 		// TODO refactor this, maybe into `data` or `api`
 		create_community: async (name) => {
 			if (!name) return {ok: false, reason: 'invalid name'};
@@ -77,14 +137,18 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify(community_params),
 			});
-			try {
-				const result: {community: Community} = await res.json(); // TODO api types
-				console.log('create_community result', result);
-				const community = to_community_model(result.community);
-				data.add_community(community);
-				return {ok: true, value: {community}};
-			} catch (err) {
-				return {ok: false, reason: err.message};
+			if (res.ok) {
+				try {
+					const result: {community: Community} = await res.json(); // TODO api types
+					console.log('create_community result', result);
+					const community = to_community_model(result.community);
+					data.add_community(community);
+					return {ok: true, value: {community}};
+				} catch (err) {
+					return {ok: false, reason: err.message};
+				}
+			} else {
+				throw Error(`error: ${res.status}: ${res.statusText}`);
 			}
 		},
 		create_space: async (community_id, name, url, media_type, content) => {
@@ -106,13 +170,17 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify(doc),
 			});
-			try {
-				const result: {space: Space} = await res.json(); // TODO api types
-				console.log('create_space result', result);
-				data.add_space(result.space, community_id);
-				return {ok: true, value: result};
-			} catch (err) {
-				return {ok: false, reason: err.message};
+			if (res.ok) {
+				try {
+					const result: {space: Space} = await res.json(); // TODO api types
+					console.log('create_space result', result);
+					data.add_space(result.space, community_id);
+					return {ok: true, value: result};
+				} catch (err) {
+					return {ok: false, reason: err.message};
+				}
+			} else {
+				throw Error(`error: ${res.status}: ${res.statusText}`);
 			}
 		},
 		// TODO: This implementation is currently unconsentful,
@@ -136,13 +204,17 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify(doc),
 			});
-			try {
-				const result: {member: Member} = await res.json(); // TODO api types
-				console.log('invite_member result', result);
-				data.add_member(result.member);
-				return {ok: true, value: result};
-			} catch (err) {
-				return {ok: false, reason: err.message};
+			if (res.ok) {
+				try {
+					const result: {member: Member} = await res.json(); // TODO api types
+					console.log('invite_member result', result);
+					data.add_member(result.member);
+					return {ok: true, value: result};
+				} catch (err) {
+					return {ok: false, reason: err.message};
+				}
+			} else {
+				throw Error(`error: ${res.status}: ${res.statusText}`);
 			}
 		},
 		create_post: async (space, content) => {
@@ -152,12 +224,31 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				body: JSON.stringify({content}),
 			});
 			if (res.ok) {
-				console.log('post sent, broadcasting to server');
-				const data = await res.json();
-				socket.send(data); // TODO refactor
-				return {ok: true, value: data};
+				try {
+					console.log('post sent, broadcasting to server');
+					const json = await res.json();
+					socket.send(json); // TODO refactor
+					return {ok: true, value: json};
+				} catch (err) {
+					return {ok: false, reason: err.message};
+				}
 			} else {
 				throw Error(`error sending post: ${res.status}: ${res.statusText}`);
+			}
+		},
+		load_posts: async (space_id: number) => {
+			data.set_posts(space_id, []);
+			const res = await fetch(`/api/v1/spaces/${space_id}/posts`);
+			if (res.ok) {
+				try {
+					const json = await res.json();
+					data.set_posts(space_id, json.posts);
+					return {ok: true, value: json};
+				} catch (err) {
+					return {ok: false, reason: err.message};
+				}
+			} else {
+				throw Error(`error loading posts: ${res.status}: ${res.statusText}`);
 			}
 		},
 	};

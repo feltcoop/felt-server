@@ -68,6 +68,7 @@ export const to_ui_store = () => {
 						...$ui,
 						selected_community_id: null,
 						selected_space_id_by_community: {},
+						main_nav_view: 'explorer',
 					};
 				}
 			});

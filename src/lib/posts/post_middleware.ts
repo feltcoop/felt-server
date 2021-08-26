@@ -35,13 +35,13 @@ export const to_create_post_middleware = (server: ApiServer): Middleware => {
 
 		// TODO take content from body & build post to pass along with it
 
-		const find_posts_result = await db.repos.posts.insert(
+		const insert_posts_result = await db.repos.posts.insert(
 			req.account_session.account.account_id!,
 			req.params.space_id,
 			req.body.content,
 		);
-		if (find_posts_result.ok) {
-			return send(res, 200, {posts: find_posts_result.value}); // TODO API types
+		if (insert_posts_result.ok) {
+			return send(res, 200, {post: insert_posts_result.value}); // TODO API types
 		} else {
 			console.log('[post_middleware] error searching for posts');
 			return send(res, 500, {reason: 'error searching for posts'});

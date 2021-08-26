@@ -1,7 +1,5 @@
 import type {Server as HttpServer} from 'http';
 import type {Server as HttpsServer} from 'https';
-import cookie_session from 'cookie-session';
-import type {CookieSessionRequest, CookieSessionObject} from 'cookie-session';
 import type {Polka, Request as PolkaRequest, Middleware as PolkaMiddleware} from 'polka';
 import body_parser from 'body-parser';
 import send from '@polka/send-type';
@@ -26,6 +24,8 @@ import {
 import type {AccountSession} from '$lib/session/client_session.js';
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
+import {to_cookie_session_middleware} from '$lib/session/cookie_session';
+import type {CookieSessionRequest} from '$lib/session/cookie_session';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -33,16 +33,8 @@ const log = new Logger([blue('[ApiServer]')]);
 // there's currently some redundancy and weirdness
 export interface Request extends PolkaRequest, CookieSessionRequest {
 	account_session?: AccountSession;
-	session: ServerSession;
 }
 export interface Middleware extends PolkaMiddleware<Request> {}
-export interface ServerSession extends CookieSessionObject {
-	account_id?: number;
-}
-
-const dev = process.env.NODE_ENV !== 'production';
-
-const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO'];
 
 export interface Options {
 	server: HttpServer | HttpsServer;
@@ -89,15 +81,7 @@ export class ApiServer {
 				log.trace('req', {url: req.url, query: req.query, params: req.params, body: req.body});
 				next();
 			})
-			.use(
-				cookie_session({
-					keys: TODO_SERVER_COOKIE_KEYS,
-					maxAge: 1000 * 60 * 60 * 24 * 7 * 6, // 6 weeks
-					secure: false, // this should be `dev!` but we need https in prod first
-					sameSite: dev ? 'lax' : false,
-					name: 'session_id',
-				}),
-			)
+			.use(to_cookie_session_middleware())
 			.use(to_session_account_middleware(this))
 			// API
 			.post('/api/v1/echo', (req, res) => {

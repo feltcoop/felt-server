@@ -4,6 +4,9 @@
 
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import Workspace from '$lib/ui/Workspace.svelte';
+	import {get_app} from '$lib/ui/app';
+
+	const {api} = get_app();
 
 	const title = 'felt-server';
 </script>
@@ -14,7 +17,7 @@
 	{#if $session.guest}
 		<div class="column">
 			<Markup>
-				<AccountForm />
+				<AccountForm guest={$session.guest} log_in={api.log_in} log_out={api.log_out} />
 			</Markup>
 		</div>
 	{:else}
