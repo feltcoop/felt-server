@@ -1,5 +1,5 @@
 export interface Persona {
-	persona_id?: number;
+	persona_id: number;
 	account_id: number;
 	name: string;
 	communities: number[];
