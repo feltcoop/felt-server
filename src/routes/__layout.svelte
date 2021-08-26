@@ -1,6 +1,6 @@
 <script lang="ts">
-	import '$lib/ui/style.css';
 	import '@feltcoop/felt/ui/style.css';
+	import '$lib/ui/style.css';
 	import {set_devmode} from '@feltcoop/felt/ui/devmode.js';
 	import Devmode from '@feltcoop/felt/ui/Devmode.svelte';
 	import {onMount} from 'svelte';
