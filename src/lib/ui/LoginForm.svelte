@@ -114,5 +114,6 @@
 	}
 	.icon img {
 		width: var(--icon_size_md);
+		height: var(--icon_size_md);
 	}
 </style>
