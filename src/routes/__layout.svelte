@@ -71,7 +71,7 @@
 		{#if $session.guest}
 			<div class="column">
 				<Markup>
-					<AccountForm />
+					<AccountForm guest={$session.guest} log_in={api.log_in} log_out={api.log_out} />
 				</Markup>
 			</div>
 		{:else}
