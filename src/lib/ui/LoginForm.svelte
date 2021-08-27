@@ -1,9 +1,9 @@
 <script lang="ts">
 	import {tick} from 'svelte';
 	import {icons} from '@feltcoop/felt';
+	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 
 	import {autofocus} from '$lib/ui/actions';
-	import PendingButton from '$lib/ui/PendingButton.svelte';
 	import type {ApiStore} from '$lib/ui/api';
 
 	export let log_in: ApiStore['log_in'];

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import {session} from '$app/stores';
-
-	import type {AccountModel} from '$lib/vocab/account/account';
-	import PendingButton from '$lib/ui/PendingButton.svelte';
+	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import type {AccountModel} from '$lib/vocab/account/account';
