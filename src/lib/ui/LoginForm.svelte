@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {tick} from 'svelte';
-	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 	import {icons} from '@feltcoop/felt';
+	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 
 	import {autofocus} from '$lib/ui/actions';
 	import type {ApiStore} from '$lib/ui/api';
@@ -71,11 +71,9 @@
 		{disabled}
 		placeholder="password"
 	/>
-	<button type="button" bind:this={button_el} on:click={do_log_in}>
-		{#if submitting}
-			<PendingAnimation />
-		{:else}log in{/if}
-	</button>
+	<PendingButton pending={!!submitting} bind:el={button_el} type="button" on:click={do_log_in}>
+		log in
+	</PendingButton>
 	<div class:error={!!error_message}>{error_message || icons.felt}</div>
 </form>
 
@@ -97,5 +95,6 @@
 	}
 	.icon img {
 		width: var(--icon_size_md);
+		height: var(--icon_size_md);
 	}
 </style>

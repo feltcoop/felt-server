@@ -35,7 +35,7 @@ export interface ApiStore {
 		password: string,
 	) => Promise<Result<{value: {session: AccountSession}}, {reason: string}>>;
 	log_out: () => Promise<Result<{}, {reason: string}>>;
-	select_community: (community_id: number) => void;
+	select_community: (community_id: number | null) => void;
 	select_space: (community_id: number, space: number | null) => void;
 	toggle_main_nav: () => void;
 	create_community: (

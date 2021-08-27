@@ -3,10 +3,7 @@
 	import type {Member} from '$lib/members/member.js';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
-	import {get_app} from '$lib/ui/app';
 	import {random_hue} from '$lib/ui/color';
-
-	const {api} = get_app();
 
 	export let members: Member[];
 	export let communities: Community[];
@@ -20,13 +17,13 @@
 	<div>
 		{#each communities as community (community.community_id)}
 			<!-- TODO make these links <a>...</a> -->
-			<button
+			<a
+				href="/{community.name}"
 				class:selected={community === selected_community}
-				on:click={() => api.select_community(community.community_id)}
 				style="--hue: {random_hue(community.name)}"
 			>
 				<ActorIcon name={community.name} />
-			</button>
+			</a>
 		{/each}
 	</div>
 </div>
@@ -50,8 +47,13 @@
 		width: 100%;
 	}
 
-	button {
-		width: var(--icon_size_md);
-		height: var(--icon_size_md);
+	a {
+		display: block;
+		/* TODO better way to have active state? this makes the community nav wider than the luggage button! */
+		border: 1px solid transparent;
+	}
+	.selected {
+		border-color: var(--active_color);
+		background-color: var(--bg);
 	}
 </style>

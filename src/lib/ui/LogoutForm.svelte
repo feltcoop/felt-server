@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {session} from '$app/stores';
-	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
+	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import type {AccountModel} from '$lib/vocab/account/account';
@@ -15,7 +15,7 @@
 	let error_message: string | undefined;
 	let submitting: boolean | undefined;
 
-	$: disabled = submitting || !account;
+	$: disabled = !account;
 
 	const do_log_out = async () => {
 		submitting = true;
@@ -30,12 +30,9 @@
 </script>
 
 <form>
-	<!-- TODO extract an `AsyncButton` or something that correctly sizes the overlay -->
-	<button type="button" on:click={do_log_out} {disabled}>
-		{#if submitting}
-			<PendingAnimation />
-		{:else}log out{/if}
-	</button>
+	<PendingButton pending={!!submitting} type="button" on:click={do_log_out} {disabled}>
+		log out
+	</PendingButton>
 	{#if error_message}
 		<Message status="error">{error_message}</Message>
 	{/if}
