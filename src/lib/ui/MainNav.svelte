@@ -61,7 +61,13 @@
 		{#if $ui.main_nav_view === 'explorer'}
 			<div class="explorer">
 				{#if selected_community}
-					<CommunityNav {members} {communities} {selected_community} />
+					<CommunityNav
+						{members}
+						{communities}
+						{personas}
+						{selected_community}
+						{selected_persona}
+					/>
 					<SpaceNav
 						community={selected_community}
 						spaces={selected_community.spaces}
