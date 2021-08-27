@@ -14,6 +14,7 @@
 	import {set_ui} from '$lib/ui/ui';
 	import {set_api, to_api_store} from '$lib/ui/api';
 	import {set_app} from '$lib/ui/app';
+	import {random_hue} from '$lib/ui/color';
 
 	const devmode = set_devmode();
 	const data = set_data($session);
@@ -32,11 +33,29 @@
 			socket.disconnect();
 		};
 	});
+
+	const on_window_message = (e: MessageEvent) => {
+		console.log('[window.message]', e);
+		// TODO show request modal to user so they can accept/deny
+		// the iframe's connection/data/capability request
+		if (e.data === 'felt__connect') {
+			// TODO security -- pass origin, not '*'
+			(e.source as any).postMessage('felt__connected', '*');
+		} else if (e.data === 'felt__query') {
+			// TODO a real API
+			(e.source as any).postMessage(
+				JSON.stringify({type: 'Message', payload: {hue: random_hue($data.account.name)}}),
+				'*',
+			);
+		}
+	};
 </script>
 
 <svelte:head>
 	<link rel="shortcut icon" href="favicon.png" />
 </svelte:head>
+
+<svelte:window on:message={on_window_message} />
 
 <div class="layout">
 	{#if !$session.guest}
