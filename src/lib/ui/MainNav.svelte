@@ -24,12 +24,7 @@
 				(s) => s.space_id === $ui.selected_space_id_by_community[selected_community!.community_id],
 		  ) || null
 		: null;
-
-	// $: console.log('[MainNav] $data', $data);
-	// $: console.log('[MainNav] $ui', $ui);
-	// $: console.log('[MainNav] communities', communities);
-	// $: console.log('[MainNav] selected_community', selected_community);
-	// $: console.log('[MainNav] selected_space', selected_space);
+	$: selected_persona = personas.find((p) => p.persona_id === $ui.selected_persona_id) || null;
 
 	// TODO refactor to some client view-model for the account
 	$: hue = random_hue($data.account.name);
@@ -49,9 +44,9 @@
 				class="explorer-button"
 			>
 				<!-- TODO figure out how to use active_persona_id here-->
-				<ActorIcon name={$data.account.name} />
+				<ActorIcon name={selected_persona?.name || 'no name'} />
 				<div class="explorer-button-text">
-					{$data.account.name}
+					{selected_persona?.name}
 				</div>
 			</button>
 			<button

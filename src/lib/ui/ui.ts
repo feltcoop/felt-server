@@ -39,7 +39,6 @@ export const to_ui_store = () => {
 	const store: UiStore = {
 		subscribe,
 		update_data: (data: DataState | null) => {
-			console.log('[ui.update_data] data', {data});
 			update(($ui) => {
 				// TODO this needs to be rethought, it's just preserving the existing ui state
 				// when new data gets set, which happens when e.g. a new community is created --
@@ -52,6 +51,7 @@ export const to_ui_store = () => {
 							data.personas.find((c) => c.persona_id === $ui.selected_persona_id)) ||
 						data.personas[0] ||
 						null;
+					console.log('ui selected_persona is', selected_persona);
 					const selected_community =
 						($ui.selected_community_id !== null &&
 							data.communities.find((c) => c.community_id === $ui.selected_community_id)) ||
@@ -66,7 +66,7 @@ export const to_ui_store = () => {
 								persona.persona_id,
 								$ui.selected_community_id_by_persona[persona.persona_id] ??
 									// TODO this type is wrong, need to change the postgres query probably
-									(persona.communities[0] as any)?.community_id ??
+									persona.community_ids[0] ??
 									null,
 							]),
 						),

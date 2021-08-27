@@ -124,7 +124,7 @@ export class Database {
 						from (
 							SELECT pc.community_id FROM persona_communities pc WHERE pc.persona_id = p.persona_id
 						) d
-					) as communities 
+					) as community_ids
 					
 					from personas p where p.account_id = ${account_id}
 					`;
