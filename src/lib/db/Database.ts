@@ -120,7 +120,7 @@ export class Database {
 				  select p.persona_id, p.account_id, p.name,
 
 					(
-						select array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
+						select array_to_json(coalesce(array_agg(d.community_id)))
 						from (
 							SELECT pc.community_id FROM persona_communities pc WHERE pc.persona_id = p.persona_id
 						) d

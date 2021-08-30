@@ -25,6 +25,9 @@
 		  ) || null
 		: null;
 	$: selected_persona = personas.find((p) => p.persona_id === $ui.selected_persona_id) || null;
+	$: selected_persona_communities = communities.filter((community) =>
+		selected_persona?.community_ids.includes(community.community_id),
+	);
 
 	// TODO refactor to some client view-model for the account
 	$: hue = random_hue($data.account.name);
@@ -61,13 +64,7 @@
 		{#if $ui.main_nav_view === 'explorer'}
 			<div class="explorer">
 				{#if selected_community}
-					<CommunityNav
-						{members}
-						{communities}
-						{personas}
-						{selected_community}
-						{selected_persona}
-					/>
+					<CommunityNav {members} {selected_persona_communities} {selected_community} />
 					<SpaceNav
 						community={selected_community}
 						spaces={selected_community.spaces}
