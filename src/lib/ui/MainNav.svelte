@@ -41,13 +41,19 @@
 		<div class="header">
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
+			<button class="explorer-button">
+				<ActorIcon name={selected_persona?.name || 'no name'} />
+			</button>
+			<select>
+				{#each personas as persona (persona)}
+					<option value={persona}>{persona.name}</option>
+				{/each}
+			</select>
 			<button
 				on:click={() => ui.set_main_nav_view('explorer')}
 				class:selected={$ui.main_nav_view === 'explorer'}
 				class="explorer-button"
 			>
-				<!-- TODO figure out how to use active_persona_id here-->
-				<ActorIcon name={selected_persona?.name || 'no name'} />
 				<div class="explorer-button-text">
 					{selected_persona?.name}
 				</div>
