@@ -242,7 +242,7 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				throw Error(`error sending post: ${res.status}: ${res.statusText}`);
 			}
 		},
-		load_posts: async (space_id: number) => {
+		load_posts: async (space_id) => {
 			data.set_posts(space_id, []);
 			const res = await fetch(`/api/v1/spaces/${space_id}/posts`);
 			if (res.ok) {

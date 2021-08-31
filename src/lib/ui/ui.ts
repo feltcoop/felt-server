@@ -39,7 +39,8 @@ export const to_ui_store = () => {
 
 	const store: UiStore = {
 		subscribe,
-		update_data: (data: DataState | null) => {
+		update_data: (data) => {
+			console.log('[ui.update_data]', {data});
 			update(($ui) => {
 				// TODO this needs to be rethought, it's just preserving the existing ui state
 				// when new data gets set, which happens when e.g. a new community is created --
@@ -93,7 +94,7 @@ export const to_ui_store = () => {
 				}
 			});
 		},
-		select_persona: (persona_id: number) => {
+		select_persona: (persona_id) => {
 			console.log(typeof persona_id);
 			update(($ui) => ({
 				...$ui,
@@ -101,7 +102,7 @@ export const to_ui_store = () => {
 				selected_community_id: $ui.selected_community_id_by_persona[persona_id],
 			}));
 		},
-		select_community: (community_id: number | null) => {
+		select_community: (community_id) => {
 			console.log('[ui.select_community] community_id', {community_id});
 			update(($ui) => ({
 				...$ui,
@@ -115,7 +116,7 @@ export const to_ui_store = () => {
 						  },
 			}));
 		},
-		select_space: (community_id: number, space_id: number | null) => {
+		select_space: (community_id, space_id) => {
 			console.log('[ui.select_space] community_id, space_id', {community_id, space_id});
 			update(($ui) => {
 				// TODO speed this up using stores maybe?
