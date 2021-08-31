@@ -56,6 +56,7 @@ export interface ApiStore {
 	create_post: (
 		space: Space,
 		content: string,
+		selected_persona_id: number,
 	) => Promise<Result<{value: {post: Post}}, {reason: string}>>;
 	load_posts: (space_id: number) => Promise<Result<{value: {post: Post[]}}, {reason: string}>>;
 }
@@ -219,11 +220,14 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				throw Error(`error: ${res.status}: ${res.statusText}`);
 			}
 		},
-		create_post: async (space, content) => {
+		create_post: async (space, content, persona_id) => {
 			const res = await fetch(`/api/v1/spaces/${space.space_id}/posts`, {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({content}),
+				body: JSON.stringify({
+					content,
+					actor_id: persona_id,
+				}),
 			});
 			if (res.ok) {
 				try {
