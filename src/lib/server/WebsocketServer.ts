@@ -3,7 +3,10 @@ import {promisify} from 'util';
 import type {Server as HttpServer} from 'http';
 import type {Server as HttpsServer} from 'https';
 
-// TODO needs a lot of work!
+import type {CookieSessionIncomingMessage} from '$lib/session/cookie_session';
+import {to_cookie_session_middleware} from '$lib/session/cookie_session';
+
+const cookie_session_middleware = to_cookie_session_middleware();
 
 export class WebsocketServer {
 	readonly wss: ws.Server;
@@ -19,11 +22,20 @@ export class WebsocketServer {
 		// const wss = new ws.Server({server: this.server}); // port: 3000
 		const {wss} = this;
 		console.log('wss.on', wss.on);
-		wss.on('connection', (socket, req) => {
+		wss.on('connection', (socket, req: CookieSessionIncomingMessage) => {
 			console.log('[wss] connection req.url', req.url, wss.clients.size);
-			console.log('[wss] connection req.account', (req as any).account); // TODO broken
 			console.log('[wss] connection req.headers', req.headers);
+			cookie_session_middleware(req, {}, () => {});
+			const account_id = req.session?.account_id;
+			if (account_id === undefined) {
+				console.log('[wss] request to open connection was unauthenticated');
+				socket.close();
+				return;
+			}
+			//TODO where to store the authorized account for a given websocket connection
+			//to prevent actions on other actors resources?
 			socket.on('message', (raw_message) => {
+				console.log('account-id', account_id);
 				let message;
 				try {
 					message = JSON.parse(raw_message as any);

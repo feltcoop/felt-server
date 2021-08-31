@@ -12,7 +12,7 @@
 <ul class="workspace-header" class:expanded-nav={$ui.expand_main_nav}>
 	<li class="luggage-placeholder" />
 	<li class="breadcrumbs">
-		{community?.name} / {space?.url.split('/').filter(Boolean).join(' / ')}
+		{community?.name} / {space?.url.split('/').filter(Boolean).join(' / ') || ''}
 	</li>
 </ul>
 

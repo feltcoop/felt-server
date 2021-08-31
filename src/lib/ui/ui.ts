@@ -88,6 +88,7 @@ export const to_ui_store = () => {
 						selected_community_id: null,
 						selected_community_id_by_persona: {},
 						selected_space_id_by_community: {},
+						main_nav_view: 'explorer',
 					};
 				}
 			});
