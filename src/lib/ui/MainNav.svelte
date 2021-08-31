@@ -25,6 +25,7 @@
 		  ) || null
 		: null;
 	$: selected_persona = personas.find((p) => p.persona_id === $ui.selected_persona_id) || null;
+	$: console.log('selected persona', selected_persona);
 	$: selected_persona_communities = communities.filter((community) =>
 		selected_persona?.community_ids.includes(community.community_id),
 	);
@@ -33,7 +34,7 @@
 	$: hue = random_hue($data.account.name);
 
 	const selectPersona = (event: Event) => {
-		console.log((event.target as any).value);
+		ui.select_persona(Number((event.target as any).value));
 	};
 </script>
 
