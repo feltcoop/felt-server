@@ -27,6 +27,7 @@ export interface UiState {
 export interface UiStore {
 	subscribe: Readable<UiState>['subscribe'];
 	update_data: (data: DataState | null) => void;
+	select_persona: (persona_id: number) => void;
 	select_community: (community_id: number | null) => void;
 	select_space: (community_id: number, space_id: number | null) => void;
 	toggle_main_nav: () => void;
@@ -91,8 +92,15 @@ export const to_ui_store = () => {
 				}
 			});
 		},
+		select_persona: (persona_id: number | null) => {
+			console.log('[ui.select_persona] persona_id', {persona_id});
+			update(($ui) => ({
+				...$ui,
+				selected_persona_id: persona_id,
+			}));
+		},
 		select_community: (community_id: number | null) => {
-			console.log('[ui.select_space] community_id', {community_id});
+			console.log('[ui.select_community] community_id', {community_id});
 			update(($ui) => ({
 				...$ui,
 				selected_community_id: community_id,

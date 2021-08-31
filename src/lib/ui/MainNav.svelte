@@ -31,6 +31,10 @@
 
 	// TODO refactor to some client view-model for the account
 	$: hue = random_hue($data.account.name);
+
+	const selectPersona = (event: Event) => {
+		console.log((event.target as any).value);
+	};
 </script>
 
 {#if $ui.expand_main_nav}
@@ -41,12 +45,9 @@
 		<div class="header">
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
-			<button class="explorer-button">
-				<ActorIcon name={selected_persona?.name || 'no name'} />
-			</button>
-			<select>
+			<select class="persona-selector" on:change={(event) => selectPersona(event)}>
 				{#each personas as persona (persona)}
-					<option value={persona}>{persona.name}</option>
+					<option value={persona.persona_id}>{persona.name}</option>
 				{/each}
 			</select>
 			<button
@@ -54,9 +55,7 @@
 				class:selected={$ui.main_nav_view === 'explorer'}
 				class="explorer-button"
 			>
-				<div class="explorer-button-text">
-					{selected_persona?.name}
-				</div>
+				<ActorIcon name={selected_persona?.name || 'no name'} />
 			</button>
 			<button
 				on:click={() => ui.set_main_nav_view('account')}
@@ -152,15 +151,19 @@
 		display: flex;
 		flex: 1;
 	}
+	.persona-selector {
+		display: flex;
+		flex: 2;
+		height: var(--navbar_size);
+		background: var(--interactive_color);
+	}
 	.explorer-button {
 		justify-content: flex-start;
 		height: var(--navbar_size);
-		flex: 1;
+		flex: 0.5;
 		padding: var(--spacing_xs);
 	}
-	.explorer-button-text {
-		padding-left: var(--spacing_md);
-	}
+
 	.account-button {
 		height: var(--navbar_size);
 		width: var(--navbar_size);

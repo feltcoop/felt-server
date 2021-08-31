@@ -27,6 +27,7 @@ export interface ApiState {}
 
 export interface ApiStore {
 	subscribe: Readable<ApiState>['subscribe'];
+	select_persona: (persona_id: number) => void;
 	select_community: (community_id: number) => void;
 	select_space: (community_id: number, space: number | null) => void;
 	toggle_main_nav: () => void;
@@ -62,6 +63,7 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 	const store: ApiStore = {
 		subscribe,
 		// TODO these are just directly proxying
+		select_persona: ui.select_persona,
 		select_community: ui.select_community,
 		select_space: ui.select_space,
 		toggle_main_nav: ui.toggle_main_nav,
