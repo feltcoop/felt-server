@@ -3,6 +3,7 @@
 	import '$lib/ui/style.css';
 	import {set_devmode} from '@feltcoop/felt/ui/devmode.js';
 	import Devmode from '@feltcoop/felt/ui/Devmode.svelte';
+	import FeltWindowHost from '@feltcoop/felt/ui/FeltWindowHost.svelte';
 	import {onMount} from 'svelte';
 	import {session} from '$app/stores';
 	import {dev} from '$app/env';
@@ -57,29 +58,11 @@
 			socket.disconnect();
 		};
 	});
-
-	const on_window_message = (e: MessageEvent) => {
-		console.log('[window.message]', e);
-		// TODO show request modal to user so they can accept/deny
-		// the iframe's connection/data/capability request
-		if (e.data === 'felt__connect') {
-			// TODO security -- pass origin, not '*'
-			(e.source as any).postMessage('felt__connected', '*');
-		} else if (e.data === 'felt__query') {
-			// TODO a real API
-			(e.source as any).postMessage(
-				JSON.stringify({type: 'Message', payload: {hue: random_hue($data.account.name)}}),
-				'*',
-			);
-		}
-	};
 </script>
 
 <svelte:head>
 	<link rel="shortcut icon" href="/favicon.png" />
 </svelte:head>
-
-<svelte:window on:message={on_window_message} />
 
 <div class="layout">
 	{#if !$session.guest}
@@ -100,6 +83,8 @@
 	<Devmode {devmode} />
 	<div id="modal-wrapper" />
 </div>
+
+<FeltWindowHost query={() => ({hue: random_hue($data.account.name)})} />
 
 <style>
 	.layout {
