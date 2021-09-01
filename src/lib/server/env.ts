@@ -14,7 +14,6 @@ interface Env {
 	DEPLOY_IP: string;
 	DEPLOY_USER: string;
 
-	PASSWORD_SALT: string;
 	COOKIE_KEYS: string;
 }
 
