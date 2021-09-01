@@ -5,7 +5,6 @@ const ENV_FILE = '.env';
 const DEFAULT_ENV_FILE = 'src/infra/.env.default';
 
 interface Env {
-	SERVER_HOST: string;
 	SVELTEKIT_SERVER_HOST: string;
 	API_SERVER_HOST: string;
 
