@@ -1,7 +1,9 @@
-import {randomBytes, scrypt} from 'crypto';
+import {scrypt} from 'crypto';
 import {promisify} from 'util';
 
 const to_scrypt = promisify(scrypt);
 
+const salt = 'TODO_SALT_SECRET'; // TODO security
+
 export const to_hash = async (password: string): Promise<string> =>
-	((await to_scrypt(password, randomBytes(16), 32)) as any).toString('hex');
+	((await to_scrypt(password, salt, 32)) as Buffer).toString('hex');

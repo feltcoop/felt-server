@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import {copyFileSync, existsSync} from 'fs';
 
-const ENV_FILE = '.env';
+const ENV_FILE = '.env'; // any changes to this path must also be made in `svelte.config.js`
 const DEFAULT_ENV_FILE = 'src/infra/.env.default';
 
 interface Env {
