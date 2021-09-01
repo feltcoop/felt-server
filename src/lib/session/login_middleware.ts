@@ -4,9 +4,10 @@ import {promisify} from 'util';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Account} from '$lib/vocab/account/account.js';
+import {fromEnv} from '$lib/server/env.js';
 
 // TODO move this?
-const salt = 'TODO_SALT_SECRET'; // TODO env
+const salt = fromEnv('PASSWORD_SALT');
 const to_scrypt = promisify(scrypt);
 const to_hash = async (password: string): Promise<string> =>
 	((await to_scrypt(password, salt, 32)) as any).toString('hex'); // TODO why is the type cast needed?

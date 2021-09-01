@@ -50,7 +50,7 @@
 	};
 
 	onMount(() => {
-		const socket_url = dev ? `ws://localhost:3001/ws` : `wss://staging.felt.dev/ws`; // TODO env
+		const socket_url = import.meta.env.VITE_WEBSOCKET_URL as string; // TODO validate?
 		socket.connect(socket_url);
 		return () => {
 			socket.disconnect();
