@@ -1,6 +1,7 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
-import {fromEnv} from '$lib/server/env';
+
+import {fromEnv} from '$lib/server/env.js';
 
 const deployIp = fromEnv('DEPLOY_IP');
 const deployUser = fromEnv('DEPLOY_USER');
