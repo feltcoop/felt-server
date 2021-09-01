@@ -5,7 +5,6 @@
 	import Devmode from '@feltcoop/felt/ui/Devmode.svelte';
 	import {onMount} from 'svelte';
 	import {session} from '$app/stores';
-	import {dev} from '$app/env';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {page} from '$app/stores';
 
