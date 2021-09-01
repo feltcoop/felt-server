@@ -16,6 +16,7 @@
 	import {set_api, to_api_store} from '$lib/ui/api';
 	import {set_app} from '$lib/ui/app';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
+	import {WEBSOCKET_URL} from '$lib/ui/env';
 
 	const devmode = set_devmode();
 	const data = set_data($session);
@@ -49,8 +50,7 @@
 	};
 
 	onMount(() => {
-		const socket_url = import.meta.env.VITE_WEBSOCKET_URL as string; // TODO validate?
-		socket.connect(socket_url);
+		socket.connect(WEBSOCKET_URL);
 		return () => {
 			socket.disconnect();
 		};
