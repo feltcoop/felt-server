@@ -5,7 +5,7 @@ import type {
 	CookieSessionObject as BaseCookieSessionObject,
 } from 'cookie-session';
 
-import {fromEnv} from '$lib/server/env.js';
+import {fromEnv} from '$lib/server/env';
 
 export interface CookieSessionRequest extends BaseCookieSessionRequest {
 	session: CookieSessionObject;
