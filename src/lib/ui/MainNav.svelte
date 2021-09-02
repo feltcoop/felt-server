@@ -34,9 +34,8 @@
 	// TODO refactor to some client view-model for the account
 	$: hue = random_hue($data.account.name);
 
-	const selectPersona = (event: Event) => {
-		ui.select_persona(Number((event.target as any).value));
-	};
+	let selected_persona_id = $ui.selected_persona_id;
+	$: ui.select_persona(selected_persona_id!);
 </script>
 
 {#if $ui.expand_main_nav}
@@ -47,7 +46,7 @@
 		<div class="header">
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
-			<select class="persona-selector" on:change={(event) => selectPersona(event)}>
+			<select class="persona-selector" bind:value={selected_persona_id}>
 				{#each personas as persona (persona)}
 					<option value={persona.persona_id}>{persona.name}</option>
 				{/each}

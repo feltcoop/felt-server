@@ -93,11 +93,12 @@ export const to_ui_store = () => {
 				}
 			});
 		},
-		select_persona: (persona_id: number | null) => {
+		select_persona: (persona_id: number) => {
 			console.log(typeof persona_id);
 			update(($ui) => ({
 				...$ui,
 				selected_persona_id: persona_id,
+				selected_community_id: $ui.selected_community_id_by_persona[persona_id],
 			}));
 		},
 		select_community: (community_id: number | null) => {
