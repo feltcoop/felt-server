@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Space} from '$lib/spaces/space.js';
+	import type {Space} from '$lib/vocab/space/space.js';
 	import PendingAnimationOverlay from '$lib/ui/PendingAnimationOverlay.svelte';
 
 	export let space: Space;

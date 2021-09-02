@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type {Community} from '$lib/communities/community.js';
-	import type {Member} from '$lib/members/member.js';
+	import type {Community} from '$lib/vocab/community/community.js';
+	import type {Member} from '$lib/vocab/member/member.js';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import {random_hue} from '$lib/ui/color';

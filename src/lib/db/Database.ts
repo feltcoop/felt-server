@@ -2,15 +2,15 @@ import type {Result} from '@feltcoop/felt';
 import {unwrap} from '@feltcoop/felt';
 
 import type {AccountSession} from '$lib/session/client_session.js';
-import type {Persona} from '$lib/personas/persona.js';
-import type {Community} from '$lib/communities/community.js';
-import type {Space, SpaceParams} from '$lib/spaces/space.js';
-import type {Post} from '$lib/posts/post.js';
-import type {Member} from '$lib/members/member.js';
+import type {Persona} from '$lib/vocab/persona/persona.js';
+import type {Community} from '$lib/vocab/community/community.js';
+import type {Space, SpaceParams} from '$lib/vocab/space/space.js';
+import type {Post} from '$lib/vocab/post/post.js';
+import type {Member} from '$lib/vocab/member/member.js';
 import type {Account, AccountModel, AccountParams} from '$lib/vocab/account/account.js';
 import {account_properties, account_model_properties} from '$lib/vocab/account/account';
 import type {PostgresSql} from '$lib/db/postgres.js';
-import {default_spaces} from '$lib/spaces/default_spaces';
+import {default_spaces} from '$lib/vocab/space/default_spaces';
 
 export interface Options {
 	sql: PostgresSql;

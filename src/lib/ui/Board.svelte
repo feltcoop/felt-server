@@ -1,8 +1,8 @@
 <script lang="ts">
 	import {browser} from '$app/env';
 
-	import type {Space} from '$lib/spaces/space.js';
-	import type {Member} from '$lib/members/member.js';
+	import type {Space} from '$lib/vocab/space/space.js';
+	import type {Member} from '$lib/vocab/member/member.js';
 	import BoardItems from '$lib/ui/BoardItems.svelte';
 	import {get_app} from '$lib/ui/app';
 

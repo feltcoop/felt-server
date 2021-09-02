@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type {Community} from '$lib/communities/community.js';
+	import type {Community} from '$lib/vocab/community/community.js';
 	import Modal from '$lib/ui/Modal.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
-	import type {Member} from '$lib/members/member.js';
+	import type {Member} from '$lib/vocab/member/member.js';
 	import {get_app} from '$lib/ui/app';
 
 	const {api} = get_app();

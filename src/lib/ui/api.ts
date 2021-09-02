@@ -6,11 +6,11 @@ import type {Result} from '@feltcoop/felt';
 
 import type {DataStore} from '$lib/ui/data';
 import type {UiStore} from '$lib/ui/ui';
-import type {Community, CommunityModel, CommunityParams} from '$lib/communities/community';
-import {to_community_model} from '$lib/communities/community';
-import type {Space, SpaceParams} from '$lib/spaces/space';
-import type {Member, MemberParams} from '$lib/members/member';
-import type {Post} from '$lib/posts/post';
+import type {Community, CommunityModel, CommunityParams} from '$lib/vocab/community/community';
+import {to_community_model} from '$lib/vocab/community/community';
+import type {Space, SpaceParams} from '$lib/vocab/space/space';
+import type {Member, MemberParams} from '$lib/vocab/member/member';
+import type {Post} from '$lib/vocab/post/post';
 import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/login_middleware.js';
 import type {AccountSession} from '$lib/session/client_session';

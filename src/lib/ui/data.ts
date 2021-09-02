@@ -3,13 +3,13 @@ import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 import type {ClientSession} from '$lib/session/client_session';
-import {to_community_model} from '$lib/communities/community';
-import type {CommunityModel} from '$lib/communities/community';
-import type {Member} from '$lib/members/member';
-import type {Space} from '$lib/spaces/space';
+import {to_community_model} from '$lib/vocab/community/community';
+import type {CommunityModel} from '$lib/vocab/community/community';
+import type {Member} from '$lib/vocab/member/member';
+import type {Space} from '$lib/vocab/space/space';
 import type {AccountModel} from '$lib/vocab/account/account';
-import type {Persona} from '$lib/personas/persona';
-import type {Post} from '$lib/posts/post';
+import type {Persona} from '$lib/vocab/persona/persona';
+import type {Post} from '$lib/vocab/post/post';
 
 // TODO refactor/rethink
 

@@ -1,7 +1,7 @@
 import send from '@polka/send-type';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
-import type {SpaceParams} from '$lib/spaces/space';
+import type {SpaceParams} from '$lib/vocab/space/space';
 
 //Returns a single space object
 export const to_space_middleware = (server: ApiServer): Middleware => {

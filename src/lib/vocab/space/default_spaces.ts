@@ -1,4 +1,4 @@
-import type {SpaceParams} from '$lib/spaces/space';
+import type {SpaceParams} from '$lib/vocab/space/space';
 
 export const default_spaces: SpaceParams[] = [
 	{

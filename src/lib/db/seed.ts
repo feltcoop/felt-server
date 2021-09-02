@@ -1,12 +1,12 @@
 import type {Database} from '$lib/db/Database.js';
 import type {Account, AccountParams} from '$lib/vocab/account/account.js';
-import type {Space, SpaceParams} from '$lib/spaces/space.js';
-import type {Post} from '$lib/posts/post.js';
+import type {Space, SpaceParams} from '$lib/vocab/space/space.js';
+import type {Post} from '$lib/vocab/post/post.js';
 import type {
 	PersonaCommunity,
 	PersonaCommunityParams,
 	CommunitySpaces,
-} from '$lib/communities/community';
+} from '$lib/vocab/community/community';
 
 // TODO extract seed helpers and db methods
 

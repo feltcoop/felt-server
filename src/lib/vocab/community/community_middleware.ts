@@ -1,7 +1,7 @@
 import send from '@polka/send-type';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
-import type {MemberParams} from '$lib/members/member';
+import type {MemberParams} from '$lib/vocab/member/member';
 
 export const to_communities_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
