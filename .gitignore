@@ -8,7 +8,7 @@ node_modules
 felt_server*.tar
 *.pem
 
-.env
+/.env*
 
 *.ignore
 *.ignore.*
