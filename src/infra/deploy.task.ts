@@ -5,9 +5,9 @@ import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
 export const task: Task = {
 	summary: 'deploy felt server to prod',
 	dev: false,
-	run: async ({invoke_task}) => {
-		await invoke_task('clean');
-		await invoke_task('build');
+	run: async ({invokeTask}) => {
+		await invokeTask('clean');
+		await invokeTask('build');
 		let timestamp = Date.now();
 		let artifact_name = `felt_server_${timestamp}`;
 		console.log(`Working with artifact: ${artifact_name}`);

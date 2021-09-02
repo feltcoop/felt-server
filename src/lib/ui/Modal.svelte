@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {is_editable} from '@feltcoop/felt/util/dom.js';
+	import {isEditable} from '@feltcoop/felt/util/dom.js';
 	import {fade} from 'svelte/transition';
 
 	import Portal from '$lib/ui/Portal.svelte';
@@ -11,7 +11,7 @@
 
 	// TODO hook into a ui input system
 	const on_window_keydown = (e: KeyboardEvent) => {
-		if (!(e.target instanceof HTMLElement && is_editable(e.target))) {
+		if (!(e.target instanceof HTMLElement && isEditable(e.target))) {
 			if (e.key === 'Escape') {
 				close();
 			}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '@feltcoop/felt/ui/style.css';
 	import '$lib/ui/style.css';
-	import {set_devmode} from '@feltcoop/felt/ui/devmode.js';
+	import {setDevmode} from '@feltcoop/felt/ui/devmode.js';
 	import Devmode from '@feltcoop/felt/ui/Devmode.svelte';
 	import FeltWindowHost from '@feltcoop/felt/ui/FeltWindowHost.svelte';
 	import {onMount} from 'svelte';
@@ -20,7 +20,7 @@
 	import {random_hue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 
-	const devmode = set_devmode();
+	const devmode = setDevmode();
 	const data = set_data($session);
 	$: data.update_session($session);
 	const socket = set_socket(to_socket_store(data));
