@@ -95,7 +95,7 @@ export const to_ui_store = () => {
 			});
 		},
 		select_persona: (persona_id) => {
-			console.log(typeof persona_id);
+			console.log('[ui.select_persona] persona_id', {persona_id});
 			update(($ui) => ({
 				...$ui,
 				selected_persona_id: persona_id,
