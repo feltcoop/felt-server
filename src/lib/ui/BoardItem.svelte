@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
-	import type {Post} from '$lib/vocab/post/post.js';
+	import type {File} from '$lib/vocab/file/file.js';
 	import type {Member} from '$lib/vocab/member/member.js';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import {random_hue} from '$lib/ui/color';
 
-	export let post: Post;
+	export let file: File;
 	export let member: Member; // TODO should this be `Actor`?
 
 	// TODO shouldn't need this
@@ -19,7 +19,7 @@
 <li style="--hue: {hue}">
 	<Markup>
 		<p>
-			{post.content}
+			{file.content}
 		</p>
 	</Markup>
 	<div class="about">

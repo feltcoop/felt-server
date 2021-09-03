@@ -1,17 +1,17 @@
 <script lang="ts">
-	import type {Post} from '$lib/vocab/post/post.js';
+	import type {File} from '$lib/vocab/file/file.js';
 	import NotesItem from '$lib/ui/NotesItem.svelte';
 
 	// TODO this should possibly be a generic component instead of this named one
 
-	export let posts: Post[];
+	export let files: File[];
 
-	$: notes = posts.slice().reverse(); // TODO definitely not this
+	$: notes = files.slice().reverse(); // TODO definitely not this
 </script>
 
 <ul>
-	{#each notes as post (post.post_id)}
-		<NotesItem {post} />
+	{#each notes as file (file.file_id)}
+		<NotesItem {file} />
 	{/each}
 </ul>
 

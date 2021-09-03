@@ -1,7 +1,7 @@
 import type {Database} from '$lib/db/Database.js';
 import type {Account, AccountParams} from '$lib/vocab/account/account.js';
 import type {Space, SpaceParams} from '$lib/vocab/space/space.js';
-import type {Post} from '$lib/vocab/post/post.js';
+import type {File} from '$lib/vocab/file/file.js';
 import type {
 	PersonaCommunity,
 	PersonaCommunityParams,
@@ -88,17 +88,17 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] create_community_spaces_table_result', create_community_spaces_table_result);
 	}
 
-	const create_posts_table_result = await sql`
-		create table if not exists posts (
-			post_id serial primary key,
+	const create_files_table_result = await sql`
+		create table if not exists files (
+			file_id serial primary key,
 			content text,
 			actor_id int,
 			space_id int references spaces (space_id) ON UPDATE CASCADE ON DELETE CASCADE
 		)	
 	`;
 
-	if (create_posts_table_result.count) {
-		console.log('[db] create_posts_table_result', create_posts_table_result);
+	if (create_files_table_result.count) {
+		console.log('[db] create_files_table_result', create_files_table_result);
 	}
 
 	const space_docs = await sql<Space[]>`
@@ -111,10 +111,10 @@ export const seed = async (db: Database): Promise<void> => {
 	`;
 	console.log('[db] account_docs', account_docs);
 
-	const post_docs = await sql<Post[]>`
-		select post_id, content, actor_id, space_id from posts
+	const file_docs = await sql<File[]>`
+		select file_id, content, actor_id, space_id from files
 	`;
-	console.log('[db] post_docs', post_docs);
+	console.log('[db] file_docs', file_docs);
 
 	interface CommunityDoc {
 		community_id?: number;
@@ -294,25 +294,25 @@ export const seed = async (db: Database): Promise<void> => {
 		name: 'chat',
 		url: '/chat',
 		media_type: 'application/fuz+json',
-		content: '{"type": "Chat", "props": {"data": "/chat/posts"}}',
+		content: '{"type": "Chat", "props": {"data": "/chat/files"}}',
 	});
 	await create_space(2, 1, {
 		name: 'board',
 		url: '/board',
 		media_type: 'application/fuz+json',
-		content: '{"type": "Board", "props": {"data": "/board/posts"}}',
+		content: '{"type": "Board", "props": {"data": "/board/files"}}',
 	});
 	await create_space(3, 1, {
 		name: 'forum',
 		url: '/forum',
 		media_type: 'application/fuz+json',
-		content: '{"type": "Forum", "props": {"data": "/forum/posts"}}',
+		content: '{"type": "Forum", "props": {"data": "/forum/files"}}',
 	});
 	await create_space(4, 1, {
 		name: 'dm/a',
 		url: '/dm/a',
 		media_type: 'application/fuz+json',
-		content: '{"type": "Chat", "props": {"data": "/dm/a/posts"}}',
+		content: '{"type": "Chat", "props": {"data": "/dm/a/files"}}',
 	});
 	await create_space(5, 1, {
 		name: 'notes',
@@ -333,82 +333,82 @@ export const seed = async (db: Database): Promise<void> => {
 		content: '{"type": "Iframe", "props": {"url": "https://www.dealt.dev/tar"}}',
 	});
 
-	const post1 = post_docs.find((d) => d.post_id === 1);
-	if (!post1) {
-		const post1: Post = {
+	const file1 = file_docs.find((d) => d.file_id === 1);
+	if (!file1) {
+		const file1: File = {
 			content: 'Those who know do not speak.',
 			actor_id: 1,
 			space_id: 1,
 		};
-		const post1_result = await sql`
-			insert into posts ${sql(post1, 'content', 'actor_id', 'space_id')}
+		const file1_result = await sql`
+			insert into files ${sql(file1, 'content', 'actor_id', 'space_id')}
 		`;
-		console.log('[db] create_post1_result', post1_result);
+		console.log('[db] create_file1_result', file1_result);
 	}
 
-	const post2 = post_docs.find((d) => d.post_id === 2);
-	if (!post2) {
-		const post2: Post = {
+	const file2 = file_docs.find((d) => d.file_id === 2);
+	if (!file2) {
+		const file2: File = {
 			content: 'Those who speak do not know.',
 			actor_id: 3,
 			space_id: 1,
 		};
-		const post2_result = await sql`
-			insert into posts ${sql(post2, 'content', 'actor_id', 'space_id')}
+		const file2_result = await sql`
+			insert into files ${sql(file2, 'content', 'actor_id', 'space_id')}
 		`;
-		console.log('[db] create_post2_result', post2_result);
+		console.log('[db] create_file2_result', file2_result);
 	}
 
-	const post3 = post_docs.find((d) => d.post_id === 3);
-	if (!post3) {
-		const post3: Post = {
+	const file3 = file_docs.find((d) => d.file_id === 3);
+	if (!file3) {
+		const file3: File = {
 			content: "All the world's a stage.",
 			actor_id: 3,
 			space_id: 2,
 		};
-		const post3_result = await sql`
-			insert into posts ${sql(post3, 'content', 'actor_id', 'space_id')}
+		const file3_result = await sql`
+			insert into files ${sql(file3, 'content', 'actor_id', 'space_id')}
 		`;
-		console.log('[db] create_post3_result', post3_result);
+		console.log('[db] create_file3_result', file3_result);
 	}
 
-	const post4 = post_docs.find((d) => d.post_id === 4);
-	if (!post4) {
-		const post4: Post = {
+	const file4 = file_docs.find((d) => d.file_id === 4);
+	if (!file4) {
+		const file4: File = {
 			content: 'And all the men and women merely players.',
 			actor_id: 1,
 			space_id: 2,
 		};
-		const post4_result = await sql`
-			insert into posts ${sql(post4, 'content', 'actor_id', 'space_id')}
+		const file4_result = await sql`
+			insert into files ${sql(file4, 'content', 'actor_id', 'space_id')}
 		`;
-		console.log('[db] create_post4_result', post4_result);
+		console.log('[db] create_file4_result', file4_result);
 	}
 
-	const post5 = post_docs.find((d) => d.post_id === 5);
-	if (!post5) {
-		const post5: Post = {
+	const file5 = file_docs.find((d) => d.file_id === 5);
+	if (!file5) {
+		const file5: File = {
 			content: 'If the evidence says you’re wrong, you don’t have the right theory.',
 			actor_id: 1,
 			space_id: 3,
 		};
-		const post5_result = await sql`
-			insert into posts ${sql(post5, 'content', 'actor_id', 'space_id')}
+		const file5_result = await sql`
+			insert into files ${sql(file5, 'content', 'actor_id', 'space_id')}
 		`;
-		console.log('[db] create_post5_result', post5_result);
+		console.log('[db] create_file5_result', file5_result);
 	}
 
-	const post6 = post_docs.find((d) => d.post_id === 6);
-	if (!post6) {
-		const post6: Post = {
+	const file6 = file_docs.find((d) => d.file_id === 6);
+	if (!file6) {
+		const file6: File = {
 			content: 'You change the theory, not the evidence.',
 			actor_id: 3,
 			space_id: 3,
 		};
-		const post6_result = await sql`
-			insert into posts ${sql(post6, 'content', 'actor_id', 'space_id')}
+		const file6_result = await sql`
+			insert into files ${sql(file6, 'content', 'actor_id', 'space_id')}
 		`;
-		console.log('[db] create_post6_result', post6_result);
+		console.log('[db] create_file6_result', file6_result);
 	}
 
 	// example: select after inserting

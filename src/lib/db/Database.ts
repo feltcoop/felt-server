@@ -5,7 +5,7 @@ import type {AccountSession} from '$lib/session/client_session.js';
 import type {Persona} from '$lib/vocab/persona/persona.js';
 import type {Community} from '$lib/vocab/community/community.js';
 import type {Space, SpaceParams} from '$lib/vocab/space/space.js';
-import type {Post} from '$lib/vocab/post/post.js';
+import type {File} from '$lib/vocab/file/file.js';
 import type {Member} from '$lib/vocab/member/member.js';
 import type {Account, AccountModel, AccountParams} from '$lib/vocab/account/account.js';
 import {account_properties, account_model_properties} from '$lib/vocab/account/account';
@@ -287,26 +287,26 @@ export class Database {
 				return {ok: true, value: spaces};
 			},
 		},
-		posts: {
+		files: {
 			insert: async (
 				actor_id: number,
 				space_id: string,
 				content: string,
-			): Promise<Result<{value: Post}>> => {
-				const data = await this.sql<Post[]>`
-					INSERT INTO posts (actor_id, space_id, content) VALUES (
+			): Promise<Result<{value: File}>> => {
+				const data = await this.sql<File[]>`
+					INSERT INTO files (actor_id, space_id, content) VALUES (
 						${actor_id},${space_id},${content}
 					) RETURNING *
 				`;
-				console.log('[db] create post', data);
+				console.log('[db] create file', data);
 				return {ok: true, value: data[0]};
 			},
-			filter_by_space: async (space_id: string): Promise<Result<{value: Post[]}>> => {
-				console.log(`[db] preparing to query for space posts: ${space_id}`);
-				const data = await this.sql<Post[]>`
-					SELECT p.post_id, p.content, p.actor_id, p.space_id FROM posts p WHERE p.space_id= ${space_id}
+			filter_by_space: async (space_id: string): Promise<Result<{value: File[]}>> => {
+				console.log(`[db] preparing to query for space files: ${space_id}`);
+				const data = await this.sql<File[]>`
+					SELECT p.file_id, p.content, p.actor_id, p.space_id FROM files p WHERE p.space_id= ${space_id}
 				`;
-				console.log('[db] space posts', data);
+				console.log('[db] space files', data);
 				return {ok: true, value: data};
 			},
 		},

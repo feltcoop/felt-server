@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type {Post} from '$lib/vocab/post/post.js';
+	import type {File} from '$lib/vocab/file/file.js';
 
-	export let post: Post;
+	export let file: File;
 </script>
 
 <li>
-	{post.content}
+	{file.content}
 </li>
 
 <style>

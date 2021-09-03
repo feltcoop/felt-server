@@ -67,7 +67,6 @@ export const to_ui_store = () => {
 							data.personas.map((persona) => [
 								persona.persona_id,
 								$ui.selected_community_id_by_persona[persona.persona_id] ??
-									// TODO this type is wrong, need to change the postgres query probably
 									persona.community_ids[0] ??
 									null,
 							]),

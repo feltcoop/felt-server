@@ -69,8 +69,8 @@ export const to_socket_store = (data: DataStore) => {
 				return;
 			}
 			console.log('[socket] message', message);
-			if (message.post) {
-				data.add_post(message.post);
+			if (message.file) {
+				data.add_file(message.file);
 			} else {
 				console.warn('TODO unhandled message', message);
 			}
