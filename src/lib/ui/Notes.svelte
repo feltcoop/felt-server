@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {browser} from '$app/env';
 
-	import type {Space} from '$lib/spaces/space.js';
+	import type {Space} from '$lib/vocab/space/space.js';
 	import NoteItems from '$lib/ui/NotesItems.svelte';
 	import {get_app} from '$lib/ui/app';
 

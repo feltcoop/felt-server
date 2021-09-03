@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Post} from '$lib/posts/post.js';
+	import type {Post} from '$lib/vocab/post/post.js';
 	import NotesItem from '$lib/ui/NotesItem.svelte';
 
 	// TODO this should possibly be a generic component instead of this named one

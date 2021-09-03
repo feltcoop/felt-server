@@ -2,15 +2,15 @@ import type {Result} from '@feltcoop/felt';
 import {unwrap} from '@feltcoop/felt';
 
 import type {AccountSession} from '$lib/session/client_session.js';
-import type {Persona} from '$lib/personas/persona.js';
-import type {Community} from '$lib/communities/community.js';
-import type {Space, SpaceParams} from '$lib/spaces/space.js';
-import type {Post} from '$lib/posts/post.js';
-import type {Member} from '$lib/members/member.js';
+import type {Persona} from '$lib/vocab/persona/persona.js';
+import type {Community} from '$lib/vocab/community/community.js';
+import type {Space, SpaceParams} from '$lib/vocab/space/space.js';
+import type {Post} from '$lib/vocab/post/post.js';
+import type {Member} from '$lib/vocab/member/member.js';
 import type {Account, AccountModel, AccountParams} from '$lib/vocab/account/account.js';
 import {account_properties, account_model_properties} from '$lib/vocab/account/account';
 import type {PostgresSql} from '$lib/db/postgres.js';
-import {default_spaces} from '$lib/spaces/default_spaces';
+import {default_spaces} from '$lib/vocab/space/default_spaces';
 
 export interface Options {
 	sql: PostgresSql;
@@ -63,14 +63,11 @@ export class Database {
 					) RETURNING *`;
 				console.log(data);
 				const account = data[0];
-				const persona_response = await this.repos.personas.create(name, account.account_id!);
+				const persona_response = await this.repos.personas.create(name, account.account_id);
 				if (!persona_response.ok) {
 					return {ok: false, reason: 'Failed to create initial user persona'};
 				}
-				const result = await this.repos.communities.insert(
-					name,
-					persona_response.value.persona_id!,
-				);
+				const result = await this.repos.communities.insert(name, persona_response.value.persona_id);
 				if (!result.ok) {
 					return {ok: false, reason: 'Failed to create initial user community'};
 				}
@@ -124,11 +121,11 @@ export class Database {
 				  select p.persona_id, p.account_id, p.name,
 
 					(
-						select array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
+						select array_to_json(coalesce(array_agg(d.community_id)))
 						from (
 							SELECT pc.community_id FROM persona_communities pc WHERE pc.persona_id = p.persona_id
 						) d
-					) as communities 
+					) as community_ids
 					
 					from personas p where p.account_id = ${account_id}
 					`;
@@ -265,7 +262,7 @@ export class Database {
 					) RETURNING *
 				`;
 				console.log('[db] created space', data);
-				const space_id: number = data[0].space_id!;
+				const space_id: number = data[0].space_id;
 				console.log('[db] creating community space', community_id, space_id);
 				// TODO more robust error handling or condense into single query
 				const association = await this.sql<any>`

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import {browser} from '$app/env';
 
-	import type {Space} from '$lib/spaces/space.js';
-	import type {Member} from '$lib/members/member.js';
+	import type {Space} from '$lib/vocab/space/space.js';
+	import type {Member} from '$lib/vocab/member/member.js';
 	import ChatItems from '$lib/ui/ChatItems.svelte';
 	import {get_app} from '$lib/ui/app';
 
-	const {api, data} = get_app();
+	const {api, ui, data} = get_app();
 
 	export let space: Space;
 	export let members_by_id: Map<number, Member>;
@@ -15,10 +15,11 @@
 
 	$: browser && api.load_posts(space.space_id);
 	$: console.log(`[Chat] fetching posts for ${space.space_id}`);
+	$: selected_persona_id = $ui.selected_persona_id;
 
 	const create_post = async () => {
 		if (!text) return;
-		await api.create_post(space, text);
+		await api.create_post(space, text, selected_persona_id!);
 		text = '';
 	};
 

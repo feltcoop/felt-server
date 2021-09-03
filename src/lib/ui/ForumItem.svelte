@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type {Post} from '$lib/posts/post.js';
-	import type {Member} from '$lib/members/member.js';
+	import type {Post} from '$lib/vocab/post/post.js';
+	import type {Member} from '$lib/vocab/member/member.js';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import {random_hue} from '$lib/ui/color';
 

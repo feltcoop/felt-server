@@ -3,12 +3,13 @@ import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 import type {ClientSession} from '$lib/session/client_session';
-import {to_community_model} from '$lib/communities/community';
-import type {CommunityModel} from '$lib/communities/community';
-import type {Member} from '$lib/members/member';
-import type {Space} from '$lib/spaces/space';
+import {to_community_model} from '$lib/vocab/community/community';
+import type {CommunityModel} from '$lib/vocab/community/community';
+import type {Member} from '$lib/vocab/member/member';
+import type {Space} from '$lib/vocab/space/space';
 import type {AccountModel} from '$lib/vocab/account/account';
-import type {Post} from '$lib/posts/post';
+import type {Persona} from '$lib/vocab/persona/persona';
+import type {Post} from '$lib/vocab/post/post';
 
 // TODO refactor/rethink
 
@@ -29,6 +30,7 @@ export interface DataState {
 	communities: CommunityModel[];
 	spaces: Space[];
 	members: Member[];
+	personas: Persona[];
 	posts_by_space: Record<number, Post[]>;
 }
 
@@ -111,6 +113,7 @@ const to_default_data = (session: ClientSession): DataState => {
 			// TODO session should already have a flat array of spaces
 			spaces: session.communities.flatMap((community) => community.spaces),
 			members: session.members,
+			personas: session.personas,
 			posts_by_space: {},
 		};
 	}

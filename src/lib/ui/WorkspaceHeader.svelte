@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type {Space} from '$lib/spaces/space';
-	import type {Community} from '$lib/communities/community';
+	import type {Space} from '$lib/vocab/space/space';
+	import type {Community} from '$lib/vocab/community/community';
 	import {get_app} from '$lib/ui/app';
 
 	const {ui} = get_app();

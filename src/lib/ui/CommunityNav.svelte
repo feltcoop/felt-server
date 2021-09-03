@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type {Community} from '$lib/communities/community.js';
-	import type {Member} from '$lib/members/member.js';
+	import type {Community} from '$lib/vocab/community/community.js';
+	import type {Member} from '$lib/vocab/member/member.js';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import {random_hue} from '$lib/ui/color';
 
 	export let members: Member[];
-	export let communities: Community[];
+	export let selected_persona_communities: Community[];
 	export let selected_community: Community;
 </script>
 
@@ -15,7 +15,7 @@
 		<CommunityInput />
 	</div>
 	<div>
-		{#each communities as community (community.community_id)}
+		{#each selected_persona_communities as community (community.community_id)}
 			<!-- TODO make these links <a>...</a> -->
 			<a
 				href="/{community.name}"

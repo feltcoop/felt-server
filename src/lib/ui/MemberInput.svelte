@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type {Community} from '$lib/communities/community.js';
+	import type {Community} from '$lib/vocab/community/community.js';
 	import Modal from '$lib/ui/Modal.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
-	import type {Member} from '$lib/members/member.js';
+	import type {Member} from '$lib/vocab/member/member.js';
 	import {get_app} from '$lib/ui/app';
 
 	const {api} = get_app();
@@ -13,7 +13,7 @@
 	let open = false;
 
 	$: invitable_members = community
-		? members.filter((x) => !community.members.some((y) => x.account_id == y.account_id))
+		? members.filter((x) => !community.members.some((y) => x.persona_id == y.persona_id))
 		: [];
 </script>
 
@@ -30,14 +30,14 @@
 	<Modal close={() => (open = false)}>
 		<Markup>
 			<h1>Invite users to {community.name}</h1>
-			{#each invitable_members as member (member.account_id)}
+			{#each invitable_members as member (member.persona_id)}
 				<p>
 					<button
 						type="button"
 						class="button-join"
-						on:click={() => api.invite_member(community.community_id, member.account_id)}
+						on:click={() => api.invite_member(community.community_id, member.persona_id)}
 					>
-						[[TODO persona name: {member.account_id}]]
+						{member.name}
 					</button>
 				</p>
 			{:else}

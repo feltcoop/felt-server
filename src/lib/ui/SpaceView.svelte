@@ -3,10 +3,10 @@
 	import Board from '$lib/ui/Board.svelte';
 	import Forum from '$lib/ui/Forum.svelte';
 	import Notes from '$lib/ui/Notes.svelte';
-	import type {Space} from '$lib/spaces/space';
+	import type {Space} from '$lib/vocab/space/space';
 	import Iframe from '$lib/ui/Iframe.svelte';
 	import Voice from '$lib/ui/Voice.svelte';
-	import type {Member} from '$lib/members/member';
+	import type {Member} from '$lib/vocab/member/member';
 
 	export let space: Space;
 	export let members_by_id: Map<number, Member>;

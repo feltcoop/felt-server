@@ -14,13 +14,13 @@ import {
 	to_communities_middleware,
 	to_create_community_middleware,
 	to_create_member_middleware,
-} from '$lib/communities/community_middleware.js';
-import {to_posts_middleware, to_create_post_middleware} from '$lib/posts/post_middleware.js';
+} from '$lib/vocab/community/community_middleware.js';
+import {to_posts_middleware, to_create_post_middleware} from '$lib/vocab/post/post_middleware.js';
 import {
 	to_space_middleware,
 	to_spaces_middleware,
 	to_create_space_middleware,
-} from '$lib/spaces/space_middleware.js';
+} from '$lib/vocab/space/space_middleware.js';
 import type {AccountSession} from '$lib/session/client_session.js';
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';

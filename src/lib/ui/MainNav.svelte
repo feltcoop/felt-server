@@ -15,24 +15,27 @@
 
 	$: members = $data.members;
 	$: communities = $data.communities;
+	$: personas = $data.personas;
 
 	// TODO speed up these lookups, probably with a map of all entities by id
 	$: selected_community =
 		communities.find((c) => c.community_id === $ui.selected_community_id) || null;
 	$: selected_space = selected_community
 		? selected_community.spaces.find(
-				(s) => s.space_id === $ui.selected_space_id_by_community[selected_community!.community_id!],
+				(s) => s.space_id === $ui.selected_space_id_by_community[selected_community!.community_id],
 		  ) || null
 		: null;
-
-	// $: console.log('[MainNav] $data', $data);
-	// $: console.log('[MainNav] $ui', $ui);
-	// $: console.log('[MainNav] communities', communities);
-	// $: console.log('[MainNav] selected_community', selected_community);
-	// $: console.log('[MainNav] selected_space', selected_space);
+	$: selected_persona = personas.find((p) => p.persona_id === $ui.selected_persona_id) || null;
+	$: console.log('selected persona', selected_persona);
+	$: selected_persona_communities = communities.filter((community) =>
+		selected_persona?.community_ids.includes(community.community_id),
+	);
 
 	// TODO refactor to some client view-model for the account
 	$: hue = random_hue($data.account.name);
+
+	let selected_persona_id = $ui.selected_persona_id;
+	$: ui.select_persona(selected_persona_id!);
 </script>
 
 {#if $ui.expand_main_nav}
@@ -43,15 +46,17 @@
 		<div class="header">
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
+			<select class="persona-selector" bind:value={selected_persona_id}>
+				{#each personas as persona (persona)}
+					<option value={persona.persona_id}>{persona.name}</option>
+				{/each}
+			</select>
 			<button
 				on:click={() => ui.set_main_nav_view('explorer')}
 				class:selected={$ui.main_nav_view === 'explorer'}
 				class="explorer-button"
 			>
-				<ActorIcon name={$data.account.name} />
-				<div class="explorer-button-text">
-					{$data.account.name}
-				</div>
+				<ActorIcon name={selected_persona?.name || 'no name'} />
 			</button>
 			<button
 				on:click={() => ui.set_main_nav_view('account')}
@@ -65,7 +70,7 @@
 		{#if $ui.main_nav_view === 'explorer'}
 			<div class="explorer">
 				{#if selected_community}
-					<CommunityNav {members} {communities} {selected_community} />
+					<CommunityNav {members} {selected_persona_communities} {selected_community} />
 					<SpaceNav
 						community={selected_community}
 						spaces={selected_community.spaces}
@@ -147,15 +152,19 @@
 		display: flex;
 		flex: 1;
 	}
+	.persona-selector {
+		display: flex;
+		flex: 2;
+		height: var(--navbar_size);
+		background: var(--interactive_color);
+	}
 	.explorer-button {
 		justify-content: flex-start;
 		height: var(--navbar_size);
-		flex: 1;
+		flex: 0.5;
 		padding: var(--spacing_xs);
 	}
-	.explorer-button-text {
-		padding-left: var(--spacing_md);
-	}
+
 	.account-button {
 		height: var(--navbar_size);
 		width: var(--navbar_size);

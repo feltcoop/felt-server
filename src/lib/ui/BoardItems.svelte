@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type {Post} from '$lib/posts/post.js';
-	import type {Member} from '$lib/members/member.js';
+	import type {Post} from '$lib/vocab/post/post.js';
+	import type {Member} from '$lib/vocab/member/member.js';
 	import BoardItem from '$lib/ui/BoardItem.svelte';
 
 	// TODO this should possibly be a generic component instead of this named one

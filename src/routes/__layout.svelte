@@ -1,8 +1,9 @@
 <script lang="ts">
 	import '@feltcoop/felt/ui/style.css';
 	import '$lib/ui/style.css';
-	import {set_devmode} from '@feltcoop/felt/ui/devmode.js';
+	import {setDevmode} from '@feltcoop/felt/ui/devmode.js';
 	import Devmode from '@feltcoop/felt/ui/Devmode.svelte';
+	import FeltWindowHost from '@feltcoop/felt/ui/FeltWindowHost.svelte';
 	import {onMount} from 'svelte';
 	import {session} from '$app/stores';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
@@ -15,10 +16,11 @@
 	import {set_ui} from '$lib/ui/ui';
 	import {set_api, to_api_store} from '$lib/ui/api';
 	import {set_app} from '$lib/ui/app';
+	import {random_hue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {WEBSOCKET_URL} from '$lib/ui/env';
 
-	const devmode = set_devmode();
+	const devmode = setDevmode();
 	const data = set_data($session);
 	$: data.update_session($session);
 	const socket = set_socket(to_socket_store(data));
@@ -80,6 +82,8 @@
 	<Devmode {devmode} />
 	<div id="modal-wrapper" />
 </div>
+
+<FeltWindowHost query={() => ({hue: random_hue($data.account.name)})} />
 
 <style>
 	.layout {

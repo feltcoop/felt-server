@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type {Space} from '$lib/spaces/space.js';
+	import type {Space} from '$lib/vocab/space/space.js';
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
-	import type {CommunityModel} from '$lib/communities/community.js';
+	import type {CommunityModel} from '$lib/vocab/community/community.js';
 	import MemberInput from '$lib/ui/MemberInput.svelte';
-	import type {Member} from '$lib/members/member.js';
+	import type {Member} from '$lib/vocab/member/member.js';
 
 	export let community: CommunityModel;
 	export let spaces: Space[];

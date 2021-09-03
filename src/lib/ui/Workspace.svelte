@@ -14,7 +14,7 @@
 		communities.find((c) => c.community_id === $ui.selected_community_id) || null;
 	$: selected_space = selected_community
 		? selected_community.spaces.find(
-				(s) => s.space_id === $ui.selected_space_id_by_community[selected_community!.community_id!],
+				(s) => s.space_id === $ui.selected_space_id_by_community[selected_community!.community_id],
 		  )
 		: null;
 	$: members_by_id = selected_community?.members_by_id;

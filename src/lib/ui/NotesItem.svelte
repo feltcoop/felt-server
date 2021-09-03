@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Post} from '$lib/posts/post.js';
+	import type {Post} from '$lib/vocab/post/post.js';
 
 	export let post: Post;
 </script>

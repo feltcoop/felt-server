@@ -6,11 +6,11 @@ import type {Result} from '@feltcoop/felt';
 
 import type {DataStore} from '$lib/ui/data';
 import type {UiStore} from '$lib/ui/ui';
-import type {Community, CommunityModel, CommunityParams} from '$lib/communities/community';
-import {to_community_model} from '$lib/communities/community';
-import type {Space, SpaceParams} from '$lib/spaces/space';
-import type {Member, MemberParams} from '$lib/members/member';
-import type {Post} from '$lib/posts/post';
+import type {Community, CommunityModel, CommunityParams} from '$lib/vocab/community/community';
+import {to_community_model} from '$lib/vocab/community/community';
+import type {Space, SpaceParams} from '$lib/vocab/space/space';
+import type {Member, MemberParams} from '$lib/vocab/member/member';
+import type {Post} from '$lib/vocab/post/post';
 import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/login_middleware.js';
 import type {AccountSession} from '$lib/session/client_session';
@@ -35,6 +35,7 @@ export interface ApiStore {
 		password: string,
 	) => Promise<Result<{value: {session: AccountSession}}, {reason: string}>>;
 	log_out: () => Promise<Result<{}, {reason: string}>>;
+	select_persona: (persona_id: number) => void;
 	select_community: (community_id: number | null) => void;
 	select_space: (community_id: number, space: number | null) => void;
 	toggle_main_nav: () => void;
@@ -55,6 +56,7 @@ export interface ApiStore {
 	create_post: (
 		space: Space,
 		content: string,
+		selected_persona_id: number,
 	) => Promise<Result<{value: {post: Post}}, {reason: string}>>;
 	load_posts: (space_id: number) => Promise<Result<{value: {post: Post[]}}, {reason: string}>>;
 }
@@ -71,6 +73,7 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 	const store: ApiStore = {
 		subscribe,
 		// TODO these are just directly proxying
+		select_persona: ui.select_persona,
 		select_community: ui.select_community,
 		select_space: ui.select_space,
 		toggle_main_nav: ui.toggle_main_nav,
@@ -217,11 +220,14 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				throw Error(`error: ${res.status}: ${res.statusText}`);
 			}
 		},
-		create_post: async (space, content) => {
+		create_post: async (space, content, persona_id) => {
 			const res = await fetch(`/api/v1/spaces/${space.space_id}/posts`, {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({content}),
+				body: JSON.stringify({
+					content,
+					actor_id: persona_id,
+				}),
 			});
 			if (res.ok) {
 				try {
@@ -236,7 +242,7 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				throw Error(`error sending post: ${res.status}: ${res.statusText}`);
 			}
 		},
-		load_posts: async (space_id: number) => {
+		load_posts: async (space_id) => {
 			data.set_posts(space_id, []);
 			const res = await fetch(`/api/v1/spaces/${space_id}/posts`);
 			if (res.ok) {
