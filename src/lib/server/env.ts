@@ -4,8 +4,9 @@ import {copyFileSync, existsSync} from 'fs';
 const envs: {file: string; defaultFile: string}[] = [
 	// any changes to this path must also be made in `svelte.config.js`
 	{file: '.env', defaultFile: 'src/infra/.env.default'},
-	{file: '.env.development', defaultFile: 'src/infra/.env.development.default'},
-	{file: '.env.production', defaultFile: 'src/infra/.env.production.default'},
+	process.env.NODE_ENV !== 'production'
+		? {file: '.env.development', defaultFile: 'src/infra/.env.development.default'}
+		: {file: '.env.production', defaultFile: 'src/infra/.env.production.default'},
 ];
 interface Env {
 	// server vars
