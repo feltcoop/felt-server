@@ -64,7 +64,7 @@
 				class="account-button"
 			>
 				<!-- TODO `icons.dot_dot_dot` -->
-				{icons.bullet_point}{icons.bullet_point}{icons.bullet_point}
+				{icons.bulletPoint}{icons.bulletPoint}{icons.bulletPoint}
 			</button>
 		</div>
 		{#if $ui.main_nav_view === 'explorer'}

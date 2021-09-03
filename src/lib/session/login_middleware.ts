@@ -1,15 +1,8 @@
 import send from '@polka/send-type';
-import {scrypt} from 'crypto';
-import {promisify} from 'util';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Account} from '$lib/vocab/account/account.js';
-
-// TODO move this?
-const salt = 'TODO_SALT_SECRET'; // TODO env
-const to_scrypt = promisify(scrypt);
-const to_hash = async (password: string): Promise<string> =>
-	((await to_scrypt(password, salt, 32)) as any).toString('hex'); // TODO why is the type cast needed?
+import {to_password_key, verify_password} from '$lib/util/password.js';
 
 export interface LoginRequest {
 	account_name: string;
@@ -37,7 +30,7 @@ export const to_login_middleware = (server: ApiServer): Middleware => {
 			}
 		}
 
-		const password_hash = await to_hash(password);
+		const password_key = await to_password_key(password);
 
 		// First see if the account already exists.
 		const find_account_result = await db.repos.accounts.find_by_name(account_name);
@@ -46,14 +39,14 @@ export const to_login_middleware = (server: ApiServer): Middleware => {
 		if (find_account_result.ok) {
 			// There's already an account, so proceed to log in after validating the password.
 			account = find_account_result.value;
-			if (account.password !== password_hash) {
+			if (!verify_password(account.password, password_key)) {
 				return send(res, 400, {reason: 'invalid account name or password'});
 			}
 		} else if (find_account_result.type === 'no_account_found') {
 			// There's no account, so create one.
 			const find_account_result = await db.repos.accounts.create({
 				name: account_name,
-				password: password_hash,
+				password: password_key,
 			});
 			console.log('createAccountResult', find_account_result);
 			if (find_account_result.ok) {

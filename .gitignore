@@ -5,10 +5,11 @@ node_modules
 
 /.gro
 /dist
+felt_server*.tar
+*.pem
+
+/.env*
+
 *.ignore
 *.ignore.*
 ignore/
-*.pem
-*.crt
-*.key
-felt_server*.tar

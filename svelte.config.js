@@ -1,5 +1,8 @@
 import {typescript} from 'svelte-preprocess-esbuild';
 import node from '@sveltejs/adapter-node';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /** @type {import('@sveltejs/kit').Config} */
 export default {
@@ -14,7 +17,7 @@ export default {
 		vite: {
 			server: {
 				proxy: {
-					'/api': 'http://localhost:3001/', // import('@feltcoop/gro/dist/config/defaultBuildConfig.js').API_SERVER_DEFAULT_PORT_DEV
+					'/api': `http://${process.env.API_SERVER_HOST}`,
 				},
 			},
 			optimizeDeps: {
