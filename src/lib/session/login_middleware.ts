@@ -2,7 +2,7 @@ import send from '@polka/send-type';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Account} from '$lib/vocab/account/account.js';
-import {to_hash} from '$lib/util/hash.js';
+import {to_password_hash} from '$lib/util/password.js';
 
 export interface LoginRequest {
 	account_name: string;
@@ -30,7 +30,7 @@ export const to_login_middleware = (server: ApiServer): Middleware => {
 			}
 		}
 
-		const password_hash = await to_hash(password);
+		const password_hash = await to_password_hash(password);
 
 		// First see if the account already exists.
 		const find_account_result = await db.repos.accounts.find_by_name(account_name);
