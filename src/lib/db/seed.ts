@@ -129,7 +129,10 @@ export const seed = async (db: Database): Promise<void> => {
 			) as {persona: Persona; community: Community}; // TODO why typecast?
 			log.trace('created persona', persona);
 			personas.push(persona);
-			await db.repos.space.create_default_spaces(community.community_id);
+			const spaces = unwrap(
+				await db.repos.space.create_default_spaces(community.community_id),
+			) as Space[]; // TODO why cast?
+			await create_default_posts(db, spaces, [persona]);
 		}
 	}
 
