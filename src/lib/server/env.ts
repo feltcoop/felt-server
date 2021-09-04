@@ -1,27 +1,20 @@
 import dotenv from 'dotenv';
 import {copyFileSync, existsSync} from 'fs';
 
+// TODO does this stuff belong in `src/server/env.ts`?
+// TODO how to configure this stuff in user projects? felt/gro config?
+
+const dev = import.meta?.env?.DEV ?? process.env.NODE_ENV !== 'production'; // TODO support in Gro and remove second half
+
 const envs: {file: string; defaultFile: string}[] = [
-	// any changes to this path must also be made in `svelte.config.js`
 	{file: '.env', defaultFile: 'src/infra/.env.default'},
-	process.env.NODE_ENV === 'production'
-		? {file: '.env.production', defaultFile: 'src/infra/.env.production.default'}
-		: {file: '.env.development', defaultFile: 'src/infra/.env.development.default'},
+	dev
+		? {file: '.env.development', defaultFile: 'src/infra/.env.development.default'}
+		: {file: '.env.production', defaultFile: 'src/infra/.env.production.default'},
 ];
+
 interface Env {
-	// server vars
-	SVELTEKIT_SERVER_HOST: string;
-	API_SERVER_HOST: string;
-
-	// client vars
-	VITE_WEBSOCKET_URL: string;
-
-	// secret vars
 	COOKIE_KEYS: string; // TODO validate this somehow to avoid production security issues
-
-	// deploy vars
-	DEPLOY_IP: string;
-	DEPLOY_USER: string;
 }
 
 let loaded = false;

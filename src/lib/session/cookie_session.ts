@@ -21,6 +21,8 @@ export interface CookieSessionObject extends BaseCookieSessionObject {
 
 const dev = process.env.NODE_ENV !== 'production';
 
+console.log(`fromEnv('COOKIE_KEYS').split('__')`, fromEnv('COOKIE_KEYS').split('__'));
+
 export const to_cookie_session_middleware = () =>
 	cookie_session({
 		name: 'session_id',

@@ -1,11 +1,9 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
 
-import {fromEnv} from '$lib/server/env.js';
+import {DEPLOY_IP, DEPLOY_USER} from '$lib/constants';
 
-const deployIp = fromEnv('DEPLOY_IP');
-const deployUser = fromEnv('DEPLOY_USER');
-const deployLogin = `${deployUser}@${deployIp}`;
+const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
 
 export const task: Task = {
 	summary: 'restart felt prod server',
