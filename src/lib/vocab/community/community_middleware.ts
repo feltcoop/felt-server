@@ -60,7 +60,7 @@ export const to_create_community_middleware = (server: ApiServer): Middleware =>
 		}
 		console.log('[community_middleware] creating community', req.body);
 
-		const create_community_result = await db.repos.community.insert(
+		const create_community_result = await db.repos.community.create(
 			req.body.name,
 			req.account_session.account.account_id,
 		);

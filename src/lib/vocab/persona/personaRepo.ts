@@ -12,7 +12,6 @@ export const personaRepo = (db: Database) => ({
       insert into personas (name, account_id) values (
         ${name}, ${account_id}
       ) RETURNING *`;
-		console.log(data);
 		const persona = data[0];
 		return {ok: true, value: persona};
 	},

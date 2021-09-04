@@ -30,7 +30,7 @@ export const spaceRepo = (db: Database) => ({
 		console.log('[db] spaces data', data);
 		return {ok: true, value: data};
 	},
-	insert: async (community_id: number, params: SpaceParams): Promise<Result<{value: Space}>> => {
+	create: async (community_id: number, params: SpaceParams): Promise<Result<{value: Space}>> => {
 		const {name, content, media_type, url} = params;
 		const data = await db.sql<Space[]>`
       INSERT INTO spaces (name, url, media_type, content) VALUES (
@@ -49,12 +49,12 @@ export const spaceRepo = (db: Database) => ({
 		console.log('[db] created community_space', association);
 		return {ok: true, value: data[0]};
 	},
-	insert_default_spaces: async (
+	create_default_spaces: async (
 		community_id: number,
 	): Promise<Result<{value: Space[]}, {reason: string}>> => {
 		const spaces: Space[] = [];
 		for (const space_params of default_spaces) {
-			const result = await db.repos.space.insert(community_id, space_params);
+			const result = await db.repos.space.create(community_id, space_params);
 			if (!result.ok) return {ok: false, reason: 'Failed to create default spaces for community.'};
 			spaces.push(result.value);
 		}

@@ -19,7 +19,7 @@ export const accountRepo = (db: Database) => ({
 		if (!persona_response.ok) {
 			return {ok: false, reason: 'Failed to create initial user persona'};
 		}
-		const result = await db.repos.community.insert(name, persona_response.value.persona_id);
+		const result = await db.repos.community.create(name, persona_response.value.persona_id);
 		if (!result.ok) {
 			return {ok: false, reason: 'Failed to create initial user community'};
 		}

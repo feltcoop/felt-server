@@ -45,7 +45,7 @@ export const communityRepo = (db: Database) => ({
 		console.log('[db] community data', data);
 		return {ok: true, value: data};
 	},
-	insert: async (name: string, persona_id: number): Promise<Result<{value: Community}>> => {
+	create: async (name: string, persona_id: number): Promise<Result<{value: Community}>> => {
 		const data = await db.sql<Community[]>`
       INSERT INTO communities (name) VALUES (
         ${name}
@@ -62,7 +62,7 @@ export const communityRepo = (db: Database) => ({
       )
     `;
 		console.log('[db] created persona_communities', association);
-		const spaces_result = await db.repos.space.insert_default_spaces(community_id);
+		const spaces_result = await db.repos.space.create_default_spaces(community_id);
 		if (!spaces_result.ok) return spaces_result;
 		community.spaces = spaces_result.value;
 		return {ok: true, value: community};
