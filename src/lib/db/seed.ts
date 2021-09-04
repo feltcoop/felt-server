@@ -4,7 +4,7 @@ import {cyan} from '@feltcoop/felt/util/terminal.js';
 
 import type {Database} from '$lib/db/Database.js';
 import type {Account, AccountParams} from '$lib/vocab/account/account.js';
-import type {Post} from '$lib/vocab/post/post.js';
+import type {Space} from '$lib/vocab/space/space.js';
 import type {Community, CommunityParams} from '$lib/vocab/community/community';
 import type {Persona} from '$lib/vocab/persona/persona';
 
@@ -140,54 +140,50 @@ export const seed = async (db: Database): Promise<void> => {
 	];
 	const communities: Community[] = [];
 
+	const mainPersonaCreator = personas[0];
+	const otherPersonas = personas.slice(1);
+
 	for (const communityParams of communitiesParams) {
 		const community = unwrap(
-			await db.repos.community.create(communityParams.name, personas[0].persona_id),
-		) as Community; // TODO type?
+			await db.repos.community.create(communityParams.name, mainPersonaCreator.persona_id),
+		) as Community; // TODO why cast?
 		communities.push(community);
-		await db.repos.space.create_default_spaces(community.community_id);
-	}
-
-	for (const community of communities) {
-		for (const persona of personas.slice(1)) {
+		for (const persona of otherPersonas) {
 			await db.repos.member.create(persona.persona_id, community.community_id);
 		}
+		const spaces = unwrap(
+			await db.repos.space.create_default_spaces(community.community_id),
+		) as Space[]; // TODO why cast?
+		await create_default_posts(db, spaces, personas);
 	}
+};
 
-	const postsParams: Post[] = [
-		{
-			content: 'Those who know do not speak.',
-			actor_id: 1,
-			space_id: 1,
-		},
-		{
-			content: 'Those who speak do not know.',
-			actor_id: 2,
-			space_id: 1,
-		},
-		{
-			content: "All the world's a stage.",
-			actor_id: 2,
-			space_id: 2,
-		},
-		{
-			content: 'And all the men and women merely players.',
-			actor_id: 1,
-			space_id: 2,
-		},
-		{
-			content: 'If the evidence says you’re wrong, you don’t have the right theory.',
-			actor_id: 1,
-			space_id: 3,
-		},
-		{
-			content: 'You change the theory, not the evidence.',
-			actor_id: 2,
-			space_id: 3,
-		},
-	];
+const create_default_posts = async (db: Database, spaces: Space[], personas: Persona[]) => {
+	const postsContents: {[key: string]: string[]} = {
+		Chat: ['Those who know do not speak.', 'Those who speak do not know.'],
+		Board: ["All the world's a stage.", 'And all the men and women merely players.'],
+		Forum: [
+			'If the evidence says you’re wrong, you don’t have the right theory.',
+			'You change the theory, not the evidence.',
+		],
+		Notes: ['go to the place later', 'remember the thing', 'what a day!'],
+	};
 
-	for (const postParams of postsParams) {
-		await db.repos.post.create(postParams.actor_id, postParams.space_id, postParams.content);
+	let persona_index = -1;
+	const nextPersona = (): Persona => {
+		persona_index++;
+		if (persona_index === personas.length) persona_index = 0;
+		return personas[persona_index];
+	};
+
+	for (const space of spaces) {
+		const spaceContent = JSON.parse(space.content);
+		if (!(spaceContent.type in postsContents)) {
+			continue;
+		}
+		const postContents = postsContents[spaceContent.type];
+		for (const postContent of postContents) {
+			await db.repos.post.create(nextPersona().persona_id, space.space_id, postContent);
+		}
 	}
 };
