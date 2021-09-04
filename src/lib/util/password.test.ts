@@ -15,11 +15,11 @@ test__verify_password('hash and verify a password', async () => {
 test__verify_password('fail to verify', async () => {
 	const password = 'password';
 	const key = await to_password_key(password);
+	t.not.ok(await verify_password('', key));
 	t.not.ok(await verify_password(password + '1', key));
 	t.not.ok(await verify_password(password, '1' + key));
-	t.not.ok(await verify_password('', key));
-	t.not.ok(await verify_password(password, await to_password_key(password + '1')));
 	t.not.ok(await verify_password(password, await to_password_key('')));
+	t.not.ok(await verify_password(password, await to_password_key(password + '1')));
 });
 
 test__verify_password.run();
