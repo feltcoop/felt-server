@@ -12,7 +12,7 @@ export const to_posts_middleware = (server: ApiServer): Middleware => {
 		}
 		console.log('[post_middleware] space', req.params.space_id);
 
-		const find_posts_result = await db.repos.post.filter_by_space(req.params.space_id);
+		const find_posts_result = await db.repos.post.filter_by_space(Number(req.params.space_id));
 		if (find_posts_result.ok) {
 			return send(res, 200, {posts: find_posts_result.value}); // TODO API types
 		} else {
@@ -37,7 +37,7 @@ export const to_create_post_middleware = (server: ApiServer): Middleware => {
 
 		const insert_posts_result = await db.repos.post.create(
 			req.body.actor_id,
-			req.params.space_id,
+			Number(req.params.space_id),
 			req.body.content,
 		);
 		if (insert_posts_result.ok) {
