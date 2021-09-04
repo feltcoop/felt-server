@@ -124,11 +124,12 @@ export const seed = async (db: Database): Promise<void> => {
 		const account = unwrap(await db.repos.account.create(accountParams)) as Account;
 		log.trace('created account', account);
 		for (const personaName of personasParams[account.name]) {
-			const persona = unwrap(
+			const {persona, community} = unwrap(
 				await db.repos.persona.create(personaName, account.account_id),
-			) as Persona; // TODO why typecast?
+			) as {persona: Persona; community: Community}; // TODO why typecast?
 			log.trace('created persona', persona);
 			personas.push(persona);
+			await db.repos.space.create_default_spaces(community.community_id);
 		}
 	}
 
@@ -144,6 +145,7 @@ export const seed = async (db: Database): Promise<void> => {
 			await db.repos.community.create(communityParams.name, personas[0].persona_id),
 		) as Community; // TODO type?
 		communities.push(community);
+		await db.repos.space.create_default_spaces(community.community_id);
 	}
 
 	for (const community of communities) {

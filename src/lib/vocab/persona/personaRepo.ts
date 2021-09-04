@@ -2,12 +2,13 @@ import type {Result} from '@feltcoop/felt';
 
 import type {Persona} from '$lib/vocab/persona/persona.js';
 import type {Database} from '$lib/db/Database';
+import type {Community} from '$lib/vocab/community/community.js';
 
 export const personaRepo = (db: Database) => ({
 	create: async (
 		name: string,
 		account_id: number,
-	): Promise<Result<{value: Persona}, {reason: string}>> => {
+	): Promise<Result<{value: {persona: Persona; community: Community}}, {reason: string}>> => {
 		const data = await db.sql<Persona[]>`
       insert into personas (name, account_id) values (
         ${name}, ${account_id}
@@ -18,7 +19,7 @@ export const personaRepo = (db: Database) => ({
 		if (!create_community_result.ok) {
 			return {ok: false, reason: 'Failed to create initial persona community'};
 		}
-		return {ok: true, value: persona};
+		return {ok: true, value: {persona, community: create_community_result.value}};
 	},
 	filter_by_account: async (
 		account_id: number,

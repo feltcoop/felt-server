@@ -60,9 +60,7 @@ export const communityRepo = (db: Database) => ({
       ${persona_id},${community_id}
       )
     `;
-		const spaces_result = await db.repos.space.create_default_spaces(community_id);
-		if (!spaces_result.ok) return spaces_result;
-		community.spaces = spaces_result.value;
+		community.spaces = []; // TODO ?
 		return {ok: true, value: community};
 	},
 });
