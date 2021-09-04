@@ -39,7 +39,7 @@ export const to_login_middleware = (server: ApiServer): Middleware => {
 		if (find_account_result.ok) {
 			// There's already an account, so proceed to log in after validating the password.
 			account = find_account_result.value;
-			if (!verify_password(account.password, password_key)) {
+			if (!(await verify_password(account.password, password_key))) {
 				return send(res, 400, {reason: 'invalid account name or password'});
 			}
 		} else if (find_account_result.type === 'no_account_found') {
