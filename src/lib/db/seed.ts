@@ -146,11 +146,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	for (const community of communities) {
 		for (const persona of personas.slice(1)) {
-			await db.sql<any>`
-				INSERT INTO persona_communities (persona_id, community_id) VALUES (
-				${persona.persona_id},${community.community_id}
-				)
-			`;
+			await db.repos.member.create(persona.persona_id, community.community_id);
 		}
 	}
 
@@ -188,8 +184,6 @@ export const seed = async (db: Database): Promise<void> => {
 	];
 
 	for (const postParams of postsParams) {
-		await sql`
-			insert into posts ${sql(postParams, 'content', 'actor_id', 'space_id')}
-		`;
+		await db.repos.post.create(postParams.actor_id, postParams.space_id, postParams.content);
 	}
 };

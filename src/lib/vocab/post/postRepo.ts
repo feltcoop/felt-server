@@ -4,9 +4,9 @@ import type {Post} from '$lib/vocab/post/post.js';
 import type {Database} from '$lib/db/Database';
 
 export const postRepo = (db: Database) => ({
-	insert: async (
+	create: async (
 		actor_id: number,
-		space_id: string,
+		space_id: number,
 		content: string,
 	): Promise<Result<{value: Post}>> => {
 		const data = await db.sql<Post[]>`
@@ -17,7 +17,7 @@ export const postRepo = (db: Database) => ({
 		console.log('[db] create post', data);
 		return {ok: true, value: data[0]};
 	},
-	filter_by_space: async (space_id: string): Promise<Result<{value: Post[]}>> => {
+	filter_by_space: async (space_id: number): Promise<Result<{value: Post[]}>> => {
 		console.log(`[db] preparing to query for space posts: ${space_id}`);
 		const data = await db.sql<Post[]>`
       SELECT p.post_id, p.content, p.actor_id, p.space_id FROM posts p WHERE p.space_id= ${space_id}
