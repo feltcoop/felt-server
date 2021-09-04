@@ -13,7 +13,7 @@ export const accountRepo = (db: Database) => ({
       insert into accounts (name, password) values (
         ${name}, ${password}
       ) RETURNING *`;
-		console.log(data);
+		console.log('[db] created account', data);
 		const account = data[0];
 		const persona_response = await db.repos.persona.create(name, account.account_id);
 		if (!persona_response.ok) {

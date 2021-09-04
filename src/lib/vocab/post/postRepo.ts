@@ -14,7 +14,7 @@ export const postRepo = (db: Database) => ({
         ${actor_id},${space_id},${content}
       ) RETURNING *
     `;
-		console.log('[db] create post', data);
+		// console.log('[db] create post', data);
 		return {ok: true, value: data[0]};
 	},
 	filter_by_space: async (space_id: number): Promise<Result<{value: Post[]}>> => {

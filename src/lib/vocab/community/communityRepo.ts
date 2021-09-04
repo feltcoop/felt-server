@@ -51,17 +51,15 @@ export const communityRepo = (db: Database) => ({
         ${name}
       ) RETURNING *
     `;
-		console.log('[db] created community', data);
+		console.log('[db] created community', data, {persona_id});
 		const community = data[0];
 		const community_id = community.community_id;
-		console.log(community_id);
 		// TODO more robust error handling or condense into single query
-		const association = await db.sql<any>`
+		await db.sql<any>`
       INSERT INTO persona_communities (persona_id, community_id) VALUES (
       ${persona_id},${community_id}
       )
     `;
-		console.log('[db] created persona_communities', association);
 		const spaces_result = await db.repos.space.create_default_spaces(community_id);
 		if (!spaces_result.ok) return spaces_result;
 		community.spaces = spaces_result.value;

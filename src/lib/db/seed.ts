@@ -1,4 +1,6 @@
 import {unwrap} from '@feltcoop/felt';
+import {Logger} from '@feltcoop/felt/util/log.js';
+import {cyan} from '@feltcoop/felt/util/terminal.js';
 
 import type {Database} from '$lib/db/Database.js';
 import type {Account, AccountParams} from '$lib/vocab/account/account.js';
@@ -8,10 +10,12 @@ import type {Persona} from '$lib/vocab/persona/persona';
 
 // TODO extract seed helpers and db methods
 
+const log = new Logger([cyan('[seed]')]);
+
 export const seed = async (db: Database): Promise<void> => {
 	const {sql} = db;
 
-	console.log('[seed] adding initial dataset to database');
+	log.trace('adding initial dataset to database');
 
 	// example: create table
 	const create_accounts_table_result = await sql`
@@ -22,7 +26,7 @@ export const seed = async (db: Database): Promise<void> => {
 		)
 	`;
 	if (create_accounts_table_result.count) {
-		console.log('[seed] create_accounts_table_result', create_accounts_table_result);
+		log.trace('create_accounts_table_result', create_accounts_table_result);
 	}
 
 	const create_personas_table_result = await sql`
@@ -34,7 +38,7 @@ export const seed = async (db: Database): Promise<void> => {
 	`;
 
 	if (create_personas_table_result.count) {
-		console.log('[seed] create_personas_table_result', create_personas_table_result);
+		log.trace('create_personas_table_result', create_personas_table_result);
 	}
 
 	const create_communities_table_result = await sql`
@@ -45,7 +49,7 @@ export const seed = async (db: Database): Promise<void> => {
 	`;
 
 	if (create_communities_table_result.count) {
-		console.log('[seed] create_communities_table_result', create_communities_table_result);
+		log.trace('create_communities_table_result', create_communities_table_result);
 	}
 
 	const create_persona_communities_result = await sql`
@@ -57,7 +61,7 @@ export const seed = async (db: Database): Promise<void> => {
 	`;
 
 	if (create_persona_communities_result.count) {
-		console.log('[seed] create_persona_communities_result', create_persona_communities_result);
+		log.trace('create_persona_communities_result', create_persona_communities_result);
 	}
 
 	const create_spaces_table_result = await sql`
@@ -71,7 +75,7 @@ export const seed = async (db: Database): Promise<void> => {
 	`;
 
 	if (create_spaces_table_result.count) {
-		console.log('[seed] create_spaces_table_result', create_spaces_table_result);
+		log.trace('create_spaces_table_result', create_spaces_table_result);
 	}
 
 	const create_community_spaces_table_result = await sql`
@@ -83,10 +87,7 @@ export const seed = async (db: Database): Promise<void> => {
 	`;
 
 	if (create_community_spaces_table_result.count) {
-		console.log(
-			'[seed] create_community_spaces_table_result',
-			create_community_spaces_table_result,
-		);
+		log.trace('create_community_spaces_table_result', create_community_spaces_table_result);
 	}
 
 	const create_posts_table_result = await sql`
@@ -99,7 +100,7 @@ export const seed = async (db: Database): Promise<void> => {
 	`;
 
 	if (create_posts_table_result.count) {
-		console.log('[seed] create_posts_table_result', create_posts_table_result);
+		log.trace('create_posts_table_result', create_posts_table_result);
 	}
 
 	const account_docs = await sql<Account[]>`
@@ -121,11 +122,12 @@ export const seed = async (db: Database): Promise<void> => {
 	const personas: Persona[] = [];
 	for (const accountParams of accountsParams) {
 		const account = unwrap(await db.repos.account.create(accountParams)) as Account;
-		console.log('[seed] created account', account);
+		log.trace('created account', account);
 		for (const personaName of personasParams[account.name]) {
 			const persona = unwrap(
 				await db.repos.persona.create(personaName, account.account_id),
 			) as Persona; // TODO why typecast?
+			log.trace('created persona', persona);
 			personas.push(persona);
 		}
 	}
