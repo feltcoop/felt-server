@@ -2,6 +2,8 @@ import {typescript} from 'svelte-preprocess-esbuild';
 import node from '@sveltejs/adapter-node';
 import dotenv from 'dotenv';
 
+import {API_SERVER_HOST} from './src/lib/constants.js';
+
 dotenv.config();
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -17,7 +19,7 @@ export default {
 		vite: {
 			server: {
 				proxy: {
-					'/api': `http://${process.env.API_SERVER_HOST}`,
+					'/api': `http://${API_SERVER_HOST}`,
 				},
 			},
 			optimizeDeps: {

@@ -2,7 +2,7 @@ import send from '@polka/send-type';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Account} from '$lib/vocab/account/account.js';
-import {to_password_key, verify_password} from '$lib/util/password.js';
+import {to_password_key, verify_password} from '$lib/util/password';
 
 export interface LoginRequest {
 	account_name: string;
@@ -33,7 +33,7 @@ export const to_login_middleware = (server: ApiServer): Middleware => {
 		const password_key = await to_password_key(password);
 
 		// First see if the account already exists.
-		const find_account_result = await db.repos.accounts.find_by_name(account_name);
+		const find_account_result = await db.repos.account.find_by_name(account_name);
 		console.log('[login_middleware] find_account_result', find_account_result);
 		let account: Account;
 		if (find_account_result.ok) {
@@ -44,7 +44,7 @@ export const to_login_middleware = (server: ApiServer): Middleware => {
 			}
 		} else if (find_account_result.type === 'no_account_found') {
 			// There's no account, so create one.
-			const find_account_result = await db.repos.accounts.create({
+			const find_account_result = await db.repos.account.create({
 				name: account_name,
 				password: password_key,
 			});

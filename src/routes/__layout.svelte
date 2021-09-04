@@ -18,7 +18,7 @@
 	import {set_app} from '$lib/ui/app';
 	import {random_hue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
-	import {WEBSOCKET_URL} from '$lib/ui/env';
+	import {WEBSOCKET_URL} from '$lib/constants';
 
 	const devmode = setDevmode();
 	const data = set_data($session);
