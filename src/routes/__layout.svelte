@@ -6,7 +6,6 @@
 	import FeltWindowHost from '@feltcoop/felt/ui/FeltWindowHost.svelte';
 	import {onMount} from 'svelte';
 	import {session} from '$app/stores';
-	import {dev} from '$app/env';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {page} from '$app/stores';
 
@@ -19,6 +18,7 @@
 	import {set_app} from '$lib/ui/app';
 	import {random_hue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
+	import {WEBSOCKET_URL} from '$lib/constants';
 
 	const devmode = setDevmode();
 	const data = set_data($session);
@@ -52,8 +52,7 @@
 	};
 
 	onMount(() => {
-		const socket_url = dev ? `ws://localhost:3001/ws` : `wss://staging.felt.dev/ws`; // TODO env
-		socket.connect(socket_url);
+		socket.connect(WEBSOCKET_URL);
 		return () => {
 			socket.disconnect();
 		};

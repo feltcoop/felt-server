@@ -9,7 +9,7 @@ export const to_space_middleware = (server: ApiServer): Middleware => {
 	return async (req, res) => {
 		console.log('[space_middleware] space', req.params.space_id);
 
-		const find_space_result = await db.repos.spaces.find_by_id(req.params.space_id);
+		const find_space_result = await db.repos.space.find_by_id(req.params.space_id);
 		if (find_space_result.ok) {
 			return send(res, 200, {space: find_space_result.value}); // TODO API types
 		} else {
@@ -26,7 +26,7 @@ export const to_spaces_middleware = (server: ApiServer): Middleware => {
 	return async (req, res) => {
 		console.log('[space_middleware] retrieving spaces for community', req.params.community_id);
 
-		const find_spaces_result = await db.repos.spaces.filter_by_community(req.params.community_id);
+		const find_spaces_result = await db.repos.space.filter_by_community(req.params.community_id);
 		if (find_spaces_result.ok) {
 			return send(res, 200, {spaces: find_spaces_result.value}); // TODO API types
 		} else {
@@ -45,10 +45,7 @@ export const to_create_space_middleware = (server: ApiServer): Middleware => {
 
 		const space: SpaceParams = req.body;
 
-		const create_space_result = await db.repos.spaces.insert(
-			Number(req.params.community_id),
-			space,
-		);
+		const create_space_result = await db.repos.space.insert(Number(req.params.community_id), space);
 		if (create_space_result.ok) {
 			return send(res, 200, {space: create_space_result.value}); // TODO API types
 		} else {

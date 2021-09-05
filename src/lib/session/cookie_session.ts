@@ -5,6 +5,8 @@ import type {
 	CookieSessionObject as BaseCookieSessionObject,
 } from 'cookie-session';
 
+import {fromEnv} from '$lib/server/env';
+
 export interface CookieSessionRequest extends BaseCookieSessionRequest {
 	session: CookieSessionObject;
 }
@@ -19,12 +21,12 @@ export interface CookieSessionObject extends BaseCookieSessionObject {
 
 const dev = process.env.NODE_ENV !== 'production';
 
-const TODO_SERVER_COOKIE_KEYS = ['TODO', 'KEY_2_TODO', 'KEY_3_TODO']; // TODO env
+console.log(`fromEnv('COOKIE_KEYS').split('__')`, fromEnv('COOKIE_KEYS').split('__'));
 
 export const to_cookie_session_middleware = () =>
 	cookie_session({
 		name: 'session_id',
-		keys: TODO_SERVER_COOKIE_KEYS,
+		keys: fromEnv('COOKIE_KEYS').split('__'),
 		maxAge: 1000 * 60 * 60 * 24 * 7 * 6, // 6 weeks
 		secure: !dev, // this makes cookies break in prod unless https! see letsencrypt
 		sameSite: 'lax',

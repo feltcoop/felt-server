@@ -13,7 +13,7 @@ export const to_communities_middleware = (server: ApiServer): Middleware => {
 		}
 		console.log('[community_middleware] account', req.account_session); // TODO logging
 
-		const find_communities_result = await db.repos.communities.filter_by_account(
+		const find_communities_result = await db.repos.community.filter_by_account(
 			req.session.account_id!,
 		);
 		if (find_communities_result.ok) {
@@ -38,7 +38,7 @@ export const to_community_middleware = (server: ApiServer): Middleware => {
 		console.log('[community_middleware] account', req.account_session.account.account_id); // TODO logging
 		console.log('[community_middleware] community', req.params.community_id);
 
-		const find_community_result = await db.repos.communities.find_by_id(req.params.community_id);
+		const find_community_result = await db.repos.community.find_by_id(req.params.community_id);
 		if (find_community_result.ok) {
 			return send(res, 200, {community: find_community_result.value}); // TODO API types
 		} else {
@@ -60,7 +60,7 @@ export const to_create_community_middleware = (server: ApiServer): Middleware =>
 		}
 		console.log('[community_middleware] creating community', req.body);
 
-		const create_community_result = await db.repos.communities.insert(
+		const create_community_result = await db.repos.community.insert(
 			req.body.name,
 			req.account_session.account.account_id,
 		);
@@ -68,7 +68,7 @@ export const to_create_community_middleware = (server: ApiServer): Middleware =>
 		if (create_community_result.ok) {
 			// TODO optimize this to return `create_community_result.value` instead of making another db call,
 			// needs to populate members, but we probably want to normalize the data, returning only ids
-			const community_data = await db.repos.communities.filter_by_account(
+			const community_data = await db.repos.community.filter_by_account(
 				req.account_session.account.account_id,
 			);
 			if (community_data.ok) {
@@ -100,7 +100,7 @@ export const to_create_member_middleware = (server: ApiServer): Middleware => {
 		const member: MemberParams = req.body; // TODO move this type
 		console.log('[community_middleware] creating member', member);
 
-		const create_member_result = await db.repos.members.create(
+		const create_member_result = await db.repos.member.create(
 			member.persona_id,
 			member.community_id,
 		);

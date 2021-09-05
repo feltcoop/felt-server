@@ -286,7 +286,7 @@ export const seed = async (db: Database): Promise<void> => {
 		params: SpaceParams,
 	): Promise<void> => {
 		if (!space_docs.find((d) => d.space_id === space_id)) {
-			await db.repos.spaces.insert(community_id, params);
+			await db.repos.space.insert(community_id, params);
 		}
 	};
 

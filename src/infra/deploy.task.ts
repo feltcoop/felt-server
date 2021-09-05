@@ -2,6 +2,10 @@ import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
 import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
 
+import {DEPLOY_IP, DEPLOY_USER} from '$lib/constants';
+
+const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
+
 export const task: Task = {
 	summary: 'deploy felt server to prod',
 	dev: false,
@@ -20,12 +24,11 @@ export const task: Task = {
 		]);
 		//scp to server
 		//your ssh key will need to be added to linode account
-		//TODO env -- extract IP to env var
 		//TODO create server account for running system
-		await spawn('scp', [`${artifact_name}.tar`, `root@96.126.116.174:${artifact_name}.tar`]);
+		await spawn('scp', [`${artifact_name}.tar`, `${deployLogin}:${artifact_name}.tar`]);
 		//unpack & start server
 		await spawn('ssh', [
-			'root@96.126.116.174', // TODO env
+			deployLogin,
 			`mkdir deploy_${artifact_name};
 			mv ${artifact_name}.tar deploy_${artifact_name}/;
 			cd deploy_${artifact_name};
