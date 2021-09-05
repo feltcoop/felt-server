@@ -10,7 +10,7 @@ import type {Community, CommunityModel, CommunityParams} from '$lib/vocab/commun
 import {to_community_model} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Member, MemberParams} from '$lib/vocab/member/member';
-import type {Post} from '$lib/vocab/post/post';
+import type {File} from '$lib/vocab/file/file';
 import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/login_middleware.js';
 import type {AccountSession} from '$lib/session/client_session';
@@ -53,12 +53,12 @@ export interface ApiStore {
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
 		persona_id: number,
 	) => Promise<Result<{value: {member: Member}}, {reason: string}>>;
-	create_post: (
+	create_file: (
 		space: Space,
 		content: string,
 		selected_persona_id: number,
-	) => Promise<Result<{value: {post: Post}}, {reason: string}>>;
-	load_posts: (space_id: number) => Promise<Result<{value: {post: Post[]}}, {reason: string}>>;
+	) => Promise<Result<{value: {file: File}}, {reason: string}>>;
+	load_files: (space_id: number) => Promise<Result<{value: {file: File[]}}, {reason: string}>>;
 }
 
 export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore): ApiStore => {
@@ -220,8 +220,8 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				throw Error(`error: ${res.status}: ${res.statusText}`);
 			}
 		},
-		create_post: async (space, content, persona_id) => {
-			const res = await fetch(`/api/v1/spaces/${space.space_id}/posts`, {
+		create_file: async (space, content, persona_id) => {
+			const res = await fetch(`/api/v1/spaces/${space.space_id}/files`, {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify({
@@ -231,7 +231,7 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 			});
 			if (res.ok) {
 				try {
-					console.log('post sent, broadcasting to server');
+					console.log('file sent, broadcasting to server');
 					const json = await res.json();
 					socket.send(json); // TODO refactor
 					return {ok: true, value: json};
@@ -239,22 +239,22 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 					return {ok: false, reason: err.message};
 				}
 			} else {
-				throw Error(`error sending post: ${res.status}: ${res.statusText}`);
+				throw Error(`error sending file: ${res.status}: ${res.statusText}`);
 			}
 		},
-		load_posts: async (space_id) => {
-			data.set_posts(space_id, []);
-			const res = await fetch(`/api/v1/spaces/${space_id}/posts`);
+		load_files: async (space_id) => {
+			data.set_files(space_id, []);
+			const res = await fetch(`/api/v1/spaces/${space_id}/files`);
 			if (res.ok) {
 				try {
 					const json = await res.json();
-					data.set_posts(space_id, json.posts);
+					data.set_files(space_id, json.files);
 					return {ok: true, value: json};
 				} catch (err) {
 					return {ok: false, reason: err.message};
 				}
 			} else {
-				throw Error(`error loading posts: ${res.status}: ${res.statusText}`);
+				throw Error(`error loading files: ${res.status}: ${res.statusText}`);
 			}
 		},
 	};

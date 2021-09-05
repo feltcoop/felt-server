@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type {Post} from '$lib/vocab/post/post.js';
+	import type {File} from '$lib/vocab/file/file.js';
 	import type {Member} from '$lib/vocab/member/member.js';
 	import ChatItem from '$lib/ui/ChatItem.svelte';
 
-	export let posts: Post[];
+	export let files: File[];
 	export let members_by_id: Map<number, Member>;
 
 	// TODO refactor
@@ -16,7 +16,7 @@
 
 <!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->
 <ul>
-	{#each posts as post (post.post_id)}
-		<ChatItem {post} member={to_member(post.actor_id)} />
+	{#each files as file (file.file_id)}
+		<ChatItem {file} member={to_member(file.actor_id)} />
 	{/each}
 </ul>

@@ -6,35 +6,36 @@
 	import ForumItems from '$lib/ui/ForumItems.svelte';
 	import {get_app} from '$lib/ui/app';
 
-	const {api, data} = get_app();
+	const {api, ui, data} = get_app();
 
 	export let space: Space;
 	export let members_by_id: Map<number, Member>;
 
 	let text = '';
 
-	$: browser && api.load_posts(space.space_id);
-	$: console.log(`[Forum] fetching posts for ${space.space_id}`);
+	$: browser && api.load_files(space.space_id);
+	$: console.log(`[Forum] fetching files for ${space.space_id}`);
+	$: selected_persona_id = $ui.selected_persona_id;
 
-	const create_post = async () => {
+	const create_file = async () => {
 		if (!text) return;
-		await api.create_post(space, text);
+		await api.create_file(space, text, selected_persona_id!);
 		text = '';
 	};
 
 	const on_keydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await create_post();
+			await create_file();
 		}
 	};
 
-	$: posts = $data.posts_by_space[space.space_id] || [];
+	$: files = $data.files_by_space[space.space_id] || [];
 </script>
 
 <div class="forum">
 	<textarea placeholder="> new topic" on:keydown={on_keydown} bind:value={text} />
-	<div class="posts">
-		<ForumItems {posts} {members_by_id} />
+	<div class="files">
+		<ForumItems {files} {members_by_id} />
 	</div>
 </div>
 
@@ -45,7 +46,7 @@
 		flex: 1;
 		overflow: hidden; /* make the content scroll */
 	}
-	.posts {
+	.files {
 		max-width: var(--column_width);
 		overflow: auto;
 		flex: 1;

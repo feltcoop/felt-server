@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type {Post} from '$lib/vocab/post/post.js';
+	import type {File} from '$lib/vocab/file/file.js';
 	import type {Member} from '$lib/vocab/member/member.js';
 	import ForumItem from '$lib/ui/ForumItem.svelte';
 
 	// TODO this should possibly be a generic component instead of this named one
 
-	export let posts: Post[];
+	export let files: File[];
 	export let members_by_id: Map<number, Member>;
 
 	// TODO refactor
@@ -18,7 +18,7 @@
 
 <!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->
 <ul>
-	{#each posts as post (post.post_id)}
-		<ForumItem {post} member={to_member(post.actor_id)} />
+	{#each files as file (file.file_id)}
+		<ForumItem {file} member={to_member(file.actor_id)} />
 	{/each}
 </ul>

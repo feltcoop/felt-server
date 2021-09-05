@@ -9,7 +9,7 @@ import type {Member} from '$lib/vocab/member/member';
 import type {Space} from '$lib/vocab/space/space';
 import type {AccountModel} from '$lib/vocab/account/account';
 import type {Persona} from '$lib/vocab/persona/persona';
-import type {Post} from '$lib/vocab/post/post';
+import type {File} from '$lib/vocab/file/file';
 
 // TODO refactor/rethink
 
@@ -31,7 +31,7 @@ export interface DataState {
 	spaces: Space[];
 	members: Member[];
 	personas: Persona[];
-	posts_by_space: Record<number, Post[]>;
+	files_by_space: Record<number, File[]>;
 }
 
 export interface DataStore {
@@ -40,8 +40,8 @@ export interface DataStore {
 	add_community: (community: CommunityModel) => void;
 	add_space: (space: Space, community_id: number) => void;
 	add_member: (member: Member) => void;
-	add_post: (post: Post) => void;
-	set_posts: (space_id: number, posts: Post[]) => void;
+	add_file: (file: File) => void;
+	set_files: (space_id: number, files: File[]) => void;
 }
 
 // TODO probably don't want to pass `initial_session` because it'll never be GC'd
@@ -79,23 +79,23 @@ export const to_data_store = (initial_session: ClientSession): DataStore => {
 			console.log('[data.add_member]', member);
 			update(($data) => ({...$data, members: $data.members.concat(member)}));
 		},
-		add_post: (post) => {
-			console.log('[data.add_post]', post);
+		add_file: (file) => {
+			console.log('[data.add_file]', file);
 			update(($data) => ({
 				...$data,
-				posts_by_space: {
-					...$data.posts_by_space,
-					[post.space_id]: ($data.posts_by_space[post.space_id] || []).concat(post),
+				files_by_space: {
+					...$data.files_by_space,
+					[file.space_id]: ($data.files_by_space[file.space_id] || []).concat(file),
 				},
 			}));
 		},
-		set_posts: (space_id, posts) => {
-			console.log('[data.set_posts]', posts);
+		set_files: (space_id, files) => {
+			console.log('[data.set_files]', files);
 			update(($data) => ({
 				...$data,
-				posts_by_space: {
-					...$data.posts_by_space,
-					[space_id]: posts,
+				files_by_space: {
+					...$data.files_by_space,
+					[space_id]: files,
 				},
 			}));
 		},
@@ -114,7 +114,7 @@ const to_default_data = (session: ClientSession): DataState => {
 			spaces: session.communities.flatMap((community) => community.spaces),
 			members: session.members,
 			personas: session.personas,
-			posts_by_space: {},
+			files_by_space: {},
 		};
 	}
 };

@@ -5,34 +5,35 @@
 	import NoteItems from '$lib/ui/NotesItems.svelte';
 	import {get_app} from '$lib/ui/app';
 
-	const {api, data} = get_app();
+	const {api, ui, data} = get_app();
 
 	export let space: Space;
 
 	let text = '';
 
-	$: browser && api.load_posts(space.space_id);
-	$: console.log(`[Notes] fetching posts for ${space.space_id}`);
+	$: browser && api.load_files(space.space_id);
+	$: console.log(`[Notes] fetching files for ${space.space_id}`);
+	$: selected_persona_id = $ui.selected_persona_id;
 
-	const create_post = async () => {
+	const create_file = async () => {
 		if (!text) return;
-		await api.create_post(space, text);
+		await api.create_file(space, text, selected_persona_id!);
 		text = '';
 	};
 
 	const on_keydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await create_post();
+			await create_file();
 		}
 	};
 
-	$: posts = $data.posts_by_space[space.space_id] || [];
+	$: files = $data.files_by_space[space.space_id] || [];
 </script>
 
 <div class="notes">
 	<textarea type="text" placeholder="> note" on:keydown={on_keydown} bind:value={text} />
-	<div class="posts">
-		<NoteItems {posts} />
+	<div class="files">
+		<NoteItems {files} />
 	</div>
 </div>
 
@@ -49,7 +50,7 @@
 		border-top: none;
 		border-radius: 0;
 	}
-	.posts {
+	.files {
 		flex: 1;
 		display: flex;
 		flex-direction: column;

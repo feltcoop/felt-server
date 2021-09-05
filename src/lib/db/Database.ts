@@ -5,7 +5,7 @@ import {personaRepo} from '$lib/vocab/persona/personaRepo';
 import {memberRepo} from '$lib/vocab/member/memberRepo';
 import {communityRepo} from '$lib/vocab/community/communityRepo';
 import {spaceRepo} from '$lib/vocab/space/spaceRepo';
-import {postRepo} from '$lib/vocab/post/postRepo';
+import {fileRepo} from '$lib/vocab/file/fileRepo';
 
 export interface Options {
 	sql: PostgresSql;
@@ -34,6 +34,6 @@ export class Database {
 		member: memberRepo(this),
 		community: communityRepo(this),
 		space: spaceRepo(this),
-		post: postRepo(this),
+		file: fileRepo(this),
 	};
 }

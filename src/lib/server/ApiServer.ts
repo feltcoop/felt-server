@@ -15,7 +15,7 @@ import {
 	to_create_community_middleware,
 	to_create_member_middleware,
 } from '$lib/vocab/community/community_middleware.js';
-import {to_posts_middleware, to_create_post_middleware} from '$lib/vocab/post/post_middleware.js';
+import {to_files_middleware, to_create_file_middleware} from '$lib/vocab/file/fileMiddleware.js';
 import {
 	to_space_middleware,
 	to_spaces_middleware,
@@ -97,8 +97,8 @@ export class ApiServer {
 			.post('/api/v1/communities/:community_id/spaces', to_create_space_middleware(this))
 			.get('/api/v1/communities/:community_id/spaces', to_spaces_middleware(this))
 			.get('/api/v1/spaces/:space_id', to_space_middleware(this))
-			.post('/api/v1/spaces/:space_id/posts', to_create_post_middleware(this))
-			.get('/api/v1/spaces/:space_id/posts', to_posts_middleware(this))
+			.post('/api/v1/spaces/:space_id/files', to_create_file_middleware(this))
+			.get('/api/v1/spaces/:space_id/files', to_files_middleware(this))
 			.post('/api/v1/members', to_create_member_middleware(this));
 
 		// TODO gro filer middleware (and needs to go after auth)

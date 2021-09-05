@@ -90,17 +90,17 @@ export const seed = async (db: Database): Promise<void> => {
 		log.trace('create_community_spaces_table_result', create_community_spaces_table_result);
 	}
 
-	const create_posts_table_result = await sql`
-		create table if not exists posts (
-			post_id serial primary key,
+	const create_files_table_result = await sql`
+		create table if not exists files (
+			file_id serial primary key,
 			content text,
 			actor_id int,
 			space_id int references spaces (space_id) ON UPDATE CASCADE ON DELETE CASCADE
 		)	
 	`;
 
-	if (create_posts_table_result.count) {
-		log.trace('create_posts_table_result', create_posts_table_result);
+	if (create_files_table_result.count) {
+		log.trace('create_files_table_result', create_files_table_result);
 	}
 
 	const account_docs = await sql<Account[]>`
@@ -132,7 +132,7 @@ export const seed = async (db: Database): Promise<void> => {
 			const spaces = unwrap(
 				await db.repos.space.create_default_spaces(community.community_id),
 			) as Space[]; // TODO why cast?
-			await create_default_posts(db, spaces, [persona]);
+			await create_default_files(db, spaces, [persona]);
 		}
 	}
 
@@ -157,12 +157,12 @@ export const seed = async (db: Database): Promise<void> => {
 		const spaces = unwrap(
 			await db.repos.space.create_default_spaces(community.community_id),
 		) as Space[]; // TODO why cast?
-		await create_default_posts(db, spaces, personas);
+		await create_default_files(db, spaces, personas);
 	}
 };
 
-const create_default_posts = async (db: Database, spaces: Space[], personas: Persona[]) => {
-	const postsContents: {[key: string]: string[]} = {
+const create_default_files = async (db: Database, spaces: Space[], personas: Persona[]) => {
+	const filesContents: {[key: string]: string[]} = {
 		Chat: ['Those who know do not speak.', 'Those who speak do not know.'],
 		Board: ["All the world's a stage.", 'And all the men and women merely players.'],
 		Forum: [
@@ -181,12 +181,12 @@ const create_default_posts = async (db: Database, spaces: Space[], personas: Per
 
 	for (const space of spaces) {
 		const spaceContent = JSON.parse(space.content);
-		if (!(spaceContent.type in postsContents)) {
+		if (!(spaceContent.type in filesContents)) {
 			continue;
 		}
-		const postContents = postsContents[spaceContent.type];
-		for (const postContent of postContents) {
-			await db.repos.post.create(nextPersona().persona_id, space.space_id, postContent);
+		const fileContents = filesContents[spaceContent.type];
+		for (const fileContent of fileContents) {
+			await db.repos.file.create(nextPersona().persona_id, space.space_id, fileContent);
 		}
 	}
 };

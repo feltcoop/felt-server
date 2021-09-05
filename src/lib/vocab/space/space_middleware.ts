@@ -41,7 +41,7 @@ export const to_create_space_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
 		console.log('[space_middleware] creating space for community', req.params.community_id);
-		console.log('[post_middleware] body', req.body);
+		console.log('[space_middleware] body', req.body);
 
 		const space: SpaceParams = req.body;
 
