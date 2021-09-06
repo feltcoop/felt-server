@@ -87,7 +87,7 @@ export class ApiServer {
 			.post('/api/v1/login', to_login_middleware(this))
 			// TODO we want to support unauthenticated routes so users can publish public content,
 			// but for now it's simple and secure to just require an authenticated account for everything
-			.use('/api/*', to_authorization_middleware(this))
+			.use('/api', to_authorization_middleware(this))
 			.post('/api/v1/logout', to_logout_middleware(this))
 			.get('/api/v1/communities', to_communities_middleware(this))
 			.post('/api/v1/communities', to_create_community_middleware(this))
