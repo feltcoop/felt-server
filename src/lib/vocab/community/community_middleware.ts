@@ -6,13 +6,6 @@ import type {MemberParams} from '$lib/vocab/member/member';
 export const to_communities_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
-		if (!req.account_session) {
-			// TODO centralize error message strings
-			console.log('[community_middleware] no account to search for communities');
-			return send(res, 401, {reason: 'not logged in'});
-		}
-		console.log('[community_middleware] account', req.account_session); // TODO logging
-
 		const find_communities_result = await db.repos.community.filter_by_account(
 			req.session.account_id!,
 		);
@@ -29,13 +22,7 @@ export const to_communities_middleware = (server: ApiServer): Middleware => {
 export const to_community_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
-		if (!req.account_session) {
-			// TODO centralize error message strings
-			console.log('[community_middleware] no account to search for communities');
-			return send(res, 401, {reason: 'not logged in'});
-		}
-
-		console.log('[community_middleware] account', req.account_session.account.account_id); // TODO logging
+		console.log('[community_middleware] account', req.account_session!.account.account_id); // TODO logging
 		console.log('[community_middleware] community', req.params.community_id);
 
 		const find_community_result = await db.repos.community.find_by_id(req.params.community_id);
@@ -53,23 +40,20 @@ export const to_community_middleware = (server: ApiServer): Middleware => {
 export const to_create_community_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
-		if (!req.account_session) {
-			// TODO centralize error message strings
-			console.log('[community_middleware] no account to search for communities');
-			return send(res, 401, {reason: 'not logged in'});
+		const {name} = req.body;
+		if (!name) {
+			return send(res, 400, {reason: 'invalid name'}); // TODO declarative validation
 		}
-		console.log('[community_middleware] creating community', req.body);
-
 		const create_community_result = await db.repos.community.insert(
-			req.body.name,
-			req.account_session.account.account_id,
+			name,
+			req.account_session!.account.account_id,
 		);
 		console.log('create_community_result', create_community_result);
 		if (create_community_result.ok) {
 			// TODO optimize this to return `create_community_result.value` instead of making another db call,
 			// needs to populate members, but we probably want to normalize the data, returning only ids
 			const community_data = await db.repos.community.filter_by_account(
-				req.account_session.account.account_id,
+				req.account_session!.account.account_id,
 			);
 			if (community_data.ok) {
 				const {community_id} = create_community_result.value;
@@ -91,12 +75,6 @@ export const to_create_community_middleware = (server: ApiServer): Middleware =>
 export const to_create_member_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
-		if (!req.account_session) {
-			// TODO centralize error message strings
-			console.log('[community_middleware] no account to search for communities');
-			return send(res, 401, {reason: 'not logged in'});
-		}
-
 		const member: MemberParams = req.body; // TODO move this type
 		console.log('[community_middleware] creating member', member);
 
