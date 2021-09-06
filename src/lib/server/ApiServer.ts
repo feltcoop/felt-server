@@ -77,8 +77,14 @@ export class ApiServer {
 		this.app
 			.use(body_parser.json()) // TODO is deprecated, but doesn't let us `import {json}`
 			.use((req, _res, next) => {
-				// TODO proper logger
-				log.trace('req', {url: req.url, query: req.query, params: req.params, body: req.body});
+				// TODO proper logger, also don't log sensitive info in prod
+				log.trace('req', {
+					method: req.method,
+					url: req.url,
+					query: req.query,
+					params: req.params,
+					body: req.body,
+				});
 				next();
 			})
 			.use(to_cookie_session_middleware())
