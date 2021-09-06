@@ -13,6 +13,7 @@ export const to_authentication_middleware = (server: ApiServer): Middleware => {
 		}
 
 		console.log('[authentication_middleware]', req.session.account_id); // TODO logging
+		// TODO this is overfetching
 		const find_session_result = await server.db.repos.session.load_client_session(
 			req.session.account_id,
 		);
