@@ -2,6 +2,7 @@ import send from '@polka/send-type';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {MemberParams} from '$lib/vocab/member/member';
+import type {Service} from '$lib/server/service';
 
 export const to_communities_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
@@ -36,12 +37,14 @@ export const to_community_middleware = (server: ApiServer): Middleware => {
 };
 
 //Creates a new community for an instance
-export const to_create_community_middleware = (server: ApiServer): Middleware => {
-	const {db} = server;
-	return async (req, res) => {
+export const create_community_service: Service = {
+	// TODO declarative validation for `req.body` and the rest
+	handle: async (server, req) => {
+		const {db} = server;
 		const {name} = req.body;
 		if (!name) {
-			return send(res, 400, {reason: 'invalid name'}); // TODO declarative validation
+			// TODO declarative validation
+			return {code: 400, data: {reason: 'invalid name'}};
 		}
 		const create_community_result = await db.repos.community.insert(
 			name,
@@ -56,18 +59,21 @@ export const to_create_community_middleware = (server: ApiServer): Middleware =>
 			);
 			if (community_data.ok) {
 				const {community_id} = create_community_result.value;
-				return send(res, 200, {
-					community: community_data.value.find((c) => c.community_id === community_id),
-				}); // TODO API types
+				return {
+					code: 200,
+					data: {
+						community: community_data.value.find((c) => c.community_id === community_id),
+					},
+				}; // TODO API types
 			} else {
 				console.log('[community_middleware] error retrieving community data');
-				return send(res, 500, {reason: 'error retrieving community data'});
+				return {code: 500, data: {reason: 'error retrieving community data'}};
 			}
 		} else {
 			console.log('[community_middleware] error creating community');
-			return send(res, 500, {reason: 'error creating community'});
+			return {code: 500, data: {reason: 'error creating community'}};
 		}
-	};
+	},
 };
 
 //Creates a new member relation for a community

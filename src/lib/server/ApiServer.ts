@@ -12,8 +12,8 @@ import {to_logout_middleware} from '$lib/session/logout_middleware.js';
 import {
 	to_community_middleware,
 	to_communities_middleware,
-	to_create_community_middleware,
 	to_create_member_middleware,
+	create_community_service,
 } from '$lib/vocab/community/community_middleware.js';
 import {to_files_middleware, to_create_file_middleware} from '$lib/vocab/file/fileMiddleware.js';
 import {
@@ -26,6 +26,7 @@ import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import {to_cookie_session_middleware} from '$lib/session/cookie_session';
 import type {CookieSessionRequest} from '$lib/session/cookie_session';
+import {to_service_middleware} from '$lib/server/service_middleware';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -96,7 +97,7 @@ export class ApiServer {
 			.use('/api', to_authorization_middleware(this))
 			.post('/api/v1/logout', to_logout_middleware(this))
 			.get('/api/v1/communities', to_communities_middleware(this))
-			.post('/api/v1/communities', to_create_community_middleware(this))
+			.post('/api/v1/communities', to_service_middleware(this, create_community_service))
 			.get('/api/v1/communities/:community_id', to_community_middleware(this))
 			.post('/api/v1/communities/:community_id/spaces', to_create_space_middleware(this))
 			.get('/api/v1/communities/:community_id/spaces', to_spaces_middleware(this))
