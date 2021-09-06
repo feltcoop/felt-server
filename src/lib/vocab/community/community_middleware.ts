@@ -29,7 +29,6 @@ export const to_community_middleware = (server: ApiServer): Middleware => {
 		if (find_community_result.ok) {
 			return send(res, 200, {community: find_community_result.value}); // TODO API types
 		} else {
-			console.log('no community found');
 			const code = find_community_result.type === 'no_community_found' ? 404 : 500;
 			return send(res, code, {reason: find_community_result.reason});
 		}

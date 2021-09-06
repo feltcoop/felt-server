@@ -99,8 +99,6 @@ export class ApiServer {
 			.get('/api/v1/spaces/:space_id/files', to_files_middleware(this))
 			.post('/api/v1/members', to_create_member_middleware(this));
 
-		// TODO gro filer middleware (and needs to go after auth)
-
 		// SvelteKit Node adapter, adapted to our production API server
 		// TODO needs a lot of work, especially for production
 		const instance = await this.load_instance();
