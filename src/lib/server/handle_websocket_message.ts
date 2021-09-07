@@ -24,33 +24,33 @@ export const to_handle_websocket_message =
 			return;
 		}
 
-		let parsed_message: any; // TODO type
+		let message: any; // TODO type
 		try {
-			parsed_message = JSON.parse(raw_message);
+			message = JSON.parse(raw_message);
 		} catch (err) {
 			console.error('[handle_websocket_message] failed to parse message', err);
 			return;
 		}
-		console.log('[handle_websocket_message]', parsed_message);
-		if (!(parsed_message as any)?.type) {
+		console.log('[handle_websocket_message]', message);
+		if (!(message as any)?.type) {
 			// TODO proper validation
-			console.error('[handle_websocket_message] invalid message', parsed_message);
+			console.error('[handle_websocket_message] invalid message', message);
 			return;
 		}
-		const handler = service_handlers[parsed_message.type];
+		const handler = service_handlers[message.type];
 		if (!handler) {
-			console.error('[handle_websocket_message] unhandled message type', parsed_message.type);
+			console.error('[handle_websocket_message] unhandled message type', message.type);
 			return;
 		}
 
 		// TODO types are off, should the `WebsocketServer` know about `ApiServer`
 		// or should this handler stuff be extracted?
-		const response = await handler.handle(server, parsed_message.params, account_id);
+		const response = await handler.handle(server, message.params, account_id);
 
-		// TODO extremely hacky
+		// TODO what should the API for returning/broadcasting responses be?
 		const serialized_response = JSON.stringify({
 			type: 'handler_response',
-			message_type: parsed_message.type,
+			message_type: message.type,
 			response,
 		});
 		for (const client of websocket_server.wss.clients) {

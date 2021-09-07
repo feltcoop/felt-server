@@ -19,11 +19,12 @@
 	import {random_hue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {WEBSOCKET_URL} from '$lib/constants';
+	import {toHandleSocketMessage} from '$lib/ui/handleSocketMessage';
 
 	const devmode = setDevmode();
 	const data = set_data($session);
 	$: data.update_session($session);
-	const socket = set_socket(to_socket_store(data));
+	const socket = set_socket(to_socket_store(toHandleSocketMessage(data)));
 	const ui = set_ui();
 	$: ui.update_data($data); // TODO this or make it an arg to the ui store?
 	const api = set_api(to_api_store(ui, data, socket));

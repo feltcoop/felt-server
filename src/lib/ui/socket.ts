@@ -3,8 +3,6 @@ import {writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
-import type {DataStore} from '$lib/ui/data';
-
 const KEY = Symbol();
 
 export const get_socket = (): SocketStore => getContext(KEY);
@@ -35,7 +33,11 @@ export interface SocketStore {
 	send: (data: object) => void;
 }
 
-export const to_socket_store = (data: DataStore) => {
+export interface HandleSocketMessage {
+	(raw_message: any): void;
+}
+
+export const to_socket_store = (handle_message: HandleSocketMessage) => {
 	const {subscribe, update} = writable<SocketState>(to_default_socket_state(), () => {
 		console.log('[socket] listen store');
 		return () => {
@@ -59,29 +61,8 @@ export const to_socket_store = (data: DataStore) => {
 			update(($socket) => ({...$socket, status: 'initial', connected: false, ws: null, url: null}));
 		};
 		ws.onmessage = (e) => {
-			console.log('[socket] on message!');
-			let message: any; // TODO types
-			try {
-				message = JSON.parse(e.data);
-			} catch (err) {
-				console.error('bad payload', e, err);
-				return;
-			}
-			console.log('[socket] message', message);
-			// TODO hack
-			if (message.type === 'handler_response') {
-				if (message.message_type === 'create_file') {
-					if (message.response.code === 200) {
-						data.add_file(message.response.data.file);
-					} else {
-						console.error('unknown response code', message.response.code);
-					}
-				} else {
-					console.error('unknown message_type', message.message_type);
-				}
-			} else {
-				console.warn('TODO unhandled message', message);
-			}
+			// console.log('[socket] on message');
+			handle_message(e.data);
 		};
 		ws.onerror = (e) => {
 			console.log('[socket] error', e);
