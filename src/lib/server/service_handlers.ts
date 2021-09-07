@@ -1,9 +1,25 @@
 import type {Service} from '$lib/server/service';
-import {create_community_service} from '$lib/vocab/community/community_middleware';
-import {create_file_service} from '$lib/vocab/file/fileMiddleware';
+import {
+	readCommunityService,
+	readCommunitiesService,
+	createCommunityService,
+	createMemberService,
+} from '$lib/vocab/community/communityServices';
+import {readFilesService, createFileService} from '$lib/vocab/file/fileServices';
+import {
+	readSpaceService,
+	readSpacesService,
+	createSpaceService,
+} from '$lib/vocab/space/spaceServices';
 
-// TODO maybe extract this to decouple from the logic below?
 export const service_handlers: {[key: string]: Service} = {
-	create_community: create_community_service,
-	create_file: create_file_service,
+	read_community: readCommunityService,
+	read_communities: readCommunitiesService,
+	create_community: createCommunityService,
+	create_member: createMemberService,
+	read_files: readFilesService,
+	create_file: createFileService,
+	read_space: readSpaceService,
+	read_spaces: readSpacesService,
+	create_space: createSpaceService,
 };

@@ -1,7 +1,7 @@
 import type {Database} from '$lib/db/Database.js';
 import type {Account, AccountParams} from '$lib/vocab/account/account.js';
 import type {Space, SpaceParams} from '$lib/vocab/space/space.js';
-import type {File} from '$lib/vocab/file/file.js';
+import type {File, FileParams} from '$lib/vocab/file/file.js';
 import type {
 	PersonaCommunity,
 	PersonaCommunityParams,
@@ -335,7 +335,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const file1 = file_docs.find((d) => d.file_id === 1);
 	if (!file1) {
-		const file1: File = {
+		const file1: FileParams = {
 			content: 'Those who know do not speak.',
 			actor_id: 1,
 			space_id: 1,
@@ -348,7 +348,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const file2 = file_docs.find((d) => d.file_id === 2);
 	if (!file2) {
-		const file2: File = {
+		const file2: FileParams = {
 			content: 'Those who speak do not know.',
 			actor_id: 3,
 			space_id: 1,
@@ -361,7 +361,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const file3 = file_docs.find((d) => d.file_id === 3);
 	if (!file3) {
-		const file3: File = {
+		const file3: FileParams = {
 			content: "All the world's a stage.",
 			actor_id: 3,
 			space_id: 2,
@@ -374,7 +374,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const file4 = file_docs.find((d) => d.file_id === 4);
 	if (!file4) {
-		const file4: File = {
+		const file4: FileParams = {
 			content: 'And all the men and women merely players.',
 			actor_id: 1,
 			space_id: 2,
@@ -387,7 +387,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const file5 = file_docs.find((d) => d.file_id === 5);
 	if (!file5) {
-		const file5: File = {
+		const file5: FileParams = {
 			content: 'If the evidence says you’re wrong, you don’t have the right theory.',
 			actor_id: 1,
 			space_id: 3,
@@ -400,7 +400,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	const file6 = file_docs.find((d) => d.file_id === 6);
 	if (!file6) {
-		const file6: File = {
+		const file6: FileParams = {
 			content: 'You change the theory, not the evidence.',
 			actor_id: 3,
 			space_id: 3,
