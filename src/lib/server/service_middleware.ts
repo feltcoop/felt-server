@@ -9,7 +9,8 @@ export const to_service_middleware = (server: ApiServer, service: Service): Midd
 		// TODO validate input/output via properties on each `Service`
 		try {
 			const params: ServiceParams = {...req.body, ...req.params};
-			const result = await service.handle(server, params, req.account_session!.account);
+			if (!req.account_id) throw Error('TODO unauthorized -- fix type or perform check');
+			const result = await service.handle(server, params, req.account_id);
 			console.log('[service_middleware] result.code', result.code);
 			send(res, result.code, result.data);
 		} catch (err) {

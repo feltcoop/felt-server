@@ -6,15 +6,21 @@ import {ApiServer} from '$lib/server/ApiServer.js';
 import {Database} from '$lib/db/Database.js';
 import {default_postgres_options} from '$lib/db/postgres.js';
 import {WebsocketServer} from '$lib/server/WebsocketServer.js';
+import {to_handle_websocket_message} from '$lib/server/handle_websocket_message';
+import {service_handlers} from '$lib/server/service_handlers';
 
 const server = create_http_server();
 
-//TODO I think we still need to pass an https server in prod
+const handle_websocket_message = to_handle_websocket_message(service_handlers);
 
-export const api_server = new ApiServer({
+// TODO this explicit type declaration is needed because of the awkward
+// `handle_websocket_message` API, there's some circularity in deps to maybe refactor
+export const api_server: ApiServer = new ApiServer({
 	server,
 	app: polka({server}),
-	websocket_server: new WebsocketServer(server), // TODO probably pass `{server}` when fixing socket auth
+	websocket_server: new WebsocketServer(server, (websocket_server, socket, message, account_id) =>
+		handle_websocket_message(api_server, websocket_server, socket, message, account_id),
+	),
 	db: new Database({sql: postgres(default_postgres_options)}),
 	load_instance: async () => {
 		try {

@@ -1,5 +1,4 @@
 import type {ApiServer} from '$lib/server/ApiServer.js';
-import type {AccountModel} from '$lib/vocab/account/account';
 import type {Json} from '@feltcoop/felt/util/json.js';
 
 // A `Service` can be reused across both http and websocket handlers.
@@ -11,7 +10,7 @@ export interface Service<TParams extends ServiceParams = ServiceParams> {
 		// TODO to support websockets we probably need to forward only the params/query/etc (headers?),
 		// maybe combined into a single object for reusability in routeless websocket events
 		params: TParams,
-		account: AccountModel,
+		account_id: number,
 	): Promise<ServiceResponse>;
 }
 

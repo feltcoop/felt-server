@@ -1,5 +1,4 @@
 import type {AsyncStatus} from '@feltcoop/felt';
-import type {Json} from '@feltcoop/felt/util/json.js';
 import {writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
@@ -33,7 +32,7 @@ export interface SocketStore {
 	subscribe: Readable<SocketState>['subscribe'];
 	disconnect: (code?: number) => void;
 	connect: (url: string) => void;
-	send: (data: Json) => void;
+	send: (data: object) => void;
 }
 
 export const to_socket_store = (data: DataStore) => {
@@ -69,8 +68,17 @@ export const to_socket_store = (data: DataStore) => {
 				return;
 			}
 			console.log('[socket] message', message);
-			if (message.file) {
-				data.add_file(message.file);
+			// TODO hack
+			if (message.type === 'handler_response') {
+				if (message.message_type === 'create_file') {
+					if (message.response.code === 200) {
+						data.add_file(message.response.data.file);
+					} else {
+						console.error('unknown response code', message.response.code);
+					}
+				} else {
+					console.error('unknown message_type', message.message_type);
+				}
 			} else {
 				console.warn('TODO unhandled message', message);
 			}

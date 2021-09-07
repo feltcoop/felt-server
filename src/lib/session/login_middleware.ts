@@ -18,16 +18,8 @@ export const to_login_middleware = (server: ApiServer): Middleware => {
 		// TODO formalize and automate validation and normalization
 		if (!account_name) return send(res, 400, {reason: 'invalid account_name'});
 		if (!password) return send(res, 400, {reason: 'invalid password'});
-		if (req.account_session) {
-			if (req.account_session.account.name === account_name) {
-				return send(res, 400, {reason: 'already logged in'});
-			} else {
-				return send(res, 400, {
-					reason:
-						`Already logged in with account_name '${req.account_session.account.name}'.` +
-						` Please first log out if you wish to log in with account_name '${account_name}'.`,
-				});
-			}
+		if (req.account_id) {
+			return send(res, 400, {reason: 'already logged in'});
 		}
 
 		const password_hash = await to_password_hash(password);

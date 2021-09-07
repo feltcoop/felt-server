@@ -8,13 +8,19 @@ import {to_cookie_session_middleware} from '$lib/session/cookie_session';
 
 const cookie_session_middleware = to_cookie_session_middleware();
 
+export interface HandleWebsocketServerMessage {
+	(websocket_server: WebsocketServer, socket: ws, message: any, account_id: number): Promise<void>;
+}
+
 export class WebsocketServer {
 	readonly wss: ws.Server;
 	readonly server: HttpServer | HttpsServer;
+	readonly handle: HandleWebsocketServerMessage;
 
-	constructor(server: HttpServer | HttpsServer) {
+	constructor(server: HttpServer | HttpsServer, handle: HandleWebsocketServerMessage) {
 		this.server = server;
 		this.wss = new ws.Server({server});
+		this.handle = handle;
 	}
 
 	async init(): Promise<void> {
@@ -34,31 +40,9 @@ export class WebsocketServer {
 			}
 			//TODO where to store the authorized account for a given websocket connection
 			//to prevent actions on other actors resources?
-			socket.on('message', (raw_message) => {
+			socket.on('message', async (raw_message) => {
 				console.log('account-id', account_id);
-				let message;
-				try {
-					message = JSON.parse(raw_message as any);
-				} catch (err) {
-					console.error('[message] bad message', err, 'do not move and they cannot see you');
-				}
-				console.log('[wss] [message]', message);
-				if (message.type === 'Create') {
-					// TODO automate all of this
-					const final_message = {
-						...message,
-						attributed_to: '$yourname', // some fields must be set by the server
-						id: Math.random().toString().slice(2), // some fields must be set by the server
-					};
-					const serialized = JSON.stringify(final_message);
-					for (const client of wss.clients) {
-						client.send(serialized);
-					}
-				} else {
-					for (const client of wss.clients) {
-						client.send(raw_message);
-					}
-				}
+				await this.handle(this, socket, raw_message, account_id);
 			});
 			socket.on('open', () => {
 				console.log('[wss] open');

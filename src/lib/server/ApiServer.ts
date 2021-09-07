@@ -15,13 +15,12 @@ import {
 	to_create_member_middleware,
 	create_community_service,
 } from '$lib/vocab/community/community_middleware.js';
-import {to_files_middleware, to_create_file_middleware} from '$lib/vocab/file/fileMiddleware.js';
+import {to_files_middleware, create_file_service} from '$lib/vocab/file/fileMiddleware.js';
 import {
 	to_space_middleware,
 	to_spaces_middleware,
 	to_create_space_middleware,
 } from '$lib/vocab/space/space_middleware.js';
-import type {ClientAccountSession} from '$lib/session/client_session.js';
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import {to_cookie_session_middleware} from '$lib/session/cookie_session';
@@ -33,7 +32,7 @@ const log = new Logger([blue('[ApiServer]')]);
 // TODO not sure what these types should look like in their final form,
 // there's currently some redundancy and weirdness
 export interface Request extends PolkaRequest, CookieSessionRequest {
-	account_session?: ClientAccountSession;
+	account_id?: number;
 }
 export interface Middleware extends PolkaMiddleware<Request> {}
 
@@ -102,7 +101,7 @@ export class ApiServer {
 			.post('/api/v1/communities/:community_id/spaces', to_create_space_middleware(this))
 			.get('/api/v1/communities/:community_id/spaces', to_spaces_middleware(this))
 			.get('/api/v1/spaces/:space_id', to_space_middleware(this))
-			.post('/api/v1/spaces/:space_id/files', to_create_file_middleware(this))
+			.post('/api/v1/spaces/:space_id/files', to_service_middleware(this, create_file_service))
 			.get('/api/v1/spaces/:space_id/files', to_files_middleware(this))
 			.post('/api/v1/members', to_create_member_middleware(this));
 

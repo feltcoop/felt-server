@@ -8,6 +8,8 @@ import {ApiServer} from '$lib/server/ApiServer.js';
 import {Database} from '$lib/db/Database.js';
 import {default_postgres_options} from '$lib/db/postgres.js';
 import {WebsocketServer} from '$lib/server/WebsocketServer.js';
+import {to_handle_websocket_message} from '$lib/server/handle_websocket_message';
+import {service_handlers} from '$lib/server/service_handlers';
 
 const TEST_PORT = 3003; // TODO
 
@@ -16,10 +18,13 @@ const test_api_server = suite('ApiServer');
 
 test_api_server('init and close', async () => {
 	const server = createServer();
-	const api_server = new ApiServer({
+	const handle_websocket_message = to_handle_websocket_message(service_handlers);
+	const api_server: ApiServer = new ApiServer({
 		server,
 		app: polka({server}),
-		websocket_server: new WebsocketServer(server),
+		websocket_server: new WebsocketServer(server, (websocket_server, socket, message, account_id) =>
+			handle_websocket_message(api_server, websocket_server, socket, message, account_id),
+		),
 		db: new Database({sql: postgres(default_postgres_options)}),
 		port: TEST_PORT,
 	});

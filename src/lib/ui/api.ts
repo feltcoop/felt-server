@@ -10,7 +10,7 @@ import type {Community, CommunityModel, CommunityParams} from '$lib/vocab/commun
 import {to_community_model} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Member, MemberParams} from '$lib/vocab/member/member';
-import type {File} from '$lib/vocab/file/file';
+import type {File, FileParams} from '$lib/vocab/file/file';
 import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/login_middleware.js';
 import type {ClientAccountSession} from '$lib/session/client_session';
@@ -221,6 +221,25 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 			}
 		},
 		create_file: async (space, content, persona_id) => {
+			// TODO type
+			const params: {type: 'create_file'; params: FileParams} = {
+				type: 'create_file',
+				params: {
+					actor_id: persona_id,
+					space_id: space.space_id,
+					content,
+				},
+			};
+			socket.send(params);
+			return {
+				ok: true,
+				get value() {
+					// TODO change API to be fire-and-forget? or return this value somehow?
+					throw Error('TODO currently incompatible with value');
+				},
+			} as any;
+			// TODO below is the REST API version -- need to extract separate clients
+			/*
 			const res = await fetch(`/api/v1/spaces/${space.space_id}/files`, {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
@@ -241,6 +260,7 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 			} else {
 				throw Error(`error sending file: ${res.status}: ${res.statusText}`);
 			}
+			*/
 		},
 		load_files: async (space_id) => {
 			data.set_files(space_id, []);
