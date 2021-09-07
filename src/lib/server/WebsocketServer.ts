@@ -53,16 +53,6 @@ export class WebsocketServer {
 			socket.on('error', (err) => {
 				console.error('[wss] error', err);
 			});
-			console.log('[server] saying hi to connected socket');
-			socket.send(
-				// the client should understand ActivityStreams vocabulary:
-				JSON.stringify({
-					id: Math.random().toString().slice(2),
-					attributed_to: 'the_server',
-					type: 'Create',
-					object: {type: 'Chat', content: 'hihi'},
-				}),
-			);
 		});
 		wss.on('close', () => {
 			console.log('[wss] close');

@@ -39,18 +39,6 @@ export const to_handle_websocket_message =
 		}
 		const handler = service_handlers[parsed_message.type];
 		if (!handler) {
-			// TODO hacky code from before, should be removed when handlers are stable
-			if (parsed_message.type === 'Create') {
-				const final_message = {
-					...parsed_message,
-					attributed_to: '$yourname', // some fields must be set by the server
-					id: Math.random().toString().slice(2), // some fields must be set by the server
-				};
-				const serialized = JSON.stringify(final_message);
-				for (const client of websocket_server.wss.clients) {
-					client.send(serialized);
-				}
-			}
 			console.warn('[handle_websocket_message] unknown message type', parsed_message.type);
 			return;
 		}
