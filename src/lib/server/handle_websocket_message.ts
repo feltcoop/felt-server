@@ -39,7 +39,7 @@ export const to_handle_websocket_message =
 		}
 		const handler = service_handlers[parsed_message.type];
 		if (!handler) {
-			console.warn('[handle_websocket_message] unknown message type', parsed_message.type);
+			console.error('[handle_websocket_message] unhandled message type', parsed_message.type);
 			return;
 		}
 
@@ -48,9 +48,12 @@ export const to_handle_websocket_message =
 		const response = await handler.handle(server, parsed_message.params, account_id);
 
 		// TODO extremely hacky
+		const serialized_response = JSON.stringify({
+			type: 'handler_response',
+			message_type: parsed_message.type,
+			response,
+		});
 		for (const client of websocket_server.wss.clients) {
-			client.send(
-				JSON.stringify({type: 'handler_response', message_type: parsed_message.type, response}),
-			);
+			client.send(serialized_response);
 		}
 	};
