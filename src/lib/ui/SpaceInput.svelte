@@ -1,6 +1,7 @@
 <script lang="ts">
-	import Modal from '$lib/ui/Modal.svelte';
+	import Modal from '@feltcoop/felt/ui/Modal.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
+
 	import type {CommunityModel} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {get_app} from '$lib/ui/app';
@@ -39,7 +40,7 @@
 	➕
 </button>
 {#if open}
-	<Modal close={() => (open = false)}>
+	<Modal on:close={() => (open = false)}>
 		<div>
 			<Markup>
 				<h1>Create a new space</h1>
