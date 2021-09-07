@@ -13,7 +13,7 @@ import type {Member, MemberParams} from '$lib/vocab/member/member';
 import type {File} from '$lib/vocab/file/file';
 import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/login_middleware.js';
-import type {AccountSession} from '$lib/session/client_session';
+import type {ClientAccountSession} from '$lib/session/client_session';
 
 // TODO refactor/rethink
 
@@ -33,7 +33,7 @@ export interface ApiStore {
 	log_in: (
 		account_name: string,
 		password: string,
-	) => Promise<Result<{value: {session: AccountSession}}, {reason: string}>>;
+	) => Promise<Result<{value: {session: ClientAccountSession}}, {reason: string}>>;
 	log_out: () => Promise<Result<{}, {reason: string}>>;
 	select_persona: (persona_id: number) => void;
 	select_community: (community_id: number | null) => void;

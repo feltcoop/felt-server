@@ -37,26 +37,22 @@ export const to_community_middleware = (server: ApiServer): Middleware => {
 };
 
 //Creates a new community for an instance
-export const create_community_service: Service = {
+// TODO automatic params type and validation
+export const create_community_service: Service<{name: string}> = {
 	// TODO declarative validation for `req.body` and the rest
-	handle: async (server, req) => {
+	handle: async (server, params, account) => {
 		const {db} = server;
-		const {name} = req.body;
+		const {name} = params;
 		if (!name) {
 			// TODO declarative validation
 			return {code: 400, data: {reason: 'invalid name'}};
 		}
-		const create_community_result = await db.repos.community.insert(
-			name,
-			req.account_session!.account.account_id,
-		);
+		const create_community_result = await db.repos.community.insert(name, account.account_id);
 		console.log('create_community_result', create_community_result);
 		if (create_community_result.ok) {
 			// TODO optimize this to return `create_community_result.value` instead of making another db call,
 			// needs to populate members, but we probably want to normalize the data, returning only ids
-			const community_data = await db.repos.community.filter_by_account(
-				req.account_session!.account.account_id,
-			);
+			const community_data = await db.repos.community.filter_by_account(account.account_id);
 			if (community_data.ok) {
 				const {community_id} = create_community_result.value;
 				return {

@@ -21,7 +21,7 @@ import {
 	to_spaces_middleware,
 	to_create_space_middleware,
 } from '$lib/vocab/space/space_middleware.js';
-import type {AccountSession} from '$lib/session/client_session.js';
+import type {ClientAccountSession} from '$lib/session/client_session.js';
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import {to_cookie_session_middleware} from '$lib/session/cookie_session';
@@ -33,7 +33,7 @@ const log = new Logger([blue('[ApiServer]')]);
 // TODO not sure what these types should look like in their final form,
 // there's currently some redundancy and weirdness
 export interface Request extends PolkaRequest, CookieSessionRequest {
-	account_session?: AccountSession;
+	account_session?: ClientAccountSession;
 }
 export interface Middleware extends PolkaMiddleware<Request> {}
 
