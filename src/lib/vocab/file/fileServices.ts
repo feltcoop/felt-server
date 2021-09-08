@@ -1,7 +1,15 @@
+import {Type} from '@sinclair/typebox';
+
 import type {Service} from '$lib/server/service';
 import type {File} from '$lib/vocab/file/file';
 
-export const readFilesService: Service<{space_id: number}, {files: File[]}> = {
+const ReadFilesServiceParams = Type.Object(
+	{space_id: Type.Number()},
+	{additionalProperties: false},
+);
+
+export const readFilesService: Service<typeof ReadFilesServiceParams, {files: File[]}> = {
+	paramsSchema: ReadFilesServiceParams,
 	handle: async (server, params) => {
 		const {db} = server;
 		const find_files_result = await db.repos.file.filter_by_space(params.space_id as any); // TODO remove the typecast once this PR is rebased
@@ -14,12 +22,20 @@ export const readFilesService: Service<{space_id: number}, {files: File[]}> = {
 	},
 };
 
+// TODO `FileParams`
+const CreateFileServiceParams = Type.Object(
+	{
+		actor_id: Type.Number(),
+		space_id: Type.Number(),
+		content: Type.String(),
+	},
+	{additionalProperties: false},
+);
+
 // TODO automatic params type and validation
 // TODO should this use the `FileParams` type?
-export const createFileService: Service<
-	{actor_id: number; space_id: number; content: string},
-	{file: File}
-> = {
+export const createFileService: Service<typeof CreateFileServiceParams, {file: File}> = {
+	paramsSchema: CreateFileServiceParams,
 	handle: async (server, params, _account_id) => {
 		// TODO validate `account_id` against the persona -- maybe as an optimized standalone method?
 		// server.db.repos.account.validate_persona(account_id, actor_id);

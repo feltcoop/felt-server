@@ -1,8 +1,16 @@
+import {Type} from '@sinclair/typebox';
+
 import type {Service} from '$lib/server/service';
 import type {Space} from '$lib/vocab/space/space';
 
+const ReadSpaceServiceParams = Type.Object(
+	{space_id: Type.Number()},
+	{additionalProperties: false},
+);
+
 //Returns a single space object
-export const readSpaceService: Service<{space_id: number}, {space: Space}> = {
+export const readSpaceService: Service<typeof ReadSpaceServiceParams, {space: Space}> = {
+	paramsSchema: ReadSpaceServiceParams,
 	handle: async (server, params) => {
 		const {db} = server;
 
@@ -19,8 +27,14 @@ export const readSpaceService: Service<{space_id: number}, {space: Space}> = {
 	},
 };
 
+const ReadSpacesServiceSchema = Type.Object(
+	{community_id: Type.Number()},
+	{additionalProperties: false},
+);
+
 //Returns all spaces in a given community
-export const readSpacesService: Service<{community_id: number}, {spaces: Space[]}> = {
+export const readSpacesService: Service<typeof ReadSpacesServiceSchema, {spaces: Space[]}> = {
+	paramsSchema: ReadSpacesServiceSchema,
 	handle: async (server, params) => {
 		const {db} = server;
 
@@ -36,18 +50,21 @@ export const readSpacesService: Service<{community_id: number}, {spaces: Space[]
 	},
 };
 
-//Creates a new space for a given community
-export const createSpaceService: Service<
+const CreateSpaceServiceSchema = Type.Object(
 	{
-		community_id: number;
+		community_id: Type.Number(),
 		// TODO change to `SpaceParams`? Union with Typebox?
-		name: string;
-		url: string;
-		media_type: string;
-		content: string;
+		name: Type.String(),
+		url: Type.String(),
+		media_type: Type.String(),
+		content: Type.String(),
 	},
-	{space: Space}
-> = {
+	{additionalProperties: false},
+);
+
+//Creates a new space for a given community
+export const createSpaceService: Service<typeof CreateSpaceServiceSchema, {space: Space}> = {
+	paramsSchema: CreateSpaceServiceSchema,
 	// TODO verify the `account_id` has permission to modify this space
 	handle: async (server, params) => {
 		const {db} = server;

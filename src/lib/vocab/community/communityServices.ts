@@ -1,8 +1,16 @@
+import {Type} from '@sinclair/typebox';
+
 import type {Service} from '$lib/server/service';
 import type {Community} from '$lib/vocab/community/community';
 import type {Member} from '$lib/vocab/member/member';
 
-export const readCommunitiesService: Service<{}, {communities: Community[]}> = {
+const ReadCommunitiesServiceParams = Type.Object({}, {additionalProperties: false});
+
+export const readCommunitiesService: Service<
+	typeof ReadCommunitiesServiceParams,
+	{communities: Community[]}
+> = {
+	paramsSchema: ReadCommunitiesServiceParams,
 	handle: async (server, _params, account_id) => {
 		const {db} = server;
 		const find_communities_result = await db.repos.community.filter_by_account(account_id);
@@ -15,8 +23,17 @@ export const readCommunitiesService: Service<{}, {communities: Community[]}> = {
 	},
 };
 
+const ReadCommunityServiceParams = Type.Object(
+	{community_id: Type.Number()},
+	{additionalProperties: false},
+);
+
 //Returns a single community object
-export const readCommunityService: Service<{community_id: number}, {community: Community}> = {
+export const readCommunityService: Service<
+	typeof ReadCommunityServiceParams,
+	{community: Community}
+> = {
+	paramsSchema: ReadCommunityServiceParams,
 	handle: async (server, params, account_id) => {
 		const {db} = server;
 		console.log('[community_service] account', account_id); // TODO logging
@@ -34,9 +51,18 @@ export const readCommunityService: Service<{community_id: number}, {community: C
 	},
 };
 
+const CreateCommunityServiceParams = Type.Object(
+	{name: Type.String(), persona_id: Type.Number()},
+	{additionalProperties: false},
+);
+
 //Creates a new community for an instance
 // TODO automatic params type and validation
-export const createCommunityService: Service<{name: string}, {community: Community}> = {
+export const createCommunityService: Service<
+	typeof CreateCommunityServiceParams,
+	{community: Community}
+> = {
+	paramsSchema: CreateCommunityServiceParams,
 	// TODO declarative validation for `req.body` and the rest
 	handle: async (server, params, account_id) => {
 		const {name} = params;
@@ -44,7 +70,9 @@ export const createCommunityService: Service<{name: string}, {community: Communi
 			// TODO declarative validation
 			return {code: 400, data: {reason: 'invalid name'}};
 		}
-		const create_community_result = await server.db.repos.community.insert(name, account_id);
+		console.log('created community account_id', account_id);
+		// TODO validate that `account_id` is `persona_id`
+		const create_community_result = await server.db.repos.community.insert(name, params.persona_id);
 		console.log('create_community_result', create_community_result);
 		if (create_community_result.ok) {
 			// TODO optimize this to return `create_community_result.value` instead of making another db call,
@@ -69,11 +97,17 @@ export const createCommunityService: Service<{name: string}, {community: Communi
 	},
 };
 
+const CreateMemberServiceParams = Type.Object(
+	{
+		persona_id: Type.Number(),
+		community_id: Type.Number(),
+	},
+	{additionalProperties: false},
+);
+
 //Creates a new member relation for a community
-export const createMemberService: Service<
-	{persona_id: number; community_id: number},
-	{member: Member}
-> = {
+export const createMemberService: Service<typeof CreateMemberServiceParams, {member: Member}> = {
+	paramsSchema: CreateMemberServiceParams,
 	handle: async (server, params) => {
 		console.log('[community_service] creating member', params.persona_id, params.community_id);
 

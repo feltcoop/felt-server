@@ -1,24 +1,30 @@
+import type {ValidateFunction} from 'ajv';
+import type {TSchema, Static} from '@sinclair/typebox';
+
 import type {ApiServer} from '$lib/server/ApiServer.js';
 import type {ErrorResponse} from '$lib/util/error';
-import type {Json} from '@feltcoop/felt/util/json.js';
 
 // A `Service` can be reused across both http and websocket handlers.
 // The generics are required to avoid mistakes with service definitions.
-export interface Service<TParams extends ServiceParams, TResponseData extends ServiceResponseData> {
+export interface Service<
+	TParamsSchema extends ServiceParamsSchema,
+	TResponseData extends ServiceResponseData,
+> {
+	paramsSchema: TParamsSchema; // TODO <TParams>;
+	// paramsSchema: TypeBuilder['Object']<TParams>;
+	validateParams?: ValidateFunction<Static<TParamsSchema>>;
 	// TODO input/output schemas
 	handle(
 		// TODO maybe make this take a single object argument?
 		server: ApiServer,
 		// TODO to support websockets we probably need to forward only the params/query/etc (headers?),
 		// maybe combined into a single object for reusability in routeless websocket events
-		params: TParams,
+		params: Static<TParamsSchema>,
 		account_id: number,
 	): Promise<ServiceResponse<TResponseData>>;
 }
 
-export interface ServiceParams {
-	[key: string]: Json;
-}
+export type ServiceParamsSchema = TSchema;
 
 export interface ServiceResponse<TResponseData extends ServiceResponseData> {
 	code: number;

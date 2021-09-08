@@ -10,6 +10,7 @@ export interface Community {
 
 export interface CommunityParams {
 	name: string;
+	persona_id: number;
 }
 
 // TODO think through alternatives to this, probably caching `members_by_id` on `data`

@@ -4,14 +4,14 @@
 	import {autofocus} from '$lib/ui/actions';
 	import {get_app} from '$lib/ui/app';
 
-	const {api} = get_app();
+	const {api, ui} = get_app();
 
 	let open = false;
 	let new_name = '';
 
 	const on_keydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await api.create_community(new_name);
+			await api.create_community(new_name, $ui.selected_persona_id!);
 			new_name = '';
 			open = false;
 		}

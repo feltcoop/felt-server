@@ -42,7 +42,10 @@ export interface ApiStore {
 	select_community: (community_id: number | null) => void;
 	select_space: (community_id: number, space: number | null) => void;
 	toggle_main_nav: () => void;
-	create_community: (name: string) => Promise<ApiResult<{value: {community: CommunityModel}}>>;
+	create_community: (
+		name: string,
+		persona_id: number,
+	) => Promise<ApiResult<{value: {community: CommunityModel}}>>;
 	create_space: (
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
 		name: string,
@@ -130,11 +133,12 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 			}
 		},
 		// TODO refactor this, maybe into `data` or `api`
-		create_community: async (name) => {
+		create_community: async (name, persona_id) => {
 			if (!name) return {ok: false, reason: 'invalid name'};
 			//Needs to collect name
 			const community_params: CommunityParams = {
 				name,
+				persona_id,
 			};
 			const res = await fetch(`/api/v1/communities`, {
 				method: 'POST',
@@ -272,10 +276,19 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 					data.set_files(space_id, json.files);
 					return {ok: true, value: json};
 				} catch (err) {
+					console.error('err', err);
 					return {ok: false, reason: err.message};
 				}
 			} else {
-				throw Error(`error loading files: ${res.status}: ${res.statusText}`);
+				let reason: string;
+				try {
+					const json = await res.json();
+					reason = json.reason;
+				} catch (err) {
+					reason = `error loading files: ${res.status}: ${res.statusText}`;
+				}
+				console.error('failed to load files:', reason);
+				return {ok: false, reason};
 			}
 		},
 	};
