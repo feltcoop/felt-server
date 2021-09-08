@@ -1,3 +1,5 @@
+import {Type, Static} from '@sinclair/typebox';
+
 export interface Space {
 	space_id: number;
 	name: string;
@@ -6,9 +8,10 @@ export interface Space {
 	content: string;
 }
 
-export interface SpaceParams {
-	name: string;
-	url: string;
-	media_type: string;
-	content: string;
-}
+export type SpaceParams = Static<typeof SpaceParamsSchema>;
+export const SpaceParamsSchema = Type.Object({
+	name: Type.String(),
+	url: Type.String(),
+	media_type: Type.String(),
+	content: Type.String(),
+});

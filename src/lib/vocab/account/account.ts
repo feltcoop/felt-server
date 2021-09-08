@@ -1,13 +1,16 @@
+import {Type, Static} from '@sinclair/typebox';
+
 export interface Account {
 	account_id: number;
 	name: string;
 	password: string;
 }
 
-export interface AccountParams {
-	name: string;
-	password: string;
-}
+export type AccountParams = Static<typeof AccountParamsSchema>;
+export const AccountParamsSchema = Type.Object({
+	name: Type.String(),
+	password: Type.String(),
+});
 
 // TODO rename? `AccountClientDoc`? above could be `AccountDbDoc` and `AccountRequestDoc`
 export interface AccountModel {
