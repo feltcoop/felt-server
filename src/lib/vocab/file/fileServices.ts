@@ -5,7 +5,9 @@ import type {File} from '$lib/vocab/file/file';
 import {FileParamsSchema} from '$lib/vocab/file/file';
 
 const ReadFilesServiceParams = Type.Object(
-	{space_id: Type.Number()},
+	{
+		space_id: Type.Number(),
+	},
 	{additionalProperties: false},
 );
 

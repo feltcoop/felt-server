@@ -24,7 +24,7 @@ export const toServiceMiddleware =
 			const valid = validateParams(params);
 			if (!valid) {
 				// TODO handle multiple errors instead of just the first
-				console.error('validation failed', params, validateParams.errors);
+				console.error('validation failed:', params, validateParams.errors);
 				const validationError = validateParams.errors![0];
 				return send(res, 400, {reason: toErrorMessage(validationError)});
 			}

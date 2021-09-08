@@ -280,53 +280,56 @@ export const seed = async (db: Database): Promise<void> => {
 		console.log('[db] create_persona_community4_result', persona_community4_result);
 	}
 
-	const create_space = async (
-		space_id: number,
-		community_id: number,
-		params: SpaceParams,
-	): Promise<void> => {
+	const create_space = async (space_id: number, params: SpaceParams): Promise<void> => {
 		if (!space_docs.find((d) => d.space_id === space_id)) {
-			await db.repos.space.insert(community_id, params);
+			await db.repos.space.insert(params);
 		}
 	};
 
-	await create_space(1, 1, {
+	await create_space(1, {
+		community_id: 1,
 		name: 'chat',
 		url: '/chat',
 		media_type: 'application/fuz+json',
 		content: '{"type": "Chat", "props": {"data": "/chat/files"}}',
 	});
-	await create_space(2, 1, {
+	await create_space(2, {
+		community_id: 1,
 		name: 'board',
 		url: '/board',
 		media_type: 'application/fuz+json',
 		content: '{"type": "Board", "props": {"data": "/board/files"}}',
 	});
-	await create_space(3, 1, {
+	await create_space(3, {
+		community_id: 1,
 		name: 'forum',
 		url: '/forum',
 		media_type: 'application/fuz+json',
 		content: '{"type": "Forum", "props": {"data": "/forum/files"}}',
 	});
-	await create_space(4, 1, {
+	await create_space(4, {
+		community_id: 1,
 		name: 'dm/a',
 		url: '/dm/a',
 		media_type: 'application/fuz+json',
 		content: '{"type": "Chat", "props": {"data": "/dm/a/files"}}',
 	});
-	await create_space(5, 1, {
+	await create_space(5, {
+		community_id: 1,
 		name: 'notes',
 		url: '/notes',
 		media_type: 'application/fuz+json',
 		content: '{"type": "Notes", "props": {"data": "/notes"}}',
 	});
-	await create_space(6, 1, {
+	await create_space(6, {
+		community_id: 1,
 		name: 'felt library',
 		url: '/library',
 		media_type: 'application/fuz+json',
 		content: '{"type": "Iframe", "props": {"url": "https://www.felt.dev/sketch/library"}}',
 	});
-	await create_space(7, 1, {
+	await create_space(7, {
+		community_id: 1,
 		name: 'dealt: tar',
 		url: '/tar',
 		media_type: 'application/fuz+json',

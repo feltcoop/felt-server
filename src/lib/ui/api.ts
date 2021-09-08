@@ -9,12 +9,14 @@ import type {UiStore} from '$lib/ui/ui';
 import type {Community, CommunityModel, CommunityParams} from '$lib/vocab/community/community';
 import {to_community_model} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
+import {validateSpaceParams} from '$lib/vocab/space/space';
 import type {Member, MemberParams} from '$lib/vocab/member/member';
 import type {File, FileParams} from '$lib/vocab/file/file';
 import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/login_middleware.js';
 import type {ClientAccountSession} from '$lib/session/client_session';
 import type {ErrorResponse} from '$lib/util/error';
+import {toErrorMessage} from '$lib/util/ajv';
 
 // TODO refactor/rethink
 
@@ -46,13 +48,7 @@ export interface ApiStore {
 		name: string,
 		persona_id: number,
 	) => Promise<ApiResult<{value: {community: CommunityModel}}>>;
-	create_space: (
-		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
-		name: string,
-		url: string,
-		media_type: string,
-		content: string,
-	) => Promise<ApiResult<{value: {space: Space}}>>;
+	create_space: (params: SpaceParams) => Promise<ApiResult<{value: {space: Space}}>>;
 	invite_member: (
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
 		persona_id: number,
@@ -159,30 +155,23 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				throw Error(`error: ${res.status}: ${res.statusText}`);
 			}
 		},
-		create_space: async (community_id, name, url, media_type, content) => {
-			// TODO proper automated validation
-			if (community_id == null) return {ok: false, reason: 'invalid url'};
-			if (!name) return {ok: false, reason: 'invalid name'};
-			if (!url) return {ok: false, reason: 'invalid url'};
-			if (!media_type) return {ok: false, reason: 'invalid meta_type'};
-			if (!content) return {ok: false, reason: 'invalid content'};
-			//Needs to collect name
-			const doc: SpaceParams = {
-				name,
-				url,
-				media_type,
-				content,
-			};
+		create_space: async (params) => {
+			const valid = validateSpaceParams()(params);
+			if (!valid) {
+				const reason = toErrorMessage(validateSpaceParams().errors![0]);
+				console.error('validation failed:', reason, validateSpaceParams().errors);
+				return {ok: false, reason};
+			}
 			try {
-				const res = await fetch(`/api/v1/communities/${community_id}/spaces`, {
+				const res = await fetch(`/api/v1/communities/${params.community_id}/spaces`, {
 					method: 'POST',
 					headers: {'Content-Type': 'application/json'},
-					body: JSON.stringify(doc),
+					body: JSON.stringify(params),
 				});
 				if (res.ok) {
 					const result: {space: Space} = await res.json(); // TODO api types
 					console.log('[create_space] result', result);
-					data.add_space(result.space, community_id);
+					data.add_space(result.space, params.community_id);
 					return {ok: true, value: result};
 				} else {
 					const json = await res.json();

@@ -23,14 +23,14 @@
 		if (!new_name) return;
 		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
 		const url = `/${new_name}`;
-		await api.create_space(
-			community.community_id,
-			new_name,
+		await api.create_space({
+			community_id: community.community_id,
+			name: new_name,
 			url,
 			//TODO : add space type picker
-			'application/fuz+json',
-			`{"type": "Chat", "props": {"data": "${url}/files"}}`,
-		);
+			media_type: 'application/fuz+json',
+			content: `{"type": "Chat", "props": {"data": "${url}/files"}}`,
+		});
 		new_name = '';
 	};
 </script>

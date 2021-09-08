@@ -1,5 +1,8 @@
 import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
+import type {ValidateFunction} from 'ajv';
+
+import {ajv} from '$lib/util/ajv';
 
 export interface Space {
 	space_id: number;
@@ -9,9 +12,11 @@ export interface Space {
 	content: string;
 }
 
+// TODO the `community_id` belongs here, but it's not used in the REST post payload, only the params
 export type SpaceParams = Static<typeof SpaceParamsSchema>;
 export const SpaceParamsSchema = Type.Object(
 	{
+		community_id: Type.Number(),
 		name: Type.String(),
 		url: Type.String(),
 		media_type: Type.String(),
@@ -19,3 +24,6 @@ export const SpaceParamsSchema = Type.Object(
 	},
 	// {additionalProperties: false}, // TODO how to use this with Type.Intersect?
 );
+export const validateSpaceParams = (): ValidateFunction<SpaceParams> =>
+	_validateSpaceParams || (_validateSpaceParams = ajv.compile(SpaceParamsSchema));
+let _validateSpaceParams: ValidateFunction<SpaceParams> | undefined;
