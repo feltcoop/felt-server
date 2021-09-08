@@ -31,13 +31,6 @@ gro test
 
 > learn more [about Gro](https://github.com/feltcoop/gro)
 
-Each part of the dev build is available as an npm script:
-
-```bash
-npm run dev-sveltekit
-npm run dev-gro
-```
-
 ## build
 
 Build the `dist/` directory for production:
