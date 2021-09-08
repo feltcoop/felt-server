@@ -38,12 +38,13 @@ export const readSpacesService: Service<{community_id: number}> = {
 //Creates a new space for a given community
 export const createSpaceService: Service<{
 	community_id: number;
-	// TODO change to `SpaceParams`?
+	// TODO change to `SpaceParams`? Union with Typebox?
 	name: string;
 	url: string;
 	media_type: string;
 	content: string;
 }> = {
+	// TODO verify the `account_id` has permission to modify this space
 	handle: async (server, params) => {
 		const {db} = server;
 
