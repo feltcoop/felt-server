@@ -37,7 +37,7 @@ export interface DataState {
 export interface DataStore {
 	subscribe: Readable<DataState>['subscribe'];
 	update_session: (session: ClientSession) => void;
-	add_community: (community: CommunityModel) => void;
+	add_community: (community: CommunityModel, persona_id: number) => void;
 	add_space: (space: Space, community_id: number) => void;
 	add_member: (member: Member) => void;
 	add_file: (file: File) => void;
@@ -53,10 +53,19 @@ export const to_data_store = (initial_session: ClientSession): DataStore => {
 			console.log('[data.update_session]', session);
 			set(to_default_data(session));
 		},
-		add_community: (community) => {
+		add_community: (community, persona_id) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.add_community]', community);
-			update(($data) => ({...$data, communities: $data.communities.concat(community)}));
+			update(($data) => ({
+				...$data,
+				communities: $data.communities.concat(community),
+				// TODO how should this be modeled and kept up to date?
+				personas: $data.personas.map((persona) =>
+					persona.persona_id === persona_id
+						? {...persona, community_ids: persona.community_ids.concat(community.community_id)}
+						: persona,
+				),
+			}));
 		},
 		add_space: (space, community_id) => {
 			// TODO instead of this, probably want to set more granularly with nested stores

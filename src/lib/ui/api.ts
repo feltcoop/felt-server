@@ -146,7 +146,7 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 					const result: {community: Community} = await res.json(); // TODO api types
 					console.log('create_community result', result);
 					const community = to_community_model(result.community);
-					data.add_community(community);
+					data.add_community(community, persona_id);
 					return {ok: true, value: {community}};
 				} catch (err) {
 					return {ok: false, reason: err.message};
