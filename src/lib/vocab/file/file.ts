@@ -15,5 +15,5 @@ export const FileParamsSchema = Type.Object(
 		space_id: Type.Number(),
 		content: Type.String(),
 	},
-	// {additionalProperties: false}, // TODO how to use this with Type.Intersect?
+	{additionalProperties: false},
 );

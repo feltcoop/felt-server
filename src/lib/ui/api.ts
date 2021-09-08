@@ -16,7 +16,7 @@ import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/login_middleware.js';
 import type {ClientAccountSession} from '$lib/session/client_session';
 import type {ErrorResponse} from '$lib/util/error';
-import {toErrorMessage} from '$lib/util/ajv';
+import {toValidationErrorMessage} from '$lib/util/ajv';
 
 // TODO refactor/rethink
 
@@ -156,10 +156,11 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 			}
 		},
 		create_space: async (params) => {
-			const valid = validateSpaceParams()(params);
+			const validate = validateSpaceParams();
+			const valid = validate(params);
 			if (!valid) {
-				const reason = toErrorMessage(validateSpaceParams().errors![0]);
-				console.error('validation failed:', reason, validateSpaceParams().errors);
+				const reason = toValidationErrorMessage(validate.errors![0]);
+				console.error('validation failed:', reason, validate.errors);
 				return {ok: false, reason};
 			}
 			try {

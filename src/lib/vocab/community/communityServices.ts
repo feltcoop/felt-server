@@ -17,6 +17,7 @@ export const readCommunitiesService: Service<
 	typeof ReadCommunitiesServiceParams,
 	{communities: Community[]}
 > = {
+	name: 'read_communities',
 	paramsSchema: ReadCommunitiesServiceParams,
 	handle: async (server, _params, account_id) => {
 		const {db} = server;
@@ -42,6 +43,7 @@ export const readCommunityService: Service<
 	typeof ReadCommunityServiceParams,
 	{community: Community}
 > = {
+	name: 'read_community',
 	paramsSchema: ReadCommunityServiceParams,
 	handle: async (server, params, account_id) => {
 		const {db} = server;
@@ -74,6 +76,7 @@ export const createCommunityService: Service<
 	typeof CreateCommunityServiceParams,
 	{community: Community}
 > = {
+	name: 'create_community',
 	paramsSchema: CreateCommunityServiceParams,
 	// TODO declarative validation for `req.body` and the rest
 	handle: async (server, params, account_id) => {
@@ -111,8 +114,10 @@ export const createCommunityService: Service<
 
 const CreateMemberServiceParams = MemberParamsSchema;
 
+// TODO move to `$lib/vocab/member`
 //Creates a new member relation for a community
 export const createMemberService: Service<typeof CreateMemberServiceParams, {member: Member}> = {
+	name: 'create_member',
 	paramsSchema: CreateMemberServiceParams,
 	handle: async (server, params) => {
 		console.log('[community_service] creating member', params.persona_id, params.community_id);

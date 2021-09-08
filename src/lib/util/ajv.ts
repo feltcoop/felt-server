@@ -1,12 +1,12 @@
-import Ajv from 'ajv/dist/2019.js';
+import Ajv from 'ajv';
 import type {ErrorObject} from 'ajv';
 
 export const ajv = new Ajv().addKeyword('kind').addKeyword('modifier');
 
-// TODO hacky, might not be correct in all cases (probably isn't!)
-export const toErrorMessage = (validationError: ErrorObject): string =>
-	validationError.keyword === 'unevaluatedProperties'
-		? `${validationError.message}: '${validationError.params.unevaluatedProperty}'`
-		: validationError.instancePath
-		? `'${validationError.instancePath.substring(1)}' ${validationError.message}`
-		: validationError.message!;
+// TODO probably misses a bunch of cases
+export const toValidationErrorMessage = (e: ErrorObject): string =>
+	e.keyword === 'additionalProperties'
+		? `${e.message}: '${e.params.additionalProperty}'`
+		: e.instancePath
+		? `'${e.instancePath.substring(1)}' ${e.message}`
+		: e.message!;

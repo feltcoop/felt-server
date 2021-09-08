@@ -2,7 +2,6 @@ import {Type} from '@sinclair/typebox';
 
 import type {Service} from '$lib/server/service';
 import type {Space} from '$lib/vocab/space/space';
-import {SpaceParamsSchema} from '$lib/vocab/space/space';
 
 const ReadSpaceServiceParams = Type.Object(
 	{
@@ -13,6 +12,7 @@ const ReadSpaceServiceParams = Type.Object(
 
 //Returns a single space object
 export const readSpaceService: Service<typeof ReadSpaceServiceParams, {space: Space}> = {
+	name: 'read_space',
 	paramsSchema: ReadSpaceServiceParams,
 	handle: async (server, params) => {
 		const {db} = server;
@@ -39,6 +39,7 @@ const ReadSpacesServiceSchema = Type.Object(
 
 //Returns all spaces in a given community
 export const readSpacesService: Service<typeof ReadSpacesServiceSchema, {spaces: Space[]}> = {
+	name: 'read_spaces',
 	paramsSchema: ReadSpacesServiceSchema,
 	handle: async (server, params) => {
 		const {db} = server;
@@ -55,23 +56,28 @@ export const readSpacesService: Service<typeof ReadSpacesServiceSchema, {spaces:
 	},
 };
 
-const CreateSpaceServiceSchema = Type.Intersect(
-	[
-		SpaceParamsSchema,
-		Type.Object({
-			community_id: Type.Number(),
-		}),
-	],
-	{unevaluatedProperties: false},
+const CreateSpaceServiceSchema = Type.Object(
+	{
+		// TODO should we do something like this for composition?
+		// params: SpaceParamsSchema,
+		// or maybe:
+		// secureParams: // or `serverParams` or `trustedParams`
+		// inputParams: // or `clientParams` or `params` or `untrustedParams` or `unsecureParams`
+		community_id: Type.Number(),
+		name: Type.String(),
+		url: Type.String(),
+		media_type: Type.String(),
+		content: Type.String(),
+	},
+	{additionalProperties: false},
 );
 
 //Creates a new space for a given community
 export const createSpaceService: Service<typeof CreateSpaceServiceSchema, {space: Space}> = {
-	// TODO maybe this to handle automatic event dispatching?
-	// (lists of services instead of the current object literal definitions)
-	// name: 'create_space',
+	name: 'create_space',
 	paramsSchema: CreateSpaceServiceSchema,
 	// TODO verify the `account_id` has permission to modify this space
+	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
 	handle: async (server, params) => {
 		const {db} = server;
 

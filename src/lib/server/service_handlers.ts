@@ -12,15 +12,19 @@ import {
 	createSpaceService,
 } from '$lib/vocab/space/spaceServices';
 
-export const service_handlers: {[key: string]: Service<ServiceParamsSchema, ServiceResponseData>} =
-	{
-		read_community: readCommunityService,
-		read_communities: readCommunitiesService,
-		create_community: createCommunityService,
-		create_member: createMemberService,
-		read_files: readFilesService,
-		create_file: createFileService,
-		read_space: readSpaceService,
-		read_spaces: readSpacesService,
-		create_space: createSpaceService,
-	};
+export const service_handlers: Map<
+	string,
+	Service<ServiceParamsSchema, ServiceResponseData>
+> = new Map(
+	[
+		readCommunityService,
+		readCommunitiesService,
+		createCommunityService,
+		createMemberService,
+		readFilesService,
+		createFileService,
+		readSpaceService,
+		readSpacesService,
+		createSpaceService,
+	].map((s) => [s.name, s]),
+);

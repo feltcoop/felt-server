@@ -2,7 +2,7 @@ import send from '@polka/send-type';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Service, ServiceParamsSchema, ServiceResponseData} from '$lib/server/service';
-import {ajv, toErrorMessage} from '$lib/util/ajv';
+import {ajv, toValidationErrorMessage} from '$lib/util/ajv';
 
 // Wraps a `Service` in an http `Middleware`
 export const toServiceMiddleware =
@@ -26,7 +26,7 @@ export const toServiceMiddleware =
 				// TODO handle multiple errors instead of just the first
 				console.error('validation failed:', params, validateParams.errors);
 				const validationError = validateParams.errors![0];
-				return send(res, 400, {reason: toErrorMessage(validationError)});
+				return send(res, 400, {reason: toValidationErrorMessage(validationError)});
 			}
 			if (!req.account_id) {
 				// TODO this is duplicating the role of the `authorization_middleware` to avoid mistakes,

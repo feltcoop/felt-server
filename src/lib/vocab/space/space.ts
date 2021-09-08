@@ -22,7 +22,7 @@ export const SpaceParamsSchema = Type.Object(
 		media_type: Type.String(),
 		content: Type.String(),
 	},
-	// {additionalProperties: false}, // TODO how to use this with Type.Intersect?
+	{additionalProperties: false},
 );
 export const validateSpaceParams = (): ValidateFunction<SpaceParams> =>
 	_validateSpaceParams || (_validateSpaceParams = ajv.compile(SpaceParamsSchema));

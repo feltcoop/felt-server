@@ -10,6 +10,7 @@ export interface Service<
 	TParamsSchema extends ServiceParamsSchema,
 	TResponseData extends ServiceResponseData,
 > {
+	name: string; // `snake_cased`
 	paramsSchema: TParamsSchema; // TODO <TParams>;
 	// paramsSchema: TypeBuilder['Object']<TParams>;
 	validateParams?: ValidateFunction<Static<TParamsSchema>>;

@@ -2,7 +2,6 @@ import {Type} from '@sinclair/typebox';
 
 import type {Service} from '$lib/server/service';
 import type {File} from '$lib/vocab/file/file';
-import {FileParamsSchema} from '$lib/vocab/file/file';
 
 const ReadFilesServiceParams = Type.Object(
 	{
@@ -12,6 +11,7 @@ const ReadFilesServiceParams = Type.Object(
 );
 
 export const readFilesService: Service<typeof ReadFilesServiceParams, {files: File[]}> = {
+	name: 'read_files',
 	paramsSchema: ReadFilesServiceParams,
 	handle: async (server, params) => {
 		const {db} = server;
@@ -25,21 +25,20 @@ export const readFilesService: Service<typeof ReadFilesServiceParams, {files: Fi
 	},
 };
 
-const CreateFileServiceParams = Type.Intersect([
-	FileParamsSchema,
-	Type.Object(
-		{
-			actor_id: Type.Number(),
-			space_id: Type.Number(),
-			content: Type.String(),
-		},
-		{unevaluatedProperties: false},
-	),
-]);
+// TODO FileParamsSchema ?
+const CreateFileServiceParams = Type.Object(
+	{
+		actor_id: Type.Number(),
+		space_id: Type.Number(),
+		content: Type.String(),
+	},
+	{additionalProperties: false},
+);
 
 // TODO automatic params type and validation
 // TODO should this use the `FileParams` type?
 export const createFileService: Service<typeof CreateFileServiceParams, {file: File}> = {
+	name: 'create_file',
 	paramsSchema: CreateFileServiceParams,
 	handle: async (server, params, _account_id) => {
 		// TODO validate `account_id` against the persona -- maybe as an optimized standalone method?
