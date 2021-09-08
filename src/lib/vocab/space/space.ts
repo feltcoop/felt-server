@@ -11,6 +11,16 @@ export interface Space {
 	media_type: string;
 	content: string;
 }
+export const SpaceSchema = Type.Object(
+	{
+		space_id: Type.Number(),
+		name: Type.String(),
+		url: Type.String(),
+		media_type: Type.String(),
+		content: Type.String(),
+	},
+	{$id: 'Space', additionalProperties: false},
+);
 
 // TODO the `community_id` belongs here, but it's not used in the REST post payload, only the params
 export type SpaceParams = Static<typeof SpaceParamsSchema>;
@@ -22,7 +32,7 @@ export const SpaceParamsSchema = Type.Object(
 		media_type: Type.String(),
 		content: Type.String(),
 	},
-	{additionalProperties: false},
+	{$id: 'SpaceParams', additionalProperties: false},
 );
 export const validateSpaceParams = (): ValidateFunction<SpaceParams> =>
 	_validateSpaceParams || (_validateSpaceParams = ajv.compile(SpaceParamsSchema));

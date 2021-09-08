@@ -10,6 +10,17 @@ export interface Community {
 	spaces: Space[];
 	members: Member[];
 }
+// TODO can't get the static inference correct here -- change to schema after normalizing data, or maybe generate plain types
+// export type Community = Static<typeof CommunitySchema>;
+// export const CommunitySchema = Type.Object(
+// 	{
+// 		community_id: Type.Number(),
+// 		name: Type.String(),
+// 		spaces: Type.Ref(SpaceSchema), // TODO reference types
+// 		members: Type.Number(),
+// 	},
+// 	{additionalProperties: false},
+// );
 
 export type CommunityParams = Static<typeof CommunityParamsSchema>;
 export const CommunityParamsSchema = Type.Object(
@@ -17,7 +28,7 @@ export const CommunityParamsSchema = Type.Object(
 		name: Type.String(),
 		persona_id: Type.Number(),
 	},
-	{additionalProperties: false},
+	{$id: 'CommunityParams', additionalProperties: false},
 );
 
 // TODO think through alternatives to this, probably caching `members_by_id` on `data`

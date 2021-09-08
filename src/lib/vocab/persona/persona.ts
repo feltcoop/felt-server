@@ -1,12 +1,16 @@
 import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
 
-export interface Persona {
-	persona_id: number;
-	account_id: number;
-	name: string;
-	community_ids: number[];
-}
+export type Persona = Static<typeof PersonaSchema>;
+export const PersonaSchema = Type.Object(
+	{
+		persona_id: Type.Number(),
+		account_id: Type.Number(),
+		name: Type.String(),
+		community_ids: Type.Array(Type.Number()),
+	},
+	{$id: 'Persona', additionalProperties: false},
+);
 
 export type PersonaParams = Static<typeof PersonaParamsSchema>;
 export const PersonaParamsSchema = Type.Object(
@@ -14,7 +18,7 @@ export const PersonaParamsSchema = Type.Object(
 		account_id: Type.Number(),
 		name: Type.String(),
 	},
-	{additionalProperties: false},
+	{$id: 'PersonaParams', additionalProperties: false},
 );
 
 //TODO

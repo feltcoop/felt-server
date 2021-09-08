@@ -1,12 +1,16 @@
 import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
 
-export interface File {
-	file_id: number;
-	actor_id: number;
-	space_id: number;
-	content: string;
-}
+export type File = Static<typeof FileSchema>;
+export const FileSchema = Type.Object(
+	{
+		file_id: Type.Number(),
+		actor_id: Type.Number(),
+		space_id: Type.Number(),
+		content: Type.String(),
+	},
+	{$id: 'File', additionalProperties: false},
+);
 
 export type FileParams = Static<typeof FileParamsSchema>;
 export const FileParamsSchema = Type.Object(
@@ -15,5 +19,5 @@ export const FileParamsSchema = Type.Object(
 		space_id: Type.Number(),
 		content: Type.String(),
 	},
-	{additionalProperties: false},
+	{$id: 'FileParams', additionalProperties: false},
 );
