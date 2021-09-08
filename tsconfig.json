@@ -5,6 +5,7 @@
     "target": "es2020",
     "module": "esnext",
     "lib": ["esnext", "dom"],
+    "outDir": "./dist",
     "strict": true,
     "useUnknownInCatchVariables": false,
     "exactOptionalPropertyTypes": true,
