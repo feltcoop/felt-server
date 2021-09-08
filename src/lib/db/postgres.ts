@@ -25,7 +25,7 @@ const to_default_postgres_options = (): PostgresOptions => ({
 	username: toEnvString('PGUSERNAME', toEnvString('PGUSER', 'postgres')),
 	password: toEnvString('PGPASSWORD', 'password'),
 	idle_timeout: toEnvNumber('PGIDLE_TIMEOUT'),
-	connect_timeout: toEnvNumber('PGCONNECT_TIMEOUT'),
+	connect_timeout: toEnvNumber('PGCONNECT_TIMEOUT')!, // TODO `!` is a type hack, try updating the lib
 });
 
 export const default_postgres_options = to_default_postgres_options();
