@@ -17,5 +17,5 @@ export const SpaceParamsSchema = Type.Object(
 		media_type: Type.String(),
 		content: Type.String(),
 	},
-	{additionalProperties: false},
+	// {additionalProperties: false}, // TODO how to use this with Type.Intersect?
 );

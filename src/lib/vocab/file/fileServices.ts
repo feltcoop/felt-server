@@ -2,6 +2,7 @@ import {Type} from '@sinclair/typebox';
 
 import type {Service} from '$lib/server/service';
 import type {File} from '$lib/vocab/file/file';
+import {FileParamsSchema} from '$lib/vocab/file/file';
 
 const ReadFilesServiceParams = Type.Object(
 	{space_id: Type.Number()},
@@ -22,15 +23,17 @@ export const readFilesService: Service<typeof ReadFilesServiceParams, {files: Fi
 	},
 };
 
-// TODO `FileParams`
-const CreateFileServiceParams = Type.Object(
-	{
-		actor_id: Type.Number(),
-		space_id: Type.Number(),
-		content: Type.String(),
-	},
-	{additionalProperties: false},
-);
+const CreateFileServiceParams = Type.Intersect([
+	FileParamsSchema,
+	Type.Object(
+		{
+			actor_id: Type.Number(),
+			space_id: Type.Number(),
+			content: Type.String(),
+		},
+		{unevaluatedProperties: false},
+	),
+]);
 
 // TODO automatic params type and validation
 // TODO should this use the `FileParams` type?

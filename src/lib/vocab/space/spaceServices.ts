@@ -2,9 +2,12 @@ import {Type} from '@sinclair/typebox';
 
 import type {Service} from '$lib/server/service';
 import type {Space} from '$lib/vocab/space/space';
+import {SpaceParamsSchema} from '$lib/vocab/space/space';
 
 const ReadSpaceServiceParams = Type.Object(
-	{space_id: Type.Number()},
+	{
+		space_id: Type.Number(),
+	},
 	{additionalProperties: false},
 );
 
@@ -28,7 +31,9 @@ export const readSpaceService: Service<typeof ReadSpaceServiceParams, {space: Sp
 };
 
 const ReadSpacesServiceSchema = Type.Object(
-	{community_id: Type.Number()},
+	{
+		community_id: Type.Number(),
+	},
 	{additionalProperties: false},
 );
 
@@ -50,20 +55,21 @@ export const readSpacesService: Service<typeof ReadSpacesServiceSchema, {spaces:
 	},
 };
 
-const CreateSpaceServiceSchema = Type.Object(
-	{
-		community_id: Type.Number(),
-		// TODO change to `SpaceParams`? Union with Typebox?
-		name: Type.String(),
-		url: Type.String(),
-		media_type: Type.String(),
-		content: Type.String(),
-	},
-	{additionalProperties: false},
+const CreateSpaceServiceSchema = Type.Intersect(
+	[
+		SpaceParamsSchema,
+		Type.Object({
+			community_id: Type.Number(),
+		}),
+	],
+	{unevaluatedProperties: false},
 );
 
 //Creates a new space for a given community
 export const createSpaceService: Service<typeof CreateSpaceServiceSchema, {space: Space}> = {
+	// TODO maybe this to handle automatic event dispatching?
+	// (lists of services instead of the current object literal definitions)
+	// name: 'create_space',
 	paramsSchema: CreateSpaceServiceSchema,
 	// TODO verify the `account_id` has permission to modify this space
 	handle: async (server, params) => {

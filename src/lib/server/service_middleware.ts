@@ -24,6 +24,7 @@ export const toServiceMiddleware =
 			const valid = validateParams(params);
 			if (!valid) {
 				// TODO handle multiple errors instead of just the first
+				console.error('validation failed', params, validateParams.errors);
 				const validationError = validateParams.errors![0];
 				return send(res, 400, {reason: toErrorMessage(validationError)});
 			}
@@ -37,6 +38,7 @@ export const toServiceMiddleware =
 			console.log('[service_middleware] result.code', result.code);
 			send(res, result.code, result.data);
 		} catch (err) {
+			console.error(err);
 			send(res, 500, {reason: 'unknown server error'});
 		}
 	};

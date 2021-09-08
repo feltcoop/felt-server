@@ -173,22 +173,24 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				media_type,
 				content,
 			};
-			const res = await fetch(`/api/v1/communities/${community_id}/spaces`, {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify(doc),
-			});
-			if (res.ok) {
-				try {
+			try {
+				const res = await fetch(`/api/v1/communities/${community_id}/spaces`, {
+					method: 'POST',
+					headers: {'Content-Type': 'application/json'},
+					body: JSON.stringify(doc),
+				});
+				if (res.ok) {
 					const result: {space: Space} = await res.json(); // TODO api types
-					console.log('create_space result', result);
+					console.log('[create_space] result', result);
 					data.add_space(result.space, community_id);
 					return {ok: true, value: result};
-				} catch (err) {
-					return {ok: false, reason: err.message};
+				} else {
+					const json = await res.json();
+					throw Error(`[create_space.failed] ${json.reason}`);
 				}
-			} else {
-				throw Error(`error: ${res.status}: ${res.statusText}`);
+			} catch (err) {
+				console.error(err.message);
+				return {ok: false, reason: err.message};
 			}
 		},
 		// TODO: This implementation is currently unconsentful,
