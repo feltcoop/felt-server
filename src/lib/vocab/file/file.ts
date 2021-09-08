@@ -1,4 +1,5 @@
-import {Type, Static} from '@sinclair/typebox';
+import {Type} from '@sinclair/typebox';
+import type {Static} from '@sinclair/typebox';
 
 export interface File {
 	file_id: number;
@@ -8,8 +9,11 @@ export interface File {
 }
 
 export type FileParams = Static<typeof FileParamsSchema>;
-export const FileParamsSchema = Type.Object({
-	actor_id: Type.Number(), // `persona_id` -- must be validated against the authenticated `account_id`
-	space_id: Type.Number(),
-	content: Type.String(),
-});
+export const FileParamsSchema = Type.Object(
+	{
+		actor_id: Type.Number(), // `persona_id` -- must be validated against the authenticated `account_id`
+		space_id: Type.Number(),
+		content: Type.String(),
+	},
+	{additionalProperties: false},
+);

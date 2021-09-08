@@ -3,9 +3,16 @@ import {Type} from '@sinclair/typebox';
 import type {Service} from '$lib/server/service';
 import type {Community} from '$lib/vocab/community/community';
 import type {Member} from '$lib/vocab/member/member';
+import {MemberParamsSchema} from '$lib/vocab/member/member';
 
-const ReadCommunitiesServiceParams = Type.Object({}, {additionalProperties: false});
+const ReadCommunitiesServiceParams = Type.Object(
+	{
+		// TODO query params
+	},
+	{additionalProperties: false},
+);
 
+// Returns a list of community objects
 export const readCommunitiesService: Service<
 	typeof ReadCommunitiesServiceParams,
 	{communities: Community[]}
@@ -24,7 +31,9 @@ export const readCommunitiesService: Service<
 };
 
 const ReadCommunityServiceParams = Type.Object(
-	{community_id: Type.Number()},
+	{
+		community_id: Type.Number(),
+	},
 	{additionalProperties: false},
 );
 
@@ -52,7 +61,10 @@ export const readCommunityService: Service<
 };
 
 const CreateCommunityServiceParams = Type.Object(
-	{name: Type.String(), persona_id: Type.Number()},
+	{
+		name: Type.String(),
+		persona_id: Type.Number(),
+	},
 	{additionalProperties: false},
 );
 
@@ -97,13 +109,7 @@ export const createCommunityService: Service<
 	},
 };
 
-const CreateMemberServiceParams = Type.Object(
-	{
-		persona_id: Type.Number(),
-		community_id: Type.Number(),
-	},
-	{additionalProperties: false},
-);
+const CreateMemberServiceParams = MemberParamsSchema;
 
 //Creates a new member relation for a community
 export const createMemberService: Service<typeof CreateMemberServiceParams, {member: Member}> = {

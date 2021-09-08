@@ -17,7 +17,7 @@
 		width: var(--icon_size);
 		min-width: var(--icon_size);
 	}
-	div {
+	div.actor-icon {
 		background-color: hsl(var(--hue), 50%, 50%);
 		border-radius: 50%;
 		color: white;

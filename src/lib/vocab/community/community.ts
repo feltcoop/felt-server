@@ -1,4 +1,5 @@
-import {Type, Static} from '@sinclair/typebox';
+import {Type} from '@sinclair/typebox';
+import type {Static} from '@sinclair/typebox';
 
 import type {Space} from '$lib/vocab/space/space.js';
 import type {Member} from '$lib/vocab/member/member.js';
@@ -11,10 +12,13 @@ export interface Community {
 }
 
 export type CommunityParams = Static<typeof CommunityParamsSchema>;
-export const CommunityParamsSchema = Type.Object({
-	name: Type.String(),
-	persona_id: Type.Number(),
-});
+export const CommunityParamsSchema = Type.Object(
+	{
+		name: Type.String(),
+		persona_id: Type.Number(),
+	},
+	{additionalProperties: false},
+);
 
 // TODO think through alternatives to this, probably caching `members_by_id` on `data`
 export interface CommunityModel {

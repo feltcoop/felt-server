@@ -22,3 +22,9 @@
 		<BoardItem {file} member={to_member(file.actor_id)} />
 	{/each}
 </ul>
+
+<style>
+	ul {
+		flex-direction: column-reverse;
+	}
+</style>
