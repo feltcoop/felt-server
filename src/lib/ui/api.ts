@@ -12,6 +12,7 @@ import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import {validateSpaceParams} from '$lib/vocab/space/space';
 import type {Member, MemberParams} from '$lib/vocab/member/member';
 import type {File, FileParams} from '$lib/vocab/file/file';
+import {validateFileParams} from '$lib/vocab/file/file';
 import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/login_middleware.js';
 import type {ClientAccountSession} from '$lib/session/client_session';
@@ -53,11 +54,7 @@ export interface ApiStore {
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
 		persona_id: number,
 	) => Promise<ApiResult<{value: {member: Member}}>>;
-	create_file: (
-		space: Space,
-		content: string,
-		selected_persona_id: number,
-	) => Promise<ApiResult<{value: {file: File}}>>;
+	create_file: (params: FileParams) => Promise<ApiResult<{value: {file: File}}>>;
 	load_files: (space_id: number) => Promise<ApiResult<{value: {file: File[]}}>>;
 }
 
@@ -217,17 +214,20 @@ export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore):
 				throw Error(`error: ${res.status}: ${res.statusText}`);
 			}
 		},
-		create_file: async (space, content, persona_id) => {
+		create_file: async (params: FileParams) => {
+			const validate = validateFileParams();
+			const valid = validate(params);
+			if (!valid) {
+				const reason = toValidationErrorMessage(validate.errors![0]);
+				console.error('validate failed:', reason, validate.errors);
+				return {ok: false, reason};
+			}
 			// TODO type
-			const params: {type: 'create_file'; params: FileParams} = {
+			const message: {type: 'create_file'; params: FileParams} = {
 				type: 'create_file',
-				params: {
-					actor_id: persona_id,
-					space_id: space.space_id,
-					content,
-				},
+				params,
 			};
-			socket.send(params);
+			socket.send(message);
 			return {
 				ok: true,
 				get value() {

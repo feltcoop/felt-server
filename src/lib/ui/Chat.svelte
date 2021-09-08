@@ -18,8 +18,13 @@
 	$: selected_persona_id = $ui.selected_persona_id;
 
 	const create_file = async () => {
-		if (!text) return;
-		await api.create_file(space, text, selected_persona_id!);
+		const content = text.trim(); // TODO parse to trim? regularize step?
+		if (!content) return;
+		await api.create_file({
+			space_id: space.space_id,
+			content,
+			actor_id: selected_persona_id!,
+		});
 		text = '';
 	};
 

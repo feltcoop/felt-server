@@ -1,5 +1,8 @@
 import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
+import type {ValidateFunction} from 'ajv';
+
+import {ajv} from '$lib/util/ajv';
 
 export type File = Static<typeof FileSchema>;
 export const FileSchema = Type.Object(
@@ -21,3 +24,6 @@ export const FileParamsSchema = Type.Object(
 	},
 	{$id: 'FileParams', additionalProperties: false},
 );
+export const validateFileParams = (): ValidateFunction<FileParams> =>
+	_validateFileParams || (_validateFileParams = ajv.compile(FileParamsSchema));
+let _validateFileParams: ValidateFunction<FileParams> | undefined;
