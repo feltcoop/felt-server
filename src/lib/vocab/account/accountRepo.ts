@@ -3,12 +3,13 @@ import type {Result} from '@feltcoop/felt';
 import type {Account, AccountParams} from '$lib/vocab/account/account.js';
 import {account_properties} from '$lib/vocab/account/account';
 import type {Database} from '$lib/db/Database';
+import type {ErrorResponse} from '$lib/util/error';
 
 export const accountRepo = (db: Database) => ({
 	create: async ({
 		name,
 		password,
-	}: AccountParams): Promise<Result<{value: Account}, {reason: string}>> => {
+	}: AccountParams): Promise<Result<{value: Account}, ErrorResponse>> => {
 		const data = await db.sql<Account[]>`
       insert into accounts (name, password) values (
         ${name}, ${password}
@@ -28,7 +29,7 @@ export const accountRepo = (db: Database) => ({
 	find_by_id: async (
 		account_id: number,
 		columns: string[] = account_properties,
-	): Promise<Result<{value: Account}, {type: 'no_account_found'; reason: string}>> => {
+	): Promise<Result<{value: Account}, {type: 'no_account_found'} & ErrorResponse>> => {
 		const data = await db.sql<Account[]>`
       select ${db.sql(columns)} from accounts where account_id = ${account_id}
     `;
@@ -43,7 +44,7 @@ export const accountRepo = (db: Database) => ({
 	},
 	find_by_name: async (
 		name: string,
-	): Promise<Result<{value: Account}, {type: 'no_account_found'; reason: string}>> => {
+	): Promise<Result<{value: Account}, {type: 'no_account_found'} & ErrorResponse>> => {
 		const data = await db.sql<Account[]>`
       select account_id, name, password from accounts where name = ${name}
     `;

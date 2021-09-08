@@ -1,6 +1,7 @@
 import type {Service} from '$lib/server/service';
+import type {File} from '$lib/vocab/file/file';
 
-export const readFilesService: Service<{space_id: number}> = {
+export const readFilesService: Service<{space_id: number}, {files: File[]}> = {
 	handle: async (server, params) => {
 		const {db} = server;
 		const find_files_result = await db.repos.file.filter_by_space(params.space_id as any); // TODO remove the typecast once this PR is rebased
@@ -15,7 +16,10 @@ export const readFilesService: Service<{space_id: number}> = {
 
 // TODO automatic params type and validation
 // TODO should this use the `FileParams` type?
-export const createFileService: Service<{actor_id: number; space_id: number; content: string}> = {
+export const createFileService: Service<
+	{actor_id: number; space_id: number; content: string},
+	{file: File}
+> = {
 	handle: async (server, params, _account_id) => {
 		// TODO validate `account_id` against the persona -- maybe as an optimized standalone method?
 		// server.db.repos.account.validate_persona(account_id, actor_id);

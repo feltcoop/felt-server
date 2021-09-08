@@ -2,11 +2,12 @@ import type {Result} from '@feltcoop/felt';
 
 import type {Community} from '$lib/vocab/community/community.js';
 import type {Database} from '$lib/db/Database';
+import type {ErrorResponse} from '$lib/util/error';
 
 export const communityRepo = (db: Database) => ({
 	find_by_id: async (
 		community_id: string,
-	): Promise<Result<{value: Community}, {type: 'no_community_found'; reason: string}>> => {
+	): Promise<Result<{value: Community}, {type: 'no_community_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for community id: ${community_id}`);
 		const data = await db.sql<Community[]>`
       select community_id, name from communities where community_id = ${community_id}

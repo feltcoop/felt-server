@@ -1,6 +1,8 @@
 import type {Service} from '$lib/server/service';
+import type {Community} from '$lib/vocab/community/community';
+import type {Member} from '$lib/vocab/member/member';
 
-export const readCommunitiesService: Service<{}> = {
+export const readCommunitiesService: Service<{}, {communities: Community[]}> = {
 	handle: async (server, _params, account_id) => {
 		const {db} = server;
 		const find_communities_result = await db.repos.community.filter_by_account(account_id);
@@ -14,7 +16,7 @@ export const readCommunitiesService: Service<{}> = {
 };
 
 //Returns a single community object
-export const readCommunityService: Service<{community_id: number}> = {
+export const readCommunityService: Service<{community_id: number}, {community: Community}> = {
 	handle: async (server, params, account_id) => {
 		const {db} = server;
 		console.log('[community_service] account', account_id); // TODO logging
@@ -34,7 +36,7 @@ export const readCommunityService: Service<{community_id: number}> = {
 
 //Creates a new community for an instance
 // TODO automatic params type and validation
-export const createCommunityService: Service<{name: string}> = {
+export const createCommunityService: Service<{name: string}, {community: Community}> = {
 	// TODO declarative validation for `req.body` and the rest
 	handle: async (server, params, account_id) => {
 		const {name} = params;
@@ -53,7 +55,7 @@ export const createCommunityService: Service<{name: string}> = {
 				return {
 					code: 200,
 					data: {
-						community: community_data.value.find((c) => c.community_id === community_id),
+						community: community_data.value.find((c) => c.community_id === community_id)!,
 					},
 				}; // TODO API types
 			} else {
@@ -68,7 +70,10 @@ export const createCommunityService: Service<{name: string}> = {
 };
 
 //Creates a new member relation for a community
-export const createMemberService: Service<{persona_id: number; community_id: number}> = {
+export const createMemberService: Service<
+	{persona_id: number; community_id: number},
+	{member: Member}
+> = {
 	handle: async (server, params) => {
 		console.log('[community_service] creating member', params.persona_id, params.community_id);
 

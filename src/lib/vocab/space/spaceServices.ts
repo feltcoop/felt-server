@@ -1,7 +1,8 @@
 import type {Service} from '$lib/server/service';
+import type {Space} from '$lib/vocab/space/space';
 
 //Returns a single space object
-export const readSpaceService: Service<{space_id: number}> = {
+export const readSpaceService: Service<{space_id: number}, {space: Space}> = {
 	handle: async (server, params) => {
 		const {db} = server;
 
@@ -19,7 +20,7 @@ export const readSpaceService: Service<{space_id: number}> = {
 };
 
 //Returns all spaces in a given community
-export const readSpacesService: Service<{community_id: number}> = {
+export const readSpacesService: Service<{community_id: number}, {spaces: Space[]}> = {
 	handle: async (server, params) => {
 		const {db} = server;
 
@@ -36,14 +37,17 @@ export const readSpacesService: Service<{community_id: number}> = {
 };
 
 //Creates a new space for a given community
-export const createSpaceService: Service<{
-	community_id: number;
-	// TODO change to `SpaceParams`? Union with Typebox?
-	name: string;
-	url: string;
-	media_type: string;
-	content: string;
-}> = {
+export const createSpaceService: Service<
+	{
+		community_id: number;
+		// TODO change to `SpaceParams`? Union with Typebox?
+		name: string;
+		url: string;
+		media_type: string;
+		content: string;
+	},
+	{space: Space}
+> = {
 	// TODO verify the `account_id` has permission to modify this space
 	handle: async (server, params) => {
 		const {db} = server;

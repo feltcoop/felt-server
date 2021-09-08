@@ -3,11 +3,12 @@ import type {Result} from '@feltcoop/felt';
 import type {Space, SpaceParams} from '$lib/vocab/space/space.js';
 import type {Database} from '$lib/db/Database';
 import {default_spaces} from '$lib/vocab/space/default_spaces';
+import type {ErrorResponse} from '$lib/util/error';
 
 export const spaceRepo = (db: Database) => ({
 	find_by_id: async (
 		space_id: string,
-	): Promise<Result<{value: Space}, {type: 'no_space_found'; reason: string}>> => {
+	): Promise<Result<{value: Space}, {type: 'no_space_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for space id: ${space_id}`);
 		const data = await db.sql<Space[]>`
       select space_id, name, url, media_type, content from spaces where space_id = ${space_id}
@@ -51,7 +52,7 @@ export const spaceRepo = (db: Database) => ({
 	},
 	insert_default_spaces: async (
 		community_id: number,
-	): Promise<Result<{value: Space[]}, {reason: string}>> => {
+	): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 		const spaces: Space[] = [];
 		for (const space_params of default_spaces) {
 			const result = await db.repos.space.insert(community_id, space_params);

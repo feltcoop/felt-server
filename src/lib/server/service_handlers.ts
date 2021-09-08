@@ -1,4 +1,4 @@
-import type {Service} from '$lib/server/service';
+import type {Service, ServiceParams, ServiceResponseData} from '$lib/server/service';
 import {
 	readCommunityService,
 	readCommunitiesService,
@@ -12,7 +12,7 @@ import {
 	createSpaceService,
 } from '$lib/vocab/space/spaceServices';
 
-export const service_handlers: {[key: string]: Service} = {
+export const service_handlers: {[key: string]: Service<ServiceParams, ServiceResponseData>} = {
 	read_community: readCommunityService,
 	read_communities: readCommunitiesService,
 	create_community: createCommunityService,

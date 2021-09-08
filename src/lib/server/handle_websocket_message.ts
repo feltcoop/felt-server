@@ -2,7 +2,7 @@ import type ws from 'ws';
 
 import type {ApiServer} from '$lib/server/ApiServer';
 import type {WebsocketServer} from './WebsocketServer';
-import type {Service} from '$lib/server/service';
+import type {Service, ServiceParams, ServiceResponseData} from '$lib/server/service';
 
 export interface HandleWebsocketMessage {
 	(
@@ -15,7 +15,9 @@ export interface HandleWebsocketMessage {
 }
 
 export const to_handle_websocket_message =
-	(service_handlers: {[key: string]: Service}): HandleWebsocketMessage =>
+	(service_handlers: {
+		[key: string]: Service<ServiceParams, ServiceResponseData>;
+	}): HandleWebsocketMessage =>
 	async (server, websocket_server, _socket, raw_message, account_id): Promise<void> => {
 		if (typeof raw_message !== 'string') {
 			console.error(

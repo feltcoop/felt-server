@@ -14,6 +14,7 @@ import type {File, FileParams} from '$lib/vocab/file/file';
 import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/login_middleware.js';
 import type {ClientAccountSession} from '$lib/session/client_session';
+import type {ErrorResponse} from '$lib/util/error';
 
 // TODO refactor/rethink
 
@@ -28,37 +29,37 @@ export const set_api = (store: ApiStore): ApiStore => {
 
 export interface ApiState {}
 
+export type ApiResult<TValue> = Result<TValue, ErrorResponse>;
+
 export interface ApiStore {
 	subscribe: Readable<ApiState>['subscribe'];
 	log_in: (
 		account_name: string,
 		password: string,
-	) => Promise<Result<{value: {session: ClientAccountSession}}, {reason: string}>>;
-	log_out: () => Promise<Result<{}, {reason: string}>>;
+	) => Promise<ApiResult<{value: {session: ClientAccountSession}}>>;
+	log_out: () => Promise<ApiResult<{}>>;
 	select_persona: (persona_id: number) => void;
 	select_community: (community_id: number | null) => void;
 	select_space: (community_id: number, space: number | null) => void;
 	toggle_main_nav: () => void;
-	create_community: (
-		name: string,
-	) => Promise<Result<{value: {community: CommunityModel}}, {reason: string}>>;
+	create_community: (name: string) => Promise<ApiResult<{value: {community: CommunityModel}}>>;
 	create_space: (
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
 		name: string,
 		url: string,
 		media_type: string,
 		content: string,
-	) => Promise<Result<{value: {space: Space}}, {reason: string}>>;
+	) => Promise<ApiResult<{value: {space: Space}}>>;
 	invite_member: (
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
 		persona_id: number,
-	) => Promise<Result<{value: {member: Member}}, {reason: string}>>;
+	) => Promise<ApiResult<{value: {member: Member}}>>;
 	create_file: (
 		space: Space,
 		content: string,
 		selected_persona_id: number,
-	) => Promise<Result<{value: {file: File}}, {reason: string}>>;
-	load_files: (space_id: number) => Promise<Result<{value: {file: File[]}}, {reason: string}>>;
+	) => Promise<ApiResult<{value: {file: File}}>>;
+	load_files: (space_id: number) => Promise<ApiResult<{value: {file: File[]}}>>;
 }
 
 export const to_api_store = (ui: UiStore, data: DataStore, socket: SocketStore): ApiStore => {

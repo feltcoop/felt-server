@@ -2,12 +2,13 @@ import type {Result} from '@feltcoop/felt';
 
 import type {Persona} from '$lib/vocab/persona/persona.js';
 import type {Database} from '$lib/db/Database';
+import type {ErrorResponse} from '$lib/util/error';
 
 export const personaRepo = (db: Database) => ({
 	create: async (
 		name: string,
 		account_id: number,
-	): Promise<Result<{value: Persona}, {reason: string}>> => {
+	): Promise<Result<{value: Persona}, ErrorResponse>> => {
 		const data = await db.sql<Persona[]>`
       insert into personas (name, account_id) values (
         ${name}, ${account_id}
@@ -18,7 +19,7 @@ export const personaRepo = (db: Database) => ({
 	},
 	filter_by_account: async (
 		account_id: number,
-	): Promise<Result<{value: Persona[]}, {reason: string}>> => {
+	): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 		const data = await db.sql<Persona[]>`
       select p.persona_id, p.account_id, p.name,
 

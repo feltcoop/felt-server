@@ -2,11 +2,12 @@ import type {Result} from '@feltcoop/felt';
 
 import type {Member} from '$lib/vocab/member/member.js';
 import type {Database} from '$lib/db/Database';
+import type {ErrorResponse} from '$lib/util/error';
 
 export const memberRepo = (db: Database) => ({
 	// TODO: this is a hack to stub out "members" for inviting to a Community.
 	//This should use a community_id to filter or something
-	get_all: async (): Promise<Result<{value: Member[]}, {reason: string}>> => {
+	get_all: async (): Promise<Result<{value: Member[]}, ErrorResponse>> => {
 		const data = await db.sql<Member[]>`
       select persona_id, name from personas
     `;
