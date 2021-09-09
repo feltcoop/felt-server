@@ -6,12 +6,15 @@
 	import {autofocus} from '$lib/ui/actions';
 	import {get_app} from '$lib/ui/app';
 
+	import {SpaceTypes} from '$lib/vocab/space/space';
+
 	const {api} = get_app();
 
 	export let community: CommunityModel;
 
 	let open = false;
 	let new_name = '';
+	let new_type = Object.entries(SpaceTypes)[0][1];
 
 	const on_keydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
@@ -21,7 +24,7 @@
 	};
 
 	const create = async () => {
-		if (!new_name) return;
+		if (!new_name || !new_type) return;
 		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
 		const url = `/${new_name}`;
 		await api.create_space(
@@ -30,9 +33,10 @@
 			url,
 			//TODO : add space type picker
 			'application/fuz+json',
-			`{"type": "chat", "props": {"data": "${url}/files"}}`,
+			`{"type": "${new_type}", "props": {"data": "${url}/files"}}`,
 		);
 		new_name = '';
+		new_type = Object.entries(SpaceTypes)[0][1];
 	};
 </script>
 
@@ -52,6 +56,11 @@
 						bind:value={new_name}
 						use:autofocus
 					/>
+					<select class="type-selector" bind:value={new_type}>
+						{#each Object.entries(SpaceTypes) as type (type)}
+							<option value={type[1]}>{type[0]}</option>
+						{/each}
+					</select>
 				</p>
 			</Markup>
 		</div>

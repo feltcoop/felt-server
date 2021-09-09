@@ -13,11 +13,11 @@ export interface SpaceParams {
 	content: string;
 }
 
-export enum SpaceTypes {
-	Chat = "chat",
-	Board = "board",
-	Forum = "forum",
-	Notes = "notes",
-	Voice = "voice",
-	Iframe = "iframe"
-}
+export const SpaceTypes = {
+	Chat: 'chat',
+	Board: 'board',
+	Forum: 'forum',
+	Notes: 'notes',
+	Voice: 'voice',
+	Iframe: 'iframe',
+};
