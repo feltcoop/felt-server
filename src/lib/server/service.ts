@@ -8,18 +8,15 @@ import type {ErrorResponse} from '$lib/util/error';
 // The generics are required to avoid mistakes with service definitions.
 export interface Service<
 	TParamsSchema extends ServiceParamsSchema,
-	TResponseData extends ServiceResponseData,
+	TResponseData extends ServiceResponseData, // TODO change to an output response schema
 > {
 	name: string; // `snake_cased`
-	paramsSchema: TParamsSchema; // TODO <TParams>;
-	// paramsSchema: TypeBuilder['Object']<TParams>;
-	validateParams?: ValidateFunction<Static<TParamsSchema>>;
-	// TODO input/output schemas
+	paramsSchema: TParamsSchema;
+	validateParams?: ValidateFunction<Static<TParamsSchema>>; // created lazily
+	// TODO is `handle` the best name?
 	handle(
 		// TODO maybe make this take a single object argument?
 		server: ApiServer,
-		// TODO to support websockets we probably need to forward only the params/query/etc (headers?),
-		// maybe combined into a single object for reusability in routeless websocket events
 		params: Static<TParamsSchema>,
 		account_id: number,
 	): Promise<ServiceResponse<TResponseData>>;
@@ -30,8 +27,8 @@ export type ServiceParamsSchema = TSchema;
 export interface ServiceResponse<TResponseData extends ServiceResponseData> {
 	code: number;
 	// TODO handle the types compatible with both websockets and http:
-	// websocket types: string | Buffer | ArrayBuffer | Buffer[];
-	// http types: string | object | Stream | Buffer | undefined
+	// websocket types: `string | Buffer | ArrayBuffer | Buffer[]`
+	// http types: `string | object | Stream | Buffer | undefined`
 	data: TResponseData | ErrorResponse;
 }
 

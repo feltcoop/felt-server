@@ -39,15 +39,13 @@ export const to_handle_websocket_message =
 			console.error('[handle_websocket_message] invalid message', message);
 			return;
 		}
-		const handler = services.get(message.type);
-		if (!handler) {
+		const service = services.get(message.type);
+		if (!service) {
 			console.error('[handle_websocket_message] unhandled message type', message.type);
 			return;
 		}
 
-		// TODO types are off, should the `WebsocketServer` know about `ApiServer`
-		// or should this handler stuff be extracted?
-		const response = await handler.handle(server, message.params, account_id);
+		const response = await service.handle(server, message.params, account_id);
 
 		// TODO what should the API for returning/broadcasting responses be?
 		const serialized_response = JSON.stringify({
