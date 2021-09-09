@@ -30,7 +30,7 @@
 			url,
 			//TODO : add space type picker
 			'application/fuz+json',
-			`{"type": "Chat", "props": {"data": "${url}/files"}}`,
+			`{"type": "chat", "props": {"data": "${url}/files"}}`,
 		);
 		new_name = '';
 	};

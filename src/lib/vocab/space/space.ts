@@ -12,3 +12,12 @@ export interface SpaceParams {
 	media_type: string;
 	content: string;
 }
+
+export enum SpaceTypes {
+	Chat = "chat",
+	Board = "board",
+	Forum = "forum",
+	Notes = "notes",
+	Voice = "voice",
+	Iframe = "iframe"
+}
