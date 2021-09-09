@@ -55,12 +55,12 @@ export const communityRepo = (db: Database) => ({
 		const community = data[0];
 		const community_id = community.community_id;
 		// TODO more robust error handling or condense into single query
-		await db.sql<any>`
-      INSERT INTO persona_communities (persona_id, community_id) VALUES (
-      ${persona_id},${community_id}
-      )
-    `;
-		community.spaces = []; // TODO ?
+		const member_result = await db.repos.member.create(persona_id, community_id);
+		if (!member_result.ok) return member_result;
+		console.log('[db] created member', member_result);
+		const spaces_result = await db.repos.space.create_default_spaces(community_id);
+		if (!spaces_result.ok) return spaces_result;
+		community.spaces = spaces_result.value;
 		return {ok: true, value: community};
 	},
 });
