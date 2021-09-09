@@ -15,7 +15,7 @@ export const accountRepo = (db: Database) => ({
       ) RETURNING *`;
 		console.log('[db] created account', data);
 		const account = data[0];
-		// TODO creating a persona should probably be decoupled from account creation,
+		// TODO creating the initial persona should probably be decoupled from account creation,
 		// and users should probably create a persona as the first onboarding step once logged in
 		const persona_response = await db.repos.persona.create(
 			`persona_${account.account_id}`,
