@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Modal from '@feltcoop/felt/ui/Modal.svelte';
+	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {autofocus} from '$lib/ui/actions';
@@ -29,7 +29,7 @@
 	➕
 </button>
 {#if open}
-	<Modal on:close={() => (open = false)}>
+	<Dialog on:close={() => (open = false)}>
 		<Markup>
 			<h1>Create a new community</h1>
 			<p>
@@ -42,7 +42,7 @@
 				/>
 			</p>
 		</Markup>
-	</Modal>
+	</Dialog>
 {/if}
 
 <style>

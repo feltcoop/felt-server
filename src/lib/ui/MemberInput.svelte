@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Modal from '@feltcoop/felt/ui/Modal.svelte';
+	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 
 	import type {Community} from '$lib/vocab/community/community.js';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
@@ -28,7 +28,7 @@
 	✉️
 </button>
 {#if open}
-	<Modal on:close={() => (open = false)}>
+	<Dialog on:close={() => (open = false)}>
 		<Markup>
 			<h1>Invite users to {community.name}</h1>
 			{#each invitable_members as member (member.persona_id)}
@@ -45,7 +45,7 @@
 				<p>There's no one new to invite</p>
 			{/each}
 		</Markup>
-	</Modal>
+	</Dialog>
 {/if}
 
 <style>

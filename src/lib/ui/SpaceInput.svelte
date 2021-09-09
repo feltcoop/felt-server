@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Modal from '@feltcoop/felt/ui/Modal.svelte';
+	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	import type {CommunityModel} from '$lib/vocab/community/community.js';
@@ -40,7 +40,7 @@
 	➕
 </button>
 {#if open}
-	<Modal on:close={() => (open = false)}>
+	<Dialog on:close={() => (open = false)}>
 		<div>
 			<Markup>
 				<h1>Create a new space</h1>
@@ -55,7 +55,7 @@
 				</p>
 			</Markup>
 		</div>
-	</Modal>
+	</Dialog>
 {/if}
 
 <style>
