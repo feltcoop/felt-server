@@ -136,15 +136,15 @@ export const seed = async (db: Database): Promise<void> => {
 		}
 	}
 
-	const communitiesParams: CommunityParams[] = [
-		{name: 'felt'},
-		{name: 'dev'},
-		{name: 'backpackers-anonymous'},
-	];
-	const communities: Community[] = [];
-
 	const mainPersonaCreator = personas[0];
 	const otherPersonas = personas.slice(1);
+
+	const communitiesParams: CommunityParams[] = [
+		{name: 'felt', persona_id: mainPersonaCreator.persona_id},
+		{name: 'dev', persona_id: mainPersonaCreator.persona_id},
+		{name: 'backpackers-anonymous', persona_id: mainPersonaCreator.persona_id},
+	];
+	const communities: Community[] = [];
 
 	for (const communityParams of communitiesParams) {
 		const community = unwrap(

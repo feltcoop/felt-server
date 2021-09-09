@@ -83,7 +83,7 @@ export const createSpaceService: Service<typeof CreateSpaceServiceSchema, {space
 
 		console.log('[space_middleware] creating space for community', params.community_id);
 
-		const create_space_result = await db.repos.space.insert(params);
+		const create_space_result = await db.repos.space.create(params);
 		if (create_space_result.ok) {
 			return {code: 200, data: {space: create_space_result.value}};
 		} else {

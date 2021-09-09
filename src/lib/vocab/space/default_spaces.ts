@@ -37,12 +37,14 @@ export const to_default_spaces = (community_id: number): SpaceParams[] => [
 		content: '{"type": "Voice", "props": {"data": "/voice/stream"}}',
 	},
 	{
+		community_id,
 		name: 'felt library',
 		url: '/library',
 		media_type: 'application/fuz+json',
 		content: '{"type": "Iframe", "props": {"url": "https://www.felt.dev/sketch/library"}}',
 	},
 	{
+		community_id,
 		name: 'dealt: tar',
 		url: '/tar',
 		media_type: 'application/fuz+json',

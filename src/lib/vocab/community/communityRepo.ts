@@ -46,6 +46,7 @@ export const communityRepo = (db: Database) => ({
 		console.log('[db.filter_by_account]', data.length);
 		return {ok: true, value: data};
 	},
+	// TODO community params
 	create: async (name: string, persona_id: number): Promise<Result<{value: Community}>> => {
 		const data = await db.sql<Community[]>`
       INSERT INTO communities (name) VALUES (

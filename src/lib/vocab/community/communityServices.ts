@@ -87,7 +87,7 @@ export const createCommunityService: Service<
 		}
 		console.log('created community account_id', account_id);
 		// TODO validate that `account_id` is `persona_id`
-		const create_community_result = await server.db.repos.community.insert(name, params.persona_id);
+		const create_community_result = await server.db.repos.community.create(name, params.persona_id);
 		console.log('create_community_result', create_community_result);
 		if (create_community_result.ok) {
 			// TODO optimize this to return `create_community_result.value` instead of making another db call,
