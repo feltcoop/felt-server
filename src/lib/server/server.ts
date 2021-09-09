@@ -7,11 +7,11 @@ import {Database} from '$lib/db/Database.js';
 import {default_postgres_options} from '$lib/db/postgres.js';
 import {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import {to_handle_websocket_message} from '$lib/server/handle_websocket_message';
-import {service_handlers} from '$lib/server/service_handlers';
+import {services} from '$lib/server/services';
 
 const server = create_http_server();
 
-const handle_websocket_message = to_handle_websocket_message(service_handlers);
+const handle_websocket_message = to_handle_websocket_message(services);
 
 // TODO this explicit type declaration is needed because of the awkward
 // `handle_websocket_message` API, there's some circularity in deps to maybe refactor

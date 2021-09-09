@@ -16,7 +16,7 @@ export interface HandleWebsocketMessage {
 
 export const to_handle_websocket_message =
 	(
-		service_handlers: Map<string, Service<ServiceParamsSchema, ServiceResponseData>>,
+		services: Map<string, Service<ServiceParamsSchema, ServiceResponseData>>,
 	): HandleWebsocketMessage =>
 	async (server, websocket_server, _socket, raw_message, account_id): Promise<void> => {
 		if (typeof raw_message !== 'string') {
@@ -39,7 +39,7 @@ export const to_handle_websocket_message =
 			console.error('[handle_websocket_message] invalid message', message);
 			return;
 		}
-		const handler = service_handlers.get(message.type);
+		const handler = services.get(message.type);
 		if (!handler) {
 			console.error('[handle_websocket_message] unhandled message type', message.type);
 			return;

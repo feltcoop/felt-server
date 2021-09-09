@@ -12,10 +12,7 @@ import {
 	createSpaceService,
 } from '$lib/vocab/space/spaceServices';
 
-export const service_handlers: Map<
-	string,
-	Service<ServiceParamsSchema, ServiceResponseData>
-> = new Map(
+export const services: Map<string, Service<ServiceParamsSchema, ServiceResponseData>> = new Map(
 	// TODO verify no duplicate names?
 	[
 		readCommunityService,
