@@ -36,4 +36,16 @@ export const to_default_spaces = (community_id: number): SpaceParams[] => [
 		media_type: 'application/fuz+json',
 		content: '{"type": "Voice", "props": {"data": "/voice/stream"}}',
 	},
+	{
+		name: 'felt library',
+		url: '/library',
+		media_type: 'application/fuz+json',
+		content: '{"type": "Iframe", "props": {"url": "https://www.felt.dev/sketch/library"}}',
+	},
+	{
+		name: 'dealt: tar',
+		url: '/tar',
+		media_type: 'application/fuz+json',
+		content: '{"type": "Iframe", "props": {"url": "https://www.dealt.dev/tar"}}',
+	},
 ];

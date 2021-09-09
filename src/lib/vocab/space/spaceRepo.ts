@@ -31,35 +31,35 @@ export const spaceRepo = (db: Database) => ({
 		console.log('[db] spaces data', data);
 		return {ok: true, value: data};
 	},
-	insert: async (params: SpaceParams): Promise<Result<{value: Space}>> => {
+	create: async (params: SpaceParams): Promise<Result<{value: Space}>> => {
 		const {name, content, media_type, url} = params;
 		const data = await db.sql<Space[]>`
       INSERT INTO spaces (name, url, media_type, content) VALUES (
         ${name},${url},${media_type},${content}
       ) RETURNING *
     `;
-		console.log('[db] created space', data);
+		// console.log('[db] created space', data);
 		const space_id: number = data[0].space_id;
-		console.log('[db] creating community space', params.community_id, space_id);
+		// console.log('[db] creating community space', params.community_id, space_id);
 		// TODO more robust error handling or condense into single query
-		const association = await db.sql<any>`
+		await db.sql<any>`
       INSERT INTO community_spaces (space_id, community_id) VALUES (
         ${space_id},${params.community_id}
       )
     `;
-		console.log('[db] created community_space', association);
+		// console.log('[db] created community_space', community_space);
 		return {ok: true, value: data[0]};
 	},
-	insert_default_spaces: async (
+	create_default_spaces: async (
 		community_id: number,
 	): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 		const spaces: Space[] = [];
 		for (const space_params of to_default_spaces(community_id)) {
-			const result = await db.repos.space.insert(space_params);
+			const result = await db.repos.space.create(space_params);
 			if (!result.ok) return {ok: false, reason: 'Failed to create default spaces for community.'};
 			spaces.push(result.value);
 		}
-		console.log('[db] created default spaces', community_id, spaces);
+		// console.log('[db] created default spaces', community_id, spaces);
 		return {ok: true, value: spaces};
 	},
 });

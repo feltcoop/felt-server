@@ -82,7 +82,6 @@
 		{/if}
 	</main>
 	<Devmode {devmode} />
-	<div id="modal-wrapper" />
 </div>
 
 <FeltWindowHost query={() => ({hue: random_hue($data.account.name)})} />

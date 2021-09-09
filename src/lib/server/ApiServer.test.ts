@@ -13,10 +13,10 @@ import {service_handlers} from '$lib/server/service_handlers';
 
 const TEST_PORT = 3003; // TODO
 
-/* test_api_server */
-const test_api_server = suite('ApiServer');
+/* test__api_server */
+const test__api_server = suite('ApiServer');
 
-test_api_server('init and close', async () => {
+test__api_server('init and close', async () => {
 	const server = createServer();
 	const handle_websocket_message = to_handle_websocket_message(service_handlers);
 	const api_server: ApiServer = new ApiServer({
@@ -34,5 +34,5 @@ test_api_server('init and close', async () => {
 	await api_server.close();
 });
 
-test_api_server.run();
-/* /test_api_server */
+test__api_server.run();
+/* test__api_server */

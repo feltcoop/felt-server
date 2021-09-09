@@ -43,9 +43,9 @@ export const createFileService: Service<typeof CreateFileServiceParams, {file: F
 	handle: async (server, params, _account_id) => {
 		// TODO validate `account_id` against the persona -- maybe as an optimized standalone method?
 		// server.db.repos.account.validate_persona(account_id, actor_id);
-		const insert_files_result = await server.db.repos.file.insert(
+		const insert_files_result = await server.db.repos.file.create(
 			params.actor_id,
-			params.space_id as any, // TODO remove the typecast once this PR is rebased
+			params.space_id,
 			params.content,
 		);
 		if (insert_files_result.ok) {
