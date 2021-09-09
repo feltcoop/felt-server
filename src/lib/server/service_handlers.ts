@@ -16,6 +16,7 @@ export const service_handlers: Map<
 	string,
 	Service<ServiceParamsSchema, ServiceResponseData>
 > = new Map(
+	// TODO verify no duplicate names?
 	[
 		readCommunityService,
 		readCommunitiesService,
