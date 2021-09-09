@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
-
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
+
 	import {autofocus} from '$lib/ui/actions';
 	import {get_app} from '$lib/ui/app';
 

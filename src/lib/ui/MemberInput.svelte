@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
+	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	import type {Community} from '$lib/vocab/community/community.js';
-	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import type {Member} from '$lib/vocab/member/member.js';
 	import {get_app} from '$lib/ui/app';
 
