@@ -29,13 +29,13 @@ export const toServiceMiddleware =
 				return send(res, 400, {reason: toValidationErrorMessage(validationError)});
 			}
 			if (!req.account_id) {
-				// TODO this is duplicating the role of the `authorization_middleware` to avoid mistakes,
+				// TODO this is duplicating the role of the `authorizationMiddleware` to avoid mistakes,
 				// but what's the better design here?
 				// Should each service declare if `account_id` is required?
 				return send(res, 401, {reason: 'not logged in'});
 			}
 			const result = await service.handle(server, params, req.account_id);
-			console.log('[service_middleware] result.code', result.code);
+			console.log('[serviceMiddleware] result.code', result.code);
 			send(res, result.code, result.data);
 		} catch (err) {
 			console.error(err);

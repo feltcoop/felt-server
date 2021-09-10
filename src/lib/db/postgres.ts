@@ -18,7 +18,7 @@ export interface PostgresOptions extends Options<PostgresTypeMap> {
 // TODO use this to pass through custom types
 export type PostgresTypeMap = Record<string, unknown>;
 
-const to_default_postgres_options = (): PostgresOptions => ({
+const toDefaultPostgresOptions = (): PostgresOptions => ({
 	host: toEnvString('PGHOST', 'localhost'),
 	port: toEnvNumber('PGPORT', 5432),
 	database: toEnvString('PGDATABASE', 'felt'),
@@ -28,12 +28,12 @@ const to_default_postgres_options = (): PostgresOptions => ({
 	connect_timeout: toEnvNumber('PGCONNECT_TIMEOUT')!, // TODO `!` is a type hack, try updating the lib
 });
 
-export const default_postgres_options = to_default_postgres_options();
+export const defaultPostgresOptions = toDefaultPostgresOptions();
 
 // update `process.env` so tools like `ley` see our values
 // TODO maybe add a flag to the `toEnv` APIs to set the value if it's undefined (set as a string!)
-process.env.PGHOST = default_postgres_options.host;
-process.env.PGPORT = default_postgres_options.port.toString();
-process.env.PGDATABASE = default_postgres_options.database;
-process.env.PGUSERNAME = default_postgres_options.username;
-process.env.PGPASSWORD = default_postgres_options.password;
+process.env.PGHOST = defaultPostgresOptions.host;
+process.env.PGPORT = defaultPostgresOptions.port.toString();
+process.env.PGDATABASE = defaultPostgresOptions.database;
+process.env.PGUSERNAME = defaultPostgresOptions.username;
+process.env.PGPASSWORD = defaultPostgresOptions.password;

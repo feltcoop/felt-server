@@ -4,12 +4,12 @@
 	import type {ApiStore} from '$lib/ui/api';
 
 	export let guest: boolean;
-	export let log_in: ApiStore['log_in'];
-	export let log_out: ApiStore['log_out'];
+	export let logIn: ApiStore['logIn'];
+	export let logOut: ApiStore['logOut'];
 </script>
 
 {#if guest}
-	<LoginForm {log_in} />
+	<LoginForm {logIn} />
 {:else}
-	<LogoutForm {log_out} />
+	<LogoutForm {logOut} />
 {/if}

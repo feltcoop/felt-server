@@ -10,45 +10,45 @@
 	import {page} from '$app/stores';
 	import {browser} from '$app/env';
 
-	import {set_socket, to_socket_store} from '$lib/ui/socket';
+	import {setSocket, toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
 	import MainNav from '$lib/ui/MainNav.svelte';
-	import {set_data} from '$lib/ui/data';
-	import {set_ui} from '$lib/ui/ui';
-	import {set_api, to_api_store} from '$lib/ui/api';
-	import {set_app} from '$lib/ui/app';
-	import {random_hue} from '$lib/ui/color';
+	import {setData} from '$lib/ui/data';
+	import {setUi} from '$lib/ui/ui';
+	import {setApi, toApiStore} from '$lib/ui/api';
+	import {setApp} from '$lib/ui/app';
+	import {randomHue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {WEBSOCKET_URL} from '$lib/constants';
 	import {toHandleSocketMessage} from '$lib/ui/handleSocketMessage';
 
 	const devmode = setDevmode();
-	const data = set_data($session);
-	$: data.update_session($session);
-	const socket = set_socket(to_socket_store(toHandleSocketMessage(data)));
-	const ui = set_ui();
-	$: ui.update_data($data); // TODO this or make it an arg to the ui store?
-	const api = set_api(to_api_store(ui, data, socket));
-	const app = set_app({data, ui, api, devmode, socket});
+	const data = setData($session);
+	$: data.updateSession($session);
+	const socket = setSocket(toSocketStore(toHandleSocketMessage(data)));
+	const ui = setUi();
+	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
+	const api = setApi(toApiStore(ui, data, socket));
+	const app = setApp({data, ui, api, devmode, socket});
 	browser && console.log('app', app);
 
 	// TODO refactor -- where should this logic go?
-	$: update_state_from_page_params($page.params);
-	const update_state_from_page_params = (params: {community?: string; space?: string}) => {
+	$: updateStateFromPageParams($page.params);
+	const updateStateFromPageParams = (params: {community?: string; space?: string}) => {
 		if (!params.community) return;
 		const community = $data.communities.find((c) => c.name === params.community);
 		if (!community) throw Error(`TODO Unable to find community: ${params.community}`);
 		const {community_id} = community;
-		if (community_id !== $ui.selected_community_id) {
-			api.select_community(community_id);
+		if (community_id !== $ui.selectedCommunityId) {
+			api.selectCommunity(community_id);
 		}
 		if (community_id && params.space) {
-			const space_url = '/' + params.space;
-			const space = community.spaces.find((s) => s.url === space_url);
-			if (!space) throw Error(`TODO Unable to find space: ${space_url}`);
+			const spaceUrl = '/' + params.space;
+			const space = community.spaces.find((s) => s.url === spaceUrl);
+			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = space;
-			if (space_id !== $ui.selected_space_id_by_community[community_id]) {
-				api.select_space(community_id, space_id);
+			if (space_id !== $ui.selectedSpaceIdByCommunity[community_id]) {
+				api.selectSpace(community_id, space_id);
 			}
 		}
 	};
@@ -74,7 +74,7 @@
 		{#if $session.guest}
 			<div class="column">
 				<Markup>
-					<AccountForm guest={$session.guest} log_in={api.log_in} log_out={api.log_out} />
+					<AccountForm guest={$session.guest} logIn={api.logIn} logOut={api.logOut} />
 				</Markup>
 			</div>
 		{:else}
@@ -84,7 +84,7 @@
 	<Devmode {devmode} />
 </div>
 
-<FeltWindowHost query={() => ({hue: random_hue($data.account.name)})} />
+<FeltWindowHost query={() => ({hue: randomHue($data.account.name)})} />
 
 <style>
 	.layout {

@@ -1,15 +1,15 @@
 <script lang="ts">
 	import type {Space} from '$lib/vocab/space/space';
 	import type {Community} from '$lib/vocab/community/community';
-	import {get_app} from '$lib/ui/app';
+	import {getApp} from '$lib/ui/app';
 
-	const {ui} = get_app();
+	const {ui} = getApp();
 
 	export let space: Space | null | undefined;
 	export let community: Community | null | undefined;
 </script>
 
-<ul class="workspace-header" class:expanded-nav={$ui.expand_main_nav}>
+<ul class="workspace-header" class:expanded-nav={$ui.expandMainNav}>
 	<li class="luggage-placeholder" />
 	<li class="breadcrumbs">
 		{community?.name} / {space?.url.split('/').filter(Boolean).join(' / ') || ''}

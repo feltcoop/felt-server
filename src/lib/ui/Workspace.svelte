@@ -2,31 +2,31 @@
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import SpaceView from '$lib/ui/SpaceView.svelte';
 	import WorkspaceHeader from '$lib/ui/WorkspaceHeader.svelte';
-	import {get_app} from '$lib/ui/app';
+	import {getApp} from '$lib/ui/app';
 
-	const {data, ui} = get_app();
+	const {data, ui} = getApp();
 
 	$: communities = $data.communities;
 
 	// TODO speed up these lookups, probably with a map of all entities by id
-	// $: selected_community = data.entities.get($ui.selected_community_id);
-	$: selected_community =
-		communities.find((c) => c.community_id === $ui.selected_community_id) || null;
-	$: selected_space = selected_community
-		? selected_community.spaces.find(
-				(s) => s.space_id === $ui.selected_space_id_by_community[selected_community!.community_id],
+	// $: selectedCommunity = data.entities.get($ui.selectedCommunityId);
+	$: selectedCommunity =
+		communities.find((c) => c.community_id === $ui.selectedCommunityId) || null;
+	$: selectedSpace = selectedCommunity
+		? selectedCommunity.spaces.find(
+				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[selectedCommunity!.community_id],
 		  )
 		: null;
-	$: members_by_id = selected_community?.members_by_id;
+	$: membersById = selectedCommunity?.membersById;
 </script>
 
 <div class="workspace">
 	<div class="column">
-		<WorkspaceHeader space={selected_space} community={selected_community} />
-		{#if selected_space && members_by_id}
-			<SpaceView space={selected_space} {members_by_id} />
-		{:else if selected_community}
-			<SpaceInput community={selected_community}>Create a new space</SpaceInput>
+		<WorkspaceHeader space={selectedSpace} community={selectedCommunity} />
+		{#if selectedSpace && membersById}
+			<SpaceView space={selectedSpace} {membersById} />
+		{:else if selectedCommunity}
+			<SpaceInput community={selectedCommunity}>Create a new space</SpaceInput>
 		{/if}
 	</div>
 </div>

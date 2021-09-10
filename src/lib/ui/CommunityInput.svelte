@@ -3,17 +3,17 @@
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	import {autofocus} from '$lib/ui/actions';
-	import {get_app} from '$lib/ui/app';
+	import {getApp} from '$lib/ui/app';
 
-	const {api, ui} = get_app();
+	const {api, ui} = getApp();
 
 	let open = false;
-	let new_name = '';
+	let newName = '';
 
-	const on_keydown = async (e: KeyboardEvent) => {
+	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await api.create_community(new_name, $ui.selected_persona_id!);
-			new_name = '';
+			await api.createCommunity(newName, $ui.selectedPersonaId!);
+			newName = '';
 			open = false;
 		}
 	};
@@ -36,8 +36,8 @@
 				<input
 					type="text"
 					placeholder="> name"
-					on:keydown={on_keydown}
-					bind:value={new_name}
+					on:keydown={onKeydown}
+					bind:value={newName}
 					use:autofocus
 				/>
 			</p>

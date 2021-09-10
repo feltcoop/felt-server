@@ -6,35 +6,35 @@
 	import type {AccountModel} from '$lib/vocab/account/account';
 	import type {ApiStore} from '$lib/ui/api';
 
-	export let log_out: ApiStore['log_out'];
+	export let logOut: ApiStore['logOut'];
 
 	let account: AccountModel;
 	$: account = $session?.account;
 	$: console.log('<LogoutForm> account', account);
 
-	let error_message: string | undefined;
+	let errorMessage: string | undefined;
 	let submitting: boolean | undefined;
 
 	$: disabled = !account;
 
-	const do_log_out = async () => {
+	const doLogOut = async () => {
 		submitting = true;
-		error_message = '';
-		const result = await log_out();
-		console.log('<LogoutForm> log_out result', result);
+		errorMessage = '';
+		const result = await logOut();
+		console.log('<LogoutForm> logOut result', result);
 		if (!result.ok) {
-			error_message = result.reason;
+			errorMessage = result.reason;
 		}
 		submitting = false;
 	};
 </script>
 
 <form>
-	<PendingButton pending={!!submitting} type="button" on:click={do_log_out} {disabled}>
+	<PendingButton pending={!!submitting} type="button" on:click={doLogOut} {disabled}>
 		log out
 	</PendingButton>
-	{#if error_message}
-		<Message status="error">{error_message}</Message>
+	{#if errorMessage}
+		<Message status="error">{errorMessage}</Message>
 	{/if}
 </form>
 

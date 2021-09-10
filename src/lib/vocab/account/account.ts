@@ -27,5 +27,5 @@ export interface AccountModel {
 }
 
 // TODO improve types so they're exhaustive but still static (maybe via schema/codegen)
-export const account_properties: (keyof Account)[] = ['account_id', 'name', 'password'];
-export const account_model_properties: (keyof AccountModel)[] = ['account_id', 'name'];
+export const accountProperties: (keyof Account)[] = ['account_id', 'name', 'password'];
+export const accountModelProperties: (keyof AccountModel)[] = ['account_id', 'name'];

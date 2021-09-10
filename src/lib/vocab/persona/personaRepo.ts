@@ -16,13 +16,13 @@ export const personaRepo = (db: Database) => ({
       ) RETURNING *`;
 		const persona = data[0];
 		console.log('[db] created persona', persona);
-		const create_community_result = await db.repos.community.create(name, persona.persona_id);
-		if (!create_community_result.ok) {
+		const createCommunityResult = await db.repos.community.create(name, persona.persona_id);
+		if (!createCommunityResult.ok) {
 			return {ok: false, reason: 'Failed to create initial persona community'};
 		}
-		return {ok: true, value: {persona, community: create_community_result.value}};
+		return {ok: true, value: {persona, community: createCommunityResult.value}};
 	},
-	filter_by_account: async (
+	filterByAccount: async (
 		account_id: number,
 	): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 		const data = await db.sql<Persona[]>`

@@ -4,33 +4,33 @@ import type {HandleSocketMessage} from '$lib/ui/socket';
 // TODO name? `Websocket`? `ClientWebsocket` to distinguish from the server version?
 export const toHandleSocketMessage =
 	(data: DataStore): HandleSocketMessage =>
-	(raw_message) => {
-		if (typeof raw_message !== 'string') {
+	(rawMessage) => {
+		if (typeof rawMessage !== 'string') {
 			console.error(
-				'[handle_socket_message] cannot handle websocket message; currently only supports strings',
+				'[handleSocketMessage] cannot handle websocket message; currently only supports strings',
 			);
 			return;
 		}
 		let message: any; // TODO types
 		try {
-			message = JSON.parse(raw_message);
+			message = JSON.parse(rawMessage);
 		} catch (err) {
-			console.error('[handle_socket_message] bad payload', raw_message, err);
+			console.error('[handleSocketMessage] bad payload', rawMessage, err);
 			return;
 		}
-		console.log('[handle_socket_message] message', message);
+		console.log('[handleSocketMessage] message', message);
 		// TODO hack
 		if (message.type === 'service_response') {
-			if (message.message_type === 'create_file') {
+			if (message.messageType === 'create_file') {
 				if (message.response.code === 200) {
-					data.add_file(message.response.data.file);
+					data.addFile(message.response.data.file);
 				} else {
-					console.error('[handle_socket_message] unhandled response code', message.response.code);
+					console.error('[handleSocketMessage] unhandled response code', message.response.code);
 				}
 			} else {
-				console.error('[handle_socket_message] unhandled message_type', message.message_type);
+				console.error('[handleSocketMessage] unhandled messageType', message.messageType);
 			}
 		} else {
-			console.error('[handle_socket_message] unhandled message', message);
+			console.error('[handleSocketMessage] unhandled message', message);
 		}
 	};

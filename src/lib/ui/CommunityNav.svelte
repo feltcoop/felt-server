@@ -3,11 +3,11 @@
 	import type {Member} from '$lib/vocab/member/member.js';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
-	import {random_hue} from '$lib/ui/color';
+	import {randomHue} from '$lib/ui/color';
 
 	export let members: Member[];
-	export let selected_persona_communities: Community[];
-	export let selected_community: Community;
+	export let selectedPersonaCommunities: Community[];
+	export let selectedCommunity: Community;
 </script>
 
 <div class="community-nav">
@@ -15,12 +15,12 @@
 		<CommunityInput />
 	</div>
 	<div>
-		{#each selected_persona_communities as community (community.community_id)}
+		{#each selectedPersonaCommunities as community (community.community_id)}
 			<!-- TODO make these links <a>...</a> -->
 			<a
 				href="/{community.name}"
-				class:selected={community === selected_community}
-				style="--hue: {random_hue(community.name)}"
+				class:selected={community === selectedCommunity}
+				style="--hue: {randomHue(community.name)}"
 			>
 				<ActorIcon name={community.name} />
 			</a>

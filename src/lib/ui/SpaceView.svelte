@@ -10,10 +10,10 @@
 	import type {Member} from '$lib/vocab/member/member';
 
 	export let space: Space;
-	export let members_by_id: Map<number, Member>;
+	export let membersById: Map<number, Member>;
 
 	// TODO types
-	const to_space_data = (space: Space): any => {
+	const toSpaceData = (space: Space): any => {
 		switch (space.media_type) {
 			case 'application/fuz+json': {
 				return JSON.parse(space.content);
@@ -24,23 +24,23 @@
 		}
 	};
 
-	$: space_data = to_space_data(space);
-	$: console.log('space_data', space_data);
+	$: spaceData = toSpaceData(space);
+	$: console.log('spaceData', spaceData);
 </script>
 
 <!-- TODO make this a lookup by type and handle generically -->
-{#if space_data.type === SpaceTypes.Chat}
-	<Chat {space} {members_by_id} />
-{:else if space_data.type === SpaceTypes.Board}
-	<Board {space} {members_by_id} />
-{:else if space_data.type === SpaceTypes.Forum}
-	<Forum {space} {members_by_id} />
-{:else if space_data.type === SpaceTypes.Notes}
+{#if spaceData.type === SpaceTypes.Chat}
+	<Chat {space} {membersById} />
+{:else if spaceData.type === SpaceTypes.Board}
+	<Board {space} {membersById} />
+{:else if spaceData.type === SpaceTypes.Forum}
+	<Forum {space} {membersById} />
+{:else if spaceData.type === SpaceTypes.Notes}
 	<Notes {space} />
-{:else if space_data.type === SpaceTypes.Voice}
+{:else if spaceData.type === SpaceTypes.Voice}
 	<Voice {space} />
-{:else if space_data.type === SpaceTypes.Iframe}
-	<Iframe {space} {...space_data.props} />
+{:else if spaceData.type === SpaceTypes.Iframe}
+	<Iframe {space} {...spaceData.props} />
 {:else}
-	unknown space type: {space_data.type}
+	unknown space type: {spaceData.type}
 {/if}

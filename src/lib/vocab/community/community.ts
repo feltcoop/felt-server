@@ -31,18 +31,18 @@ export const CommunityParamsSchema = Type.Object(
 	{$id: 'CommunityParams', additionalProperties: false},
 );
 
-// TODO think through alternatives to this, probably caching `members_by_id` on `data`
+// TODO think through alternatives to this, probably caching `membersById` on `data`
 export interface CommunityModel {
 	community_id: number;
 	name: string;
 	spaces: Space[];
 	members: Member[];
-	members_by_id: Map<number, Member>;
+	membersById: Map<number, Member>;
 }
 
-export const to_community_model = (community: Community): CommunityModel => ({
+export const toCommunityModel = (community: Community): CommunityModel => ({
 	...community,
-	members_by_id: new Map(community.members.map((member) => [member.persona_id, member])),
+	membersById: new Map(community.members.map((member) => [member.persona_id, member])),
 });
 
 export interface CommunitySpaces {

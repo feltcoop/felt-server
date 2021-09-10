@@ -5,9 +5,9 @@ import {setContext, getContext} from 'svelte';
 
 const KEY = Symbol();
 
-export const get_socket = (): SocketStore => getContext(KEY);
+export const getSocket = (): SocketStore => getContext(KEY);
 
-export const set_socket = (store: SocketStore): SocketStore => {
+export const setSocket = (store: SocketStore): SocketStore => {
 	setContext(KEY, store);
 	return store;
 };
@@ -21,9 +21,9 @@ export interface SocketState {
 	url: string | null;
 	ws: WebSocket | null;
 	connected: boolean;
-	status: AsyncStatus; // rename? `connection_status`?
+	status: AsyncStatus; // rename? `connectionStatus`?
 	error: string | null;
-	send_count: number;
+	sendCount: number;
 }
 
 export interface SocketStore {
@@ -34,11 +34,11 @@ export interface SocketStore {
 }
 
 export interface HandleSocketMessage {
-	(raw_message: any): void;
+	(rawMessage: any): void;
 }
 
-export const to_socket_store = (handle_message: HandleSocketMessage) => {
-	const {subscribe, update} = writable<SocketState>(to_default_socket_state(), () => {
+export const toSocketStore = (handleMessage: HandleSocketMessage) => {
+	const {subscribe, update} = writable<SocketState>(toDefaultSocketState(), () => {
 		console.log('[socket] listen store');
 		return () => {
 			console.log('[socket] unlisten store');
@@ -49,7 +49,7 @@ export const to_socket_store = (handle_message: HandleSocketMessage) => {
 		console.log('[socket] store subscriber', value);
 	});
 
-	const create_web_socket = (url: string): WebSocket => {
+	const createWebSocket = (url: string): WebSocket => {
 		const ws = new WebSocket(url);
 		ws.onopen = (e) => {
 			console.log('[socket] open', e);
@@ -62,7 +62,7 @@ export const to_socket_store = (handle_message: HandleSocketMessage) => {
 		};
 		ws.onmessage = (e) => {
 			// console.log('[socket] on message');
-			handle_message(e.data);
+			handleMessage(e.data);
 		};
 		ws.onerror = (e) => {
 			console.log('[socket] error', e);
@@ -98,7 +98,7 @@ export const to_socket_store = (handle_message: HandleSocketMessage) => {
 					url,
 					connected: false,
 					status: 'pending',
-					ws: create_web_socket(url),
+					ws: createWebSocket(url),
 					error: null,
 				};
 			});
@@ -108,7 +108,7 @@ export const to_socket_store = (handle_message: HandleSocketMessage) => {
 				console.log('[ws] send', data, $socket);
 				if (!$socket.ws) return $socket;
 				$socket.ws.send(JSON.stringify(data));
-				return {...$socket, send_count: $socket.send_count + 1};
+				return {...$socket, sendCount: $socket.sendCount + 1};
 			});
 		},
 	};
@@ -116,11 +116,11 @@ export const to_socket_store = (handle_message: HandleSocketMessage) => {
 	return store;
 };
 
-const to_default_socket_state = (): SocketState => ({
+const toDefaultSocketState = (): SocketState => ({
 	url: null,
 	ws: null,
 	connected: false,
 	status: 'initial',
 	error: null,
-	send_count: 0,
+	sendCount: 0,
 });

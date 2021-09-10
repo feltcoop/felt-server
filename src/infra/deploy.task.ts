@@ -13,11 +13,11 @@ export const task: Task = {
 		await invokeTask('clean');
 		await invokeTask('build');
 		let timestamp = Date.now();
-		let artifact_name = `felt_server_${timestamp}`;
-		console.log(`Working with artifact: ${artifact_name}`);
+		let artifactName = `felt_server_${timestamp}`;
+		console.log(`Working with artifact: ${artifactName}`);
 		await spawn('tar', [
 			'-cvf',
-			`${artifact_name}.tar`,
+			`${artifactName}.tar`,
 			DIST_DIRNAME,
 			'package.json',
 			'package-lock.json',
@@ -25,17 +25,17 @@ export const task: Task = {
 		//scp to server
 		//your ssh key will need to be added to linode account
 		//TODO create server account for running system
-		await spawn('scp', [`${artifact_name}.tar`, `${deployLogin}:${artifact_name}.tar`]);
+		await spawn('scp', [`${artifactName}.tar`, `${deployLogin}:${artifactName}.tar`]);
 		//unpack & start server
 		await spawn('ssh', [
 			deployLogin,
-			`mkdir deploy_${artifact_name};
-			mv ${artifact_name}.tar deploy_${artifact_name}/;
-			cd deploy_${artifact_name};
-			tar -xvf ${artifact_name}.tar;
+			`mkdir deploy_${artifactName};
+			mv ${artifactName}.tar deploy_${artifactName}/;
+			cd deploy_${artifactName};
+			tar -xvf ${artifactName}.tar;
 			npm i;
 			cd ../;
-			ln -sfn deploy_${artifact_name}/ deploy_felt_server_current;`,
+			ln -sfn deploy_${artifactName}/ deploy_felt_server_current;`,
 		]);
 	},
 };

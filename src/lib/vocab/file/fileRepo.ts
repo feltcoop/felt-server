@@ -17,7 +17,7 @@ export const fileRepo = (db: Database) => ({
 		// console.log('[db] create file', data);
 		return {ok: true, value: data[0]};
 	},
-	filter_by_space: async (space_id: number): Promise<Result<{value: File[]}>> => {
+	filterBySpace: async (space_id: number): Promise<Result<{value: File[]}>> => {
 		console.log(`[db] preparing to query for space files: ${space_id}`);
 		const data = await db.sql<File[]>`
       SELECT f.file_id, f.content, f.actor_id, f.space_id FROM files f WHERE f.space_id= ${space_id}

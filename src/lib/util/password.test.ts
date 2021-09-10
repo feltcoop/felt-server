@@ -1,26 +1,26 @@
 import {suite} from 'uvu';
 import * as t from 'uvu/assert';
 
-import {verify_password, to_password_key} from '$lib/util/password';
+import {verifyPassword, toPasswordKey} from '$lib/util/password';
 
-/* test__verify_password */
-const test__verify_password = suite('verify_password');
+/* test__verifyPassword */
+const test__verifyPassword = suite('verifyPassword');
 
-test__verify_password('hash and verify a password', async () => {
+test__verifyPassword('hash and verify a password', async () => {
 	const password = 'password';
-	const key = await to_password_key(password);
-	t.ok(await verify_password(password, key));
+	const key = await toPasswordKey(password);
+	t.ok(await verifyPassword(password, key));
 });
 
-test__verify_password('fail to verify', async () => {
+test__verifyPassword('fail to verify', async () => {
 	const password = 'password';
-	const key = await to_password_key(password);
-	t.not.ok(await verify_password('', key));
-	t.not.ok(await verify_password(password + '1', key));
-	t.not.ok(await verify_password(password, '1' + key));
-	t.not.ok(await verify_password(password, await to_password_key('')));
-	t.not.ok(await verify_password(password, await to_password_key(password + '1')));
+	const key = await toPasswordKey(password);
+	t.not.ok(await verifyPassword('', key));
+	t.not.ok(await verifyPassword(password + '1', key));
+	t.not.ok(await verifyPassword(password, '1' + key));
+	t.not.ok(await verifyPassword(password, await toPasswordKey('')));
+	t.not.ok(await verifyPassword(password, await toPasswordKey(password + '1')));
 });
 
-test__verify_password.run();
-/* test__verify_password */
+test__verifyPassword.run();
+/* test__verifyPassword */

@@ -1,7 +1,7 @@
 import type {SpaceParams} from '$lib/vocab/space/space';
 import {SpaceTypes} from '$lib/vocab/space/space';
 
-export const to_default_spaces = (community_id: number): SpaceParams[] => [
+export const toDefaultSpaces = (community_id: number): SpaceParams[] => [
 	{
 		community_id,
 		name: 'chat',

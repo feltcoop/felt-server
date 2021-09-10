@@ -17,15 +17,15 @@ export const readSpaceService: Service<typeof ReadSpaceServiceParams, {space: Sp
 	handle: async (server, params) => {
 		const {db} = server;
 
-		console.log('[space_middleware] space', params.space_id);
+		console.log('[read_space] space', params.space_id);
 
-		const find_space_result = await db.repos.space.find_by_id(params.space_id as any); // TODO remove the typecast once this PR is rebased
-		if (find_space_result.ok) {
-			return {code: 200, data: {space: find_space_result.value}};
+		const findSpaceResult = await db.repos.space.findById(params.space_id as any); // TODO remove the typecast once this PR is rebased
+		if (findSpaceResult.ok) {
+			return {code: 200, data: {space: findSpaceResult.value}};
 		} else {
-			console.log('no space found');
-			const code = find_space_result.type === 'no_space_found' ? 404 : 500;
-			return {code, data: {reason: find_space_result.reason}};
+			console.log('[read_space] no space found');
+			const code = findSpaceResult.type === 'no_space_found' ? 404 : 500;
+			return {code, data: {reason: findSpaceResult.reason}};
 		}
 	},
 };
@@ -44,13 +44,13 @@ export const readSpacesService: Service<typeof ReadSpacesServiceSchema, {spaces:
 	handle: async (server, params) => {
 		const {db} = server;
 
-		console.log('[space_middleware] retrieving spaces for community', params.community_id);
+		console.log('[read_spaces] retrieving spaces for community', params.community_id);
 
-		const find_spaces_result = await db.repos.space.filter_by_community(params.community_id as any); // TODO remove the typecast once this PR is rebased
-		if (find_spaces_result.ok) {
-			return {code: 200, data: {spaces: find_spaces_result.value}};
+		const findSpacesResult = await db.repos.space.filterByCommunity(params.community_id as any); // TODO remove the typecast once this PR is rebased
+		if (findSpacesResult.ok) {
+			return {code: 200, data: {spaces: findSpacesResult.value}};
 		} else {
-			console.log('[space_middleware] error searching for community spaces');
+			console.log('[read_spaces] error searching for community spaces');
 			return {code: 500, data: {reason: 'error searching for community spaces'}};
 		}
 	},
@@ -81,13 +81,13 @@ export const createSpaceService: Service<typeof CreateSpaceServiceSchema, {space
 	handle: async (server, params) => {
 		const {db} = server;
 
-		console.log('[space_middleware] creating space for community', params.community_id);
+		console.log('[create_space] creating space for community', params.community_id);
 
-		const create_space_result = await db.repos.space.create(params);
-		if (create_space_result.ok) {
-			return {code: 200, data: {space: create_space_result.value}};
+		const createSpaceResult = await db.repos.space.create(params);
+		if (createSpaceResult.ok) {
+			return {code: 200, data: {space: createSpaceResult.value}};
 		} else {
-			console.log('[space_middleware] error searching for community spaces');
+			console.log('[create_space] error searching for community spaces');
 			return {code: 500, data: {reason: 'error searching for community spaces'}};
 		}
 	},

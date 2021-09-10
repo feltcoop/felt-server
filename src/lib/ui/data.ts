@@ -2,8 +2,8 @@ import {writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
-import type {ClientSession} from '$lib/session/client_session';
-import {to_community_model} from '$lib/vocab/community/community';
+import type {ClientSession} from '$lib/session/clientSession';
+import {toCommunityModel} from '$lib/vocab/community/community';
 import type {CommunityModel} from '$lib/vocab/community/community';
 import type {Member} from '$lib/vocab/member/member';
 import type {Space} from '$lib/vocab/space/space';
@@ -17,10 +17,10 @@ import type {File} from '$lib/vocab/file/file';
 
 const KEY = Symbol();
 
-export const get_data = (): DataStore => getContext(KEY);
+export const getData = (): DataStore => getContext(KEY);
 
-export const set_data = (session: ClientSession): DataStore => {
-	const store = to_data_store(session);
+export const setData = (session: ClientSession): DataStore => {
+	const store = toDataStore(session);
 	setContext(KEY, store);
 	return store;
 };
@@ -31,31 +31,31 @@ export interface DataState {
 	spaces: Space[];
 	members: Member[];
 	personas: Persona[];
-	files_by_space: Record<number, File[]>;
+	filesBySpace: Record<number, File[]>;
 }
 
 export interface DataStore {
 	subscribe: Readable<DataState>['subscribe'];
-	update_session: (session: ClientSession) => void;
-	add_community: (community: CommunityModel, persona_id: number) => void;
-	add_space: (space: Space, community_id: number) => void;
-	add_member: (member: Member) => void;
-	add_file: (file: File) => void;
-	set_files: (space_id: number, files: File[]) => void;
+	updateSession: (session: ClientSession) => void;
+	addCommunity: (community: CommunityModel, persona_id: number) => void;
+	addSpace: (space: Space, community_id: number) => void;
+	addMember: (member: Member) => void;
+	addFile: (file: File) => void;
+	setFiles: (space_id: number, files: File[]) => void;
 }
 
-// TODO probably don't want to pass `initial_session` because it'll never be GC'd
-export const to_data_store = (initial_session: ClientSession): DataStore => {
-	const {subscribe, set, update} = writable(to_default_data(initial_session));
+// TODO probably don't want to pass `initialSession` because it'll never be GC'd
+export const toDataStore = (initialSession: ClientSession): DataStore => {
+	const {subscribe, set, update} = writable(toDefaultData(initialSession));
 	const store: DataStore = {
 		subscribe,
-		update_session: (session) => {
-			console.log('[data.update_session]', session);
-			set(to_default_data(session));
+		updateSession: (session) => {
+			console.log('[data.updateSession]', session);
+			set(toDefaultData(session));
 		},
-		add_community: (community, persona_id) => {
+		addCommunity: (community, persona_id) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
-			console.log('[data.add_community]', community);
+			console.log('[data.addCommunity]', community);
 			update(($data) => ({
 				...$data,
 				communities: $data.communities.concat(community),
@@ -67,9 +67,9 @@ export const to_data_store = (initial_session: ClientSession): DataStore => {
 				),
 			}));
 		},
-		add_space: (space, community_id) => {
+		addSpace: (space, community_id) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
-			console.log('[data.add_space]', space);
+			console.log('[data.addSpace]', space);
 			update(($data) => ({
 				...$data,
 				spaces: $data.spaces.concat(space),
@@ -83,27 +83,27 @@ export const to_data_store = (initial_session: ClientSession): DataStore => {
 				),
 			}));
 		},
-		add_member: (member) => {
+		addMember: (member) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
-			console.log('[data.add_member]', member);
+			console.log('[data.addMember]', member);
 			update(($data) => ({...$data, members: $data.members.concat(member)}));
 		},
-		add_file: (file) => {
-			console.log('[data.add_file]', file);
+		addFile: (file) => {
+			console.log('[data.addFile]', file);
 			update(($data) => ({
 				...$data,
-				files_by_space: {
-					...$data.files_by_space,
-					[file.space_id]: ($data.files_by_space[file.space_id] || []).concat(file),
+				filesBySpace: {
+					...$data.filesBySpace,
+					[file.space_id]: ($data.filesBySpace[file.space_id] || []).concat(file),
 				},
 			}));
 		},
-		set_files: (space_id, files) => {
-			console.log('[data.set_files]', files);
+		setFiles: (space_id, files) => {
+			console.log('[data.setFiles]', files);
 			update(($data) => ({
 				...$data,
-				files_by_space: {
-					...$data.files_by_space,
+				filesBySpace: {
+					...$data.filesBySpace,
 					[space_id]: files,
 				},
 			}));
@@ -112,18 +112,18 @@ export const to_data_store = (initial_session: ClientSession): DataStore => {
 	return store;
 };
 
-const to_default_data = (session: ClientSession): DataState => {
+const toDefaultData = (session: ClientSession): DataState => {
 	if (session.guest) {
 		return null as any;
 	} else {
 		return {
 			account: session.account,
-			communities: session.communities.map((community) => to_community_model(community)),
+			communities: session.communities.map((community) => toCommunityModel(community)),
 			// TODO session should already have a flat array of spaces
 			spaces: session.communities.flatMap((community) => community.spaces),
 			members: session.members,
 			personas: session.personas,
-			files_by_space: {},
+			filesBySpace: {},
 		};
 	}
 };

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import {get_app} from '$lib/ui/app';
+	import {getApp} from '$lib/ui/app';
 
-	const {api} = get_app();
+	const {api} = getApp();
 </script>
 
 <div class="luggage">
-	<button class="icon-button" on:click={() => api.toggle_main_nav()}> ☰ </button>
+	<button class="icon-button" on:click={() => api.toggleMainNav()}> ☰ </button>
 </div>
 
 <style>

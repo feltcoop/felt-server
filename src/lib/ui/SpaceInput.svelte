@@ -4,31 +4,31 @@
 
 	import type {CommunityModel} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
-	import {get_app} from '$lib/ui/app';
+	import {getApp} from '$lib/ui/app';
 	import {SpaceTypes} from '$lib/vocab/space/space';
 
-	const {api} = get_app();
+	const {api} = getApp();
 
 	export let community: CommunityModel;
 
 	let open = false;
-	let new_name = '';
-	let new_type = Object.entries(SpaceTypes)[0][1];
+	let newName = '';
+	let newType = Object.entries(SpaceTypes)[0][1];
 
 	const create = async () => {
-		if (!new_name || !new_type) return;
+		if (!newName || !newType) return;
 		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
-		const url = `/${new_name}`;
-		await api.create_space({
+		const url = `/${newName}`;
+		await api.createSpace({
 			community_id: community.community_id,
-			name: new_name,
+			name: newName,
 			url,
 			//TODO : add space type picker
 			media_type: 'application/fuz+json',
-			content: `{"type": "${new_type}", "props": {"data": "${url}/files"}}`,
+			content: `{"type": "${newType}", "props": {"data": "${url}/files"}}`,
 		});
-		new_name = '';
-		new_type = Object.entries(SpaceTypes)[0][1];
+		newName = '';
+		newType = Object.entries(SpaceTypes)[0][1];
 	};
 </script>
 
@@ -41,10 +41,10 @@
 			<Markup>
 				<h1>Create a new space</h1>
 				<form>
-					<input type="text" placeholder="> name" bind:value={new_name} use:autofocus />
+					<input type="text" placeholder="> name" bind:value={newName} use:autofocus />
 					<label class="type-label"
 						>Select Type:
-						<select class="type-selector" bind:value={new_type}>
+						<select class="type-selector" bind:value={newType}>
 							{#each Object.entries(SpaceTypes) as type (type)}
 								<option value={type[1]}>{type[0]}</option>
 							{/each}

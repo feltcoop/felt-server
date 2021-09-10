@@ -18,9 +18,9 @@ export interface AppStores {
 
 const KEY = Symbol();
 
-export const get_app = (): AppStores => getContext(KEY);
+export const getApp = (): AppStores => getContext(KEY);
 
-export const set_app = (stores: AppStores): AppStores => {
+export const setApp = (stores: AppStores): AppStores => {
 	setContext(KEY, stores);
 	return stores;
 };

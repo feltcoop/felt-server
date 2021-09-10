@@ -15,11 +15,11 @@ export const readFilesService: Service<typeof ReadFilesServiceParams, {files: Fi
 	paramsSchema: ReadFilesServiceParams,
 	handle: async (server, params) => {
 		const {db} = server;
-		const find_files_result = await db.repos.file.filter_by_space(params.space_id as any); // TODO remove the typecast once this PR is rebased
-		if (find_files_result.ok) {
-			return {code: 200, data: {files: find_files_result.value}}; // TODO API types
+		const findFilesResult = await db.repos.file.filterBySpace(params.space_id as any); // TODO remove the typecast once this PR is rebased
+		if (findFilesResult.ok) {
+			return {code: 200, data: {files: findFilesResult.value}}; // TODO API types
 		} else {
-			console.log('[file_middleware] error searching for files');
+			console.log('[read_files] error searching for files');
 			return {code: 500, data: {reason: 'error searching for files'}};
 		}
 	},
@@ -40,18 +40,18 @@ const CreateFileServiceParams = Type.Object(
 export const createFileService: Service<typeof CreateFileServiceParams, {file: File}> = {
 	name: 'create_file',
 	paramsSchema: CreateFileServiceParams,
-	handle: async (server, params, _account_id) => {
+	handle: async (server, params, _accountId) => {
 		// TODO validate `account_id` against the persona -- maybe as an optimized standalone method?
-		// server.db.repos.account.validate_persona(account_id, actor_id);
-		const insert_files_result = await server.db.repos.file.create(
+		// server.db.repos.account.validatePersona(account_id, actor_id);
+		const insertFilesResult = await server.db.repos.file.create(
 			params.actor_id,
 			params.space_id,
 			params.content,
 		);
-		if (insert_files_result.ok) {
-			return {code: 200, data: {file: insert_files_result.value}}; // TODO API types
+		if (insertFilesResult.ok) {
+			return {code: 200, data: {file: insertFilesResult.value}}; // TODO API types
 		} else {
-			console.log('[file_middleware] error searching for files');
+			console.log('[create_file] error searching for files');
 			return {code: 500, data: {reason: 'error searching for files'}};
 		}
 	},

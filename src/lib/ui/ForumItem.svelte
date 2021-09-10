@@ -2,7 +2,7 @@
 	import type {File} from '$lib/vocab/file/file.js';
 	import type {Member} from '$lib/vocab/member/member.js';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
-	import {random_hue} from '$lib/ui/color';
+	import {randomHue} from '$lib/ui/color';
 
 	export let file: File;
 	export let member: Member; // TODO should this be `Actor`?
@@ -11,7 +11,7 @@
 	$: icon = (member as any).icon || null;
 
 	// TODO refactor to some client view-model for the actor
-	$: hue = random_hue(member.name);
+	$: hue = randomHue(member.name);
 </script>
 
 <li style="--hue: {hue}">

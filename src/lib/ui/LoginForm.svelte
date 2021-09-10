@@ -6,46 +6,46 @@
 	import {autofocus} from '$lib/ui/actions';
 	import type {ApiStore} from '$lib/ui/api';
 
-	export let log_in: ApiStore['log_in'];
+	export let logIn: ApiStore['logIn'];
 
-	let account_name = '';
+	let accountName = '';
 	let password = '';
-	let account_name_el: HTMLInputElement;
-	let password_el: HTMLInputElement;
-	let button_el: HTMLButtonElement;
-	let error_message: string | undefined;
+	let accountNameEl: HTMLInputElement;
+	let passwordEl: HTMLInputElement;
+	let buttonEl: HTMLButtonElement;
+	let errorMessage: string | undefined;
 	let submitting: boolean | undefined;
 
 	$: disabled = submitting;
 
-	const do_log_in = async () => {
+	const doLogIn = async () => {
 		if (submitting) return;
-		if (!account_name) {
-			account_name_el.focus();
-			error_message = 'please enter an account name';
+		if (!accountName) {
+			accountNameEl.focus();
+			errorMessage = 'please enter an account name';
 			return;
 		}
 		if (!password) {
-			password_el.focus();
-			error_message = 'please enter a password';
+			passwordEl.focus();
+			errorMessage = 'please enter a password';
 			return;
 		}
-		button_el.focus();
+		buttonEl.focus();
 		submitting = true;
-		error_message = '';
-		console.log('logging in with account_name', account_name);
-		const result = await log_in(account_name, password);
+		errorMessage = '';
+		console.log('logging in with accountName', accountName);
+		const result = await logIn(accountName, password);
 		submitting = false;
 		if (!result.ok) {
-			error_message = result.reason;
+			errorMessage = result.reason;
 			await tick();
-			password_el.select(); // wait a tick to let the DOM update (the input is disabled when fetching)
+			passwordEl.select(); // wait a tick to let the DOM update (the input is disabled when fetching)
 		}
 	};
 
-	const on_keypress = (e: KeyboardEvent) => {
+	const onKeypress = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			do_log_in();
+			doLogIn();
 		}
 	};
 </script>
@@ -56,25 +56,25 @@
 <form>
 	<input
 		type="text"
-		bind:this={account_name_el}
-		bind:value={account_name}
-		on:keypress={on_keypress}
+		bind:this={accountNameEl}
+		bind:value={accountName}
+		on:keypress={onKeypress}
 		{disabled}
 		placeholder="account name"
 		use:autofocus
 	/>
 	<input
 		type="password"
-		bind:this={password_el}
+		bind:this={passwordEl}
 		bind:value={password}
-		on:keypress={on_keypress}
+		on:keypress={onKeypress}
 		{disabled}
 		placeholder="password"
 	/>
-	<PendingButton pending={!!submitting} bind:el={button_el} type="button" on:click={do_log_in}>
+	<PendingButton pending={!!submitting} bind:el={buttonEl} type="button" on:click={doLogIn}>
 		log in
 	</PendingButton>
-	<div class:error={!!error_message}>{error_message || icons.felt}</div>
+	<div class:error={!!errorMessage}>{errorMessage || icons.felt}</div>
 </form>
 
 <style>

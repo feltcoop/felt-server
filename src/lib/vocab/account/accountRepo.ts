@@ -1,7 +1,7 @@
 import type {Result} from '@feltcoop/felt';
 
 import type {Account, AccountParams} from '$lib/vocab/account/account.js';
-import {account_properties} from '$lib/vocab/account/account';
+import {accountProperties} from '$lib/vocab/account/account';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 
@@ -18,22 +18,22 @@ export const accountRepo = (db: Database) => ({
 		const account = data[0];
 		// TODO creating the initial persona should probably be decoupled from account creation,
 		// and users should probably create a persona as the first onboarding step once logged in
-		const persona_response = await db.repos.persona.create(
+		const personaResponse = await db.repos.persona.create(
 			`persona_${account.account_id}`,
 			account.account_id,
 		);
-		if (!persona_response.ok) {
+		if (!personaResponse.ok) {
 			return {ok: false, reason: 'Failed to create initial user persona'};
 		}
-		const result = await db.repos.community.create(name, persona_response.value.persona.persona_id);
+		const result = await db.repos.community.create(name, personaResponse.value.persona.persona_id);
 		if (!result.ok) {
 			return {ok: false, reason: 'Failed to create initial user community'};
 		}
 		return {ok: true, value: account};
 	},
-	find_by_id: async (
+	findById: async (
 		account_id: number,
-		columns: string[] = account_properties,
+		columns: string[] = accountProperties,
 	): Promise<Result<{value: Account}, {type: 'no_account_found'} & ErrorResponse>> => {
 		const data = await db.sql<Account[]>`
       select ${db.sql(columns)} from accounts where account_id = ${account_id}
@@ -47,7 +47,7 @@ export const accountRepo = (db: Database) => ({
 			reason: `No account found with account_id: ${account_id}`,
 		};
 	},
-	find_by_name: async (
+	findByName: async (
 		name: string,
 	): Promise<Result<{value: Account}, {type: 'no_account_found'} & ErrorResponse>> => {
 		const data = await db.sql<Account[]>`

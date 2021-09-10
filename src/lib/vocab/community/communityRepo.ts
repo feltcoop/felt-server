@@ -5,14 +5,14 @@ import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 
 export const communityRepo = (db: Database) => ({
-	find_by_id: async (
+	findById: async (
 		community_id: string,
 	): Promise<Result<{value: Community}, {type: 'no_community_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for community id: ${community_id}`);
 		const data = await db.sql<Community[]>`
       SELECT community_id, name FROM communities where community_id = ${community_id}
     `;
-		// console.log('[db.find_by_id]', data);
+		// console.log('[db.findById]', data);
 		if (data.length) {
 			return {ok: true, value: data[0]};
 		}
@@ -22,7 +22,7 @@ export const communityRepo = (db: Database) => ({
 			reason: `No community found with id: ${community_id}`,
 		};
 	},
-	filter_by_account: async (account_id: number): Promise<Result<{value: Community[]}>> => {
+	filterByAccount: async (account_id: number): Promise<Result<{value: Community[]}>> => {
 		console.log(`[db] preparing to query for communities & spaces persona: ${account_id}`);
 		const data = await db.sql<Community[]>`		
 			SELECT c.community_id, c.name,
@@ -43,7 +43,7 @@ export const communityRepo = (db: Database) => ({
 			) apc
 			ON c.community_id=apc.community_id;
     `;
-		console.log('[db.filter_by_account]', data.length);
+		console.log('[db.filterByAccount]', data.length);
 		return {ok: true, value: data};
 	},
 	// TODO community params
@@ -57,11 +57,11 @@ export const communityRepo = (db: Database) => ({
 		const community = data[0];
 		const community_id = community.community_id;
 		// TODO more robust error handling or condense into single query
-		const member_result = await db.repos.member.create(persona_id, community_id);
-		if (!member_result.ok) return member_result;
-		const spaces_result = await db.repos.space.create_default_spaces(community_id);
-		if (!spaces_result.ok) return spaces_result;
-		community.spaces = spaces_result.value;
+		const memberResult = await db.repos.member.create(persona_id, community_id);
+		if (!memberResult.ok) return memberResult;
+		const spacesResult = await db.repos.space.createDefaultSpaces(community_id);
+		if (!spacesResult.ok) return spacesResult;
+		community.spaces = spacesResult.value;
 		return {ok: true, value: community};
 	},
 });

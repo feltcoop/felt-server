@@ -4,43 +4,43 @@
 	import type {Space} from '$lib/vocab/space/space.js';
 	import type {Member} from '$lib/vocab/member/member.js';
 	import ForumItems from '$lib/ui/ForumItems.svelte';
-	import {get_app} from '$lib/ui/app';
+	import {getApp} from '$lib/ui/app';
 
-	const {api, ui, data} = get_app();
+	const {api, ui, data} = getApp();
 
 	export let space: Space;
-	export let members_by_id: Map<number, Member>;
+	export let membersById: Map<number, Member>;
 
 	let text = '';
 
-	$: browser && api.load_files(space.space_id);
+	$: browser && api.loadFiles(space.space_id);
 	$: console.log(`[Forum] fetching files for ${space.space_id}`);
-	$: selected_persona_id = $ui.selected_persona_id;
+	$: selectedPersonaId = $ui.selectedPersonaId;
 
-	const create_file = async () => {
+	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
 		if (!content) return;
-		await api.create_file({
+		await api.createFile({
 			space_id: space.space_id,
 			content,
-			actor_id: selected_persona_id!,
+			actor_id: selectedPersonaId!,
 		});
 		text = '';
 	};
 
-	const on_keydown = async (e: KeyboardEvent) => {
+	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await create_file();
+			await createFile();
 		}
 	};
 
-	$: files = $data.files_by_space[space.space_id] || [];
+	$: files = $data.filesBySpace[space.space_id] || [];
 </script>
 
 <div class="forum">
-	<textarea placeholder="> new topic" on:keydown={on_keydown} bind:value={text} />
+	<textarea placeholder="> new topic" on:keydown={onKeydown} bind:value={text} />
 	<div class="files">
-		<ForumItems {files} {members_by_id} />
+		<ForumItems {files} {membersById} />
 	</div>
 </div>
 

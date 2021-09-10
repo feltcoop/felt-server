@@ -7,7 +7,7 @@ import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 // Rather than deleting this module, it attaches `account_id` to the `req`,
 // and we'll want to take another look at this soon.
 
-export const to_authentication_middleware = (_server: ApiServer): Middleware => {
+export const toAuthenticationMiddleware = (_server: ApiServer): Middleware => {
 	return async (req, res, next) => {
 		if (req.account_id) {
 			// TODO centralize error message strings
@@ -17,7 +17,7 @@ export const to_authentication_middleware = (_server: ApiServer): Middleware => 
 			return next();
 		}
 		req.account_id = req.session.account_id;
-		console.log('[authentication_middleware]', req.account_id); // TODO logging
+		console.log('[authenticationMiddleware]', req.account_id); // TODO logging
 		next();
 	};
 };

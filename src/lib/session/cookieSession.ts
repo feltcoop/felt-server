@@ -1,5 +1,5 @@
 import type {IncomingMessage} from 'http';
-import cookie_session from 'cookie-session';
+import cookieSession from 'cookie-session';
 import type {
 	CookieSessionRequest as BaseCookieSessionRequest,
 	CookieSessionObject as BaseCookieSessionObject,
@@ -21,8 +21,8 @@ export interface CookieSessionObject extends BaseCookieSessionObject {
 
 const dev = process.env.NODE_ENV !== 'production';
 
-export const to_cookie_session_middleware = () =>
-	cookie_session({
+export const toCookieSessionMiddleware = () =>
+	cookieSession({
 		name: 'session_id',
 		keys: fromEnv('COOKIE_KEYS').split('__'),
 		maxAge: 1000 * 60 * 60 * 24 * 7 * 6, // 6 weeks

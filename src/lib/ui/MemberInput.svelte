@@ -4,16 +4,16 @@
 
 	import type {Community} from '$lib/vocab/community/community.js';
 	import type {Member} from '$lib/vocab/member/member.js';
-	import {get_app} from '$lib/ui/app';
+	import {getApp} from '$lib/ui/app';
 
-	const {api} = get_app();
+	const {api} = getApp();
 
 	export let members: Member[];
 	export let community: Community;
 
 	let open = false;
 
-	$: invitable_members = community
+	$: invitableMembers = community
 		? members.filter((x) => !community.members.some((y) => x.persona_id == y.persona_id))
 		: [];
 </script>
@@ -31,12 +31,12 @@
 	<Dialog on:close={() => (open = false)}>
 		<Markup>
 			<h1>Invite users to {community.name}</h1>
-			{#each invitable_members as member (member.persona_id)}
+			{#each invitableMembers as member (member.persona_id)}
 				<p>
 					<button
 						type="button"
 						class="button-join"
-						on:click={() => api.invite_member(community.community_id, member.persona_id)}
+						on:click={() => api.inviteMember(community.community_id, member.persona_id)}
 					>
 						{member.name}
 					</button>

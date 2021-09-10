@@ -18,18 +18,18 @@ export const seed = async (db: Database): Promise<void> => {
 	log.trace('adding initial dataset to database');
 
 	// example: create table
-	const create_accounts_table_result = await sql`
+	const createAccountsTableResult = await sql`
 		create table if not exists accounts (
 		account_id serial primary key,
 			name text,
 			password text
 		)
 	`;
-	if (create_accounts_table_result.count) {
-		log.trace('create_accounts_table_result', create_accounts_table_result);
+	if (createAccountsTableResult.count) {
+		log.trace('createAccountsTableResult', createAccountsTableResult);
 	}
 
-	const create_personas_table_result = await sql`
+	const createPersonasTableResult = await sql`
 		create table if not exists personas (
 			persona_id serial primary key,
 			account_id int,
@@ -37,22 +37,22 @@ export const seed = async (db: Database): Promise<void> => {
 		)
 	`;
 
-	if (create_personas_table_result.count) {
-		log.trace('create_personas_table_result', create_personas_table_result);
+	if (createPersonasTableResult.count) {
+		log.trace('createPersonasTableResult', createPersonasTableResult);
 	}
 
-	const create_communities_table_result = await sql`
+	const createCommunitiesTableResult = await sql`
 		create table if not exists communities (
 			community_id serial primary key,
 			name text
 		)	
 	`;
 
-	if (create_communities_table_result.count) {
-		log.trace('create_communities_table_result', create_communities_table_result);
+	if (createCommunitiesTableResult.count) {
+		log.trace('createCommunitiesTableResult', createCommunitiesTableResult);
 	}
 
-	const create_persona_communities_result = await sql`
+	const createPersonaCommunitiesResult = await sql`
 		create table if not exists persona_communities (
 			persona_id int references personas (persona_id) ON UPDATE CASCADE ON DELETE CASCADE,
 			community_id int references communities (community_id) ON UPDATE CASCADE,
@@ -60,11 +60,11 @@ export const seed = async (db: Database): Promise<void> => {
 		)	
 	`;
 
-	if (create_persona_communities_result.count) {
-		log.trace('create_persona_communities_result', create_persona_communities_result);
+	if (createPersonaCommunitiesResult.count) {
+		log.trace('createPersonaCommunitiesResult', createPersonaCommunitiesResult);
 	}
 
-	const create_spaces_table_result = await sql`
+	const createSpacesTableResult = await sql`
 		create table if not exists spaces (
 			space_id serial primary key,
 			name text,
@@ -74,11 +74,11 @@ export const seed = async (db: Database): Promise<void> => {
 		)	
 	`;
 
-	if (create_spaces_table_result.count) {
-		log.trace('create_spaces_table_result', create_spaces_table_result);
+	if (createSpacesTableResult.count) {
+		log.trace('createSpacesTableResult', createSpacesTableResult);
 	}
 
-	const create_community_spaces_table_result = await sql`
+	const createCommunitySpacesTableResult = await sql`
 		create table if not exists community_spaces (
 			community_id int references communities (community_id) ON UPDATE CASCADE ON DELETE CASCADE,
 			space_id int references spaces (space_id) ON UPDATE CASCADE,
@@ -86,11 +86,11 @@ export const seed = async (db: Database): Promise<void> => {
 		)	
 	`;
 
-	if (create_community_spaces_table_result.count) {
-		log.trace('create_community_spaces_table_result', create_community_spaces_table_result);
+	if (createCommunitySpacesTableResult.count) {
+		log.trace('createCommunitySpacesTableResult', createCommunitySpacesTableResult);
 	}
 
-	const create_files_table_result = await sql`
+	const createFilesTableResult = await sql`
 		create table if not exists files (
 			file_id serial primary key,
 			content text,
@@ -99,14 +99,14 @@ export const seed = async (db: Database): Promise<void> => {
 		)	
 	`;
 
-	if (create_files_table_result.count) {
-		log.trace('create_files_table_result', create_files_table_result);
+	if (createFilesTableResult.count) {
+		log.trace('createFilesTableResult', createFilesTableResult);
 	}
 
-	const account_docs = await sql<Account[]>`
+	const accountDocs = await sql<Account[]>`
 		select account_id, name, password from accounts
 	`;
-	if (account_docs.length) {
+	if (accountDocs.length) {
 		return; // already seeded
 	}
 
@@ -130,9 +130,9 @@ export const seed = async (db: Database): Promise<void> => {
 			log.trace('created persona', persona);
 			personas.push(persona);
 			const spaces = unwrap(
-				await db.repos.space.create_default_spaces(community.community_id),
+				await db.repos.space.createDefaultSpaces(community.community_id),
 			) as Space[]; // TODO why cast?
-			await create_default_files(db, spaces, [persona]);
+			await createDefaultFiles(db, spaces, [persona]);
 		}
 	}
 
@@ -154,11 +154,11 @@ export const seed = async (db: Database): Promise<void> => {
 		for (const persona of otherPersonas) {
 			await db.repos.member.create(persona.persona_id, community.community_id);
 		}
-		await create_default_files(db, community.spaces, personas);
+		await createDefaultFiles(db, community.spaces, personas);
 	}
 };
 
-const create_default_files = async (db: Database, spaces: Space[], personas: Persona[]) => {
+const createDefaultFiles = async (db: Database, spaces: Space[], personas: Persona[]) => {
 	const filesContents: {[key: string]: string[]} = {
 		Chat: ['Those who know do not speak.', 'Those who speak do not know.'],
 		Board: ["All the world's a stage.", 'And all the men and women merely players.'],
@@ -169,11 +169,11 @@ const create_default_files = async (db: Database, spaces: Space[], personas: Per
 		Notes: ['go to the place later', 'remember the thing', 'what a day!'],
 	};
 
-	let persona_index = -1;
+	let personaIndex = -1;
 	const nextPersona = (): Persona => {
-		persona_index++;
-		if (persona_index === personas.length) persona_index = 0;
-		return personas[persona_index];
+		personaIndex++;
+		if (personaIndex === personas.length) personaIndex = 0;
+		return personas[personaIndex];
 	};
 
 	for (const space of spaces) {

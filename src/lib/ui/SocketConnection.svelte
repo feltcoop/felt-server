@@ -1,18 +1,18 @@
 <script lang="ts">
-	import {get_app} from '$lib/ui/app';
+	import {getApp} from '$lib/ui/app';
 
-	const {socket, devmode} = get_app();
+	const {socket, devmode} = getApp();
 
-	let new_url = $socket.url || '';
-	const reset_url = () => (new_url = $socket.url || '');
-	$: if ($socket.connected) reset_url();
+	let newUrl = $socket.url || '';
+	const resetUrl = () => (newUrl = $socket.url || '');
+	$: if ($socket.connected) resetUrl();
 </script>
 
 {#if $devmode}
 	<div class="socket-connection">
 		{#if $socket.connected}
 			<form>
-				<input bind:value={new_url} type="text" disabled />
+				<input bind:value={newUrl} type="text" disabled />
 				<button
 					type="button"
 					on:click={() => socket.disconnect()}
@@ -23,10 +23,10 @@
 			</form>
 		{:else}
 			<form>
-				<input bind:value={new_url} type="text" disabled={$socket.status === 'pending'} />
+				<input bind:value={newUrl} type="text" disabled={$socket.status === 'pending'} />
 				<button
 					type="button"
-					on:click={() => socket.connect(new_url)}
+					on:click={() => socket.connect(newUrl)}
 					disabled={$socket.status === 'pending'}
 				>
 					connect

@@ -7,7 +7,7 @@ import type {ErrorResponse} from '$lib/util/error';
 export const memberRepo = (db: Database) => ({
 	// TODO: this is a hack to stub out "members" for inviting to a Community.
 	//This should use a community_id to filter or something
-	get_all: async (): Promise<Result<{value: Member[]}, ErrorResponse>> => {
+	getAll: async (): Promise<Result<{value: Member[]}, ErrorResponse>> => {
 		const data = await db.sql<Member[]>`
       select persona_id, name from personas
     `;

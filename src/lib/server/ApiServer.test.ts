@@ -6,28 +6,28 @@ import {createServer} from 'http';
 
 import {ApiServer} from '$lib/server/ApiServer.js';
 import {Database} from '$lib/db/Database.js';
-import {default_postgres_options} from '$lib/db/postgres.js';
+import {defaultPostgresOptions} from '$lib/db/postgres.js';
 import {WebsocketServer} from '$lib/server/WebsocketServer.js';
 
 const TEST_PORT = 3003; // TODO
 
-/* test__api_server */
-const test__api_server = suite('ApiServer');
+/* test__ApiServer */
+const test__ApiServer = suite('ApiServer');
 
-test__api_server('init and close', async () => {
+test__ApiServer('init and close', async () => {
 	const server = createServer();
-	const api_server: ApiServer = new ApiServer({
+	const apiServer: ApiServer = new ApiServer({
 		server,
 		app: polka({server}),
-		websocket_server: new WebsocketServer(server),
-		db: new Database({sql: postgres(default_postgres_options)}),
+		websocketServer: new WebsocketServer(server),
+		db: new Database({sql: postgres(defaultPostgresOptions)}),
 		port: TEST_PORT,
 	});
-	t.is(api_server.port, TEST_PORT);
-	await api_server.init();
+	t.is(apiServer.port, TEST_PORT);
+	await apiServer.init();
 	// TODO make API requests, and look into before/after
-	await api_server.close();
+	await apiServer.close();
 });
 
-test__api_server.run();
-/* test__api_server */
+test__ApiServer.run();
+/* test__ApiServer */

@@ -11,8 +11,6 @@ export interface Options {
 	sql: PostgresSql;
 }
 
-// TODO create seperate models used by the front end (w/ camelCase attributes) from the repo models
-// and snake_case for the DB stuff
 export class Database {
 	sql: PostgresSql;
 

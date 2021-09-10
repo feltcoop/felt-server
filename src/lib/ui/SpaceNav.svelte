@@ -9,7 +9,7 @@
 
 	export let community: CommunityModel;
 	export let spaces: Space[];
-	export let selected_space: Space | null;
+	export let selectedSpace: Space | null;
 	export let members: Member[];
 	$: browser && console.log('spaces', spaces);
 </script>
@@ -21,7 +21,7 @@
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
-		<a href="/{community.name}{space.url}" class:selected={space === selected_space}>
+		<a href="/{community.name}{space.url}" class:selected={space === selectedSpace}>
 			{space.name}
 		</a>
 	{/each}

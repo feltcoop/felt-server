@@ -7,144 +7,144 @@ import type {DataState} from '$lib/ui/data';
 
 const KEY = Symbol();
 
-export const get_ui = (): UiStore => getContext(KEY);
+export const getUi = (): UiStore => getContext(KEY);
 
-export const set_ui = (store: UiStore = to_ui_store()): UiStore => {
+export const setUi = (store: UiStore = toUiStore()): UiStore => {
 	setContext(KEY, store);
 	return store;
 };
 
 export interface UiState {
 	// TODO should these be store references instead of ids?
-	selected_persona_id: number | null;
-	selected_community_id: number | null;
-	selected_community_id_by_persona: {[key: number]: number};
-	selected_space_id_by_community: {[key: number]: number | null};
-	expand_main_nav: boolean;
-	main_nav_view: MainNavView;
+	selectedPersonaId: number | null;
+	selectedCommunityId: number | null;
+	selectedCommunityIdByPersona: {[key: number]: number};
+	selectedSpaceIdByCommunity: {[key: number]: number | null};
+	expandMainNav: boolean;
+	mainNavView: MainNavView;
 }
 
 export interface UiStore {
 	subscribe: Readable<UiState>['subscribe'];
-	update_data: (data: DataState | null) => void;
-	select_persona: (persona_id: number) => void;
-	select_community: (community_id: number | null) => void;
-	select_space: (community_id: number, space_id: number | null) => void;
-	toggle_main_nav: () => void;
-	set_main_nav_view: (main_nav_view: MainNavView) => void;
+	updateData: (data: DataState | null) => void;
+	selectPersona: (persona_id: number) => void;
+	selectCommunity: (community_id: number | null) => void;
+	selectSpace: (community_id: number, space_id: number | null) => void;
+	toggleMainNav: () => void;
+	setMainNavView: (mainNavView: MainNavView) => void;
 }
 
-export const to_ui_store = () => {
-	const {subscribe, update} = writable<UiState>(to_default_ui_state());
+export const toUiStore = () => {
+	const {subscribe, update} = writable<UiState>(toDefaultUiState());
 
 	const store: UiStore = {
 		subscribe,
-		update_data: (data) => {
-			console.log('[ui.update_data]', {data});
+		updateData: (data) => {
+			console.log('[ui.updateData]', {data});
 			update(($ui) => {
 				// TODO this needs to be rethought, it's just preserving the existing ui state
 				// when new data gets set, which happens when e.g. a new community is created --
-				// most likely `update_data` *should* wipe away UI state by default,
+				// most likely `updateData` *should* wipe away UI state by default,
 				// and should not be called when data changes, only when a new session's data is set,
 				// so the naming is misleading
 				if (data) {
-					const selected_persona =
-						($ui.selected_persona_id !== null &&
-							data.personas.find((c) => c.persona_id === $ui.selected_persona_id)) ||
+					const selectedPersona =
+						($ui.selectedPersonaId !== null &&
+							data.personas.find((c) => c.persona_id === $ui.selectedPersonaId)) ||
 						data.personas[0] ||
 						null;
-					console.log('ui selected_persona is', selected_persona);
-					const selected_community =
-						($ui.selected_community_id !== null &&
-							data.communities.find((c) => c.community_id === $ui.selected_community_id)) ||
+					console.log('ui selectedPersona is', selectedPersona);
+					const selectedCommunity =
+						($ui.selectedCommunityId !== null &&
+							data.communities.find((c) => c.community_id === $ui.selectedCommunityId)) ||
 						data.communities[0] ||
 						null;
 					return {
 						...$ui,
-						selected_persona_id: selected_persona?.persona_id ?? null,
-						selected_community_id: selected_community?.community_id ?? null,
-						selected_community_id_by_persona: Object.fromEntries(
+						selectedPersonaId: selectedPersona?.persona_id ?? null,
+						selectedCommunityId: selectedCommunity?.community_id ?? null,
+						selectedCommunityIdByPersona: Object.fromEntries(
 							data.personas.map((persona) => [
 								persona.persona_id,
-								$ui.selected_community_id_by_persona[persona.persona_id] ??
+								$ui.selectedCommunityIdByPersona[persona.persona_id] ??
 									persona.community_ids[0] ??
 									null,
 							]),
 						),
-						selected_space_id_by_community: Object.fromEntries(
+						selectedSpaceIdByCommunity: Object.fromEntries(
 							data.communities.map((community) => [
 								community.community_id,
-								$ui.selected_space_id_by_community[community.community_id] ??
+								$ui.selectedSpaceIdByCommunity[community.community_id] ??
 									community.spaces[0]?.space_id ??
 									null,
 							]),
 						),
 					};
 				} else {
-					// might want to preserve some state, so this doesn't use `to_default_ui_state`
+					// might want to preserve some state, so this doesn't use `toDefaultUiState`
 					return {
 						...$ui,
-						selected_persona_id: null,
-						selected_community_id: null,
-						selected_community_id_by_persona: {},
-						selected_space_id_by_community: {},
-						main_nav_view: 'explorer',
+						selectedPersonaId: null,
+						selectedCommunityId: null,
+						selectedCommunityIdByPersona: {},
+						selectedSpaceIdByCommunity: {},
+						mainNavView: 'explorer',
 					};
 				}
 			});
 		},
-		select_persona: (persona_id) => {
-			console.log('[ui.select_persona] persona_id', {persona_id});
+		selectPersona: (persona_id) => {
+			console.log('[ui.selectPersona] persona_id', {persona_id});
 			update(($ui) => ({
 				...$ui,
-				selected_persona_id: persona_id,
-				selected_community_id: $ui.selected_community_id_by_persona[persona_id],
+				selectedPersonaId: persona_id,
+				selectedCommunityId: $ui.selectedCommunityIdByPersona[persona_id],
 			}));
 		},
-		select_community: (community_id) => {
-			console.log('[ui.select_community] community_id', {community_id});
+		selectCommunity: (community_id) => {
+			console.log('[ui.selectCommunity] community_id', {community_id});
 			update(($ui) => ({
 				...$ui,
-				selected_community_id: community_id,
-				selected_community_id_by_persona:
-					community_id === null || $ui.selected_persona_id === null
-						? $ui.selected_community_id_by_persona
+				selectedCommunityId: community_id,
+				selectedCommunityIdByPersona:
+					community_id === null || $ui.selectedPersonaId === null
+						? $ui.selectedCommunityIdByPersona
 						: {
-								...$ui.selected_community_id_by_persona,
-								[$ui.selected_persona_id]: community_id,
+								...$ui.selectedCommunityIdByPersona,
+								[$ui.selectedPersonaId]: community_id,
 						  },
 			}));
 		},
-		select_space: (community_id, space_id) => {
-			console.log('[ui.select_space] community_id, space_id', {community_id, space_id});
+		selectSpace: (community_id, space_id) => {
+			console.log('[ui.selectSpace] community_id, space_id', {community_id, space_id});
 			update(($ui) => {
 				// TODO speed this up using stores maybe?
 				return {
 					...$ui,
-					selected_space_id_by_community: {
-						...$ui.selected_space_id_by_community,
+					selectedSpaceIdByCommunity: {
+						...$ui.selectedSpaceIdByCommunity,
 						[community_id]: space_id,
 					},
 				};
 			});
 		},
-		toggle_main_nav: () => {
-			update(($ui) => ({...$ui, expand_main_nav: !$ui.expand_main_nav}));
+		toggleMainNav: () => {
+			update(($ui) => ({...$ui, expandMainNav: !$ui.expandMainNav}));
 		},
-		set_main_nav_view: (main_nav_view) => {
-			update(($ui) => ({...$ui, main_nav_view}));
+		setMainNavView: (mainNavView) => {
+			update(($ui) => ({...$ui, mainNavView}));
 		},
 	};
 	return store;
 };
 
-const to_default_ui_state = (): UiState => ({
-	selected_persona_id: null,
-	selected_community_id: null,
-	selected_community_id_by_persona: {},
-	selected_space_id_by_community: {},
-	expand_main_nav: true,
-	main_nav_view: 'explorer',
+const toDefaultUiState = (): UiState => ({
+	selectedPersonaId: null,
+	selectedCommunityId: null,
+	selectedCommunityIdByPersona: {},
+	selectedSpaceIdByCommunity: {},
+	expandMainNav: true,
+	mainNavView: 'explorer',
 });
 
 export type MainNavView = 'explorer' | 'account';

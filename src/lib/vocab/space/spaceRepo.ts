@@ -2,11 +2,11 @@ import type {Result} from '@feltcoop/felt';
 
 import type {Space, SpaceParams} from '$lib/vocab/space/space.js';
 import type {Database} from '$lib/db/Database';
-import {to_default_spaces} from '$lib/vocab/space/default_spaces';
+import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import type {ErrorResponse} from '$lib/util/error';
 
 export const spaceRepo = (db: Database) => ({
-	find_by_id: async (
+	findById: async (
 		space_id: string,
 	): Promise<Result<{value: Space}, {type: 'no_space_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for space id: ${space_id}`);
@@ -23,7 +23,7 @@ export const spaceRepo = (db: Database) => ({
 			reason: `No space found with id: ${space_id}`,
 		};
 	},
-	filter_by_community: async (community_id: string): Promise<Result<{value: Space[]}>> => {
+	filterByCommunity: async (community_id: string): Promise<Result<{value: Space[]}>> => {
 		console.log(`[db] preparing to query for community spaces: ${community_id}`);
 		const data = await db.sql<Space[]>`
       SELECT s.space_id, s.name, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id= ${community_id}
@@ -47,15 +47,15 @@ export const spaceRepo = (db: Database) => ({
         ${space_id},${params.community_id}
       )
     `;
-		// console.log('[db] created community_space', community_space);
+		// console.log('[db] created communitySpace', communitySpace);
 		return {ok: true, value: data[0]};
 	},
-	create_default_spaces: async (
+	createDefaultSpaces: async (
 		community_id: number,
 	): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 		const spaces: Space[] = [];
-		for (const space_params of to_default_spaces(community_id)) {
-			const result = await db.repos.space.create(space_params);
+		for (const spaceParams of toDefaultSpaces(community_id)) {
+			const result = await db.repos.space.create(spaceParams);
 			if (!result.ok) return {ok: false, reason: 'Failed to create default spaces for community.'};
 			spaces.push(result.value);
 		}

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import {get_api} from '$lib/ui/api';
+	import {getApi} from '$lib/ui/api';
 
-	const api = get_api();
+	const api = getApi();
 
 	// TODO proper api metadata
 	$: keys = Object.keys($api);

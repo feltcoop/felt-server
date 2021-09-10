@@ -5,15 +5,15 @@ import type {Server as HttpsServer} from 'https';
 import {EventEmitter} from 'events';
 import type StrictEventEmitter from 'strict-event-emitter-types';
 
-import type {CookieSessionIncomingMessage} from '$lib/session/cookie_session';
-import {to_cookie_session_middleware} from '$lib/session/cookie_session';
+import type {CookieSessionIncomingMessage} from '$lib/session/cookieSession';
+import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 
 type WebsocketServerEmitter = StrictEventEmitter<EventEmitter, WebsocketServerEvents>;
 interface WebsocketServerEvents {
 	message: (socket: ws, message: ws.Data, account_id: number) => void;
 }
 
-const cookie_session_middleware = to_cookie_session_middleware();
+const cookieSessionMiddleware = toCookieSessionMiddleware();
 
 export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEmitter}) {
 	readonly wss: ws.Server;
@@ -33,7 +33,7 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 		wss.on('connection', (socket, req: CookieSessionIncomingMessage) => {
 			console.log('[wss] connection req.url', req.url, wss.clients.size);
 			console.log('[wss] connection req.headers', req.headers);
-			cookie_session_middleware(req, {}, () => {});
+			cookieSessionMiddleware(req, {}, () => {});
 			const account_id = req.session?.account_id;
 			if (account_id === undefined) {
 				console.log('[wss] request to open connection was unauthenticated');

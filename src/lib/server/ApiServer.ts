@@ -1,15 +1,15 @@
 import type {Server as HttpServer} from 'http';
 import type {Server as HttpsServer} from 'https';
 import type {Polka, Request as PolkaRequest, Middleware as PolkaMiddleware} from 'polka';
-import body_parser from 'body-parser';
+import bodyParser from 'body-parser';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue} from '@feltcoop/felt/util/terminal.js';
 import type ws from 'ws';
 
-import {to_authentication_middleware} from '$lib/session/authentication_middleware.js';
-import {to_authorization_middleware} from '$lib/session/authorization_middleware.js';
-import {to_login_middleware} from '$lib/session/login_middleware.js';
-import {to_logout_middleware} from '$lib/session/logout_middleware.js';
+import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.js';
+import {toAuthorizationMiddleware} from '$lib/session/authorizationMiddleware.js';
+import {toLoginMiddleware} from '$lib/session/loginMiddleware.js';
+import {toLogoutMiddleware} from '$lib/session/logoutMiddleware.js';
 import {
 	readCommunityService,
 	readCommunitiesService,
@@ -24,9 +24,9 @@ import {
 } from '$lib/vocab/space/spaceServices.js';
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
-import {to_cookie_session_middleware} from '$lib/session/cookie_session';
-import type {CookieSessionRequest} from '$lib/session/cookie_session';
-import {toServiceMiddleware} from '$lib/server/service_middleware';
+import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
+import type {CookieSessionRequest} from '$lib/session/cookieSession';
+import {toServiceMiddleware} from '$lib/server/serviceMiddleware';
 import {services} from '$lib/server/services';
 
 const log = new Logger([blue('[ApiServer]')]);
@@ -41,31 +41,31 @@ export interface Middleware extends PolkaMiddleware<Request> {}
 export interface Options {
 	server: HttpServer | HttpsServer;
 	app: Polka<Request>;
-	websocket_server: WebsocketServer;
+	websocketServer: WebsocketServer;
 	port?: number;
 	db: Database;
-	load_instance?: () => Promise<Polka | null>;
+	loadInstance?: () => Promise<Polka | null>;
 }
 
 export class ApiServer {
 	readonly server: HttpServer | HttpsServer;
 	readonly app: Polka<Request>;
-	readonly websocket_server: WebsocketServer;
+	readonly websocketServer: WebsocketServer;
 	readonly port: number | undefined;
 	readonly db: Database;
-	readonly load_instance: () => Promise<Polka | null>;
+	readonly loadInstance: () => Promise<Polka | null>;
 
 	constructor(options: Options) {
 		this.server = options.server;
 		this.app = options.app;
-		this.websocket_server = options.websocket_server;
+		this.websocketServer = options.websocketServer;
 		this.port = options.port;
 		this.db = options.db;
-		this.load_instance = options.load_instance || (async () => null);
+		this.loadInstance = options.loadInstance || (async () => null);
 		log.info('created');
 	}
 
-	is_api_server_pathname(pathname: string): boolean {
+	isApiServerPathname(pathname: string): boolean {
 		return pathname.startsWith('/api/');
 	}
 
@@ -73,12 +73,12 @@ export class ApiServer {
 		log.info('initing');
 
 		// TODO refactor to paralleize `init` of the various pieces
-		this.websocket_server.on('message', this.handle_websocket_message);
-		await this.websocket_server.init();
+		this.websocketServer.on('message', this.handleWebsocketMessage);
+		await this.websocketServer.init();
 
 		// Set up the app and its middleware.
 		this.app
-			.use(body_parser.json()) // TODO is deprecated, but doesn't let us `import {json}`
+			.use(bodyParser.json()) // TODO is deprecated, but doesn't let us `import {json}`
 			.use((req, _res, next) => {
 				// TODO proper logger, also don't log sensitive info in prod
 				log.trace('req', {
@@ -90,14 +90,14 @@ export class ApiServer {
 				});
 				next();
 			})
-			.use(to_cookie_session_middleware())
-			.use(to_authentication_middleware(this))
+			.use(toCookieSessionMiddleware())
+			.use(toAuthenticationMiddleware(this))
 			// API
-			.post('/api/v1/login', to_login_middleware(this)) // TODO wait shouldn't this fail in Polka's system??
+			.post('/api/v1/login', toLoginMiddleware(this)) // TODO wait shouldn't this fail in Polka's system??
 			// TODO we want to support unauthenticated routes so users can publish public content,
 			// but for now it's simple and secure to just require an authenticated account for everything
-			.use('/api', to_authorization_middleware(this))
-			.post('/api/v1/logout', to_logout_middleware(this))
+			.use('/api', toAuthorizationMiddleware(this))
+			.post('/api/v1/logout', toLogoutMiddleware(this))
 			.get('/api/v1/communities', toServiceMiddleware(this, readCommunitiesService))
 			.post('/api/v1/communities', toServiceMiddleware(this, createCommunityService))
 			.get('/api/v1/communities/:community_id', toServiceMiddleware(this, readCommunityService))
@@ -113,7 +113,7 @@ export class ApiServer {
 
 		// SvelteKit Node adapter, adapted to our production API server
 		// TODO needs a lot of work, especially for production
-		const instance = await this.load_instance();
+		const instance = await this.loadInstance();
 		if (instance) {
 			this.app.use(instance.handler);
 		}
@@ -124,7 +124,7 @@ export class ApiServer {
 		// and we want to use 3001 while building for prod.
 		// TODO maybe always default to env var `PORT`, upstream and instantiate `ApiServer` with it
 		// (instance && !dev
-		// 	? to_env_number('PORT', API_SERVER_DEFAULT_PORT_PROD)
+		// 	? toEnvNumber('PORT', API_SERVER_DEFAULT_PORT_PROD)
 		// 	: API_SERVER_DEFAULT_PORT_DEV);
 		// TODO Gro utility to get next good port
 		// (wait no that doesn't work, static proxy, hmm... can fix when we switch frontend to Gro)
@@ -140,9 +140,9 @@ export class ApiServer {
 
 	async close(): Promise<void> {
 		log.info('close');
-		this.websocket_server.off('message', this.handle_websocket_message);
+		this.websocketServer.off('message', this.handleWebsocketMessage);
 		await Promise.all([
-			this.websocket_server.close(),
+			this.websocketServer.close(),
 			this.db.close(),
 			new Promise((resolve, reject) =>
 				// TODO remove type casting when polka types are fixed
@@ -151,47 +151,47 @@ export class ApiServer {
 		]);
 	}
 
-	handle_websocket_message = async (_socket: ws, raw_message: ws.Data, account_id: number) => {
-		if (typeof raw_message !== 'string') {
+	handleWebsocketMessage = async (_socket: ws, rawMessage: ws.Data, account_id: number) => {
+		if (typeof rawMessage !== 'string') {
 			console.error(
-				'[handle_websocket_message] cannot handle websocket message; currently only supports strings',
+				'[handleWebsocketMessage] cannot handle websocket message; currently only supports strings',
 			);
 			return;
 		}
 
 		let message: any; // TODO type
 		try {
-			message = JSON.parse(raw_message);
+			message = JSON.parse(rawMessage);
 		} catch (err) {
-			console.error('[handle_websocket_message] failed to parse message', err);
+			console.error('[handleWebsocketMessage] failed to parse message', err);
 			return;
 		}
-		console.log('[handle_websocket_message]', message);
+		console.log('[handleWebsocketMessage]', message);
 		if (!(message as any)?.type) {
 			// TODO proper automated validation
-			console.error('[handle_websocket_message] invalid message', message);
+			console.error('[handleWebsocketMessage] invalid message', message);
 			return;
 		}
 		const service = services.get(message.type);
 		if (!service) {
-			console.error('[handle_websocket_message] unhandled message type', message.type);
+			console.error('[handleWebsocketMessage] unhandled message type', message.type);
 			return;
 		}
 
 		const response = await service.handle(this, message.params, account_id);
 
 		// TODO what should the API for returning/broadcasting responses be?
-		const serialized_response = JSON.stringify({
+		const serializedResponse = JSON.stringify({
 			type: 'service_response',
-			message_type: message.type,
+			messageType: message.type,
 			response,
 		});
-		for (const client of this.websocket_server.wss.clients) {
-			client.send(serialized_response);
+		for (const client of this.websocketServer.wss.clients) {
+			client.send(serializedResponse);
 		}
 	};
 }
 
 export interface HandleWebsocketMessage {
-	(server: ApiServer, socket: ws, raw_message: ws.Data, account_id: number): Promise<void>;
+	(server: ApiServer, socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
 }

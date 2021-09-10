@@ -8,80 +8,80 @@
 	import SpaceNav from '$lib/ui/SpaceNav.svelte';
 	import SocketConnection from '$lib/ui/SocketConnection.svelte';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
-	import {get_app} from '$lib/ui/app';
-	import {random_hue} from '$lib/ui/color';
+	import {getApp} from '$lib/ui/app';
+	import {randomHue} from '$lib/ui/color';
 
-	const {data, ui, api} = get_app();
+	const {data, ui, api} = getApp();
 
 	$: members = $data.members;
 	$: communities = $data.communities;
 	$: personas = $data.personas;
 
 	// TODO speed up these lookups, probably with a map of all entities by id
-	$: selected_community =
-		communities.find((c) => c.community_id === $ui.selected_community_id) || null;
-	$: selected_space = selected_community
-		? selected_community.spaces.find(
-				(s) => s.space_id === $ui.selected_space_id_by_community[selected_community!.community_id],
+	$: selectedCommunity =
+		communities.find((c) => c.community_id === $ui.selectedCommunityId) || null;
+	$: selectedSpace = selectedCommunity
+		? selectedCommunity.spaces.find(
+				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[selectedCommunity!.community_id],
 		  ) || null
 		: null;
-	$: selected_persona = personas.find((p) => p.persona_id === $ui.selected_persona_id) || null;
-	$: console.log('selected persona', selected_persona);
-	$: selected_persona_communities = communities.filter((community) =>
-		selected_persona?.community_ids.includes(community.community_id),
+	$: selectedPersona = personas.find((p) => p.persona_id === $ui.selectedPersonaId) || null;
+	$: console.log('selected persona', selectedPersona);
+	$: selectedPersonaCommunities = communities.filter((community) =>
+		selectedPersona?.community_ids.includes(community.community_id),
 	);
 
 	// TODO refactor to some client view-model for the account
-	$: hue = random_hue($data.account.name);
+	$: hue = randomHue($data.account.name);
 
-	let selected_persona_id = $ui.selected_persona_id;
-	$: ui.select_persona(selected_persona_id!);
+	let selectedPersonaId = $ui.selectedPersonaId;
+	$: ui.selectPersona(selectedPersonaId!);
 </script>
 
-{#if $ui.expand_main_nav}
-	<div class="main-nav-bg" on:click={() => ($ui.expand_main_nav ? api.toggle_main_nav() : null)} />
+{#if $ui.expandMainNav}
+	<div class="main-nav-bg" on:click={() => ($ui.expandMainNav ? api.toggleMainNav() : null)} />
 {/if}
-<div class="main-nav-panel" class:expanded={$ui.expand_main_nav} style="--hue: {hue}">
+<div class="main-nav-panel" class:expanded={$ui.expandMainNav} style="--hue: {hue}">
 	<div class="main-nav">
 		<div class="header">
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
-			<select class="persona-selector" bind:value={selected_persona_id}>
+			<select class="persona-selector" bind:value={selectedPersonaId}>
 				{#each personas as persona (persona)}
 					<option value={persona.persona_id}>{persona.name}</option>
 				{/each}
 			</select>
 			<button
-				on:click={() => ui.set_main_nav_view('explorer')}
-				class:selected={$ui.main_nav_view === 'explorer'}
+				on:click={() => ui.setMainNavView('explorer')}
+				class:selected={$ui.mainNavView === 'explorer'}
 				class="explorer-button"
 			>
-				<ActorIcon name={selected_persona?.name || 'no name'} />
+				<ActorIcon name={selectedPersona?.name || 'no name'} />
 			</button>
 			<button
-				on:click={() => ui.set_main_nav_view('account')}
-				class:selected={$ui.main_nav_view === 'account'}
+				on:click={() => ui.setMainNavView('account')}
+				class:selected={$ui.mainNavView === 'account'}
 				class="account-button"
 			>
-				<!-- TODO `icons.dot_dot_dot` -->
+				<!-- TODO `icons.dotDotDot` -->
 				{icons.bulletPoint}{icons.bulletPoint}{icons.bulletPoint}
 			</button>
 		</div>
-		{#if $ui.main_nav_view === 'explorer'}
+		{#if $ui.mainNavView === 'explorer'}
 			<div class="explorer">
-				{#if selected_community}
-					<CommunityNav {members} {selected_persona_communities} {selected_community} />
+				{#if selectedCommunity}
+					<CommunityNav {members} {selectedPersonaCommunities} {selectedCommunity} />
 					<SpaceNav
-						community={selected_community}
-						spaces={selected_community.spaces}
-						{selected_space}
+						community={selectedCommunity}
+						spaces={selectedCommunity.spaces}
+						{selectedSpace}
 						{members}
 					/>
 				{/if}
 			</div>
-		{:else if $ui.main_nav_view === 'account'}
+		{:else if $ui.mainNavView === 'account'}
 			<Markup>
-				<AccountForm guest={$session.guest} log_in={api.log_in} log_out={api.log_out} />
+				<AccountForm guest={$session.guest} logIn={api.logIn} logOut={api.logOut} />
 			</Markup>
 			<SocketConnection />
 		{/if}
