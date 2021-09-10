@@ -148,7 +148,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	for (const communityParams of communitiesParams) {
 		const community = unwrap(
-			await db.repos.community.create(communityParams.name, mainPersonaCreator.persona_id),
+			await db.repos.community.create(communityParams.name, communityParams.persona_id),
 		) as Community; // TODO why cast?
 		communities.push(community);
 		for (const persona of otherPersonas) {
