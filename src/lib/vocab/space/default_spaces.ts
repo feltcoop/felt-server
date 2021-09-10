@@ -36,8 +36,7 @@ export const default_spaces: SpaceParams[] = [
 		name: 'felt library',
 		url: '/library',
 		media_type: 'application/fuz+json',
-		content:
-			`{"type": "${SpaceTypes.Iframe}", "props": {"url": "https://www.felt.dev/sketch/library"}}`,
+		content: `{"type": "${SpaceTypes.Iframe}", "props": {"url": "https://www.felt.dev/sketch/library"}}`,
 	},
 	{
 		name: 'dealt: tar',

@@ -42,22 +42,16 @@
 			<Markup>
 				<h1>Create a new space</h1>
 				<form>
-					<input
-						type="text"
-						placeholder="> name"						
-						bind:value={new_name}
-						use:autofocus
-					/>
-					<label class="type-label">Select Type:
-					<select class="type-selector" bind:value={new_type}>
-						{#each Object.entries(SpaceTypes) as type (type)}
-							<option value={type[1]}>{type[0]}</option>
-						{/each}
-					</select>
+					<input type="text" placeholder="> name" bind:value={new_name} use:autofocus />
+					<label class="type-label"
+						>Select Type:
+						<select class="type-selector" bind:value={new_type}>
+							{#each Object.entries(SpaceTypes) as type (type)}
+								<option value={type[1]}>{type[0]}</option>
+							{/each}
+						</select>
 					</label>
-					<button on:click={create}>
-						Create
-					</button>
+					<button on:click={create}> Create </button>
 				</form>
 			</Markup>
 		</div>
@@ -74,5 +68,5 @@
 	}
 	.type-selector {
 		margin-left: var(--spacing_xs);
-	}	
+	}
 </style>
