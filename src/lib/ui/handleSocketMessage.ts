@@ -20,7 +20,7 @@ export const toHandleSocketMessage =
 		}
 		console.log('[handle_socket_message] message', message);
 		// TODO hack
-		if (message.type === 'handler_response') {
+		if (message.type === 'service_response') {
 			if (message.message_type === 'create_file') {
 				if (message.response.code === 200) {
 					data.add_file(message.response.data.file);

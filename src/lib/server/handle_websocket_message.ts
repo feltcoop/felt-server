@@ -49,7 +49,7 @@ export const to_handle_websocket_message =
 
 		// TODO what should the API for returning/broadcasting responses be?
 		const serialized_response = JSON.stringify({
-			type: 'handler_response',
+			type: 'service_response',
 			message_type: message.type,
 			response,
 		});
