@@ -6,21 +6,15 @@ import {ApiServer} from '$lib/server/ApiServer.js';
 import {Database} from '$lib/db/Database.js';
 import {default_postgres_options} from '$lib/db/postgres.js';
 import {WebsocketServer} from '$lib/server/WebsocketServer.js';
-import {to_handle_websocket_message} from '$lib/server/handle_websocket_message';
-import {services} from '$lib/server/services';
 
 const server = create_http_server();
-
-const handle_websocket_message = to_handle_websocket_message(services);
 
 // TODO this explicit type declaration is needed because of the awkward
 // `handle_websocket_message` API, there's some circularity in deps to maybe refactor
 export const api_server: ApiServer = new ApiServer({
 	server,
 	app: polka({server}),
-	websocket_server: new WebsocketServer(server, (websocket_server, socket, message, account_id) =>
-		handle_websocket_message(api_server, websocket_server, socket, message, account_id),
-	),
+	websocket_server: new WebsocketServer(server),
 	db: new Database({sql: postgres(default_postgres_options)}),
 	load_instance: async () => {
 		try {

@@ -2,25 +2,27 @@ import ws from 'ws';
 import {promisify} from 'util';
 import type {Server as HttpServer} from 'http';
 import type {Server as HttpsServer} from 'https';
+import {EventEmitter} from 'events';
+import type StrictEventEmitter from 'strict-event-emitter-types';
 
 import type {CookieSessionIncomingMessage} from '$lib/session/cookie_session';
 import {to_cookie_session_middleware} from '$lib/session/cookie_session';
 
-const cookie_session_middleware = to_cookie_session_middleware();
-
-export interface HandleWebsocketServerMessage {
-	(websocket_server: WebsocketServer, socket: ws, message: any, account_id: number): Promise<void>;
+type WebsocketServerEmitter = StrictEventEmitter<EventEmitter, WebsocketServerEvents>;
+interface WebsocketServerEvents {
+	message: (socket: ws, message: ws.Data, account_id: number) => void;
 }
 
-export class WebsocketServer {
+const cookie_session_middleware = to_cookie_session_middleware();
+
+export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEmitter}) {
 	readonly wss: ws.Server;
 	readonly server: HttpServer | HttpsServer;
-	readonly handle: HandleWebsocketServerMessage;
 
-	constructor(server: HttpServer | HttpsServer, handle: HandleWebsocketServerMessage) {
+	constructor(server: HttpServer | HttpsServer) {
+		super();
 		this.server = server;
 		this.wss = new ws.Server({server});
-		this.handle = handle;
 	}
 
 	async init(): Promise<void> {
@@ -40,9 +42,9 @@ export class WebsocketServer {
 			}
 			//TODO where to store the authorized account for a given websocket connection
 			//to prevent actions on other actors resources?
-			socket.on('message', async (raw_message) => {
+			socket.on('message', async (message) => {
 				console.log('account-id', account_id);
-				await this.handle(this, socket, raw_message, account_id);
+				this.emit('message', socket, message, account_id);
 			});
 			socket.on('open', () => {
 				console.log('[wss] open');

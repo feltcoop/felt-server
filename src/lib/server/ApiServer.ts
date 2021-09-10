@@ -4,6 +4,7 @@ import type {Polka, Request as PolkaRequest, Middleware as PolkaMiddleware} from
 import body_parser from 'body-parser';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue} from '@feltcoop/felt/util/terminal.js';
+import type ws from 'ws';
 
 import {to_authentication_middleware} from '$lib/session/authentication_middleware.js';
 import {to_authorization_middleware} from '$lib/session/authorization_middleware.js';
@@ -26,6 +27,8 @@ import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import {to_cookie_session_middleware} from '$lib/session/cookie_session';
 import type {CookieSessionRequest} from '$lib/session/cookie_session';
 import {toServiceMiddleware} from '$lib/server/service_middleware';
+import {services} from '$lib/server/services';
+import type {Service, ServiceResponseData, ServiceParamsSchema} from '$lib/server/service';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -71,6 +74,7 @@ export class ApiServer {
 		log.info('initing');
 
 		// TODO refactor to paralleize `init` of the various pieces
+		this.websocket_server.on('message', this.handle_websocket_message);
 		await this.websocket_server.init();
 
 		// Set up the app and its middleware.
@@ -137,6 +141,7 @@ export class ApiServer {
 
 	async close(): Promise<void> {
 		log.info('close');
+		this.websocket_server.off('message', this.handle_websocket_message);
 		await Promise.all([
 			this.websocket_server.close(),
 			this.db.close(),
@@ -146,4 +151,54 @@ export class ApiServer {
 			),
 		]);
 	}
+
+	getService(name: string): Service<ServiceParamsSchema, ServiceResponseData> {
+		const service = services.get(name);
+		if (!service) throw Error(`Cannot get service '${name}'`);
+		return service;
+	}
+
+	handle_websocket_message = async (_socket: ws, raw_message: ws.Data, account_id: number) => {
+		if (typeof raw_message !== 'string') {
+			console.error(
+				'[handle_websocket_message] cannot handle websocket message; currently only supports strings',
+			);
+			return;
+		}
+
+		let message: any; // TODO type
+		try {
+			message = JSON.parse(raw_message);
+		} catch (err) {
+			console.error('[handle_websocket_message] failed to parse message', err);
+			return;
+		}
+		console.log('[handle_websocket_message]', message);
+		if (!(message as any)?.type) {
+			// TODO proper automated validation
+			console.error('[handle_websocket_message] invalid message', message);
+			return;
+		}
+		const service = this.getService(message.type);
+		if (!service) {
+			console.error('[handle_websocket_message] unhandled message type', message.type);
+			return;
+		}
+
+		const response = await service.handle(this, message.params, account_id);
+
+		// TODO what should the API for returning/broadcasting responses be?
+		const serialized_response = JSON.stringify({
+			type: 'service_response',
+			message_type: message.type,
+			response,
+		});
+		for (const client of this.websocket_server.wss.clients) {
+			client.send(serialized_response);
+		}
+	};
+}
+
+export interface HandleWebsocketMessage {
+	(server: ApiServer, socket: ws, raw_message: ws.Data, account_id: number): Promise<void>;
 }
