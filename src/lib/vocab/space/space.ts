@@ -31,3 +31,13 @@ export const SpaceParamsSchema = Type.Object(
 export const validateSpaceParams = (): ValidateFunction<SpaceParams> =>
 	_validateSpaceParams || (_validateSpaceParams = ajv.compile(SpaceParamsSchema));
 let _validateSpaceParams: ValidateFunction<SpaceParams> | undefined;
+
+//TODO make TypeScript String enum
+export const SpaceTypes = {
+	Chat: 'Chat',
+	Board: 'Board',
+	Forum: 'Forum',
+	Notes: 'Notes',
+	Voice: 'Voice',
+	Iframe: 'Iframe',
+};
