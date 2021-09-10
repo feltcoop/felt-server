@@ -28,7 +28,6 @@ import {to_cookie_session_middleware} from '$lib/session/cookie_session';
 import type {CookieSessionRequest} from '$lib/session/cookie_session';
 import {toServiceMiddleware} from '$lib/server/service_middleware';
 import {services} from '$lib/server/services';
-import type {Service, ServiceResponseData, ServiceParamsSchema} from '$lib/server/service';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -152,12 +151,6 @@ export class ApiServer {
 		]);
 	}
 
-	getService(name: string): Service<ServiceParamsSchema, ServiceResponseData> {
-		const service = services.get(name);
-		if (!service) throw Error(`Cannot get service '${name}'`);
-		return service;
-	}
-
 	handle_websocket_message = async (_socket: ws, raw_message: ws.Data, account_id: number) => {
 		if (typeof raw_message !== 'string') {
 			console.error(
@@ -179,7 +172,7 @@ export class ApiServer {
 			console.error('[handle_websocket_message] invalid message', message);
 			return;
 		}
-		const service = this.getService(message.type);
+		const service = services.get(message.type);
 		if (!service) {
 			console.error('[handle_websocket_message] unhandled message type', message.type);
 			return;
