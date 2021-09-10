@@ -45,24 +45,19 @@ export const communityRepo = (db: Database) => ({
 		console.log('[db] community data', data);
 		return {ok: true, value: data};
 	},
-	insert: async (name: string, persona_id: number): Promise<Result<{value: Community}>> => {
+	create: async (name: string, persona_id: number): Promise<Result<{value: Community}>> => {
 		const data = await db.sql<Community[]>`
       INSERT INTO communities (name) VALUES (
         ${name}
       ) RETURNING *
     `;
-		console.log('[db] created community', data);
+		console.log('[db] created community', data, {persona_id});
 		const community = data[0];
 		const community_id = community.community_id;
-		console.log(community_id);
 		// TODO more robust error handling or condense into single query
-		const association = await db.sql<any>`
-      INSERT INTO persona_communities (persona_id, community_id) VALUES (
-      ${persona_id},${community_id}
-      )
-    `;
-		console.log('[db] created persona_communities', association);
-		const spaces_result = await db.repos.space.insert_default_spaces(community_id);
+		const member_result = await db.repos.member.create(persona_id, community_id);
+		if (!member_result.ok) return member_result;
+		const spaces_result = await db.repos.space.create_default_spaces(community_id);
 		if (!spaces_result.ok) return spaces_result;
 		community.spaces = spaces_result.value;
 		return {ok: true, value: community};

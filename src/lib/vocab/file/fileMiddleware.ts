@@ -5,7 +5,7 @@ import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 export const to_files_middleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
-		const find_files_result = await db.repos.file.filter_by_space(req.params.space_id);
+		const find_files_result = await db.repos.file.filter_by_space(Number(req.params.space_id));
 		if (find_files_result.ok) {
 			return send(res, 200, {files: find_files_result.value}); // TODO API types
 		} else {
@@ -23,13 +23,13 @@ export const to_create_file_middleware = (server: ApiServer): Middleware => {
 
 		// TODO take content from body & build file to pass along with it
 
-		const insert_files_result = await db.repos.file.insert(
+		const create_files_result = await db.repos.file.create(
 			req.body.actor_id,
-			req.params.space_id,
+			Number(req.params.space_id),
 			req.body.content,
 		);
-		if (insert_files_result.ok) {
-			return send(res, 200, {file: insert_files_result.value}); // TODO API types
+		if (create_files_result.ok) {
+			return send(res, 200, {file: create_files_result.value}); // TODO API types
 		} else {
 			console.log('[file_middleware] error searching for files');
 			return send(res, 500, {reason: 'error searching for files'});

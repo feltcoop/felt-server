@@ -43,7 +43,7 @@ export const to_create_community_middleware = (server: ApiServer): Middleware =>
 		if (!name) {
 			return send(res, 400, {reason: 'invalid name'}); // TODO declarative validation
 		}
-		const create_community_result = await db.repos.community.insert(
+		const create_community_result = await db.repos.community.create(
 			name,
 			req.account_session!.account.account_id,
 		);
