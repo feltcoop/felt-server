@@ -7,7 +7,7 @@ import type {ErrorResponse} from '$lib/util/error';
 
 export const spaceRepo = (db: Database) => ({
 	findById: async (
-		space_id: string,
+		space_id: number,
 	): Promise<Result<{value: Space}, {type: 'no_space_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for space id: ${space_id}`);
 		const data = await db.sql<Space[]>`
@@ -23,7 +23,7 @@ export const spaceRepo = (db: Database) => ({
 			reason: `No space found with id: ${space_id}`,
 		};
 	},
-	filterByCommunity: async (community_id: string): Promise<Result<{value: Space[]}>> => {
+	filterByCommunity: async (community_id: number): Promise<Result<{value: Space[]}>> => {
 		console.log(`[db] preparing to query for community spaces: ${community_id}`);
 		const data = await db.sql<Space[]>`
       SELECT s.space_id, s.name, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id= ${community_id}

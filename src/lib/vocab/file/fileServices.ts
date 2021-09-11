@@ -15,7 +15,7 @@ export const readFilesService: Service<typeof ReadFilesServiceParams, {files: Fi
 	paramsSchema: ReadFilesServiceParams,
 	handle: async (server, params) => {
 		const {db} = server;
-		const findFilesResult = await db.repos.file.filterBySpace(params.space_id as any); // TODO remove the typecast once this PR is rebased
+		const findFilesResult = await db.repos.file.filterBySpace(params.space_id);
 		if (findFilesResult.ok) {
 			return {code: 200, data: {files: findFilesResult.value}}; // TODO API types
 		} else {

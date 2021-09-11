@@ -6,7 +6,7 @@ import type {ErrorResponse} from '$lib/util/error';
 
 export const communityRepo = (db: Database) => ({
 	findById: async (
-		community_id: string,
+		community_id: number,
 	): Promise<Result<{value: Community}, {type: 'no_community_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for community id: ${community_id}`);
 		const data = await db.sql<Community[]>`

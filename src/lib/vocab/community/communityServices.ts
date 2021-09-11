@@ -50,7 +50,7 @@ export const readCommunityService: Service<
 		console.log('[read_community] account', account_id); // TODO logging
 		console.log('[read_community] community', params.community_id);
 
-		const findCommunityResult = await db.repos.community.findById(params.community_id as any); // TODO remove the typecast once this PR is rebased
+		const findCommunityResult = await db.repos.community.findById(params.community_id);
 		if (findCommunityResult.ok) {
 			return {code: 200, data: {community: findCommunityResult.value}};
 		} else {
