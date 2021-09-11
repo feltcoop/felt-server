@@ -21,6 +21,7 @@
 	<div class="header">
 		<CommunityInput />
 	</div>
+	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
 	<div>
 		{#each personas as persona (persona.persona_id)}
 			<a
@@ -32,17 +33,18 @@
 			>
 				<ActorIcon name={persona.name} />
 			</a>
-			<!-- TODO hacky way to ignore duplicating the persona home community -->
-			{#each communitiesByPersonaId[persona.persona_id].slice(1) as community (community.community_id)}
-				<a
-					class="community"
-					href="/{community.name}"
-					class:selected={persona === selectedPersona && community === selectedCommunity}
-					style="--hue: {randomHue(community.name)}"
-					on:click={() => selectPersona(persona.persona_id)}
-				>
-					<ActorIcon name={community.name} />
-				</a>
+			{#each communitiesByPersonaId[persona.persona_id] as community (community.community_id)}
+				{#if community.name !== persona.name}
+					<a
+						class="community"
+						href="/{community.name}"
+						class:selected={persona === selectedPersona && community === selectedCommunity}
+						style="--hue: {randomHue(community.name)}"
+						on:click={() => selectPersona(persona.persona_id)}
+					>
+						<ActorIcon name={community.name} />
+					</a>
+				{/if}
 			{/each}
 		{/each}
 	</div>
