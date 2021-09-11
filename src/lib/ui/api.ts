@@ -15,6 +15,7 @@ import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ErrorResponse} from '$lib/util/error';
+import type {Persona, PersonaParams} from '$lib/vocab/persona/persona';
 
 // TODO refactor/rethink
 
@@ -42,6 +43,9 @@ export interface ApiStore {
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space: number | null) => void;
 	toggleMainNav: () => void;
+	createPersona: (
+		params: PersonaParams,
+	) => Promise<ApiResult<{value: {persona: Persona; community: Community}}>>;
 	createCommunity: (
 		name: string,
 		persona_id: number,
@@ -122,7 +126,28 @@ export const toApiStore = (ui: UiStore, data: DataStore, socket: SocketStore): A
 				};
 			}
 		},
-		// TODO refactor this, maybe into `data` or `api`
+		createPersona: async (params) => {
+			const res = await fetch(`/api/v1/personas`, {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify(params),
+			});
+			if (res.ok) {
+				try {
+					const result: {persona: Persona; community: Community} = await res.json(); // TODO api types
+					console.log('createPersona result', result);
+					const {persona, community: rawCommunity} = result;
+					const community = toCommunityModel(rawCommunity);
+					data.addCommunity(community, persona.persona_id);
+					data.addPersona(persona);
+					return {ok: true, value: {persona, community}};
+				} catch (err) {
+					return {ok: false, reason: err.message};
+				}
+			} else {
+				throw Error(`error: ${res.status}: ${res.statusText}`);
+			}
+		},
 		createCommunity: async (name, persona_id) => {
 			if (!name) return {ok: false, reason: 'invalid name'};
 			//Needs to collect name

@@ -10,6 +10,7 @@ import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.
 import {toAuthorizationMiddleware} from '$lib/session/authorizationMiddleware.js';
 import {toLoginMiddleware} from '$lib/session/loginMiddleware.js';
 import {toLogoutMiddleware} from '$lib/session/logoutMiddleware.js';
+import {createPersonaService} from '$lib/vocab/persona/personaServices.js';
 import {
 	readCommunityService,
 	readCommunitiesService,
@@ -98,6 +99,7 @@ export class ApiServer {
 			// but for now it's simple and secure to just require an authenticated account for everything
 			.use('/api', toAuthorizationMiddleware(this))
 			.post('/api/v1/logout', toLogoutMiddleware(this))
+			.post('/api/v1/personas', toServiceMiddleware(this, createPersonaService))
 			.get('/api/v1/communities', toServiceMiddleware(this, readCommunitiesService))
 			.post('/api/v1/communities', toServiceMiddleware(this, createCommunityService))
 			.get('/api/v1/communities/:community_id', toServiceMiddleware(this, readCommunityService))

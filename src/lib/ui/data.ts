@@ -37,6 +37,7 @@ export interface DataState {
 export interface DataStore {
 	subscribe: Readable<DataState>['subscribe'];
 	updateSession: (session: ClientSession) => void;
+	addPersona: (persona: Persona) => void;
 	addCommunity: (community: CommunityModel, persona_id: number) => void;
 	addSpace: (space: Space, community_id: number) => void;
 	addMember: (member: Member) => void;
@@ -52,6 +53,14 @@ export const toDataStore = (initialSession: ClientSession): DataStore => {
 		updateSession: (session) => {
 			console.log('[data.updateSession]', session);
 			set(toDefaultData(session));
+		},
+		addPersona: (persona) => {
+			// TODO instead of this, probably want to set more granularly with nested stores
+			console.log('[data.addPersona]', persona);
+			update(($data) => ({
+				...$data,
+				personas: $data.personas.concat(persona),
+			}));
 		},
 		addCommunity: (community, persona_id) => {
 			// TODO instead of this, probably want to set more granularly with nested stores

@@ -20,7 +20,15 @@ export const personaRepo = (db: Database) => ({
 		if (!createCommunityResult.ok) {
 			return {ok: false, reason: 'Failed to create initial persona community'};
 		}
-		return {ok: true, value: {persona, community: createCommunityResult.value}};
+		// TODO this is a hack -- always adding/expecting `community_ids`
+		// like in `filterByAccount` below is probably not the best idea because of overfetching
+		const community = createCommunityResult.value;
+		persona.community_ids = [community.community_id];
+		// TODO this is also a yucky hack
+		community.members = [
+			{persona_id: persona.persona_id, name: persona.name, community_id: community.community_id},
+		];
+		return {ok: true, value: {persona, community}};
 	},
 	filterByAccount: async (
 		account_id: number,
