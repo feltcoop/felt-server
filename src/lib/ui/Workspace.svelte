@@ -7,19 +7,15 @@
 	const {ui} = getApp();
 
 	$: selectedCommunity = ui.selectedCommunity;
-	$: selectedSpace = $selectedCommunity
-		? $selectedCommunity.spaces.find(
-				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[$selectedCommunity!.community_id],
-		  )
-		: null;
+	$: selectedSpace = ui.selectedSpace;
 	$: membersById = $selectedCommunity?.membersById;
 </script>
 
 <div class="workspace">
 	<div class="column">
-		<WorkspaceHeader space={selectedSpace} community={$selectedCommunity} />
-		{#if selectedSpace && membersById}
-			<SpaceView space={selectedSpace} {membersById} />
+		<WorkspaceHeader space={$selectedSpace} community={$selectedCommunity} />
+		{#if $selectedSpace && membersById}
+			<SpaceView space={$selectedSpace} {membersById} />
 		{:else if $selectedCommunity}
 			<SpaceInput community={$selectedCommunity}>Create a new space</SpaceInput>
 		{/if}

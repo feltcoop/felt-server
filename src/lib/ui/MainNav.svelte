@@ -19,11 +19,7 @@
 
 	// TODO speed up these lookups, probably with a map of all entities by id
 	$: selectedCommunity = ui.selectedCommunity;
-	$: selectedSpace = $selectedCommunity
-		? $selectedCommunity.spaces.find(
-				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[$selectedCommunity!.community_id],
-		  ) || null
-		: null;
+	$: selectedSpace = ui.selectedSpace;
 	$: selectedPersona = personas.find((p) => p.persona_id === $ui.selectedPersonaId) || null;
 	$: console.log('selected persona', selectedPersona);
 	$: selectedPersonaCommunities = communities.filter((community) =>
@@ -69,15 +65,11 @@
 		{#if $ui.mainNavView === 'explorer'}
 			<div class="explorer">
 				{#if $selectedCommunity}
-					<CommunityNav
-						{members}
-						{selectedPersonaCommunities}
-						selectedCommunity={$selectedCommunity}
-					/>
+					<CommunityNav {selectedPersonaCommunities} selectedCommunity={$selectedCommunity} />
 					<SpaceNav
 						community={$selectedCommunity}
 						spaces={$selectedCommunity.spaces}
-						{selectedSpace}
+						selectedSpace={$selectedSpace}
 						{members}
 					/>
 				{/if}

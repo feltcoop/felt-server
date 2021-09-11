@@ -37,7 +37,7 @@
 	const updateStateFromPageParams = (params: {community?: string; space?: string}) => {
 		if (!params.community) return;
 		const community = $data.communities.find((c) => c.name === params.community);
-		if (!community) throw Error(`TODO Unable to find community: ${params.community}`);
+		if (!community) return; // occurs when a session routes to a community they can't access
 		const {community_id} = community;
 		if (community_id !== $ui.selectedCommunityId) {
 			api.selectCommunity(community_id);

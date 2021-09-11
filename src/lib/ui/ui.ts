@@ -3,6 +3,7 @@ import {writable, derived} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 import type {DataState, DataStore} from '$lib/ui/data';
 import type {CommunityModel} from '$lib/vocab/community/community';
+import type {Space} from '$lib/vocab/space/space';
 
 // TODO refactor/rethink
 
@@ -27,14 +28,16 @@ export interface UiState {
 
 export interface UiStore {
 	subscribe: Readable<UiState>['subscribe'];
+	// derived state
+	selectedCommunity: Readable<CommunityModel | null>;
+	selectedSpace: Readable<Space | null>;
+	// methods
 	updateData: (data: DataState | null) => void;
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space_id: number | null) => void;
 	toggleMainNav: () => void;
 	setMainNavView: (mainNavView: MainNavView) => void;
-	// derived state
-	selectedCommunity: Readable<CommunityModel | null>;
 }
 
 export const toUiStore = (data: DataStore) => {
@@ -42,8 +45,26 @@ export const toUiStore = (data: DataStore) => {
 
 	const {subscribe, update} = state;
 
+	// derived state
+	const selectedCommunity = derived(
+		[state, data],
+		([$ui, $data]) =>
+			$data.communities.find((c) => c.community_id === $ui.selectedCommunityId) || null,
+	);
+	const selectedSpace = derived(
+		[state, selectedCommunity],
+		([$ui, $selectedCommunity]) =>
+			$selectedCommunity?.spaces.find(
+				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[$selectedCommunity.community_id],
+			) || null,
+	);
+
 	const store: UiStore = {
 		subscribe,
+		// derived state
+		selectedCommunity,
+		selectedSpace,
+		// methods
 		updateData: (data) => {
 			console.log('[ui.updateData]', {data});
 			update(($ui) => {
@@ -139,12 +160,6 @@ export const toUiStore = (data: DataStore) => {
 		setMainNavView: (mainNavView) => {
 			update(($ui) => ({...$ui, mainNavView}));
 		},
-		// derived state
-		selectedCommunity: derived(
-			[state, data],
-			([$ui, $data]) =>
-				$data.communities.find((c) => c.community_id === $ui.selectedCommunityId) || null,
-		),
 	};
 	return store;
 };
