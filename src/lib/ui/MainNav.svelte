@@ -18,12 +18,11 @@
 	$: personas = $data.personas;
 
 	// TODO speed up these lookups, probably with a map of all entities by id
+	$: selectedPersona = ui.selectedPersona;
 	$: selectedCommunity = ui.selectedCommunity;
 	$: selectedSpace = ui.selectedSpace;
-	$: selectedPersona = personas.find((p) => p.persona_id === $ui.selectedPersonaId) || null;
-	$: console.log('selected persona', selectedPersona);
 	$: selectedPersonaCommunities = communities.filter((community) =>
-		selectedPersona?.community_ids.includes(community.community_id),
+		$selectedPersona?.community_ids.includes(community.community_id),
 	);
 
 	// TODO refactor to some client view-model for the account
@@ -51,7 +50,7 @@
 				class:selected={$ui.mainNavView === 'explorer'}
 				class="explorer-button"
 			>
-				<ActorIcon name={selectedPersona?.name || 'no name'} />
+				<ActorIcon name={$selectedPersona?.name || 'guest'} />
 			</button>
 			<button
 				on:click={() => ui.setMainNavView('account')}

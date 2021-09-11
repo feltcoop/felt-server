@@ -4,6 +4,7 @@ import {setContext, getContext} from 'svelte';
 import type {DataState, DataStore} from '$lib/ui/data';
 import type {CommunityModel} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
+import type {Persona} from '$lib/vocab/persona/persona';
 
 // TODO refactor/rethink
 
@@ -29,6 +30,7 @@ export interface UiState {
 export interface UiStore {
 	subscribe: Readable<UiState>['subscribe'];
 	// derived state
+	selectedPersona: Readable<Persona | null>;
 	selectedCommunity: Readable<CommunityModel | null>;
 	selectedSpace: Readable<Space | null>;
 	// methods
@@ -46,6 +48,10 @@ export const toUiStore = (data: DataStore) => {
 	const {subscribe, update} = state;
 
 	// derived state
+	const selectedPersona = derived(
+		[state, data],
+		([$ui, $data]) => $data.personas.find((p) => p.persona_id === $ui.selectedPersonaId) || null,
+	);
 	const selectedCommunity = derived(
 		[state, data],
 		([$ui, $data]) =>
@@ -62,6 +68,7 @@ export const toUiStore = (data: DataStore) => {
 	const store: UiStore = {
 		subscribe,
 		// derived state
+		selectedPersona,
 		selectedCommunity,
 		selectedSpace,
 		// methods
