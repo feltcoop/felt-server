@@ -83,9 +83,7 @@
 			</div>
 		{:else if onboarding}
 			<div class="column">
-				<Markup>
-					<Onboard />
-				</Markup>
+				<Onboard />
 			</div>
 		{:else}
 			<slot />
