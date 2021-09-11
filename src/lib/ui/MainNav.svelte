@@ -18,11 +18,10 @@
 	$: personas = $data.personas;
 
 	// TODO speed up these lookups, probably with a map of all entities by id
-	$: selectedCommunity =
-		communities.find((c) => c.community_id === $ui.selectedCommunityId) || null;
-	$: selectedSpace = selectedCommunity
-		? selectedCommunity.spaces.find(
-				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[selectedCommunity!.community_id],
+	$: selectedCommunity = ui.selectedCommunity;
+	$: selectedSpace = $selectedCommunity
+		? $selectedCommunity.spaces.find(
+				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[$selectedCommunity!.community_id],
 		  ) || null
 		: null;
 	$: selectedPersona = personas.find((p) => p.persona_id === $ui.selectedPersonaId) || null;
@@ -32,7 +31,7 @@
 	);
 
 	// TODO refactor to some client view-model for the account
-	$: hue = randomHue($data.account.name);
+	$: hue = randomHue($data.account?.name || 'guest');
 
 	let selectedPersonaId = $ui.selectedPersonaId;
 	$: ui.selectPersona(selectedPersonaId!);
@@ -69,11 +68,15 @@
 		</div>
 		{#if $ui.mainNavView === 'explorer'}
 			<div class="explorer">
-				{#if selectedCommunity}
-					<CommunityNav {members} {selectedPersonaCommunities} {selectedCommunity} />
+				{#if $selectedCommunity}
+					<CommunityNav
+						{members}
+						{selectedPersonaCommunities}
+						selectedCommunity={$selectedCommunity}
+					/>
 					<SpaceNav
-						community={selectedCommunity}
-						spaces={selectedCommunity.spaces}
+						community={$selectedCommunity}
+						spaces={$selectedCommunity.spaces}
 						{selectedSpace}
 						{members}
 					/>

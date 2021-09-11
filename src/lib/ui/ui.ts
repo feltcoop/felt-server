@@ -1,7 +1,8 @@
 import type {Readable} from 'svelte/store';
-import {writable} from 'svelte/store';
+import {writable, derived} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
-import type {DataState} from '$lib/ui/data';
+import type {DataState, DataStore} from '$lib/ui/data';
+import type {CommunityModel} from '$lib/vocab/community/community';
 
 // TODO refactor/rethink
 
@@ -9,7 +10,7 @@ const KEY = Symbol();
 
 export const getUi = (): UiStore => getContext(KEY);
 
-export const setUi = (store: UiStore = toUiStore()): UiStore => {
+export const setUi = (store: UiStore): UiStore => {
 	setContext(KEY, store);
 	return store;
 };
@@ -32,10 +33,14 @@ export interface UiStore {
 	selectSpace: (community_id: number, space_id: number | null) => void;
 	toggleMainNav: () => void;
 	setMainNavView: (mainNavView: MainNavView) => void;
+	// derived state
+	selectedCommunity: Readable<CommunityModel | null>;
 }
 
-export const toUiStore = () => {
-	const {subscribe, update} = writable<UiState>(toDefaultUiState());
+export const toUiStore = (data: DataStore) => {
+	const state = writable<UiState>(toDefaultUiState());
+
+	const {subscribe, update} = state;
 
 	const store: UiStore = {
 		subscribe,
@@ -134,6 +139,12 @@ export const toUiStore = () => {
 		setMainNavView: (mainNavView) => {
 			update(($ui) => ({...$ui, mainNavView}));
 		},
+		// derived state
+		selectedCommunity: derived(
+			[state, data],
+			([$ui, $data]) =>
+				$data.communities.find((c) => c.community_id === $ui.selectedCommunityId) || null,
+		),
 	};
 	return store;
 };
