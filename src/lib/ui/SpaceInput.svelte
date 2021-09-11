@@ -5,7 +5,7 @@
 	import type {CommunityModel} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
-	import {SpaceTypes} from '$lib/vocab/space/space';
+	import {spaceTypes} from '$lib/vocab/space/space';
 
 	const {api} = getApp();
 
@@ -13,10 +13,14 @@
 
 	let open = false;
 	let newName = '';
-	let newType = Object.entries(SpaceTypes)[0][1];
+	let newType = spaceTypes[0];
+	let nameEl: HTMLInputElement;
 
 	const create = async () => {
-		if (!newName || !newType) return;
+		if (!newName) {
+			nameEl.focus();
+			return;
+		}
 		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
 		const url = `/${newName}`;
 		await api.createSpace({
@@ -28,7 +32,15 @@
 			content: `{"type": "${newType}", "props": {"data": "${url}/files"}}`,
 		});
 		newName = '';
-		newType = Object.entries(SpaceTypes)[0][1];
+		newType = spaceTypes[0];
+		open = false;
+	};
+
+	const onKeydown = async (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			await create();
+		}
 	};
 </script>
 
@@ -41,16 +53,23 @@
 			<Markup>
 				<h1>Create a new space</h1>
 				<form>
-					<input type="text" placeholder="> name" bind:value={newName} use:autofocus />
-					<label class="type-label"
-						>Select Type:
+					<input
+						type="text"
+						placeholder="> name"
+						bind:value={newName}
+						use:autofocus
+						bind:this={nameEl}
+						on:keydown={onKeydown}
+					/>
+					<label>
+						Select Type:
 						<select class="type-selector" bind:value={newType}>
-							{#each Object.entries(SpaceTypes) as type (type)}
-								<option value={type[1]}>{type[0]}</option>
+							{#each spaceTypes as type (type)}
+								<option value={type}>{type}</option>
 							{/each}
 						</select>
 					</label>
-					<button on:click={create}> Create </button>
+					<button type="button" on:click={create}> Create space </button>
 				</form>
 			</Markup>
 		</div>
