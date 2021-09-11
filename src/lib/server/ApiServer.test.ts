@@ -8,6 +8,7 @@ import {ApiServer} from '$lib/server/ApiServer.js';
 import {Database} from '$lib/db/Database.js';
 import {defaultPostgresOptions} from '$lib/db/postgres.js';
 import {WebsocketServer} from '$lib/server/WebsocketServer.js';
+import {services} from '$lib/server/services';
 
 const TEST_PORT = 3003; // TODO
 
@@ -21,6 +22,7 @@ test__ApiServer('init and close', async () => {
 		app: polka({server}),
 		websocketServer: new WebsocketServer(server),
 		db: new Database({sql: postgres(defaultPostgresOptions)}),
+		services,
 		port: TEST_PORT,
 	});
 	t.is(apiServer.port, TEST_PORT);
