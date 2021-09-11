@@ -14,16 +14,16 @@
 	const {data, ui, api} = getApp();
 
 	$: members = $data.members;
-	$: communities = $data.communities;
 	$: personas = $data.personas;
 
-	// TODO speed up these lookups, probably with a map of all entities by id
 	$: selectedPersona = ui.selectedPersona;
 	$: selectedCommunity = ui.selectedCommunity;
 	$: selectedSpace = ui.selectedSpace;
-	$: selectedPersonaCommunities = communities.filter((community) =>
-		$selectedPersona?.community_ids.includes(community.community_id),
-	);
+	$: communitiesByPersonaId = ui.communitiesByPersonaId;
+	// TODO speed up this lookup, probably with a map of all entities by id
+	$: selectedPersonaCommunities = $ui.selectedPersonaId
+		? $communitiesByPersonaId[$ui.selectedPersonaId]
+		: null;
 
 	// TODO refactor to some client view-model for the account
 	$: hue = randomHue($data.account?.name || 'guest');
@@ -63,7 +63,7 @@
 		</div>
 		{#if $ui.mainNavView === 'explorer'}
 			<div class="explorer">
-				{#if $selectedCommunity}
+				{#if $selectedCommunity && selectedPersonaCommunities}
 					<CommunityNav {selectedPersonaCommunities} selectedCommunity={$selectedCommunity} />
 					<SpaceNav
 						community={$selectedCommunity}

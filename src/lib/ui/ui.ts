@@ -33,6 +33,7 @@ export interface UiStore {
 	selectedPersona: Readable<Persona | null>;
 	selectedCommunity: Readable<CommunityModel | null>;
 	selectedSpace: Readable<Space | null>;
+	communitiesByPersonaId: Readable<{[persona_id: number]: CommunityModel[]}>; // TODO or name `personaCommunities`?
 	// methods
 	updateData: (data: DataState | null) => void;
 	selectPersona: (persona_id: number) => void;
@@ -64,6 +65,15 @@ export const toUiStore = (data: DataStore) => {
 				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[$selectedCommunity.community_id],
 			) || null,
 	);
+	const communitiesByPersonaId = derived([data], ([$data]) =>
+		$data.personas.reduce((result, persona) => {
+			// TODO speed up this lookup, probably with a map of all communities by id
+			result[persona.persona_id] = $data.communities.filter((community) =>
+				persona.community_ids.includes(community.community_id),
+			);
+			return result;
+		}, {} as {[persona_id: number]: CommunityModel[]}),
+	);
 
 	const store: UiStore = {
 		subscribe,
@@ -71,6 +81,7 @@ export const toUiStore = (data: DataStore) => {
 		selectedPersona,
 		selectedCommunity,
 		selectedSpace,
+		communitiesByPersonaId,
 		// methods
 		updateData: (data) => {
 			console.log('[ui.updateData]', {data});
