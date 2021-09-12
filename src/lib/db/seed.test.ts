@@ -238,8 +238,8 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 	// );
 	// t.ok(deleteFileResult.ok);
 
-	// TODO check to be sure the database has the same rows as when it started --
-	// maybe do this with before/after hooks?
+	// TODO check to be sure the database has the same # rows in each table as when this test started --
+	// maybe do this with before/after hooks so it's easily reused?
 });
 
 test__seed.run();
