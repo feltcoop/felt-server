@@ -31,6 +31,25 @@ const randomCommunnityName = randomString;
 const randomSpaceUrl = randomString;
 const randomSpaceName = randomString;
 const randomContent = randomString;
+const randomAccountParams = (): AccountParams => ({
+	name: randomAccountName(),
+	password: randomPassword(),
+});
+const randomPersonaParams = (account_id: number): PersonaParams => ({
+	name: randomPersonaName(),
+	account_id,
+});
+const randomCommunityParams = (persona_id: number): CommunityParams => ({
+	name: randomCommunnityName(),
+	persona_id,
+});
+const randomSpaceParams = (community_id: number): SpaceParams => ({
+	community_id,
+	content: randomContent(),
+	media_type: 'text/plain',
+	name: randomSpaceName(),
+	url: randomSpaceUrl(),
+});
 
 /* test__seed */
 const test__seed = suite<TestServerContext>('seed');
@@ -45,17 +64,14 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 	//
 
 	// TODO refactor these vars -- seed?
-	const accountParams: AccountParams = {name: randomAccountName(), password: randomPassword()};
+	const accountParams = randomAccountParams();
 	const createAccountResult = await server.db.repos.account.create(accountParams);
 	if (!createAccountResult.ok) {
 		throw Error(`Failed to create account: ${createAccountResult.reason}`);
 	}
 	const account = createAccountResult.value;
 
-	const personaParams: PersonaParams = {
-		name: randomPersonaName(),
-		account_id: account.account_id,
-	};
+	const personaParams = randomPersonaParams(account.account_id);
 	const personaResult = await server.db.repos.persona.create(personaParams);
 	if (!personaResult.ok) {
 		// TODO doesn't have a `reason` like others -- do we need to add one? maybe not?
@@ -76,10 +92,7 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 	// 	);
 	// }
 
-	const communityParams: CommunityParams = {
-		name: randomCommunnityName(),
-		persona_id: persona.persona_id,
-	};
+	const communityParams = randomCommunityParams(persona.persona_id);
 	const communityResult = await server.db.repos.community.create(communityParams);
 	if (!communityResult.ok) {
 		// TODO doesn't have a `reason` like others -- do we need to add one? maybe not?
@@ -88,13 +101,7 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 	}
 	const community = communityResult.value;
 
-	const spaceParams: SpaceParams = {
-		community_id: community.community_id,
-		content: randomContent(),
-		media_type: 'text/plain',
-		name: randomSpaceName(),
-		url: randomSpaceUrl(),
-	};
+	const spaceParams = randomSpaceParams(community.community_id);
 	const spaceResult = await server.db.repos.space.create(spaceParams);
 	if (!spaceResult.ok) {
 		// TODO doesn't have a `reason` like others -- do we need to add one? maybe not?
