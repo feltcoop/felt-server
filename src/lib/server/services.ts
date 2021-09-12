@@ -13,24 +13,30 @@ import {
 	readSpacesService,
 	createSpaceService,
 } from '$lib/vocab/space/spaceServices';
-import {randomFileParams, RandomVocab, RandomVocabContext} from '$lib/vocab/random';
+import {
+	randomFileParams,
+	randomMemberParams,
+	RandomVocab,
+	RandomVocabContext,
+} from '$lib/vocab/random';
 import {randomCommunityParams, randomSpaceParams} from '$lib/vocab/random';
 
 export const services: Map<string, Service<TSchema, TSchema>> = new Map(
 	// TODO verify no duplicate names?
 	[
-		readCommunityService,
-		readCommunitiesService,
 		createCommunityService,
 		createMemberService,
-		readFilesService,
+		createSpaceService,
 		createFileService,
+		readCommunityService,
+		readCommunitiesService,
 		readSpaceService,
 		readSpacesService,
-		createSpaceService,
+		readFilesService,
 	].map((s) => [s.name, s]),
 );
 
+// TODO where does this belong?
 // TODO keep factoring this until it's fully automated, generating from the schema
 export const randomServiceParams = async <TParamsSchema extends TSchema>(
 	service: Service<TParamsSchema, TSchema>,
@@ -38,13 +44,6 @@ export const randomServiceParams = async <TParamsSchema extends TSchema>(
 	{account, persona, community, space}: RandomVocab,
 ): Promise<object> => {
 	switch (service.name) {
-		case 'read_community': {
-			if (!community) community = await random.community(persona, account);
-			return {community_id: community.community_id};
-		}
-		case 'read_communities': {
-			return {};
-		}
 		case 'create_community': {
 			if (!persona) persona = await random.persona(account);
 			return randomCommunityParams(persona.persona_id);
@@ -52,16 +51,23 @@ export const randomServiceParams = async <TParamsSchema extends TSchema>(
 		case 'create_member': {
 			if (!persona) persona = await random.persona(account);
 			if (!community) community = await random.community(); // don't forward `persona`/`account` bc that's the service's job
-			return {persona_id: persona.persona_id, community_id: community.community_id};
+			return randomMemberParams(persona.persona_id, community.community_id);
 		}
-		case 'read_files': {
-			if (!space) space = await random.space(persona, account, community);
-			return {space_id: space.space_id};
+		case 'create_space': {
+			if (!community) community = await random.community(persona, account);
+			return randomSpaceParams(community.community_id);
 		}
 		case 'create_file': {
 			if (!persona) persona = await random.persona(account);
 			if (!space) space = await random.space(persona, account, community);
 			return randomFileParams(persona.persona_id, space.space_id);
+		}
+		case 'read_community': {
+			if (!community) community = await random.community(persona, account);
+			return {community_id: community.community_id};
+		}
+		case 'read_communities': {
+			return {};
 		}
 		case 'read_space': {
 			if (!space) space = await random.space(persona, account, community);
@@ -71,12 +77,12 @@ export const randomServiceParams = async <TParamsSchema extends TSchema>(
 			if (!community) community = await random.community(persona, account);
 			return {community_id: community.community_id};
 		}
-		case 'create_space': {
-			if (!community) community = await random.community(persona, account);
-			return randomSpaceParams(community.community_id);
+		case 'read_files': {
+			if (!space) space = await random.space(persona, account, community);
+			return {space_id: space.space_id};
 		}
 		default: {
-			throw Error(`Unhandled service: ${service.name}`);
+			throw Error(`Unhandled service for randomServiceParams: ${service.name}`);
 		}
 	}
 };

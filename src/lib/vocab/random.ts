@@ -4,6 +4,7 @@ import type {Account, AccountParams} from '$lib/vocab/account/account';
 import type {Persona, PersonaParams} from '$lib/vocab/persona/persona';
 import type {FileParams} from '$lib/vocab/file/file';
 import type {Database} from '$lib/db/Database';
+import type {MemberParams} from '$lib/vocab/member/member';
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = () => Math.random().toString().slice(2);
@@ -21,6 +22,10 @@ export const randomAccountParams = (): AccountParams => ({
 export const randomPersonaParams = (account_id: number): PersonaParams => ({
 	name: randomPersonaName(),
 	account_id,
+});
+export const randomMemberParams = (persona_id: number, community_id: number): MemberParams => ({
+	persona_id,
+	community_id,
 });
 export const randomCommunityParams = (persona_id: number): CommunityParams => ({
 	name: randomCommunnityName(),
