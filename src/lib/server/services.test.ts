@@ -37,7 +37,7 @@ test__services('perform services', async ({server}) => {
 				)}`,
 			);
 		}
-		t.is(response.code, 200);
+		t.is(response.code, 200); // TODO generate invalid data and test those params+responses too
 	}
 });
 
