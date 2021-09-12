@@ -3,14 +3,13 @@ import {Type} from '@sinclair/typebox';
 import type {Service} from '$lib/server/service';
 import type {Community} from '$lib/vocab/community/community';
 import type {Member} from '$lib/vocab/member/member';
-import {MemberParamsSchema} from '$lib/vocab/member/member';
 import {toValidateSchema} from '$lib/util/ajv';
 
 const ReadCommunitiesServiceParams = Type.Object(
 	{
 		// TODO query params
 	},
-	{additionalProperties: false},
+	{$id: 'ReadCommunitiesServiceParams', additionalProperties: false},
 );
 
 // Returns a list of community objects
@@ -37,7 +36,7 @@ const ReadCommunityServiceParams = Type.Object(
 	{
 		community_id: Type.Number(),
 	},
-	{additionalProperties: false},
+	{$id: 'ReadCommunityServiceParams', additionalProperties: false},
 );
 
 //Returns a single community object
@@ -70,7 +69,7 @@ const CreateCommunityServiceParams = Type.Object(
 		name: Type.String(),
 		persona_id: Type.Number(),
 	},
-	{additionalProperties: false},
+	{$id: 'CreateCommunityServiceParams', additionalProperties: false},
 );
 
 //Creates a new community for an instance
@@ -84,14 +83,13 @@ export const createCommunityService: Service<
 	validateParams: toValidateSchema(CreateCommunityServiceParams),
 	// TODO declarative validation for `req.body` and the rest
 	handle: async (server, params, account_id) => {
-		const {name} = params;
-		if (!name) {
+		if (!params.name) {
 			// TODO declarative validation
 			return {code: 400, data: {reason: 'invalid name'}};
 		}
 		console.log('created community account_id', account_id);
 		// TODO validate that `account_id` is `persona_id`
-		const createCommunityResult = await server.db.repos.community.create(name, params.persona_id);
+		const createCommunityResult = await server.db.repos.community.create(params);
 		console.log('createCommunityResult', createCommunityResult);
 		if (createCommunityResult.ok) {
 			// TODO optimize this to return `createCommunityResult.value` instead of making another db call,
@@ -116,7 +114,13 @@ export const createCommunityService: Service<
 	},
 };
 
-const CreateMemberServiceParams = MemberParamsSchema;
+const CreateMemberServiceParams = Type.Object(
+	{
+		persona_id: Type.Number(),
+		community_id: Type.Number(),
+	},
+	{$id: 'CreateMemberServiceParams', additionalProperties: false},
+);
 
 // TODO move to `$lib/vocab/member`
 //Creates a new member relation for a community

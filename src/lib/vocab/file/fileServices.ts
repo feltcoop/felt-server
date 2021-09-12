@@ -8,7 +8,7 @@ const ReadFilesServiceParams = Type.Object(
 	{
 		space_id: Type.Number(),
 	},
-	{additionalProperties: false},
+	{$id: 'ReadFilesServiceParams', additionalProperties: false},
 );
 
 export const readFilesService: Service<typeof ReadFilesServiceParams, {files: File[]}> = {
@@ -34,7 +34,7 @@ const CreateFileServiceParams = Type.Object(
 		space_id: Type.Number(),
 		content: Type.String(),
 	},
-	{additionalProperties: false},
+	{$id: 'CreateFileServiceParams', additionalProperties: false},
 );
 
 // TODO automatic params type and validation

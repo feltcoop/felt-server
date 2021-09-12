@@ -3,6 +3,7 @@ import type {Static} from '@sinclair/typebox';
 
 import type {Space} from '$lib/vocab/space/space.js';
 import type {Member} from '$lib/vocab/member/member.js';
+import {toValidateSchema} from '$lib/util/ajv';
 
 export interface Community {
 	community_id: number;
@@ -19,7 +20,7 @@ export interface Community {
 // 		spaces: Type.Ref(SpaceSchema), // TODO reference types
 // 		members: Type.Number(),
 // 	},
-// 	{additionalProperties: false},
+// 	{$id:'CommunitySchema': additionalProperties: false},
 // );
 
 export type CommunityParams = Static<typeof CommunityParamsSchema>;
@@ -30,6 +31,7 @@ export const CommunityParamsSchema = Type.Object(
 	},
 	{$id: 'CommunityParams', additionalProperties: false},
 );
+export const validateCommunityParams = toValidateSchema<CommunityParams>(CommunityParamsSchema);
 
 // TODO think through alternatives to this, probably caching `membersById` on `data`
 export interface CommunityModel {

@@ -8,7 +8,7 @@ const ReadSpaceServiceParams = Type.Object(
 	{
 		space_id: Type.Number(),
 	},
-	{additionalProperties: false},
+	{$id: 'ReadSpaceServiceParams', additionalProperties: false},
 );
 
 //Returns a single space object
@@ -36,7 +36,7 @@ const ReadSpacesServiceSchema = Type.Object(
 	{
 		community_id: Type.Number(),
 	},
-	{additionalProperties: false},
+	{$id: 'ReadSpacesServiceSchema', additionalProperties: false},
 );
 
 //Returns all spaces in a given community
@@ -72,7 +72,7 @@ const CreateSpaceServiceSchema = Type.Object(
 		media_type: Type.String(),
 		content: Type.String(),
 	},
-	{additionalProperties: false},
+	{$id: 'CreateSpaceServiceSchema', additionalProperties: false},
 );
 
 //Creates a new space for a given community
