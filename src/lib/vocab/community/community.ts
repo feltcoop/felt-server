@@ -24,7 +24,7 @@ export const CommunitySchema = Type.Object(
 );
 export const validateCommunity = toValidateSchema<Community>(CommunitySchema);
 
-export type CommunityParams = Static<typeof CommunityParamsSchema>;
+export interface CommunityParams extends Static<typeof CommunityParamsSchema> {}
 export const CommunityParamsSchema = Type.Object(
 	{
 		name: Type.String(),

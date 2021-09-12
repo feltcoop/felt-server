@@ -2,7 +2,7 @@ import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
 import {toValidateSchema} from '$lib/util/ajv';
 
-export type Account = Static<typeof AccountSchema>;
+export interface Account extends Static<typeof AccountSchema> {}
 export const AccountSchema = Type.Object(
 	{
 		account_id: Type.Number(),
@@ -13,7 +13,7 @@ export const AccountSchema = Type.Object(
 );
 export const validateAccount = toValidateSchema<Account>(AccountSchema);
 
-export type AccountParams = Static<typeof AccountParamsSchema>;
+export interface AccountParams extends Static<typeof AccountParamsSchema> {}
 export const AccountParamsSchema = Type.Object(
 	{
 		name: Type.String(),

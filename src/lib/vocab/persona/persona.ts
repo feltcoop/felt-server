@@ -3,7 +3,7 @@ import type {Static} from '@sinclair/typebox';
 
 import {toValidateSchema} from '$lib/util/ajv';
 
-export type Persona = Static<typeof PersonaSchema>;
+export interface Persona extends Static<typeof PersonaSchema> {}
 export const PersonaSchema = Type.Object(
 	{
 		persona_id: Type.Number(),
@@ -15,7 +15,7 @@ export const PersonaSchema = Type.Object(
 );
 export const validatePersona = toValidateSchema<Persona>(PersonaSchema);
 
-export type PersonaParams = Static<typeof PersonaParamsSchema>;
+export interface PersonaParams extends Static<typeof PersonaParamsSchema> {}
 export const PersonaParamsSchema = Type.Object(
 	{
 		account_id: Type.Number(),

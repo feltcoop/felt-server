@@ -3,7 +3,7 @@ import type {Static} from '@sinclair/typebox';
 
 import {toValidateSchema} from '$lib/util/ajv';
 
-export type Space = Static<typeof SpaceSchema>;
+export interface Space extends Static<typeof SpaceSchema> {}
 export const SpaceSchema = Type.Object(
 	{
 		space_id: Type.Number(),
@@ -17,7 +17,7 @@ export const SpaceSchema = Type.Object(
 export const validateSpace = toValidateSchema<Space>(SpaceSchema);
 
 // TODO the `community_id` belongs here, but it's not used in the REST post payload, only the params
-export type SpaceParams = Static<typeof SpaceParamsSchema>;
+export interface SpaceParams extends Static<typeof SpaceParamsSchema> {}
 export const SpaceParamsSchema = Type.Object(
 	{
 		community_id: Type.Number(),

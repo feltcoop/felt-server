@@ -1,4 +1,4 @@
-import type {SpaceParams} from '$lib/vocab/space/space';
+import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Community, CommunityParams} from '$lib/vocab/community/community';
 import type {Account, AccountParams} from '$lib/vocab/account/account';
 import type {Persona, PersonaParams} from '$lib/vocab/persona/persona';
@@ -44,6 +44,7 @@ export interface RandomVocab {
 	account?: Account;
 	persona?: Persona;
 	community?: Community;
+	space?: Space;
 }
 
 // TODO maybe compute in relation to `RandomVocab`
@@ -51,6 +52,7 @@ export interface RandomVocabContext {
 	account: () => Promise<Account>;
 	persona: (account?: Account) => Promise<Persona>;
 	community: (persona?: Persona, account?: Account) => Promise<Community>;
+	space: (persona?: Persona, account?: Account, community?: Community) => Promise<Space>;
 }
 
 // TODO generate from schema
@@ -86,6 +88,24 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 				throw Error(`Failed to create community`);
 			}
 			return createCommunityResult.value;
+		},
+		space: async (persona, account, community) => {
+			if (!account) {
+				account = await random.account();
+			}
+			if (!persona) {
+				persona = await random.persona(account);
+			}
+			if (!community) {
+				community = await random.community(persona, account);
+			}
+			const createSpaceResult = await db.repos.space.create(
+				randomSpaceParams(community.community_id),
+			);
+			if (!createSpaceResult.ok) {
+				throw Error(`Failed to create space`);
+			}
+			return createSpaceResult.value;
 		},
 	};
 	return random;
