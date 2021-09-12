@@ -18,9 +18,11 @@ test__fileRepo.before(setupServer);
 test__fileRepo.after(teardownServer);
 
 test__fileRepo('create a file', async ({server}) => {
-	console.log('test file repo');
-	t.ok(server.db.repos.file);
-	const result = await server.db.repos.file.create(1, 1, 'hello');
+	// TODO refactor these vars -- seed?
+	const actor_id = 1;
+	const space_id = 1;
+
+	const result = await server.db.repos.file.create(actor_id, space_id, 'hello');
 	t.ok(result.ok);
 	const valid = validateFile()(result.value);
 	if (!valid) {
