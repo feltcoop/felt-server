@@ -13,6 +13,7 @@ export const FileSchema = Type.Object(
 	},
 	{$id: 'File', additionalProperties: false},
 );
+export const validateFile = toValidateSchema<File>(FileSchema);
 
 export type FileParams = Static<typeof FileParamsSchema>;
 export const FileParamsSchema = Type.Object(

@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue} from '@feltcoop/felt/util/terminal.js';
 import type ws from 'ws';
+import {promisify} from 'util';
 
 import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.js';
 import {toAuthorizationMiddleware} from '$lib/session/authorizationMiddleware.js';
@@ -144,10 +145,7 @@ export class ApiServer {
 		await Promise.all([
 			this.websocketServer.close(),
 			this.db.close(),
-			new Promise((resolve, reject) =>
-				// TODO remove type casting when polka types are fixed
-				(this.app.server as any as HttpServer).close((err) => (err ? resolve : reject(err))),
-			),
+			promisify(this.app.server.close).call(this.app.server),
 		]);
 	}
 
