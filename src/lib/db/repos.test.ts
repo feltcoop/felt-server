@@ -5,49 +5,23 @@ import type {Result} from '@feltcoop/felt';
 import type {TestServerContext} from '$lib/util/testHelpers';
 import {setupServer, teardownServer} from '$lib/util/testHelpers';
 import {validateFile} from '$lib/vocab/file/file';
-import type {SpaceParams} from '$lib/vocab/space/space';
 import {validateSpace} from '$lib/vocab/space/space';
 import {toValidationErrorMessage} from '$lib/util/ajv';
-import type {AccountParams} from '$lib/vocab/account/account';
 import {validateAccount} from '$lib/vocab/account/account';
-import type {CommunityParams} from '$lib/vocab/community/community';
 import {validateCommunity} from '$lib/vocab/community/community';
-import {PersonaParams, validatePersona} from '$lib/vocab/persona/persona';
+import {validatePersona} from '$lib/vocab/persona/persona';
 import type {File} from '$lib/vocab/file/file';
+import {
+	randomAccountParams,
+	randomCommunityParams,
+	randomPersonaParams,
+	randomSpaceParams,
+} from '$lib/vocab/random';
 
 // TODO this only depends on the database --
 // if we don't figure out a robust way to make a global reusable server,
 // then change this module to setup and teardown only a `db` instance
 // instead of the whole server
-
-// TODO automate faking these from schemas, also use seeded rng
-const randomString = () => Math.random().toString().slice(2);
-const randomAccountName = randomString;
-const randomPassword = randomString;
-const randomPersonaName = randomString;
-const randomCommunnityName = randomString;
-const randomSpaceUrl = randomString;
-const randomSpaceName = randomString;
-const randomContent = randomString;
-const randomAccountParams = (): AccountParams => ({
-	name: randomAccountName(),
-	password: randomPassword(),
-});
-const randomPersonaParams = (account_id: number): PersonaParams => ({
-	name: randomPersonaName(),
-	account_id,
-});
-const randomCommunityParams = (persona_id: number): CommunityParams => ({
-	name: randomCommunnityName(),
-	persona_id,
-});
-const randomSpaceParams = (community_id: number): SpaceParams => ({
-	community_id,
-	content: randomContent(),
-	media_type: 'text/plain',
-	name: randomSpaceName(),
-	url: randomSpaceUrl(),
-});
 
 /* test__repos */
 const test__repos = suite<TestServerContext>('repos');

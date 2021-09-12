@@ -121,6 +121,8 @@ export const createCommunityService: Service<
 			const communityData = await server.db.repos.community.filterByAccount(account_id);
 			if (communityData.ok) {
 				const {community_id} = createCommunityResult.value;
+				console.log('community_id', community_id);
+				console.log('communityData', communityData);
 				return {
 					code: 200,
 					data: {

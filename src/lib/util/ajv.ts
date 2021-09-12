@@ -1,4 +1,4 @@
-import Ajv from 'ajv';
+import Ajv, {_} from 'ajv';
 import type {ErrorObject, ValidateFunction} from 'ajv';
 import type {TSchema} from '@sinclair/typebox';
 
@@ -8,10 +8,26 @@ export const ajv = new Ajv()
 	.addKeyword('kind')
 	.addKeyword('modifier');
 
+export interface CreateValidate<T = unknown> {
+	(): ValidateFunction<T>;
+}
+
+const validators: Map<TSchema, ValidateFunction> = new Map();
+
+// Memoizes the returned schema validation function in the module-level lookup `validators`.
+export const validateSchema = <T>(schema: TSchema): ValidateFunction<T> => {
+	let validate = validators.get(schema) as ValidateFunction<T>;
+	if (!validate) {
+		validators.set(schema, (validate = toValidateSchema<T>(schema)()));
+	}
+	return validate;
+};
+
+// TODO try to fix this type, should use `Static`
 // Creates a lazily-compiled schema validation function to avoid wasteful compilation.
 // It's also faster than ajv's internal compiled schema cache
 // because we can assume a consistent environment.
-export const toValidateSchema = <T>(schema: TSchema): (() => ValidateFunction<T>) => {
+export const toValidateSchema = <T>(schema: TSchema): CreateValidate<T> => {
 	let validate: ValidateFunction<T>;
 	return () => validate || (validate = ajv.compile(schema));
 };

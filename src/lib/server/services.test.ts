@@ -1,0 +1,44 @@
+import {suite} from 'uvu';
+import * as t from 'uvu/assert';
+import {red} from '@feltcoop/felt/util/terminal.js';
+
+import type {TestServerContext} from '$lib/util/testHelpers';
+import {setupServer, teardownServer} from '$lib/util/testHelpers';
+import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
+import {randomServiceParams, services} from '$lib/server/services';
+import {toRandomVocabContext} from '$lib/vocab/random';
+
+/* test__services */
+const test__services = suite<TestServerContext>('services');
+
+test__services.before(setupServer);
+test__services.after(teardownServer);
+
+test__services('perform services', async ({server}) => {
+	const random = toRandomVocabContext(server.db);
+
+	for (const service of services.values()) {
+		const account = await random.account();
+		const params = await randomServiceParams(service, random, {account});
+		if (!validateSchema(service.paramsSchema)(params)) {
+			throw new Error(
+				`Failed to validate random params: ${toValidationErrorMessage(
+					validateSchema(service.paramsSchema).errors![0],
+				)}`,
+			);
+		}
+		const response = await service.perform(server, params, account.account_id);
+		if (!validateSchema(service.responseSchema)(response.data)) {
+			console.error(red(`failed to validate service: ${service.name}`), response.data);
+			throw new Error(
+				`Failed to validate response for service: ${service.name}: ${toValidationErrorMessage(
+					validateSchema(service.responseSchema).errors![0],
+				)}`,
+			);
+		}
+		t.is(response.code, 200);
+	}
+});
+
+test__services.run();
+/* test__services */
