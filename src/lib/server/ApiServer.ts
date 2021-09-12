@@ -29,7 +29,6 @@ import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import {toServiceMiddleware} from '$lib/server/serviceMiddleware';
 import {services} from '$lib/server/services';
-import {toValidationErrorMessage} from '$lib/util/ajv';
 
 const log = new Logger([blue('[ApiServer]')]);
 
