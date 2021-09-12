@@ -1,5 +1,6 @@
 import {suite} from 'uvu';
 import * as t from 'uvu/assert';
+import type {Result} from '@feltcoop/felt';
 
 import type {TestServerContext} from '$lib/util/testHelpers';
 import {setupServer, teardownServer} from '$lib/util/testHelpers';
@@ -9,6 +10,7 @@ import type {SpaceParams} from '$lib/vocab/space/space';
 import type {AccountParams} from '$lib/vocab/account/account';
 import type {CommunityParams} from '$lib/vocab/community/community';
 import {PersonaParams, validatePersona} from '$lib/vocab/persona/persona';
+import type {File} from '$lib/vocab/file/file';
 
 // TODO this only depends on the database --
 // if we don't figure out a robust way to make a global reusable server,
@@ -88,17 +90,34 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 	}
 	const space = spaceResult.value;
 
-	const createFileResult = await server.db.repos.file.create(
-		account.account_id,
-		space.space_id,
-		content,
+	const unwrapFile = async (promise: Promise<Result<{value: File}>>): Promise<File> => {
+		const createFileResult = await promise;
+		t.ok(createFileResult.ok);
+		if (!validateFile()(createFileResult.value)) {
+			console.log('createFileResult.value', createFileResult.value);
+			throw new Error(
+				`Failed to validate file: ${toValidationErrorMessage(validateFile().errors![0])}`,
+			);
+		}
+		return createFileResult.value;
+	};
+
+	const fileContent1 = 'this is file 1';
+	const fileContent2 = 'file: 2';
+	const file1 = await unwrapFile(
+		server.db.repos.file.create({
+			actor_id: persona.persona_id,
+			space_id: space.space_id,
+			content: fileContent1,
+		}),
 	);
-	t.ok(createFileResult.ok);
-	if (!validateFile()(createFileResult.value)) {
-		throw new Error(
-			`Failed to validate file: ${toValidationErrorMessage(validateFile().errors![0])}`,
-		);
-	}
+	const file2 = await unwrapFile(
+		server.db.repos.file.create({
+			actor_id: persona.persona_id,
+			space_id: space.space_id,
+			content: fileContent2,
+		}),
+	);
 
 	// do queries and changes
 	//
@@ -107,7 +126,7 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 
 	const filterFilesResult = await server.db.repos.file.filterBySpace(space.space_id);
 	t.ok(filterFilesResult.ok);
-	t.is(filterFilesResult.value.length, 1);
+	t.is(filterFilesResult.value.length, 2);
 	filterFilesResult.value.forEach((file) => {
 		if (!validateFile()(file)) {
 			throw new Error(
@@ -115,6 +134,13 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 			);
 		}
 	});
+	t.ok(filterFilesResult.ok);
+	const queriedFile1 = filterFilesResult.value.find((f) => f.content === fileContent1);
+	t.ok(queriedFile1);
+	t.equal(file1, queriedFile1);
+	const queriedFile2 = filterFilesResult.value.find((f) => f.content === fileContent2);
+	t.ok(queriedFile2);
+	t.equal(file2, queriedFile2);
 
 	// delete everything
 	//
