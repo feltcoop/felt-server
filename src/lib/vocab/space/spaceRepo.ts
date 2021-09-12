@@ -31,8 +31,13 @@ export const spaceRepo = (db: Database) => ({
 		console.log('[db] spaces data', data);
 		return {ok: true, value: data};
 	},
-	create: async (params: SpaceParams): Promise<Result<{value: Space}>> => {
-		const {name, content, media_type, url} = params;
+	create: async ({
+		name,
+		content,
+		media_type,
+		url,
+		community_id,
+	}: SpaceParams): Promise<Result<{value: Space}>> => {
 		const data = await db.sql<Space[]>`
       INSERT INTO spaces (name, url, media_type, content) VALUES (
         ${name},${url},${media_type},${content}
@@ -40,11 +45,10 @@ export const spaceRepo = (db: Database) => ({
     `;
 		// console.log('[db] created space', data);
 		const space_id: number = data[0].space_id;
-		// console.log('[db] creating community space', params.community_id, space_id);
 		// TODO more robust error handling or condense into single query
 		await db.sql<any>`
       INSERT INTO community_spaces (space_id, community_id) VALUES (
-        ${space_id},${params.community_id}
+        ${space_id},${community_id}
       )
     `;
 		// console.log('[db] created communitySpace', communitySpace);
