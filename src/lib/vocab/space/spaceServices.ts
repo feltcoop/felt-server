@@ -1,7 +1,7 @@
 import {Type} from '@sinclair/typebox';
 
 import type {Service} from '$lib/server/service';
-import type {Space} from '$lib/vocab/space/space';
+import {SpaceSchema} from '$lib/vocab/space/space';
 import {toValidateSchema} from '$lib/util/ajv';
 
 const ReadSpaceServiceParams = Type.Object(
@@ -10,12 +10,23 @@ const ReadSpaceServiceParams = Type.Object(
 	},
 	{$id: 'ReadSpaceServiceParams', additionalProperties: false},
 );
+const ReadSpaceServiceResponse = Type.Object(
+	{
+		space: SpaceSchema,
+	},
+	{$id: 'ReadSpaceServiceResponse', additionalProperties: false},
+);
 
 //Returns a single space object
-export const readSpaceService: Service<typeof ReadSpaceServiceParams, {space: Space}> = {
+export const readSpaceService: Service<
+	typeof ReadSpaceServiceParams,
+	typeof ReadSpaceServiceResponse
+> = {
 	name: 'read_space',
 	paramsSchema: ReadSpaceServiceParams,
 	validateParams: toValidateSchema(ReadSpaceServiceParams),
+	responseSchema: ReadSpaceServiceResponse,
+	validateResponse: toValidateSchema(ReadSpaceServiceResponse),
 	handle: async (server, params) => {
 		const {db} = server;
 
@@ -38,12 +49,23 @@ const ReadSpacesServiceSchema = Type.Object(
 	},
 	{$id: 'ReadSpacesServiceSchema', additionalProperties: false},
 );
+const ReadSpacesServiceResponse = Type.Object(
+	{
+		spaces: Type.Array(SpaceSchema),
+	},
+	{$id: 'ReadSpacesServiceResponse', additionalProperties: false},
+);
 
 //Returns all spaces in a given community
-export const readSpacesService: Service<typeof ReadSpacesServiceSchema, {spaces: Space[]}> = {
+export const readSpacesService: Service<
+	typeof ReadSpacesServiceSchema,
+	typeof ReadSpacesServiceResponse
+> = {
 	name: 'read_spaces',
 	paramsSchema: ReadSpacesServiceSchema,
 	validateParams: toValidateSchema(ReadSpacesServiceSchema),
+	responseSchema: ReadSpacesServiceResponse,
+	validateResponse: toValidateSchema(ReadSpacesServiceResponse),
 	handle: async (server, params) => {
 		const {db} = server;
 
@@ -74,12 +96,23 @@ const CreateSpaceServiceSchema = Type.Object(
 	},
 	{$id: 'CreateSpaceServiceSchema', additionalProperties: false},
 );
+const CreateSpaceServiceResponse = Type.Object(
+	{
+		space: SpaceSchema,
+	},
+	{$id: 'CreateSpaceServiceResponse', additionalProperties: false},
+);
 
 //Creates a new space for a given community
-export const createSpaceService: Service<typeof CreateSpaceServiceSchema, {space: Space}> = {
+export const createSpaceService: Service<
+	typeof CreateSpaceServiceSchema,
+	typeof CreateSpaceServiceResponse
+> = {
 	name: 'create_space',
 	paramsSchema: CreateSpaceServiceSchema,
 	validateParams: toValidateSchema(CreateSpaceServiceSchema),
+	responseSchema: CreateSpaceServiceResponse,
+	validateResponse: toValidateSchema(CreateSpaceServiceResponse),
 	// TODO verify the `account_id` has permission to modify this space
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
 	handle: async (server, params) => {

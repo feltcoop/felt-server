@@ -176,6 +176,7 @@ export class ApiServer {
 			return;
 		}
 
+		// TODO do the same validation as in `serviceMiddleware`
 		const response = await service.handle(this, message.params, account_id);
 
 		// TODO what should the API for returning/broadcasting responses be?

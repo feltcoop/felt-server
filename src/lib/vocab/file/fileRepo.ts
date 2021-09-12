@@ -23,3 +23,8 @@ export const fileRepo = (db: Database) => ({
 		return {ok: true, value: data};
 	},
 });
+
+// TODO to associate schemas with repo methods,
+// what about something like this?
+// or use decorators? on classes? hmm. something else?
+// repoSchemas.set(fileRepo.filterBySpace, FileFilterBySpaceResponseSchema);
