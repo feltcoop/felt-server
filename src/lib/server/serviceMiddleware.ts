@@ -37,17 +37,17 @@ export const toServiceMiddleware =
 				// Should each service declare if `account_id` is required?
 				return send(res, 401, {reason: 'not logged in'});
 			}
-			const result = await service.perform(server, params, req.account_id);
+			const response = await service.perform(server, params, req.account_id);
 			const validateResponse = service.validateResponse();
-			if (!validateResponse(params)) {
+			if (!validateResponse(response)) {
 				// TODO enable this error when testing? or just dev?
 				// TODO handle multiple errors instead of just the first
-				console.error(red('validation failed:'), params, validateResponse.errors);
+				console.error(red('validation failed:'), response, validateResponse.errors);
 				// const validationError = validateResponse.errors![0];
 				// return send(res, 400, {reason: toValidationErrorMessage(validationError)});
 			}
-			console.log('[serviceMiddleware] result.code', result.code);
-			send(res, result.code, result.data);
+			console.log('[serviceMiddleware] result.code', response.code);
+			send(res, response.code, response.data);
 		} catch (err) {
 			console.error(err);
 			send(res, 500, {reason: 'unknown server error'});
