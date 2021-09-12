@@ -13,13 +13,6 @@ import {
 	readSpacesService,
 	createSpaceService,
 } from '$lib/vocab/space/spaceServices';
-import {
-	randomFileParams,
-	randomMemberParams,
-	RandomVocab,
-	RandomVocabContext,
-} from '$lib/vocab/random';
-import {randomCommunityParams, randomSpaceParams} from '$lib/vocab/random';
 
 export const services: Map<string, Service<TSchema, TSchema>> = new Map(
 	// TODO verify no duplicate names?
