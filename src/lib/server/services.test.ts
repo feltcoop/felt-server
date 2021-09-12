@@ -5,8 +5,9 @@ import {red} from '@feltcoop/felt/util/terminal.js';
 import type {TestServerContext} from '$lib/util/testHelpers';
 import {setupServer, teardownServer} from '$lib/util/testHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
-import {randomServiceParams, services} from '$lib/server/services';
+import {services} from '$lib/server/services';
 import {toRandomVocabContext} from '$lib/vocab/random';
+import {randomServiceParams} from '$lib/server/random';
 
 /* test__services */
 const test__services = suite<TestServerContext>('services');
