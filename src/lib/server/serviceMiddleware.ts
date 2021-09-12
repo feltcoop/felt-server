@@ -41,11 +41,7 @@ export const toServiceMiddleware =
 			if (process.env.NODE_ENV !== 'production') {
 				const validateResponse = service.validateResponse();
 				if (!validateResponse(response)) {
-					// TODO enable this error when testing? or just dev?
-					// TODO handle multiple errors instead of just the first
 					console.error(red('validation failed:'), response, validateResponse.errors);
-					// const validationError = validateResponse.errors![0];
-					// return send(res, 400, {reason: toValidationErrorMessage(validationError)});
 				}
 			}
 			console.log('[serviceMiddleware] result.code', response.code);
