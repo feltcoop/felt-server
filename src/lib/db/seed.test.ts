@@ -85,12 +85,12 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 		// 	`Failed to validate file: ${toValidationErrorMessage(validatePersona().errors![0])}`,
 		// );
 	}
-	t.ok(personaHomeCommunity); // TODO add schema (change return type tho? it joins a lot of stuff currently)
-	// if (!validateCommunity()(personaHomeCommunity)) {
-	// 	throw new Error(
-	// 		`Failed to validate file: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
-	// 	);
-	// }
+	t.ok(personaHomeCommunity);
+	if (!validateCommunity()(personaHomeCommunity)) {
+		throw new Error(
+			`Failed to validate file: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
+		);
+	}
 
 	const communityParams = randomCommunityParams(persona.persona_id);
 	const communityResult = await server.db.repos.community.create(communityParams);
