@@ -15,8 +15,6 @@ import {validateCommunity} from '$lib/vocab/community/community';
 import {PersonaParams, validatePersona} from '$lib/vocab/persona/persona';
 import type {File} from '$lib/vocab/file/file';
 
-// TODO rename this from `seed` to something like `repos`?
-
 // TODO this only depends on the database --
 // if we don't figure out a robust way to make a global reusable server,
 // then change this module to setup and teardown only a `db` instance
@@ -144,7 +142,7 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 		}),
 	);
 
-	// do queries and changes
+	// do queries
 	//
 	//
 	//
@@ -230,6 +228,11 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 			`Failed to validate account: ${toValidationErrorMessage(validateAccount().errors![0])}`,
 		);
 	}
+
+	// do changes
+	//
+	//
+	//
 
 	// delete everything
 	//
