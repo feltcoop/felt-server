@@ -15,7 +15,7 @@ export const communityRepo = (db: Database) => ({
 		const community = data[0];
 		const community_id = community.community_id;
 		// TODO more robust error handling or condense into single query
-		const memberResult = await db.repos.member.create(persona_id, community_id);
+		const memberResult = await db.repos.member.create({persona_id, community_id});
 		if (!memberResult.ok) return memberResult;
 		const spacesResult = await db.repos.space.createDefaultSpaces(community_id);
 		if (!spacesResult.ok) return spacesResult;

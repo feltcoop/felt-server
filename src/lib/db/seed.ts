@@ -155,7 +155,10 @@ export const seed = async (db: Database): Promise<void> => {
 		) as Community; // TODO why cast?
 		communities.push(community);
 		for (const persona of otherPersonas) {
-			await db.repos.member.create(persona.persona_id, community.community_id);
+			await db.repos.member.create({
+				persona_id: persona.persona_id,
+				community_id: community.community_id,
+			});
 		}
 		await createDefaultFiles(db, community.spaces, personas);
 	}

@@ -131,10 +131,7 @@ export const createMemberService: Service<typeof CreateMemberServiceParams, {mem
 	handle: async (server, params) => {
 		console.log('[create_member] creating member', params.persona_id, params.community_id);
 
-		const createMemberResult = await server.db.repos.member.create(
-			params.persona_id,
-			params.community_id,
-		);
+		const createMemberResult = await server.db.repos.member.create(params);
 		if (createMemberResult.ok) {
 			return {code: 200, data: {member: createMemberResult.value}};
 		} else {
