@@ -27,7 +27,7 @@ export const readFilesService: Service<typeof ReadFilesServiceParams, {files: Fi
 	},
 };
 
-// TODO FileParamsSchema ?
+// TODO FileParamsSchema ? compose `FileParams`?
 const CreateFileServiceParams = Type.Object(
 	{
 		actor_id: Type.Number(),
@@ -46,11 +46,7 @@ export const createFileService: Service<typeof CreateFileServiceParams, {file: F
 	handle: async (server, params, _accountId) => {
 		// TODO validate `account_id` against the persona -- maybe as an optimized standalone method?
 		// server.db.repos.account.validatePersona(account_id, actor_id);
-		const insertFilesResult = await server.db.repos.file.create(
-			params.actor_id,
-			params.space_id,
-			params.content,
-		);
+		const insertFilesResult = await server.db.repos.file.create(params);
 		if (insertFilesResult.ok) {
 			return {code: 200, data: {file: insertFilesResult.value}}; // TODO API types
 		} else {
