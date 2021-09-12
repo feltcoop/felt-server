@@ -5,11 +5,12 @@ import type {Result} from '@feltcoop/felt';
 import type {TestServerContext} from '$lib/util/testHelpers';
 import {setupServer, teardownServer} from '$lib/util/testHelpers';
 import {validateFile} from '$lib/vocab/file/file';
+import type {SpaceParams} from '$lib/vocab/space/space';
 import {validateSpace} from '$lib/vocab/space/space';
 import {toValidationErrorMessage} from '$lib/util/ajv';
-import type {SpaceParams} from '$lib/vocab/space/space';
 import type {AccountParams} from '$lib/vocab/account/account';
 import type {CommunityParams} from '$lib/vocab/community/community';
+import {validateCommunity} from '$lib/vocab/community/community';
 import {PersonaParams, validatePersona} from '$lib/vocab/persona/persona';
 import type {File} from '$lib/vocab/file/file';
 
@@ -20,8 +21,10 @@ import type {File} from '$lib/vocab/file/file';
 // then change this module to setup and teardown only a `db` instance
 // instead of the whole server
 
-// TODO refactor these
+// TODO automate faking these from schemas, also use seeded rng
 const randomString = () => Math.random().toString().slice(2);
+const randomAccountName = randomString;
+const randomPassword = randomString;
 const randomPersonaName = randomString;
 const randomCommunnityName = randomString;
 const randomSpaceUrl = randomString;
@@ -42,7 +45,7 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 	//
 
 	// TODO refactor these vars -- seed?
-	const accountParams: AccountParams = {name: 'alice', password: 'password'};
+	const accountParams: AccountParams = {name: randomAccountName(), password: randomPassword()};
 	const createAccountResult = await server.db.repos.account.create(accountParams);
 	if (!createAccountResult.ok) {
 		throw Error(`Failed to create account: ${createAccountResult.reason}`);
@@ -160,7 +163,6 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
 		);
 	}
-	// TODO filter
 	const filterSpacesResult = await server.db.repos.space.filterByCommunity(community.community_id);
 	t.ok(filterSpacesResult.ok);
 	t.equal(filterSpacesResult.value.length, 8); // TODO do a better check
@@ -168,6 +170,27 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 		if (!validateSpace()(s)) {
 			throw new Error(
 				`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
+			);
+		}
+	});
+
+	const findCommunityResult = await server.db.repos.community.findById(community.community_id);
+	t.ok(findCommunityResult.ok);
+	t.is(findCommunityResult.value.name, community.name); // TODO a better check
+	if (!validateCommunity()(findCommunityResult.value)) {
+		throw new Error(
+			`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
+		);
+	}
+	const filterCommunitysResult = await server.db.repos.community.filterByAccount(
+		account.account_id,
+	);
+	t.ok(filterCommunitysResult.ok);
+	t.equal(filterCommunitysResult.value.length, 4); // TODO do a better check
+	filterCommunitysResult.value.forEach((s) => {
+		if (!validateCommunity()(s)) {
+			throw new Error(
+				`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
 			);
 		}
 	});

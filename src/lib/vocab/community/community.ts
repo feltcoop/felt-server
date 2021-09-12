@@ -13,15 +13,16 @@ export interface Community {
 }
 // TODO can't get the static inference correct here -- change to schema after normalizing data, or maybe generate plain types
 // export type Community = Static<typeof CommunitySchema>;
-// export const CommunitySchema = Type.Object(
-// 	{
-// 		community_id: Type.Number(),
-// 		name: Type.String(),
-// 		spaces: Type.Ref(SpaceSchema), // TODO reference types
-// 		members: Type.Number(),
-// 	},
-// 	{$id:'CommunitySchema': additionalProperties: false},
-// );
+export const CommunitySchema = Type.Object(
+	{
+		community_id: Type.Number(),
+		name: Type.String(),
+		// spaces: Type.Ref(SpaceSchema), // TODO reference types
+		// members: Type.Number(),
+	},
+	{$id: 'CommunitySchema', additionalProperties: true}, // TODO `true` is a hack
+);
+export const validateCommunity = toValidateSchema<Community>(CommunitySchema);
 
 export type CommunityParams = Static<typeof CommunityParamsSchema>;
 export const CommunityParamsSchema = Type.Object(
