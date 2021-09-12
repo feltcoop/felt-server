@@ -15,7 +15,8 @@ export const personaRepo = (db: Database) => ({
 		const data = await db.sql<Persona[]>`
       insert into personas (name, account_id) values (
         ${name}, ${account_id}
-      ) RETURNING *`;
+      ) RETURNING *
+		`;
 		const persona = data[0];
 		console.log('[db] created persona', persona);
 		const createCommunityResult = await db.repos.community.create({
@@ -41,7 +42,7 @@ export const personaRepo = (db: Database) => ({
       ) as community_ids
       
       from personas p where p.account_id = ${account_id}
-      `;
+		`;
 		if (data.length) {
 			return {ok: true, value: data};
 		}

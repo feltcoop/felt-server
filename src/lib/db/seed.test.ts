@@ -182,15 +182,27 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 			`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
 		);
 	}
-	const filterCommunitysResult = await server.db.repos.community.filterByAccount(
+	const filterCommunitiesResult = await server.db.repos.community.filterByAccount(
 		account.account_id,
 	);
-	t.ok(filterCommunitysResult.ok);
-	t.equal(filterCommunitysResult.value.length, 4); // TODO do a better check
-	filterCommunitysResult.value.forEach((s) => {
+	t.ok(filterCommunitiesResult.ok);
+	t.equal(filterCommunitiesResult.value.length, 4); // TODO do a better check
+	filterCommunitiesResult.value.forEach((s) => {
 		if (!validateCommunity()(s)) {
 			throw new Error(
 				`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
+			);
+		}
+	});
+
+	const filterPersonasResult = await server.db.repos.persona.filterByAccount(account.account_id);
+	t.ok(filterPersonasResult.ok);
+	t.is(filterPersonasResult.value.length, 2); // TODO fix this after merge
+	t.is(filterPersonasResult.value[1].name, persona.name); // TODO fix this after merge
+	filterPersonasResult.value.forEach((p) => {
+		if (!validatePersona()(p)) {
+			throw new Error(
+				`Failed to validate persona: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
 			);
 		}
 	});
