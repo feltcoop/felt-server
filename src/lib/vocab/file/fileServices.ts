@@ -64,7 +64,7 @@ export const createFileService: Service<
 	paramsSchema: CreateFileServiceParams,
 	validateParams: toValidateSchema(CreateFileServiceParams),
 	responseSchema: CreateFileServiceResponse,
-	validateResponse: toValidateSchema(CreateFileServiceParams),
+	validateResponse: toValidateSchema(CreateFileServiceResponse),
 	perform: async (server, params, _accountId) => {
 		// TODO validate `account_id` against the persona -- maybe as an optimized standalone method?
 		// server.db.repos.account.validatePersona(account_id, actor_id);
