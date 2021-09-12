@@ -4,6 +4,7 @@ import type {Service} from '$lib/server/service';
 import type {Community} from '$lib/vocab/community/community';
 import type {Member} from '$lib/vocab/member/member';
 import {MemberParamsSchema} from '$lib/vocab/member/member';
+import {toValidateSchema} from '$lib/util/ajv';
 
 const ReadCommunitiesServiceParams = Type.Object(
 	{
@@ -19,6 +20,7 @@ export const readCommunitiesService: Service<
 > = {
 	name: 'read_communities',
 	paramsSchema: ReadCommunitiesServiceParams,
+	validateParams: toValidateSchema(ReadCommunitiesServiceParams),
 	handle: async (server, _params, account_id) => {
 		const {db} = server;
 		const findCommunitiesResult = await db.repos.community.filterByAccount(account_id);
@@ -45,6 +47,7 @@ export const readCommunityService: Service<
 > = {
 	name: 'read_community',
 	paramsSchema: ReadCommunityServiceParams,
+	validateParams: toValidateSchema(ReadCommunityServiceParams),
 	handle: async (server, params, account_id) => {
 		const {db} = server;
 		console.log('[read_community] account', account_id); // TODO logging
@@ -78,6 +81,7 @@ export const createCommunityService: Service<
 > = {
 	name: 'create_community',
 	paramsSchema: CreateCommunityServiceParams,
+	validateParams: toValidateSchema(CreateCommunityServiceParams),
 	// TODO declarative validation for `req.body` and the rest
 	handle: async (server, params, account_id) => {
 		const {name} = params;
@@ -119,6 +123,7 @@ const CreateMemberServiceParams = MemberParamsSchema;
 export const createMemberService: Service<typeof CreateMemberServiceParams, {member: Member}> = {
 	name: 'create_member',
 	paramsSchema: CreateMemberServiceParams,
+	validateParams: toValidateSchema(CreateMemberServiceParams),
 	handle: async (server, params) => {
 		console.log('[create_member] creating member', params.persona_id, params.community_id);
 

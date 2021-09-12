@@ -2,7 +2,7 @@ import send from '@polka/send-type';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Service, ServiceParamsSchema, ServiceResponseData} from '$lib/server/service';
-import {ajv, toValidationErrorMessage} from '$lib/util/ajv';
+import {toValidationErrorMessage} from '$lib/util/ajv';
 
 // Wraps a `Service` in an http `Middleware`
 export const toServiceMiddleware =
@@ -19,8 +19,7 @@ export const toServiceMiddleware =
 			}
 
 			const params = {...req.body, ...req.params};
-			const validateParams =
-				service.validateParams || (service.validateParams = ajv.compile(service.paramsSchema));
+			const validateParams = service.validateParams();
 			const valid = validateParams(params);
 			if (!valid) {
 				// TODO handle multiple errors instead of just the first

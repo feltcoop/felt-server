@@ -1,8 +1,7 @@
 import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
-import type {ValidateFunction} from 'ajv';
 
-import {ajv} from '$lib/util/ajv';
+import {toValidateSchema} from '$lib/util/ajv';
 
 export type Space = Static<typeof SpaceSchema>;
 export const SpaceSchema = Type.Object(
@@ -28,9 +27,7 @@ export const SpaceParamsSchema = Type.Object(
 	},
 	{$id: 'SpaceParams', additionalProperties: false},
 );
-export const validateSpaceParams = (): ValidateFunction<SpaceParams> =>
-	_validateSpaceParams || (_validateSpaceParams = ajv.compile(SpaceParamsSchema));
-let _validateSpaceParams: ValidateFunction<SpaceParams> | undefined;
+export const validateSpaceParams = toValidateSchema<SpaceParams>(SpaceParamsSchema);
 
 //TODO make TypeScript String enum
 export const SpaceTypes = {

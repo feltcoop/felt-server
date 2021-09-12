@@ -2,6 +2,7 @@ import {Type} from '@sinclair/typebox';
 
 import type {Service} from '$lib/server/service';
 import type {File} from '$lib/vocab/file/file';
+import {toValidateSchema} from '$lib/util/ajv';
 
 const ReadFilesServiceParams = Type.Object(
 	{
@@ -13,6 +14,7 @@ const ReadFilesServiceParams = Type.Object(
 export const readFilesService: Service<typeof ReadFilesServiceParams, {files: File[]}> = {
 	name: 'read_files',
 	paramsSchema: ReadFilesServiceParams,
+	validateParams: toValidateSchema(ReadFilesServiceParams),
 	handle: async (server, params) => {
 		const {db} = server;
 		const findFilesResult = await db.repos.file.filterBySpace(params.space_id as any); // TODO remove the typecast once this PR is rebased
@@ -40,6 +42,7 @@ const CreateFileServiceParams = Type.Object(
 export const createFileService: Service<typeof CreateFileServiceParams, {file: File}> = {
 	name: 'create_file',
 	paramsSchema: CreateFileServiceParams,
+	validateParams: toValidateSchema(CreateFileServiceParams),
 	handle: async (server, params, _accountId) => {
 		// TODO validate `account_id` against the persona -- maybe as an optimized standalone method?
 		// server.db.repos.account.validatePersona(account_id, actor_id);

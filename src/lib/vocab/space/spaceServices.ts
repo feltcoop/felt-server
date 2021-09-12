@@ -2,6 +2,7 @@ import {Type} from '@sinclair/typebox';
 
 import type {Service} from '$lib/server/service';
 import type {Space} from '$lib/vocab/space/space';
+import {toValidateSchema} from '$lib/util/ajv';
 
 const ReadSpaceServiceParams = Type.Object(
 	{
@@ -14,6 +15,7 @@ const ReadSpaceServiceParams = Type.Object(
 export const readSpaceService: Service<typeof ReadSpaceServiceParams, {space: Space}> = {
 	name: 'read_space',
 	paramsSchema: ReadSpaceServiceParams,
+	validateParams: toValidateSchema(ReadSpaceServiceParams),
 	handle: async (server, params) => {
 		const {db} = server;
 
@@ -41,6 +43,7 @@ const ReadSpacesServiceSchema = Type.Object(
 export const readSpacesService: Service<typeof ReadSpacesServiceSchema, {spaces: Space[]}> = {
 	name: 'read_spaces',
 	paramsSchema: ReadSpacesServiceSchema,
+	validateParams: toValidateSchema(ReadSpacesServiceSchema),
 	handle: async (server, params) => {
 		const {db} = server;
 
@@ -76,6 +79,7 @@ const CreateSpaceServiceSchema = Type.Object(
 export const createSpaceService: Service<typeof CreateSpaceServiceSchema, {space: Space}> = {
 	name: 'create_space',
 	paramsSchema: CreateSpaceServiceSchema,
+	validateParams: toValidateSchema(CreateSpaceServiceSchema),
 	// TODO verify the `account_id` has permission to modify this space
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
 	handle: async (server, params) => {

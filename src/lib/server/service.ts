@@ -12,7 +12,7 @@ export interface Service<
 > {
 	name: string; // `snake_cased`
 	paramsSchema: TParamsSchema;
-	validateParams?: ValidateFunction<Static<TParamsSchema>>; // created lazily
+	validateParams: () => ValidateFunction<Static<TParamsSchema>>; // lazy to avoid wasteful compilation
 	// TODO is `handle` the best name?
 	handle(
 		// TODO maybe make this take a single object argument?
