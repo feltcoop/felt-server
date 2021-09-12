@@ -24,6 +24,11 @@ test__seed.after(teardownServer);
 test__seed('create, change, and delete some data from repos', async ({server}) => {
 	const content = 'hey friends';
 
+	// create everything
+	//
+	//
+	//
+
 	// TODO refactor these vars -- seed?
 	const accountParams: AccountParams = {name: 'alice', password: 'password'};
 	const createAccountResult = await server.db.repos.account.create(accountParams);
@@ -83,13 +88,46 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 	}
 	const space = spaceResult.value;
 
-	const result = await server.db.repos.file.create(account.account_id, space.space_id, content);
-	t.ok(result.ok);
-	if (!validateFile()(result.value)) {
+	const createFileResult = await server.db.repos.file.create(
+		account.account_id,
+		space.space_id,
+		content,
+	);
+	t.ok(createFileResult.ok);
+	if (!validateFile()(createFileResult.value)) {
 		throw new Error(
 			`Failed to validate file: ${toValidationErrorMessage(validateFile().errors![0])}`,
 		);
 	}
+
+	// do queries and changes
+	//
+	//
+	//
+
+	const filterFilesResult = await server.db.repos.file.filterBySpace(space.space_id);
+	t.ok(filterFilesResult.ok);
+	t.is(filterFilesResult.value.length, 1);
+	filterFilesResult.value.forEach((file) => {
+		if (!validateFile()(file)) {
+			throw new Error(
+				`Failed to validate file: ${toValidationErrorMessage(validateFile().errors![0])}`,
+			);
+		}
+	});
+
+	// delete everything
+	//
+	//
+	//
+
+	// TODO implement
+	// const deleteFileResult = await server.db.repos.file.delete(
+	// 	account.account_id,
+	// 	space.space_id,
+	// 	content,
+	// );
+	// t.ok(deleteFileResult.ok);
 
 	// TODO check to be sure the database has the same rows as when it started --
 	// maybe do this with before/after hooks?
