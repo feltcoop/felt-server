@@ -12,8 +12,7 @@ export interface Service<TParamsSchema extends TSchema, TResponseSchema extends 
 	validateParams: () => ValidateFunction<Static<TParamsSchema>>; // lazy to avoid wasteful compilation
 	responseSchema: TResponseSchema;
 	validateResponse: () => ValidateFunction<Static<TResponseSchema>>; // lazy to avoid wasteful compilation
-	// TODO is `handle` the best name?
-	handle(
+	perform(
 		// TODO maybe make this take a single object argument?
 		server: ApiServer,
 		params: Static<TParamsSchema>,

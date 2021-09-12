@@ -37,7 +37,7 @@ export const toServiceMiddleware =
 				// Should each service declare if `account_id` is required?
 				return send(res, 401, {reason: 'not logged in'});
 			}
-			const result = await service.handle(server, params, req.account_id);
+			const result = await service.perform(server, params, req.account_id);
 			const validateResponse = service.validateResponse();
 			if (!validateResponse(params)) {
 				// TODO enable this error when testing? or just dev?

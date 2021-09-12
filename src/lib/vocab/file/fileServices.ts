@@ -26,7 +26,7 @@ export const readFilesService: Service<
 	validateParams: toValidateSchema(ReadFilesServiceParams),
 	responseSchema: ReadFilesServiceResponse,
 	validateResponse: toValidateSchema(ReadFilesServiceResponse),
-	handle: async (server, params) => {
+	perform: async (server, params) => {
 		const {db} = server;
 		const findFilesResult = await db.repos.file.filterBySpace(params.space_id as any); // TODO remove the typecast once this PR is rebased
 		if (findFilesResult.ok) {
@@ -65,7 +65,7 @@ export const createFileService: Service<
 	validateParams: toValidateSchema(CreateFileServiceParams),
 	responseSchema: CreateFileServiceResponse,
 	validateResponse: toValidateSchema(CreateFileServiceParams),
-	handle: async (server, params, _accountId) => {
+	perform: async (server, params, _accountId) => {
 		// TODO validate `account_id` against the persona -- maybe as an optimized standalone method?
 		// server.db.repos.account.validatePersona(account_id, actor_id);
 		const insertFilesResult = await server.db.repos.file.create(params);
