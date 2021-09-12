@@ -30,7 +30,7 @@ test__services('perform services', async ({server}) => {
 		}
 		const response = await service.perform(server, params, account.account_id);
 		if (!validateSchema(service.responseSchema)(response.data)) {
-			console.error(red(`failed to validate service response: ${service.name}`), response.data);
+			console.error(red(`failed to validate service response: ${service.name}`), response);
 			throw new Error(
 				`Failed to validate response for service: ${service.name}: ${toValidationErrorMessage(
 					validateSchema(service.responseSchema).errors![0],

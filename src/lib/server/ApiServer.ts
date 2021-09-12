@@ -3,7 +3,7 @@ import type {Server as HttpsServer} from 'https';
 import type {Polka, Request as PolkaRequest, Middleware as PolkaMiddleware} from 'polka';
 import bodyParser from 'body-parser';
 import {Logger} from '@feltcoop/felt/util/log.js';
-import {blue} from '@feltcoop/felt/util/terminal.js';
+import {blue, red} from '@feltcoop/felt/util/terminal.js';
 import type ws from 'ws';
 import {promisify} from 'util';
 
@@ -29,6 +29,7 @@ import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import {toServiceMiddleware} from '$lib/server/serviceMiddleware';
 import {services} from '$lib/server/services';
+import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -176,8 +177,23 @@ export class ApiServer {
 			return;
 		}
 
+		if (!validateSchema(service.paramsSchema)(message.params)) {
+			console.error(
+				red(
+					`Failed to validate params: ${toValidationErrorMessage(
+						validateSchema(service.paramsSchema).errors![0],
+					)}`,
+				),
+			);
+			return;
+		}
+
 		// TODO do the same validation as in `serviceMiddleware`
 		const response = await service.perform(this, message.params, account_id);
+
+		if (!validateSchema(service.responseSchema)(response.data)) {
+			console.error(red(`failed to validate service response: ${service.name}`), response);
+		}
 
 		// TODO what should the API for returning/broadcasting responses be?
 		const serializedResponse = JSON.stringify({
