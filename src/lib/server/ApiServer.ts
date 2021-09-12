@@ -29,7 +29,7 @@ import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import {toServiceMiddleware} from '$lib/server/serviceMiddleware';
 import {services} from '$lib/server/services';
-import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
+import {toValidationErrorMessage} from '$lib/util/ajv';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -177,25 +177,25 @@ export class ApiServer {
 			return;
 		}
 
-		if (!validateSchema(service.paramsSchema)(message.params)) {
-			console.error(
-				red(
-					`Failed to validate params: ${toValidationErrorMessage(
-						validateSchema(service.paramsSchema).errors![0],
-					)}`,
-				),
-			);
+		if (!service.validateParams()(message.params)) {
+			console.error(red('Failed to validate params'), service.validateParams().errors);
 			return;
 		}
 
 		// TODO do the same validation as in `serviceMiddleware`
 		const response = await service.perform(this, message.params, account_id);
 
-		if (!validateSchema(service.responseSchema)(response.data)) {
-			console.error(red(`failed to validate service response: ${service.name}`), response);
+		if (process.env.NODE_ENV !== 'production') {
+			if (!service.validateResponse()(response.data)) {
+				console.error(
+					red(`failed to validate service response: ${service.name}`),
+					response,
+					service.validateResponse().errors,
+				);
+			}
 		}
 
-		// TODO what should the API for returning/broadcasting responses be?
+		// TODO this is very hacky -- what should the API for returning/broadcasting responses be?
 		const serializedResponse = JSON.stringify({
 			type: 'service_response',
 			messageType: message.type,

@@ -39,9 +39,8 @@ export const toServiceMiddleware =
 			}
 			const response = await service.perform(server, params, req.account_id);
 			if (process.env.NODE_ENV !== 'production') {
-				const validateResponse = service.validateResponse();
-				if (!validateResponse(response)) {
-					console.error(red('validation failed:'), response, validateResponse.errors);
+				if (!service.validateResponse()(response.data)) {
+					console.error(red('validation failed:'), response, service.validateResponse().errors);
 				}
 			}
 			console.log('[serviceMiddleware] result.code', response.code);

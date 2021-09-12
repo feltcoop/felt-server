@@ -14,6 +14,7 @@ export interface CreateValidate<T = unknown> {
 
 const validators: Map<TSchema, ValidateFunction> = new Map();
 
+// TODO improve this and `toValidateSchema` so they use the same cache
 // Memoizes the returned schema validation function in the module-level lookup `validators`.
 export const validateSchema = <T>(schema: TSchema): ValidateFunction<T> => {
 	let validate = validators.get(schema) as ValidateFunction<T>;
