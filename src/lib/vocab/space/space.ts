@@ -14,6 +14,7 @@ export const SpaceSchema = Type.Object(
 	},
 	{$id: 'Space', additionalProperties: false},
 );
+export const validateSpace = toValidateSchema<Space>(SpaceSchema);
 
 // TODO the `community_id` belongs here, but it's not used in the REST post payload, only the params
 export type SpaceParams = Static<typeof SpaceParamsSchema>;

@@ -5,6 +5,7 @@ import type {Result} from '@feltcoop/felt';
 import type {TestServerContext} from '$lib/util/testHelpers';
 import {setupServer, teardownServer} from '$lib/util/testHelpers';
 import {validateFile} from '$lib/vocab/file/file';
+import {validateSpace} from '$lib/vocab/space/space';
 import {toValidationErrorMessage} from '$lib/util/ajv';
 import type {SpaceParams} from '$lib/vocab/space/space';
 import type {AccountParams} from '$lib/vocab/account/account';
@@ -18,6 +19,13 @@ import type {File} from '$lib/vocab/file/file';
 // if we don't figure out a robust way to make a global reusable server,
 // then change this module to setup and teardown only a `db` instance
 // instead of the whole server
+
+// TODO refactor these
+const randomString = () => Math.random().toString().slice(2);
+const randomPersonaName = randomString;
+const randomCommunnityName = randomString;
+const randomSpaceUrl = randomString;
+const randomSpaceName = randomString;
 
 /* test__seed */
 const test__seed = suite<TestServerContext>('seed');
@@ -42,7 +50,7 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 	const account = createAccountResult.value;
 
 	const personaParams: PersonaParams = {
-		name: 'alias',
+		name: randomPersonaName(),
 		account_id: account.account_id,
 	};
 	const personaResult = await server.db.repos.persona.create(personaParams);
@@ -66,7 +74,7 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 	// }
 
 	const communityParams: CommunityParams = {
-		name: 'inside',
+		name: randomCommunnityName(),
 		persona_id: persona.persona_id,
 	};
 	const communityResult = await server.db.repos.community.create(communityParams);
@@ -81,8 +89,8 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 		community_id: community.community_id,
 		content,
 		media_type: 'text/plain',
-		name: 'outer space',
-		url: '/outer/space',
+		name: randomSpaceName(),
+		url: randomSpaceUrl(),
 	};
 	const spaceResult = await server.db.repos.space.create(spaceParams);
 	if (!spaceResult.ok) {
@@ -91,6 +99,11 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 		throw Error(`Failed to create space`);
 	}
 	const space = spaceResult.value;
+	if (!validateSpace()(space)) {
+		throw new Error(
+			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
+		);
+	}
 
 	const unwrapFile = async (promise: Promise<Result<{value: File}>>): Promise<File> => {
 		const createFileResult = await promise;
@@ -129,20 +142,35 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 	const filterFilesResult = await server.db.repos.file.filterBySpace(space.space_id);
 	t.ok(filterFilesResult.ok);
 	t.is(filterFilesResult.value.length, 2);
-	filterFilesResult.value.forEach((file) => {
-		if (!validateFile()(file)) {
+	filterFilesResult.value.forEach((f) => {
+		if (!validateFile()(f)) {
 			throw new Error(
 				`Failed to validate file: ${toValidationErrorMessage(validateFile().errors![0])}`,
 			);
 		}
 	});
 	t.ok(filterFilesResult.ok);
-	const queriedFile1 = filterFilesResult.value.find((f) => f.content === fileContent1);
-	t.ok(queriedFile1);
-	t.equal(file1, queriedFile1);
-	const queriedFile2 = filterFilesResult.value.find((f) => f.content === fileContent2);
-	t.ok(queriedFile2);
-	t.equal(file2, queriedFile2);
+	t.equal(filterFilesResult.value, [file1, file2]);
+
+	const findSpaceResult = await server.db.repos.space.findById(space.space_id);
+	t.ok(findSpaceResult.ok);
+	t.equal(findSpaceResult.value, space);
+	if (!validateSpace()(findSpaceResult.value)) {
+		throw new Error(
+			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
+		);
+	}
+	// TODO filter
+	const filterSpacesResult = await server.db.repos.space.filterByCommunity(community.community_id);
+	t.ok(filterSpacesResult.ok);
+	t.equal(filterSpacesResult.value.length, 8); // TODO do a better check
+	filterSpacesResult.value.forEach((s) => {
+		if (!validateSpace()(s)) {
+			throw new Error(
+				`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
+			);
+		}
+	});
 
 	// delete everything
 	//
