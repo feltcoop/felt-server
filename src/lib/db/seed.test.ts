@@ -30,6 +30,7 @@ const randomPersonaName = randomString;
 const randomCommunnityName = randomString;
 const randomSpaceUrl = randomString;
 const randomSpaceName = randomString;
+const randomContent = randomString;
 
 /* test__seed */
 const test__seed = suite<TestServerContext>('seed');
@@ -38,8 +39,6 @@ test__seed.before(setupServer);
 test__seed.after(teardownServer);
 
 test__seed('create, change, and delete some data from repos', async ({server}) => {
-	const content = 'hey friends';
-
 	// create everything
 	//
 	//
@@ -91,7 +90,7 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 
 	const spaceParams: SpaceParams = {
 		community_id: community.community_id,
-		content,
+		content: randomContent(),
 		media_type: 'text/plain',
 		name: randomSpaceName(),
 		url: randomSpaceUrl(),
