@@ -9,6 +9,7 @@ import type {SpaceParams} from '$lib/vocab/space/space';
 import {validateSpace} from '$lib/vocab/space/space';
 import {toValidationErrorMessage} from '$lib/util/ajv';
 import type {AccountParams} from '$lib/vocab/account/account';
+import {validateAccount} from '$lib/vocab/account/account';
 import type {CommunityParams} from '$lib/vocab/community/community';
 import {validateCommunity} from '$lib/vocab/community/community';
 import {PersonaParams, validatePersona} from '$lib/vocab/persona/persona';
@@ -206,6 +207,23 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 			);
 		}
 	});
+
+	const findAccountByIdResult = await server.db.repos.account.findById(account.account_id);
+	t.ok(findAccountByIdResult.ok);
+	t.is(findAccountByIdResult.value.name, account.name); // TODO a better check
+	if (!validateAccount()(findAccountByIdResult.value)) {
+		throw new Error(
+			`Failed to validate account: ${toValidationErrorMessage(validateAccount().errors![0])}`,
+		);
+	}
+	const findAccountByNameResult = await server.db.repos.account.findByName(account.name);
+	t.ok(findAccountByNameResult.ok);
+	t.is(findAccountByNameResult.value.name, account.name); // TODO a better check
+	if (!validateAccount()(findAccountByNameResult.value)) {
+		throw new Error(
+			`Failed to validate account: ${toValidationErrorMessage(validateAccount().errors![0])}`,
+		);
+	}
 
 	// delete everything
 	//
