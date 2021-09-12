@@ -49,19 +49,17 @@ const randomSpaceParams = (community_id: number): SpaceParams => ({
 	url: randomSpaceUrl(),
 });
 
-/* test__seed */
-const test__seed = suite<TestServerContext>('seed');
+/* test__repos */
+const test__repos = suite<TestServerContext>('repos');
 
-test__seed.before(setupServer);
-test__seed.after(teardownServer);
+test__repos.before(setupServer);
+test__repos.after(teardownServer);
 
-test__seed('create, change, and delete some data from repos', async ({server}) => {
+test__repos('create, change, and delete some data from repos', async ({server}) => {
 	// create everything
 	//
 	//
 	//
-
-	// TODO refactor these vars -- seed?
 	const accountParams = randomAccountParams();
 	const createAccountResult = await server.db.repos.account.create(accountParams);
 	if (!createAccountResult.ok) {
@@ -251,5 +249,5 @@ test__seed('create, change, and delete some data from repos', async ({server}) =
 	// maybe do this with before/after hooks so it's easily reused?
 });
 
-test__seed.run();
-/* test__seed */
+test__repos.run();
+/* test__repos */
