@@ -20,7 +20,6 @@
 	$: selectedCommunity = ui.selectedCommunity;
 	$: selectedSpace = ui.selectedSpace;
 	$: communitiesByPersonaId = ui.communitiesByPersonaId;
-	// TODO speed up this lookup, probably with a map of all entities by id
 	$: selectedPersonaCommunities = $ui.selectedPersonaId
 		? $communitiesByPersonaId[$ui.selectedPersonaId]
 		: null;
