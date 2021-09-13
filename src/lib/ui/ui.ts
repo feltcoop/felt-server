@@ -49,6 +49,7 @@ export const toUiStore = (data: DataStore) => {
 	const {subscribe, update} = state;
 
 	// derived state
+	// TODO speed up these lookups with id maps
 	const selectedPersona = derived(
 		[state, data],
 		([$ui, $data]) => $data.personas.find((p) => p.persona_id === $ui.selectedPersonaId) || null,
