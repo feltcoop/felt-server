@@ -9,7 +9,7 @@ import {
 } from '$lib/vocab/random';
 import {randomCommunityParams, randomSpaceParams} from '$lib/vocab/random';
 
-// TODO where does this belong? this isn't technically vocab
+// TODO maybe move to `src/lib/util`
 // TODO keep factoring this until it's fully automated, generating from the schema
 export const randomServiceParams = async <TParamsSchema extends TSchema>(
 	service: Service<TParamsSchema, TSchema>,
