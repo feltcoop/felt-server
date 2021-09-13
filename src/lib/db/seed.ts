@@ -121,17 +121,15 @@ export const seed = async (db: Database): Promise<void> => {
 	};
 	const personas: Persona[] = [];
 	for (const accountParams of accountsParams) {
-		const account = unwrap(await db.repos.account.create(accountParams)) as Account;
+		const account = unwrap(await db.repos.account.create(accountParams));
 		log.trace('created account', account);
 		for (const personaName of personasParams[account.name]) {
 			const {persona, community} = unwrap(
 				await db.repos.persona.create({name: personaName, account_id: account.account_id}),
-			) as {persona: Persona; community: Community}; // TODO why typecast?
+			);
 			log.trace('created persona', persona);
 			personas.push(persona);
-			const spaces = unwrap(
-				await db.repos.space.createDefaultSpaces(community.community_id),
-			) as Space[]; // TODO why cast?
+			const spaces = unwrap(await db.repos.space.createDefaultSpaces(community.community_id));
 			await createDefaultFiles(db, spaces, [persona]);
 		}
 	}
@@ -152,7 +150,7 @@ export const seed = async (db: Database): Promise<void> => {
 				name: communityParams.name,
 				persona_id: communityParams.persona_id,
 			}),
-		) as Community; // TODO why cast?
+		);
 		communities.push(community);
 		for (const persona of otherPersonas) {
 			await db.repos.member.create({

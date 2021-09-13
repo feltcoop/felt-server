@@ -1,6 +1,6 @@
 import {suite} from 'uvu';
 import * as t from 'uvu/assert';
-import type {Result} from '@feltcoop/felt';
+import {Result, unwrap} from '@feltcoop/felt';
 
 import type {TestServerContext} from '$lib/util/testHelpers';
 import {setupServer, teardownServer} from '$lib/util/testHelpers';
@@ -35,20 +35,12 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	//
 	//
 	const accountParams = randomAccountParams();
-	const createAccountResult = await server.db.repos.account.create(accountParams);
-	if (!createAccountResult.ok) {
-		throw Error(`Failed to create account: ${createAccountResult.reason}`);
-	}
-	const account = createAccountResult.value;
+	const account = unwrap(await server.db.repos.account.create(accountParams));
 
 	const personaParams = randomPersonaParams(account.account_id);
-	const personaResult = await server.db.repos.persona.create(personaParams);
-	if (!personaResult.ok) {
-		// TODO doesn't have a `reason` like others -- do we need to add one? maybe not?
-		// or maybe compose with a generic db error catcher?
-		throw Error(`Failed to create persona`);
-	}
-	const {persona, community: personaHomeCommunity} = personaResult.value;
+	const {persona, community: personaHomeCommunity} = unwrap(
+		await server.db.repos.persona.create(personaParams),
+	);
 	if (!validatePersona()(persona)) {
 		console.log('TODO throw error here after merging with other changes'); // TODO
 		// throw new Error(
@@ -63,22 +55,10 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	}
 
 	const communityParams = randomCommunityParams(persona.persona_id);
-	const communityResult = await server.db.repos.community.create(communityParams);
-	if (!communityResult.ok) {
-		// TODO doesn't have a `reason` like others -- do we need to add one? maybe not?
-		// or maybe compose with a generic db error catcher?
-		throw Error(`Failed to create community`);
-	}
-	const community = communityResult.value;
+	const community = unwrap(await server.db.repos.community.create(communityParams));
 
 	const spaceParams = randomSpaceParams(community.community_id);
-	const spaceResult = await server.db.repos.space.create(spaceParams);
-	if (!spaceResult.ok) {
-		// TODO doesn't have a `reason` like others -- do we need to add one? maybe not?
-		// or maybe compose with a generic db error catcher?
-		throw Error(`Failed to create space`);
-	}
-	const space = spaceResult.value;
+	const space = unwrap(await server.db.repos.space.create(spaceParams));
 	if (!validateSpace()(space)) {
 		throw new Error(
 			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
@@ -86,15 +66,13 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	}
 
 	const unwrapFile = async (promise: Promise<Result<{value: File}>>): Promise<File> => {
-		const createFileResult = await promise;
-		t.ok(createFileResult.ok);
-		if (!validateFile()(createFileResult.value)) {
-			console.log('createFileResult.value', createFileResult.value);
+		const file = unwrap(await promise);
+		if (!validateFile()(file)) {
 			throw new Error(
 				`Failed to validate file: ${toValidationErrorMessage(validateFile().errors![0])}`,
 			);
 		}
-		return createFileResult.value;
+		return file;
 	};
 
 	const fileContent1 = 'this is file 1';
@@ -119,31 +97,29 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	//
 	//
 
-	const filterFilesResult = await server.db.repos.file.filterBySpace(space.space_id);
-	t.ok(filterFilesResult.ok);
-	t.is(filterFilesResult.value.length, 2);
-	filterFilesResult.value.forEach((f) => {
+	const filterFilesValue = unwrap(await server.db.repos.file.filterBySpace(space.space_id));
+	t.is(filterFilesValue.length, 2);
+	filterFilesValue.forEach((f) => {
 		if (!validateFile()(f)) {
 			throw new Error(
 				`Failed to validate file: ${toValidationErrorMessage(validateFile().errors![0])}`,
 			);
 		}
 	});
-	t.ok(filterFilesResult.ok);
-	t.equal(filterFilesResult.value, [file1, file2]);
+	t.equal(filterFilesValue, [file1, file2]);
 
-	const findSpaceResult = await server.db.repos.space.findById(space.space_id);
-	t.ok(findSpaceResult.ok);
-	t.equal(findSpaceResult.value, space);
-	if (!validateSpace()(findSpaceResult.value)) {
+	const findSpaceValue = unwrap(await server.db.repos.space.findById(space.space_id));
+	t.equal(findSpaceValue, space);
+	if (!validateSpace()(findSpaceValue)) {
 		throw new Error(
 			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
 		);
 	}
-	const filterSpacesResult = await server.db.repos.space.filterByCommunity(community.community_id);
-	t.ok(filterSpacesResult.ok);
-	t.equal(filterSpacesResult.value.length, 8); // TODO do a better check
-	filterSpacesResult.value.forEach((s) => {
+	const filterSpacesValue = unwrap(
+		await server.db.repos.space.filterByCommunity(community.community_id),
+	);
+	t.equal(filterSpacesValue.length, 8); // TODO do a better check
+	filterSpacesValue.forEach((s) => {
 		if (!validateSpace()(s)) {
 			throw new Error(
 				`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
@@ -151,20 +127,20 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 		}
 	});
 
-	const findCommunityResult = await server.db.repos.community.findById(community.community_id);
-	t.ok(findCommunityResult.ok);
-	t.is(findCommunityResult.value.name, community.name); // TODO a better check
-	if (!validateCommunity()(findCommunityResult.value)) {
+	const findCommunityValue = unwrap(
+		await server.db.repos.community.findById(community.community_id),
+	);
+	t.is(findCommunityValue.name, community.name); // TODO a better check
+	if (!validateCommunity()(findCommunityValue)) {
 		throw new Error(
 			`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
 		);
 	}
-	const filterCommunitiesResult = await server.db.repos.community.filterByAccount(
-		account.account_id,
+	const filterCommunitiesValue = unwrap(
+		await server.db.repos.community.filterByAccount(account.account_id),
 	);
-	t.ok(filterCommunitiesResult.ok);
-	t.equal(filterCommunitiesResult.value.length, 4); // TODO do a better check
-	filterCommunitiesResult.value.forEach((s) => {
+	t.equal(filterCommunitiesValue.length, 4); // TODO do a better check
+	filterCommunitiesValue.forEach((s) => {
 		if (!validateCommunity()(s)) {
 			throw new Error(
 				`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
@@ -172,11 +148,12 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 		}
 	});
 
-	const filterPersonasResult = await server.db.repos.persona.filterByAccount(account.account_id);
-	t.ok(filterPersonasResult.ok);
-	t.is(filterPersonasResult.value.length, 2); // TODO fix this after merge
-	t.is(filterPersonasResult.value[1].name, persona.name); // TODO fix this after merge
-	filterPersonasResult.value.forEach((p) => {
+	const filterPersonasValue = unwrap(
+		await server.db.repos.persona.filterByAccount(account.account_id),
+	);
+	t.is(filterPersonasValue.length, 2); // TODO fix this after merge
+	t.is(filterPersonasValue[1].name, persona.name); // TODO fix this after merge
+	filterPersonasValue.forEach((p) => {
 		if (!validatePersona()(p)) {
 			throw new Error(
 				`Failed to validate persona: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
@@ -184,18 +161,16 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 		}
 	});
 
-	const findAccountByIdResult = await server.db.repos.account.findById(account.account_id);
-	t.ok(findAccountByIdResult.ok);
-	t.is(findAccountByIdResult.value.name, account.name); // TODO a better check
-	if (!validateAccount()(findAccountByIdResult.value)) {
+	const findAccountByIdValue = unwrap(await server.db.repos.account.findById(account.account_id));
+	t.is(findAccountByIdValue.name, account.name); // TODO a better check
+	if (!validateAccount()(findAccountByIdValue)) {
 		throw new Error(
 			`Failed to validate account: ${toValidationErrorMessage(validateAccount().errors![0])}`,
 		);
 	}
-	const findAccountByNameResult = await server.db.repos.account.findByName(account.name);
-	t.ok(findAccountByNameResult.ok);
-	t.is(findAccountByNameResult.value.name, account.name); // TODO a better check
-	if (!validateAccount()(findAccountByNameResult.value)) {
+	const findAccountByNameValue = unwrap(await server.db.repos.account.findByName(account.name));
+	t.is(findAccountByNameValue.name, account.name); // TODO a better check
+	if (!validateAccount()(findAccountByNameValue)) {
 		throw new Error(
 			`Failed to validate account: ${toValidationErrorMessage(validateAccount().errors![0])}`,
 		);
