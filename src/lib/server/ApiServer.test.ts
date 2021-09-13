@@ -16,7 +16,6 @@ test__ApiServer.after(teardownServer);
 
 test__ApiServer('init and close', async ({server}) => {
 	t.is(server.port, 3003);
-	console.log('GOOD!');
 	// TODO do stuff
 });
 
