@@ -7,7 +7,7 @@ import type {ErrorResponse} from '$lib/util/error';
 
 export const spaceRepo = (db: Database) => ({
 	findById: async (
-		space_id: string,
+		space_id: number,
 	): Promise<Result<{value: Space}, {type: 'no_space_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for space id: ${space_id}`);
 		const data = await db.sql<Space[]>`
@@ -23,7 +23,7 @@ export const spaceRepo = (db: Database) => ({
 			reason: `No space found with id: ${space_id}`,
 		};
 	},
-	filterByCommunity: async (community_id: string): Promise<Result<{value: Space[]}>> => {
+	filterByCommunity: async (community_id: number): Promise<Result<{value: Space[]}>> => {
 		console.log(`[db] preparing to query for community spaces: ${community_id}`);
 		const data = await db.sql<Space[]>`
       SELECT s.space_id, s.name, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id= ${community_id}
@@ -31,8 +31,13 @@ export const spaceRepo = (db: Database) => ({
 		console.log('[db] spaces data', data);
 		return {ok: true, value: data};
 	},
-	create: async (params: SpaceParams): Promise<Result<{value: Space}>> => {
-		const {name, content, media_type, url} = params;
+	create: async ({
+		name,
+		content,
+		media_type,
+		url,
+		community_id,
+	}: SpaceParams): Promise<Result<{value: Space}>> => {
 		const data = await db.sql<Space[]>`
       INSERT INTO spaces (name, url, media_type, content) VALUES (
         ${name},${url},${media_type},${content}
@@ -40,11 +45,10 @@ export const spaceRepo = (db: Database) => ({
     `;
 		// console.log('[db] created space', data);
 		const space_id: number = data[0].space_id;
-		// console.log('[db] creating community space', params.community_id, space_id);
 		// TODO more robust error handling or condense into single query
 		await db.sql<any>`
       INSERT INTO community_spaces (space_id, community_id) VALUES (
-        ${space_id},${params.community_id}
+        ${space_id},${community_id}
       )
     `;
 		// console.log('[db] created communitySpace', communitySpace);

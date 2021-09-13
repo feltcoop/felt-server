@@ -1,11 +1,9 @@
 <script lang="ts">
 	import type {Community} from '$lib/vocab/community/community.js';
-	import type {Member} from '$lib/vocab/member/member.js';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import {randomHue} from '$lib/ui/color';
 
-	export let members: Member[];
 	export let selectedPersonaCommunities: Community[];
 	export let selectedCommunity: Community;
 </script>

@@ -1,6 +1,6 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {Member} from '$lib/vocab/member/member.js';
+import type {Member, MemberParams} from '$lib/vocab/member/member.js';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 
@@ -13,7 +13,7 @@ export const memberRepo = (db: Database) => ({
     `;
 		return {ok: true, value: data};
 	},
-	create: async (persona_id: number, community_id: number): Promise<Result<{value: Member}>> => {
+	create: async ({persona_id, community_id}: MemberParams): Promise<Result<{value: Member}>> => {
 		const data = await db.sql<Member[]>`
       INSERT INTO persona_communities (persona_id, community_id) VALUES (
         ${persona_id},${community_id}

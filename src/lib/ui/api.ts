@@ -87,7 +87,7 @@ export const toApiStore = (ui: UiStore, data: DataStore, socket: SocketStore): A
 					session.set(responseData.session);
 					return {ok: true, value: responseData};
 				} else {
-					console.error('[logIn] response not ok', response); // TODO logging
+					console.error('[logIn] response not ok', responseData, response); // TODO logging
 					return {ok: false, reason: responseData.reason};
 				}
 			} catch (err) {
