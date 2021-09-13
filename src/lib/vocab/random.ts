@@ -71,9 +71,7 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 			return createAccountResult.value;
 		},
 		persona: async (account) => {
-			if (!account) {
-				account = await random.account();
-			}
+			if (!account) account = await random.account();
 			const createPersonaResult = await db.repos.persona.create(
 				randomPersonaParams(account.account_id),
 			);
@@ -83,9 +81,7 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 			return createPersonaResult.value.persona;
 		},
 		community: async (persona, account) => {
-			if (!persona) {
-				persona = await random.persona(account);
-			}
+			if (!persona) persona = await random.persona(account);
 			const createCommunityResult = await db.repos.community.create(
 				randomCommunityParams(persona.persona_id),
 			);
@@ -95,15 +91,9 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 			return createCommunityResult.value;
 		},
 		space: async (persona, account, community) => {
-			if (!account) {
-				account = await random.account();
-			}
-			if (!persona) {
-				persona = await random.persona(account);
-			}
-			if (!community) {
-				community = await random.community(persona, account);
-			}
+			if (!account) account = await random.account();
+			if (!persona) persona = await random.persona(account);
+			if (!community) community = await random.community(persona, account);
 			const createSpaceResult = await db.repos.space.create(
 				randomSpaceParams(community.community_id),
 			);
