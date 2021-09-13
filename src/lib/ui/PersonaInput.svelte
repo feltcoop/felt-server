@@ -19,7 +19,7 @@
 			return;
 		}
 		status = 'pending';
-		await createPersona({name}); // TODO hoist
+		await createPersona({name});
 		status = 'success'; // TODO handle failure (also refactor to be generic)
 		name = '';
 	};
