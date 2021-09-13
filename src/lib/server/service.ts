@@ -11,6 +11,11 @@ export interface Service<
 	TResponseData extends ServiceResponseData, // TODO change to an output response schema
 > {
 	name: string; // `snake_cased`
+	route: {
+		path: string; // e.g. '/api/v1/some/:neat/:path'
+		// supports each `trouter` http method: https://github.com/lukeed/trouter#method
+		method: 'get' | 'head' | 'patch' | 'options' | 'connect' | 'delete' | 'trace' | 'post' | 'put';
+	};
 	paramsSchema: TParamsSchema;
 	validateParams?: ValidateFunction<Static<TParamsSchema>>; // created lazily
 	// TODO is `handle` the best name?

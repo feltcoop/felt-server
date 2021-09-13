@@ -18,6 +18,10 @@ export const readCommunitiesService: Service<
 	{communities: Community[]}
 > = {
 	name: 'read_communities',
+	route: {
+		path: '/api/v1/communities',
+		method: 'get',
+	},
 	paramsSchema: ReadCommunitiesServiceParams,
 	handle: async (server, _params, account_id) => {
 		const {db} = server;
@@ -44,6 +48,10 @@ export const readCommunityService: Service<
 	{community: Community}
 > = {
 	name: 'read_community',
+	route: {
+		path: '/api/v1/communities/:community_id',
+		method: 'get',
+	},
 	paramsSchema: ReadCommunityServiceParams,
 	handle: async (server, params, account_id) => {
 		const {db} = server;
@@ -77,6 +85,10 @@ export const createCommunityService: Service<
 	{community: Community}
 > = {
 	name: 'create_community',
+	route: {
+		path: '/api/v1/communities',
+		method: 'post',
+	},
 	paramsSchema: CreateCommunityServiceParams,
 	// TODO declarative validation for `req.body` and the rest
 	handle: async (server, params, account_id) => {
@@ -118,6 +130,10 @@ const CreateMemberServiceParams = MemberParamsSchema;
 //Creates a new member relation for a community
 export const createMemberService: Service<typeof CreateMemberServiceParams, {member: Member}> = {
 	name: 'create_member',
+	route: {
+		path: '/api/v1/members',
+		method: 'post',
+	},
 	paramsSchema: CreateMemberServiceParams,
 	handle: async (server, params) => {
 		console.log('[create_member] creating member', params.persona_id, params.community_id);

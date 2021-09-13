@@ -13,6 +13,10 @@ const ReadSpaceServiceParams = Type.Object(
 //Returns a single space object
 export const readSpaceService: Service<typeof ReadSpaceServiceParams, {space: Space}> = {
 	name: 'read_space',
+	route: {
+		path: '/api/v1/spaces/:space_id',
+		method: 'get',
+	},
 	paramsSchema: ReadSpaceServiceParams,
 	handle: async (server, params) => {
 		const {db} = server;
@@ -40,6 +44,10 @@ const ReadSpacesServiceSchema = Type.Object(
 //Returns all spaces in a given community
 export const readSpacesService: Service<typeof ReadSpacesServiceSchema, {spaces: Space[]}> = {
 	name: 'read_spaces',
+	route: {
+		path: '/api/v1/communities/:community_id/spaces',
+		method: 'get',
+	},
 	paramsSchema: ReadSpacesServiceSchema,
 	handle: async (server, params) => {
 		const {db} = server;
@@ -75,6 +83,10 @@ const CreateSpaceServiceSchema = Type.Object(
 //Creates a new space for a given community
 export const createSpaceService: Service<typeof CreateSpaceServiceSchema, {space: Space}> = {
 	name: 'create_space',
+	route: {
+		path: '/api/v1/communities/:community_id/spaces',
+		method: 'post',
+	},
 	paramsSchema: CreateSpaceServiceSchema,
 	// TODO verify the `account_id` has permission to modify this space
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas

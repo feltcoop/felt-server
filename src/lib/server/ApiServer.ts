@@ -10,24 +10,12 @@ import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.
 import {toAuthorizationMiddleware} from '$lib/session/authorizationMiddleware.js';
 import {toLoginMiddleware} from '$lib/session/loginMiddleware.js';
 import {toLogoutMiddleware} from '$lib/session/logoutMiddleware.js';
-import {
-	readCommunityService,
-	readCommunitiesService,
-	createMemberService,
-	createCommunityService,
-} from '$lib/vocab/community/communityServices.js';
-import {readFilesService, createFileService} from '$lib/vocab/file/fileServices.js';
-import {
-	readSpaceService,
-	readSpacesService,
-	createSpaceService,
-} from '$lib/vocab/space/spaceServices.js';
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
+import type {Service, ServiceParamsSchema, ServiceResponseData} from '$lib/server/service';
 import {toServiceMiddleware} from '$lib/server/serviceMiddleware';
-import {services} from '$lib/server/services';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -44,6 +32,7 @@ export interface Options {
 	websocketServer: WebsocketServer;
 	port?: number;
 	db: Database;
+	services: Map<string, Service<ServiceParamsSchema, ServiceResponseData>>;
 	loadInstance?: () => Promise<Polka | null>;
 }
 
@@ -53,6 +42,7 @@ export class ApiServer {
 	readonly websocketServer: WebsocketServer;
 	readonly port: number | undefined;
 	readonly db: Database;
+	readonly services: Map<string, Service<ServiceParamsSchema, ServiceResponseData>>;
 	readonly loadInstance: () => Promise<Polka | null>;
 
 	constructor(options: Options) {
@@ -61,6 +51,7 @@ export class ApiServer {
 		this.websocketServer = options.websocketServer;
 		this.port = options.port;
 		this.db = options.db;
+		this.services = options.services;
 		this.loadInstance = options.loadInstance || (async () => null);
 		log.info('created');
 	}
@@ -97,19 +88,12 @@ export class ApiServer {
 			// TODO we want to support unauthenticated routes so users can publish public content,
 			// but for now it's simple and secure to just require an authenticated account for everything
 			.use('/api', toAuthorizationMiddleware(this))
-			.post('/api/v1/logout', toLogoutMiddleware(this))
-			.get('/api/v1/communities', toServiceMiddleware(this, readCommunitiesService))
-			.post('/api/v1/communities', toServiceMiddleware(this, createCommunityService))
-			.get('/api/v1/communities/:community_id', toServiceMiddleware(this, readCommunityService))
-			.post(
-				'/api/v1/communities/:community_id/spaces',
-				toServiceMiddleware(this, createSpaceService),
-			)
-			.get('/api/v1/communities/:community_id/spaces', toServiceMiddleware(this, readSpacesService))
-			.get('/api/v1/spaces/:space_id', toServiceMiddleware(this, readSpaceService))
-			.post('/api/v1/spaces/:space_id/files', toServiceMiddleware(this, createFileService))
-			.get('/api/v1/spaces/:space_id/files', toServiceMiddleware(this, readFilesService))
-			.post('/api/v1/members', toServiceMiddleware(this, createMemberService));
+			.post('/api/v1/logout', toLogoutMiddleware(this));
+
+		// Register services as http routes.
+		for (const service of this.services.values()) {
+			this.app[service.route.method](service.route.path, toServiceMiddleware(this, service));
+		}
 
 		// SvelteKit Node adapter, adapted to our production API server
 		// TODO needs a lot of work, especially for production
@@ -172,7 +156,7 @@ export class ApiServer {
 			console.error('[handleWebsocketMessage] invalid message', message);
 			return;
 		}
-		const service = services.get(message.type);
+		const service = this.services.get(message.type);
 		if (!service) {
 			console.error('[handleWebsocketMessage] unhandled message type', message.type);
 			return;
