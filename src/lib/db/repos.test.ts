@@ -38,9 +38,9 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const accountParams = randomAccountParams();
 	const account = unwrap(await server.db.repos.account.create(accountParams));
 
-	const personaParams = randomPersonaParams(account.account_id);
+	const personaParams = randomPersonaParams();
 	const {persona, community: personaHomeCommunity} = unwrap(
-		await server.db.repos.persona.create(personaParams),
+		await server.db.repos.persona.create(personaParams, account.account_id),
 	);
 	if (!validatePersona()(persona)) {
 		console.log('TODO throw error here after merging with other changes'); // TODO

@@ -6,12 +6,12 @@ import type {ErrorResponse} from '$lib/util/error';
 import type {Community} from '$lib/vocab/community/community.js';
 
 export const personaRepo = (db: Database) => ({
-	create: async ({
-		name,
-		account_id,
-	}: PersonaParams): Promise<
-		Result<{value: {persona: Persona; community: Community}}, ErrorResponse>
-	> => {
+	create: async (
+		{name}: PersonaParams,
+		// TODO should `account_id` be part of the params object?
+		// then we need a different abstraction? maybe `PersonaDoc` or something?
+		account_id: number,
+	): Promise<Result<{value: {persona: Persona; community: Community}}, ErrorResponse>> => {
 		const data = await db.sql<Persona[]>`
       insert into personas (name, account_id) values (
         ${name}, ${account_id}

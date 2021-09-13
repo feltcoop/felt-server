@@ -21,9 +21,8 @@ export const randomAccountParams = (): AccountParams => ({
 	name: randomAccountName(),
 	password: randomPassword(),
 });
-export const randomPersonaParams = (account_id: number): PersonaParams => ({
+export const randomPersonaParams = (): PersonaParams => ({
 	name: randomPersonaName(),
-	account_id,
 });
 export const randomMemberParams = (persona_id: number, community_id: number): MemberParams => ({
 	persona_id,
@@ -70,7 +69,8 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 		},
 		persona: async (account) => {
 			if (!account) account = await random.account();
-			return unwrap(await db.repos.persona.create(randomPersonaParams(account.account_id))).persona;
+			return unwrap(await db.repos.persona.create(randomPersonaParams(), account.account_id))
+				.persona;
 		},
 		community: async (persona, account) => {
 			if (!persona) persona = await random.persona(account);

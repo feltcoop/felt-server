@@ -7,6 +7,7 @@ export const MemberSchema = Type.Object(
 	{
 		persona_id: Type.Number(),
 		community_id: Type.Number(),
+		name: Type.String(), // TODO ??
 	},
 	{$id: 'Member', additionalProperties: false},
 );

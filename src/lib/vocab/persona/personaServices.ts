@@ -1,31 +1,48 @@
-import type {Service} from '$lib/server/service';
-import type {Persona} from '$lib/vocab/persona/persona';
-import {PersonaParamsSchema} from '$lib/vocab/persona/persona';
-import type {Community} from '$lib/vocab/community/community';
+import {Type} from '@sinclair/typebox';
 
-const CreatePersonaServiceSchema = PersonaParamsSchema;
+import type {Service} from '$lib/server/service';
+import {PersonaSchema} from '$lib/vocab/persona/persona';
+import {CommunitySchema} from '$lib/vocab/community/community';
+import {toValidateSchema} from '$lib/util/ajv';
+
+const CreatePersonaServiceParams = Type.Object(
+	{
+		name: Type.String(),
+	},
+	{$id: 'CreatePersonaServiceParams', additionalProperties: false},
+);
+const CreatePersonaServiceResponse = Type.Object(
+	{
+		persona: PersonaSchema,
+		community: CommunitySchema,
+	},
+	{$id: 'CreatePersonaServiceResponse', additionalProperties: false},
+);
 
 //Creates a new persona
 export const createPersonaService: Service<
-	typeof CreatePersonaServiceSchema,
-	{persona: Persona; community: Community}
+	typeof CreatePersonaServiceParams,
+	typeof CreatePersonaServiceResponse
 > = {
 	name: 'create_persona',
 	route: {
 		path: '/api/v1/personas',
 		method: 'post',
 	},
-	paramsSchema: CreatePersonaServiceSchema,
+	paramsSchema: CreatePersonaServiceParams,
+	validateParams: toValidateSchema(CreatePersonaServiceParams),
+	responseSchema: CreatePersonaServiceResponse,
+	validateResponse: toValidateSchema(CreatePersonaServiceResponse),
 	// TODO verify the `account_id` has permission to modify this persona
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
-	handle: async (server, params, account_id) => {
+	perform: async (server, params, account_id) => {
 		const {db} = server;
 
 		console.log('[create_persona] creating persona', params.name);
 
 		// TODO does it make more sense to pass `name` alone, or the whole `params`?
 		// this begs the question, should repos use the `__Params` interfaces or not?
-		const createPersonaResult = await db.repos.persona.create(params.name, account_id);
+		const createPersonaResult = await db.repos.persona.create(params, account_id);
 		if (createPersonaResult.ok) {
 			return {code: 200, data: createPersonaResult.value};
 		} else {
