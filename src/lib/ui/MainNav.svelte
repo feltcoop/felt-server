@@ -40,7 +40,7 @@
 				class="explorer-button"
 			>
 				<ActorIcon name={selectedPersonaName} />
-				{selectedPersonaName}
+				<span class="persona-name">{selectedPersonaName}</span>
 			</button>
 			<button
 				on:click={() => ui.setMainNavView('account')}
@@ -148,7 +148,9 @@
 		flex: 1;
 		padding: var(--spacing_xs);
 	}
-
+	.persona-name {
+		margin-left: var(--spacing_sm);
+	}
 	.account-button {
 		height: var(--navbar_size);
 		width: var(--navbar_size);
