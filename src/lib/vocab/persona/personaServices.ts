@@ -12,7 +12,7 @@ export const createPersonaService: Service<
 > = {
 	name: 'create_persona',
 	route: {
-		path: '/api/v1/communities',
+		path: '/api/v1/personas',
 		method: 'post',
 	},
 	paramsSchema: CreatePersonaServiceSchema,
