@@ -7,7 +7,7 @@ import {
 	RandomVocab,
 	RandomVocabContext,
 } from '$lib/vocab/random';
-import {randomCommunityParams, randomSpaceParams} from '$lib/vocab/random';
+import {randomPersonaParams, randomCommunityParams, randomSpaceParams} from '$lib/vocab/random';
 
 // TODO maybe move to `src/lib/util`
 // TODO keep factoring this until it's fully automated, generating from the schema
@@ -17,6 +17,9 @@ export const randomServiceParams = async <TParamsSchema extends TSchema>(
 	{account, persona, community, space}: RandomVocab,
 ): Promise<object> => {
 	switch (service.name) {
+		case 'create_persona': {
+			return randomPersonaParams();
+		}
 		case 'create_community': {
 			if (!persona) persona = await random.persona(account);
 			return randomCommunityParams(persona.persona_id);
