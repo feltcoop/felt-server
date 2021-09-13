@@ -15,6 +15,7 @@ import type {AnySchema} from 'ajv';
 interface ServiceMeta {
   name: string;
   paramsSchema: AnySchema;
+  responseSchema: AnySchema;
 }
 
 ${Array.from(services.values()).reduce(
@@ -24,7 +25,7 @@ ${Array.from(services.values()).reduce(
 export const ${service.name}: ServiceMeta = {
   name: '${service.name}',
   paramsSchema: ${JSON.stringify(service.paramsSchema)},
-  // TODO response schema after merging
+  responseSchema: ${JSON.stringify(service.responseSchema)},
 };
 `,
 	'',
