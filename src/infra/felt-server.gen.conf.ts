@@ -8,8 +8,8 @@ export const SVELTEKIT_SERVER_HOST = 'localhost:3000';
 export const API_SERVER_HOST = 'localhost:3001';
 
 // Outputs an nginx config with custom values.
-export const gen: Gen = async () => {
-	// TODO source these from config and extend in user projects
+export const gen: Gen = async (/*{config}*/) => {
+	// TODO source these from config (see ^^ -- and extend in user projects)
 	const serverName = SERVER_HOST;
 	const serverUrl = API_SERVER_HOST;
 	// TODO delete this var after switching to the `adapter-node` middleware
