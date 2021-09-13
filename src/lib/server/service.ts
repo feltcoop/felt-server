@@ -8,6 +8,11 @@ import type {ErrorResponse} from '$lib/util/error';
 // The generics are required to avoid mistakes with service definitions.
 export interface Service<TParamsSchema extends TSchema, TResponseSchema extends TSchema> {
 	name: string; // `snake_cased`
+	route: {
+		path: string; // e.g. '/api/v1/some/:neat/:path'
+		// supports each `trouter` http method: https://github.com/lukeed/trouter#method
+		method: 'get' | 'head' | 'patch' | 'options' | 'connect' | 'delete' | 'trace' | 'post' | 'put';
+	};
 	paramsSchema: TParamsSchema;
 	validateParams: () => ValidateFunction<Static<TParamsSchema>>; // lazy to avoid wasteful compilation
 	responseSchema: TResponseSchema;

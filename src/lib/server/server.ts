@@ -6,6 +6,7 @@ import {ApiServer} from '$lib/server/ApiServer.js';
 import {Database} from '$lib/db/Database.js';
 import {defaultPostgresOptions} from '$lib/db/postgres.js';
 import {WebsocketServer} from '$lib/server/WebsocketServer.js';
+import {services} from '$lib/server/services';
 
 const server = createServer();
 
@@ -16,6 +17,7 @@ export const apiServer: ApiServer = new ApiServer({
 	app: polka({server}),
 	websocketServer: new WebsocketServer(server),
 	db: new Database({sql: postgres(defaultPostgresOptions)}),
+	services,
 	loadInstance: async () => {
 		try {
 			// TODO this is a hack to make Rollup not bundle this - needs refactoring

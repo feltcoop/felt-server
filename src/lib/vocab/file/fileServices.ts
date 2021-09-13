@@ -22,6 +22,10 @@ export const readFilesService: Service<
 	typeof ReadFilesServiceResponse
 > = {
 	name: 'read_files',
+	route: {
+		path: '/api/v1/spaces/:space_id/files',
+		method: 'get',
+	},
 	paramsSchema: ReadFilesServiceParams,
 	validateParams: toValidateSchema(ReadFilesServiceParams),
 	responseSchema: ReadFilesServiceResponse,
@@ -61,6 +65,10 @@ export const createFileService: Service<
 	typeof CreateFileServiceResponse
 > = {
 	name: 'create_file',
+	route: {
+		path: '/api/v1/spaces/:space_id/files',
+		method: 'post',
+	},
 	paramsSchema: CreateFileServiceParams,
 	validateParams: toValidateSchema(CreateFileServiceParams),
 	responseSchema: CreateFileServiceResponse,

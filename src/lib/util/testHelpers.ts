@@ -7,6 +7,7 @@ import {ApiServer} from '$lib/server/ApiServer';
 import {Database} from '$lib/db/Database';
 import {defaultPostgresOptions} from '$lib/db/postgres';
 import {WebsocketServer} from '$lib/server/WebsocketServer';
+import {services} from '$lib/server/services';
 
 sourcemapSupport.install({
 	handleUncaughtExceptions: false,
@@ -31,6 +32,7 @@ export const setupServer = async (context: TestServerContext): Promise<void> => 
 		websocketServer: new WebsocketServer(server),
 		db: new Database({sql: postgres(defaultPostgresOptions)}),
 		port: TEST_PORT,
+		services,
 	});
 	await context.server.init();
 };

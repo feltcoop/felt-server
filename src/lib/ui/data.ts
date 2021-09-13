@@ -26,7 +26,7 @@ export const setData = (session: ClientSession): DataStore => {
 };
 
 export interface DataState {
-	account: AccountModel;
+	account: AccountModel | null;
 	communities: CommunityModel[];
 	spaces: Space[];
 	members: Member[];
@@ -114,7 +114,14 @@ export const toDataStore = (initialSession: ClientSession): DataStore => {
 
 const toDefaultData = (session: ClientSession): DataState => {
 	if (session.guest) {
-		return null as any;
+		return {
+			account: null,
+			communities: [],
+			spaces: [],
+			members: [],
+			personas: [],
+			filesBySpace: {},
+		};
 	} else {
 		return {
 			account: session.account,

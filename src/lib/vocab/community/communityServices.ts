@@ -24,6 +24,10 @@ export const readCommunitiesService: Service<
 	typeof ReadCommunitiesServiceResponse
 > = {
 	name: 'read_communities',
+	route: {
+		path: '/api/v1/communities',
+		method: 'get',
+	},
 	paramsSchema: ReadCommunitiesServiceParams,
 	validateParams: toValidateSchema(ReadCommunitiesServiceParams),
 	responseSchema: ReadCommunitiesServiceResponse,
@@ -59,6 +63,10 @@ export const readCommunityService: Service<
 	typeof ReadCommunityServiceResponse
 > = {
 	name: 'read_community',
+	route: {
+		path: '/api/v1/communities/:community_id',
+		method: 'get',
+	},
 	paramsSchema: ReadCommunityServiceParams,
 	validateParams: toValidateSchema(ReadCommunityServiceParams),
 	responseSchema: ReadCommunityServiceResponse,
@@ -101,6 +109,10 @@ export const createCommunityService: Service<
 	typeof CreateCommunityServiceResponse
 > = {
 	name: 'create_community',
+	route: {
+		path: '/api/v1/communities',
+		method: 'post',
+	},
 	paramsSchema: CreateCommunityServiceParams,
 	validateParams: toValidateSchema(CreateCommunityServiceParams),
 	responseSchema: CreateCommunityServiceResponse,
@@ -161,6 +173,10 @@ export const createMemberService: Service<
 	typeof CreateMemberServiceResponse
 > = {
 	name: 'create_member',
+	route: {
+		path: '/api/v1/members',
+		method: 'post',
+	},
 	paramsSchema: CreateMemberServiceParams,
 	validateParams: toValidateSchema(CreateMemberServiceParams),
 	responseSchema: CreateMemberServiceResponse,
