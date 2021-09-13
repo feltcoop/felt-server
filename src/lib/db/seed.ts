@@ -121,17 +121,15 @@ export const seed = async (db: Database): Promise<void> => {
 	};
 	const personas: Persona[] = [];
 	for (const accountParams of accountsParams) {
-		const account = unwrap(await db.repos.account.create(accountParams)) as Account;
+		const account = unwrap(await db.repos.account.create(accountParams));
 		log.trace('created account', account);
 		for (const personaName of personasParams[account.name]) {
 			const {persona, community} = unwrap(
-				await db.repos.persona.create(personaName, account.account_id),
-			) as {persona: Persona; community: Community}; // TODO why typecast?
+				await db.repos.persona.create({name: personaName, account_id: account.account_id}),
+			);
 			log.trace('created persona', persona);
 			personas.push(persona);
-			const spaces = unwrap(
-				await db.repos.space.createDefaultSpaces(community.community_id),
-			) as Space[]; // TODO why cast?
+			const spaces = unwrap(await db.repos.space.createDefaultSpaces(community.community_id));
 			await createDefaultFiles(db, spaces, [persona]);
 		}
 	}
@@ -148,11 +146,17 @@ export const seed = async (db: Database): Promise<void> => {
 
 	for (const communityParams of communitiesParams) {
 		const community = unwrap(
-			await db.repos.community.create(communityParams.name, communityParams.persona_id),
-		) as Community; // TODO why cast?
+			await db.repos.community.create({
+				name: communityParams.name,
+				persona_id: communityParams.persona_id,
+			}),
+		);
 		communities.push(community);
 		for (const persona of otherPersonas) {
-			await db.repos.member.create(persona.persona_id, community.community_id);
+			await db.repos.member.create({
+				persona_id: persona.persona_id,
+				community_id: community.community_id,
+			});
 		}
 		await createDefaultFiles(db, community.spaces, personas);
 	}
@@ -183,7 +187,11 @@ const createDefaultFiles = async (db: Database, spaces: Space[], personas: Perso
 		}
 		const fileContents = filesContents[spaceContent.type];
 		for (const fileContent of fileContents) {
-			await db.repos.file.create(nextPersona().persona_id, space.space_id, fileContent);
+			await db.repos.file.create({
+				actor_id: nextPersona().persona_id,
+				space_id: space.space_id,
+				content: fileContent,
+			});
 		}
 	}
 };

@@ -1,12 +1,17 @@
 import send from '@polka/send-type';
+import type {TSchema} from '@sinclair/typebox';
+import {red} from '@feltcoop/felt/util/terminal.js';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
-import type {Service, ServiceParamsSchema, ServiceResponseData} from '$lib/server/service';
-import {ajv, toValidationErrorMessage} from '$lib/util/ajv';
+import type {Service} from '$lib/server/service';
+import {toValidationErrorMessage} from '$lib/util/ajv';
+
+// TODO refactor this with the `ApiServer` websocket handler,
+// probably just a config object
 
 // Wraps a `Service` in an http `Middleware`
 export const toServiceMiddleware =
-	(server: ApiServer, service: Service<ServiceParamsSchema, ServiceResponseData>): Middleware =>
+	(server: ApiServer, service: Service<TSchema, TSchema>): Middleware =>
 	async (req, res) => {
 		// TODO validate input/output via properties on each `Service`
 		try {
@@ -19,10 +24,8 @@ export const toServiceMiddleware =
 			}
 
 			const params = {...req.body, ...req.params};
-			const validateParams =
-				service.validateParams || (service.validateParams = ajv.compile(service.paramsSchema));
-			const valid = validateParams(params);
-			if (!valid) {
+			const validateParams = service.validateParams();
+			if (!validateParams(params)) {
 				// TODO handle multiple errors instead of just the first
 				console.error('validation failed:', params, validateParams.errors);
 				const validationError = validateParams.errors![0];
@@ -34,9 +37,14 @@ export const toServiceMiddleware =
 				// Should each service declare if `account_id` is required?
 				return send(res, 401, {reason: 'not logged in'});
 			}
-			const result = await service.handle(server, params, req.account_id);
-			console.log('[serviceMiddleware] result.code', result.code);
-			send(res, result.code, result.data);
+			const response = await service.perform(server, params, req.account_id);
+			if (process.env.NODE_ENV !== 'production') {
+				if (!service.validateResponse()(response.data)) {
+					console.error(red('validation failed:'), response, service.validateResponse().errors);
+				}
+			}
+			console.log('[serviceMiddleware] result.code', response.code);
+			send(res, response.code, response.data);
 		} catch (err) {
 			console.error(err);
 			send(res, 500, {reason: 'unknown server error'});

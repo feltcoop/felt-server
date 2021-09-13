@@ -1,34 +1,22 @@
-import polka from 'polka';
 import {suite} from 'uvu';
 import * as t from 'uvu/assert';
-import postgres from 'postgres';
-import {createServer} from 'http';
 
-import {ApiServer} from '$lib/server/ApiServer.js';
-import {Database} from '$lib/db/Database.js';
-import {defaultPostgresOptions} from '$lib/db/postgres.js';
-import {WebsocketServer} from '$lib/server/WebsocketServer.js';
-import {services} from '$lib/server/services';
+import type {TestServerContext} from '$lib/util/testHelpers.js';
+import {setupServer, teardownServer} from '$lib/util/testHelpers.js';
+import {ApiServer} from '$lib/server/ApiServer';
 
-const TEST_PORT = 3003; // TODO
+// TODO hack because of broken test builds
+console.log('ApiServer', ApiServer.name);
 
 /* test__ApiServer */
-const test__ApiServer = suite('ApiServer');
+const test__ApiServer = suite<TestServerContext>('ApiServer');
 
-test__ApiServer('init and close', async () => {
-	const server = createServer();
-	const apiServer: ApiServer = new ApiServer({
-		server,
-		app: polka({server}),
-		websocketServer: new WebsocketServer(server),
-		db: new Database({sql: postgres(defaultPostgresOptions)}),
-		services,
-		port: TEST_PORT,
-	});
-	t.is(apiServer.port, TEST_PORT);
-	await apiServer.init();
-	// TODO make API requests, and look into before/after
-	await apiServer.close();
+test__ApiServer.before(setupServer);
+test__ApiServer.after(teardownServer);
+
+test__ApiServer('init and close', async ({server}) => {
+	t.is(server.port, 3003);
+	// TODO do stuff
 });
 
 test__ApiServer.run();

@@ -1,4 +1,6 @@
-import type {Service, ServiceParamsSchema, ServiceResponseData} from '$lib/server/service';
+import type {TSchema} from '@sinclair/typebox';
+
+import type {Service} from '$lib/server/service';
 import {createPersonaService} from '$lib/vocab/persona/personaServices';
 import {
 	readCommunityService,
@@ -13,18 +15,18 @@ import {
 	createSpaceService,
 } from '$lib/vocab/space/spaceServices';
 
-export const services: Map<string, Service<ServiceParamsSchema, ServiceResponseData>> = new Map(
+export const services: Map<string, Service<TSchema, TSchema>> = new Map(
 	// TODO verify no duplicate names?
 	[
-		readCommunityService,
-		readCommunitiesService,
 		createCommunityService,
 		createPersonaService,
 		createMemberService,
-		readFilesService,
+		createSpaceService,
 		createFileService,
+		readCommunityService,
+		readCommunitiesService,
 		readSpaceService,
 		readSpacesService,
-		createSpaceService,
+		readFilesService,
 	].map((s) => [s.name, s]),
 );

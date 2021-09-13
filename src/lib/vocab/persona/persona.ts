@@ -1,7 +1,9 @@
 import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
 
-export type Persona = Static<typeof PersonaSchema>;
+import {toValidateSchema} from '$lib/util/ajv';
+
+export interface Persona extends Static<typeof PersonaSchema> {}
 export const PersonaSchema = Type.Object(
 	{
 		persona_id: Type.Number(),
@@ -11,14 +13,16 @@ export const PersonaSchema = Type.Object(
 	},
 	{$id: 'Persona', additionalProperties: false},
 );
+export const validatePersona = toValidateSchema<Persona>(PersonaSchema);
 
-export type PersonaParams = Static<typeof PersonaParamsSchema>;
+export interface PersonaParams extends Static<typeof PersonaParamsSchema> {}
 export const PersonaParamsSchema = Type.Object(
 	{
 		name: Type.String(),
 	},
 	{$id: 'PersonaParams', additionalProperties: false},
 );
+export const validatePersonaParams = toValidateSchema<PersonaParams>(PersonaParamsSchema);
 
 //TODO
 //2.5: Render active persona

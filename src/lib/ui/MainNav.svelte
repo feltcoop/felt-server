@@ -20,15 +20,10 @@
 	$: selectedCommunity = ui.selectedCommunity;
 	$: selectedSpace = ui.selectedSpace;
 	$: communitiesByPersonaId = ui.communitiesByPersonaId;
-	$: selectedPersonaCommunities = $ui.selectedPersonaId
-		? $communitiesByPersonaId[$ui.selectedPersonaId]
-		: null;
 
 	// TODO refactor to some client view-model for the account
-	$: hue = randomHue($data.account?.name || 'guest');
-
-	let selectedPersonaId = $ui.selectedPersonaId;
-	$: ui.selectPersona(selectedPersonaId!);
+	$: selectedPersonaName = $selectedPersona?.name || 'guest';
+	$: hue = randomHue(selectedPersonaName);
 </script>
 
 {#if $ui.expandMainNav}
@@ -39,17 +34,13 @@
 		<div class="header">
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
-			<select class="persona-selector" bind:value={selectedPersonaId}>
-				{#each personas as persona (persona)}
-					<option value={persona.persona_id}>{persona.name}</option>
-				{/each}
-			</select>
 			<button
 				on:click={() => ui.setMainNavView('explorer')}
 				class:selected={$ui.mainNavView === 'explorer'}
 				class="explorer-button"
 			>
-				<ActorIcon name={$selectedPersona?.name || 'guest'} />
+				<ActorIcon name={selectedPersonaName} />
+				<span class="persona-name">{selectedPersonaName}</span>
 			</button>
 			<button
 				on:click={() => ui.setMainNavView('account')}
@@ -62,8 +53,14 @@
 		</div>
 		{#if $ui.mainNavView === 'explorer'}
 			<div class="explorer">
-				{#if $selectedCommunity && selectedPersonaCommunities}
-					<CommunityNav {selectedPersonaCommunities} selectedCommunity={$selectedCommunity} />
+				<CommunityNav
+					{personas}
+					selectedPersona={$selectedPersona}
+					selectedCommunity={$selectedCommunity}
+					communitiesByPersonaId={$communitiesByPersonaId}
+					selectPersona={ui.selectPersona}
+				/>
+				{#if $selectedCommunity}
 					<SpaceNav
 						community={$selectedCommunity}
 						spaces={$selectedCommunity.spaces}
@@ -145,19 +142,15 @@
 		display: flex;
 		flex: 1;
 	}
-	.persona-selector {
-		display: flex;
-		flex: 2;
-		height: var(--navbar_size);
-		background: var(--interactive_color);
-	}
 	.explorer-button {
 		justify-content: flex-start;
 		height: var(--navbar_size);
-		flex: 0.5;
+		flex: 1;
 		padding: var(--spacing_xs);
 	}
-
+	.persona-name {
+		margin-left: var(--spacing_sm);
+	}
 	.account-button {
 		height: var(--navbar_size);
 		width: var(--navbar_size);

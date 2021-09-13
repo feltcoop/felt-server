@@ -1,10 +1,9 @@
 import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
-import type {ValidateFunction} from 'ajv';
 
-import {ajv} from '$lib/util/ajv';
+import {toValidateSchema} from '$lib/util/ajv';
 
-export type File = Static<typeof FileSchema>;
+export interface File extends Static<typeof FileSchema> {}
 export const FileSchema = Type.Object(
 	{
 		file_id: Type.Number(),
@@ -14,8 +13,9 @@ export const FileSchema = Type.Object(
 	},
 	{$id: 'File', additionalProperties: false},
 );
+export const validateFile = toValidateSchema<File>(FileSchema);
 
-export type FileParams = Static<typeof FileParamsSchema>;
+export interface FileParams extends Static<typeof FileParamsSchema> {}
 export const FileParamsSchema = Type.Object(
 	{
 		actor_id: Type.Number(), // `persona_id` -- must be validated against the authenticated `account_id`
@@ -24,6 +24,4 @@ export const FileParamsSchema = Type.Object(
 	},
 	{$id: 'FileParams', additionalProperties: false},
 );
-export const validateFileParams = (): ValidateFunction<FileParams> =>
-	_validateFileParams || (_validateFileParams = ajv.compile(FileParamsSchema));
-let _validateFileParams: ValidateFunction<FileParams> | undefined;
+export const validateFileParams = toValidateSchema<FileParams>(FileParamsSchema);
