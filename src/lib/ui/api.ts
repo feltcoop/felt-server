@@ -9,7 +9,7 @@ import type {UiStore} from '$lib/ui/ui';
 import type {Community, CommunityModel, CommunityParams} from '$lib/vocab/community/community';
 import {toCommunityModel} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
-import type {Member, MemberParams} from '$lib/vocab/member/member';
+import type {Membership, MembershipParams} from '$lib/vocab/membership/membership';
 import type {File, FileParams} from '$lib/vocab/file/file';
 import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
@@ -50,7 +50,7 @@ export interface ApiStore {
 	inviteMember: (
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
 		persona_id: number,
-	) => Promise<ApiResult<{value: {member: Member}}>>;
+	) => Promise<ApiResult<{value: {member: Membership}}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{value: {file: File}}>>;
 	loadFiles: (space_id: number) => Promise<ApiResult<{value: {file: File[]}}>>;
 }
@@ -180,7 +180,7 @@ export const toApiStore = (ui: UiStore, data: DataStore, socket: SocketStore): A
 			if (community_id == null) return {ok: false, reason: 'invalid url'};
 			if (!persona_id) return {ok: false, reason: 'invalid persona'};
 
-			const doc: MemberParams = {
+			const doc: MembershipParams = {
 				persona_id,
 				community_id,
 			};
@@ -193,7 +193,7 @@ export const toApiStore = (ui: UiStore, data: DataStore, socket: SocketStore): A
 			});
 			if (res.ok) {
 				try {
-					const result: {member: Member} = await res.json(); // TODO api types
+					const result: {member: Membership} = await res.json(); // TODO api types
 					console.log('inviteMember result', result);
 					data.addMember(result.member);
 					return {ok: true, value: result};

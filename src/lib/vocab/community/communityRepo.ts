@@ -52,11 +52,11 @@ export const communityRepo = (db: Database) => ({
 				(
 					SELECT array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
 					FROM (
-						SELECT p.persona_id, p.name FROM personas p JOIN persona_communities pc ON p.persona_id=pc.persona_id AND pc.community_id=c.community_id
+						SELECT p.persona_id, p.name FROM personas p JOIN membership pc ON p.persona_id=pc.persona_id AND pc.community_id=c.community_id
 					) d
 				) as members
 			FROM communities c JOIN (
-				SELECT DISTINCT pc.community_id FROM personas p JOIN persona_communities pc ON p.persona_id=pc.persona_id AND p.account_id = ${account_id}
+				SELECT DISTINCT pc.community_id FROM personas p JOIN membership pc ON p.persona_id=pc.persona_id AND p.account_id = ${account_id}
 			) apc
 			ON c.community_id=apc.community_id;
     `;

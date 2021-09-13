@@ -37,7 +37,7 @@ export const personaRepo = (db: Database) => ({
       (
         select array_to_json(coalesce(array_agg(d.community_id)))
         from (
-          SELECT pc.community_id FROM persona_communities pc WHERE pc.persona_id = p.persona_id
+          SELECT pc.community_id FROM membership pc WHERE pc.persona_id = p.persona_id
         ) d
       ) as community_ids
       

@@ -2,7 +2,7 @@ import {Type} from '@sinclair/typebox';
 
 import type {Service} from '$lib/server/service';
 import {CommunitySchema} from '$lib/vocab/community/community';
-import {MemberSchema} from '$lib/vocab/member/member';
+import {MembershipSchema} from '$lib/vocab/membership/membership';
 import {toValidateSchema} from '$lib/util/ajv';
 
 const ReadCommunitiesServiceParams = Type.Object(
@@ -161,7 +161,7 @@ const CreateMemberServiceParams = Type.Object(
 );
 const CreateMemberServiceResponse = Type.Object(
 	{
-		member: MemberSchema,
+		member: MembershipSchema,
 	},
 	{$id: 'CreateMemberServiceResponse', additionalProperties: false},
 );

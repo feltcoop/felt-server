@@ -1,6 +1,6 @@
 import type {Community} from '$lib/vocab/community/community.js';
 import type {AccountModel} from '$lib/vocab/account/account.js';
-import type {Member} from '$lib/vocab/member/member.js';
+import type {Membership} from '$lib/vocab/membership/membership.js';
 import type {Persona} from '$lib/vocab/persona/persona.js';
 
 export type ClientSession = ClientAccountSession | ClientGuestSession;
@@ -10,7 +10,7 @@ export interface ClientAccountSession {
 	account: AccountModel;
 	communities: Community[];
 	//Stub for a Friends feature in future release, for now just returns all users in an instance
-	members: Member[];
+	members: Membership[];
 	guest?: false; // is only for types; this property doesn't exist at runtime
 }
 
