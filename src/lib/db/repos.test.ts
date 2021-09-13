@@ -1,6 +1,7 @@
 import {suite} from 'uvu';
 import * as t from 'uvu/assert';
-import {Result, unwrap} from '@feltcoop/felt';
+import type {Result} from '@feltcoop/felt';
+import {unwrap} from '@feltcoop/felt';
 
 import type {TestServerContext} from '$lib/util/testHelpers';
 import {setupServer, teardownServer} from '$lib/util/testHelpers';

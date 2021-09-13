@@ -1,5 +1,4 @@
-import type {Result} from '@feltcoop/felt';
-// import {unwrap} from '@feltcoop/felt'; // TODO upgrade felt
+import {unwrap} from '@feltcoop/felt';
 
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Community, CommunityParams} from '$lib/vocab/community/community';
@@ -85,15 +84,4 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 		},
 	};
 	return random;
-};
-
-// TODO import from Felt when 0.11.0 is published
-export const unwrap = <TValue extends {value: unknown}, TError extends {reason?: string}>(
-	result: Result<TValue, TError>,
-): TValue['value'] => {
-	if (result.ok) {
-		return result.value;
-	} else {
-		throw Error(result.reason || 'Failed to unwrap result with unknown reason');
-	}
 };
