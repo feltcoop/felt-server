@@ -1,3 +1,6 @@
+import type {Result} from '@feltcoop/felt';
+// import {unwrap} from '@feltcoop/felt'; // TODO upgrade felt
+
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Community, CommunityParams} from '$lib/vocab/community/community';
 import type {Account, AccountParams} from '$lib/vocab/account/account';
@@ -64,44 +67,33 @@ export interface RandomVocabContext {
 export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 	const random: RandomVocabContext = {
 		account: async () => {
-			const createAccountResult = await db.repos.account.create(randomAccountParams());
-			if (!createAccountResult.ok) {
-				throw Error(`Failed to create account: ${createAccountResult.reason}`);
-			}
-			return createAccountResult.value;
+			return unwrap(await db.repos.account.create(randomAccountParams()));
 		},
 		persona: async (account) => {
 			if (!account) account = await random.account();
-			const createPersonaResult = await db.repos.persona.create(
-				randomPersonaParams(account.account_id),
-			);
-			if (!createPersonaResult.ok) {
-				throw Error(`Failed to create persona: ${createPersonaResult.reason}`);
-			}
-			return createPersonaResult.value.persona;
+			return unwrap(await db.repos.persona.create(randomPersonaParams(account.account_id))).persona;
 		},
 		community: async (persona, account) => {
 			if (!persona) persona = await random.persona(account);
-			const createCommunityResult = await db.repos.community.create(
-				randomCommunityParams(persona.persona_id),
-			);
-			if (!createCommunityResult.ok) {
-				throw Error(`Failed to create community`);
-			}
-			return createCommunityResult.value;
+			return unwrap(await db.repos.community.create(randomCommunityParams(persona.persona_id)));
 		},
 		space: async (persona, account, community) => {
 			if (!account) account = await random.account();
 			if (!persona) persona = await random.persona(account);
 			if (!community) community = await random.community(persona, account);
-			const createSpaceResult = await db.repos.space.create(
-				randomSpaceParams(community.community_id),
-			);
-			if (!createSpaceResult.ok) {
-				throw Error(`Failed to create space`);
-			}
-			return createSpaceResult.value;
+			return unwrap(await db.repos.space.create(randomSpaceParams(community.community_id)));
 		},
 	};
 	return random;
+};
+
+// TODO import from Felt when 0.11.0 is published
+export const unwrap = <TValue extends {value: unknown}, TError extends {reason?: string}>(
+	result: Result<TValue, TError>,
+): TValue['value'] => {
+	if (result.ok) {
+		return result.value;
+	} else {
+		throw Error(result.reason || 'Failed to unwrap result with unknown reason');
+	}
 };
