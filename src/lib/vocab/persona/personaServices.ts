@@ -11,6 +11,10 @@ export const createPersonaService: Service<
 	{persona: Persona; community: Community}
 > = {
 	name: 'create_persona',
+	route: {
+		path: '/api/v1/communities',
+		method: 'post',
+	},
 	paramsSchema: CreatePersonaServiceSchema,
 	// TODO verify the `account_id` has permission to modify this persona
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
