@@ -1,7 +1,10 @@
 import type {Readable} from 'svelte/store';
-import {writable} from 'svelte/store';
+import {writable, derived} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
-import type {DataState} from '$lib/ui/data';
+import type {DataState, DataStore} from '$lib/ui/data';
+import type {CommunityModel} from '$lib/vocab/community/community';
+import type {Space} from '$lib/vocab/space/space';
+import type {Persona} from '$lib/vocab/persona/persona';
 
 // TODO refactor/rethink
 
@@ -9,7 +12,7 @@ const KEY = Symbol();
 
 export const getUi = (): UiStore => getContext(KEY);
 
-export const setUi = (store: UiStore = toUiStore()): UiStore => {
+export const setUi = (store: UiStore): UiStore => {
 	setContext(KEY, store);
 	return store;
 };
@@ -26,6 +29,12 @@ export interface UiState {
 
 export interface UiStore {
 	subscribe: Readable<UiState>['subscribe'];
+	// derived state
+	selectedPersona: Readable<Persona | null>;
+	selectedCommunity: Readable<CommunityModel | null>;
+	selectedSpace: Readable<Space | null>;
+	communitiesByPersonaId: Readable<{[persona_id: number]: CommunityModel[]}>; // TODO or name `personaCommunities`?
+	// methods
 	updateData: (data: DataState | null) => void;
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
@@ -34,11 +43,47 @@ export interface UiStore {
 	setMainNavView: (mainNavView: MainNavView) => void;
 }
 
-export const toUiStore = () => {
-	const {subscribe, update} = writable<UiState>(toDefaultUiState());
+export const toUiStore = (data: DataStore) => {
+	const state = writable<UiState>(toDefaultUiState());
+
+	const {subscribe, update} = state;
+
+	// derived state
+	// TODO speed up these lookups with id maps
+	const selectedPersona = derived(
+		[state, data],
+		([$ui, $data]) => $data.personas.find((p) => p.persona_id === $ui.selectedPersonaId) || null,
+	);
+	const selectedCommunity = derived(
+		[state, data],
+		([$ui, $data]) =>
+			$data.communities.find((c) => c.community_id === $ui.selectedCommunityId) || null,
+	);
+	const selectedSpace = derived(
+		[state, selectedCommunity],
+		([$ui, $selectedCommunity]) =>
+			$selectedCommunity?.spaces.find(
+				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[$selectedCommunity.community_id],
+			) || null,
+	);
+	const communitiesByPersonaId = derived([data], ([$data]) =>
+		$data.personas.reduce((result, persona) => {
+			// TODO speed up this lookup, probably with a map of all communities by id
+			result[persona.persona_id] = $data.communities.filter((community) =>
+				persona.community_ids.includes(community.community_id),
+			);
+			return result;
+		}, {} as {[persona_id: number]: CommunityModel[]}),
+	);
 
 	const store: UiStore = {
 		subscribe,
+		// derived state
+		selectedPersona,
+		selectedCommunity,
+		selectedSpace,
+		communitiesByPersonaId,
+		// methods
 		updateData: (data) => {
 			console.log('[ui.updateData]', {data});
 			update(($ui) => {

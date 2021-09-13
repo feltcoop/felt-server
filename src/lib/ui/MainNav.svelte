@@ -14,25 +14,18 @@
 	const {data, ui, api} = getApp();
 
 	$: members = $data.members;
-	$: communities = $data.communities;
 	$: personas = $data.personas;
 
-	// TODO speed up these lookups, probably with a map of all entities by id
-	$: selectedCommunity =
-		communities.find((c) => c.community_id === $ui.selectedCommunityId) || null;
-	$: selectedSpace = selectedCommunity
-		? selectedCommunity.spaces.find(
-				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[selectedCommunity!.community_id],
-		  ) || null
+	$: selectedPersona = ui.selectedPersona;
+	$: selectedCommunity = ui.selectedCommunity;
+	$: selectedSpace = ui.selectedSpace;
+	$: communitiesByPersonaId = ui.communitiesByPersonaId;
+	$: selectedPersonaCommunities = $ui.selectedPersonaId
+		? $communitiesByPersonaId[$ui.selectedPersonaId]
 		: null;
-	$: selectedPersona = personas.find((p) => p.persona_id === $ui.selectedPersonaId) || null;
-	$: console.log('selected persona', selectedPersona);
-	$: selectedPersonaCommunities = communities.filter((community) =>
-		selectedPersona?.community_ids.includes(community.community_id),
-	);
 
 	// TODO refactor to some client view-model for the account
-	$: hue = randomHue($data.account.name);
+	$: hue = randomHue($data.account?.name || 'guest');
 
 	let selectedPersonaId = $ui.selectedPersonaId;
 	$: ui.selectPersona(selectedPersonaId!);
@@ -56,7 +49,7 @@
 				class:selected={$ui.mainNavView === 'explorer'}
 				class="explorer-button"
 			>
-				<ActorIcon name={selectedPersona?.name || 'no name'} />
+				<ActorIcon name={$selectedPersona?.name || 'guest'} />
 			</button>
 			<button
 				on:click={() => ui.setMainNavView('account')}
@@ -69,12 +62,12 @@
 		</div>
 		{#if $ui.mainNavView === 'explorer'}
 			<div class="explorer">
-				{#if selectedCommunity}
-					<CommunityNav {members} {selectedPersonaCommunities} {selectedCommunity} />
+				{#if $selectedCommunity && selectedPersonaCommunities}
+					<CommunityNav {selectedPersonaCommunities} selectedCommunity={$selectedCommunity} />
 					<SpaceNav
-						community={selectedCommunity}
-						spaces={selectedCommunity.spaces}
-						{selectedSpace}
+						community={$selectedCommunity}
+						spaces={$selectedCommunity.spaces}
+						selectedSpace={$selectedSpace}
 						{members}
 					/>
 				{/if}

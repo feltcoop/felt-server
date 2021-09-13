@@ -15,7 +15,7 @@
 	import MainNav from '$lib/ui/MainNav.svelte';
 	import Onboard from '$lib/ui/Onboard.svelte';
 	import {setData} from '$lib/ui/data';
-	import {setUi} from '$lib/ui/ui';
+	import {setUi, toUiStore} from '$lib/ui/ui';
 	import {setApi, toApiStore} from '$lib/ui/api';
 	import {setApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
@@ -27,7 +27,7 @@
 	const data = setData($session);
 	$: data.updateSession($session);
 	const socket = setSocket(toSocketStore(toHandleSocketMessage(data)));
-	const ui = setUi();
+	const ui = setUi(toUiStore(data));
 	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
 	const api = setApi(toApiStore(ui, data, socket));
 	const app = setApp({data, ui, api, devmode, socket});
@@ -41,7 +41,7 @@
 	const updateStateFromPageParams = (params: {community?: string; space?: string}) => {
 		if (!params.community) return;
 		const community = $data.communities.find((c) => c.name === params.community);
-		if (!community) throw Error(`TODO Unable to find community: ${params.community}`);
+		if (!community) return; // occurs when a session routes to a community they can't access
 		const {community_id} = community;
 		if (community_id !== $ui.selectedCommunityId) {
 			api.selectCommunity(community_id);
@@ -92,7 +92,7 @@
 	<Devmode {devmode} />
 </div>
 
-<FeltWindowHost query={() => ({hue: randomHue($data.account.name)})} />
+<FeltWindowHost query={() => ({hue: randomHue($data.account?.name || 'guest')})} />
 
 <style>
 	.layout {

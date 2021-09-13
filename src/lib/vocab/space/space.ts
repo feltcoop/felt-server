@@ -32,12 +32,19 @@ export const validateSpaceParams = (): ValidateFunction<SpaceParams> =>
 	_validateSpaceParams || (_validateSpaceParams = ajv.compile(SpaceParamsSchema));
 let _validateSpaceParams: ValidateFunction<SpaceParams> | undefined;
 
-//TODO make TypeScript String enum
-export const SpaceTypes = {
-	Chat: 'Chat',
-	Board: 'Board',
-	Forum: 'Forum',
-	Notes: 'Notes',
-	Voice: 'Voice',
-	Iframe: 'Iframe',
-};
+export enum SpaceType {
+	Chat = 'Chat',
+	Board = 'Board',
+	Forum = 'Forum',
+	Notes = 'Notes',
+	Voice = 'Voice',
+	Iframe = 'Iframe',
+}
+export const spaceTypes: SpaceType[] = Object.keys(SpaceType) as SpaceType[];
+
+// TODO refactor? rename? or how to define this?
+export interface SpaceViewData {
+	type: SpaceType;
+	props: SpaceProps;
+}
+export type SpaceProps = any; // TODO generic per type?
