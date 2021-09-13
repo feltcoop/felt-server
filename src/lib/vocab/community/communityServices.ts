@@ -18,7 +18,7 @@ export const readCommunitiesService: Service<
 	{communities: Community[]}
 > = {
 	name: 'read_communities',
-	http: {
+	route: {
 		path: '/api/v1/communities',
 		method: 'get',
 	},
@@ -48,7 +48,7 @@ export const readCommunityService: Service<
 	{community: Community}
 > = {
 	name: 'read_community',
-	http: {
+	route: {
 		path: '/api/v1/communities/:community_id',
 		method: 'get',
 	},
@@ -85,7 +85,7 @@ export const createCommunityService: Service<
 	{community: Community}
 > = {
 	name: 'create_community',
-	http: {
+	route: {
 		path: '/api/v1/communities',
 		method: 'post',
 	},
@@ -130,7 +130,7 @@ const CreateMemberServiceParams = MemberParamsSchema;
 //Creates a new member relation for a community
 export const createMemberService: Service<typeof CreateMemberServiceParams, {member: Member}> = {
 	name: 'create_member',
-	http: {
+	route: {
 		path: '/api/v1/members',
 		method: 'post',
 	},

@@ -12,7 +12,7 @@ const ReadFilesServiceParams = Type.Object(
 
 export const readFilesService: Service<typeof ReadFilesServiceParams, {files: File[]}> = {
 	name: 'read_files',
-	http: {
+	route: {
 		path: '/api/v1/spaces/:space_id/files',
 		method: 'get',
 	},
@@ -43,7 +43,7 @@ const CreateFileServiceParams = Type.Object(
 // TODO should this use the `FileParams` type?
 export const createFileService: Service<typeof CreateFileServiceParams, {file: File}> = {
 	name: 'create_file',
-	http: {
+	route: {
 		path: '/api/v1/spaces/:space_id/files',
 		method: 'post',
 	},

@@ -13,7 +13,7 @@ const ReadSpaceServiceParams = Type.Object(
 //Returns a single space object
 export const readSpaceService: Service<typeof ReadSpaceServiceParams, {space: Space}> = {
 	name: 'read_space',
-	http: {
+	route: {
 		path: '/api/v1/spaces/:space_id',
 		method: 'get',
 	},
@@ -44,7 +44,7 @@ const ReadSpacesServiceSchema = Type.Object(
 //Returns all spaces in a given community
 export const readSpacesService: Service<typeof ReadSpacesServiceSchema, {spaces: Space[]}> = {
 	name: 'read_spaces',
-	http: {
+	route: {
 		path: '/api/v1/communities/:community_id/spaces',
 		method: 'get',
 	},
@@ -83,7 +83,7 @@ const CreateSpaceServiceSchema = Type.Object(
 //Creates a new space for a given community
 export const createSpaceService: Service<typeof CreateSpaceServiceSchema, {space: Space}> = {
 	name: 'create_space',
-	http: {
+	route: {
 		path: '/api/v1/communities/:community_id/spaces',
 		method: 'post',
 	},
