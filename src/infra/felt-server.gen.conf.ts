@@ -1,16 +1,16 @@
 import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
 
 // TODO fix gro :|
-// import {SERVER_NAME, API_SERVER_HOST, SVELTEKIT_SERVER_HOST} from '$lib/constants.js';
+// import {SERVER_HOST, API_SERVER_HOST, SVELTEKIT_SERVER_HOST} from '$lib/constants.js';
 
-export const SERVER_NAME = 'felt.dev';
+export const SERVER_HOST = 'felt.dev';
 export const SVELTEKIT_SERVER_HOST = 'localhost:3000';
 export const API_SERVER_HOST = 'localhost:3001';
 
 // Outputs an nginx config with custom values.
 export const gen: Gen = async () => {
 	// TODO source these from config and extend in user projects
-	const serverName = SERVER_NAME;
+	const serverName = SERVER_HOST;
 	const serverUrl = API_SERVER_HOST;
 	// TODO delete this var after switching to the `adapter-node` middleware
 	const staticServerUrl = SVELTEKIT_SERVER_HOST;
