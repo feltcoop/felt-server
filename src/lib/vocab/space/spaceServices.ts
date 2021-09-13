@@ -88,7 +88,7 @@ export const createSpaceService: Service<typeof CreateSpaceServiceSchema, {space
 		method: 'post',
 	},
 	paramsSchema: CreateSpaceServiceSchema,
-	// TODO verify the `account_id` has permission to modify this space
+	// TODO security verify the `account_id` has permission to modify this space
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
 	handle: async (server, params) => {
 		const {db} = server;
