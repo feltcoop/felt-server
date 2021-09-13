@@ -1,4 +1,5 @@
 import type {Service, ServiceParamsSchema, ServiceResponseData} from '$lib/server/service';
+import {createPersonaService} from '$lib/vocab/persona/personaServices';
 import {
 	readCommunityService,
 	readCommunitiesService,
@@ -18,6 +19,7 @@ export const services: Map<string, Service<ServiceParamsSchema, ServiceResponseD
 		readCommunityService,
 		readCommunitiesService,
 		createCommunityService,
+		createPersonaService,
 		createMemberService,
 		readFilesService,
 		createFileService,
