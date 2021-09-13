@@ -1,12 +1,29 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {Community} from '$lib/vocab/community/community.js';
+import type {Community, CommunityParams} from '$lib/vocab/community/community.js';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 
 export const communityRepo = (db: Database) => ({
+	create: async ({name, persona_id}: CommunityParams): Promise<Result<{value: Community}>> => {
+		const data = await db.sql<Community[]>`
+			INSERT INTO communities (name) VALUES (
+				${name}
+			) RETURNING *
+		`;
+		console.log('[db] created community', data, {persona_id});
+		const community = data[0];
+		const community_id = community.community_id;
+		// TODO more robust error handling or condense into single query
+		const memberResult = await db.repos.member.create({persona_id, community_id});
+		if (!memberResult.ok) return memberResult;
+		const spacesResult = await db.repos.space.createDefaultSpaces(community_id);
+		if (!spacesResult.ok) return spacesResult;
+		community.spaces = spacesResult.value;
+		return {ok: true, value: community};
+	},
 	findById: async (
-		community_id: string,
+		community_id: number,
 	): Promise<Result<{value: Community}, {type: 'no_community_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for community id: ${community_id}`);
 		const data = await db.sql<Community[]>`
@@ -45,23 +62,5 @@ export const communityRepo = (db: Database) => ({
     `;
 		console.log('[db.filterByAccount]', data.length);
 		return {ok: true, value: data};
-	},
-	// TODO community params
-	create: async (name: string, persona_id: number): Promise<Result<{value: Community}>> => {
-		const data = await db.sql<Community[]>`
-      INSERT INTO communities (name) VALUES (
-        ${name}
-      ) RETURNING *
-    `;
-		console.log('[db] created community', data, {persona_id});
-		const community = data[0];
-		const community_id = community.community_id;
-		// TODO more robust error handling or condense into single query
-		const memberResult = await db.repos.member.create(persona_id, community_id);
-		if (!memberResult.ok) return memberResult;
-		const spacesResult = await db.repos.space.createDefaultSpaces(community_id);
-		if (!spacesResult.ok) return spacesResult;
-		community.spaces = spacesResult.value;
-		return {ok: true, value: community};
 	},
 });

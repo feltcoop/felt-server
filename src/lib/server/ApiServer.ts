@@ -3,8 +3,10 @@ import type {Server as HttpsServer} from 'https';
 import type {Polka, Request as PolkaRequest, Middleware as PolkaMiddleware} from 'polka';
 import bodyParser from 'body-parser';
 import {Logger} from '@feltcoop/felt/util/log.js';
-import {blue} from '@feltcoop/felt/util/terminal.js';
+import {blue, red} from '@feltcoop/felt/util/terminal.js';
 import type ws from 'ws';
+import {promisify} from 'util';
+import type {TSchema} from '@sinclair/typebox';
 
 import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.js';
 import {toAuthorizationMiddleware} from '$lib/session/authorizationMiddleware.js';
@@ -14,7 +16,7 @@ import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
-import type {Service, ServiceParamsSchema, ServiceResponseData} from '$lib/server/service';
+import type {Service} from '$lib/server/service';
 import {toServiceMiddleware} from '$lib/server/serviceMiddleware';
 
 const log = new Logger([blue('[ApiServer]')]);
@@ -32,7 +34,7 @@ export interface Options {
 	websocketServer: WebsocketServer;
 	port?: number;
 	db: Database;
-	services: Map<string, Service<ServiceParamsSchema, ServiceResponseData>>;
+	services: Map<string, Service<TSchema, TSchema>>;
 	loadInstance?: () => Promise<Polka | null>;
 }
 
@@ -42,7 +44,7 @@ export class ApiServer {
 	readonly websocketServer: WebsocketServer;
 	readonly port: number | undefined;
 	readonly db: Database;
-	readonly services: Map<string, Service<ServiceParamsSchema, ServiceResponseData>>;
+	readonly services: Map<string, Service<TSchema, TSchema>>;
 	readonly loadInstance: () => Promise<Polka | null>;
 
 	constructor(options: Options) {
@@ -128,10 +130,7 @@ export class ApiServer {
 		await Promise.all([
 			this.websocketServer.close(),
 			this.db.close(),
-			new Promise((resolve, reject) =>
-				// TODO remove type casting when polka types are fixed
-				(this.app.server as any as HttpServer).close((err) => (err ? resolve : reject(err))),
-			),
+			promisify(this.app.server.close).call(this.app.server),
 		]);
 	}
 
@@ -162,9 +161,25 @@ export class ApiServer {
 			return;
 		}
 
-		const response = await service.handle(this, message.params, account_id);
+		if (!service.validateParams()(message.params)) {
+			console.error(red('Failed to validate params'), service.validateParams().errors);
+			return;
+		}
 
-		// TODO what should the API for returning/broadcasting responses be?
+		// TODO do the same validation as in `serviceMiddleware`
+		const response = await service.perform(this, message.params, account_id);
+
+		if (process.env.NODE_ENV !== 'production') {
+			if (!service.validateResponse()(response.data)) {
+				console.error(
+					red(`failed to validate service response: ${service.name}`),
+					response,
+					service.validateResponse().errors,
+				);
+			}
+		}
+
+		// TODO this is very hacky -- what should the API for returning/broadcasting responses be?
 		const serializedResponse = JSON.stringify({
 			type: 'service_response',
 			messageType: message.type,

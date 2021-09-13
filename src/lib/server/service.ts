@@ -6,10 +6,7 @@ import type {ErrorResponse} from '$lib/util/error';
 
 // A `Service` can be reused across both http and websocket handlers.
 // The generics are required to avoid mistakes with service definitions.
-export interface Service<
-	TParamsSchema extends ServiceParamsSchema,
-	TResponseData extends ServiceResponseData, // TODO change to an output response schema
-> {
+export interface Service<TParamsSchema extends TSchema, TResponseSchema extends TSchema> {
 	name: string; // `snake_cased`
 	route: {
 		path: string; // e.g. '/api/v1/some/:neat/:path'
@@ -17,17 +14,16 @@ export interface Service<
 		method: 'get' | 'head' | 'patch' | 'options' | 'connect' | 'delete' | 'trace' | 'post' | 'put';
 	};
 	paramsSchema: TParamsSchema;
-	validateParams?: ValidateFunction<Static<TParamsSchema>>; // created lazily
-	// TODO is `handle` the best name?
-	handle(
+	validateParams: () => ValidateFunction<Static<TParamsSchema>>; // lazy to avoid wasteful compilation
+	responseSchema: TResponseSchema;
+	validateResponse: () => ValidateFunction<Static<TResponseSchema>>; // lazy to avoid wasteful compilation
+	perform(
 		// TODO maybe make this take a single object argument?
 		server: ApiServer,
 		params: Static<TParamsSchema>,
 		account_id: number,
-	): Promise<ServiceResponse<TResponseData>>;
+	): Promise<ServiceResponse<Static<TResponseSchema>>>;
 }
-
-export type ServiceParamsSchema = TSchema;
 
 export interface ServiceResponse<TResponseData extends ServiceResponseData> {
 	code: number;
@@ -37,4 +33,4 @@ export interface ServiceResponse<TResponseData extends ServiceResponseData> {
 	data: TResponseData | ErrorResponse;
 }
 
-export type ServiceResponseData = string | object;
+export type ServiceResponseData = object;

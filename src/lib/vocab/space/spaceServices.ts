@@ -1,24 +1,37 @@
 import {Type} from '@sinclair/typebox';
 
 import type {Service} from '$lib/server/service';
-import type {Space} from '$lib/vocab/space/space';
+import {SpaceSchema} from '$lib/vocab/space/space';
+import {toValidateSchema} from '$lib/util/ajv';
 
 const ReadSpaceServiceParams = Type.Object(
 	{
 		space_id: Type.Number(),
 	},
-	{additionalProperties: false},
+	{$id: 'ReadSpaceServiceParams', additionalProperties: false},
+);
+const ReadSpaceServiceResponse = Type.Object(
+	{
+		space: SpaceSchema,
+	},
+	{$id: 'ReadSpaceServiceResponse', additionalProperties: false},
 );
 
 //Returns a single space object
-export const readSpaceService: Service<typeof ReadSpaceServiceParams, {space: Space}> = {
+export const readSpaceService: Service<
+	typeof ReadSpaceServiceParams,
+	typeof ReadSpaceServiceResponse
+> = {
 	name: 'read_space',
 	route: {
 		path: '/api/v1/spaces/:space_id',
 		method: 'get',
 	},
 	paramsSchema: ReadSpaceServiceParams,
-	handle: async (server, params) => {
+	validateParams: toValidateSchema(ReadSpaceServiceParams),
+	responseSchema: ReadSpaceServiceResponse,
+	validateResponse: toValidateSchema(ReadSpaceServiceResponse),
+	perform: async (server, params) => {
 		const {db} = server;
 
 		console.log('[read_space] space', params.space_id);
@@ -38,18 +51,30 @@ const ReadSpacesServiceSchema = Type.Object(
 	{
 		community_id: Type.Number(),
 	},
-	{additionalProperties: false},
+	{$id: 'ReadSpacesServiceSchema', additionalProperties: false},
+);
+const ReadSpacesServiceResponse = Type.Object(
+	{
+		spaces: Type.Array(SpaceSchema),
+	},
+	{$id: 'ReadSpacesServiceResponse', additionalProperties: false},
 );
 
 //Returns all spaces in a given community
-export const readSpacesService: Service<typeof ReadSpacesServiceSchema, {spaces: Space[]}> = {
+export const readSpacesService: Service<
+	typeof ReadSpacesServiceSchema,
+	typeof ReadSpacesServiceResponse
+> = {
 	name: 'read_spaces',
 	route: {
 		path: '/api/v1/communities/:community_id/spaces',
 		method: 'get',
 	},
 	paramsSchema: ReadSpacesServiceSchema,
-	handle: async (server, params) => {
+	validateParams: toValidateSchema(ReadSpacesServiceSchema),
+	responseSchema: ReadSpacesServiceResponse,
+	validateResponse: toValidateSchema(ReadSpacesServiceResponse),
+	perform: async (server, params) => {
 		const {db} = server;
 
 		console.log('[read_spaces] retrieving spaces for community', params.community_id);
@@ -77,20 +102,32 @@ const CreateSpaceServiceSchema = Type.Object(
 		media_type: Type.String(),
 		content: Type.String(),
 	},
-	{additionalProperties: false},
+	{$id: 'CreateSpaceServiceSchema', additionalProperties: false},
+);
+const CreateSpaceServiceResponse = Type.Object(
+	{
+		space: SpaceSchema,
+	},
+	{$id: 'CreateSpaceServiceResponse', additionalProperties: false},
 );
 
 //Creates a new space for a given community
-export const createSpaceService: Service<typeof CreateSpaceServiceSchema, {space: Space}> = {
+export const createSpaceService: Service<
+	typeof CreateSpaceServiceSchema,
+	typeof CreateSpaceServiceResponse
+> = {
 	name: 'create_space',
 	route: {
 		path: '/api/v1/communities/:community_id/spaces',
 		method: 'post',
 	},
 	paramsSchema: CreateSpaceServiceSchema,
+	validateParams: toValidateSchema(CreateSpaceServiceSchema),
+	responseSchema: CreateSpaceServiceResponse,
+	validateResponse: toValidateSchema(CreateSpaceServiceResponse),
 	// TODO security: verify the `account_id` has permission to modify this space
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
-	handle: async (server, params) => {
+	perform: async (server, params) => {
 		const {db} = server;
 
 		console.log('[create_space] creating space for community', params.community_id);
