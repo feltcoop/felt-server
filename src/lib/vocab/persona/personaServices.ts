@@ -35,7 +35,7 @@ export const createPersonaService: Service<
 	validateResponse: toValidateSchema(CreatePersonaServiceResponse),
 	// TODO verify the `account_id` has permission to modify this persona
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
-	perform: async (server, params, account_id) => {
+	perform: async ({server, params, account_id}) => {
 		const {db} = server;
 
 		console.log('[create_persona] creating persona', params.name);
