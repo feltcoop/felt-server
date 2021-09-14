@@ -3,9 +3,7 @@ import node from '@sveltejs/adapter-node';
 import dotenv from 'dotenv';
 import {readFileSync} from 'fs';
 
-const {
-	development: {API_SERVER_HOST},
-} = JSON.parse(readFileSync('./src/lib/config.json', 'utf8'));
+const {API_SERVER_HOST} = JSON.parse(readFileSync('./src/lib/config.json', 'utf8'));
 
 dotenv.config();
 

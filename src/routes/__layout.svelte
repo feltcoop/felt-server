@@ -8,7 +8,7 @@
 	import {session} from '$app/stores';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {page} from '$app/stores';
-	import {browser, dev} from '$app/env';
+	import {browser} from '$app/env';
 
 	import {setSocket, toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
@@ -19,7 +19,7 @@
 	import {setApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
-	import config from '$lib/config.json';
+	import {WEBSOCKET_URL} from '$lib/config';
 	import {toHandleSocketMessage} from '$lib/ui/handleSocketMessage';
 
 	const devmode = setDevmode();
@@ -54,7 +54,7 @@
 	};
 
 	onMount(() => {
-		socket.connect(config[dev ? 'development' : 'production'].WEBSOCKET_URL);
+		socket.connect(WEBSOCKET_URL);
 		return () => {
 			socket.disconnect();
 		};

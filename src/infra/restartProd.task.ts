@@ -1,11 +1,7 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
 
-import config from '$lib/config.json';
-
-const {
-	production: {DEPLOY_USER, DEPLOY_IP},
-} = config;
+import {DEPLOY_USER, DEPLOY_IP} from '$lib/config';
 
 const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
 

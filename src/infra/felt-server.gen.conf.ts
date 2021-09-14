@@ -1,10 +1,6 @@
 import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
 
-import config from '$lib/config.json';
-
-const {
-	production: {DEPLOY_SERVER_HOST, API_SERVER_HOST, SVELTEKIT_SERVER_HOST},
-} = config;
+import {DEPLOY_SERVER_HOST, API_SERVER_HOST, SVELTEKIT_SERVER_HOST} from '$lib/config';
 
 // Outputs an nginx config with custom values.
 export const gen: Gen = async (/*{config}*/) => {
