@@ -13,7 +13,10 @@ export const membershipRepo = (db: Database) => ({
     `;
 		return {ok: true, value: data};
 	},
-	create: async ({persona_id, community_id}: MembershipParams): Promise<Result<{value: Membership}>> => {
+	create: async ({
+		persona_id,
+		community_id,
+	}: MembershipParams): Promise<Result<{value: Membership}>> => {
 		const data = await db.sql<Membership[]>`
       INSERT INTO membership (persona_id, community_id) VALUES (
         ${persona_id},${community_id}
