@@ -37,7 +37,7 @@ export const toServiceMiddleware =
 				// Should each service declare if `account_id` is required?
 				return send(res, 401, {reason: 'not logged in'});
 			}
-			const response = await service.perform(server, params, req.account_id);
+			const response = await service.perform({server, params, account_id: req.account_id});
 			if (process.env.NODE_ENV !== 'production') {
 				if (!service.validateResponse()(response.data)) {
 					console.error(red('validation failed:'), response, service.validateResponse().errors);
