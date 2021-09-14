@@ -1,8 +1,8 @@
 {
-	"API_SERVER_HOST": "localhost:3001",
-	"DEPLOY_IP": "50.116.30.248",
-	"DEPLOY_SERVER_HOST": "felt.dev",
-	"DEPLOY_USER": "root",
-	"SVELTEKIT_SERVER_HOST": "localhost:3000",
-	"WEBSOCKET_URL": "ws://localhost:3001/ws"
+  "API_SERVER_HOST": "localhost:3001",
+  "DEPLOY_IP": "50.116.30.248",
+  "DEPLOY_SERVER_HOST": "felt.dev",
+  "DEPLOY_USER": "root",
+  "SVELTEKIT_SERVER_HOST": "localhost:3000",
+  "WEBSOCKET_URL": "ws://localhost:3001/ws"
 }
