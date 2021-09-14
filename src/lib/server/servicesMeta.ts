@@ -10,6 +10,44 @@ interface ServiceMeta {
 	responseSchema: AnySchema;
 }
 
+export const create_persona: ServiceMeta = {
+	name: 'create_persona',
+	paramsSchema: {
+		$id: 'CreatePersonaServiceParams',
+		additionalProperties: false,
+		type: 'object',
+		properties: {name: {type: 'string'}},
+		required: ['name'],
+	},
+	responseSchema: {
+		$id: 'CreatePersonaServiceResponse',
+		additionalProperties: false,
+		type: 'object',
+		properties: {
+			persona: {
+				$id: 'Persona',
+				additionalProperties: false,
+				type: 'object',
+				properties: {
+					persona_id: {type: 'number'},
+					account_id: {type: 'number'},
+					name: {type: 'string'},
+					community_ids: {type: 'array', items: {type: 'number'}},
+				},
+				required: ['persona_id', 'account_id', 'name', 'community_ids'],
+			},
+			community: {
+				$id: 'CommunitySchema',
+				additionalProperties: true,
+				type: 'object',
+				properties: {community_id: {type: 'number'}, name: {type: 'string'}},
+				required: ['community_id', 'name'],
+			},
+		},
+		required: ['persona', 'community'],
+	},
+};
+
 export const create_community: ServiceMeta = {
 	name: 'create_community',
 	paramsSchema: {
@@ -54,7 +92,11 @@ export const create_member: ServiceMeta = {
 				$id: 'Member',
 				additionalProperties: false,
 				type: 'object',
-				properties: {persona_id: {type: 'number'}, community_id: {type: 'number'}},
+				properties: {
+					persona_id: {type: 'number'},
+					community_id: {type: 'number'},
+					name: {type: 'string'},
+				},
 				required: ['persona_id', 'community_id'],
 			},
 		},
