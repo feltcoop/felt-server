@@ -31,7 +31,7 @@ export const SpaceParamsSchema = Type.Object(
 export const validateSpaceParams = toValidateSchema<SpaceParams>(SpaceParamsSchema);
 
 export enum SpaceType {
-	Chat = 'Chat',
+	Room = 'Room',
 	Board = 'Board',
 	Forum = 'Forum',
 	Notes = 'Notes',

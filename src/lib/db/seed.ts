@@ -164,7 +164,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 const createDefaultFiles = async (db: Database, spaces: Space[], personas: Persona[]) => {
 	const filesContents: {[key: string]: string[]} = {
-		Chat: ['Those who know do not speak.', 'Those who speak do not know.'],
+		Room: ['Those who know do not speak.', 'Those who speak do not know.'],
 		Board: ["All the world's a stage.", 'And all the men and women merely players.'],
 		Forum: [
 			'If the evidence says you’re wrong, you don’t have the right theory.',

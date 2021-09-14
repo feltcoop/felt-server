@@ -4,10 +4,10 @@ import {SpaceType} from '$lib/vocab/space/space';
 export const toDefaultSpaces = (community_id: number): SpaceParams[] => [
 	{
 		community_id,
-		name: 'chat',
-		url: '/chat',
+		name: 'room',
+		url: '/room',
 		media_type: 'application/fuz+json',
-		content: `{"type": "${SpaceType.Chat}", "props": {"data": "/chat/files"}}`,
+		content: `{"type": "${SpaceType.Room}", "props": {"data": "/room/files"}}`,
 	},
 	{
 		community_id,
