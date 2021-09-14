@@ -22,8 +22,6 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 			return send(res, 400, {reason: 'already logged in'});
 		}
 
-		const passwordKey = await toPasswordKey(password);
-
 		// First see if the account already exists.
 		const findAccountResult = await db.repos.account.findByName(accountName);
 		console.log('[loginMiddleware] findAccountResult', findAccountResult);
@@ -31,11 +29,12 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 		if (findAccountResult.ok) {
 			// There's already an account, so proceed to log in after validating the password.
 			account = findAccountResult.value;
-			if (!(await verifyPassword(account.password, passwordKey))) {
+			if (!(await verifyPassword(password, account.password))) {
 				return send(res, 400, {reason: 'invalid account name or password'});
 			}
 		} else if (findAccountResult.type === 'no_account_found') {
 			// There's no account, so create one.
+			const passwordKey = await toPasswordKey(password);
 			const findAccountResult = await db.repos.account.create({
 				name: accountName,
 				password: passwordKey,

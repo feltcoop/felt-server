@@ -15,9 +15,9 @@ export const toPasswordKey = async (password: string): Promise<string> => {
 };
 
 // Checks if a `password` matches the generated hash and salt in `key` from `toPasswordKey`.
-export const verifyPassword = async (password: string, key: string): Promise<boolean> => {
+export const verifyPassword = async (passwordText: string, key: string): Promise<boolean> => {
 	const [salt, hash] = key.split(':');
-	return timingSafeEqual(Buffer.from(hash, 'hex'), await toHash(password, salt));
+	return timingSafeEqual(Buffer.from(hash, 'hex'), await toHash(passwordText, salt));
 };
 
 const toHash = (password: string, salt: string): Promise<Buffer> =>
