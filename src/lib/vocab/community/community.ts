@@ -54,10 +54,3 @@ export interface CommunitySpaces {
 }
 
 export type CommunitySpacesParams = CommunitySpaces;
-
-export interface Membership {
-	persona_id: number;
-	community_id: number;
-}
-
-export type MembershipParams = Membership;
