@@ -2,11 +2,11 @@ import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
 import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
 
-import constants from '$lib/constants.json';
+import config from '$lib/config.json';
 
 const {
 	production: {DEPLOY_IP, DEPLOY_USER},
-} = constants;
+} = config;
 
 const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
 

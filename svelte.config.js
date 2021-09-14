@@ -5,7 +5,7 @@ import {readFileSync} from 'fs';
 
 const {
 	development: {API_SERVER_HOST},
-} = JSON.parse(readFileSync('./src/lib/constants.json', 'utf8'));
+} = JSON.parse(readFileSync('./src/lib/config.json', 'utf8'));
 
 dotenv.config();
 
