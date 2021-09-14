@@ -154,7 +154,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 		await server.db.repos.persona.filterByAccount(account.account_id),
 	);
 	t.is(filterPersonasValue.length, 1);
-	t.equal(filterPersonasValue[0], persona);
+	t.equal(filterPersonasValue, [persona]);
 	filterPersonasValue.forEach((p) => {
 		if (!validatePersona()(p)) {
 			throw new Error(
