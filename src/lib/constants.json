@@ -1,0 +1,15 @@
+{
+  "development": {
+    "SVELTEKIT_SERVER_HOST": "localhost:3000",
+    "API_SERVER_HOST": "localhost:3001",
+    "WEBSOCKET_URL": "ws://localhost:3001/ws"
+  },
+  "production": {
+    "SVELTEKIT_SERVER_HOST": "localhost:3000",
+    "API_SERVER_HOST": "localhost:3001",
+    "WEBSOCKET_URL": "wss://staging.felt.dev/ws",
+    "DEPLOY_SERVER_HOST": "felt.dev",
+    "DEPLOY_IP": "50.116.30.248",
+    "DEPLOY_USER": "root"
+  }
+}

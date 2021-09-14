@@ -19,7 +19,7 @@
 	import {setApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
-	import {WEBSOCKET_URL} from '$lib/constants';
+	import constants from '$lib/constants.json';
 	import {toHandleSocketMessage} from '$lib/ui/handleSocketMessage';
 
 	const devmode = setDevmode();
@@ -54,7 +54,7 @@
 	};
 
 	onMount(() => {
-		socket.connect(WEBSOCKET_URL);
+		socket.connect(constants[import.meta.env.DEV ? 'development' : 'production'].WEBSOCKET_URL);
 		return () => {
 			socket.disconnect();
 		};
