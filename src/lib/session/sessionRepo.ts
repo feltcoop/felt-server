@@ -19,6 +19,8 @@ export const sessionRepo = (db: Database) => ({
 		const communities: Community[] = unwrap(
 			await db.repos.community.filterByAccount(account.account_id),
 		);
+		//due to a UX hack around inviting personas to a community, this actually returns a list of all personas on the instance
+		//TODO: sort out a better community invite flow
 		const members: Membership[] = unwrap(await db.repos.member.getAll());
 		return {
 			ok: true,
