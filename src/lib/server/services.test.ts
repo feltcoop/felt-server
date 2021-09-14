@@ -28,7 +28,7 @@ test__services('perform services', async ({server}) => {
 				)}`,
 			);
 		}
-		const response = await service.perform(server, params, account.account_id);
+		const response = await service.perform({server, params, account_id: account.account_id});
 		if (!validateSchema(service.responseSchema)(response.data)) {
 			console.error(red(`failed to validate service response: ${service.name}`), response);
 			throw new Error(

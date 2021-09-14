@@ -31,7 +31,7 @@ export const readSpaceService: Service<
 	validateParams: toValidateSchema(ReadSpaceServiceParams),
 	responseSchema: ReadSpaceServiceResponse,
 	validateResponse: toValidateSchema(ReadSpaceServiceResponse),
-	perform: async (server, params) => {
+	perform: async ({server, params}) => {
 		const {db} = server;
 
 		console.log('[read_space] space', params.space_id);
@@ -74,7 +74,7 @@ export const readSpacesService: Service<
 	validateParams: toValidateSchema(ReadSpacesServiceSchema),
 	responseSchema: ReadSpacesServiceResponse,
 	validateResponse: toValidateSchema(ReadSpacesServiceResponse),
-	perform: async (server, params) => {
+	perform: async ({server, params}) => {
 		const {db} = server;
 
 		console.log('[read_spaces] retrieving spaces for community', params.community_id);
@@ -127,7 +127,7 @@ export const createSpaceService: Service<
 	validateResponse: toValidateSchema(CreateSpaceServiceResponse),
 	// TODO security: verify the `account_id` has permission to modify this space
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
-	perform: async (server, params) => {
+	perform: async ({server, params}) => {
 		const {db} = server;
 
 		console.log('[create_space] creating space for community', params.community_id);

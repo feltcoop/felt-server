@@ -155,19 +155,19 @@ export class ApiServer {
 			console.error('[handleWebsocketMessage] invalid message', message);
 			return;
 		}
-		const service = this.services.get(message.type);
+		const {type, params} = message; // TODO parse type with a `Result`, probably
+		const service = this.services.get(type);
 		if (!service) {
-			console.error('[handleWebsocketMessage] unhandled message type', message.type);
+			console.error('[handleWebsocketMessage] unhandled message type', type);
 			return;
 		}
 
-		if (!service.validateParams()(message.params)) {
+		if (!service.validateParams()(params)) {
 			console.error(red('Failed to validate params'), service.validateParams().errors);
 			return;
 		}
 
-		// TODO do the same validation as in `serviceMiddleware`
-		const response = await service.perform(this, message.params, account_id);
+		const response = await service.perform({server: this, params, account_id});
 
 		if (process.env.NODE_ENV !== 'production') {
 			if (!service.validateResponse()(response.data)) {
@@ -182,7 +182,7 @@ export class ApiServer {
 		// TODO this is very hacky -- what should the API for returning/broadcasting responses be?
 		const serializedResponse = JSON.stringify({
 			type: 'service_response',
-			messageType: message.type,
+			messageType: type,
 			response,
 		});
 		for (const client of this.websocketServer.wss.clients) {

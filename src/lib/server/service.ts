@@ -18,11 +18,14 @@ export interface Service<TParamsSchema extends TSchema, TResponseSchema extends 
 	responseSchema: TResponseSchema;
 	validateResponse: () => ValidateFunction<Static<TResponseSchema>>; // lazy to avoid wasteful compilation
 	perform(
-		// TODO maybe make this take a single object argument?
-		server: ApiServer,
-		params: Static<TParamsSchema>,
-		account_id: number,
+		request: ServiceRequest<TParamsSchema>,
 	): Promise<ServiceResponse<Static<TResponseSchema>>>;
+}
+
+export interface ServiceRequest<TParamsSchema extends TSchema> {
+	server: ApiServer;
+	params: Static<TParamsSchema>;
+	account_id: number;
 }
 
 export interface ServiceResponse<TResponseData extends ServiceResponseData> {

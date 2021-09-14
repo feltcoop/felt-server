@@ -32,7 +32,7 @@ export const readCommunitiesService: Service<
 	validateParams: toValidateSchema(ReadCommunitiesServiceParams),
 	responseSchema: ReadCommunitiesServiceResponse,
 	validateResponse: toValidateSchema(ReadCommunitiesServiceResponse),
-	perform: async (server, _params, account_id) => {
+	perform: async ({server, account_id}) => {
 		const {db} = server;
 		const findCommunitiesResult = await db.repos.community.filterByAccount(account_id);
 		if (findCommunitiesResult.ok) {
@@ -71,7 +71,7 @@ export const readCommunityService: Service<
 	validateParams: toValidateSchema(ReadCommunityServiceParams),
 	responseSchema: ReadCommunityServiceResponse,
 	validateResponse: toValidateSchema(ReadCommunityServiceResponse),
-	perform: async (server, params, account_id) => {
+	perform: async ({server, params, account_id}) => {
 		const {db} = server;
 		console.log('[read_community] account', account_id); // TODO logging
 		console.log('[read_community] community', params.community_id);
@@ -118,7 +118,7 @@ export const createCommunityService: Service<
 	responseSchema: CreateCommunityServiceResponse,
 	validateResponse: toValidateSchema(CreateCommunityServiceResponse),
 	// TODO declarative validation for `req.body` and the rest
-	perform: async (server, params, account_id) => {
+	perform: async ({server, params, account_id}) => {
 		if (!params.name) {
 			// TODO declarative validation
 			return {code: 400, data: {reason: 'invalid name'}};
@@ -181,7 +181,7 @@ export const createMemberService: Service<
 	validateParams: toValidateSchema(CreateMemberServiceParams),
 	responseSchema: CreateMemberServiceResponse,
 	validateResponse: toValidateSchema(CreateMemberServiceResponse),
-	perform: async (server, params) => {
+	perform: async ({server, params}) => {
 		console.log('[create_member] creating member', params.persona_id, params.community_id);
 
 		const createMemberResult = await server.db.repos.member.create(params);
