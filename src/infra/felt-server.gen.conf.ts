@@ -8,7 +8,7 @@ const {
 
 // Outputs an nginx config with custom values.
 export const gen: Gen = async (/*{config}*/) => {
-	// TODO source these from config (see ^^ -- and extend in user projects)
+	// TODO source these from runtime Gro config so they can be extended by user projects
 	return `
 
 server {
