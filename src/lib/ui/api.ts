@@ -50,7 +50,7 @@ export interface ApiStore {
 	inviteMember: (
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
 		persona_id: number,
-	) => Promise<ApiResult<{value: {member: Membership}}>>;
+	) => Promise<ApiResult<{value: {membership: Membership}}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{value: {file: File}}>>;
 	loadFiles: (space_id: number) => Promise<ApiResult<{value: {file: File[]}}>>;
 }
@@ -186,16 +186,16 @@ export const toApiStore = (ui: UiStore, data: DataStore, socket: SocketStore): A
 			};
 
 			// TODO change this input, consider `/api/v1/invitations`
-			const res = await fetch(`/api/v1/members`, {
+			const res = await fetch(`/api/v1/memberships`, {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify(doc),
 			});
 			if (res.ok) {
 				try {
-					const result: {member: Membership} = await res.json(); // TODO api types
-					console.log('inviteMember result', result);
-					data.addMember(result.member);
+					const result: {membership: Membership} = await res.json(); // TODO api types
+					console.log('addMembership result', result);
+					data.addMembership(result.membership);
 					return {ok: true, value: result};
 				} catch (err) {
 					return {ok: false, reason: err.message};

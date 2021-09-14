@@ -29,7 +29,7 @@ export class Database {
 		session: sessionRepo(this),
 		account: accountRepo(this),
 		persona: personaRepo(this),
-		member: membershipRepo(this),
+		membership: membershipRepo(this),
 		community: communityRepo(this),
 		space: spaceRepo(this),
 		file: fileRepo(this),

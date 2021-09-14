@@ -18,7 +18,7 @@ export const membershipRepo = (db: Database) => ({
 		community_id,
 	}: MembershipParams): Promise<Result<{value: Membership}>> => {
 		const data = await db.sql<Membership[]>`
-      INSERT INTO membership (persona_id, community_id) VALUES (
+      INSERT INTO memberships (persona_id, community_id) VALUES (
         ${persona_id},${community_id}
       ) RETURNING *			
     `;

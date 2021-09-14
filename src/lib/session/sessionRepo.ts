@@ -21,10 +21,10 @@ export const sessionRepo = (db: Database) => ({
 		);
 		//due to a UX hack around inviting personas to a community, this actually returns a list of all personas on the instance
 		//TODO: sort out a better community invite flow
-		const members: Membership[] = unwrap(await db.repos.member.getAll());
+		const membership: Membership[] = unwrap(await db.repos.membership.getAll());
 		return {
 			ok: true,
-			value: {account, personas, communities, members},
+			value: {account, personas, communities, membership},
 		};
 	},
 });

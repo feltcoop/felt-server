@@ -5,7 +5,7 @@ import {
 	readCommunityService,
 	readCommunitiesService,
 	createCommunityService,
-	createMemberService,
+	createMembershipService,
 } from '$lib/vocab/community/communityServices';
 import {readFilesService, createFileService} from '$lib/vocab/file/fileServices';
 import {
@@ -18,7 +18,7 @@ export const services: Map<string, Service<TSchema, TSchema>> = new Map(
 	// TODO verify no duplicate names?
 	[
 		createCommunityService,
-		createMemberService,
+		createMembershipService,
 		createSpaceService,
 		createFileService,
 		readCommunityService,

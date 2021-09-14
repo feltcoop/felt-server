@@ -29,7 +29,7 @@ export interface DataState {
 	account: AccountModel | null;
 	communities: CommunityModel[];
 	spaces: Space[];
-	members: Membership[];
+	membership: Membership[];
 	personas: Persona[];
 	filesBySpace: Record<number, File[]>;
 }
@@ -39,7 +39,7 @@ export interface DataStore {
 	updateSession: (session: ClientSession) => void;
 	addCommunity: (community: CommunityModel, persona_id: number) => void;
 	addSpace: (space: Space, community_id: number) => void;
-	addMember: (member: Membership) => void;
+	addMembership: (membership: Membership) => void;
 	addFile: (file: File) => void;
 	setFiles: (space_id: number, files: File[]) => void;
 }
@@ -83,10 +83,10 @@ export const toDataStore = (initialSession: ClientSession): DataStore => {
 				),
 			}));
 		},
-		addMember: (member) => {
+		addMembership: (membership) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
-			console.log('[data.addMember]', member);
-			update(($data) => ({...$data, members: $data.members.concat(member)}));
+			console.log('[data.addMembership]', membership);
+			update(($data) => ({...$data, membership: $data.membership.concat(membership)}));
 		},
 		addFile: (file) => {
 			console.log('[data.addFile]', file);
@@ -118,7 +118,7 @@ const toDefaultData = (session: ClientSession): DataState => {
 			account: null,
 			communities: [],
 			spaces: [],
-			members: [],
+			membership: [],
 			personas: [],
 			filesBySpace: {},
 		};
@@ -128,7 +128,7 @@ const toDefaultData = (session: ClientSession): DataState => {
 			communities: session.communities.map((community) => toCommunityModel(community)),
 			// TODO session should already have a flat array of spaces
 			spaces: session.communities.flatMap((community) => community.spaces),
-			members: session.members,
+			membership: session.membership,
 			personas: session.personas,
 			filesBySpace: {},
 		};
