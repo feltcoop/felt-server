@@ -18,8 +18,8 @@ import {
 export const services: Map<string, Service<TSchema, TSchema>> = new Map(
 	// TODO verify no duplicate names?
 	[
-		createCommunityService,
 		createPersonaService,
+		createCommunityService,
 		createMemberService,
 		createSpaceService,
 		createFileService,
