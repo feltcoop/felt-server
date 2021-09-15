@@ -1,5 +1,7 @@
 // this is a JS file so it can be imported by `svelte.config.js`
 
+// TODO figure out how to allow user projects to override these vars
+
 const dev = import.meta.env?.DEV ?? process.env.NODE_ENV !== 'production';
 
 export const SVELTEKIT_SERVER_HOST = 'localhost:3000';
