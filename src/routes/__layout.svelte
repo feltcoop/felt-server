@@ -21,6 +21,7 @@
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {WEBSOCKET_URL} from '$lib/constants';
 	import {toHandleSocketMessage} from '$lib/ui/handleSocketMessage';
+	import {toApiClient} from '$lib/ui/WebsocketApiClient';
 
 	const devmode = setDevmode();
 	const data = setData($session);
@@ -28,7 +29,8 @@
 	const socket = setSocket(toSocketStore(toHandleSocketMessage(data)));
 	const ui = setUi(toUiStore(data));
 	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
-	const api = setApi(toApiStore(ui, data, socket));
+	const websocketApiClient = toApiClient(socket, data); // TODO how to handle updates on $socket?
+	const api = setApi(toApiStore(ui, data, websocketApiClient));
 	const app = setApp({data, ui, api, devmode, socket});
 	browser && console.log('app', app);
 

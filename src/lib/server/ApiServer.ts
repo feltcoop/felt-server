@@ -18,6 +18,7 @@ import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import type {Service} from '$lib/server/service';
 import {toServiceMiddleware} from '$lib/server/serviceMiddleware';
+import {JsonRpcResponse, parseJsonRpcRequest} from '$lib/util/jsonRpc';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -134,31 +135,31 @@ export class ApiServer {
 		]);
 	}
 
-	handleWebsocketMessage = async (_socket: ws, rawMessage: ws.Data, account_id: number) => {
-		if (typeof rawMessage !== 'string') {
+	handleWebsocketMessage = async (_socket: ws, messageData: ws.Data, account_id: number) => {
+		if (typeof messageData !== 'string') {
 			console.error(
 				'[handleWebsocketMessage] cannot handle websocket message; currently only supports strings',
 			);
 			return;
 		}
 
-		let message: any; // TODO type
+		let rawMessage: any; // TODO type
 		try {
-			message = JSON.parse(rawMessage);
+			rawMessage = JSON.parse(messageData);
 		} catch (err) {
 			console.error('[handleWebsocketMessage] failed to parse message', err);
 			return;
 		}
-		console.log('[handleWebsocketMessage]', message);
-		if (!(message as any)?.type) {
-			// TODO proper automated validation
-			console.error('[handleWebsocketMessage] invalid message', message);
+		console.log('[handleWebsocketMessage]', rawMessage);
+		const message = parseJsonRpcRequest(rawMessage);
+		if (!message) {
+			console.error('[handleWebsocketMessage] invalid message', rawMessage);
 			return;
 		}
-		const {type, params} = message; // TODO parse type with a `Result`, probably
-		const service = this.services.get(type);
+		const {method, params} = message;
+		const service = this.services.get(method);
 		if (!service) {
-			console.error('[handleWebsocketMessage] unhandled message type', type);
+			console.error('[handleWebsocketMessage] unhandled request method', method);
 			return;
 		}
 
@@ -167,6 +168,7 @@ export class ApiServer {
 			return;
 		}
 
+		// TODO probably should be `response` with `data` to include other metadata/effects
 		const response = await service.perform({server: this, params, account_id});
 
 		if (process.env.NODE_ENV !== 'production') {
@@ -180,11 +182,13 @@ export class ApiServer {
 		}
 
 		// TODO this is very hacky -- what should the API for returning/broadcasting responses be?
-		const serializedResponse = JSON.stringify({
-			type: 'service_response',
-			messageType: type,
-			response,
-		});
+		const responseMessage: JsonRpcResponse = {
+			jsonrpc: '2.0',
+			id: message.id,
+			result: response, // TODO see above where `response` is assigned, should probably be `response.data`
+		};
+		console.log('sending responseMessage', responseMessage);
+		const serializedResponse = JSON.stringify(responseMessage);
 		for (const client of this.websocketServer.wss.clients) {
 			client.send(serializedResponse);
 		}

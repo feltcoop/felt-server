@@ -37,7 +37,7 @@ export interface HandleSocketMessage {
 	(rawMessage: any): void;
 }
 
-export const toSocketStore = (handleMessage: HandleSocketMessage) => {
+export const toSocketStore = (handleMessage: HandleSocketMessage): SocketStore => {
 	const {subscribe, update} = writable<SocketState>(toDefaultSocketState(), () => {
 		console.log('[socket] listen store');
 		return () => {
@@ -62,12 +62,11 @@ export const toSocketStore = (handleMessage: HandleSocketMessage) => {
 		};
 		ws.onmessage = (e) => {
 			// console.log('[socket] on message');
-			handleMessage(e.data);
+			handleMessage(e.data); // TODO how to design this with the api client?
 		};
 		ws.onerror = (e) => {
 			console.log('[socket] error', e);
 			update(($socket) => ({...$socket, status: 'failure', error: 'unknown websocket error'}));
-			status = 'failure';
 		};
 		console.log('[socket] ws', ws);
 

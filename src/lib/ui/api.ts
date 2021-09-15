@@ -11,10 +11,10 @@ import {toCommunityModel} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Member, MemberParams} from '$lib/vocab/member/member';
 import type {File, FileParams} from '$lib/vocab/file/file';
-import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ErrorResponse} from '$lib/util/error';
+import type {ApiClient} from '$lib/ui/ApiClient';
 
 // TODO refactor/rethink
 
@@ -55,7 +55,7 @@ export interface ApiStore {
 	loadFiles: (space_id: number) => Promise<ApiResult<{value: {file: File[]}}>>;
 }
 
-export const toApiStore = (ui: UiStore, data: DataStore, socket: SocketStore): ApiStore => {
+export const toApiStore = (ui: UiStore, data: DataStore, client: ApiClient): ApiStore => {
 	// TODO set the `api` state with progress of remote calls
 	const {subscribe} = writable<ApiState>(toDefaultApiState());
 
@@ -206,17 +206,16 @@ export const toApiStore = (ui: UiStore, data: DataStore, socket: SocketStore): A
 		},
 		createFile: async (params: FileParams) => {
 			// TODO type
-			const message: {type: 'create_file'; params: FileParams} = {
-				type: 'create_file',
-				params,
-			};
-			socket.send(message);
+			const result = await client.invoke('create_file', params);
+			console.log('result', result);
+			// const message: {type: 'create_file'; params: FileParams} = {
+			// 	type: 'create_file',
+			// 	params,
+			// };
+			// socket.send(message);
 			return {
 				ok: true,
-				get value() {
-					// TODO change API to be fire-and-forget? or return this value somehow?
-					throw Error('TODO currently incompatible with value');
-				},
+				result,
 			} as any;
 			// TODO below is the REST API version -- need to extract separate clients
 			/*

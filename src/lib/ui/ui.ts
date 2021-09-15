@@ -43,7 +43,7 @@ export interface UiStore {
 	setMainNavView: (mainNavView: MainNavView) => void;
 }
 
-export const toUiStore = (data: DataStore) => {
+export const toUiStore = (data: DataStore): UiStore => {
 	const state = writable<UiState>(toDefaultUiState());
 
 	const {subscribe, update} = state;

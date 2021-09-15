@@ -12,8 +12,12 @@ import type {AnySchema} from 'ajv';
 
 // this module is a client-friendly subset of data from '$lib/server/services.ts'
 
-interface ServiceMeta {
+export interface ServiceMeta {
   name: string;
+  route: {
+    path: string;
+    method: string;
+  };
   paramsSchema: AnySchema;
   responseSchema: AnySchema;
 }
@@ -24,6 +28,10 @@ ${Array.from(services.values()).reduce(
 		`
 export const ${service.name}: ServiceMeta = {
   name: '${service.name}',
+  route: {
+    path: '${service.route.path}',
+    method: '${service.route.method}',
+  },
   paramsSchema: ${JSON.stringify(service.paramsSchema)},
   responseSchema: ${JSON.stringify(service.responseSchema)},
 };

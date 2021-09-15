@@ -4,14 +4,22 @@ import type {AnySchema} from 'ajv';
 
 // this module is a client-friendly subset of data from '$lib/server/services.ts'
 
-interface ServiceMeta {
+export interface ServiceMeta {
 	name: string;
+	route: {
+		path: string;
+		method: string;
+	};
 	paramsSchema: AnySchema;
 	responseSchema: AnySchema;
 }
 
 export const create_community: ServiceMeta = {
 	name: 'create_community',
+	route: {
+		path: '/api/v1/communities',
+		method: 'post',
+	},
 	paramsSchema: {
 		$id: 'CreateCommunityServiceParams',
 		additionalProperties: false,
@@ -38,6 +46,10 @@ export const create_community: ServiceMeta = {
 
 export const create_member: ServiceMeta = {
 	name: 'create_member',
+	route: {
+		path: '/api/v1/members',
+		method: 'post',
+	},
 	paramsSchema: {
 		$id: 'CreateMemberServiceParams',
 		additionalProperties: false,
@@ -64,6 +76,10 @@ export const create_member: ServiceMeta = {
 
 export const create_space: ServiceMeta = {
 	name: 'create_space',
+	route: {
+		path: '/api/v1/communities/:community_id/spaces',
+		method: 'post',
+	},
 	paramsSchema: {
 		$id: 'CreateSpaceServiceSchema',
 		additionalProperties: false,
@@ -102,6 +118,10 @@ export const create_space: ServiceMeta = {
 
 export const create_file: ServiceMeta = {
 	name: 'create_file',
+	route: {
+		path: '/api/v1/spaces/:space_id/files',
+		method: 'post',
+	},
 	paramsSchema: {
 		$id: 'CreateFileServiceParams',
 		additionalProperties: false,
@@ -133,6 +153,10 @@ export const create_file: ServiceMeta = {
 
 export const read_community: ServiceMeta = {
 	name: 'read_community',
+	route: {
+		path: '/api/v1/communities/:community_id',
+		method: 'get',
+	},
 	paramsSchema: {
 		$id: 'ReadCommunityServiceParams',
 		additionalProperties: false,
@@ -159,6 +183,10 @@ export const read_community: ServiceMeta = {
 
 export const read_communities: ServiceMeta = {
 	name: 'read_communities',
+	route: {
+		path: '/api/v1/communities',
+		method: 'get',
+	},
 	paramsSchema: {
 		$id: 'ReadCommunitiesServiceParams',
 		additionalProperties: false,
@@ -187,6 +215,10 @@ export const read_communities: ServiceMeta = {
 
 export const read_space: ServiceMeta = {
 	name: 'read_space',
+	route: {
+		path: '/api/v1/spaces/:space_id',
+		method: 'get',
+	},
 	paramsSchema: {
 		$id: 'ReadSpaceServiceParams',
 		additionalProperties: false,
@@ -219,6 +251,10 @@ export const read_space: ServiceMeta = {
 
 export const read_spaces: ServiceMeta = {
 	name: 'read_spaces',
+	route: {
+		path: '/api/v1/communities/:community_id/spaces',
+		method: 'get',
+	},
 	paramsSchema: {
 		$id: 'ReadSpacesServiceSchema',
 		additionalProperties: false,
@@ -254,6 +290,10 @@ export const read_spaces: ServiceMeta = {
 
 export const read_files: ServiceMeta = {
 	name: 'read_files',
+	route: {
+		path: '/api/v1/spaces/:space_id/files',
+		method: 'get',
+	},
 	paramsSchema: {
 		$id: 'ReadFilesServiceParams',
 		additionalProperties: false,
