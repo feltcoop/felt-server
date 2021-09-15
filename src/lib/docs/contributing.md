@@ -26,9 +26,11 @@ is the only command you'll need to run during development.
 It starts both SvelteKit and an API server,
 and when files change they should update or restart automatically.
 
+## manual processes
+
 There's two manual steps that you may sometimes need to perform:
 
-## `gro format`
+### `gro format`
 
 Gro integrates formatting with [Prettier](https://github.com/prettier/prettier).
 [This project's CI](/.github/workflows/check.yml)
@@ -38,7 +40,7 @@ You can manually format the project with `gro format`, and if you're using VSCod
 combined with the setting `"editor.formatOnSave": true`
 should take care of formatting automatically.
 
-## `gro gen`
+### `gro gen`
 
 Gro provides the [`gro gen`](https://github.com/feltcoop/gro/blob/main/src/docs/gen.md)
 task to make it easier to derive data and other files from single sources of truth.
@@ -54,6 +56,16 @@ to help ensure that the committed files remain in sync.
 
 > The files that `gro gen` outputs are formatted automatically when possible,
 > so there's no need to get things perfect.
+
+## Building
+
+The [`gro build`](https://github.com/feltcoop/gro/blob/main/src/docs/build.md) command
+outputs artifacts to the gitignored `/dist` directory,
+which can then deployed to production and published to a package registry like npm.
+For SvelteKit projects, `gro build` wraps `svelte-kit build`,
+and it also produces directories for each of
+[Gro's configured production builds](https://github.com/feltcoop/gro/blob/main/src/docs/config.md).
+See [Gro's build docs](https://github.com/feltcoop/gro/blob/main/src/docs/build.md) for more.
 
 ## Deploying
 
