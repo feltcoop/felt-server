@@ -182,29 +182,6 @@ export const toApiStore = (
 				ok: true,
 				result,
 			} as any;
-			// TODO below is the REST API version -- need to extract separate clients
-			/*
-			const res = await fetch(`/api/v1/spaces/${space.space_id}/files`, {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({
-					content,
-					actor_id: persona_id,
-				}),
-			});
-			if (res.ok) {
-				try {
-					console.log('file sent, broadcasting to server');
-					const json = await res.json();
-					socket.send(json); // TODO refactor
-					return {ok: true, value: json};
-				} catch (err) {
-					return {ok: false, reason: err.message};
-				}
-			} else {
-				throw Error(`error sending file: ${res.status}: ${res.statusText}`);
-			}
-			*/
 		},
 		loadFiles: async (space_id) => {
 			data.setFiles(space_id, []);

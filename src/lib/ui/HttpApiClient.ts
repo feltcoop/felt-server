@@ -37,6 +37,7 @@ export const toHttpApiClient = <
 				return result;
 			} catch (err) {
 				// TODO handle errors
+				// (`error sending file: ${res.status}: ${res.statusText}`);
 				return null as any;
 			}
 		},
