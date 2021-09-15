@@ -15,7 +15,7 @@ export const toApiClient = <
 			params: TParams,
 		): Promise<TResultMap[TMethod]> => {
 			console.log('[http api client] method, params', method, params);
-			const serviceMeta: ServiceMeta = (servicesMeta as any)[method];
+			const serviceMeta: ServiceMeta = (servicesMeta as any)[method]; // TODO lighten this dependency, don't need the schemas
 			if (!serviceMeta) throw Error(`Unable to find serviceMeta: ${method}`);
 			const path = method;
 			const res = await fetch(path, {
