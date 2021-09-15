@@ -5,12 +5,18 @@
 import {toToClientId} from '@feltcoop/felt/util/id.js';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
-import type {SocketStore} from '$lib/ui/socket';
-import type {JsonRpcRequest} from '$lib/util/jsonRpc';
+import type {JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 import type {DataStore} from '$lib/ui/data';
 
 const toId = toToClientId('');
+
+export interface WebsocketApiClient<
+	TParamsMap extends Record<string, object>,
+	TResultMap extends Record<string, object>,
+> extends ApiClient<TParamsMap, TResultMap> {
+	handle: (rawMessage: any) => void;
+}
 
 interface PendingRequest<T = unknown> {
 	request: JsonRpcRequest;
@@ -23,50 +29,12 @@ export const toApiClient = <
 	TParamsMap extends Record<string, object>,
 	TResultMap extends Record<string, object>,
 >(
-	socket: SocketStore,
-	data: DataStore,
-): ApiClient<TParamsMap, TResultMap> => {
-	// TODO how to do this? should the `ApiClient` be created every time the `ws` in the store changes?
-	let ws: WebSocket | null = null;
-	socket.subscribe(($socket) => {
-		if (ws) {
-			// TODO how to handle teardown?
-			ws.onmessage = null;
-		}
-		ws = $socket.ws;
-		if (!ws) return;
-		ws.onmessage = handle; // TODO ? how to play nicely with the others? should we subscribe to the store?
-	});
-
+	send: (request: JsonRpcRequest) => void,
+	data: DataStore, // TODO extract
+): WebsocketApiClient<TParamsMap, TResultMap> => {
 	const pendingRequests: Map<string, any> = new Map(); // TODO
 
-	// TODO this is very wonky, overwrites the socket `onmessage` handler
-	// should this be on the client?
-	const handle = (rawMessage: any): void => {
-		const message = parseJsonRpcResponse(JSON.parse(rawMessage.data));
-		console.log('handle message', message);
-		if (!message) return;
-		const found = pendingRequests.get(message.id);
-		if (!found) {
-			console.error(`Unable to find message with id ${message.id}`);
-			return;
-		}
-		pendingRequests.delete(message.id);
-		// TODO extract this
-		if (found.request.method === 'create_file') {
-			if (message.result.code === 200) {
-				console.log('message', message);
-				data.addFile(message.result.data.file);
-			} else {
-				console.error('[handleSocketMessage] unhandled response code', message.result.code);
-			}
-		} else {
-			console.error('[handleSocketMessage] unhandled messageMethod', found.request.method);
-		}
-		found.resolve(message.result);
-	};
-
-	const client: ApiClient<TParamsMap, TResultMap> = {
+	const client: WebsocketApiClient<TParamsMap, TResultMap> = {
 		invoke: async <TMethod extends string, TParams extends TParamsMap[TMethod]>(
 			method: TMethod,
 			params: TParams,
@@ -90,12 +58,58 @@ export const toApiClient = <
 			});
 
 			pendingRequests.set(request.id, pendingRequest);
-			socket.send(request);
+			send(request);
 			return pendingRequest.promise;
+		},
+		handle: (rawMessage: any): void => {
+			const message = parseSocketMessage(rawMessage);
+			console.log('handle message', message);
+			if (!message) return;
+			const found = pendingRequests.get(message.id);
+			if (!found) {
+				console.error(`Unable to find message with id ${message.id}`);
+				return;
+			}
+			pendingRequests.delete(message.id);
+			// TODO extract this
+			if (found.request.method === 'create_file') {
+				if (message.result.code === 200) {
+					console.log('message', message);
+					data.addFile(message.result.data.file);
+				} else {
+					console.error('[handleSocketMessage] unhandled response code', message.result.code);
+				}
+			} else {
+				console.error('[handleSocketMessage] unhandled messageMethod', found.request.method);
+			}
+			found.resolve(message.result);
 		},
 		close: () => {
 			//
 		},
 	};
 	return client;
+};
+
+// TODO do we need to support another type of message, the non-response kind?
+const parseSocketMessage = (rawMessage: any): JsonRpcResponse<any> | null => {
+	if (typeof rawMessage !== 'string') {
+		console.error(
+			'[parseSocketMessage] cannot parse websocket message; currently only supports strings',
+		);
+		return null;
+	}
+	let message: any;
+	try {
+		message = JSON.parse(rawMessage);
+	} catch (err) {
+		console.error('[parseSocketMessage] message data is not valid JSON', rawMessage, err);
+		return null;
+	}
+	const response = parseJsonRpcResponse(message);
+	if (!response) {
+		console.error('[parseSocketMessage] message data is not valid JSON-RPC 2.0');
+		return null;
+	}
+	return response;
 };

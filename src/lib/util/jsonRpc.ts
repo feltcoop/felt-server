@@ -8,6 +8,8 @@ export interface JsonRpcRequest<
 	params: TParams[TMethod];
 }
 
+// TODO `Response` may not be the best name, because they may not be responding to anything!
+// or do we want to support multiple kinds of messages?
 export interface JsonRpcResponse<TResult = any> {
 	jsonrpc: '2.0';
 	id: string;
