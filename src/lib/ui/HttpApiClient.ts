@@ -24,9 +24,9 @@ export const toHttpApiClient = <
 			console.log('[http api client] method, params', method, params);
 			const serviceMeta: ServiceMeta = (servicesMeta as any)[method]; // TODO lighten this dependency, don't need the schemas
 			if (!serviceMeta) throw Error(`Unable to find serviceMeta: ${method}`);
-			const path = inject(serviceMeta.route.path, params); // TODO cache this
+			const path = inject(serviceMeta.route.path, params);
 			const res = await fetch(path, {
-				method: serviceMeta.route.method.toUpperCase(), // TODO is
+				method: serviceMeta.route.method.toUpperCase(), // TODO instead of this maybe define as uppercase
 				headers: {'content-type': 'application/json'},
 				body: JSON.stringify(params),
 			});
