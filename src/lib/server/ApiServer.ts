@@ -95,7 +95,7 @@ export class ApiServer {
 
 		// Register services as http routes.
 		for (const service of this.services.values()) {
-			this.app[service.route.method](service.route.path, toServiceMiddleware(this, service));
+			this.app.add(service.route.method, service.route.path, toServiceMiddleware(this, service));
 		}
 
 		// SvelteKit Node adapter, adapted to our production API server

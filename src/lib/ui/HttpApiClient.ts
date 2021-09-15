@@ -26,7 +26,7 @@ export const toHttpApiClient = <
 			if (!serviceMeta) throw Error(`Unable to find serviceMeta: ${method}`);
 			const path = inject(serviceMeta.route.path, params);
 			const res = await fetch(path, {
-				method: serviceMeta.route.method.toUpperCase(), // TODO instead of this maybe define as uppercase
+				method: serviceMeta.route.method,
 				headers: {'content-type': 'application/json'},
 				body: JSON.stringify(params),
 			});

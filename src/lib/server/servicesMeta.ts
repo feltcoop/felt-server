@@ -18,7 +18,7 @@ export const create_community: ServiceMeta = {
 	name: 'create_community',
 	route: {
 		path: '/api/v1/communities',
-		method: 'post',
+		method: 'POST',
 	},
 	paramsSchema: {
 		$id: 'CreateCommunityServiceParams',
@@ -48,7 +48,7 @@ export const create_member: ServiceMeta = {
 	name: 'create_member',
 	route: {
 		path: '/api/v1/members',
-		method: 'post',
+		method: 'POST',
 	},
 	paramsSchema: {
 		$id: 'CreateMemberServiceParams',
@@ -78,7 +78,7 @@ export const create_space: ServiceMeta = {
 	name: 'create_space',
 	route: {
 		path: '/api/v1/communities/:community_id/spaces',
-		method: 'post',
+		method: 'POST',
 	},
 	paramsSchema: {
 		$id: 'CreateSpaceServiceSchema',
@@ -120,7 +120,7 @@ export const create_file: ServiceMeta = {
 	name: 'create_file',
 	route: {
 		path: '/api/v1/spaces/:space_id/files',
-		method: 'post',
+		method: 'POST',
 	},
 	paramsSchema: {
 		$id: 'CreateFileServiceParams',
@@ -155,7 +155,7 @@ export const read_community: ServiceMeta = {
 	name: 'read_community',
 	route: {
 		path: '/api/v1/communities/:community_id',
-		method: 'get',
+		method: 'GET',
 	},
 	paramsSchema: {
 		$id: 'ReadCommunityServiceParams',
@@ -185,7 +185,7 @@ export const read_communities: ServiceMeta = {
 	name: 'read_communities',
 	route: {
 		path: '/api/v1/communities',
-		method: 'get',
+		method: 'GET',
 	},
 	paramsSchema: {
 		$id: 'ReadCommunitiesServiceParams',
@@ -217,7 +217,7 @@ export const read_space: ServiceMeta = {
 	name: 'read_space',
 	route: {
 		path: '/api/v1/spaces/:space_id',
-		method: 'get',
+		method: 'GET',
 	},
 	paramsSchema: {
 		$id: 'ReadSpaceServiceParams',
@@ -253,7 +253,7 @@ export const read_spaces: ServiceMeta = {
 	name: 'read_spaces',
 	route: {
 		path: '/api/v1/communities/:community_id/spaces',
-		method: 'get',
+		method: 'GET',
 	},
 	paramsSchema: {
 		$id: 'ReadSpacesServiceSchema',
@@ -292,7 +292,7 @@ export const read_files: ServiceMeta = {
 	name: 'read_files',
 	route: {
 		path: '/api/v1/spaces/:space_id/files',
-		method: 'get',
+		method: 'GET',
 	},
 	paramsSchema: {
 		$id: 'ReadFilesServiceParams',

@@ -25,7 +25,7 @@ export const readSpaceService: Service<
 	name: 'read_space',
 	route: {
 		path: '/api/v1/spaces/:space_id',
-		method: 'get',
+		method: 'GET',
 	},
 	paramsSchema: ReadSpaceServiceParams,
 	validateParams: toValidateSchema(ReadSpaceServiceParams),
@@ -68,7 +68,7 @@ export const readSpacesService: Service<
 	name: 'read_spaces',
 	route: {
 		path: '/api/v1/communities/:community_id/spaces',
-		method: 'get',
+		method: 'GET',
 	},
 	paramsSchema: ReadSpacesServiceSchema,
 	validateParams: toValidateSchema(ReadSpacesServiceSchema),
@@ -119,7 +119,7 @@ export const createSpaceService: Service<
 	name: 'create_space',
 	route: {
 		path: '/api/v1/communities/:community_id/spaces',
-		method: 'post',
+		method: 'POST',
 	},
 	paramsSchema: CreateSpaceServiceSchema,
 	validateParams: toValidateSchema(CreateSpaceServiceSchema),
