@@ -24,7 +24,7 @@ Thanks for your interest in contributing! Before you get started you'll need to 
 In most cases [`gro dev`](https://github.com/feltcoop/gro/blob/main/src/docs/dev.md)
 is the only command you'll need to run during development.
 It starts both SvelteKit and an API server,
-and when files change they should update or restart automatically.
+and when files change the system should automatically update or restart as needed.
 
 ## manual processes
 
