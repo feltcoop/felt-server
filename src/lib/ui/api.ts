@@ -31,6 +31,7 @@ export interface ApiState {}
 
 export type ApiResult<TValue> = Result<TValue, ErrorResponse>;
 
+// TODO probably remove these object wrappers from `value`
 export interface ApiStore {
 	subscribe: Readable<ApiState>['subscribe'];
 	logIn: (
@@ -42,10 +43,7 @@ export interface ApiStore {
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space: number | null) => void;
 	toggleMainNav: () => void;
-	createCommunity: (
-		name: string,
-		persona_id: number,
-	) => Promise<ApiResult<{value: {community: CommunityModel}}>>;
+	createCommunity: (params: CommunityParams) => Promise<ApiResult<{value: CommunityModel}>>;
 	createSpace: (params: SpaceParams) => Promise<ApiResult<{value: {space: Space}}>>;
 	inviteMember: (
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
@@ -127,64 +125,23 @@ export const toApiStore = (
 				};
 			}
 		},
-		createCommunity: async (name, persona_id) => {
-			if (!name) return {ok: false, reason: 'invalid name'};
-			//Needs to collect name
-			const communityParams: CommunityParams = {
-				name,
-				persona_id,
-			};
-			const result = await client2.invoke('create_community', communityParams);
-			console.log('create_community result', result);
+		createCommunity: async (params) => {
+			if (!params.name) return {ok: false, reason: 'invalid name'};
+			const result = await client2.invoke('create_community', params);
+			console.log('[api] create_community result', result);
 			const community = toCommunityModel(result.community);
-			data.addCommunity(community, persona_id);
-			return {ok: true, value: {community}}; // TODO remove wrapper?
-			// const res = await fetch(`/api/v1/communities`, {
-			// 	method: 'POST',
-			// 	headers: {'Content-Type': 'application/json'},
-			// 	body: JSON.stringify(communityParams),
-			// });
-			// if (res.ok) {
-			// 	try {
-			// 		const result: {community: Community} = await res.json(); // TODO api types
-			// 		console.log('createCommunity result', result);
-			// 		const community = toCommunityModel(result.community);
-			// 		data.addCommunity(community, persona_id);
-			// 		return {ok: true, value: {community}};
-			// 	} catch (err) {
-			// 		return {ok: false, reason: err.message};
-			// 	}
-			// } else {
-			// 	throw Error(`error: ${res.status}: ${res.statusText}`);
-			// }
+			data.addCommunity(community, params.persona_id);
+			return {ok: true, value: community}; // TODO maybe return `result` instead? problem is the `CommunityModel` is different
 		},
 		createSpace: async (params) => {
-			try {
-				const res = await fetch(`/api/v1/communities/${params.community_id}/spaces`, {
-					method: 'POST',
-					headers: {'Content-Type': 'application/json'},
-					body: JSON.stringify(params),
-				});
-				if (res.ok) {
-					const result: {space: Space} = await res.json(); // TODO api types
-					console.log('[createSpace] result', result);
-					data.addSpace(result.space, params.community_id);
-					return {ok: true, value: result};
-				} else {
-					const json = await res.json();
-					throw Error(`[createSpace.failed] ${json.reason}`);
-				}
-			} catch (err) {
-				console.error(err.message);
-				return {ok: false, reason: err.message};
-			}
+			const result = await client2.invoke('create_space', params);
+			console.log('[api] create_space result', result);
+			data.addSpace(result.space, params.community_id);
+			return {ok: true, value: result};
 		},
 		// TODO: This implementation is currently unconsentful,
 		// because does not give the potential member an opportunity to deny an invite
-		inviteMember: async (
-			community_id,
-			persona_id, // TODO `persona_id`
-		) => {
+		inviteMember: async (community_id, persona_id) => {
 			// TODO proper automated validation
 			if (community_id == null) return {ok: false, reason: 'invalid url'};
 			if (!persona_id) return {ok: false, reason: 'invalid persona'};
