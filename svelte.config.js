@@ -1,9 +1,8 @@
 import {typescript} from 'svelte-preprocess-esbuild';
 import node from '@sveltejs/adapter-node';
 import dotenv from 'dotenv';
-import {readFileSync} from 'fs';
 
-const {API_SERVER_HOST} = JSON.parse(readFileSync('./src/lib/config.json', 'utf8'));
+import {API_SERVER_HOST} from './src/lib/config.js';
 
 dotenv.config();
 
