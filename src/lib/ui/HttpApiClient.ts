@@ -17,23 +17,28 @@ export const toHttpApiClient = <
 	TResultMap extends Record<string, object>,
 >(): ApiClient<TParamsMap, TResultMap> => {
 	return {
-		invoke: async <TMethod extends string, TParams extends TParamsMap[TMethod]>(
-			method: TMethod,
+		invoke: async <TServiceName extends string, TParams extends TParamsMap[TServiceName]>(
+			name: TServiceName,
 			params: TParams,
-		): Promise<TResultMap[TMethod]> => {
-			console.log('[http api client] method, params', method, params);
-			const serviceMeta: ServiceMeta = (servicesMeta as any)[method]; // TODO lighten this dependency, don't need the schemas
-			if (!serviceMeta) throw Error(`Unable to find serviceMeta: ${method}`);
+		): Promise<TResultMap[TServiceName]> => {
+			console.log('[http api client] invoke', name, params);
+			const serviceMeta: ServiceMeta = (servicesMeta as any)[name]; // TODO lighten this dependency, don't need the schemas
+			if (!serviceMeta) throw Error(`Unable to find serviceMeta: ${name}`); // TODO return result instead of throwing
 			const path = inject(serviceMeta.route.path, params);
-			const res = await fetch(path, {
-				method: serviceMeta.route.method,
-				headers: {'content-type': 'application/json'},
-				body: JSON.stringify(params),
-			});
-			console.log('res', res);
-			const json = await res.json();
-			console.log('json', json);
-			return json;
+			const {method} = serviceMeta.route;
+			try {
+				const res = await fetch(path, {
+					method,
+					headers: {'content-type': 'application/json'},
+					body: method === 'GET' || method === 'HEAD' ? null : JSON.stringify(params),
+				});
+				const result = await res.json();
+				console.log('[http api client] result', result);
+				return result;
+			} catch (err) {
+				// TODO handle errors
+				return null as any;
+			}
 		},
 		close: () => {
 			//

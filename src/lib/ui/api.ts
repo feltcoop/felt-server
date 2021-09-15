@@ -50,7 +50,7 @@ export interface ApiStore {
 		persona_id: number,
 	) => Promise<ApiResult<{value: {member: Member}}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{value: {file: File}}>>;
-	loadFiles: (space_id: number) => Promise<ApiResult<{value: {file: File[]}}>>;
+	loadFiles: (space_id: number) => Promise<ApiResult<{value: {files: File[]}}>>;
 }
 
 export const toApiStore = (
@@ -208,27 +208,11 @@ export const toApiStore = (
 		},
 		loadFiles: async (space_id) => {
 			data.setFiles(space_id, []);
-			const res = await fetch(`/api/v1/spaces/${space_id}/files`);
-			if (res.ok) {
-				try {
-					const json = await res.json();
-					data.setFiles(space_id, json.files);
-					return {ok: true, value: json};
-				} catch (err) {
-					console.error('err', err);
-					return {ok: false, reason: err.message};
-				}
-			} else {
-				let reason: string;
-				try {
-					const json = await res.json();
-					reason = json.reason;
-				} catch (err) {
-					reason = `error loading files: ${res.status}: ${res.statusText}`;
-				}
-				console.error('failed to load files:', reason);
-				return {ok: false, reason};
-			}
+			// TODO this isn't working with the websocket client
+			const result = await client2.invoke('read_files', {space_id});
+			console.log('[api] read_files result', result);
+			data.setFiles(space_id, result.files);
+			return {ok: true, value: result};
 		},
 	};
 	return store;
