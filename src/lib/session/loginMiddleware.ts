@@ -59,7 +59,7 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 		if (clientSessionResult.ok) {
 			return send(res, 200, {session: clientSessionResult.value}); // TODO API types
 		} else {
-			req.session = null!; // TODO this resets the session, but need to also clear user's cookies
+			req.session = null!;
 			return send(res, 500, {reason: 'problem loading client session'});
 		}
 	};

@@ -22,7 +22,7 @@ export const getSession: GetSession<CookieSessionRequest, ClientSession> = async
 		if (result.ok) {
 			return result.value;
 		} else {
-			request.session = null!; // TODO this resets the session, but need to also clear user's cookies
+			request.session = null!;
 			return {guest: true};
 		}
 	} else {
