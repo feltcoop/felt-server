@@ -7,7 +7,6 @@ import {toToClientId} from '@feltcoop/felt/util/id.js';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
-import type {DataStore} from '$lib/ui/data';
 
 const toId = toToClientId('');
 
@@ -25,12 +24,11 @@ interface PendingRequest<T = unknown> {
 	reject: (err: Error) => void;
 }
 
-export const toApiClient = <
+export const toWebsocketApiClient = <
 	TParamsMap extends Record<string, object>,
 	TResultMap extends Record<string, object>,
 >(
 	send: (request: JsonRpcRequest) => void,
-	data: DataStore, // TODO extract
 ): WebsocketApiClient<TParamsMap, TResultMap> => {
 	const pendingRequests: Map<string, any> = new Map(); // TODO
 
@@ -71,17 +69,6 @@ export const toApiClient = <
 				return;
 			}
 			pendingRequests.delete(message.id);
-			// TODO extract this
-			if (found.request.method === 'create_file') {
-				if (message.result.code === 200) {
-					console.log('message', message);
-					data.addFile(message.result.data.file);
-				} else {
-					console.error('[handleSocketMessage] unhandled response code', message.result.code);
-				}
-			} else {
-				console.error('[handleSocketMessage] unhandled messageMethod', found.request.method);
-			}
 			found.resolve(message.result);
 		},
 		close: () => {

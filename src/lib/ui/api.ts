@@ -6,7 +6,7 @@ import type {Result} from '@feltcoop/felt';
 
 import type {DataStore} from '$lib/ui/data';
 import type {UiStore} from '$lib/ui/ui';
-import type {Community, CommunityModel, CommunityParams} from '$lib/vocab/community/community';
+import type {CommunityModel, CommunityParams} from '$lib/vocab/community/community';
 import {toCommunityModel} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Member, MemberParams} from '$lib/vocab/member/member';
@@ -55,7 +55,12 @@ export interface ApiStore {
 	loadFiles: (space_id: number) => Promise<ApiResult<{value: {file: File[]}}>>;
 }
 
-export const toApiStore = (ui: UiStore, data: DataStore, client: ApiClient): ApiStore => {
+export const toApiStore = (
+	ui: UiStore,
+	data: DataStore,
+	client: ApiClient,
+	client2: ApiClient, // TODO remove this after testing
+): ApiStore => {
 	// TODO set the `api` state with progress of remote calls
 	const {subscribe} = writable<ApiState>(toDefaultApiState());
 
@@ -122,7 +127,6 @@ export const toApiStore = (ui: UiStore, data: DataStore, client: ApiClient): Api
 				};
 			}
 		},
-		// TODO refactor this, maybe into `data` or `api`
 		createCommunity: async (name, persona_id) => {
 			if (!name) return {ok: false, reason: 'invalid name'};
 			//Needs to collect name
@@ -130,24 +134,29 @@ export const toApiStore = (ui: UiStore, data: DataStore, client: ApiClient): Api
 				name,
 				persona_id,
 			};
-			const res = await fetch(`/api/v1/communities`, {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify(communityParams),
-			});
-			if (res.ok) {
-				try {
-					const result: {community: Community} = await res.json(); // TODO api types
-					console.log('createCommunity result', result);
-					const community = toCommunityModel(result.community);
-					data.addCommunity(community, persona_id);
-					return {ok: true, value: {community}};
-				} catch (err) {
-					return {ok: false, reason: err.message};
-				}
-			} else {
-				throw Error(`error: ${res.status}: ${res.statusText}`);
-			}
+			const result = await client2.invoke('create_community', communityParams);
+			console.log('create_community result', result);
+			const community = toCommunityModel(result.community);
+			data.addCommunity(community, persona_id);
+			return {ok: true, value: {community}}; // TODO remove wrapper?
+			// const res = await fetch(`/api/v1/communities`, {
+			// 	method: 'POST',
+			// 	headers: {'Content-Type': 'application/json'},
+			// 	body: JSON.stringify(communityParams),
+			// });
+			// if (res.ok) {
+			// 	try {
+			// 		const result: {community: Community} = await res.json(); // TODO api types
+			// 		console.log('createCommunity result', result);
+			// 		const community = toCommunityModel(result.community);
+			// 		data.addCommunity(community, persona_id);
+			// 		return {ok: true, value: {community}};
+			// 	} catch (err) {
+			// 		return {ok: false, reason: err.message};
+			// 	}
+			// } else {
+			// 	throw Error(`error: ${res.status}: ${res.statusText}`);
+			// }
 		},
 		createSpace: async (params) => {
 			try {
@@ -205,14 +214,13 @@ export const toApiStore = (ui: UiStore, data: DataStore, client: ApiClient): Api
 			}
 		},
 		createFile: async (params: FileParams) => {
-			// TODO type
 			const result = await client.invoke('create_file', params);
-			console.log('result', result);
-			// const message: {type: 'create_file'; params: FileParams} = {
-			// 	type: 'create_file',
-			// 	params,
-			// };
-			// socket.send(message);
+			console.log('create_file result', result);
+			if (result.code === 200) {
+				data.addFile(result.data.file);
+			} else {
+				console.error('[handleSocketMessage] unhandled response code', result.code);
+			}
 			return {
 				ok: true,
 				result,

@@ -20,16 +20,19 @@
 	import {randomHue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {WEBSOCKET_URL} from '$lib/constants';
-	import {toApiClient} from '$lib/ui/WebsocketApiClient';
+	import {toWebsocketApiClient} from '$lib/ui/WebsocketApiClient';
+	import {toHttpApiClient} from '$lib/ui/HttpApiClient';
 
+	// TODO some of this shouldn't run during SSR
 	const devmode = setDevmode();
 	const data = setData($session);
 	$: data.updateSession($session);
 	const socket = setSocket(toSocketStore((data) => websocketApiClient.handle(data)));
 	const ui = setUi(toUiStore(data));
 	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
-	const websocketApiClient = toApiClient(socket.send, data);
-	const api = setApi(toApiStore(ui, data, websocketApiClient));
+	const websocketApiClient = toWebsocketApiClient(socket.send);
+	const httpApiClient = toHttpApiClient();
+	const api = setApi(toApiStore(ui, data, websocketApiClient, httpApiClient));
 	const app = setApp({data, ui, api, devmode, socket});
 	browser && console.log('app', app);
 

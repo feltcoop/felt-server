@@ -5,7 +5,7 @@ import type {ApiClient} from '$lib/ui/ApiClient';
 import * as servicesMeta from '$lib/server/servicesMeta';
 import type {ServiceMeta} from '$lib/server/servicesMeta';
 
-export const toApiClient = <
+export const toHttpApiClient = <
 	TParamsMap extends Record<string, object>,
 	TResultMap extends Record<string, object>,
 >(): ApiClient<TParamsMap, TResultMap> => {
@@ -23,7 +23,9 @@ export const toApiClient = <
 				headers: {'content-type': 'application/json'},
 				body: JSON.stringify(params),
 			});
+			console.log('res', res);
 			const json = await res.json();
+			console.log('json', json);
 			return json;
 		},
 		close: () => {
