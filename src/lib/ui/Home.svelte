@@ -19,7 +19,7 @@
 </script>
 
 <div class="home">
-	<!-- TODO display all members -->
+	<!-- TODO display other meta info about the community -->
 	{#each personas as persona (persona.persona_id)}
 		<div>{persona.name}</div>
 	{/each}
