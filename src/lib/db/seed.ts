@@ -129,7 +129,7 @@ export const seed = async (db: Database): Promise<void> => {
 			);
 			log.trace('created persona', persona);
 			personas.push(persona);
-			const spaces = unwrap(await db.repos.space.createDefaultSpaces(community.community_id));
+			const spaces = unwrap(await db.repos.space.filterByCommunity(community.community_id));
 			await createDefaultFiles(db, spaces, [persona]);
 		}
 	}
