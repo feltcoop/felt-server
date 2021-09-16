@@ -6,14 +6,14 @@
 	import RoomItems from '$lib/ui/RoomItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {api, ui, data} = getApp();
+	const {api, ui, data, socket} = getApp();
 
 	export let space: Space;
 	export let membersById: Map<number, Member>;
 
 	let text = '';
 
-	$: browser && api.loadFiles(space.space_id);
+	$: browser && $socket.connected && api.loadFiles(space.space_id);
 	$: console.log(`[Room] fetching files for ${space.space_id}`);
 	$: selectedPersonaId = $ui.selectedPersonaId;
 
