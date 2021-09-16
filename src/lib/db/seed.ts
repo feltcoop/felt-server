@@ -153,7 +153,7 @@ export const seed = async (db: Database): Promise<void> => {
 		);
 		communities.push(community);
 		for (const persona of otherPersonas) {
-			await db.repos.member.create({
+			await db.repos.membership.create({
 				persona_id: persona.persona_id,
 				community_id: community.community_id,
 			});

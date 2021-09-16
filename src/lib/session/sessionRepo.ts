@@ -5,7 +5,6 @@ import type {Database} from '$lib/db/Database';
 import type {ClientAccountSession} from '$lib/session/clientSession.js';
 import type {Persona} from '$lib/vocab/persona/persona.js';
 import type {Community} from '$lib/vocab/community/community.js';
-import type {Membership} from '$lib/vocab/membership/membership.js';
 import type {AccountModel} from '$lib/vocab/account/account.js';
 import {accountModelProperties} from '$lib/vocab/account/account';
 
@@ -19,10 +18,10 @@ export const sessionRepo = (db: Database) => ({
 		const communities: Community[] = unwrap(
 			await db.repos.community.filterByAccount(account.account_id),
 		);
-		const members: Membership[] = unwrap(await db.repos.membership.getAll());
+		const allPersonas: Persona[] = unwrap(await db.repos.persona.getAll());
 		return {
 			ok: true,
-			value: {account, personas, communities, members},
+			value: {account, personas, communities, allPersonas},
 		};
 	},
 });

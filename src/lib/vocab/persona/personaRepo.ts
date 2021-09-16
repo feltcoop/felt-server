@@ -51,4 +51,10 @@ export const personaRepo = (db: Database) => ({
 			reason: `No Personas found for account: ${account_id}`,
 		};
 	},
+	getAll: async (): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
+		const data = await db.sql<Persona[]>`
+      select persona_id, name from personas
+    `;
+		return {ok: true, value: data};
+	},
 });
