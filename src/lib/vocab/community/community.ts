@@ -2,14 +2,14 @@ import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
 
 import type {Space} from '$lib/vocab/space/space.js';
-import type {Membership} from '$lib/vocab/membership/membership.js';
+import type {Persona} from '$lib/vocab/persona/persona.js';
 import {toValidateSchema} from '$lib/util/ajv';
 
 export interface Community {
 	community_id: number;
 	name: string;
 	spaces: Space[];
-	membership: Membership[];
+	member_personas: Persona[];
 }
 // TODO can't get the static inference correct here -- change to schema after normalizing data, or maybe generate plain types
 // export type Community = Static<typeof CommunitySchema>;
@@ -39,13 +39,14 @@ export interface CommunityModel {
 	community_id: number;
 	name: string;
 	spaces: Space[];
-	membership: Membership[];
-	membershipById: Map<number, Membership>;
+	memberPersonas: Persona[];
+	memberPersonasById: Map<number, Persona>;
 }
 
 export const toCommunityModel = (community: Community): CommunityModel => ({
 	...community,
-	membershipById: new Map(community.membership.map((membership) => [membership.persona_id, membership])),
+	memberPersonas: community.member_personas,
+	memberPersonasById: new Map(community.member_personas.map((persona) => [persona.persona_id, persona])),
 });
 
 export interface CommunitySpaces {
