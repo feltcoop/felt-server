@@ -9,7 +9,7 @@ export interface Community {
 	community_id: number;
 	name: string;
 	spaces: Space[];
-	members: Membership[];
+	membership: Membership[];
 }
 // TODO can't get the static inference correct here -- change to schema after normalizing data, or maybe generate plain types
 // export type Community = Static<typeof CommunitySchema>;
@@ -39,13 +39,13 @@ export interface CommunityModel {
 	community_id: number;
 	name: string;
 	spaces: Space[];
-	members: Membership[];
-	membersById: Map<number, Membership>;
+	membership: Membership[];
+	membershipById: Map<number, Membership>;
 }
 
 export const toCommunityModel = (community: Community): CommunityModel => ({
 	...community,
-	membersById: new Map(community.members.map((member) => [member.persona_id, member])),
+	membershipById: new Map(community.membership.map((membership) => [membership.persona_id, membership])),
 });
 
 export interface CommunitySpaces {

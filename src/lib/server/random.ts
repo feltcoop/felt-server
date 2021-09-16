@@ -3,7 +3,7 @@ import type {TSchema} from '@sinclair/typebox';
 import type {Service} from '$lib/server/service';
 import {
 	randomFileParams,
-	randomMemberParams,
+	randomMembershipParams,
 	RandomVocab,
 	RandomVocabContext,
 } from '$lib/vocab/random';
@@ -21,10 +21,10 @@ export const randomServiceParams = async <TParamsSchema extends TSchema>(
 			if (!persona) persona = await random.persona(account);
 			return randomCommunityParams(persona.persona_id);
 		}
-		case 'create_member': {
+		case 'create_membership': {
 			if (!persona) persona = await random.persona(account);
 			if (!community) community = await random.community(); // don't forward `persona`/`account` bc that's the service's job
-			return randomMemberParams(persona.persona_id, community.community_id);
+			return randomMembershipParams(persona.persona_id, community.community_id);
 		}
 		case 'create_space': {
 			if (!community) community = await random.community(persona, account);

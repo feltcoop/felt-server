@@ -36,29 +36,29 @@ export const create_community: ServiceMeta = {
 	},
 };
 
-export const create_member: ServiceMeta = {
-	name: 'create_member',
+export const create_membership: ServiceMeta = {
+	name: 'create_membership',
 	paramsSchema: {
-		$id: 'CreateMemberServiceParams',
+		$id: 'CreateMembershipServiceParams',
 		additionalProperties: false,
 		type: 'object',
 		properties: {persona_id: {type: 'number'}, community_id: {type: 'number'}},
 		required: ['persona_id', 'community_id'],
 	},
 	responseSchema: {
-		$id: 'CreateMemberServiceResponse',
+		$id: 'CreateMembershipServiceResponse',
 		additionalProperties: false,
 		type: 'object',
 		properties: {
-			member: {
-				$id: 'Member',
+			membership: {
+				$id: 'Membership',
 				additionalProperties: false,
 				type: 'object',
 				properties: {persona_id: {type: 'number'}, community_id: {type: 'number'}},
 				required: ['persona_id', 'community_id'],
 			},
 		},
-		required: ['member'],
+		required: ['membership'],
 	},
 };
 
