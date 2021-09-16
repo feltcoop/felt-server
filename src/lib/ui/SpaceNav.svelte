@@ -17,7 +17,7 @@
 <div class="space-nav">
 	<div class="header">
 		<SpaceInput {community} />
-		<MemberInput {community} allPersonas={allPersonas} />
+		<MemberInput {community} {allPersonas} />
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}

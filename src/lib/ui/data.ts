@@ -37,7 +37,7 @@ export interface DataStore {
 	subscribe: Readable<DataState>['subscribe'];
 	updateSession: (session: ClientSession) => void;
 	addCommunity: (community: CommunityModel, persona_id: number) => void;
-	addSpace: (space: Space, community_id: number) => void;	
+	addSpace: (space: Space, community_id: number) => void;
 	addFile: (file: File) => void;
 	setFiles: (space_id: number, files: File[]) => void;
 }

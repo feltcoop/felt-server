@@ -40,12 +40,12 @@ export const accountRepo = (db: Database) => ({
 		account_id: number,
 		columns: string[] = accountProperties,
 	): Promise<Result<{value: Account}, {type: 'no_account_found'} & ErrorResponse>> => {
-		console.log('[accountRepo] loading account', account_id)
+		console.log('[accountRepo] loading account', account_id);
 		const data = await db.sql<Account[]>`
       select ${db.sql(columns)} from accounts where account_id = ${account_id}
     `;
 		if (data.length) {
-			console.log('[accountRepo] account found, returning', account_id)
+			console.log('[accountRepo] account found, returning', account_id);
 			return {ok: true, value: data[0]};
 		}
 		return {

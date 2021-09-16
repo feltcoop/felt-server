@@ -65,7 +65,7 @@
 						community={$selectedCommunity}
 						spaces={$selectedCommunity.spaces}
 						selectedSpace={$selectedSpace}
-						allPersonas={allPersonas}
+						{allPersonas}
 					/>
 				{/if}
 			</div>

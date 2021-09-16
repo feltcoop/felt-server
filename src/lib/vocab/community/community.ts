@@ -46,7 +46,9 @@ export interface CommunityModel {
 export const toCommunityModel = (community: Community): CommunityModel => ({
 	...community,
 	memberPersonas: community.member_personas,
-	memberPersonasById: new Map(community.member_personas.map((persona) => [persona.persona_id, persona])),
+	memberPersonasById: new Map(
+		community.member_personas.map((persona) => [persona.persona_id, persona]),
+	),
 });
 
 export interface CommunitySpaces {

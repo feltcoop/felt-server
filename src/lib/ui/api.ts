@@ -194,7 +194,7 @@ export const toApiStore = (ui: UiStore, data: DataStore, socket: SocketStore): A
 			if (res.ok) {
 				try {
 					const result: {membership: Membership} = await res.json(); // TODO api types
-					console.log('inviteMember result', result);					
+					console.log('inviteMember result', result);
 					return {ok: true, value: result};
 				} catch (err) {
 					return {ok: false, reason: err.message};
