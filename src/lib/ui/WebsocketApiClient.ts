@@ -4,7 +4,7 @@
 
 import {toToClientId} from '@feltcoop/felt/util/id.js';
 
-import type {ApiClient} from '$lib/ui/ApiClient';
+import type {ApiClient, ApiResult} from '$lib/ui/ApiClient';
 import type {JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 
@@ -23,7 +23,7 @@ export interface WebsocketApiClient<
 interface WebsocketRequest<T = any> {
 	request: JsonRpcRequest;
 	promise: Promise<T>;
-	resolve: (value: T) => void;
+	resolve: (result: T) => void;
 }
 
 export const toWebsocketApiClient = <
@@ -49,7 +49,7 @@ export const toWebsocketApiClient = <
 		invoke: async <TServiceName extends string, TParams extends TParamsMap[TServiceName]>(
 			name: TServiceName,
 			params: TParams,
-		): Promise<TResultMap[TServiceName]> => {
+		): Promise<ApiResult<TResultMap[TServiceName]>> => {
 			console.log('[websocket api client] invoke', name, params);
 			const request: JsonRpcRequest<typeof name, TParamsMap> = {
 				jsonrpc: '2.0',
@@ -72,7 +72,8 @@ export const toWebsocketApiClient = <
 				return;
 			}
 			websocketRequests.delete(message.id);
-			found.resolve(message.result);
+			// TODO upstream the `ok` instead of creating a new object? could return `message.result` directly
+			found.resolve({ok: message.result.status === 200, ...message.result});
 		},
 		close: () => {
 			//

@@ -8,7 +8,7 @@
 
 import {inject} from 'regexparam';
 
-import type {ApiClient} from '$lib/ui/ApiClient';
+import type {ApiClient, ApiResult} from '$lib/ui/ApiClient';
 import * as servicesMeta from '$lib/server/servicesMeta';
 import type {ServiceMeta} from '$lib/server/servicesMeta';
 
@@ -20,7 +20,7 @@ export const toHttpApiClient = <
 		invoke: async <TServiceName extends string, TParams extends TParamsMap[TServiceName]>(
 			name: TServiceName,
 			params: TParams,
-		): Promise<TResultMap[TServiceName]> => {
+		): Promise<ApiResult<TResultMap[TServiceName]>> => {
 			console.log('[http api client] invoke', name, params);
 			const serviceMeta: ServiceMeta = (servicesMeta as any)[name]; // TODO lighten this dependency, don't need the schemas
 			if (!serviceMeta) throw Error(`Unable to find serviceMeta: ${name}`); // TODO return result instead of throwing
@@ -34,11 +34,9 @@ export const toHttpApiClient = <
 				});
 				const result = await res.json();
 				console.log('[http api client] result', result);
-				return result;
+				return {ok: true, status: res.status, data: result};
 			} catch (err) {
-				// TODO handle errors
-				// (`error sending file: ${res.status}: ${res.statusText}`);
-				return null as any;
+				return {ok: false, status: 500, reason: err.message || 'Unknown error'}; // TODO ?
 			}
 		},
 		close: () => {

@@ -83,15 +83,16 @@ export const toApiStore = (
 					console.log('[logIn] responseData', responseData); // TODO logging
 					accountName = '';
 					session.set(responseData.session);
-					return {ok: true, value: responseData}; // TODO doesn't this have other status codes?
+					return {ok: true, status: response.status, data: responseData}; // TODO doesn't this have other status codes?
 				} else {
 					console.error('[logIn] response not ok', responseData, response); // TODO logging
-					return {ok: false, reason: responseData.reason};
+					return {ok: false, status: response.status, reason: responseData.reason};
 				}
 			} catch (err) {
 				console.error('[logIn] error', err); // TODO logging
 				return {
 					ok: false,
+					status: 500, // TODO what's the correct status?
 					reason: `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again.`,
 				};
 			}
@@ -107,43 +108,49 @@ export const toApiStore = (
 				console.log('[logOut] response', responseData); // TODO logging
 				if (response.ok) {
 					session.set({guest: true});
-					return {ok: true, value: responseData};
+					return {ok: true, status: response.status, data: responseData};
 				} else {
 					console.error('[logOut] response not ok', response); // TODO logging
-					return {ok: false, reason: responseData.reason};
+					return {ok: false, status: response.status, reason: responseData.reason};
 				}
 			} catch (err) {
 				console.error('[logOut] err', err); // TODO logging
 				return {
 					ok: false,
+					status: 500, // TODO what's the correct status?
 					reason: `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again!`,
 				};
 			}
 		},
 		createCommunity: async (params) => {
-			if (!params.name) return {ok: false, reason: 'invalid name'};
+			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
 			const result = await client2.invoke('create_community', params);
 			console.log('[api] create_community result', result);
-			if (!result.ok) return result;
-			const community = toCommunityModel(result.value.community as any); // TODO `Community` type is off with schema
-			data.addCommunity(community, params.persona_id);
-			// TODO can't return `result` because the `CommunityModel` is different,
-			// but we probably want to change it to have associated data instead of a different interface
-			return {ok: true, value: community};
+			if (result.ok) {
+				const community = toCommunityModel(result.data.community as any); // TODO `Community` type is off with schema
+				data.addCommunity(community, params.persona_id);
+				// TODO refactor to not return here, do `return result` below --
+				// can't return `result` right now because the `CommunityModel` is different,
+				// but we probably want to change it to have associated data instead of a different interface
+				return {ok: true, status: result.status, data: community};
+			}
+			return result;
 		},
 		createSpace: async (params) => {
 			const result = await client2.invoke('create_space', params);
 			console.log('[api] create_space result', result);
-			if (!result.ok) return result;
-			data.addSpace(result.value.space, params.community_id);
+			if (result.ok) {
+				data.addSpace(result.data.space, params.community_id);
+			}
 			return result;
 		},
+		// TODO refactor this after `membership` stuff is merged
 		// TODO: This implementation is currently unconsentful,
 		// because does not give the potential member an opportunity to deny an invite
 		inviteMember: async (community_id, persona_id) => {
 			// TODO proper automated validation
-			if (community_id == null) return {ok: false, reason: 'invalid url'};
-			if (!persona_id) return {ok: false, reason: 'invalid persona'};
+			if (community_id == null) return {ok: false, status: 400, reason: 'invalid url'};
+			if (!persona_id) return {ok: false, status: 400, reason: 'invalid persona'};
 
 			const doc: MemberParams = {
 				persona_id,
@@ -161,9 +168,9 @@ export const toApiStore = (
 					const result: {member: Member} = await res.json(); // TODO api types
 					console.log('inviteMember result', result);
 					data.addMember(result.member);
-					return {ok: true, value: result};
+					return {ok: true, status: 200, data: result};
 				} catch (err) {
-					return {ok: false, reason: err.message};
+					return {ok: false, status: 400, reason: err.message};
 				}
 			} else {
 				throw Error(`error: ${res.status}: ${res.statusText}`);
@@ -172,8 +179,9 @@ export const toApiStore = (
 		createFile: async (params: FileParams) => {
 			const result = await client.invoke('create_file', params);
 			console.log('create_file result', result);
-			if (!result.ok) return result;
-			data.addFile(result.value.file);
+			if (result.ok) {
+				data.addFile(result.data.file);
+			}
 			return result;
 		},
 		loadFiles: async (space_id) => {
@@ -181,8 +189,9 @@ export const toApiStore = (
 			// TODO this isn't working with the websocket client
 			const result = await client2.invoke('read_files', {space_id});
 			console.log('[api] read_files result', result);
-			if (!result.ok) return result;
-			data.setFiles(space_id, result.value.files);
+			if (result.ok) {
+				data.setFiles(space_id, result.data.files);
+			}
 			return result;
 		},
 	};

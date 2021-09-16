@@ -9,7 +9,10 @@ import type {ErrorResponse} from '$lib/util/error';
 // ) => Promise<Result<TResultMap[TServiceName], ErrorResponse>>;
 // import type {ErrorResponse} from '$lib/util/error';
 
-export type ApiResult<TValue> = Result<{value: TValue}, ErrorResponse>; // TODO include status? `& {status: number}`
+export type ApiResult<TData> = Result<
+	{status: number; data: TData},
+	ErrorResponse & {status: number}
+>;
 
 export interface ApiClient<
 	TParamsMap extends Record<string, any> = any, // TODO default type?

@@ -183,10 +183,12 @@ export class ApiServer {
 		}
 
 		// TODO this is very hacky -- what should the API for returning/broadcasting responses be?
-		// a quick improvement would be to scope to the community
+		// A quick improvement would be to scope to the community.
+		// We probably also want 2 types of messages, `JsonRpcResponse` for this specific client
+		// and some generic broadcast message type for everyone else.
 		const responseMessage: JsonRpcResponse = {
 			jsonrpc: '2.0',
-			id: message.id,
+			id: message.id, // TODO this should only be set for the client we're responding to -- maybe don't use `response`?
 			result: response, // TODO see above where `response` is assigned, should probably be `response.data`
 		};
 		console.log('[handleWebsocketMessage] broadcasting', responseMessage);
