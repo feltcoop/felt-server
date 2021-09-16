@@ -33,7 +33,7 @@ export interface UiStore {
 	selectedPersona: Readable<Persona | null>;
 	selectedCommunity: Readable<CommunityModel | null>;
 	selectedSpace: Readable<Space | null>;
-	communitiesByPersonaId: Readable<{[persona_id: number]: CommunityModel[]}>; // TODO or name `membership`?
+	communitiesByPersonaId: Readable<{[persona_id: number]: CommunityModel[]}>; // TODO or name `memberships`?
 	// methods
 	updateData: (data: DataState | null) => void;
 	selectPersona: (persona_id: number) => void;

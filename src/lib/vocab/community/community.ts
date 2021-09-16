@@ -39,7 +39,7 @@ export interface CommunityModel {
 	community_id: number;
 	name: string;
 	spaces: Space[];
-	membership: Membership[];
+	membership: Membership[]; //TODO move this over to use Persona or munge the data together
 	membershipById: Map<number, Membership>;
 }
 

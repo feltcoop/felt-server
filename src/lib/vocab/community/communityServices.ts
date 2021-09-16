@@ -182,7 +182,7 @@ export const createMembershipService: Service<
 	responseSchema: CreateMembershipServiceResponse,
 	validateResponse: toValidateSchema(CreateMembershipServiceResponse),
 	perform: async (server, params) => {
-		console.log('[create_member] creating member', params.persona_id, params.community_id);
+		console.log('[create_membership] creating membership', params.persona_id, params.community_id);
 
 		const createMembershipResult = await server.db.repos.membership.create(params);
 		if (createMembershipResult.ok) {

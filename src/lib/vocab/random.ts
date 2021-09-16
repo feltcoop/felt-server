@@ -25,7 +25,7 @@ export const randomPersonaParams = (account_id: number): PersonaParams => ({
 	name: randomPersonaName(),
 	account_id,
 });
-export const randomMemberParams = (persona_id: number, community_id: number): MembershipParams => ({
+export const randomMembershipParams = (persona_id: number, community_id: number): MembershipParams => ({
 	persona_id,
 	community_id,
 });
