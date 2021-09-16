@@ -4,8 +4,8 @@
 // import type {ErrorResponse} from '$lib/util/error';
 
 export interface ApiClient<
-	TParamsMap extends Record<string, object> = any, // TODO default type?
-	TResultMap extends Record<string, object> = any, // TODO default type?
+	TParamsMap extends Record<string, any> = any, // TODO default type?
+	TResultMap extends Record<string, any> = any, // TODO default type?
 > {
 	// TODO `name`?
 	invoke: <TMethod extends string, TParams extends TParamsMap[TMethod]>(

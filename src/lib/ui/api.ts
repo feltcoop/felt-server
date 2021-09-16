@@ -15,6 +15,7 @@ import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ErrorResponse} from '$lib/util/error';
 import type {ApiClient} from '$lib/ui/ApiClient';
+import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
 
 const KEY = Symbol();
 
@@ -54,8 +55,8 @@ export interface ApiStore {
 export const toApiStore = (
 	ui: UiStore,
 	data: DataStore,
-	client: ApiClient,
-	client2: ApiClient, // TODO remove this after testing
+	client: ApiClient<ServicesParamsMap, ServicesResultMap>,
+	client2: ApiClient<ServicesParamsMap, ServicesResultMap>, // TODO remove this after testing
 ): ApiStore => {
 	// TODO set the `api` state with progress of remote calls
 	const {subscribe} = writable<ApiState>(toDefaultApiState());
@@ -127,7 +128,7 @@ export const toApiStore = (
 			if (!params.name) return {ok: false, reason: 'invalid name'};
 			const result = await client2.invoke('create_community', params);
 			console.log('[api] create_community result', result);
-			const community = toCommunityModel(result.community);
+			const community = toCommunityModel(result.community as any); // TODO `Community` type is off with schema
 			data.addCommunity(community, params.persona_id);
 			return {ok: true, value: community}; // TODO maybe return `result` instead? problem is the `CommunityModel` is different
 		},
