@@ -15,7 +15,7 @@
 	import MainNav from '$lib/ui/MainNav.svelte';
 	import {setData} from '$lib/ui/data';
 	import {setUi, toUiStore} from '$lib/ui/ui';
-	import {setApi, toApiStore} from '$lib/ui/api';
+	import {setApi, toApi} from '$lib/ui/api';
 	import {setApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
@@ -32,7 +32,7 @@
 	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
 	const websocketApiClient = toWebsocketApiClient(socket.send);
 	const httpApiClient = toHttpApiClient();
-	const api = setApi(toApiStore(ui, data, websocketApiClient, httpApiClient));
+	const api = setApi(toApi(ui, data, websocketApiClient, httpApiClient));
 	const app = setApp({data, ui, api, devmode, socket});
 	browser && console.log('app', app);
 

@@ -1,5 +1,3 @@
-import {writable} from 'svelte/store';
-import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 import {session} from '$app/stores';
 
@@ -15,20 +13,24 @@ import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ApiClient, ApiResult} from '$lib/ui/ApiClient';
 import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
 
+// TODO This was originally implemented as a Svelte store
+// but we weren't using the state at all.
+// It's now a plain object with functions.
+// As our use cases develop, we may want to make it a store again,
+// or perhaps a plain object is best for composition and extension.
+// It may be best to have related state in optional external modules that
+// observe the behavior of the api, to keep this module small and efficient.
+
 const KEY = Symbol();
 
-export const getApi = (): ApiStore => getContext(KEY);
+export const getApi = (): Api => getContext(KEY);
 
-export const setApi = (store: ApiStore): ApiStore => {
+export const setApi = (store: Api): Api => {
 	setContext(KEY, store);
 	return store;
 };
 
-export interface ApiState {}
-
-// TODO probably remove these object wrappers from `value`
-export interface ApiStore {
-	subscribe: Readable<ApiState>['subscribe'];
+export interface Api {
 	logIn: (
 		accountName: string,
 		password: string,
@@ -48,23 +50,15 @@ export interface ApiStore {
 	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
 }
 
-export const toApiStore = (
+export const toApi = (
 	ui: UiStore,
 	data: DataStore,
 	client: ApiClient<ServicesParamsMap, ServicesResultMap>,
 	client2: ApiClient<ServicesParamsMap, ServicesResultMap>, // TODO remove this after testing
-): ApiStore => {
-	// TODO set the `api` state with progress of remote calls
-	const {subscribe} = writable<ApiState>(toDefaultApiState());
-
-	// let $ui: UiState;
-	// let $data: DataState;
-	// ui.subscribe(($u) => ($ui = $u));
-	// data.subscribe(($d) => ($data = $d));
-
-	const store: ApiStore = {
-		subscribe,
-		// TODO these are just directly proxying
+): Api => {
+	const api: Api = {
+		// TODO these are just directly proxying and they don't have the normal `ApiResult` return value
+		// The motivation is that sometimes UI events may do API-related things, but this may not be the best design.
 		selectPersona: ui.selectPersona,
 		selectCommunity: ui.selectCommunity,
 		selectSpace: ui.selectSpace,
@@ -186,8 +180,8 @@ export const toApiStore = (
 		},
 		loadFiles: async (space_id) => {
 			data.setFiles(space_id, []);
-			// TODO this isn't working with the websocket client
-			const result = await client2.invoke('read_files', {space_id});
+			// TODO this breaks on startup because the websocket isn't connected yet
+			const result = await client.invoke('read_files', {space_id});
 			console.log('[api] read_files result', result);
 			if (result.ok) {
 				data.setFiles(space_id, result.data.files);
@@ -195,10 +189,5 @@ export const toApiStore = (
 			return result;
 		},
 	};
-	return store;
+	return api;
 };
-
-const toDefaultApiState = (): ApiState => ({
-	selectedCommunityId: null,
-	selectedSpaceIdByCommunity: {},
-});

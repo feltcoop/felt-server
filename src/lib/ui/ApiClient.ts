@@ -10,7 +10,7 @@ import type {ErrorResponse} from '$lib/util/error';
 // import type {ErrorResponse} from '$lib/util/error';
 
 export type ApiResult<TData> = Result<
-	{status: number; data: TData},
+	{status: number; data: TData}, // TODO should `data` be `value` to match `Result` usage elsewhere?
 	ErrorResponse & {status: number}
 >;
 
