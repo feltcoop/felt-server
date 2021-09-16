@@ -2,7 +2,7 @@ import send from '@polka/send-type';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Account} from '$lib/vocab/account/account.js';
-import {toPasswordKey, verifyPassword} from '$lib/util/password';
+import {verifyPassword} from '$lib/util/password';
 
 export interface LoginRequest {
 	accountName: string;
@@ -34,20 +34,16 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 			}
 		} else if (findAccountResult.type === 'no_account_found') {
 			// There's no account, so create one.
-			const passwordKey = await toPasswordKey(password);
-			const findAccountResult = await db.repos.account.create({
-				name: accountName,
-				password: passwordKey,
-			});
-			console.log('[loginMiddleware] createAccountResult', findAccountResult);
-			if (findAccountResult.ok) {
-				account = findAccountResult.value;
+			const createAccountResult = await db.repos.account.create({name: accountName, password});
+			console.log('[loginMiddleware] createAccountResult', createAccountResult);
+			if (createAccountResult.ok) {
+				account = createAccountResult.value;
 			} else {
-				// Failed to create the account some unknown reason.
-				return send(res, 500, {reason: findAccountResult.reason});
+				// Failed to create the account.
+				return send(res, 500, {reason: createAccountResult.reason});
 			}
 		} else {
-			// Failed to find the account some reason.
+			// Failed to find the account.
 			return send(res, 400, {reason: findAccountResult.reason});
 		}
 
