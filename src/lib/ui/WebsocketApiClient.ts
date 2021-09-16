@@ -10,6 +10,9 @@ import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 
 const toId = toToClientId('');
 
+// TODO doesn't handle the case where the client never hears back from the server,
+// might want a timeout on each request
+
 export interface WebsocketApiClient<
 	TParamsMap extends Record<string, object>,
 	TResultMap extends Record<string, object>,

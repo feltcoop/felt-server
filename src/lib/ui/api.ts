@@ -16,8 +16,6 @@ import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ErrorResponse} from '$lib/util/error';
 import type {ApiClient} from '$lib/ui/ApiClient';
 
-// TODO refactor/rethink
-
 const KEY = Symbol();
 
 export const getApi = (): ApiStore => getContext(KEY);
