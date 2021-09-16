@@ -20,11 +20,10 @@ export interface WebsocketApiClient<
 	handle: (rawMessage: any) => void;
 }
 
-interface PendingRequest<T = unknown> {
+interface WebsocketRequest<T = any> {
 	request: JsonRpcRequest;
 	promise: Promise<T>;
 	resolve: (value: T) => void;
-	reject: (err: Error) => void;
 }
 
 export const toWebsocketApiClient = <
@@ -33,13 +32,24 @@ export const toWebsocketApiClient = <
 >(
 	send: (request: JsonRpcRequest) => void,
 ): WebsocketApiClient<TParamsMap, TResultMap> => {
-	const pendingRequests: Map<string, any> = new Map(); // TODO
+	// TODO maybe extract a `WebsocketRequests` interface, with `add`/`remove` functions (and `pending` items?)
+	const websocketRequests: Map<string, WebsocketRequest> = new Map();
+	const toWebsocketRequest = <T>(request: JsonRpcRequest): WebsocketRequest<T> => {
+		const websocketRequest: WebsocketRequest<T> = {request} as any;
+		websocketRequest.promise = new Promise((resolve) => {
+			websocketRequest.resolve = resolve;
+		});
+		websocketRequests.set(request.id, websocketRequest);
+		return websocketRequest;
+	};
 
 	const client: WebsocketApiClient<TParamsMap, TResultMap> = {
+		// TODO once stabilized try to simplify this type signature and types inside the function body,
+		// using inference from the base `ApiClient.invoke`
 		invoke: async <TServiceName extends string, TParams extends TParamsMap[TServiceName]>(
 			name: TServiceName,
 			params: TParams,
-		) => {
+		): Promise<TResultMap[TServiceName]> => {
 			console.log('[websocket api client] invoke', name, params);
 			const request: JsonRpcRequest<typeof name, TParamsMap> = {
 				jsonrpc: '2.0',
@@ -48,28 +58,20 @@ export const toWebsocketApiClient = <
 				params,
 			};
 			console.log('[websocket api client] request', request);
-
-			// TODO with helper?
-			const pendingRequest: PendingRequest<TResultMap[TServiceName]> = {request} as any; // TODO
-			pendingRequest.promise = new Promise<TResultMap[TServiceName]>((resolve, reject) => {
-				pendingRequest.resolve = resolve;
-				pendingRequest.reject = reject;
-			});
-
-			pendingRequests.set(request.id, pendingRequest);
+			const websocketRequest = toWebsocketRequest<TResultMap[TServiceName]>(request);
 			send(request);
-			return pendingRequest.promise;
+			return websocketRequest.promise;
 		},
 		handle: (rawMessage: any): void => {
 			const message = parseSocketMessage(rawMessage);
-			console.log('handle message', message);
+			console.log('[websocket api client] handle incoming message', message);
 			if (!message) return;
-			const found = pendingRequests.get(message.id);
+			const found = websocketRequests.get(message.id);
 			if (!found) {
 				console.error(`Unable to find message with id ${message.id}`);
 				return;
 			}
-			pendingRequests.delete(message.id);
+			websocketRequests.delete(message.id);
 			found.resolve(message.result);
 		},
 		close: () => {

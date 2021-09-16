@@ -135,6 +135,7 @@ export class ApiServer {
 		]);
 	}
 
+	// TODO extract to a standalone module?
 	handleWebsocketMessage = async (_socket: ws, messageData: ws.Data, account_id: number) => {
 		if (typeof messageData !== 'string') {
 			console.error(
@@ -182,12 +183,13 @@ export class ApiServer {
 		}
 
 		// TODO this is very hacky -- what should the API for returning/broadcasting responses be?
+		// a quick improvement would be to scope to the community
 		const responseMessage: JsonRpcResponse = {
 			jsonrpc: '2.0',
 			id: message.id,
 			result: response, // TODO see above where `response` is assigned, should probably be `response.data`
 		};
-		console.log('sending responseMessage', responseMessage);
+		console.log('[handleWebsocketMessage] broadcasting', responseMessage);
 		const serializedResponse = JSON.stringify(responseMessage);
 		for (const client of this.websocketServer.wss.clients) {
 			client.send(serializedResponse);
