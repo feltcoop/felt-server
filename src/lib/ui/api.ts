@@ -2,7 +2,6 @@ import {writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 import {session} from '$app/stores';
-import type {Result} from '@feltcoop/felt';
 
 import type {DataStore} from '$lib/ui/data';
 import type {UiStore} from '$lib/ui/ui';
@@ -13,8 +12,7 @@ import type {Member, MemberParams} from '$lib/vocab/member/member';
 import type {File, FileParams} from '$lib/vocab/file/file';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
-import type {ErrorResponse} from '$lib/util/error';
-import type {ApiClient} from '$lib/ui/ApiClient';
+import type {ApiClient, ApiResult} from '$lib/ui/ApiClient';
 import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
 
 const KEY = Symbol();
@@ -28,28 +26,26 @@ export const setApi = (store: ApiStore): ApiStore => {
 
 export interface ApiState {}
 
-export type ApiResult<TValue> = Result<TValue, ErrorResponse>;
-
 // TODO probably remove these object wrappers from `value`
 export interface ApiStore {
 	subscribe: Readable<ApiState>['subscribe'];
 	logIn: (
 		accountName: string,
 		password: string,
-	) => Promise<ApiResult<{value: {session: ClientAccountSession}}>>;
+	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	logOut: () => Promise<ApiResult<{}>>;
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space: number | null) => void;
 	toggleMainNav: () => void;
-	createCommunity: (params: CommunityParams) => Promise<ApiResult<{value: CommunityModel}>>;
-	createSpace: (params: SpaceParams) => Promise<ApiResult<{value: {space: Space}}>>;
+	createCommunity: (params: CommunityParams) => Promise<ApiResult<CommunityModel>>;
+	createSpace: (params: SpaceParams) => Promise<ApiResult<{space: Space}>>;
 	inviteMember: (
 		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
 		persona_id: number,
-	) => Promise<ApiResult<{value: {member: Member}}>>;
-	createFile: (params: FileParams) => Promise<ApiResult<{value: {file: File}}>>;
-	loadFiles: (space_id: number) => Promise<ApiResult<{value: {files: File[]}}>>;
+	) => Promise<ApiResult<{member: Member}>>;
+	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
+	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
 }
 
 export const toApiStore = (
@@ -87,7 +83,7 @@ export const toApiStore = (
 					console.log('[logIn] responseData', responseData); // TODO logging
 					accountName = '';
 					session.set(responseData.session);
-					return {ok: true, value: responseData};
+					return {ok: true, value: responseData}; // TODO doesn't this have other status codes?
 				} else {
 					console.error('[logIn] response not ok', responseData, response); // TODO logging
 					return {ok: false, reason: responseData.reason};
@@ -111,7 +107,7 @@ export const toApiStore = (
 				console.log('[logOut] response', responseData); // TODO logging
 				if (response.ok) {
 					session.set({guest: true});
-					return {ok: true};
+					return {ok: true, value: responseData};
 				} else {
 					console.error('[logOut] response not ok', response); // TODO logging
 					return {ok: false, reason: responseData.reason};
@@ -128,15 +124,19 @@ export const toApiStore = (
 			if (!params.name) return {ok: false, reason: 'invalid name'};
 			const result = await client2.invoke('create_community', params);
 			console.log('[api] create_community result', result);
-			const community = toCommunityModel(result.community as any); // TODO `Community` type is off with schema
+			if (!result.ok) return result;
+			const community = toCommunityModel(result.value.community as any); // TODO `Community` type is off with schema
 			data.addCommunity(community, params.persona_id);
-			return {ok: true, value: community}; // TODO maybe return `result` instead? problem is the `CommunityModel` is different
+			// TODO can't return `result` because the `CommunityModel` is different,
+			// but we probably want to change it to have associated data instead of a different interface
+			return {ok: true, value: community};
 		},
 		createSpace: async (params) => {
 			const result = await client2.invoke('create_space', params);
 			console.log('[api] create_space result', result);
-			data.addSpace(result.space, params.community_id);
-			return {ok: true, value: result};
+			if (!result.ok) return result;
+			data.addSpace(result.value.space, params.community_id);
+			return result;
 		},
 		// TODO: This implementation is currently unconsentful,
 		// because does not give the potential member an opportunity to deny an invite
@@ -172,23 +172,18 @@ export const toApiStore = (
 		createFile: async (params: FileParams) => {
 			const result = await client.invoke('create_file', params);
 			console.log('create_file result', result);
-			if (result.code === 200) {
-				data.addFile(result.data.file);
-			} else {
-				console.error('[handleSocketMessage] unhandled response code', result.code);
-			}
-			return {
-				ok: true,
-				result,
-			} as any;
+			if (!result.ok) return result;
+			data.addFile(result.value.file);
+			return result;
 		},
 		loadFiles: async (space_id) => {
 			data.setFiles(space_id, []);
 			// TODO this isn't working with the websocket client
 			const result = await client2.invoke('read_files', {space_id});
 			console.log('[api] read_files result', result);
-			data.setFiles(space_id, result.files);
-			return {ok: true, value: result};
+			if (!result.ok) return result;
+			data.setFiles(space_id, result.value.files);
+			return result;
 		},
 	};
 	return store;

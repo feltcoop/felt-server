@@ -13,8 +13,8 @@ import * as servicesMeta from '$lib/server/servicesMeta';
 import type {ServiceMeta} from '$lib/server/servicesMeta';
 
 export const toHttpApiClient = <
-	TParamsMap extends Record<string, object>,
-	TResultMap extends Record<string, object>,
+	TParamsMap extends Record<string, any>,
+	TResultMap extends Record<string, any>,
 >(): ApiClient<TParamsMap, TResultMap> => {
 	return {
 		invoke: async <TServiceName extends string, TParams extends TParamsMap[TServiceName]>(

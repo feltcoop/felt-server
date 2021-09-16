@@ -14,8 +14,8 @@ const toId = toToClientId('');
 // might want a timeout on each request
 
 export interface WebsocketApiClient<
-	TParamsMap extends Record<string, object>,
-	TResultMap extends Record<string, object>,
+	TParamsMap extends Record<string, any>,
+	TResultMap extends Record<string, any>,
 > extends ApiClient<TParamsMap, TResultMap> {
 	handle: (rawMessage: any) => void;
 }
@@ -28,32 +28,30 @@ interface PendingRequest<T = unknown> {
 }
 
 export const toWebsocketApiClient = <
-	TParamsMap extends Record<string, object>,
-	TResultMap extends Record<string, object>,
+	TParamsMap extends Record<string, any>,
+	TResultMap extends Record<string, any>,
 >(
 	send: (request: JsonRpcRequest) => void,
 ): WebsocketApiClient<TParamsMap, TResultMap> => {
 	const pendingRequests: Map<string, any> = new Map(); // TODO
 
 	const client: WebsocketApiClient<TParamsMap, TResultMap> = {
-		invoke: async <TMethod extends string, TParams extends TParamsMap[TMethod]>(
-			method: TMethod,
+		invoke: async <TServiceName extends string, TParams extends TParamsMap[TServiceName]>(
+			name: TServiceName,
 			params: TParams,
 		) => {
-			const request: JsonRpcRequest<typeof method, TParamsMap> = {
+			console.log('[websocket api client] invoke', name, params);
+			const request: JsonRpcRequest<typeof name, TParamsMap> = {
 				jsonrpc: '2.0',
 				id: toId(),
-				method,
+				method: name,
 				params,
 			};
-
-			// TODO create a promise that gets saved to a map and then resolved in `handleMessage`
-
-			console.log('request', request);
+			console.log('[websocket api client] request', request);
 
 			// TODO with helper?
-			const pendingRequest: PendingRequest<TResultMap[TMethod]> = {request} as any; // TODO
-			pendingRequest.promise = new Promise<TResultMap[TMethod]>((resolve, reject) => {
+			const pendingRequest: PendingRequest<TResultMap[TServiceName]> = {request} as any; // TODO
+			pendingRequest.promise = new Promise<TResultMap[TServiceName]>((resolve, reject) => {
 				pendingRequest.resolve = resolve;
 				pendingRequest.reject = reject;
 			});

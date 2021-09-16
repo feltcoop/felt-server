@@ -1,16 +1,24 @@
+import type {Result} from '@feltcoop/felt';
+
+import type {ErrorResponse} from '$lib/util/error';
+
+// TODO should `status` be passed through on error results?
+
 // TODO typesafe non-throwing `Result`
 // import type {Result} from '@feltcoop/felt';
-// ) => Promise<Result<TResultMap[TMethod], ErrorResponse>>;
+// ) => Promise<Result<TResultMap[TServiceName], ErrorResponse>>;
 // import type {ErrorResponse} from '$lib/util/error';
+
+export type ApiResult<TValue> = Result<{value: TValue}, ErrorResponse>; // TODO include status? `& {status: number}`
 
 export interface ApiClient<
 	TParamsMap extends Record<string, any> = any, // TODO default type?
 	TResultMap extends Record<string, any> = any, // TODO default type?
 > {
 	// TODO `name`?
-	invoke: <TMethod extends string, TParams extends TParamsMap[TMethod]>(
-		method: TMethod,
+	invoke: <TServiceName extends string, TParams extends TParamsMap[TServiceName]>(
+		name: TServiceName,
 		params: TParams,
-	) => Promise<TResultMap[TMethod]>;
+	) => Promise<ApiResult<TResultMap[TServiceName]>>;
 	close: () => void;
 }

@@ -38,11 +38,11 @@ export const readSpaceService: Service<
 
 		const findSpaceResult = await db.repos.space.findById(params.space_id as any); // TODO remove the typecast once this PR is rebased
 		if (findSpaceResult.ok) {
-			return {code: 200, data: {space: findSpaceResult.value}};
+			return {status: 200, data: {space: findSpaceResult.value}};
 		} else {
 			console.log('[read_space] no space found');
 			const code = findSpaceResult.type === 'no_space_found' ? 404 : 500;
-			return {code, data: {reason: findSpaceResult.reason}};
+			return {status: code, data: {reason: findSpaceResult.reason}};
 		}
 	},
 };
@@ -81,10 +81,10 @@ export const readSpacesService: Service<
 
 		const findSpacesResult = await db.repos.space.filterByCommunity(params.community_id as any); // TODO remove the typecast once this PR is rebased
 		if (findSpacesResult.ok) {
-			return {code: 200, data: {spaces: findSpacesResult.value}};
+			return {status: 200, data: {spaces: findSpacesResult.value}};
 		} else {
 			console.log('[read_spaces] error searching for community spaces');
-			return {code: 500, data: {reason: 'error searching for community spaces'}};
+			return {status: 500, data: {reason: 'error searching for community spaces'}};
 		}
 	},
 };
@@ -134,10 +134,10 @@ export const createSpaceService: Service<
 
 		const createSpaceResult = await db.repos.space.create(params);
 		if (createSpaceResult.ok) {
-			return {code: 200, data: {space: createSpaceResult.value}};
+			return {status: 200, data: {space: createSpaceResult.value}};
 		} else {
 			console.log('[create_space] error searching for community spaces');
-			return {code: 500, data: {reason: 'error searching for community spaces'}};
+			return {status: 500, data: {reason: 'error searching for community spaces'}};
 		}
 	},
 };

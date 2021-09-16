@@ -29,7 +29,7 @@ export interface ServiceRequest<TParamsSchema extends TSchema> {
 }
 
 export interface ServiceResponse<TResponseData extends ServiceResponseData> {
-	code: number;
+	status: number;
 	// TODO handle the types compatible with both websockets and http:
 	// websocket types: `string | Buffer | ArrayBuffer | Buffer[]`
 	// http types: `string | object | Stream | Buffer | undefined`

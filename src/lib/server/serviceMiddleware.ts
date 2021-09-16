@@ -62,8 +62,8 @@ export const toServiceMiddleware =
 					console.error(red('validation failed:'), response, service.validateResponse().errors);
 				}
 			}
-			console.log('[serviceMiddleware] result.code', response.code);
-			send(res, response.code, response.data);
+			console.log('[serviceMiddleware] result.code', response.status);
+			send(res, response.status, response.data);
 		} catch (err) {
 			console.error(err);
 			send(res, 500, {reason: 'unknown server error'});

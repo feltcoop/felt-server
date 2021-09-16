@@ -34,10 +34,10 @@ export const readFilesService: Service<
 		const {db} = server;
 		const findFilesResult = await db.repos.file.filterBySpace(params.space_id as any); // TODO remove the typecast once this PR is rebased
 		if (findFilesResult.ok) {
-			return {code: 200, data: {files: findFilesResult.value}}; // TODO API types
+			return {status: 200, data: {files: findFilesResult.value}}; // TODO API types
 		} else {
 			console.log('[read_files] error searching for files');
-			return {code: 500, data: {reason: 'error searching for files'}};
+			return {status: 500, data: {reason: 'error searching for files'}};
 		}
 	},
 };
@@ -78,10 +78,10 @@ export const createFileService: Service<
 		// server.db.repos.account.validatePersona(account_id, actor_id);
 		const insertFilesResult = await server.db.repos.file.create(params);
 		if (insertFilesResult.ok) {
-			return {code: 200, data: {file: insertFilesResult.value}}; // TODO API types
+			return {status: 200, data: {file: insertFilesResult.value}}; // TODO API types
 		} else {
 			console.log('[create_file] error searching for files');
-			return {code: 500, data: {reason: 'error searching for files'}};
+			return {status: 500, data: {reason: 'error searching for files'}};
 		}
 	},
 };
