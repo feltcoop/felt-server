@@ -20,28 +20,6 @@ export const create_community: ServiceMeta = {
 		path: '/api/v1/communities',
 		method: 'POST',
 	},
-	paramsSchema: {
-		$id: 'CreateCommunityServiceParams',
-		additionalProperties: false,
-		type: 'object',
-		properties: {name: {type: 'string'}, persona_id: {type: 'number'}},
-		required: ['name', 'persona_id'],
-	},
-	responseSchema: {
-		$id: 'CreateCommunityServiceResponse',
-		additionalProperties: false,
-		type: 'object',
-		properties: {
-			community: {
-				$id: 'CommunitySchema',
-				additionalProperties: true,
-				type: 'object',
-				properties: {community_id: {type: 'number'}, name: {type: 'string'}},
-				required: ['community_id', 'name'],
-			},
-		},
-		required: ['community'],
-	},
 };
 
 export const create_member: ServiceMeta = {
@@ -49,28 +27,6 @@ export const create_member: ServiceMeta = {
 	route: {
 		path: '/api/v1/members',
 		method: 'POST',
-	},
-	paramsSchema: {
-		$id: 'CreateMemberServiceParams',
-		additionalProperties: false,
-		type: 'object',
-		properties: {persona_id: {type: 'number'}, community_id: {type: 'number'}},
-		required: ['persona_id', 'community_id'],
-	},
-	responseSchema: {
-		$id: 'CreateMemberServiceResponse',
-		additionalProperties: false,
-		type: 'object',
-		properties: {
-			member: {
-				$id: 'Member',
-				additionalProperties: false,
-				type: 'object',
-				properties: {persona_id: {type: 'number'}, community_id: {type: 'number'}},
-				required: ['persona_id', 'community_id'],
-			},
-		},
-		required: ['member'],
 	},
 };
 
@@ -80,40 +36,6 @@ export const create_space: ServiceMeta = {
 		path: '/api/v1/communities/:community_id/spaces',
 		method: 'POST',
 	},
-	paramsSchema: {
-		$id: 'CreateSpaceServiceSchema',
-		additionalProperties: false,
-		type: 'object',
-		properties: {
-			community_id: {type: 'number'},
-			name: {type: 'string'},
-			url: {type: 'string'},
-			media_type: {type: 'string'},
-			content: {type: 'string'},
-		},
-		required: ['community_id', 'name', 'url', 'media_type', 'content'],
-	},
-	responseSchema: {
-		$id: 'CreateSpaceServiceResponse',
-		additionalProperties: false,
-		type: 'object',
-		properties: {
-			space: {
-				$id: 'Space',
-				additionalProperties: false,
-				type: 'object',
-				properties: {
-					space_id: {type: 'number'},
-					name: {type: 'string'},
-					url: {type: 'string'},
-					media_type: {type: 'string'},
-					content: {type: 'string'},
-				},
-				required: ['space_id', 'name', 'url', 'media_type', 'content'],
-			},
-		},
-		required: ['space'],
-	},
 };
 
 export const create_file: ServiceMeta = {
@@ -121,33 +43,6 @@ export const create_file: ServiceMeta = {
 	route: {
 		path: '/api/v1/spaces/:space_id/files',
 		method: 'POST',
-	},
-	paramsSchema: {
-		$id: 'CreateFileServiceParams',
-		additionalProperties: false,
-		type: 'object',
-		properties: {actor_id: {type: 'number'}, space_id: {type: 'number'}, content: {type: 'string'}},
-		required: ['actor_id', 'space_id', 'content'],
-	},
-	responseSchema: {
-		$id: 'CreateFileServiceResponse',
-		additionalProperties: false,
-		type: 'object',
-		properties: {
-			file: {
-				$id: 'File',
-				additionalProperties: false,
-				type: 'object',
-				properties: {
-					file_id: {type: 'number'},
-					actor_id: {type: 'number'},
-					space_id: {type: 'number'},
-					content: {type: 'string'},
-				},
-				required: ['file_id', 'actor_id', 'space_id', 'content'],
-			},
-		},
-		required: ['file'],
 	},
 };
 
@@ -157,28 +52,6 @@ export const read_community: ServiceMeta = {
 		path: '/api/v1/communities/:community_id',
 		method: 'GET',
 	},
-	paramsSchema: {
-		$id: 'ReadCommunityServiceParams',
-		additionalProperties: false,
-		type: 'object',
-		properties: {community_id: {type: 'number'}},
-		required: ['community_id'],
-	},
-	responseSchema: {
-		$id: 'ReadCommunityServiceResponse',
-		additionalProperties: false,
-		type: 'object',
-		properties: {
-			community: {
-				$id: 'CommunitySchema',
-				additionalProperties: true,
-				type: 'object',
-				properties: {community_id: {type: 'number'}, name: {type: 'string'}},
-				required: ['community_id', 'name'],
-			},
-		},
-		required: ['community'],
-	},
 };
 
 export const read_communities: ServiceMeta = {
@@ -186,30 +59,6 @@ export const read_communities: ServiceMeta = {
 	route: {
 		path: '/api/v1/communities',
 		method: 'GET',
-	},
-	paramsSchema: {
-		$id: 'ReadCommunitiesServiceParams',
-		additionalProperties: false,
-		type: 'object',
-		properties: {},
-	},
-	responseSchema: {
-		$id: 'ReadCommunitiesServiceResponse',
-		additionalProperties: false,
-		type: 'object',
-		properties: {
-			communities: {
-				type: 'array',
-				items: {
-					$id: 'CommunitySchema',
-					additionalProperties: true,
-					type: 'object',
-					properties: {community_id: {type: 'number'}, name: {type: 'string'}},
-					required: ['community_id', 'name'],
-				},
-			},
-		},
-		required: ['communities'],
 	},
 };
 
@@ -219,34 +68,6 @@ export const read_space: ServiceMeta = {
 		path: '/api/v1/spaces/:space_id',
 		method: 'GET',
 	},
-	paramsSchema: {
-		$id: 'ReadSpaceServiceParams',
-		additionalProperties: false,
-		type: 'object',
-		properties: {space_id: {type: 'number'}},
-		required: ['space_id'],
-	},
-	responseSchema: {
-		$id: 'ReadSpaceServiceResponse',
-		additionalProperties: false,
-		type: 'object',
-		properties: {
-			space: {
-				$id: 'Space',
-				additionalProperties: false,
-				type: 'object',
-				properties: {
-					space_id: {type: 'number'},
-					name: {type: 'string'},
-					url: {type: 'string'},
-					media_type: {type: 'string'},
-					content: {type: 'string'},
-				},
-				required: ['space_id', 'name', 'url', 'media_type', 'content'],
-			},
-		},
-		required: ['space'],
-	},
 };
 
 export const read_spaces: ServiceMeta = {
@@ -255,37 +76,6 @@ export const read_spaces: ServiceMeta = {
 		path: '/api/v1/communities/:community_id/spaces',
 		method: 'GET',
 	},
-	paramsSchema: {
-		$id: 'ReadSpacesServiceSchema',
-		additionalProperties: false,
-		type: 'object',
-		properties: {community_id: {type: 'number'}},
-		required: ['community_id'],
-	},
-	responseSchema: {
-		$id: 'ReadSpacesServiceResponse',
-		additionalProperties: false,
-		type: 'object',
-		properties: {
-			spaces: {
-				type: 'array',
-				items: {
-					$id: 'Space',
-					additionalProperties: false,
-					type: 'object',
-					properties: {
-						space_id: {type: 'number'},
-						name: {type: 'string'},
-						url: {type: 'string'},
-						media_type: {type: 'string'},
-						content: {type: 'string'},
-					},
-					required: ['space_id', 'name', 'url', 'media_type', 'content'],
-				},
-			},
-		},
-		required: ['spaces'],
-	},
 };
 
 export const read_files: ServiceMeta = {
@@ -293,35 +83,5 @@ export const read_files: ServiceMeta = {
 	route: {
 		path: '/api/v1/spaces/:space_id/files',
 		method: 'GET',
-	},
-	paramsSchema: {
-		$id: 'ReadFilesServiceParams',
-		additionalProperties: false,
-		type: 'object',
-		properties: {space_id: {type: 'number'}},
-		required: ['space_id'],
-	},
-	responseSchema: {
-		$id: 'ReadFilesServiceResponse',
-		additionalProperties: false,
-		type: 'object',
-		properties: {
-			files: {
-				type: 'array',
-				items: {
-					$id: 'File',
-					additionalProperties: false,
-					type: 'object',
-					properties: {
-						file_id: {type: 'number'},
-						actor_id: {type: 'number'},
-						space_id: {type: 'number'},
-						content: {type: 'string'},
-					},
-					required: ['file_id', 'actor_id', 'space_id', 'content'],
-				},
-			},
-		},
-		required: ['files'],
 	},
 };
