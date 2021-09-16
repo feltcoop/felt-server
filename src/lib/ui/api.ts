@@ -170,7 +170,7 @@ export const toApi = (
 				throw Error(`error: ${res.status}: ${res.statusText}`);
 			}
 		},
-		createFile: async (params: FileParams) => {
+		createFile: async (params) => {
 			const result = await client.invoke('create_file', params);
 			console.log('create_file result', result);
 			if (result.ok) {

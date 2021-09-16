@@ -22,6 +22,7 @@
 	import {WEBSOCKET_URL} from '$lib/constants';
 	import {toWebsocketApiClient} from '$lib/ui/WebsocketApiClient';
 	import {toHttpApiClient} from '$lib/ui/HttpApiClient';
+	import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
 
 	// TODO some of this shouldn't run during SSR
 	const devmode = setDevmode();
@@ -30,8 +31,11 @@
 	const socket = setSocket(toSocketStore((data) => websocketApiClient.handle(data)));
 	const ui = setUi(toUiStore(data));
 	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
-	const websocketApiClient = toWebsocketApiClient(socket.send);
-	const httpApiClient = toHttpApiClient();
+	// TODO create only the websocket client, not the http client
+	const websocketApiClient = toWebsocketApiClient<ServicesParamsMap, ServicesResultMap>(
+		socket.send,
+	);
+	const httpApiClient = toHttpApiClient<ServicesParamsMap, ServicesResultMap>();
 	const api = setApi(toApi(ui, data, websocketApiClient, httpApiClient));
 	const app = setApp({data, ui, api, devmode, socket});
 	browser && console.log('app', app);
