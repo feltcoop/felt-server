@@ -39,7 +39,9 @@ export const communityRepo = (db: Database) => ({
 			reason: `No community found with id: ${community_id}`,
 		};
 	},
-	filterByAccount: async (account_id: number): Promise<Result<{value: Community[]}>> => {
+	filterByAccount: async (
+		account_id: number,
+	): Promise<Result<{value: Community[]}, ErrorResponse>> => {
 		console.log(`[db] preparing to query for communities & spaces persona: ${account_id}`);
 		const data = await db.sql<Community[]>`		
 			SELECT c.community_id, c.name,

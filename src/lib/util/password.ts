@@ -8,17 +8,20 @@ const toScrypt = promisify(scrypt);
 
 // Returns the string `salt:hash` to be stored in the database.
 // The returned key can be compared to a password attempt with `verifyPassword`.
-export const toPasswordKey = async (password: string): Promise<string> => {
+export const toPasswordKey = async (passwordText: string): Promise<string> => {
 	const salt = randomBytes(SALT_SIZE).toString('hex');
-	const hash = (await toHash(password, salt)).toString('hex');
+	const hash = (await toHash(passwordText, salt)).toString('hex');
 	return `${salt}:${hash}`;
 };
 
 // Checks if a `password` matches the generated hash and salt in `key` from `toPasswordKey`.
-export const verifyPassword = async (passwordText: string, key: string): Promise<boolean> => {
-	const [salt, hash] = key.split(':');
+export const verifyPassword = async (
+	passwordText: string,
+	passwordKey: string,
+): Promise<boolean> => {
+	const [salt, hash] = passwordKey.split(':');
 	return timingSafeEqual(Buffer.from(hash, 'hex'), await toHash(passwordText, salt));
 };
 
-const toHash = (password: string, salt: string): Promise<Buffer> =>
-	toScrypt(password, salt, HASH_SIZE) as any;
+const toHash = (passwordText: string, salt: string): Promise<Buffer> =>
+	toScrypt(passwordText, salt, HASH_SIZE) as any;
