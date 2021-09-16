@@ -11,7 +11,7 @@
 
 	let text = '';
 
-	$: browser && $socket.connected && api.loadFiles(space.space_id);
+	$: browser && $socket.connected && api.loadFiles(space.space_id); // TODO move this to SvelteKit `load` so it works with http clients
 	$: console.log(`[Notes] fetching files for ${space.space_id}`);
 	$: selectedPersonaId = $ui.selectedPersonaId;
 

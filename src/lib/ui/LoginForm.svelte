@@ -4,9 +4,9 @@
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 
 	import {autofocus} from '$lib/ui/actions';
-	import type {ApiStore} from '$lib/ui/api';
+	import type {Api} from '$lib/ui/api';
 
-	export let logIn: ApiStore['logIn'];
+	export let logIn: Api['logIn'];
 
 	let accountName = '';
 	let password = '';
