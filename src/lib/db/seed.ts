@@ -61,7 +61,7 @@ export const seed = async (db: Database): Promise<void> => {
 	`;
 
 	if (createMembershipsResult.count) {
-		log.trace('createPersonaCommunitiesResult', createMembershipsResult);
+		log.trace('createMembershipsResult', createMembershipsResult);
 	}
 
 	const createSpacesTableResult = await sql`

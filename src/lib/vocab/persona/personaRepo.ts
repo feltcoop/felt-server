@@ -31,19 +31,21 @@ export const personaRepo = (db: Database) => ({
 	filterByAccount: async (
 		account_id: number,
 	): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
+		console.log('[personaRepo] filtering by account', account_id);
 		const data = await db.sql<Persona[]>`
       select p.persona_id, p.account_id, p.name,
 
       (
         select array_to_json(coalesce(array_agg(d.community_id)))
         from (
-          SELECT pc.community_id FROM persona_communities pc WHERE pc.persona_id = p.persona_id
+          SELECT m.community_id FROM memberships m WHERE m.persona_id = p.persona_id
         ) d
       ) as community_ids
       
       from personas p where p.account_id = ${account_id}
 		`;
 		if (data.length) {
+			console.log('[personaRepo] returning personas for account', account_id);
 			return {ok: true, value: data};
 		}
 		return {

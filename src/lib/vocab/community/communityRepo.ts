@@ -56,7 +56,7 @@ export const communityRepo = (db: Database) => ({
 					) d
 				) as membership
 			FROM communities c JOIN (
-				SELECT DISTINCT pc.community_id FROM personas p JOIN memberships m ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
+				SELECT DISTINCT m.community_id FROM personas p JOIN memberships m ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
 			) apc
 			ON c.community_id=apc.community_id;
     `;

@@ -13,7 +13,7 @@
 
 	const {data, ui, api} = getApp();
 
-	$: members = $data.members;
+	$: members = $data.allPersonas;
 	$: personas = $data.personas;
 
 	$: selectedPersona = ui.selectedPersona;

@@ -34,7 +34,7 @@ export const CommunityParamsSchema = Type.Object(
 );
 export const validateCommunityParams = toValidateSchema<CommunityParams>(CommunityParamsSchema);
 
-// TODO think through alternatives to this, probably caching `membersById` on `data`
+// TODO think through alternatives to this, probably caching `membershipById` on `data`
 export interface CommunityModel {
 	community_id: number;
 	name: string;

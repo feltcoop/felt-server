@@ -14,11 +14,12 @@ export const sessionRepo = (db: Database) => ({
 		const account: AccountModel = unwrap(
 			await db.repos.account.findById(account_id, accountModelProperties),
 		);
-		let personas: Persona[] = unwrap(await db.repos.persona.filterByAccount(account.account_id));
+		const personas: Persona[] = unwrap(await db.repos.persona.filterByAccount(account.account_id));
 		const communities: Community[] = unwrap(
 			await db.repos.community.filterByAccount(account.account_id),
 		);
 		const allPersonas: Persona[] = unwrap(await db.repos.persona.getAll());
+		console.log('[db] loadClientSession resulsts', account, personas, communities, allPersonas);
 		return {
 			ok: true,
 			value: {account, personas, communities, allPersonas},
