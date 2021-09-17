@@ -36,7 +36,11 @@
 					<button
 						type="button"
 						class="button-join"
-						on:click={() => api.inviteMember(community.community_id, member.persona_id)}
+						on:click={() =>
+							api.createMembership({
+								community_id: community.community_id,
+								persona_id: member.persona_id,
+							})}
 					>
 						{member.name}
 					</button>

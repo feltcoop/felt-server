@@ -42,10 +42,7 @@ export interface Api {
 	toggleMainNav: () => void;
 	createCommunity: (params: CommunityParams) => Promise<ApiResult<CommunityModel>>;
 	createSpace: (params: SpaceParams) => Promise<ApiResult<{space: Space}>>;
-	inviteMember: (
-		community_id: number, // TODO using `Community` instead of `community_id` breaks the pattern above
-		persona_id: number,
-	) => Promise<ApiResult<{member: Member}>>;
+	createMembership: (params: MemberParams) => Promise<ApiResult<{member: Member}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
 	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
 }
@@ -138,37 +135,14 @@ export const toApi = (
 			}
 			return result;
 		},
-		// TODO refactor this after `membership` stuff is merged
 		// TODO: This implementation is currently unconsentful,
 		// because does not give the potential member an opportunity to deny an invite
-		inviteMember: async (community_id, persona_id) => {
-			// TODO proper automated validation
-			if (community_id == null) return {ok: false, status: 400, reason: 'invalid url'};
-			if (!persona_id) return {ok: false, status: 400, reason: 'invalid persona'};
-
-			const doc: MemberParams = {
-				persona_id,
-				community_id,
-			};
-
-			// TODO change this input, consider `/api/v1/invitations`
-			const res = await fetch(`/api/v1/members`, {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify(doc),
-			});
-			if (res.ok) {
-				try {
-					const result: {member: Member} = await res.json(); // TODO api types
-					console.log('inviteMember result', result);
-					data.addMember(result.member);
-					return {ok: true, status: 200, data: result};
-				} catch (err) {
-					return {ok: false, status: 400, reason: err.message};
-				}
-			} else {
-				throw Error(`error: ${res.status}: ${res.statusText}`);
+		createMembership: async (params) => {
+			const result = await client2.invoke('create_member', params);
+			if (result.ok) {
+				data.addMember(result.data.member);
 			}
+			return result;
 		},
 		createFile: async (params) => {
 			const result = await client.invoke('create_file', params);
