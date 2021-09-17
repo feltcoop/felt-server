@@ -5,6 +5,6 @@ export const task: Task = {
 	summary: 'check that everything is ready to commit',
 	run: async ({invokeTask}) => {
 		await invokeTask('gro/check');
-		await spawn('npx', ['svelte-check']); // TODO why is `npx` needed here?
+		await spawn('npx', ['svelte-check']);
 	},
 };
