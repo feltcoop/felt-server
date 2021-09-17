@@ -2,9 +2,6 @@ import type {Result} from '@feltcoop/felt';
 
 import type {Database} from '$lib/db/Database';
 import type {ClientAccountSession} from '$lib/session/clientSession.js';
-import type {Persona} from '$lib/vocab/persona/persona.js';
-import type {Community} from '$lib/vocab/community/community.js';
-import type {AccountModel} from '$lib/vocab/account/account.js';
 import {accountModelProperties} from '$lib/vocab/account/account';
 import type {ErrorResponse} from '$lib/util/error';
 

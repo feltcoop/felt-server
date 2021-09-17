@@ -4,7 +4,7 @@
 	import type {Space} from '$lib/vocab/space/space.js';
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import type {CommunityModel} from '$lib/vocab/community/community.js';
-	import MemberInput from '$lib/ui/MemberInput.svelte';
+	import MembershipInput from '$lib/ui/MembershipInput.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 
 	export let community: CommunityModel;
@@ -17,7 +17,7 @@
 <div class="space-nav">
 	<div class="header">
 		<SpaceInput {community} />
-		<MemberInput {community} {allPersonas} />
+		<MembershipInput {community} {allPersonas} />
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
