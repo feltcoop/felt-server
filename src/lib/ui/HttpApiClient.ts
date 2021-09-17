@@ -12,6 +12,8 @@ import type {ApiClient, ApiResult} from '$lib/ui/ApiClient';
 import * as servicesMeta from '$lib/server/servicesMeta';
 import type {ServiceMeta} from '$lib/server/servicesMeta';
 
+// TODO make `fetch` a parameter once the client isn't created for SSR
+// fetch: typeof window.fetch,
 export const toHttpApiClient = <
 	TParamsMap extends Record<string, any>,
 	TResultMap extends Record<string, any>,

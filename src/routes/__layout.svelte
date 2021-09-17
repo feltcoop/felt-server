@@ -24,7 +24,7 @@
 	import {toHttpApiClient} from '$lib/ui/HttpApiClient';
 	import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
 
-	// TODO some of this shouldn't run during SSR
+	// TODO some of this shouldn't run during SSR, see the `onMount` function below
 	const devmode = setDevmode();
 	const data = setData($session);
 	$: data.updateSession($session);
@@ -62,6 +62,8 @@
 	};
 
 	onMount(() => {
+		// TODO create the API client here -- do we need a `$client.ready` state
+		// to abstract away `$socket.connected`?
 		socket.connect(WEBSOCKET_URL);
 		return () => {
 			socket.disconnect();
