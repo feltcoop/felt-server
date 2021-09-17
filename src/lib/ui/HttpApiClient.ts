@@ -36,7 +36,7 @@ export const toHttpApiClient = <
 				});
 				const result = await res.json();
 				console.log('[http api client] result', result);
-				return {ok: true, status: res.status, data: result};
+				return {ok: true, status: res.status, value: result};
 			} catch (err) {
 				return {ok: false, status: 500, reason: err.message || 'Unknown error'}; // TODO ?
 			}

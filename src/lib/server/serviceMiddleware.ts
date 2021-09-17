@@ -58,12 +58,12 @@ export const toServiceMiddleware =
 			}
 			const response = await service.perform({server, params, account_id: req.account_id});
 			if (process.env.NODE_ENV !== 'production') {
-				if (!service.validateResponse()(response.data)) {
+				if (!service.validateResponse()(response.value)) {
 					console.error(red('validation failed:'), response, service.validateResponse().errors);
 				}
 			}
 			console.log('[serviceMiddleware] result.code', response.status);
-			send(res, response.status, response.data);
+			send(res, response.status, response.value);
 		} catch (err) {
 			console.error(err);
 			send(res, 500, {reason: 'unknown server error'});

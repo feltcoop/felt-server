@@ -28,12 +28,10 @@ export interface ServiceRequest<TParamsSchema extends TSchema> {
 	account_id: number;
 }
 
-export interface ServiceResponse<TResponseData extends ServiceResponseData> {
+export interface ServiceResponse<TResponseValue extends object> {
 	status: number;
 	// TODO handle the types compatible with both websockets and http:
 	// websocket types: `string | Buffer | ArrayBuffer | Buffer[]`
 	// http types: `string | object | Stream | Buffer | undefined`
-	data: TResponseData | ErrorResponse;
+	value: TResponseValue | ErrorResponse;
 }
-
-export type ServiceResponseData = object;

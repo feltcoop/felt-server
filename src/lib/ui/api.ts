@@ -74,7 +74,7 @@ export const toApi = (
 					console.log('[logIn] responseData', responseData); // TODO logging
 					accountName = '';
 					session.set(responseData.session);
-					return {ok: true, status: response.status, data: responseData}; // TODO doesn't this have other status codes?
+					return {ok: true, status: response.status, value: responseData}; // TODO doesn't this have other status codes?
 				} else {
 					console.error('[logIn] response not ok', responseData, response); // TODO logging
 					return {ok: false, status: response.status, reason: responseData.reason};
@@ -99,7 +99,7 @@ export const toApi = (
 				console.log('[logOut] response', responseData); // TODO logging
 				if (response.ok) {
 					session.set({guest: true});
-					return {ok: true, status: response.status, data: responseData};
+					return {ok: true, status: response.status, value: responseData};
 				} else {
 					console.error('[logOut] response not ok', response); // TODO logging
 					return {ok: false, status: response.status, reason: responseData.reason};
@@ -118,12 +118,12 @@ export const toApi = (
 			const result = await client2.invoke('create_community', params);
 			console.log('[api] create_community result', result);
 			if (result.ok) {
-				const community = toCommunityModel(result.data.community as any); // TODO `Community` type is off with schema
+				const community = toCommunityModel(result.value.community as any); // TODO `Community` type is off with schema
 				data.addCommunity(community, params.persona_id);
 				// TODO refactor to not return here, do `return result` below --
 				// can't return `result` right now because the `CommunityModel` is different,
 				// but we probably want to change it to have associated data instead of a different interface
-				return {ok: true, status: result.status, data: community};
+				return {ok: true, status: result.status, value: community};
 			}
 			return result;
 		},
@@ -131,7 +131,7 @@ export const toApi = (
 			const result = await client2.invoke('create_space', params);
 			console.log('[api] create_space result', result);
 			if (result.ok) {
-				data.addSpace(result.data.space, params.community_id);
+				data.addSpace(result.value.space, params.community_id);
 			}
 			return result;
 		},
@@ -140,7 +140,7 @@ export const toApi = (
 		createMembership: async (params) => {
 			const result = await client2.invoke('create_member', params);
 			if (result.ok) {
-				data.addMember(result.data.member);
+				data.addMember(result.value.member);
 			}
 			return result;
 		},
@@ -148,7 +148,7 @@ export const toApi = (
 			const result = await client.invoke('create_file', params);
 			console.log('create_file result', result);
 			if (result.ok) {
-				data.addFile(result.data.file);
+				data.addFile(result.value.file);
 			}
 			return result;
 		},
@@ -158,7 +158,7 @@ export const toApi = (
 			const result = await client.invoke('read_files', {space_id});
 			console.log('[api] read_files result', result);
 			if (result.ok) {
-				data.setFiles(space_id, result.data.files);
+				data.setFiles(space_id, result.value.files);
 			}
 			return result;
 		},

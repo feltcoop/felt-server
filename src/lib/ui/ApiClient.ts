@@ -9,8 +9,8 @@ import type {ErrorResponse} from '$lib/util/error';
 // ) => Promise<Result<TResultMap[TServiceName], ErrorResponse>>;
 // import type {ErrorResponse} from '$lib/util/error';
 
-export type ApiResult<TData> = Result<
-	{status: number; data: TData}, // TODO should `data` be `value` to match `Result` usage elsewhere?
+export type ApiResult<TValue> = Result<
+	{status: number; value: TValue}, // TODO should `data` be `value` to match `Result` usage elsewhere?
 	ErrorResponse & {status: number}
 >;
 

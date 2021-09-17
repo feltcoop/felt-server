@@ -173,7 +173,7 @@ export class ApiServer {
 		const response = await service.perform({server: this, params, account_id});
 
 		if (process.env.NODE_ENV !== 'production') {
-			if (!service.validateResponse()(response.data)) {
+			if (!service.validateResponse()(response.value)) {
 				console.error(
 					red(`failed to validate service response: ${service.name}`),
 					response,
