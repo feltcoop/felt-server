@@ -42,5 +42,4 @@ jobs:
       - run: npm ci
       - run: npx gro lib/db/create
       - run: npx gro check
-      - run: npx -y svelte-check
       - run: npx gro build
