@@ -8,7 +8,7 @@ export const task: Task = {
 		await invokeTask('gro/typecheck');
 		const svelteCheckResult = await spawn('npx', ['svelte-check']);
 		if (!svelteCheckResult.ok) {
-			throw new TaskError(`Failed to typecheck. ${printSpawnResult(svelteCheckResult)}`);
+			throw new TaskError(`Failed to typecheck Svelte. ${printSpawnResult(svelteCheckResult)}`);
 		}
 	},
 };
