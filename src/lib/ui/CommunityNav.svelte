@@ -14,10 +14,6 @@
 		[persona_id: number]: CommunityModel[];
 	};
 	export let selectedSpaceIdByCommunity: {[key: number]: number | null};
-	// TODO this is causing a double state change (rendering an invalid in between state)
-	// because it's both navigating and setting state internally in the same user action
-	// TODO should this be an event?
-	export let selectPersona: (persona_id: number) => void;
 
 	// TODO improve the efficiency of this with better
 	const toPersonaCommunity = (persona: Persona): CommunityModel =>
@@ -36,7 +32,6 @@
 				{persona}
 				selected={persona === selectedPersona && toPersonaCommunity(persona) === selectedCommunity}
 				{selectedSpaceIdByCommunity}
-				{selectPersona}
 			/>
 			{#each communitiesByPersonaId[persona.persona_id] as community (community.community_id)}
 				{#if community.name !== persona.name}
@@ -45,7 +40,6 @@
 						{persona}
 						selected={persona === selectedPersona && community === selectedCommunity}
 						{selectedSpaceIdByCommunity}
-						{selectPersona}
 					/>
 				{/if}
 			{/each}

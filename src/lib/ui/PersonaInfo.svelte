@@ -2,7 +2,7 @@
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import {randomHue} from '$lib/ui/color';
-	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
+	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/util';
 
 	export let persona: Persona | null; // TODO should this be `Actor`?
 

@@ -22,7 +22,7 @@
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {WEBSOCKET_URL} from '$lib/config';
 	import {toHandleSocketMessage} from '$lib/ui/handleSocketMessage';
-	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
+	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/util';
 
 	const devmode = setDevmode();
 	const data = setData($session);
@@ -43,6 +43,17 @@
 		if (!params.community) return;
 		const community = $data.communities.find((c) => c.name === params.community);
 		if (!community) return; // occurs when a session routes to a community they can't access
+
+		// TODO look up faster with caching data structure
+		const personaName = $page.query.get('persona');
+		const persona = $data.personas.find((p) => p.name === personaName);
+		if (!persona) {
+			console.error(`TODO Unable to find persona: ${persona}`);
+		} else {
+			console.log('$page.query', $page.query.get('persona'));
+			api.selectPersona(persona.persona_id);
+		}
+
 		const {community_id} = community;
 		if (community_id !== $ui.selectedCommunityId) {
 			api.selectCommunity(community_id);

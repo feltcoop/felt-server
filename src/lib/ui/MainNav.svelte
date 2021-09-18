@@ -10,7 +10,7 @@
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
-	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
+	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/util';
 
 	const {data, ui, api} = getApp();
 
@@ -58,7 +58,6 @@
 					selectedPersona={$selectedPersona}
 					selectedCommunity={$selectedCommunity}
 					communitiesByPersonaId={$communitiesByPersonaId}
-					selectPersona={ui.selectPersona}
 					selectedSpaceIdByCommunity={$ui.selectedSpaceIdByCommunity}
 				/>
 				{#if $selectedCommunity}
