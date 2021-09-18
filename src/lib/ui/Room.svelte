@@ -2,19 +2,19 @@
 	import {browser} from '$app/env';
 
 	import type {Space} from '$lib/vocab/space/space.js';
-	import type {Member} from '$lib/vocab/member/member.js';
-	import ChatItems from '$lib/ui/ChatItems.svelte';
+	import type {Persona} from '$lib/vocab/persona/persona.js';
+	import RoomItems from '$lib/ui/RoomItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
 	const {api, ui, data} = getApp();
 
 	export let space: Space;
-	export let membersById: Map<number, Member>;
+	export let memberPersonasById: Map<number, Persona>;
 
 	let text = '';
 
 	$: browser && api.loadFiles(space.space_id);
-	$: console.log(`[Chat] fetching files for ${space.space_id}`);
+	$: console.log(`[Room] fetching files for ${space.space_id}`);
 	$: selectedPersonaId = $ui.selectedPersonaId;
 
 	const createFile = async () => {
@@ -37,15 +37,15 @@
 	$: files = $data.filesBySpace[space.space_id] || [];
 </script>
 
-<div class="chat">
+<div class="room">
 	<div class="files">
-		<ChatItems {files} {membersById} />
+		<RoomItems {files} {memberPersonasById} />
 	</div>
 	<input type="text" placeholder="> chat" on:keydown={onKeydown} bind:value={text} />
 </div>
 
 <style>
-	.chat {
+	.room {
 		display: flex;
 		flex-direction: column;
 		flex: 1;

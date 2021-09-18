@@ -13,29 +13,17 @@
 
 	const {data, ui, api} = getApp();
 
-	$: members = $data.members;
-	$: communities = $data.communities;
+	$: allPersonas = $data.allPersonas;
 	$: personas = $data.personas;
 
-	// TODO speed up these lookups, probably with a map of all entities by id
-	$: selectedCommunity =
-		communities.find((c) => c.community_id === $ui.selectedCommunityId) || null;
-	$: selectedSpace = selectedCommunity
-		? selectedCommunity.spaces.find(
-				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[selectedCommunity!.community_id],
-		  ) || null
-		: null;
-	$: selectedPersona = personas.find((p) => p.persona_id === $ui.selectedPersonaId) || null;
-	$: console.log('selected persona', selectedPersona);
-	$: selectedPersonaCommunities = communities.filter((community) =>
-		selectedPersona?.community_ids.includes(community.community_id),
-	);
+	$: selectedPersona = ui.selectedPersona;
+	$: selectedCommunity = ui.selectedCommunity;
+	$: selectedSpace = ui.selectedSpace;
+	$: communitiesByPersonaId = ui.communitiesByPersonaId;
 
 	// TODO refactor to some client view-model for the account
-	$: hue = randomHue($data.account.name);
-
-	let selectedPersonaId = $ui.selectedPersonaId;
-	$: ui.selectPersona(selectedPersonaId!);
+	$: selectedPersonaName = $selectedPersona?.name || 'guest';
+	$: hue = randomHue(selectedPersonaName);
 </script>
 
 {#if $ui.expandMainNav}
@@ -46,17 +34,13 @@
 		<div class="header">
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
-			<select class="persona-selector" bind:value={selectedPersonaId}>
-				{#each personas as persona (persona)}
-					<option value={persona.persona_id}>{persona.name}</option>
-				{/each}
-			</select>
 			<button
 				on:click={() => ui.setMainNavView('explorer')}
 				class:selected={$ui.mainNavView === 'explorer'}
 				class="explorer-button"
 			>
-				<ActorIcon name={selectedPersona?.name || 'no name'} />
+				<ActorIcon name={selectedPersonaName} />
+				<span class="persona-name">{selectedPersonaName}</span>
 			</button>
 			<button
 				on:click={() => ui.setMainNavView('account')}
@@ -69,13 +53,19 @@
 		</div>
 		{#if $ui.mainNavView === 'explorer'}
 			<div class="explorer">
-				{#if selectedCommunity}
-					<CommunityNav {members} {selectedPersonaCommunities} {selectedCommunity} />
+				<CommunityNav
+					{personas}
+					selectedPersona={$selectedPersona}
+					selectedCommunity={$selectedCommunity}
+					communitiesByPersonaId={$communitiesByPersonaId}
+					selectPersona={ui.selectPersona}
+				/>
+				{#if $selectedCommunity}
 					<SpaceNav
-						community={selectedCommunity}
-						spaces={selectedCommunity.spaces}
-						{selectedSpace}
-						{members}
+						community={$selectedCommunity}
+						spaces={$selectedCommunity.spaces}
+						selectedSpace={$selectedSpace}
+						{allPersonas}
 					/>
 				{/if}
 			</div>
@@ -152,19 +142,15 @@
 		display: flex;
 		flex: 1;
 	}
-	.persona-selector {
-		display: flex;
-		flex: 2;
-		height: var(--navbar_size);
-		background: var(--interactive_color);
-	}
 	.explorer-button {
 		justify-content: flex-start;
 		height: var(--navbar_size);
-		flex: 0.5;
+		flex: 1;
 		padding: var(--spacing_xs);
 	}
-
+	.persona-name {
+		margin-left: var(--spacing_sm);
+	}
 	.account-button {
 		height: var(--navbar_size);
 		width: var(--navbar_size);

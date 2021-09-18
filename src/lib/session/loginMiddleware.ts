@@ -2,7 +2,7 @@ import send from '@polka/send-type';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Account} from '$lib/vocab/account/account.js';
-import {toPasswordKey, verifyPassword} from '$lib/util/password';
+import {verifyPassword} from '$lib/util/password';
 
 export interface LoginRequest {
 	accountName: string;
@@ -22,8 +22,6 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 			return send(res, 400, {reason: 'already logged in'});
 		}
 
-		const passwordKey = await toPasswordKey(password);
-
 		// First see if the account already exists.
 		const findAccountResult = await db.repos.account.findByName(accountName);
 		console.log('[loginMiddleware] findAccountResult', findAccountResult);
@@ -31,24 +29,21 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 		if (findAccountResult.ok) {
 			// There's already an account, so proceed to log in after validating the password.
 			account = findAccountResult.value;
-			if (!(await verifyPassword(account.password, passwordKey))) {
+			if (!(await verifyPassword(password, account.password))) {
 				return send(res, 400, {reason: 'invalid account name or password'});
 			}
 		} else if (findAccountResult.type === 'no_account_found') {
 			// There's no account, so create one.
-			const findAccountResult = await db.repos.account.create({
-				name: accountName,
-				password: passwordKey,
-			});
-			console.log('[loginMiddleware] createAccountResult', findAccountResult);
-			if (findAccountResult.ok) {
-				account = findAccountResult.value;
+			const createAccountResult = await db.repos.account.create({name: accountName, password});
+			console.log('[loginMiddleware] createAccountResult', createAccountResult);
+			if (createAccountResult.ok) {
+				account = createAccountResult.value;
 			} else {
-				// Failed to create the account some unknown reason.
-				return send(res, 500, {reason: findAccountResult.reason});
+				// Failed to create the account.
+				return send(res, 500, {reason: createAccountResult.reason});
 			}
 		} else {
-			// Failed to find the account some reason.
+			// Failed to find the account.
 			return send(res, 400, {reason: findAccountResult.reason});
 		}
 
@@ -59,6 +54,7 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 		if (clientSessionResult.ok) {
 			return send(res, 200, {session: clientSessionResult.value}); // TODO API types
 		} else {
+			req.session = null!;
 			return send(res, 500, {reason: 'problem loading client session'});
 		}
 	};

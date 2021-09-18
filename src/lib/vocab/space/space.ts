@@ -1,10 +1,9 @@
 import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
-import type {ValidateFunction} from 'ajv';
 
-import {ajv} from '$lib/util/ajv';
+import {toValidateSchema} from '$lib/util/ajv';
 
-export type Space = Static<typeof SpaceSchema>;
+export interface Space extends Static<typeof SpaceSchema> {}
 export const SpaceSchema = Type.Object(
 	{
 		space_id: Type.Number(),
@@ -15,9 +14,10 @@ export const SpaceSchema = Type.Object(
 	},
 	{$id: 'Space', additionalProperties: false},
 );
+export const validateSpace = toValidateSchema<Space>(SpaceSchema);
 
 // TODO the `community_id` belongs here, but it's not used in the REST post payload, only the params
-export type SpaceParams = Static<typeof SpaceParamsSchema>;
+export interface SpaceParams extends Static<typeof SpaceParamsSchema> {}
 export const SpaceParamsSchema = Type.Object(
 	{
 		community_id: Type.Number(),
@@ -28,16 +28,21 @@ export const SpaceParamsSchema = Type.Object(
 	},
 	{$id: 'SpaceParams', additionalProperties: false},
 );
-export const validateSpaceParams = (): ValidateFunction<SpaceParams> =>
-	_validateSpaceParams || (_validateSpaceParams = ajv.compile(SpaceParamsSchema));
-let _validateSpaceParams: ValidateFunction<SpaceParams> | undefined;
+export const validateSpaceParams = toValidateSchema<SpaceParams>(SpaceParamsSchema);
 
-//TODO make TypeScript String enum
-export const SpaceTypes = {
-	Chat: 'Chat',
-	Board: 'Board',
-	Forum: 'Forum',
-	Notes: 'Notes',
-	Voice: 'Voice',
-	Iframe: 'Iframe',
-};
+export enum SpaceType {
+	Room = 'Room',
+	Board = 'Board',
+	Forum = 'Forum',
+	Notes = 'Notes',
+	Voice = 'Voice',
+	Iframe = 'Iframe',
+}
+export const spaceTypes: SpaceType[] = Object.keys(SpaceType) as SpaceType[];
+
+// TODO refactor? rename? or how to define this?
+export interface SpaceViewData {
+	type: SpaceType;
+	props: SpaceProps;
+}
+export type SpaceProps = any; // TODO generic per type?
