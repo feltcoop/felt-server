@@ -41,6 +41,11 @@
 			<SpaceInfo {space} {community} selected={space === $selectedSpace} />
 		{/each}
 	</section>
+	<section>
+		<!-- TODO this is just a stubbed out idea -->
+		<h2>activity</h2>
+		<code>TODO</code>
+	</section>
 </Markup>
 
 <style>
