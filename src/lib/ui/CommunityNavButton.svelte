@@ -14,7 +14,6 @@
 	export let persona: Persona;
 	export let community: CommunityModel;
 	export let selected: boolean = false;
-	export let small: boolean = false; // TODO probably change this API
 	// export let communitiesByPersonaId: {
 	// 	[persona_id: number]: CommunityModel[];
 	// };
@@ -35,7 +34,7 @@
 	class="community"
 	href="/{community.name}{toUrl(selectedSpace && selectedSpace.url)}"
 	class:selected
-	class:small
+	class:persona={community.name === persona.name}
 	style="--hue: {randomHue(community.name)}"
 	on:click={() => selectPersona(persona.persona_id)}
 >
@@ -48,11 +47,12 @@
 		/* TODO better way to have active state? this makes the community nav wider than the luggage button! */
 		border: 1px solid transparent;
 	}
+	/* TODO jucier selected state, maybe scaling up 10ish percent */
 	.selected {
 		border-color: var(--active_color);
 		background-color: var(--bg);
 	}
-	.small {
+	.persona {
 		margin-top: var(--spacing_xl5);
 		display: flex;
 		justify-content: center;
@@ -61,7 +61,7 @@
 		height: var(--icon_size_md);
 		--icon_size: var(--icon_size_sm);
 	}
-	.small:first-child {
+	.persona:first-child {
 		margin-top: 0;
 	}
 </style>

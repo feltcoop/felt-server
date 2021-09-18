@@ -32,7 +32,6 @@
 	<div>
 		{#each personas as persona (persona.persona_id)}
 			<CommunityNavButton
-				small={true}
 				community={toPersonaCommunity(persona)}
 				{persona}
 				selected={persona === selectedPersona && toPersonaCommunity(persona) === selectedCommunity}
