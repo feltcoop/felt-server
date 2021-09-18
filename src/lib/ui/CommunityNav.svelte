@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {CommunityModel} from '$lib/vocab/community/community.js';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
+	import CommunityNavButton from '$lib/ui/CommunityNavButton.svelte';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import type {Persona} from '$lib/vocab/persona/persona';
@@ -19,16 +20,6 @@
 	// because it's both navigating and setting state internally in the same user action
 	// TODO should this be an event?
 	export let selectPersona: (persona_id: number) => void;
-
-	// // TODO refactor
-	// const getSpace = (community_id: number) => {
-	// 	const space_id = selectedSpaceIdByCommunity[community_id];
-	// 	if (!space_id) throw Error('TODO');
-	// 	// TODO better data access
-	// 	const space = data.spaces.find((s) => s.space_id === space_id);
-	// 	if (!space) throw Error('TODO');
-	// 	return space;
-	// };
 </script>
 
 <div class="community-nav">
@@ -49,15 +40,13 @@
 			</a>
 			{#each communitiesByPersonaId[persona.persona_id] as community (community.community_id)}
 				{#if community.name !== persona.name}
-					<a
-						class="community"
-						href="/{community.name}"
-						class:selected={persona === selectedPersona && community === selectedCommunity}
-						style="--hue: {randomHue(community.name)}"
-						on:click={() => selectPersona(persona.persona_id)}
-					>
-						<ActorIcon name={community.name} />
-					</a>
+					<CommunityNavButton
+						{community}
+						{persona}
+						selected={persona === selectedPersona && community === selectedCommunity}
+						{selectedSpaceIdByCommunity}
+						{selectPersona}
+					/>
 				{/if}
 			{/each}
 		{/each}
