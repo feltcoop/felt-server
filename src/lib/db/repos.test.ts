@@ -67,6 +67,9 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
 		);
 	}
+	const spaceCount = 1;
+	const defaultSpaces = toDefaultSpaces(community.community_id);
+	const defaultSpaceCount = defaultSpaces.length;
 
 	const unwrapFile = async (promise: Promise<Result<{value: File}>>): Promise<File> => {
 		const file = unwrap(await promise);
@@ -121,7 +124,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const filterSpacesValue = unwrap(
 		await server.db.repos.space.filterByCommunity(community.community_id),
 	);
-	t.equal(filterSpacesValue.length, toDefaultSpaces(community.community_id).length);
+	t.equal(filterSpacesValue.length, spaceCount + defaultSpaceCount);
 	filterSpacesValue.forEach((s) => {
 		if (!validateSpace()(s)) {
 			throw new Error(
