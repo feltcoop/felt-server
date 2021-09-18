@@ -5,16 +5,30 @@
 	import {randomHue} from '$lib/ui/color';
 	import type {Persona} from '$lib/vocab/persona/persona';
 
+	// TODO should this just use `ui` instead of taking all of these props?
+	// could `ui` be more composable, so it could be easily reused e.g. in docs for demonstration purposes?
+
 	export let personas: Persona[];
 	export let selectedPersona: Persona | null;
 	export let selectedCommunity: CommunityModel | null;
 	export let communitiesByPersonaId: {
 		[persona_id: number]: CommunityModel[];
 	};
+	export let selectedSpaceIdByCommunity: {[key: number]: number | null};
 	// TODO this is causing a double state change (rendering an invalid in between state)
 	// because it's both navigating and setting state internally in the same user action
 	// TODO should this be an event?
 	export let selectPersona: (persona_id: number) => void;
+
+	// // TODO refactor
+	// const getSpace = (community_id: number) => {
+	// 	const space_id = selectedSpaceIdByCommunity[community_id];
+	// 	if (!space_id) throw Error('TODO');
+	// 	// TODO better data access
+	// 	const space = data.spaces.find((s) => s.space_id === space_id);
+	// 	if (!space) throw Error('TODO');
+	// 	return space;
+	// };
 </script>
 
 <div class="community-nav">

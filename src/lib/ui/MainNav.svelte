@@ -59,6 +59,7 @@
 					selectedCommunity={$selectedCommunity}
 					communitiesByPersonaId={$communitiesByPersonaId}
 					selectPersona={ui.selectPersona}
+					selectedSpaceIdByCommunity={$ui.selectedSpaceIdByCommunity}
 				/>
 				{#if $selectedCommunity}
 					<SpaceNav

@@ -14,8 +14,8 @@
 <div class="workspace">
 	<div class="column">
 		<WorkspaceHeader space={$selectedSpace} community={$selectedCommunity} />
-		{#if $selectedSpace && memberPersonasById}
-			<SpaceView space={$selectedSpace} {memberPersonasById} />
+		{#if $selectedCommunity && $selectedSpace && memberPersonasById}
+			<SpaceView community={$selectedCommunity} space={$selectedSpace} {memberPersonasById} />
 		{:else if $selectedCommunity}
 			<SpaceInput community={$selectedCommunity}>Create a new space</SpaceInput>
 		{/if}

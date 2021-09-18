@@ -9,7 +9,7 @@
 	// TODO factor out a viewmodel or something
 	$: name = (persona as any)?.name || GUEST_PERSONA_NAME;
 	$: icon = (persona as any)?.icon || null;
-	$: hue = randomHue(name);
+	$: hue = randomHue(name); // TODO add custom setting on personas
 </script>
 
 <div class="persona-info" style="--hue: {hue}">

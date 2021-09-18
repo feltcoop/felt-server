@@ -2,7 +2,9 @@
 	import {spaceViews} from '$lib/ui/spaceViews';
 	import type {Space, SpaceViewData} from '$lib/vocab/space/space';
 	import type {Persona} from '$lib/vocab/persona/persona';
+	import type {Community} from '$lib/vocab/community/community';
 
+	export let community: Community;
 	export let space: Space;
 	export let memberPersonasById: Map<number, Persona>;
 
@@ -22,7 +24,13 @@
 </script>
 
 {#if component}
-	<svelte:component this={component} {space} {memberPersonasById} {...spaceData.props} />
+	<svelte:component
+		this={component}
+		{community}
+		{space}
+		{memberPersonasById}
+		{...spaceData.props}
+	/>
 {:else}
 	unknown space type: {spaceData.type}
 {/if}
