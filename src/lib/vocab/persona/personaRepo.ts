@@ -31,9 +31,7 @@ export const personaRepo = (db: Database) => ({
 		const community = createCommunityResult.value;
 		persona.community_ids = [community.community_id];
 		// TODO this is also a yucky hack
-		community.members = [
-			{persona_id: persona.persona_id, name: persona.name, community_id: community.community_id},
-		];
+		community.memberPersonas = [persona];
 		return {ok: true, value: {persona, community}};
 	},
 	filterByAccount: async (
