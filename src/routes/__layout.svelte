@@ -37,7 +37,7 @@
 	$: guest = $session.guest;
 	$: onboarding = !$session.guest && !$data.personas.length;
 
-	// TODO refactor -- where should this logic go?
+	// TODO refactor -- where should this logic go? maybe just take `app` as a param?
 	$: updateStateFromPageParams($page.params);
 	const updateStateFromPageParams = (params: {community?: string; space?: string}) => {
 		if (!params.community) return;

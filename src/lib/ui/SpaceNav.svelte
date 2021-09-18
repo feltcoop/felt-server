@@ -5,11 +5,13 @@
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import type {CommunityModel} from '$lib/vocab/community/community.js';
 	import MembershipInput from '$lib/ui/MembershipInput.svelte';
+	import SpaceNavButton from '$lib/ui/SpaceNavButton.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 
 	export let community: CommunityModel;
 	export let spaces: Space[];
 	export let selectedSpace: Space | null;
+	export let selectedPersona: Persona;
 	export let allPersonas: Persona[];
 	$: browser && console.log('spaces', spaces);
 </script>
@@ -21,12 +23,12 @@
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
-		<a
-			href="/{community.name}{space.url === '/' ? '' : space.url}"
-			class:selected={space === selectedSpace}
-		>
-			{space.name}
-		</a>
+		<SpaceNavButton
+			persona={selectedPersona}
+			{community}
+			{space}
+			selected={space === selectedSpace}
+		/>
 	{/each}
 </div>
 
