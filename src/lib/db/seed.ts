@@ -52,16 +52,16 @@ export const seed = async (db: Database): Promise<void> => {
 		log.trace('createCommunitiesTableResult', createCommunitiesTableResult);
 	}
 
-	const createPersonaCommunitiesResult = await sql`
-		create table if not exists persona_communities (
+	const createMembershipsResult = await sql`
+		create table if not exists memberships (
 			persona_id int references personas (persona_id) ON UPDATE CASCADE ON DELETE CASCADE,
 			community_id int references communities (community_id) ON UPDATE CASCADE,
-			CONSTRAINT persona_community_pkey PRIMARY KEY (persona_id,community_id)
+			CONSTRAINT membership_pkey PRIMARY KEY (persona_id,community_id)
 		)	
 	`;
 
-	if (createPersonaCommunitiesResult.count) {
-		log.trace('createPersonaCommunitiesResult', createPersonaCommunitiesResult);
+	if (createMembershipsResult.count) {
+		log.trace('createMembershipsResult', createMembershipsResult);
 	}
 
 	const createSpacesTableResult = await sql`
@@ -153,7 +153,7 @@ export const seed = async (db: Database): Promise<void> => {
 		);
 		communities.push(community);
 		for (const persona of otherPersonas) {
-			await db.repos.member.create({
+			await db.repos.membership.create({
 				persona_id: persona.persona_id,
 				community_id: community.community_id,
 			});

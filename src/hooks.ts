@@ -19,7 +19,12 @@ export const getSession: GetSession<CookieSessionRequest, ClientSession> = async
 	if (account_id !== undefined) {
 		// TODO this swallows errors
 		const result = await db.repos.session.loadClientSession(account_id);
-		return result.ok ? result.value : {guest: true};
+		if (result.ok) {
+			return result.value;
+		} else {
+			request.session = null!;
+			return {guest: true};
+		}
 	} else {
 		return {guest: true};
 	}

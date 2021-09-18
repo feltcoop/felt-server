@@ -13,7 +13,7 @@
 
 	const {data, ui, api} = getApp();
 
-	$: members = $data.members;
+	$: allPersonas = $data.allPersonas;
 	$: personas = $data.personas;
 
 	$: selectedPersona = ui.selectedPersona;
@@ -65,7 +65,7 @@
 						community={$selectedCommunity}
 						spaces={$selectedCommunity.spaces}
 						selectedSpace={$selectedSpace}
-						{members}
+						{allPersonas}
 					/>
 				{/if}
 			</div>

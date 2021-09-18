@@ -2,7 +2,7 @@ import {Type} from '@sinclair/typebox';
 
 import type {Service} from '$lib/server/service';
 import {CommunitySchema} from '$lib/vocab/community/community';
-import {MemberSchema} from '$lib/vocab/member/member';
+import {MembershipSchema} from '$lib/vocab/membership/membership';
 import {toValidateSchema} from '$lib/util/ajv';
 
 const ReadCommunitiesServiceParams = Type.Object(
@@ -152,44 +152,44 @@ export const createCommunityService: Service<
 	},
 };
 
-const CreateMemberServiceParams = Type.Object(
+const CreateMembershipServiceParams = Type.Object(
 	{
 		persona_id: Type.Number(),
 		community_id: Type.Number(),
 	},
-	{$id: 'CreateMemberServiceParams', additionalProperties: false},
+	{$id: 'CreateMembershipServiceParams', additionalProperties: false},
 );
-const CreateMemberServiceResponse = Type.Object(
+const CreateMembershipServiceResponse = Type.Object(
 	{
-		member: MemberSchema,
+		membership: MembershipSchema,
 	},
-	{$id: 'CreateMemberServiceResponse', additionalProperties: false},
+	{$id: 'CreateMembershipServiceResponse', additionalProperties: false},
 );
 
 // TODO move to `$lib/vocab/member`
 //Creates a new member relation for a community
-export const createMemberService: Service<
-	typeof CreateMemberServiceParams,
-	typeof CreateMemberServiceResponse
+export const createMembershipService: Service<
+	typeof CreateMembershipServiceParams,
+	typeof CreateMembershipServiceResponse
 > = {
-	name: 'create_member',
+	name: 'create_membership',
 	route: {
-		path: '/api/v1/members',
+		path: '/api/v1/memberships',
 		method: 'post',
 	},
-	paramsSchema: CreateMemberServiceParams,
-	validateParams: toValidateSchema(CreateMemberServiceParams),
-	responseSchema: CreateMemberServiceResponse,
-	validateResponse: toValidateSchema(CreateMemberServiceResponse),
+	paramsSchema: CreateMembershipServiceParams,
+	validateParams: toValidateSchema(CreateMembershipServiceParams),
+	responseSchema: CreateMembershipServiceResponse,
+	validateResponse: toValidateSchema(CreateMembershipServiceResponse),
 	perform: async ({server, params}) => {
-		console.log('[create_member] creating member', params.persona_id, params.community_id);
+		console.log('[create_membership] creating membership', params.persona_id, params.community_id);
 
-		const createMemberResult = await server.db.repos.member.create(params);
-		if (createMemberResult.ok) {
-			return {code: 200, data: {member: createMemberResult.value}};
+		const createMembershipResult = await server.db.repos.membership.create(params);
+		if (createMembershipResult.ok) {
+			return {code: 200, data: {membership: createMembershipResult.value}};
 		} else {
-			console.log('[create_member] error creating member');
-			return {code: 500, data: {reason: 'error creating member'}};
+			console.log('[create_membership] error creating membership');
+			return {code: 500, data: {reason: 'error creating membership'}};
 		}
 	},
 };

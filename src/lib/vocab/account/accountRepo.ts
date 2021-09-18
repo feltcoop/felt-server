@@ -4,15 +4,17 @@ import type {Account, AccountParams} from '$lib/vocab/account/account.js';
 import {accountProperties} from '$lib/vocab/account/account';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
+import {toPasswordKey} from '$lib/util/password';
 
 export const accountRepo = (db: Database) => ({
 	create: async ({
 		name,
 		password,
 	}: AccountParams): Promise<Result<{value: Account}, ErrorResponse>> => {
+		const passwordKey = await toPasswordKey(password);
 		const data = await db.sql<Account[]>`
       insert into accounts (name, password) values (
-        ${name}, ${password}
+        ${name}, ${passwordKey}
       ) RETURNING *`;
 		console.log('[db] created account', data);
 		const account = data[0];
@@ -22,10 +24,12 @@ export const accountRepo = (db: Database) => ({
 		account_id: number,
 		columns: string[] = accountProperties,
 	): Promise<Result<{value: Account}, {type: 'no_account_found'} & ErrorResponse>> => {
+		console.log('[accountRepo] loading account', account_id);
 		const data = await db.sql<Account[]>`
       select ${db.sql(columns)} from accounts where account_id = ${account_id}
     `;
 		if (data.length) {
+			console.log('[accountRepo] account found, returning', account_id);
 			return {ok: true, value: data[0]};
 		}
 		return {

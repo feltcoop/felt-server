@@ -5,7 +5,6 @@ import {setContext, getContext} from 'svelte';
 import type {ClientSession} from '$lib/session/clientSession';
 import {toCommunityModel} from '$lib/vocab/community/community';
 import type {CommunityModel} from '$lib/vocab/community/community';
-import type {Member} from '$lib/vocab/member/member';
 import type {Space} from '$lib/vocab/space/space';
 import type {AccountModel} from '$lib/vocab/account/account';
 import type {Persona} from '$lib/vocab/persona/persona';
@@ -29,7 +28,7 @@ export interface DataState {
 	account: AccountModel | null;
 	communities: CommunityModel[];
 	spaces: Space[];
-	members: Member[];
+	allPersonas: Persona[]; //TODO; remove this when a real invite system is in place
 	personas: Persona[];
 	filesBySpace: Record<number, File[]>;
 }
@@ -40,7 +39,6 @@ export interface DataStore {
 	addPersona: (persona: Persona) => void;
 	addCommunity: (community: CommunityModel, persona_id: number) => void;
 	addSpace: (space: Space, community_id: number) => void;
-	addMember: (member: Member) => void;
 	addFile: (file: File) => void;
 	setFiles: (space_id: number, files: File[]) => void;
 }
@@ -92,11 +90,6 @@ export const toDataStore = (initialSession: ClientSession): DataStore => {
 				),
 			}));
 		},
-		addMember: (member) => {
-			// TODO instead of this, probably want to set more granularly with nested stores
-			console.log('[data.addMember]', member);
-			update(($data) => ({...$data, members: $data.members.concat(member)}));
-		},
 		addFile: (file) => {
 			console.log('[data.addFile]', file);
 			update(($data) => ({
@@ -127,7 +120,7 @@ const toDefaultData = (session: ClientSession): DataState => {
 			account: null,
 			communities: [],
 			spaces: [],
-			members: [],
+			allPersonas: [],
 			personas: [],
 			filesBySpace: {},
 		};
@@ -137,7 +130,7 @@ const toDefaultData = (session: ClientSession): DataState => {
 			communities: session.communities.map((community) => toCommunityModel(community)),
 			// TODO session should already have a flat array of spaces
 			spaces: session.communities.flatMap((community) => community.spaces),
-			members: session.members,
+			allPersonas: session.allPersonas,
 			personas: session.personas,
 			filesBySpace: {},
 		};
