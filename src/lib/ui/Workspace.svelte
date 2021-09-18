@@ -9,6 +9,7 @@
 
 	$: selectedCommunity = ui.selectedCommunity;
 	$: selectedSpace = ui.selectedSpace;
+	// TODO should display just the space's members, not the community's
 	$: memberPersonasById = $selectedCommunity?.memberPersonasById;
 </script>
 
