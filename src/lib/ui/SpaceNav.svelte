@@ -43,8 +43,4 @@
 	.header {
 		display: flex;
 	}
-
-	a {
-		padding: var(--spacing_xs) var(--spacing_sm);
-	}
 </style>
