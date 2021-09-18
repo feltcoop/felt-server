@@ -35,7 +35,7 @@ export interface UiStore {
 	selectedSpace: Readable<Space | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: CommunityModel[]}>; // TODO or name `personaCommunities`?
 	// methods
-	updateData: (data: DataState | null) => void;
+	updateData: (data: DataState) => void;
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space_id: number | null) => void;
@@ -92,7 +92,7 @@ export const toUiStore = (data: DataStore) => {
 				// most likely `updateData` *should* wipe away UI state by default,
 				// and should not be called when data changes, only when a new session's data is set,
 				// so the naming is misleading
-				if (data) {
+				if (data.account) {
 					const selectedPersona =
 						($ui.selectedPersonaId !== null &&
 							data.personas.find((c) => c.persona_id === $ui.selectedPersonaId)) ||

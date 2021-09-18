@@ -2,18 +2,18 @@
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	import type {File} from '$lib/vocab/file/file.js';
-	import type {Member} from '$lib/vocab/member/member.js';
+	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import {randomHue} from '$lib/ui/color';
 
 	export let file: File;
-	export let member: Member; // TODO should this be `Actor`?
+	export let persona: Persona; // TODO should this be `Actor`?
 
 	// TODO shouldn't need this
-	$: icon = (member as any).icon || null;
+	$: icon = (persona as any).icon || null;
 
 	// TODO refactor to some client view-model for the actor
-	$: hue = randomHue(member.name);
+	$: hue = randomHue(persona.name);
 </script>
 
 <li style="--hue: {hue}">
@@ -23,8 +23,8 @@
 		</p>
 	</Markup>
 	<div class="about">
-		<ActorIcon name={member.name} {icon} />
-		<span class="actor">{member.name}</span>
+		<ActorIcon name={persona.name} {icon} />
+		<span class="actor">{persona.name}</span>
 	</div>
 </li>
 

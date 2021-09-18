@@ -2,14 +2,14 @@
 	import {browser} from '$app/env';
 
 	import type {Space} from '$lib/vocab/space/space.js';
-	import type {Member} from '$lib/vocab/member/member.js';
+	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import BoardItems from '$lib/ui/BoardItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
 	const {api, ui, data} = getApp();
 
 	export let space: Space;
-	export let membersById: Map<number, Member>;
+	export let memberPersonasById: Map<number, Persona>;
 
 	let text = '';
 
@@ -40,7 +40,7 @@
 <div class="board">
 	<textarea placeholder="> file" on:keydown={onKeydown} bind:value={text} />
 	<div class="files">
-		<BoardItems {files} {membersById} />
+		<BoardItems {files} {memberPersonasById} />
 	</div>
 </div>
 
