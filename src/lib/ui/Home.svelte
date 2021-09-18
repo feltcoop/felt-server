@@ -14,6 +14,8 @@
 	export let space: Space;
 	export let memberPersonasById: Map<number, Persona>;
 
+	space; // TODO we're ignoring the space, but should probably mount its `content` as markup
+
 	// TODO refactor to be normalized
 	// this will also fix the UX issue where `spaces` aren't available for SSR, so they pop in
 	$: spaces = community?.spaces || [];

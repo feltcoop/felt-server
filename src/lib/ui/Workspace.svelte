@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import SpaceView from '$lib/ui/SpaceView.svelte';
+	import SpaceMetaView from '$lib/ui/SpaceMetaView.svelte';
 	import WorkspaceHeader from '$lib/ui/WorkspaceHeader.svelte';
 	import {getApp} from '$lib/ui/app';
 
@@ -20,6 +21,11 @@
 			<SpaceInput community={$selectedCommunity}>Create a new space</SpaceInput>
 		{/if}
 	</div>
+	{#if $selectedCommunity && $selectedSpace && memberPersonasById}
+		<div class="space-meta">
+			<SpaceMetaView community={$selectedCommunity} space={$selectedSpace} {memberPersonasById} />
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -28,12 +34,17 @@
 		width: 100%;
 		display: flex;
 		flex: 1;
-		flex-direction: column;
 	}
 	.column {
 		height: 100%;
 		display: flex;
 		flex-direction: column;
+		border-right: var(--border);
+	}
+	/* TODO handle properly for mobile */
+	/* TODO better name? */
+	.space-meta {
+		width: var(--column_width_min);
 		border-right: var(--border);
 	}
 </style>
