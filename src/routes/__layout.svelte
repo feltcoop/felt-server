@@ -47,14 +47,16 @@
 		if (community_id !== $ui.selectedCommunityId) {
 			api.selectCommunity(community_id);
 		}
-		if (community_id && params.space) {
-			const spaceUrl = '/' + params.space;
+		if (community_id) {
+			const spaceUrl = '/' + (params.space || '');
 			const space = community.spaces.find((s) => s.url === spaceUrl);
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = space;
 			if (space_id !== $ui.selectedSpaceIdByCommunity[community_id]) {
 				api.selectSpace(community_id, space_id);
 			}
+		} else {
+			// TODO what is this condition?
 		}
 	};
 

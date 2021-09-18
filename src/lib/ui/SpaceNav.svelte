@@ -21,7 +21,10 @@
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
-		<a href="/{community.name}{space.url}" class:selected={space === selectedSpace}>
+		<a
+			href="/{community.name}{space.url === '/' ? '' : space.url}"
+			class:selected={space === selectedSpace}
+		>
 			{space.name}
 		</a>
 	{/each}

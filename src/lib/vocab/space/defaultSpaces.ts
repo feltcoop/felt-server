@@ -5,7 +5,7 @@ export const toDefaultSpaces = (community_id: number): SpaceParams[] => [
 	{
 		community_id,
 		name: 'home',
-		url: '/home',
+		url: '/',
 		media_type: 'application/fuz+json',
 		content: `{"type": "${SpaceType.Home}", "props": {"data": "/home/files"}}`,
 	},
