@@ -1,27 +1,21 @@
 <script lang="ts">
 	import type {Space} from '$lib/vocab/space/space.js';
-	import type {Member} from '$lib/vocab/member/member.js';
-	import {getApp} from '$lib/ui/app';
-
-	const {data} = getApp();
+	import type {Persona} from '$lib/vocab/persona/persona.js';
+	import PersonaInfo from '$lib/ui/PersonaInfo.svelte';
 
 	export let space: Space;
-	export let membersById: Map<number, Member>;
+	export let memberPersonasById: Map<number, Persona>;
 
 	space;
 
-	// TODO this is hacky because of the member data, fix when `memberships` are fixed
 	// TODO cache data better to speed this up!!
-	console.log('$data.personas', $data.personas);
-	$: personas = Array.from(membersById.values()).map(
-		(m) => $data.members.find((p) => p.persona_id === m.persona_id)! as any,
-	);
+	$: personas = Array.from(memberPersonasById.values());
 </script>
 
 <div class="home">
 	<!-- TODO display other meta info about the community -->
 	{#each personas as persona (persona.persona_id)}
-		<div>{persona.name}</div>
+		<PersonaInfo {persona} />
 	{/each}
 </div>
 

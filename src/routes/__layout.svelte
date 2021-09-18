@@ -22,6 +22,7 @@
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {WEBSOCKET_URL} from '$lib/config';
 	import {toHandleSocketMessage} from '$lib/ui/handleSocketMessage';
+	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 
 	const devmode = setDevmode();
 	const data = setData($session);
@@ -92,7 +93,7 @@
 	<Devmode {devmode} />
 </div>
 
-<FeltWindowHost query={() => ({hue: randomHue($data.account?.name || 'guest')})} />
+<FeltWindowHost query={() => ({hue: randomHue($data.account?.name || GUEST_PERSONA_NAME)})} />
 
 <style>
 	.layout {

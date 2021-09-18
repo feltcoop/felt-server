@@ -3,13 +3,14 @@
 	import {icons} from '@feltcoop/felt';
 	import {session} from '$app/stores';
 
-	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import CommunityNav from '$lib/ui/CommunityNav.svelte';
 	import SpaceNav from '$lib/ui/SpaceNav.svelte';
 	import SocketConnection from '$lib/ui/SocketConnection.svelte';
+	import PersonaInfo from '$lib/ui/PersonaInfo.svelte';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
+	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 
 	const {data, ui, api} = getApp();
 
@@ -22,7 +23,7 @@
 	$: communitiesByPersonaId = ui.communitiesByPersonaId;
 
 	// TODO refactor to some client view-model for the account
-	$: selectedPersonaName = $selectedPersona?.name || 'guest';
+	$: selectedPersonaName = $selectedPersona?.name || GUEST_PERSONA_NAME;
 	$: hue = randomHue(selectedPersonaName);
 </script>
 
@@ -39,8 +40,7 @@
 				class:selected={$ui.mainNavView === 'explorer'}
 				class="explorer-button"
 			>
-				<ActorIcon name={selectedPersonaName} />
-				<span class="persona-name">{selectedPersonaName}</span>
+				<PersonaInfo persona={$selectedPersona} />
 			</button>
 			<button
 				on:click={() => ui.setMainNavView('account')}
@@ -147,9 +147,6 @@
 		height: var(--navbar_size);
 		flex: 1;
 		padding: var(--spacing_xs);
-	}
-	.persona-name {
-		margin-left: var(--spacing_sm);
 	}
 	.account-button {
 		height: var(--navbar_size);
