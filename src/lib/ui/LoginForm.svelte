@@ -2,9 +2,11 @@
 	import {tick} from 'svelte';
 	import {icons} from '@feltcoop/felt';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
+	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import {autofocus} from '$lib/ui/actions';
 	import type {ApiStore} from '$lib/ui/api';
+	import CenteredBlock from '$lib/ui/CenteredBlock.svelte';
 
 	export let logIn: ApiStore['logIn'];
 
@@ -16,7 +18,7 @@
 	let errorMessage: string | undefined;
 	let submitting: boolean | undefined;
 
-	$: disabled = submitting;
+	$: disabled = !!submitting;
 
 	const doLogIn = async () => {
 		if (submitting) return;
@@ -76,6 +78,9 @@
 	</PendingButton>
 	<div class:error={!!errorMessage}>{errorMessage || icons.felt}</div>
 </form>
+<CenteredBlock>
+	<Message icon="🗝">your account name is private</Message>
+</CenteredBlock>
 
 <style>
 	.error {

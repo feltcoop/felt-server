@@ -1,9 +1,11 @@
 <script lang="ts">
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import type {AsyncStatus} from '@feltcoop/felt';
+	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import type {PersonaParams} from '$lib/vocab/persona/persona';
 	import {autofocus} from '$lib/ui/actions';
+	import CenteredBlock from '$lib/ui/CenteredBlock.svelte';
 
 	export let createPersona: (personaParams: PersonaParams) => Promise<unknown>; // TODO return type?
 
@@ -47,6 +49,9 @@
 		<button type="button" on:click={create} disabled={status === 'pending'}> Create </button>
 	</form>
 </Markup>
+<CenteredBlock>
+	<Message icon="‼">your persona name is visible in your communities</Message>
+</CenteredBlock>
 
 <style>
 	h2 {
