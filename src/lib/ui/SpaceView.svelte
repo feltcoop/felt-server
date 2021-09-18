@@ -4,6 +4,7 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
 
+	export let persona: Persona;
 	export let community: Community;
 	export let space: Space;
 	export let memberPersonasById: Map<number, Persona>;
@@ -26,6 +27,7 @@
 {#if component}
 	<svelte:component
 		this={component}
+		{persona}
 		{community}
 		{space}
 		{memberPersonasById}

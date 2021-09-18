@@ -10,9 +10,12 @@
 
 	const {ui} = getApp();
 
+	export let persona: Persona;
 	export let community: Community;
 	export let space: Space;
 	export let memberPersonasById: Map<number, Persona>;
+
+	space; // TODO useme
 
 	// TODO refactor to be normalized
 	// this will also fix the UX issue where `spaces` aren't available for SSR, so they pop in
@@ -36,9 +39,9 @@
 	</section>
 	<section>
 		<!-- TODO this is just a stubbed out idea -->
-		<h2>recent spaces</h2>
+		<h2>recent <code><small>fake</small></code> spaces</h2>
 		{#each spaces as space (space.space_id)}
-			<SpaceInfo {space} {community} selected={space === $selectedSpace} />
+			<SpaceInfo {space} {persona} {community} selected={space === $selectedSpace} />
 		{/each}
 	</section>
 	<section>

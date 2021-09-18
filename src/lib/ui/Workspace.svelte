@@ -6,6 +6,7 @@
 
 	const {ui} = getApp();
 
+	$: selectedPersona = ui.selectedPersona;
 	$: selectedCommunity = ui.selectedCommunity;
 	$: selectedSpace = ui.selectedSpace;
 	$: memberPersonasById = $selectedCommunity?.memberPersonasById;
@@ -14,8 +15,13 @@
 <div class="workspace">
 	<div class="column">
 		<WorkspaceHeader space={$selectedSpace} community={$selectedCommunity} />
-		{#if $selectedCommunity && $selectedSpace && memberPersonasById}
-			<SpaceView community={$selectedCommunity} space={$selectedSpace} {memberPersonasById} />
+		{#if $selectedPersona && $selectedCommunity && $selectedSpace && memberPersonasById}
+			<SpaceView
+				persona={$selectedPersona}
+				community={$selectedCommunity}
+				space={$selectedSpace}
+				{memberPersonasById}
+			/>
 		{:else if $selectedCommunity}
 			<SpaceInput community={$selectedCommunity}>Create a new space</SpaceInput>
 		{/if}

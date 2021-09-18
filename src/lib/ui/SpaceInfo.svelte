@@ -1,17 +1,20 @@
 <script lang="ts">
 	import type {Space} from '$lib/vocab/space/space.js';
 	import type {Community} from '$lib/vocab/community/community.js';
+	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import {randomHue} from '$lib/ui/color';
+	import {toSpaceUrl} from '$lib/vocab/persona/util';
 
-	export let space: Space;
+	export let persona: Persona;
 	export let community: Community;
+	export let space: Space;
 	export let selected: boolean = false;
 
 	$: hue = randomHue(space.name); // TODO add custom setting on spaces
 </script>
 
 <a
-	href="/{community.name}{space.url === '/' ? '' : space.url}"
+	href={toSpaceUrl(persona, community, space)}
 	class:selected
 	class="space-info"
 	style="--hue: {hue}"
