@@ -14,6 +14,7 @@
 	export let persona: Persona;
 	export let community: CommunityModel;
 	export let selected: boolean = false;
+	export let small: boolean = false; // TODO probably change this API
 	// export let communitiesByPersonaId: {
 	// 	[persona_id: number]: CommunityModel[];
 	// };
@@ -30,19 +31,11 @@
 		null;
 </script>
 
-<!-- <a
-				class="persona"
-				href="/{persona.name}"
-				class:selected={persona === selectedPersona}
-				style="--hue: {randomHue(persona.name)}"
-				on:click={() => selectPersona(persona.persona_id)}
-			>
-				<ActorIcon name={persona.name} />
-			</a> -->
 <a
 	class="community"
 	href="/{community.name}{toUrl(selectedSpace && selectedSpace.url)}"
 	class:selected
+	class:small
 	style="--hue: {randomHue(community.name)}"
 	on:click={() => selectPersona(persona.persona_id)}
 >
@@ -58,5 +51,17 @@
 	.selected {
 		border-color: var(--active_color);
 		background-color: var(--bg);
+	}
+	.small {
+		margin-top: var(--spacing_xl5);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: var(--icon_size_md);
+		height: var(--icon_size_md);
+		--icon_size: var(--icon_size_sm);
+	}
+	.small:first-child {
+		margin-top: 0;
 	}
 </style>
