@@ -11,14 +11,9 @@ export const GUEST_PERSONA_NAME = 'guest';
 
 // TODO should this api extend the existing `URLSearchParams`? (to preserve?)
 // TODO do this more robustly with the existing url
-export const toSpaceUrl = (persona: Persona, community: Community, space: Space | null): string =>
-	`/${community.name}${toUrl(space && space.url)}?${toQueryParams(persona)}`;
-
-// TODO this is a weird context, not sure how to name. maybe move to $lib/util if so
-const toUrl = (url: string | null): string => (url === null || url === '/' ? '' : url);
-
-// TODO extract? not sure how this API should look, not this tho
-const toQueryParams = (persona: Persona): URLSearchParams =>
-	new URLSearchParams({
+export const toSpaceUrl = (persona: Persona, community: Community, space: Space | null): string => {
+	const url = space && space.url; // TODO could be `space.url` but that messes the types up for some reason, adds undefined and removes null
+	return `/${community.name}${!url || url === '/' ? '' : url}?${new URLSearchParams({
 		persona: persona.name,
-	});
+	})}`;
+};
