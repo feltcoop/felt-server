@@ -36,7 +36,7 @@ export const readSpaceService: Service<
 
 		console.log('[read_space] space', params.space_id);
 
-		const findSpaceResult = await db.repos.space.findById(params.space_id as any); // TODO remove the typecast once this PR is rebased
+		const findSpaceResult = await db.repos.space.findById(params.space_id);
 		if (findSpaceResult.ok) {
 			return {code: 200, data: {space: findSpaceResult.value}};
 		} else {
@@ -79,7 +79,7 @@ export const readSpacesService: Service<
 
 		console.log('[read_spaces] retrieving spaces for community', params.community_id);
 
-		const findSpacesResult = await db.repos.space.filterByCommunity(params.community_id as any); // TODO remove the typecast once this PR is rebased
+		const findSpacesResult = await db.repos.space.filterByCommunity(params.community_id);
 		if (findSpacesResult.ok) {
 			return {code: 200, data: {spaces: findSpacesResult.value}};
 		} else {

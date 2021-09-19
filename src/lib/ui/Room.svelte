@@ -2,14 +2,14 @@
 	import {browser} from '$app/env';
 
 	import type {Space} from '$lib/vocab/space/space.js';
-	import type {Member} from '$lib/vocab/member/member.js';
+	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import RoomItems from '$lib/ui/RoomItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
 	const {api, ui, data} = getApp();
 
 	export let space: Space;
-	export let membersById: Map<number, Member>;
+	export let memberPersonasById: Map<number, Persona>;
 
 	let text = '';
 
@@ -39,7 +39,7 @@
 
 <div class="room">
 	<div class="files">
-		<RoomItems {files} {membersById} />
+		<RoomItems {files} {memberPersonasById} />
 	</div>
 	<input type="text" placeholder="> chat" on:keydown={onKeydown} bind:value={text} />
 </div>

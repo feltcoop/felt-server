@@ -8,14 +8,14 @@
 
 	$: selectedCommunity = ui.selectedCommunity;
 	$: selectedSpace = ui.selectedSpace;
-	$: membersById = $selectedCommunity?.membersById;
+	$: memberPersonasById = $selectedCommunity?.memberPersonasById;
 </script>
 
 <div class="workspace">
 	<div class="column">
 		<WorkspaceHeader space={$selectedSpace} community={$selectedCommunity} />
-		{#if $selectedSpace && membersById}
-			<SpaceView space={$selectedSpace} {membersById} />
+		{#if $selectedSpace && memberPersonasById}
+			<SpaceView space={$selectedSpace} {memberPersonasById} />
 		{:else if $selectedCommunity}
 			<SpaceInput community={$selectedCommunity}>Create a new space</SpaceInput>
 		{/if}

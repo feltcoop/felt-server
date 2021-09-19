@@ -4,20 +4,20 @@
 	import type {Space} from '$lib/vocab/space/space.js';
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import type {CommunityModel} from '$lib/vocab/community/community.js';
-	import MemberInput from '$lib/ui/MemberInput.svelte';
-	import type {Member} from '$lib/vocab/member/member.js';
+	import MembershipInput from '$lib/ui/MembershipInput.svelte';
+	import type {Persona} from '$lib/vocab/persona/persona.js';
 
 	export let community: CommunityModel;
 	export let spaces: Space[];
 	export let selectedSpace: Space | null;
-	export let members: Member[];
+	export let allPersonas: Persona[];
 	$: browser && console.log('spaces', spaces);
 </script>
 
 <div class="space-nav">
 	<div class="header">
 		<SpaceInput {community} />
-		<MemberInput {community} {members} />
+		<MembershipInput {community} {allPersonas} />
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}

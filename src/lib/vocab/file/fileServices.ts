@@ -32,7 +32,7 @@ export const readFilesService: Service<
 	validateResponse: toValidateSchema(ReadFilesServiceResponse),
 	perform: async ({server, params}) => {
 		const {db} = server;
-		const findFilesResult = await db.repos.file.filterBySpace(params.space_id as any); // TODO remove the typecast once this PR is rebased
+		const findFilesResult = await db.repos.file.filterBySpace(params.space_id);
 		if (findFilesResult.ok) {
 			return {code: 200, data: {files: findFilesResult.value}}; // TODO API types
 		} else {

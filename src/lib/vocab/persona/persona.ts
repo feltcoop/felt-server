@@ -18,7 +18,6 @@ export const validatePersona = toValidateSchema<Persona>(PersonaSchema);
 export interface PersonaParams extends Static<typeof PersonaParamsSchema> {}
 export const PersonaParamsSchema = Type.Object(
 	{
-		account_id: Type.Number(),
 		name: Type.String(),
 	},
 	{$id: 'PersonaParams', additionalProperties: false},

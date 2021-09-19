@@ -13,13 +13,14 @@
 	import {setSocket, toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
 	import MainNav from '$lib/ui/MainNav.svelte';
+	import Onboard from '$lib/ui/Onboard.svelte';
 	import {setData} from '$lib/ui/data';
 	import {setUi, toUiStore} from '$lib/ui/ui';
 	import {setApi, toApiStore} from '$lib/ui/api';
 	import {setApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
-	import {WEBSOCKET_URL} from '$lib/constants';
+	import {WEBSOCKET_URL} from '$lib/config';
 	import {toHandleSocketMessage} from '$lib/ui/handleSocketMessage';
 
 	const devmode = setDevmode();
@@ -31,6 +32,9 @@
 	const api = setApi(toApiStore(ui, data, socket));
 	const app = setApp({data, ui, api, devmode, socket});
 	browser && console.log('app', app);
+
+	$: guest = $session.guest;
+	$: onboarding = !$session.guest && !$data.personas.length;
 
 	// TODO refactor -- where should this logic go?
 	$: updateStateFromPageParams($page.params);
@@ -66,16 +70,20 @@
 </svelte:head>
 
 <div class="layout">
-	{#if !$session.guest}
+	{#if !guest && !onboarding}
 		<Luggage />
 		<MainNav />
 	{/if}
 	<main>
-		{#if $session.guest}
+		{#if guest}
 			<div class="column">
 				<Markup>
-					<AccountForm guest={$session.guest} logIn={api.logIn} logOut={api.logOut} />
+					<AccountForm {guest} logIn={api.logIn} logOut={api.logOut} />
 				</Markup>
+			</div>
+		{:else if onboarding}
+			<div class="column">
+				<Onboard />
 			</div>
 		{:else}
 			<slot />

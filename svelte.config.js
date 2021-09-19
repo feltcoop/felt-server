@@ -2,7 +2,7 @@ import {typescript} from 'svelte-preprocess-esbuild';
 import node from '@sveltejs/adapter-node';
 import dotenv from 'dotenv';
 
-import {API_SERVER_HOST} from './src/lib/constants.js';
+import {API_SERVER_HOST} from './src/lib/config.js';
 
 dotenv.config();
 

@@ -2,7 +2,7 @@ import type {PostgresSql} from '$lib/db/postgres.js';
 import {sessionRepo} from '$lib/session/sessionRepo';
 import {accountRepo} from '$lib/vocab/account/accountRepo';
 import {personaRepo} from '$lib/vocab/persona/personaRepo';
-import {memberRepo} from '$lib/vocab/member/memberRepo';
+import {membershipRepo} from '$lib/vocab/membership/membershipRepo';
 import {communityRepo} from '$lib/vocab/community/communityRepo';
 import {spaceRepo} from '$lib/vocab/space/spaceRepo';
 import {fileRepo} from '$lib/vocab/file/fileRepo';
@@ -29,7 +29,7 @@ export class Database {
 		session: sessionRepo(this),
 		account: accountRepo(this),
 		persona: personaRepo(this),
-		member: memberRepo(this),
+		membership: membershipRepo(this),
 		community: communityRepo(this),
 		space: spaceRepo(this),
 		file: fileRepo(this),
