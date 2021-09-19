@@ -16,7 +16,7 @@
 	let errorMessage: string | undefined;
 	let submitting: boolean | undefined;
 
-	$: disabled = submitting;
+	$: disabled = !!submitting;
 
 	const doLogIn = async () => {
 		if (submitting) return;
