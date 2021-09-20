@@ -1,34 +1,21 @@
 <script lang="ts">
 	import type {CommunityModel} from '$lib/vocab/community/community.js';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
-	import ActorIcon from '$lib/ui/ActorIcon.svelte';
-	import {randomHue} from '$lib/ui/color';
+	import CommunityNavButton from '$lib/ui/CommunityNavButton.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
+	import {getApp} from '$lib/ui/app';
 
-	// TODO should this just use `ui` instead of taking all of these props?
-	// could `ui` be more composable, so it could be easily reused e.g. in docs for demonstration purposes?
+	const {data, ui} = getApp();
 
-	export let personas: Persona[];
-	export let selectedPersona: Persona | null;
-	export let selectedCommunity: CommunityModel | null;
-	export let communitiesByPersonaId: {
-		[persona_id: number]: CommunityModel[];
-	};
-	export let selectedSpaceIdByCommunity: {[key: number]: number | null};
-	// TODO this is causing a double state change (rendering an invalid in between state)
-	// because it's both navigating and setting state internally in the same user action
-	// TODO should this be an event?
-	export let selectPersona: (persona_id: number) => void;
+	$: selectedPersona = ui.selectedPersona;
+	$: selectedCommunity = ui.selectedCommunity;
+	$: communitiesByPersonaId = ui.communitiesByPersonaId;
 
-	// // TODO refactor
-	// const getSpace = (community_id: number) => {
-	// 	const space_id = selectedSpaceIdByCommunity[community_id];
-	// 	if (!space_id) throw Error('TODO');
-	// 	// TODO better data access
-	// 	const space = data.spaces.find((s) => s.space_id === space_id);
-	// 	if (!space) throw Error('TODO');
-	// 	return space;
-	// };
+	$: selectedSpaceIdByCommunity = $ui.selectedSpaceIdByCommunity;
+
+	// TODO improve the efficiency of this with better data structures and caching
+	const toPersonaCommunity = (persona: Persona): CommunityModel =>
+		$communitiesByPersonaId[persona.persona_id].find((c) => c.name === persona.name)!;
 </script>
 
 <div class="community-nav">
@@ -37,27 +24,24 @@
 	</div>
 	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
 	<div>
-		{#each personas as persona (persona.persona_id)}
-			<a
-				class="persona"
-				href="/{persona.name}"
-				class:selected={persona === selectedPersona}
-				style="--hue: {randomHue(persona.name)}"
-				on:click={() => selectPersona(persona.persona_id)}
-			>
-				<ActorIcon name={persona.name} />
-			</a>
-			{#each communitiesByPersonaId[persona.persona_id] as community (community.community_id)}
+		{#each $data.personas as persona (persona.persona_id)}
+			<CommunityNavButton
+				community={toPersonaCommunity(persona)}
+				{persona}
+				selected={persona === $selectedPersona &&
+					toPersonaCommunity(persona) === $selectedCommunity}
+				{selectedSpaceIdByCommunity}
+				selectPersona={ui.selectPersona}
+			/>
+			{#each $communitiesByPersonaId[persona.persona_id] as community (community.community_id)}
 				{#if community.name !== persona.name}
-					<a
-						class="community"
-						href="/{community.name}"
-						class:selected={persona === selectedPersona && community === selectedCommunity}
-						style="--hue: {randomHue(community.name)}"
-						on:click={() => selectPersona(persona.persona_id)}
-					>
-						<ActorIcon name={community.name} />
-					</a>
+					<CommunityNavButton
+						{community}
+						{persona}
+						selected={persona === $selectedPersona && community === $selectedCommunity}
+						{selectedSpaceIdByCommunity}
+						selectPersona={ui.selectPersona}
+					/>
 				{/if}
 			{/each}
 		{/each}
@@ -73,20 +57,6 @@
 		align-items: center;
 	}
 
-	/* TODO maybe instead of this, group with elements */
-	.persona {
-		margin-top: var(--spacing_xl5);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: var(--icon_size_md);
-		height: var(--icon_size_md);
-		--icon_size: var(--icon_size_sm);
-	}
-	.persona:first-child {
-		margin-top: 0;
-	}
-
 	.header {
 		display: flex;
 		flex-direction: column;
@@ -95,15 +65,5 @@
 	}
 	.header :global(button) {
 		width: 100%;
-	}
-
-	a {
-		display: block;
-		/* TODO better way to have active state? this makes the community nav wider than the luggage button! */
-		border: 1px solid transparent;
-	}
-	.selected {
-		border-color: var(--active_color);
-		background-color: var(--bg);
 	}
 </style>

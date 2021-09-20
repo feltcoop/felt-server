@@ -4,4 +4,4 @@
 	export let space: Space;
 </script>
 
-TODO voice
+TODO voice -- {space.name}
