@@ -19,7 +19,7 @@
 	// TODO should this be an event?
 	export let selectPersona: (persona_id: number) => void;
 
-	// TODO improve the efficiency of this with better
+	// TODO improve the efficiency of this with better data structures and caching
 	const toPersonaCommunity = (persona: Persona): CommunityModel =>
 		communitiesByPersonaId[persona.persona_id].find((c) => c.name === persona.name)!;
 </script>
