@@ -3,25 +3,19 @@
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
 	import CommunityNavButton from '$lib/ui/CommunityNavButton.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
+	import {getApp} from '$lib/ui/app';
 
-	// TODO should this just use `ui` instead of taking all of these props?
-	// could `ui` be more composable, so it could be easily reused e.g. in docs for demonstration purposes?
+	const {data, ui} = getApp();
 
-	export let personas: Persona[];
-	export let selectedPersona: Persona | null;
-	export let selectedCommunity: CommunityModel | null;
-	export let communitiesByPersonaId: {
-		[persona_id: number]: CommunityModel[];
-	};
-	export let selectedSpaceIdByCommunity: {[key: number]: number | null};
-	// TODO this is causing a double state change (rendering an invalid in between state)
-	// because it's both navigating and setting state internally in the same user action
-	// TODO should this be an event?
-	export let selectPersona: (persona_id: number) => void;
+	$: selectedPersona = ui.selectedPersona;
+	$: selectedCommunity = ui.selectedCommunity;
+	$: communitiesByPersonaId = ui.communitiesByPersonaId;
+
+	$: selectedSpaceIdByCommunity = $ui.selectedSpaceIdByCommunity;
 
 	// TODO improve the efficiency of this with better data structures and caching
 	const toPersonaCommunity = (persona: Persona): CommunityModel =>
-		communitiesByPersonaId[persona.persona_id].find((c) => c.name === persona.name)!;
+		$communitiesByPersonaId[persona.persona_id].find((c) => c.name === persona.name)!;
 </script>
 
 <div class="community-nav">
@@ -30,22 +24,23 @@
 	</div>
 	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
 	<div>
-		{#each personas as persona (persona.persona_id)}
+		{#each $data.personas as persona (persona.persona_id)}
 			<CommunityNavButton
 				community={toPersonaCommunity(persona)}
 				{persona}
-				selected={persona === selectedPersona && toPersonaCommunity(persona) === selectedCommunity}
+				selected={persona === $selectedPersona &&
+					toPersonaCommunity(persona) === $selectedCommunity}
 				{selectedSpaceIdByCommunity}
-				{selectPersona}
+				selectPersona={ui.selectPersona}
 			/>
-			{#each communitiesByPersonaId[persona.persona_id] as community (community.community_id)}
+			{#each $communitiesByPersonaId[persona.persona_id] as community (community.community_id)}
 				{#if community.name !== persona.name}
 					<CommunityNavButton
 						{community}
 						{persona}
-						selected={persona === selectedPersona && community === selectedCommunity}
+						selected={persona === $selectedPersona && community === $selectedCommunity}
 						{selectedSpaceIdByCommunity}
-						{selectPersona}
+						selectPersona={ui.selectPersona}
 					/>
 				{/if}
 			{/each}
