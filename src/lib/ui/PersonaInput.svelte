@@ -50,7 +50,7 @@
 	</form>
 </Markup>
 <CenteredBlock>
-	<Message icon="‼">your persona name is visible in your communities</Message>
+	<Message icon="‼">your persona name is visible to others</Message>
 </CenteredBlock>
 
 <style>
