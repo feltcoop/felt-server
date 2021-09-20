@@ -5,7 +5,6 @@
 
 	import type {PersonaParams} from '$lib/vocab/persona/persona';
 	import {autofocus} from '$lib/ui/actions';
-	import CenteredBlock from '$lib/ui/CenteredBlock.svelte';
 
 	export let createPersona: (personaParams: PersonaParams) => Promise<unknown>; // TODO return type?
 
@@ -49,12 +48,20 @@
 		<button type="button" on:click={create} disabled={status === 'pending'}> Create </button>
 	</form>
 </Markup>
-<CenteredBlock>
-	<Message icon="‼">your persona name is visible to others</Message>
-</CenteredBlock>
+<div class="centered-block">
+	<div>
+		<Message icon="‼">your persona name is visible to others</Message>
+	</div>
+</div>
 
 <style>
 	h2 {
 		text-align: center;
+	}
+
+	.centered-block {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 </style>

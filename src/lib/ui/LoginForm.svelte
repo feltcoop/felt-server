@@ -6,7 +6,6 @@
 
 	import {autofocus} from '$lib/ui/actions';
 	import type {ApiStore} from '$lib/ui/api';
-	import CenteredBlock from '$lib/ui/CenteredBlock.svelte';
 
 	export let logIn: ApiStore['logIn'];
 
@@ -78,9 +77,16 @@
 	</PendingButton>
 	<div class:error={!!errorMessage}>{errorMessage || icons.felt}</div>
 </form>
-<CenteredBlock>
-	<Message icon="🗝">your account name is private</Message>
-</CenteredBlock>
+<div class="centered-block">
+	<div>
+		<slot />
+	</div>
+</div>
+<div class="centered-block">
+	<div>
+		<Message icon="🗝">your account name is private</Message>
+	</div>
+</div>
 
 <style>
 	.error {
@@ -101,5 +107,11 @@
 	.icon img {
 		width: var(--icon_size_md);
 		height: var(--icon_size_md);
+	}
+
+	.centered-block {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 </style>
