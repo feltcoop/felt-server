@@ -15,12 +15,10 @@
 	const {data, ui, api} = getApp();
 
 	$: allPersonas = $data.allPersonas;
-	$: personas = $data.personas;
 
 	$: selectedPersona = ui.selectedPersona;
 	$: selectedCommunity = ui.selectedCommunity;
 	$: selectedSpace = ui.selectedSpace;
-	$: communitiesByPersonaId = ui.communitiesByPersonaId;
 
 	// TODO refactor to some client view-model for the account
 	$: selectedPersonaName = $selectedPersona?.name || GUEST_PERSONA_NAME;
@@ -53,13 +51,7 @@
 		</div>
 		{#if $ui.mainNavView === 'explorer'}
 			<div class="explorer">
-				<CommunityNav
-					{personas}
-					selectedPersona={$selectedPersona}
-					selectedCommunity={$selectedCommunity}
-					communitiesByPersonaId={$communitiesByPersonaId}
-					selectedSpaceIdByCommunity={$ui.selectedSpaceIdByCommunity}
-				/>
+				<CommunityNav />
 				{#if $selectedPersona && $selectedCommunity}
 					<SpaceNav
 						selectedPersona={$selectedPersona}

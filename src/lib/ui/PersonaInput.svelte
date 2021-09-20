@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import type {AsyncStatus} from '@feltcoop/felt';
+	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import type {PersonaParams} from '$lib/vocab/persona/persona';
 	import {autofocus} from '$lib/ui/actions';
@@ -47,9 +48,20 @@
 		<button type="button" on:click={create} disabled={status === 'pending'}> Create </button>
 	</form>
 </Markup>
+<div class="centered-block">
+	<div>
+		<Message icon="‼">your persona name is visible to others</Message>
+	</div>
+</div>
 
 <style>
 	h2 {
 		text-align: center;
+	}
+
+	.centered-block {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 </style>
