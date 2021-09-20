@@ -31,8 +31,13 @@ export const spaceRepo = (db: Database) => ({
 		console.log('[db] spaces data', data);
 		return {ok: true, value: data};
 	},
-	filterByCommunityUrl: async (community_id: number, url: string): Promise<Result<{value: Space[]}>> => {
-		console.log(`[spaceRepo] preparing to query for community space by url: ${community_id} ${url}`);
+	filterByCommunityUrl: async (
+		community_id: number,
+		url: string,
+	): Promise<Result<{value: Space[]}>> => {
+		console.log(
+			`[spaceRepo] preparing to query for community space by url: ${community_id} ${url}`,
+		);
 		const data = await db.sql<Space[]>`
 			SELECT s.space_id, s.name, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id= ${community_id} AND s.url = ${url}
 		`;
