@@ -11,6 +11,7 @@
 	class="icon-button"
 	class:expanded={$ui.expandSecondaryNav}
 	style="right: {right}px"
+	aria-label="toggle space meta"
 	on:click={ui.toggleSecondaryNav}
 >
 	<div class="content">⚆</div>
