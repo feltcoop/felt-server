@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {Space} from '$lib/vocab/space/space';
 	import type {Community} from '$lib/vocab/community/community';
-	import ActorIcon from '$lib/ui/ActorIcon.svelte';
+	import Avatar from '$lib/ui/Avatar.svelte';
 	import {toUrl} from '$lib/vocab/persona/constants';
 	import {randomHue} from '$lib/ui/color';
 
@@ -19,19 +19,25 @@
 
 <div class="space-meta-nav">
 	<!-- TODO extract helper -->
-	<a href="/{community.name}{toUrl(space && space.url)}" style="--hue: {randomHue(community.name)}">
-		<ActorIcon name={community.name} />
+	<a
+		class="avatars"
+		href="/{community.name}{toUrl(space && space.url)}"
+		style="--hue: {randomHue(community.name)}"
+	>
+		<Avatar name={community.name} showName={false} />
+		<Avatar name={space.name} showIcon={false} />
 	</a>
-
-	<!-- TODO copy the style of the  -->
-	{space.name}
 </div>
 
 <style>
 	.space-meta-nav {
 		display: flex;
-		align-items: center;
 		height: var(--navbar_size);
 		border-bottom: var(--border);
+	}
+	.avatars {
+		display: flex;
+		align-items: center;
+		height: 100%;
 	}
 </style>

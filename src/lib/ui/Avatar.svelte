@@ -6,12 +6,15 @@
 	export let name: string = GUEST_PERSONA_NAME; // TODO should this handle "default" or "empty" or "blank" avatars?
 	export let icon: string | null = null;
 	export let showName: boolean = true;
+	export let showIcon: boolean = true;
 </script>
 
 <!-- TODO add link option? -->
 
 <div class="avatar" style="--hue: {randomHue(name)}">
-	<ActorIcon {name} {icon} />
+	{#if showIcon}
+		<ActorIcon {name} {icon} />
+	{/if}
 	{#if showName}
 		<span class="actor">{name}</span>
 	{/if}
