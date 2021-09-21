@@ -45,4 +45,11 @@
 	a {
 		padding: var(--spacing_xs) var(--spacing_sm);
 	}
+	a:hover {
+		/* TODO update Felt and use `--tint_light_N` */
+		background-color: rgba(255, 255, 255, 50%);
+	}
+	a.selected {
+		background-color: var(--interactive_color_active);
+	}
 </style>
