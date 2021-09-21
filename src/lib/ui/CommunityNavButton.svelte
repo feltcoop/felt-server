@@ -30,6 +30,7 @@
 		null;
 </script>
 
+<!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
 <a
 	class="community"
 	href="/{community.name}{toUrl(selectedSpace && selectedSpace.url)}"

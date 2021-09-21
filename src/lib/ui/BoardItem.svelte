@@ -4,7 +4,8 @@
 	import type {File} from '$lib/vocab/file/file.js';
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import {randomHue} from '$lib/ui/color';
-	import PersonaInfo from '$lib/ui/PersonaInfo.svelte';
+	import Avatar from '$lib/ui/Avatar.svelte';
+	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
 	export let file: File;
 	export let persona: Persona; // TODO should this be `Actor`?
@@ -19,7 +20,7 @@
 			{file.content}
 		</p>
 	</Markup>
-	<PersonaInfo {persona} />
+	<Avatar name={toName(persona)} icon={toIcon(persona)} />
 </li>
 
 <style>

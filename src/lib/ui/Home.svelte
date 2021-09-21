@@ -3,10 +3,11 @@
 
 	import type {Space} from '$lib/vocab/space/space.js';
 	import type {Persona} from '$lib/vocab/persona/persona.js';
-	import PersonaInfo from '$lib/ui/PersonaInfo.svelte';
+	import Avatar from '$lib/ui/Avatar.svelte';
 	import SpaceInfo from '$lib/ui/SpaceInfo.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
+	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
 	const {ui} = getApp();
 
@@ -33,7 +34,7 @@
 		<h2>members</h2>
 		<!-- TODO display other meta info about the community -->
 		{#each personas as persona (persona.persona_id)}
-			<PersonaInfo {persona} />
+			<Avatar name={toName(persona)} icon={toIcon(persona)} />
 		{/each}
 	</section>
 	<section>

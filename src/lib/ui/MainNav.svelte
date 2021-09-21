@@ -6,11 +6,12 @@
 	import CommunityNav from '$lib/ui/CommunityNav.svelte';
 	import SpaceNav from '$lib/ui/SpaceNav.svelte';
 	import SocketConnection from '$lib/ui/SocketConnection.svelte';
-	import PersonaInfo from '$lib/ui/PersonaInfo.svelte';
+	import Avatar from '$lib/ui/Avatar.svelte';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
+	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
 	const {data, ui, api} = getApp();
 
@@ -38,7 +39,7 @@
 				class:selected={$ui.mainNavView === 'explorer'}
 				class="explorer-button"
 			>
-				<PersonaInfo persona={$selectedPersona} />
+				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
 			</button>
 			<button
 				on:click={() => ui.setMainNavView('account')}

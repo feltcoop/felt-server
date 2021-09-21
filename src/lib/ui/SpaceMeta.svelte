@@ -2,8 +2,9 @@
 	import type {Space} from '$lib/vocab/space/space';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
-	import PersonaInfo from '$lib/ui/PersonaInfo.svelte';
+	import Avatar from '$lib/ui/Avatar.svelte';
 	import SpaceMetaNav from '$lib/ui/SpaceMetaNav.svelte';
+	import {toIcon, toName} from '$lib/vocab/entity/entity';
 
 	// TODO better name?
 
@@ -21,6 +22,6 @@
 <section>
 	<!-- TODO probably want these to be sorted so the selected persona is always first -->
 	{#each personas as persona (persona.persona_id)}
-		<PersonaInfo {persona} />
+		<Avatar name={toName(persona)} icon={toIcon(persona)} />
 	{/each}
 </section>
