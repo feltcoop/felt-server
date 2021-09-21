@@ -7,7 +7,14 @@
 	$: right = $ui.expandSecondaryNav ? -space_meta_width : 0;
 </script>
 
-<button class="icon-button" style="right: {right}px" on:click={ui.toggleSecondaryNav}> ⚆ </button>
+<button
+	class="icon-button"
+	class:expanded={$ui.expandSecondaryNav}
+	style="right: {right}px"
+	on:click={ui.toggleSecondaryNav}
+>
+	<div class="content">⚆</div>
+</button>
 
 <style>
 	button {
@@ -16,5 +23,12 @@
 		right: 0;
 		top: 0;
 		transition: right var(--transition_duration_xs) ease-out;
+	}
+	.content {
+		transition: transform var(--transition_duration_xl) ease-in-out;
+		transform: rotate(180deg);
+	}
+	.expanded .content {
+		transform: rotate(0deg);
 	}
 </style>
