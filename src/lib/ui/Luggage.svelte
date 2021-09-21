@@ -5,7 +5,9 @@
 </script>
 
 <div class="luggage">
-	<button class="icon-button" on:click={() => api.toggleMainNav()}> ☰ </button>
+	<button class="icon-button" aria-label="toggle luggage" on:click={() => api.toggleMainNav()}>
+		☰
+	</button>
 </div>
 
 <style>
