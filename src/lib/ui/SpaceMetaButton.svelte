@@ -4,13 +4,13 @@
 	const {ui} = getApp();
 
 	const space_meta_width = 320; // TODO where to get this?
-	$: right = $ui.expandSecondaryNav ? -space_meta_width : 0;
+	$: right = $ui.expandSecondaryNav ? space_meta_width : 0;
 </script>
 
 <button
 	class="icon-button"
 	class:expanded={$ui.expandSecondaryNav}
-	style="right: {right}px"
+	style="transform: translate3d({right}px, 0, 0)"
 	aria-label="toggle space meta"
 	on:click={ui.toggleSecondaryNav}
 >
@@ -23,7 +23,7 @@
 		position: absolute;
 		right: 0;
 		top: 0;
-		transition: right var(--transition_duration_xs) ease-out;
+		transition: transform var(--transition_duration_xs) ease-out;
 	}
 	.content {
 		transition: transform var(--transition_duration_xl) ease-in-out;
