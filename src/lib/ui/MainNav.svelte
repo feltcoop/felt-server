@@ -80,7 +80,7 @@
 	}
 	.main-nav {
 		position: relative;
-		z-index: 1;
+		z-index: 2;
 		height: 100%;
 		width: var(--column_width_min);
 		overflow: auto;
@@ -99,7 +99,7 @@
 		transition-duration: var(--transition_duration_sm);
 	}
 	.main-nav-bg {
-		z-index: 1;
+		z-index: 2;
 		display: none;
 		position: fixed;
 		width: 100%;
@@ -112,7 +112,7 @@
 	/* `50rem` in media queries is the same as `800px`, which is `--column_width` */
 	@media (max-width: 50rem) {
 		.main-nav {
-			z-index: 1;
+			z-index: 2;
 			position: fixed;
 			left: 0;
 			top: 0;
