@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import SpaceView from '$lib/ui/SpaceView.svelte';
-	import SpaceMetaView from '$lib/ui/SpaceMetaView.svelte';
+	import SpaceMetaView from '$lib/ui/SpaceMeta.svelte';
 	import WorkspaceHeader from '$lib/ui/WorkspaceHeader.svelte';
 	import {getApp} from '$lib/ui/app';
 

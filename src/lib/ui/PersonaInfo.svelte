@@ -5,6 +5,7 @@
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 
 	export let persona: Persona | null; // TODO should this be `Actor`?
+	export let showName: boolean = true; // TODO not sure about this
 
 	// TODO factor out a viewmodel or something
 	$: name = (persona as any)?.name || GUEST_PERSONA_NAME;
@@ -14,7 +15,9 @@
 
 <div class="persona-info" style="--hue: {hue}">
 	<ActorIcon {name} {icon} />
-	<span class="actor">{name}</span>
+	{#if showName}
+		<span class="actor">{name}</span>
+	{/if}
 </div>
 
 <style>

@@ -3,6 +3,7 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
 	import PersonaInfo from '$lib/ui/PersonaInfo.svelte';
+	import SpaceMetaNav from '$lib/ui/SpaceMetaNav.svelte';
 
 	// TODO better name?
 
@@ -14,8 +15,11 @@
 	$: personas = Array.from(memberPersonasById.values());
 </script>
 
+<SpaceMetaNav {community} {space} />
+
 <!-- TODO display other meta info about the community -->
 <section>
+	<!-- TODO probably want these to be sorted so the selected persona is always first -->
 	{#each personas as persona (persona.persona_id)}
 		<PersonaInfo {persona} />
 	{/each}
