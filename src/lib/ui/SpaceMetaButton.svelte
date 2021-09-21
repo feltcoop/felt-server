@@ -27,9 +27,9 @@
 	}
 	.content {
 		transition: transform var(--transition_duration_xl) ease-in-out;
-		transform: rotate(180deg);
+		transform: rotate(0deg);
 	}
 	.expanded .content {
-		transform: rotate(0deg);
+		transform: rotate(180deg);
 	}
 </style>
