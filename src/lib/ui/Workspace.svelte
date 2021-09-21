@@ -37,7 +37,6 @@
 		height: 100%;
 		width: 100%;
 		display: flex;
-		flex: 1;
 	}
 	.column {
 		position: relative;
