@@ -5,8 +5,11 @@
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import SpaceMetaNav from '$lib/ui/SpaceMetaNav.svelte';
 	import {toIcon, toName} from '$lib/vocab/entity/entity';
+	import {getApp} from '$lib/ui/app';
 
-	// TODO better name?
+	const {ui} = getApp();
+
+	// TODO better name than `SpaceMeta`?
 
 	export let community: Community;
 	export let space: Space;
@@ -19,9 +22,11 @@
 <SpaceMetaNav {community} {space} />
 
 <!-- TODO display other meta info about the community -->
-<section>
-	<!-- TODO probably want these to be sorted so the selected persona is always first -->
-	{#each personas as persona (persona.persona_id)}
-		<Avatar name={toName(persona)} icon={toIcon(persona)} />
-	{/each}
-</section>
+{#if $ui.expandSecondaryNav}
+	<section>
+		<!-- TODO probably want these to be sorted so the selected persona is always first -->
+		{#each personas as persona (persona.persona_id)}
+			<Avatar name={toName(persona)} icon={toIcon(persona)} />
+		{/each}
+	</section>
+{/if}

@@ -43,6 +43,7 @@ export interface ApiStore {
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space: number | null) => void;
 	toggleMainNav: () => void;
+	toggleSecondaryNav: () => void;
 	createPersona: (
 		params: PersonaParams,
 	) => Promise<ApiResult<{value: {persona: Persona; community: Community}}>>;
@@ -75,6 +76,7 @@ export const toApiStore = (ui: UiStore, data: DataStore, socket: SocketStore): A
 		selectCommunity: ui.selectCommunity,
 		selectSpace: ui.selectSpace,
 		toggleMainNav: ui.toggleMainNav,
+		toggleSecondaryNav: ui.toggleSecondaryNav,
 		logIn: async (accountName, password) => {
 			console.log('[logIn] logging in with accountName', accountName); // TODO logging
 			try {

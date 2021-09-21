@@ -24,6 +24,7 @@ export interface UiState {
 	selectedCommunityIdByPersona: {[key: number]: number};
 	selectedSpaceIdByCommunity: {[key: number]: number | null};
 	expandMainNav: boolean;
+	expandSecondaryNav: boolean; // TODO name?
 	mainNavView: MainNavView;
 }
 
@@ -40,6 +41,7 @@ export interface UiStore {
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space_id: number | null) => void;
 	toggleMainNav: () => void;
+	toggleSecondaryNav: () => void;
 	setMainNavView: (mainNavView: MainNavView) => void;
 }
 
@@ -176,6 +178,9 @@ export const toUiStore = (data: DataStore) => {
 		toggleMainNav: () => {
 			update(($ui) => ({...$ui, expandMainNav: !$ui.expandMainNav}));
 		},
+		toggleSecondaryNav: () => {
+			update(($ui) => ({...$ui, expandSecondaryNav: !$ui.expandSecondaryNav}));
+		},
 		setMainNavView: (mainNavView) => {
 			update(($ui) => ({...$ui, mainNavView}));
 		},
@@ -189,6 +194,7 @@ const toDefaultUiState = (): UiState => ({
 	selectedCommunityIdByPersona: {},
 	selectedSpaceIdByCommunity: {},
 	expandMainNav: true,
+	expandSecondaryNav: true,
 	mainNavView: 'explorer',
 });
 
