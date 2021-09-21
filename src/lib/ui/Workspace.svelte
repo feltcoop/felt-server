@@ -22,16 +22,14 @@
 		{:else if $selectedCommunity}
 			<SpaceInput community={$selectedCommunity}>Create a new space</SpaceInput>
 		{/if}
-	</div>
-	<!-- TODO extract to some shared abstractions with the `Luggage` probably -->
-	<div class="space-meta">
-		{#if $ui.expandSecondaryNav && $selectedCommunity && $selectedSpace && memberPersonasById}
-			<div class="space-meta-content">
-				<SpaceMeta community={$selectedCommunity} space={$selectedSpace} {memberPersonasById} />
-			</div>
-		{/if}
 		<SpaceMetaButton />
 	</div>
+	<!-- TODO extract to some shared abstractions with the `Luggage` probably -->
+	{#if $ui.expandSecondaryNav && $selectedCommunity && $selectedSpace && memberPersonasById}
+		<div class="space-meta">
+			<SpaceMeta community={$selectedCommunity} space={$selectedSpace} {memberPersonasById} />
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -42,6 +40,7 @@
 		flex: 1;
 	}
 	.column {
+		position: relative;
 		height: 100%;
 		display: flex;
 		flex-direction: column;
@@ -50,9 +49,6 @@
 	/* TODO handle properly for mobile */
 	/* TODO better name? */
 	.space-meta {
-		position: relative;
-	}
-	.space-meta-content {
 		width: var(--column_width_min);
 		border-right: var(--border);
 	}
