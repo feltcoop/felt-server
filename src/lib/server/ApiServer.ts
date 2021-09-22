@@ -3,8 +3,7 @@ import type {Server as HttpsServer} from 'https';
 import type {Polka, Request as PolkaRequest, Middleware as PolkaMiddleware} from 'polka';
 import bodyParser from 'body-parser';
 import {Logger} from '@feltcoop/felt/util/log.js';
-import {blue, red} from '@feltcoop/felt/util/terminal.js';
-import type ws from 'ws';
+import {blue} from '@feltcoop/felt/util/terminal.js';
 import {promisify} from 'util';
 import type {TSchema} from '@sinclair/typebox';
 
@@ -18,7 +17,7 @@ import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import type {Service} from '$lib/server/service';
 import {toServiceMiddleware} from '$lib/server/serviceMiddleware';
-import {JsonRpcResponse, parseJsonRpcRequest} from '$lib/util/jsonRpc';
+import {handleWebsocketMessage} from '$lib/server/websocketMessage';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -125,6 +124,8 @@ export class ApiServer {
 		log.info('inited');
 	}
 
+	handleWebsocketMessage = handleWebsocketMessage.bind(null, this);
+
 	async close(): Promise<void> {
 		log.info('close');
 		this.websocketServer.off('message', this.handleWebsocketMessage);
@@ -134,71 +135,4 @@ export class ApiServer {
 			promisify(this.app.server.close).call(this.app.server),
 		]);
 	}
-
-	// TODO extract to a standalone module?
-	handleWebsocketMessage = async (_socket: ws, messageData: ws.Data, account_id: number) => {
-		if (typeof messageData !== 'string') {
-			console.error(
-				'[handleWebsocketMessage] cannot handle websocket message; currently only supports strings',
-			);
-			return;
-		}
-
-		let rawMessage: any; // TODO type
-		try {
-			rawMessage = JSON.parse(messageData);
-		} catch (err) {
-			console.error('[handleWebsocketMessage] failed to parse message', err);
-			return;
-		}
-		console.log('[handleWebsocketMessage]', rawMessage);
-		const message = parseJsonRpcRequest(rawMessage);
-		if (!message) {
-			console.error('[handleWebsocketMessage] invalid message', rawMessage);
-			return;
-		}
-		const {method, params} = message;
-		const service = this.services.get(method);
-		if (!service) {
-			console.error('[handleWebsocketMessage] unhandled request method', method);
-			return;
-		}
-
-		if (!service.validateParams()(params)) {
-			console.error(red('Failed to validate params'), service.validateParams().errors);
-			return;
-		}
-
-		// TODO probably should be `response` with `data` to include other metadata/effects
-		const response = await service.perform({server: this, params, account_id});
-
-		if (process.env.NODE_ENV !== 'production') {
-			if (!service.validateResponse()(response.value)) {
-				console.error(
-					red(`failed to validate service response: ${service.name}`),
-					response,
-					service.validateResponse().errors,
-				);
-			}
-		}
-
-		// TODO this is very hacky -- what should the API for returning/broadcasting responses be?
-		// A quick improvement would be to scope to the community.
-		// We probably also want 2 types of messages, `JsonRpcResponse` for this specific client
-		// and some generic broadcast message type for everyone else.
-		const responseMessage: JsonRpcResponse = {
-			jsonrpc: '2.0',
-			id: message.id, // TODO this should only be set for the client we're responding to -- maybe don't use `response`?
-			result: response, // TODO see above where `response` is assigned, should probably be `response.data`
-		};
-		console.log('[handleWebsocketMessage] broadcasting', responseMessage);
-		const serializedResponse = JSON.stringify(responseMessage);
-		for (const client of this.websocketServer.wss.clients) {
-			client.send(serializedResponse);
-		}
-	};
-}
-
-export interface HandleWebsocketMessage {
-	(server: ApiServer, socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
 }
