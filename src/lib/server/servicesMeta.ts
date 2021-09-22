@@ -29,7 +29,7 @@ export const create_community: ServiceMeta = {
 export const create_membership: ServiceMeta = {
 	name: 'create_membership',
 	route: {
-		path: '/api/v1/members',
+		path: '/api/v1/memberships',
 		method: 'POST',
 	},
 };
