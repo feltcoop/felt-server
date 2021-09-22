@@ -4,11 +4,11 @@ import {red} from '@feltcoop/felt/util/terminal.js';
 import {JsonRpcResponse, parseJsonRpcRequest} from '$lib/util/jsonRpc';
 import type {ApiServer} from '$lib/server/ApiServer';
 
-export interface HandleWebsocketMessage {
+export interface WebsocketHandler {
 	(server: ApiServer, socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
 }
 
-export const handleWebsocketMessage: HandleWebsocketMessage = async (
+export const websocketHandler: WebsocketHandler = async (
 	server: ApiServer,
 	_socket: ws,
 	messageData: ws.Data,
@@ -16,7 +16,7 @@ export const handleWebsocketMessage: HandleWebsocketMessage = async (
 ) => {
 	if (typeof messageData !== 'string') {
 		console.error(
-			'[handleWebsocketMessage] cannot handle websocket message; currently only supports strings',
+			'[websocketHandler] cannot handle websocket message; currently only supports strings',
 		);
 		return;
 	}
@@ -25,19 +25,19 @@ export const handleWebsocketMessage: HandleWebsocketMessage = async (
 	try {
 		rawMessage = JSON.parse(messageData);
 	} catch (err) {
-		console.error('[handleWebsocketMessage] failed to parse message', err);
+		console.error('[websocketHandler] failed to parse message', err);
 		return;
 	}
-	console.log('[handleWebsocketMessage]', rawMessage);
+	console.log('[websocketHandler]', rawMessage);
 	const message = parseJsonRpcRequest(rawMessage);
 	if (!message) {
-		console.error('[handleWebsocketMessage] invalid message', rawMessage);
+		console.error('[websocketHandler] invalid message', rawMessage);
 		return;
 	}
 	const {method, params} = message;
 	const service = server.services.get(method);
 	if (!service) {
-		console.error('[handleWebsocketMessage] unhandled request method', method);
+		console.error('[websocketHandler] unhandled request method', method);
 		return;
 	}
 
@@ -68,7 +68,7 @@ export const handleWebsocketMessage: HandleWebsocketMessage = async (
 		id: message.id, // TODO this should only be set for the client we're responding to -- maybe don't use `response`?
 		result: response, // TODO see above where `response` is assigned, should probably be `response.data`
 	};
-	console.log('[handleWebsocketMessage] broadcasting', responseMessage);
+	console.log('[websocketHandler] broadcasting', responseMessage);
 	const serializedResponse = JSON.stringify(responseMessage);
 	for (const client of server.websocketServer.wss.clients) {
 		client.send(serializedResponse);

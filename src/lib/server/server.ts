@@ -11,7 +11,7 @@ import {services} from '$lib/server/services';
 const server = createServer();
 
 // TODO this explicit type declaration is needed because of the awkward
-// `handleWebsocketMessage` API, there's some circularity in deps to maybe refactor
+// `WebsocketHandler` API, there's some circularity in deps to maybe refactor
 export const apiServer: ApiServer = new ApiServer({
 	server,
 	app: polka({server}),

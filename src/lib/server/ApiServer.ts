@@ -17,7 +17,7 @@ import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import type {Service} from '$lib/server/service';
 import {toServiceMiddleware} from '$lib/server/serviceMiddleware';
-import {handleWebsocketMessage} from '$lib/server/websocketMessage';
+import {websocketHandler} from '$lib/server/websocketHandler';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -66,7 +66,7 @@ export class ApiServer {
 		log.info('initing');
 
 		// TODO refactor to paralleize `init` of the various pieces
-		this.websocketServer.on('message', this.handleWebsocketMessage);
+		this.websocketServer.on('message', this.websocketListener);
 		await this.websocketServer.init();
 
 		// Set up the app and its middleware.
@@ -124,11 +124,11 @@ export class ApiServer {
 		log.info('inited');
 	}
 
-	handleWebsocketMessage = handleWebsocketMessage.bind(null, this);
+	websocketListener = websocketHandler.bind(null, this);
 
 	async close(): Promise<void> {
 		log.info('close');
-		this.websocketServer.off('message', this.handleWebsocketMessage);
+		this.websocketServer.off('message', this.websocketListener);
 		await Promise.all([
 			this.websocketServer.close(),
 			this.db.close(),
