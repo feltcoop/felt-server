@@ -49,6 +49,7 @@
 		height: 100%;
 		display: flex;
 		flex-direction: column;
+		border-left: var(--border);
 		border-right: var(--border);
 	}
 	/* TODO handle properly for mobile */
@@ -86,6 +87,14 @@
 		.space-meta-bg {
 			display: block;
 			animation: fade-in var(--transition_duration_xl) ease-out;
+		}
+		/* remove borders on things when not necessary, makes things look cleaner and crisper */
+		.column {
+			border-right: none;
+			border-left: none;
+		}
+		.space-meta {
+			border-right: none;
 		}
 	}
 </style>

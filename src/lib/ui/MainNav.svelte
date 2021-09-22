@@ -87,8 +87,6 @@
 		display: flex;
 		flex-direction: column;
 		flex-shrink: 0;
-		border-left: var(--border);
-		border-right: var(--border);
 		transform-origin: top left;
 		/* TODO what var is this? */
 		background-color: hsl(var(--bg_hue), var(--bg_saturation), var(--bg_lightness));
