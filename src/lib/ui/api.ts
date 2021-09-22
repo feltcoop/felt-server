@@ -22,6 +22,9 @@ import type {Persona, PersonaParams} from '$lib/vocab/persona/persona';
 // It may be best to have related state in optional external modules that
 // observe the behavior of the api, to keep this module small and efficient.
 
+const UNKNOWN_API_ERROR =
+	'Something went wrong. Maybe the server or your Internet connection is down. Please try again.';
+
 const KEY = Symbol();
 
 export const getApi = (): Api => getContext(KEY);
@@ -87,8 +90,8 @@ export const toApi = (
 				console.error('[logIn] error', err); // TODO logging
 				return {
 					ok: false,
-					status: 500, // TODO what's the correct status?
-					reason: `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again.`,
+					status: 500,
+					reason: UNKNOWN_API_ERROR,
 				};
 			}
 		},
@@ -112,8 +115,8 @@ export const toApi = (
 				console.error('[logOut] err', err); // TODO logging
 				return {
 					ok: false,
-					status: 500, // TODO what's the correct status?
-					reason: `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again!`,
+					status: 500,
+					reason: UNKNOWN_API_ERROR,
 				};
 			}
 		},
