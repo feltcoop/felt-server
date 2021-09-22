@@ -1,7 +1,6 @@
-// This is *not* RESTful as in HATEOS;
-// it's a convenient alternative to the primary websocket API,
-// and because of its secondary importance it's expected
-// to have significant limitations and quirks
+// This is not RESTful as in HATEOS,
+// instead it's a sometimes-convenient alternative to the primary websocket API.
+// Due to its secondary importance it's expected to have limitations and quirks
 // compared to a thoughtfully-designed REST API.
 // For future design inspiration see:
 // https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md
