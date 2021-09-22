@@ -3,15 +3,16 @@ import {session} from '$app/stores';
 
 import type {DataStore} from '$lib/ui/data';
 import type {UiStore} from '$lib/ui/ui';
-import type {CommunityModel, CommunityParams} from '$lib/vocab/community/community';
+import type {Community, CommunityModel, CommunityParams} from '$lib/vocab/community/community';
 import {toCommunityModel} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
-import type {Member, MemberParams} from '$lib/vocab/member/member';
+import type {Membership, MembershipParams} from '$lib/vocab/membership/membership';
 import type {File, FileParams} from '$lib/vocab/file/file';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ApiClient, ApiResult} from '$lib/ui/ApiClient';
 import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
+import type {Persona, PersonaParams} from '$lib/vocab/persona/persona';
 
 // TODO This was originally implemented as a Svelte store
 // but we weren't using the state at all.
@@ -40,9 +41,12 @@ export interface Api {
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space: number | null) => void;
 	toggleMainNav: () => void;
+	createPersona: (
+		params: PersonaParams,
+	) => Promise<ApiResult<{persona: Persona; community: Community}>>;
 	createCommunity: (params: CommunityParams) => Promise<ApiResult<CommunityModel>>;
 	createSpace: (params: SpaceParams) => Promise<ApiResult<{space: Space}>>;
-	createMembership: (params: MemberParams) => Promise<ApiResult<{member: Member}>>;
+	createMembership: (params: MembershipParams) => Promise<ApiResult<{membership: Membership}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
 	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
 }
@@ -113,6 +117,22 @@ export const toApi = (
 				};
 			}
 		},
+		createPersona: async (params) => {
+			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
+			const result = await client2.invoke('create_persona', params);
+			console.log('[api] create_community result', result);
+			if (result.ok) {
+				const {persona, community: rawCommunity} = result.value;
+				const community = toCommunityModel(rawCommunity as Community); // TODO fix type between `Community` and `CommunitySchema` and remove this cast
+				data.addCommunity(community, persona.persona_id);
+				data.addPersona(persona);
+				// TODO refactor to not return here, do `return result` below --
+				// can't return `result` right now because the `CommunityModel` is different,
+				// but we probably want to change it to have associated data instead of a different interface
+				return {ok: true, status: result.status, value: {persona, community}};
+			}
+			return result;
+		},
 		createCommunity: async (params) => {
 			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
 			const result = await client2.invoke('create_community', params);
@@ -138,9 +158,10 @@ export const toApi = (
 		// TODO: This implementation is currently unconsentful,
 		// because does not give the potential member an opportunity to deny an invite
 		createMembership: async (params) => {
-			const result = await client2.invoke('create_member', params);
+			const result = await client2.invoke('create_membership', params);
 			if (result.ok) {
-				data.addMember(result.value.member);
+				console.log('TODO handle create_membership result', result);
+				// data.addMembership(result.value.member);
 			}
 			return result;
 		},

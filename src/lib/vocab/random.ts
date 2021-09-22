@@ -6,7 +6,7 @@ import type {Account, AccountParams} from '$lib/vocab/account/account';
 import type {Persona, PersonaParams} from '$lib/vocab/persona/persona';
 import type {FileParams} from '$lib/vocab/file/file';
 import type {Database} from '$lib/db/Database';
-import type {MemberParams} from '$lib/vocab/member/member';
+import type {MembershipParams} from '$lib/vocab/membership/membership';
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = () => Math.random().toString().slice(2);
@@ -21,11 +21,13 @@ export const randomAccountParams = (): AccountParams => ({
 	name: randomAccountName(),
 	password: randomPassword(),
 });
-export const randomPersonaParams = (account_id: number): PersonaParams => ({
+export const randomPersonaParams = (): PersonaParams => ({
 	name: randomPersonaName(),
-	account_id,
 });
-export const randomMemberParams = (persona_id: number, community_id: number): MemberParams => ({
+export const randomMembershipParams = (
+	persona_id: number,
+	community_id: number,
+): MembershipParams => ({
 	persona_id,
 	community_id,
 });
@@ -70,7 +72,8 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 		},
 		persona: async (account) => {
 			if (!account) account = await random.account();
-			return unwrap(await db.repos.persona.create(randomPersonaParams(account.account_id))).persona;
+			return unwrap(await db.repos.persona.create(randomPersonaParams(), account.account_id))
+				.persona;
 		},
 		community: async (persona, account) => {
 			if (!persona) persona = await random.persona(account);

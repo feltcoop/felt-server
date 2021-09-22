@@ -18,6 +18,7 @@ import {
 	randomPersonaParams,
 	randomSpaceParams,
 } from '$lib/vocab/random';
+import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 
 // TODO this only depends on the database --
 // if we don't figure out a robust way to make a global reusable server,
@@ -38,15 +39,15 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const accountParams = randomAccountParams();
 	const account = unwrap(await server.db.repos.account.create(accountParams));
 
-	const personaParams = randomPersonaParams(account.account_id);
+	// TODO create 2 personas
+	const personaParams = randomPersonaParams();
 	const {persona, community: personaHomeCommunity} = unwrap(
-		await server.db.repos.persona.create(personaParams),
+		await server.db.repos.persona.create(personaParams, account.account_id),
 	);
 	if (!validatePersona()(persona)) {
-		console.log('TODO throw error here after merging with other changes'); // TODO
-		// throw new Error(
-		// 	`Failed to validate file: ${toValidationErrorMessage(validatePersona().errors![0])}`,
-		// );
+		throw new Error(
+			`Failed to validate file: ${toValidationErrorMessage(validatePersona().errors![0])}`,
+		);
 	}
 	t.ok(personaHomeCommunity);
 	if (!validateCommunity()(personaHomeCommunity)) {
@@ -57,6 +58,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 
 	const communityParams = randomCommunityParams(persona.persona_id);
 	const community = unwrap(await server.db.repos.community.create(communityParams));
+	persona.community_ids.push(community.community_id); // TODO hacky
 
 	const spaceParams = randomSpaceParams(community.community_id);
 	const space = unwrap(await server.db.repos.space.create(spaceParams));
@@ -65,6 +67,9 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
 		);
 	}
+	const spaceCount = 1;
+	const defaultSpaces = toDefaultSpaces(community.community_id);
+	const defaultSpaceCount = defaultSpaces.length;
 
 	const unwrapFile = async (promise: Promise<Result<{value: File}>>): Promise<File> => {
 		const file = unwrap(await promise);
@@ -119,7 +124,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const filterSpacesValue = unwrap(
 		await server.db.repos.space.filterByCommunity(community.community_id),
 	);
-	t.equal(filterSpacesValue.length, 8); // TODO do a better check
+	t.equal(filterSpacesValue.length, spaceCount + defaultSpaceCount);
 	filterSpacesValue.forEach((s) => {
 		if (!validateSpace()(s)) {
 			throw new Error(
@@ -131,7 +136,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const findCommunityValue = unwrap(
 		await server.db.repos.community.findById(community.community_id),
 	);
-	t.is(findCommunityValue.name, community.name); // TODO a better check
+	t.is(findCommunityValue.name, community.name); // TODO do a better check
 	if (!validateCommunity()(findCommunityValue)) {
 		throw new Error(
 			`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
@@ -140,7 +145,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const filterCommunitiesValue = unwrap(
 		await server.db.repos.community.filterByAccount(account.account_id),
 	);
-	t.equal(filterCommunitiesValue.length, 4); // TODO do a better check
+	t.equal(filterCommunitiesValue.length, 2); // TODO do a better check
 	filterCommunitiesValue.forEach((s) => {
 		if (!validateCommunity()(s)) {
 			throw new Error(
@@ -152,8 +157,8 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const filterPersonasValue = unwrap(
 		await server.db.repos.persona.filterByAccount(account.account_id),
 	);
-	t.is(filterPersonasValue.length, 2); // TODO fix this after merge
-	t.is(filterPersonasValue[1].name, persona.name); // TODO fix this after merge
+	t.is(filterPersonasValue.length, 1);
+	t.equal(filterPersonasValue, [persona]);
 	filterPersonasValue.forEach((p) => {
 		if (!validatePersona()(p)) {
 			throw new Error(
@@ -163,14 +168,14 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	});
 
 	const findAccountByIdValue = unwrap(await server.db.repos.account.findById(account.account_id));
-	t.is(findAccountByIdValue.name, account.name); // TODO a better check
+	t.is(findAccountByIdValue.name, account.name); // TODO do a better check
 	if (!validateAccount()(findAccountByIdValue)) {
 		throw new Error(
 			`Failed to validate account: ${toValidationErrorMessage(validateAccount().errors![0])}`,
 		);
 	}
 	const findAccountByNameValue = unwrap(await server.db.repos.account.findByName(account.name));
-	t.is(findAccountByNameValue.name, account.name); // TODO a better check
+	t.is(findAccountByNameValue.name, account.name); // TODO do a better check
 	if (!validateAccount()(findAccountByNameValue)) {
 		throw new Error(
 			`Failed to validate account: ${toValidationErrorMessage(validateAccount().errors![0])}`,

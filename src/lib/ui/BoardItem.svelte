@@ -2,18 +2,15 @@
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	import type {File} from '$lib/vocab/file/file.js';
-	import type {Member} from '$lib/vocab/member/member.js';
-	import ActorIcon from '$lib/ui/ActorIcon.svelte';
+	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import {randomHue} from '$lib/ui/color';
+	import PersonaInfo from '$lib/ui/PersonaInfo.svelte';
 
 	export let file: File;
-	export let member: Member; // TODO should this be `Actor`?
-
-	// TODO shouldn't need this
-	$: icon = (member as any).icon || null;
+	export let persona: Persona; // TODO should this be `Actor`?
 
 	// TODO refactor to some client view-model for the actor
-	$: hue = randomHue(member.name);
+	$: hue = randomHue(persona.name);
 </script>
 
 <li style="--hue: {hue}">
@@ -22,10 +19,7 @@
 			{file.content}
 		</p>
 	</Markup>
-	<div class="about">
-		<ActorIcon name={member.name} {icon} />
-		<span class="actor">{member.name}</span>
-	</div>
+	<PersonaInfo {persona} />
 </li>
 
 <style>
@@ -34,15 +28,5 @@
 		/* TODO experiment with a border color instead of bg */
 		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
 		flex-direction: column;
-	}
-
-	.actor {
-		padding-left: var(--spacing_md);
-		font-weight: var(--font_weight_4);
-	}
-
-	.about {
-		display: flex;
-		align-items: center;
 	}
 </style>

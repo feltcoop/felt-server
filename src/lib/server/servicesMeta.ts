@@ -10,6 +10,14 @@ export interface ServiceMeta {
 	};
 }
 
+export const create_persona: ServiceMeta = {
+	name: 'create_persona',
+	route: {
+		path: '/api/v1/personas',
+		method: 'POST',
+	},
+};
+
 export const create_community: ServiceMeta = {
 	name: 'create_community',
 	route: {
@@ -18,8 +26,8 @@ export const create_community: ServiceMeta = {
 	},
 };
 
-export const create_member: ServiceMeta = {
-	name: 'create_member',
+export const create_membership: ServiceMeta = {
+	name: 'create_membership',
 	route: {
 		path: '/api/v1/members',
 		method: 'POST',

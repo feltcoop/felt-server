@@ -21,7 +21,7 @@ export const apiServer: ApiServer = new ApiServer({
 	loadInstance: async () => {
 		try {
 			// TODO this is a hack to make Rollup not bundle this - needs refactoring
-			// TODO what can we do with gro here with helpers or constants?
+			// TODO what can we do with gro here with helpers or config?
 			const importPath = '../../../svelte-kit/' + 'index.js';
 			const mod = (await import(importPath)) as any;
 			return mod.instance || null;

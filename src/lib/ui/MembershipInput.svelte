@@ -3,18 +3,18 @@
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	import type {Community} from '$lib/vocab/community/community.js';
-	import type {Member} from '$lib/vocab/member/member.js';
+	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import {getApp} from '$lib/ui/app';
 
 	const {api} = getApp();
 
-	export let members: Member[];
+	export let allPersonas: Persona[];
 	export let community: Community;
 
 	let open = false;
 
 	$: invitableMembers = community
-		? members.filter((x) => !community.members.some((y) => x.persona_id == y.persona_id))
+		? allPersonas.filter((x) => !community.memberPersonas.some((y) => x.persona_id == y.persona_id))
 		: [];
 </script>
 

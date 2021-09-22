@@ -15,8 +15,8 @@ export const communityRepo = (db: Database) => ({
 		const community = data[0];
 		const community_id = community.community_id;
 		// TODO more robust error handling or condense into single query
-		const memberResult = await db.repos.member.create({persona_id, community_id});
-		if (!memberResult.ok) return memberResult;
+		const membershipResult = await db.repos.membership.create({persona_id, community_id});
+		if (!membershipResult.ok) return membershipResult;
 		const spacesResult = await db.repos.space.createDefaultSpaces(community_id);
 		if (!spacesResult.ok) return spacesResult;
 		community.spaces = spacesResult.value;
@@ -54,11 +54,11 @@ export const communityRepo = (db: Database) => ({
 				(
 					SELECT array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
 					FROM (
-						SELECT p.persona_id, p.name FROM personas p JOIN persona_communities pc ON p.persona_id=pc.persona_id AND pc.community_id=c.community_id
+						SELECT p.persona_id, p.name FROM personas p JOIN memberships m ON p.persona_id=m.persona_id AND m.community_id=c.community_id
 					) d
-				) as members
+				) as "memberPersonas"
 			FROM communities c JOIN (
-				SELECT DISTINCT pc.community_id FROM personas p JOIN persona_communities pc ON p.persona_id=pc.persona_id AND p.account_id = ${account_id}
+				SELECT DISTINCT m.community_id FROM personas p JOIN memberships m ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
 			) apc
 			ON c.community_id=apc.community_id;
     `;

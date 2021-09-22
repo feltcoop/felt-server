@@ -6,12 +6,12 @@ import type {ErrorResponse} from '$lib/util/error';
 import type {Community} from '$lib/vocab/community/community.js';
 
 export const personaRepo = (db: Database) => ({
-	create: async ({
-		name,
-		account_id,
-	}: PersonaParams): Promise<
-		Result<{value: {persona: Persona; community: Community}}, ErrorResponse>
-	> => {
+	create: async (
+		{name}: PersonaParams,
+		// TODO should `account_id` be part of the params object?
+		// then we need a different abstraction? maybe `PersonaDoc` or something?
+		account_id: number,
+	): Promise<Result<{value: {persona: Persona; community: Community}}, ErrorResponse>> => {
 		const data = await db.sql<Persona[]>`
       insert into personas (name, account_id) values (
         ${name}, ${account_id}
@@ -26,29 +26,36 @@ export const personaRepo = (db: Database) => ({
 		if (!createCommunityResult.ok) {
 			return {ok: false, reason: 'Failed to create initial persona community'};
 		}
-		return {ok: true, value: {persona, community: createCommunityResult.value}};
+		// TODO this is a hack -- always adding/expecting `community_ids`
+		// like in `filterByAccount` below is probably not the best idea because of overfetching
+		const community = createCommunityResult.value;
+		persona.community_ids = [community.community_id];
+		// TODO this is also a yucky hack
+		community.memberPersonas = [persona];
+		return {ok: true, value: {persona, community}};
 	},
 	filterByAccount: async (
 		account_id: number,
 	): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
+		console.log('[personaRepo] filtering by account', account_id);
 		const data = await db.sql<Persona[]>`
-      select p.persona_id, p.account_id, p.name,
+      SELECT p.persona_id, p.account_id, p.name,
 
       (
-        select array_to_json(coalesce(array_agg(d.community_id)))
-        from (
-          SELECT pc.community_id FROM persona_communities pc WHERE pc.persona_id = p.persona_id
+        SELECT array_to_json(coalesce(array_agg(d.community_id)))
+        FROM (
+          SELECT m.community_id FROM memberships m WHERE m.persona_id = p.persona_id
         ) d
-      ) as community_ids
+      ) AS community_ids
       
-      from personas p where p.account_id = ${account_id}
+      FROM personas p WHERE p.account_id = ${account_id}
 		`;
-		if (data.length) {
-			return {ok: true, value: data};
-		}
-		return {
-			ok: false,
-			reason: `No Personas found for account: ${account_id}`,
-		};
+		return {ok: true, value: data};
+	},
+	getAll: async (): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
+		const data = await db.sql<Persona[]>`
+      select persona_id, name from personas
+    `;
+		return {ok: true, value: data};
 	},
 });
