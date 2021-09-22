@@ -2,15 +2,8 @@ import type {Result} from '@feltcoop/felt';
 
 import type {ErrorResponse} from '$lib/util/error';
 
-// TODO should `status` be passed through on error results?
-
-// TODO typesafe non-throwing `Result`
-// import type {Result} from '@feltcoop/felt';
-// ) => Promise<Result<TResultMap[TServiceName], ErrorResponse>>;
-// import type {ErrorResponse} from '$lib/util/error';
-
 export type ApiResult<TValue> = Result<
-	{status: number; value: TValue}, // TODO should `data` be `value` to match `Result` usage elsewhere?
+	{status: number; value: TValue},
 	ErrorResponse & {status: number}
 >;
 
