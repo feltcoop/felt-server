@@ -17,11 +17,8 @@ export const toHttpApiClient = <
 	TParamsMap extends Record<string, any>,
 	TResultMap extends Record<string, any>,
 >(): ApiClient<TParamsMap, TResultMap> => {
-	return {
-		invoke: async <TServiceName extends string, TParams extends TParamsMap[TServiceName]>(
-			name: TServiceName,
-			params: TParams,
-		): Promise<ApiResult<TResultMap[TServiceName]>> => {
+	const client: ApiClient<TParamsMap, TResultMap> = {
+		invoke: async (name, params) => {
 			console.log('[http api client] invoke', name, params);
 			const serviceMeta: ServiceMeta = (servicesMeta as any)[name];
 			if (!serviceMeta) {
@@ -59,4 +56,5 @@ export const toHttpApiClient = <
 			// TODO ?
 		},
 	};
+	return client;
 };
