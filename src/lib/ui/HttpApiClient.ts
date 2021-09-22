@@ -23,8 +23,10 @@ export const toHttpApiClient = <
 			params: TParams,
 		): Promise<ApiResult<TResultMap[TServiceName]>> => {
 			console.log('[http api client] invoke', name, params);
-			const serviceMeta: ServiceMeta = (servicesMeta as any)[name]; // TODO lighten this dependency, don't need the schemas
-			if (!serviceMeta) throw Error(`Unable to find serviceMeta: ${name}`); // TODO return result instead of throwing
+			const serviceMeta: ServiceMeta = (servicesMeta as any)[name];
+			if (!serviceMeta) {
+				return {ok: false, status: 400, reason: `failed to invoke unknown service: ${name}`};
+			}
 			const path = inject(serviceMeta.route.path, params);
 			const {method} = serviceMeta.route;
 			try {
