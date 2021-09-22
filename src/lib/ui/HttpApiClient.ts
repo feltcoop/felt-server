@@ -25,7 +25,7 @@ export const toHttpApiClient = <
 			console.log('[http api client] invoke', name, params);
 			const serviceMeta: ServiceMeta = (servicesMeta as any)[name];
 			if (!serviceMeta) {
-				return {ok: false, status: 400, reason: `failed to invoke unknown service: ${name}`};
+				return {ok: false, status: 400, reason: `Failed to invoke unknown service: ${name}`};
 			}
 			const path = inject(serviceMeta.route.path, params);
 			const {method} = serviceMeta.route;
@@ -35,15 +35,28 @@ export const toHttpApiClient = <
 					headers: {'content-type': 'application/json'},
 					body: method === 'GET' || method === 'HEAD' ? null : JSON.stringify(params),
 				});
+				// TODO need to think through how to properly handle errors here
+				// if (!res.ok) {
+				// 	try {
+				// 		const result = await res.json();
+				// 		return {
+				// 			ok: false,
+				// 			status: res.status,
+				// 			reason: result.reason || res.statusText || 'Unknown error',
+				// 		};
+				// 	} catch {
+				// 		return {ok: false, status: res.status, reason: res.statusText || 'Unknown error'};
+				// 	}
+				// }
 				const result = await res.json();
 				console.log('[http api client] result', result);
 				return {ok: true, status: res.status, value: result};
 			} catch (err) {
-				return {ok: false, status: 500, reason: err.message || 'Unknown error'}; // TODO ?
+				return {ok: false, status: 500, reason: err.message || 'Unknown error'}; // TODO ? Network issues?
 			}
 		},
 		close: () => {
-			//
+			// TODO ?
 		},
 	};
 };
