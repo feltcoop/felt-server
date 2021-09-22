@@ -90,6 +90,7 @@
 		border-left: var(--border);
 		border-right: var(--border);
 		transform-origin: top left;
+		/* TODO what var is this? */
 		background-color: hsl(var(--bg_hue), var(--bg_saturation), var(--bg_lightness));
 		transform: translate3d(-100%, 0, 0) scale3d(1, 1, 1);
 		transition: transform var(--transition_duration_xs) ease-out;
@@ -112,7 +113,6 @@
 	/* `50rem` in media queries is the same as `800px`, which is `--column_width` */
 	@media (max-width: 50rem) {
 		.main-nav {
-			z-index: 2;
 			position: fixed;
 			left: 0;
 			top: 0;

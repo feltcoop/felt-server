@@ -194,7 +194,7 @@ const toDefaultUiState = (): UiState => ({
 	selectedCommunityIdByPersona: {},
 	selectedSpaceIdByCommunity: {},
 	expandMainNav: true,
-	expandSecondaryNav: true,
+	expandSecondaryNav: true, // TODO default to `false` for mobile -- how?
 	mainNavView: 'explorer',
 });
 

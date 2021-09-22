@@ -23,7 +23,9 @@
 		position: absolute;
 		right: 0;
 		top: 0;
-		transition: transform var(--transition_duration_xs) ease-out;
+		/* TODO this is janky because it can go offscreen for a bit,
+		though it's a nice idea because it maintains object permanence */
+		/* transition: transform var(--transition_duration_xs) ease-out; */
 	}
 	.content {
 		transition: transform var(--transition_duration_xl) ease-in-out;
@@ -31,5 +33,13 @@
 	}
 	.expanded .content {
 		transform: rotate(180deg);
+	}
+	@media (max-width: 50rem) {
+		button {
+			transform: translate3d(0, 0, 0) !important;
+		}
+		button.expanded {
+			z-index: 4;
+		}
 	}
 </style>
