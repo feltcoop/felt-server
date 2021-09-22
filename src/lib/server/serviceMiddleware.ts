@@ -43,11 +43,10 @@ export const toServiceMiddleware =
 			}
 
 			const params = {...reqBody, ...reqParams};
-			const validateParams = service.validateParams();
-			if (!validateParams(params)) {
+			if (!service.validateParams()(params)) {
 				// TODO handle multiple errors instead of just the first
-				console.error('validation failed:', params, validateParams.errors);
-				const validationError = validateParams.errors![0];
+				console.error('validation failed:', params, service.validateParams().errors);
+				const validationError = service.validateParams().errors![0];
 				return send(res, 400, {reason: toValidationErrorMessage(validationError)});
 			}
 			if (!req.account_id) {
