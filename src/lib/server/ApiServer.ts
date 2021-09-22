@@ -47,6 +47,8 @@ export class ApiServer {
 	readonly services: Map<string, Service<TSchema, TSchema>>;
 	readonly loadInstance: () => Promise<Polka | null>;
 
+	websocketListener = websocketHandler.bind(null, this);
+
 	constructor(options: Options) {
 		this.server = options.server;
 		this.app = options.app;
@@ -123,8 +125,6 @@ export class ApiServer {
 
 		log.info('inited');
 	}
-
-	websocketListener = websocketHandler.bind(null, this);
 
 	async close(): Promise<void> {
 		log.info('close');
