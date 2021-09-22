@@ -7,7 +7,7 @@
 
 import {inject} from 'regexparam';
 
-import type {ApiClient, ApiResult} from '$lib/ui/ApiClient';
+import type {ApiClient} from '$lib/ui/ApiClient';
 import * as servicesMeta from '$lib/server/servicesMeta';
 import type {ServiceMeta} from '$lib/server/servicesMeta';
 

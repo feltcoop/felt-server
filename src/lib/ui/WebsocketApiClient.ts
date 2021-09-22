@@ -4,7 +4,7 @@
 
 import {toToClientId} from '@feltcoop/felt/util/id.js';
 
-import type {ApiClient, ApiResult} from '$lib/ui/ApiClient';
+import type {ApiClient} from '$lib/ui/ApiClient';
 import type {JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 
