@@ -55,7 +55,7 @@ export const toApi = (
 	ui: UiStore,
 	data: DataStore,
 	client: ApiClient<ServicesParamsMap, ServicesResultMap>,
-	client2: ApiClient<ServicesParamsMap, ServicesResultMap>, // TODO remove this after testing
+	client2: ApiClient<ServicesParamsMap, ServicesResultMap>, // TODO remove this after everything stabilizes
 ): Api => {
 	const api: Api = {
 		// TODO these are just directly proxying and they don't have the normal `ApiResult` return value

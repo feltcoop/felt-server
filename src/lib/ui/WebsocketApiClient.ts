@@ -1,6 +1,6 @@
 // This is the main API client.
 // It implements a request/response pattern over websockets instead of fire-and-forget
-// using JSON-RPC 2.0
+// using JSON-RPC 2.0: https://www.jsonrpc.org/specification
 
 import {toToClientId} from '@feltcoop/felt/util/id.js';
 
