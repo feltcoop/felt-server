@@ -126,7 +126,7 @@ export const toApi = (
 			console.log('[api] create_community result', result);
 			if (result.ok) {
 				const {persona, community: rawCommunity} = result.value;
-				const community = toCommunityModel(rawCommunity as Community); // TODO fix type between `Community` and `CommunitySchema` and remove this cast
+				const community = toCommunityModel(rawCommunity as Community); // TODO `Community` type is off with schema
 				data.addCommunity(community, persona.persona_id);
 				data.addPersona(persona);
 				// TODO refactor to not return here, do `return result` below --

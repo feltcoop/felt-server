@@ -44,12 +44,7 @@ export const toWebsocketApiClient = <
 	};
 
 	const client: WebsocketApiClient<TParamsMap, TResultMap> = {
-		// TODO once stabilized try to simplify this type signature and types inside the function body,
-		// using inference from the base `ApiClient.invoke`
-		invoke: async <TServiceName extends string, TParams extends TParamsMap[TServiceName]>(
-			name: TServiceName,
-			params: TParams,
-		): Promise<ApiResult<TResultMap[TServiceName]>> => {
+		invoke: async (name, params) => {
 			console.log('[websocket api client] invoke', name, params);
 			const request: JsonRpcRequest<typeof name, TParamsMap> = {
 				jsonrpc: '2.0',
@@ -58,11 +53,11 @@ export const toWebsocketApiClient = <
 				params,
 			};
 			console.log('[websocket api client] request', request);
-			const websocketRequest = toWebsocketRequest<TResultMap[TServiceName]>(request);
+			const websocketRequest = toWebsocketRequest<any>(request);
 			send(request);
 			return websocketRequest.promise;
 		},
-		handle: (rawMessage: any): void => {
+		handle: (rawMessage) => {
 			const message = parseSocketMessage(rawMessage);
 			console.log('[websocket api client] handle incoming message', message);
 			if (!message) return;
@@ -76,7 +71,7 @@ export const toWebsocketApiClient = <
 			found.resolve({ok: message.result.status === 200, ...message.result});
 		},
 		close: () => {
-			//
+			// ?
 		},
 	};
 	return client;
