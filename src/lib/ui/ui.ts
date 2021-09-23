@@ -1,5 +1,5 @@
-import type {Readable, Writable} from 'svelte/store';
-import {writable, derived} from 'svelte/store';
+import type {Readable} from 'svelte/store';
+import {writable, derived, readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 import type {DataState, DataStore} from '$lib/ui/data';
@@ -38,7 +38,7 @@ export interface UiStore {
 	selectedSpace: Readable<Space | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: CommunityModel[]}>; // TODO or name `personaCommunities`?
 	// methods and stores
-	mobile: Writable<boolean>;
+	mobile: Readable<boolean>;
 	setMobile: (mobile: boolean) => void;
 	updateData: (data: DataState) => void;
 	selectPersona: (persona_id: number) => void;
@@ -49,8 +49,8 @@ export interface UiStore {
 	setMainNavView: (mainNavView: MainNavView) => void;
 }
 
-export const toUiStore = (data: DataStore, mobile: boolean) => {
-	const state = writable<UiState>(toDefaultUiState(mobile));
+export const toUiStore = (data: DataStore, initialMobileValue: boolean) => {
+	const state = writable<UiState>(toDefaultUiState(initialMobileValue));
 
 	const {subscribe, update} = state;
 
@@ -82,6 +82,11 @@ export const toUiStore = (data: DataStore, mobile: boolean) => {
 		}, {} as {[persona_id: number]: CommunityModel[]}),
 	);
 
+	let setMobile!: (value: boolean) => void;
+	const mobile = readable(initialMobileValue, (set) => {
+		setMobile = set;
+	});
+
 	const store: UiStore = {
 		subscribe,
 		// derived state
@@ -90,8 +95,8 @@ export const toUiStore = (data: DataStore, mobile: boolean) => {
 		selectedSpace,
 		communitiesByPersonaId,
 		// methods and stores
-		mobile: writable(mobile), // TODO this should be treated as readable externally and go through `setMobile`, but how to enforce that?
-		setMobile: (mobile) => store.mobile.set(mobile),
+		mobile,
+		setMobile,
 		updateData: (data) => {
 			console.log('[ui.updateData]', {data});
 			update(($ui) => {
