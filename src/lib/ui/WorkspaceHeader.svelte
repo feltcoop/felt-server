@@ -36,10 +36,7 @@
 	.expanded-nav .luggage-placeholder {
 		display: none;
 	}
-	/* `50rem` in media queries is the same as `800px`, which is `--column_width` */
-	@media (max-width: 50rem) {
-		.workspace-header .luggage-placeholder {
-			display: block;
-		}
+	:global(.mobile) .workspace-header .luggage-placeholder {
+		display: block;
 	}
 </style>

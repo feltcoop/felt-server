@@ -24,7 +24,7 @@
 	import {toHandleSocketMessage} from '$lib/ui/handleSocketMessage';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 
-	let mobile = false; // TODO causes mobile view to change on load -- detect for SSR via User-Agent?
+	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
 	if (browser) {
 		// TODO to let the user override with their own preferred mobile setting,
@@ -32,7 +32,7 @@
 		// we need to either branch logic here, or have a different derived `media` value
 		// that only reads this default value when the user has no override.
 		const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_WIDTH})`);
-		mobile = mediaQuery.matches;
+		initialMobileValue = mediaQuery.matches;
 		mediaQuery.onchange = (e) => ui.setMobile(e.matches);
 	}
 
@@ -40,7 +40,8 @@
 	const data = setData($session);
 	$: data.updateSession($session);
 	const socket = setSocket(toSocketStore(toHandleSocketMessage(data)));
-	const ui = setUi(toUiStore(data, mobile));
+	const ui = setUi(toUiStore(data, initialMobileValue));
+	const mobile = ui.mobile;
 	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
 	const api = setApi(toApiStore(ui, data, socket));
 	const app = setApp({data, ui, api, devmode, socket});
@@ -86,7 +87,7 @@
 	<link rel="shortcut icon" href="/favicon.png" />
 </svelte:head>
 
-<div class="layout">
+<div class="layout" class:mobile={$mobile}>
 	{#if !guest && !onboarding}
 		<Luggage />
 		<MainNav />

@@ -90,7 +90,7 @@ export const toUiStore = (data: DataStore, mobile: boolean) => {
 		selectedSpace,
 		communitiesByPersonaId,
 		// methods and stores
-		mobile: writable(mobile),
+		mobile: writable(mobile), // TODO this should be treated as readable externally and go through `setMobile`, but how to enforce that?
 		setMobile: (mobile) => store.mobile.set(mobile),
 		updateData: (data) => {
 			console.log('[ui.updateData]', {data});

@@ -34,12 +34,10 @@
 	.expanded .content {
 		transform: rotate(180deg);
 	}
-	@media (max-width: 50rem) {
-		button {
-			transform: translate3d(0, 0, 0) !important;
-		}
-		button.expanded {
-			z-index: 4;
-		}
+	:global(.mobile) button {
+		transform: translate3d(0, 0, 0) !important;
+	}
+	:global(.mobile) button.expanded {
+		z-index: 4;
 	}
 </style>

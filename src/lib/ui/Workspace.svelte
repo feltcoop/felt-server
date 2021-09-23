@@ -76,25 +76,23 @@
 		top: 0;
 		/* TODO from felt */
 		background-color: rgba(0, 0, 0, 0.4);
-	} /* `50rem` in media queries is the same as `800px`, which is `--column_width` */
-	@media (max-width: 50rem) {
-		.space-meta {
-			z-index: 3;
-			position: fixed;
-			right: 0;
-			top: 0;
-		}
-		.space-meta-bg {
-			display: block;
-			animation: fade-in var(--transition_duration_xl) ease-out;
-		}
-		/* remove borders on things when not necessary, makes things look cleaner and crisper */
-		.column {
-			border-right: none;
-			border-left: none;
-		}
-		.space-meta {
-			border-right: none;
-		}
+	}
+	:global(.mobile) .space-meta {
+		z-index: 3;
+		position: fixed;
+		right: 0;
+		top: 0;
+	}
+	:global(.mobile) .space-meta-bg {
+		display: block;
+		animation: fade-in var(--transition_duration_xl) ease-out;
+	}
+	/* remove borders on things when not necessary, makes things look cleaner and crisper */
+	:global(.mobile) .column {
+		border-right: none;
+		border-left: none;
+	}
+	:global(.mobile) .space-meta {
+		border-right: none;
 	}
 </style>
