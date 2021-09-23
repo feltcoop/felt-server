@@ -1,5 +1,5 @@
 import type {Readable} from 'svelte/store';
-import {writable, derived, readable} from 'svelte/store';
+import {writable, derived} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 import type {DataState, DataStore} from '$lib/ui/data';
@@ -82,10 +82,7 @@ export const toUiStore = (data: DataStore, initialMobileValue: boolean) => {
 		}, {} as {[persona_id: number]: CommunityModel[]}),
 	);
 
-	let setMobile!: (value: boolean) => void;
-	const mobile = readable(initialMobileValue, (set) => {
-		setMobile = set;
-	});
+	const {subscribe: subscribeMobile, set: setMobile} = writable(initialMobileValue);
 
 	const store: UiStore = {
 		subscribe,
@@ -95,7 +92,7 @@ export const toUiStore = (data: DataStore, initialMobileValue: boolean) => {
 		selectedSpace,
 		communitiesByPersonaId,
 		// methods and stores
-		mobile,
+		mobile: {subscribe: subscribeMobile}, // don't expose the writable store
 		setMobile,
 		updateData: (data) => {
 			console.log('[ui.updateData]', {data});
