@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {browser} from '$app/env';
+	import {get} from 'svelte/store';
 
 	import type {Space} from '$lib/vocab/space/space.js';
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
@@ -34,7 +35,7 @@
 				// That's probably what the user wants,
 				// but the problem is that we also want to close the main nav
 				// when the user clicks the already-selected space. For now this is fine.
-				if ($ui.mobile && $ui.expandMainNav) api.toggleMainNav();
+				if (get(ui.mobile) && $ui.expandMainNav) api.toggleMainNav();
 			}}
 		>
 			{space.name}

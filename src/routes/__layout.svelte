@@ -24,7 +24,7 @@
 	import {toHandleSocketMessage} from '$lib/ui/handleSocketMessage';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 
-	let mobile = false; // TODO causes mobile to change on load -- detect for SSR via User-Agent?
+	let mobile = false; // TODO causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
 	if (browser) {
 		// TODO to let the user override with their own preferred mobile setting,

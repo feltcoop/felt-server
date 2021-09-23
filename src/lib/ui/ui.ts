@@ -1,4 +1,4 @@
-import type {Readable} from 'svelte/store';
+import type {Readable, Writable} from 'svelte/store';
 import {writable, derived} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
@@ -19,7 +19,6 @@ export const setUi = (store: UiStore): UiStore => {
 };
 
 export interface UiState {
-	mobile: boolean;
 	// TODO should these be store references instead of ids?
 	selectedPersonaId: number | null;
 	selectedCommunityId: number | null;
@@ -32,12 +31,14 @@ export interface UiState {
 
 export interface UiStore {
 	subscribe: Readable<UiState>['subscribe'];
+	// state
 	// derived state
 	selectedPersona: Readable<Persona | null>;
 	selectedCommunity: Readable<CommunityModel | null>;
 	selectedSpace: Readable<Space | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: CommunityModel[]}>; // TODO or name `personaCommunities`?
-	// methods
+	// methods and stores
+	mobile: Writable<boolean>;
 	setMobile: (mobile: boolean) => void;
 	updateData: (data: DataState) => void;
 	selectPersona: (persona_id: number) => void;
@@ -88,8 +89,9 @@ export const toUiStore = (data: DataStore, mobile: boolean) => {
 		selectedCommunity,
 		selectedSpace,
 		communitiesByPersonaId,
-		// methods
-		setMobile: (mobile) => update(($ui) => ({...$ui, mobile})),
+		// methods and stores
+		mobile: writable(mobile),
+		setMobile: (mobile) => store.mobile.set(mobile),
 		updateData: (data) => {
 			console.log('[ui.updateData]', {data});
 			update(($ui) => {
@@ -193,7 +195,6 @@ export const toUiStore = (data: DataStore, mobile: boolean) => {
 };
 
 const toDefaultUiState = (mobile: boolean): UiState => ({
-	mobile,
 	expandMainNav: !mobile,
 	expandSecondaryNav: !mobile,
 	mainNavView: 'explorer',
