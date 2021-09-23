@@ -1,6 +1,8 @@
 import type {Readable} from 'svelte/store';
 import {writable, derived} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
+import {browser} from '$app/env';
+
 import type {DataState, DataStore} from '$lib/ui/data';
 import type {CommunityModel} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
@@ -18,6 +20,7 @@ export const setUi = (store: UiStore): UiStore => {
 };
 
 export interface UiState {
+	mobile: boolean;
 	// TODO should these be store references instead of ids?
 	selectedPersonaId: number | null;
 	selectedCommunityId: number | null;
@@ -36,6 +39,7 @@ export interface UiStore {
 	selectedSpace: Readable<Space | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: CommunityModel[]}>; // TODO or name `personaCommunities`?
 	// methods
+	setMobile: (mobile: boolean) => void;
 	updateData: (data: DataState) => void;
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
@@ -86,6 +90,7 @@ export const toUiStore = (data: DataStore) => {
 		selectedSpace,
 		communitiesByPersonaId,
 		// methods
+		setMobile: (mobile) => update(($ui) => ({...$ui, mobile})),
 		updateData: (data) => {
 			console.log('[ui.updateData]', {data});
 			update(($ui) => {
@@ -188,14 +193,19 @@ export const toUiStore = (data: DataStore) => {
 	return store;
 };
 
-const toDefaultUiState = (): UiState => ({
-	selectedPersonaId: null,
-	selectedCommunityId: null,
-	selectedCommunityIdByPersona: {},
-	selectedSpaceIdByCommunity: {},
-	expandMainNav: true,
-	expandSecondaryNav: true, // TODO default to `false` for mobile -- how?
-	mainNavView: 'explorer',
-});
+const toDefaultUiState = (): UiState => {
+	// TODO how to do this in one place, but handle initialization properly? see __layout
+	const mobile = browser ? window.matchMedia('(max-width: 50rem)').matches : false;
+	return {
+		mobile,
+		expandMainNav: !mobile,
+		expandSecondaryNav: !mobile,
+		mainNavView: 'explorer',
+		selectedPersonaId: null,
+		selectedCommunityId: null,
+		selectedCommunityIdByPersona: {},
+		selectedSpaceIdByCommunity: {},
+	};
+};
 
 export type MainNavView = 'explorer' | 'account';

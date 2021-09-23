@@ -62,6 +62,10 @@
 
 	onMount(() => {
 		socket.connect(WEBSOCKET_URL);
+		// TODO how to do this in one place, but handle initialization properly? see UiStore
+		window.matchMedia('(max-width: 50rem)').addEventListener('change', (e) => {
+			ui.setMobile(e.matches);
+		});
 		return () => {
 			socket.disconnect();
 		};

@@ -6,6 +6,9 @@
 	import type {CommunityModel} from '$lib/vocab/community/community.js';
 	import MembershipInput from '$lib/ui/MembershipInput.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona.js';
+	import {getApp} from '$lib/ui/app';
+
+	const {ui, api} = getApp();
 
 	export let community: CommunityModel;
 	export let spaces: Space[];
@@ -24,6 +27,9 @@
 		<a
 			href="/{community.name}{space.url === '/' ? '' : space.url}"
 			class:selected={space === selectedSpace}
+			on:click={() => {
+				if ($ui.mobile) api.toggleMainNav();
+			}}
 		>
 			{space.name}
 		</a>
