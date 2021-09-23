@@ -49,10 +49,12 @@ export interface UiStore {
 	setMainNavView: (mainNavView: MainNavView) => void;
 }
 
-export const toUiStore = (data: DataStore, initialMobileValue: boolean) => {
-	const state = writable<UiState>(toDefaultUiState(initialMobileValue));
+export const toUiStore = (data: DataStore, mobile: boolean) => {
+	const state = writable<UiState>(toDefaultUiState(mobile));
 
 	const {subscribe, update} = state;
+
+	const {subscribe: subscribeMobile, set: setMobile} = writable(mobile);
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -81,8 +83,6 @@ export const toUiStore = (data: DataStore, initialMobileValue: boolean) => {
 			return result;
 		}, {} as {[persona_id: number]: CommunityModel[]}),
 	);
-
-	const {subscribe: subscribeMobile, set: setMobile} = writable(initialMobileValue);
 
 	const store: UiStore = {
 		subscribe,
