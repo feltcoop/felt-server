@@ -3,13 +3,13 @@ import type {Writable} from 'svelte/store';
 
 import type {DataStore} from '$lib/ui/data';
 import type {UiStore} from '$lib/ui/ui';
-import type {ApiStore} from '$lib/ui/api';
+import type {Api} from '$lib/ui/api';
 import type {SocketStore} from '$lib/ui/socket';
 
 // TODO refactor/rethink
 
 export interface AppStores {
-	api: ApiStore;
+	api: Api;
 	data: DataStore;
 	ui: UiStore;
 	socket: SocketStore;

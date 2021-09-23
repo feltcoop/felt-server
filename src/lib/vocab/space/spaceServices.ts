@@ -25,7 +25,7 @@ export const readSpaceService: Service<
 	name: 'read_space',
 	route: {
 		path: '/api/v1/spaces/:space_id',
-		method: 'get',
+		method: 'GET',
 	},
 	paramsSchema: ReadSpaceServiceParams,
 	validateParams: toValidateSchema(ReadSpaceServiceParams),
@@ -38,11 +38,13 @@ export const readSpaceService: Service<
 
 		const findSpaceResult = await db.repos.space.findById(params.space_id);
 		if (findSpaceResult.ok) {
-			return {code: 200, data: {space: findSpaceResult.value}};
+			return {status: 200, value: {space: findSpaceResult.value}};
 		} else {
 			console.log('[read_space] no space found');
-			const code = findSpaceResult.type === 'no_space_found' ? 404 : 500;
-			return {code, data: {reason: findSpaceResult.reason}};
+			return {
+				status: findSpaceResult.type === 'no_space_found' ? 404 : 500,
+				value: {reason: findSpaceResult.reason},
+			};
 		}
 	},
 };
@@ -68,7 +70,7 @@ export const readSpacesService: Service<
 	name: 'read_spaces',
 	route: {
 		path: '/api/v1/communities/:community_id/spaces',
-		method: 'get',
+		method: 'GET',
 	},
 	paramsSchema: ReadSpacesServiceSchema,
 	validateParams: toValidateSchema(ReadSpacesServiceSchema),
@@ -81,10 +83,10 @@ export const readSpacesService: Service<
 
 		const findSpacesResult = await db.repos.space.filterByCommunity(params.community_id);
 		if (findSpacesResult.ok) {
-			return {code: 200, data: {spaces: findSpacesResult.value}};
+			return {status: 200, value: {spaces: findSpacesResult.value}};
 		} else {
 			console.log('[read_spaces] error searching for community spaces');
-			return {code: 500, data: {reason: 'error searching for community spaces'}};
+			return {status: 500, value: {reason: 'error searching for community spaces'}};
 		}
 	},
 };
@@ -119,7 +121,7 @@ export const createSpaceService: Service<
 	name: 'create_space',
 	route: {
 		path: '/api/v1/communities/:community_id/spaces',
-		method: 'post',
+		method: 'POST',
 	},
 	paramsSchema: CreateSpaceServiceSchema,
 	validateParams: toValidateSchema(CreateSpaceServiceSchema),
@@ -134,10 +136,10 @@ export const createSpaceService: Service<
 
 		const createSpaceResult = await db.repos.space.create(params);
 		if (createSpaceResult.ok) {
-			return {code: 200, data: {space: createSpaceResult.value}};
+			return {status: 200, value: {space: createSpaceResult.value}};
 		} else {
 			console.log('[create_space] error searching for community spaces');
-			return {code: 500, data: {reason: 'error searching for community spaces'}};
+			return {status: 500, value: {reason: 'error searching for community spaces'}};
 		}
 	},
 };

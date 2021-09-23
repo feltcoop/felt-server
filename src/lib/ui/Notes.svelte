@@ -5,13 +5,13 @@
 	import NoteItems from '$lib/ui/NotesItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {api, ui, data} = getApp();
+	const {api, ui, data, socket} = getApp();
 
 	export let space: Space;
 
 	let text = '';
 
-	$: browser && api.loadFiles(space.space_id);
+	$: browser && $socket.connected && api.loadFiles(space.space_id); // TODO move this to SvelteKit `load` so it works with http clients
 	$: console.log(`[Notes] fetching files for ${space.space_id}`);
 	$: selectedPersonaId = $ui.selectedPersonaId;
 

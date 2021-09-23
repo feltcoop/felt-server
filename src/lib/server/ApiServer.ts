@@ -3,8 +3,7 @@ import type {Server as HttpsServer} from 'https';
 import type {Polka, Request as PolkaRequest, Middleware as PolkaMiddleware} from 'polka';
 import bodyParser from 'body-parser';
 import {Logger} from '@feltcoop/felt/util/log.js';
-import {blue, red} from '@feltcoop/felt/util/terminal.js';
-import type ws from 'ws';
+import {blue} from '@feltcoop/felt/util/terminal.js';
 import {promisify} from 'util';
 import type {TSchema} from '@sinclair/typebox';
 
@@ -18,6 +17,7 @@ import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import type {Service} from '$lib/server/service';
 import {toServiceMiddleware} from '$lib/server/serviceMiddleware';
+import {websocketHandler} from '$lib/server/websocketHandler';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -47,6 +47,8 @@ export class ApiServer {
 	readonly services: Map<string, Service<TSchema, TSchema>>;
 	readonly loadInstance: () => Promise<Polka | null>;
 
+	websocketListener = websocketHandler.bind(null, this);
+
 	constructor(options: Options) {
 		this.server = options.server;
 		this.app = options.app;
@@ -66,7 +68,7 @@ export class ApiServer {
 		log.info('initing');
 
 		// TODO refactor to paralleize `init` of the various pieces
-		this.websocketServer.on('message', this.handleWebsocketMessage);
+		this.websocketServer.on('message', this.websocketListener);
 		await this.websocketServer.init();
 
 		// Set up the app and its middleware.
@@ -94,7 +96,7 @@ export class ApiServer {
 
 		// Register services as http routes.
 		for (const service of this.services.values()) {
-			this.app[service.route.method](service.route.path, toServiceMiddleware(this, service));
+			this.app.add(service.route.method, service.route.path, toServiceMiddleware(this, service));
 		}
 
 		// SvelteKit Node adapter, adapted to our production API server
@@ -126,71 +128,11 @@ export class ApiServer {
 
 	async close(): Promise<void> {
 		log.info('close');
-		this.websocketServer.off('message', this.handleWebsocketMessage);
+		this.websocketServer.off('message', this.websocketListener);
 		await Promise.all([
 			this.websocketServer.close(),
 			this.db.close(),
 			promisify(this.app.server.close).call(this.app.server),
 		]);
 	}
-
-	handleWebsocketMessage = async (_socket: ws, rawMessage: ws.Data, account_id: number) => {
-		if (typeof rawMessage !== 'string') {
-			console.error(
-				'[handleWebsocketMessage] cannot handle websocket message; currently only supports strings',
-			);
-			return;
-		}
-
-		let message: any; // TODO type
-		try {
-			message = JSON.parse(rawMessage);
-		} catch (err) {
-			console.error('[handleWebsocketMessage] failed to parse message', err);
-			return;
-		}
-		console.log('[handleWebsocketMessage]', message);
-		if (!(message as any)?.type) {
-			// TODO proper automated validation
-			console.error('[handleWebsocketMessage] invalid message', message);
-			return;
-		}
-		const {type, params} = message; // TODO parse type with a `Result`, probably
-		const service = this.services.get(type);
-		if (!service) {
-			console.error('[handleWebsocketMessage] unhandled message type', type);
-			return;
-		}
-
-		if (!service.validateParams()(params)) {
-			console.error(red('Failed to validate params'), service.validateParams().errors);
-			return;
-		}
-
-		const response = await service.perform({server: this, params, account_id});
-
-		if (process.env.NODE_ENV !== 'production') {
-			if (!service.validateResponse()(response.data)) {
-				console.error(
-					red(`failed to validate service response: ${service.name}`),
-					response,
-					service.validateResponse().errors,
-				);
-			}
-		}
-
-		// TODO this is very hacky -- what should the API for returning/broadcasting responses be?
-		const serializedResponse = JSON.stringify({
-			type: 'service_response',
-			messageType: type,
-			response,
-		});
-		for (const client of this.websocketServer.wss.clients) {
-			client.send(serializedResponse);
-		}
-	};
-}
-
-export interface HandleWebsocketMessage {
-	(server: ApiServer, socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
 }

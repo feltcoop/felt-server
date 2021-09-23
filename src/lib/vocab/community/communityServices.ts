@@ -26,7 +26,7 @@ export const readCommunitiesService: Service<
 	name: 'read_communities',
 	route: {
 		path: '/api/v1/communities',
-		method: 'get',
+		method: 'GET',
 	},
 	paramsSchema: ReadCommunitiesServiceParams,
 	validateParams: toValidateSchema(ReadCommunitiesServiceParams),
@@ -36,10 +36,10 @@ export const readCommunitiesService: Service<
 		const {db} = server;
 		const findCommunitiesResult = await db.repos.community.filterByAccount(account_id);
 		if (findCommunitiesResult.ok) {
-			return {code: 200, data: {communities: findCommunitiesResult.value}};
+			return {status: 200, value: {communities: findCommunitiesResult.value}};
 		} else {
 			console.log('[read_communities] error searching for communities');
-			return {code: 500, data: {reason: 'error searching for communities'}};
+			return {status: 500, value: {reason: 'error searching for communities'}};
 		}
 	},
 };
@@ -65,7 +65,7 @@ export const readCommunityService: Service<
 	name: 'read_community',
 	route: {
 		path: '/api/v1/communities/:community_id',
-		method: 'get',
+		method: 'GET',
 	},
 	paramsSchema: ReadCommunityServiceParams,
 	validateParams: toValidateSchema(ReadCommunityServiceParams),
@@ -78,11 +78,11 @@ export const readCommunityService: Service<
 
 		const findCommunityResult = await db.repos.community.findById(params.community_id);
 		if (findCommunityResult.ok) {
-			return {code: 200, data: {community: findCommunityResult.value}};
+			return {status: 200, value: {community: findCommunityResult.value}};
 		} else {
 			return {
-				code: findCommunityResult.type === 'no_community_found' ? 404 : 500,
-				data: {reason: findCommunityResult.reason},
+				status: findCommunityResult.type === 'no_community_found' ? 404 : 500,
+				value: {reason: findCommunityResult.reason},
 			};
 		}
 	},
@@ -111,7 +111,7 @@ export const createCommunityService: Service<
 	name: 'create_community',
 	route: {
 		path: '/api/v1/communities',
-		method: 'post',
+		method: 'POST',
 	},
 	paramsSchema: CreateCommunityServiceParams,
 	validateParams: toValidateSchema(CreateCommunityServiceParams),
@@ -121,7 +121,7 @@ export const createCommunityService: Service<
 	perform: async ({server, params, account_id}) => {
 		if (!params.name) {
 			// TODO declarative validation
-			return {code: 400, data: {reason: 'invalid name'}};
+			return {status: 400, value: {reason: 'invalid name'}};
 		}
 		console.log('created community account_id', account_id);
 		// TODO validate that `account_id` is `persona_id`
@@ -136,18 +136,18 @@ export const createCommunityService: Service<
 				console.log('community_id', community_id);
 				console.log('communityData', communityData);
 				return {
-					code: 200,
-					data: {
+					status: 200,
+					value: {
 						community: communityData.value.find((c) => c.community_id === community_id)!,
 					},
 				}; // TODO API types
 			} else {
 				console.log('[create_community] error retrieving community data');
-				return {code: 500, data: {reason: 'error retrieving community data'}};
+				return {status: 500, value: {reason: 'error retrieving community data'}};
 			}
 		} else {
 			console.log('[create_community] error creating community');
-			return {code: 500, data: {reason: 'error creating community'}};
+			return {status: 500, value: {reason: 'error creating community'}};
 		}
 	},
 };
@@ -175,7 +175,7 @@ export const createMembershipService: Service<
 	name: 'create_membership',
 	route: {
 		path: '/api/v1/memberships',
-		method: 'post',
+		method: 'POST',
 	},
 	paramsSchema: CreateMembershipServiceParams,
 	validateParams: toValidateSchema(CreateMembershipServiceParams),
@@ -186,10 +186,10 @@ export const createMembershipService: Service<
 
 		const createMembershipResult = await server.db.repos.membership.create(params);
 		if (createMembershipResult.ok) {
-			return {code: 200, data: {membership: createMembershipResult.value}};
+			return {status: 200, value: {membership: createMembershipResult.value}};
 		} else {
 			console.log('[create_membership] error creating membership');
-			return {code: 500, data: {reason: 'error creating membership'}};
+			return {status: 500, value: {reason: 'error creating membership'}};
 		}
 	},
 };

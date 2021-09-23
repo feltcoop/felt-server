@@ -11,7 +11,7 @@ export interface Service<TParamsSchema extends TSchema, TResponseSchema extends 
 	route: {
 		path: string; // e.g. '/api/v1/some/:neat/:path'
 		// supports each `trouter` http method: https://github.com/lukeed/trouter#method
-		method: 'get' | 'head' | 'patch' | 'options' | 'connect' | 'delete' | 'trace' | 'post' | 'put';
+		method: 'GET' | 'HEAD' | 'PATCH' | 'OPTIONS' | 'CONNECT' | 'DELETE' | 'TRACE' | 'POST' | 'PUT';
 	};
 	paramsSchema: TParamsSchema;
 	validateParams: () => ValidateFunction<Static<TParamsSchema>>; // lazy to avoid wasteful compilation
@@ -28,12 +28,10 @@ export interface ServiceRequest<TParamsSchema extends TSchema> {
 	account_id: number;
 }
 
-export interface ServiceResponse<TResponseData extends ServiceResponseData> {
-	code: number;
+export interface ServiceResponse<TResponseValue extends object> {
+	status: number;
 	// TODO handle the types compatible with both websockets and http:
 	// websocket types: `string | Buffer | ArrayBuffer | Buffer[]`
 	// http types: `string | object | Stream | Buffer | undefined`
-	data: TResponseData | ErrorResponse;
+	value: TResponseValue | ErrorResponse;
 }
-
-export type ServiceResponseData = object;

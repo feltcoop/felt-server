@@ -48,6 +48,9 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 		}
 
 		console.log('[loginMiddleware] login', account.account_id); // TODO logging
+		// TODO usage of `req` here is the only reason this can't be directly implemented as a `Service`, I think,
+		// but we could make that a side effect that gets executed via callback or something,
+		// maybe `effects` on the return value alongside `value`
 		req.session.account_id = account.account_id;
 		const clientSessionResult = await db.repos.session.loadClientSession(account.account_id);
 
