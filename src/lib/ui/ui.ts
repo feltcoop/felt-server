@@ -1,7 +1,6 @@
 import type {Readable} from 'svelte/store';
 import {writable, derived} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
-import {browser} from '$app/env';
 
 import type {DataState, DataStore} from '$lib/ui/data';
 import type {CommunityModel} from '$lib/vocab/community/community';
@@ -49,8 +48,8 @@ export interface UiStore {
 	setMainNavView: (mainNavView: MainNavView) => void;
 }
 
-export const toUiStore = (data: DataStore) => {
-	const state = writable<UiState>(toDefaultUiState());
+export const toUiStore = (data: DataStore, mobile: boolean) => {
+	const state = writable<UiState>(toDefaultUiState(mobile));
 
 	const {subscribe, update} = state;
 
@@ -193,19 +192,15 @@ export const toUiStore = (data: DataStore) => {
 	return store;
 };
 
-const toDefaultUiState = (): UiState => {
-	// TODO how to do this in one place, but handle initialization properly? see __layout
-	const mobile = browser ? window.matchMedia('(max-width: 50rem)').matches : false;
-	return {
-		mobile,
-		expandMainNav: !mobile,
-		expandSecondaryNav: !mobile,
-		mainNavView: 'explorer',
-		selectedPersonaId: null,
-		selectedCommunityId: null,
-		selectedCommunityIdByPersona: {},
-		selectedSpaceIdByCommunity: {},
-	};
-};
+const toDefaultUiState = (mobile: boolean): UiState => ({
+	mobile,
+	expandMainNav: !mobile,
+	expandSecondaryNav: !mobile,
+	mainNavView: 'explorer',
+	selectedPersonaId: null,
+	selectedCommunityId: null,
+	selectedCommunityIdByPersona: {},
+	selectedSpaceIdByCommunity: {},
+});
 
 export type MainNavView = 'explorer' | 'account';

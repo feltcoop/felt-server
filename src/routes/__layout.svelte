@@ -24,11 +24,23 @@
 	import {toHandleSocketMessage} from '$lib/ui/handleSocketMessage';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 
+	let mobile = false; // TODO causes mobile to change on load -- detect for SSR via User-Agent?
+	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
+	if (browser) {
+		// TODO to let the user override with their own preferred mobile setting,
+		// which I could see wanting to do for various reasons including in `devmode`,
+		// we need to either branch logic here, or have a different derived `media` value
+		// that only reads this default value when the user has no override.
+		const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_WIDTH})`);
+		mobile = mediaQuery.matches;
+		mediaQuery.onchange = (e) => ui.setMobile(e.matches);
+	}
+
 	const devmode = setDevmode();
 	const data = setData($session);
 	$: data.updateSession($session);
 	const socket = setSocket(toSocketStore(toHandleSocketMessage(data)));
-	const ui = setUi(toUiStore(data));
+	const ui = setUi(toUiStore(data, mobile));
 	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
 	const api = setApi(toApiStore(ui, data, socket));
 	const app = setApp({data, ui, api, devmode, socket});
@@ -36,6 +48,8 @@
 
 	$: guest = $session.guest;
 	$: onboarding = !$session.guest && !$data.personas.length;
+
+	$: console.log('$ui', $ui);
 
 	// TODO refactor -- where should this logic go?
 	$: updateStateFromPageParams($page.params);
@@ -62,10 +76,6 @@
 
 	onMount(() => {
 		socket.connect(WEBSOCKET_URL);
-		// TODO how to do this in one place, but handle initialization properly? see UiStore
-		window.matchMedia('(max-width: 50rem)').addEventListener('change', (e) => {
-			ui.setMobile(e.matches);
-		});
 		return () => {
 			socket.disconnect();
 		};
