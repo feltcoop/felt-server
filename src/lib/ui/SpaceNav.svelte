@@ -28,7 +28,11 @@
 			href="/{community.name}{space.url === '/' ? '' : space.url}"
 			class:selected={space === selectedSpace}
 			on:click={() => {
-				if ($ui.mobile) api.toggleMainNav();
+				// TODO should this be a click handler or react to state changes?
+				// Might make more UX sense to make it react to any state changes,
+				// no matter the source, because that's probably what the user wants!
+				// At least in most cases...
+				if ($ui.mobile && $ui.expandMainNav) api.toggleMainNav();
 			}}
 		>
 			{space.name}
