@@ -140,7 +140,7 @@ export const createSpaceService: Service<
 			return {code: 500, data: {reason: 'error validating unique url for new space'}};
 		}
 
-		if (filterByCommunityUrlResult.value.length != 0) {
+		if (filterByCommunityUrlResult.value.length !== 0) {
 			console.log('[create_space] provided url for space already exists');
 			return {code: 409, data: {reason: 'a space with that url already exists'}};
 		}
