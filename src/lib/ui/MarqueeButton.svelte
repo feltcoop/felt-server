@@ -3,15 +3,15 @@
 
 	const {ui} = getApp();
 
-	const space_meta_width = 320; // TODO where to get this?
-	$: right = $ui.expandSecondaryNav ? space_meta_width : 0;
+	const marquee_width = 320; // TODO where to get this?
+	$: right = $ui.expandSecondaryNav ? marquee_width : 0;
 </script>
 
 <button
 	class="icon-button"
 	class:expanded={$ui.expandSecondaryNav}
 	style="transform: translate3d({right}px, 0, 0)"
-	aria-label="toggle space meta"
+	aria-label="toggle marquee"
 	on:click={ui.toggleSecondaryNav}
 >
 	<div class="content">⚆</div>

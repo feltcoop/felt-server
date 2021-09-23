@@ -1,9 +1,9 @@
 <script lang="ts">
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import SpaceView from '$lib/ui/SpaceView.svelte';
-	import SpaceMeta from '$lib/ui/SpaceMeta.svelte';
+	import Marquee from '$lib/ui/Marquee.svelte';
 	import WorkspaceHeader from '$lib/ui/WorkspaceHeader.svelte';
-	import SpaceMetaButton from '$lib/ui/SpaceMetaButton.svelte';
+	import MarqueeButton from '$lib/ui/MarqueeButton.svelte';
 	import {getApp} from '$lib/ui/app';
 
 	const {ui, api} = getApp();
@@ -17,7 +17,7 @@
 <div class="workspace">
 	{#if $ui.expandSecondaryNav}
 		<div
-			class="space-meta-bg"
+			class="marquee-bg"
 			on:click={() => ($ui.expandSecondaryNav ? api.toggleSecondaryNav() : null)}
 		/>
 	{/if}
@@ -28,12 +28,12 @@
 		{:else if $selectedCommunity}
 			<SpaceInput community={$selectedCommunity}>Create a new space</SpaceInput>
 		{/if}
-		<SpaceMetaButton />
+		<MarqueeButton />
 	</div>
 	<!-- TODO extract to some shared abstractions with the `Luggage` probably -->
 	{#if $ui.expandSecondaryNav && $selectedCommunity && $selectedSpace && memberPersonasById}
-		<div class="space-meta">
-			<SpaceMeta community={$selectedCommunity} space={$selectedSpace} {memberPersonasById} />
+		<div class="marquee">
+			<Marquee community={$selectedCommunity} space={$selectedSpace} {memberPersonasById} />
 		</div>
 	{/if}
 </div>
@@ -54,7 +54,7 @@
 	}
 	/* TODO handle properly for mobile */
 	/* TODO better name? */
-	.space-meta {
+	.marquee {
 		position: relative;
 		height: 100%;
 		width: var(--column_width_min);
@@ -66,7 +66,7 @@
 		background-color: hsl(var(--bg_hue), var(--bg_saturation), var(--bg_lightness));
 	}
 	/* TODO abstract with `MainNav` at all? */
-	.space-meta-bg {
+	.marquee-bg {
 		z-index: 3;
 		display: none;
 		position: fixed;
@@ -78,13 +78,13 @@
 		background-color: rgba(0, 0, 0, 0.4);
 	} /* `50rem` in media queries is the same as `800px`, which is `--column_width` */
 	@media (max-width: 50rem) {
-		.space-meta {
+		.marquee {
 			z-index: 3;
 			position: fixed;
 			right: 0;
 			top: 0;
 		}
-		.space-meta-bg {
+		.marquee-bg {
 			display: block;
 			animation: fade-in var(--transition_duration_xl) ease-out;
 		}
@@ -93,7 +93,7 @@
 			border-right: none;
 			border-left: none;
 		}
-		.space-meta {
+		.marquee {
 			border-right: none;
 		}
 	}

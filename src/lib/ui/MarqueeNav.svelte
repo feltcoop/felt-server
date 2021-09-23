@@ -17,7 +17,7 @@
 	export let space: Space;
 </script>
 
-<div class="space-meta-nav">
+<div class="marquee-nav">
 	<!-- TODO url extract helper -->
 	<a
 		class="avatars"
@@ -30,7 +30,7 @@
 </div>
 
 <style>
-	.space-meta-nav {
+	.marquee-nav {
 		position: relative;
 		display: flex;
 		justify-content: space-between;

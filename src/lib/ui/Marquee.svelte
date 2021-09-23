@@ -3,13 +3,13 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
 	import Avatar from '$lib/ui/Avatar.svelte';
-	import SpaceMetaNav from '$lib/ui/SpaceMetaNav.svelte';
+	import MarqueeNav from '$lib/ui/MarqueeNav.svelte';
 	import {toIcon, toName} from '$lib/vocab/entity/entity';
 	import {getApp} from '$lib/ui/app';
 
 	const {ui} = getApp();
 
-	// TODO better name than `SpaceMeta`?
+	// TODO better name than `Marquee`?
 
 	export let community: Community;
 	export let space: Space;
@@ -19,7 +19,7 @@
 	$: personas = Array.from(memberPersonasById.values());
 </script>
 
-<SpaceMetaNav {community} {space} />
+<MarqueeNav {community} {space} />
 
 <!-- TODO display other meta info about the community -->
 {#if $ui.expandSecondaryNav}
