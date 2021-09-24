@@ -153,7 +153,7 @@ export const toApi = (
 			return result;
 		},
 		createSpace: async (params) => {
-			const result = await client.invoke('create_space', params);
+			const result = await client2.invoke('create_space', params);
 			console.log('[api] create_space result', result);
 			if (result.ok) {				
 				data.addSpace(result.value.space, params.community_id);
