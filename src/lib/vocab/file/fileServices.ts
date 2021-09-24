@@ -24,7 +24,7 @@ export const readFilesService: Service<
 	name: 'read_files',
 	route: {
 		path: '/api/v1/spaces/:space_id/files',
-		method: 'get',
+		method: 'GET',
 	},
 	paramsSchema: ReadFilesServiceParams,
 	validateParams: toValidateSchema(ReadFilesServiceParams),
@@ -34,10 +34,10 @@ export const readFilesService: Service<
 		const {db} = server;
 		const findFilesResult = await db.repos.file.filterBySpace(params.space_id);
 		if (findFilesResult.ok) {
-			return {code: 200, data: {files: findFilesResult.value}}; // TODO API types
+			return {status: 200, value: {files: findFilesResult.value}}; // TODO API types
 		} else {
 			console.log('[read_files] error searching for files');
-			return {code: 500, data: {reason: 'error searching for files'}};
+			return {status: 500, value: {reason: 'error searching for files'}};
 		}
 	},
 };
@@ -67,7 +67,7 @@ export const createFileService: Service<
 	name: 'create_file',
 	route: {
 		path: '/api/v1/spaces/:space_id/files',
-		method: 'post',
+		method: 'POST',
 	},
 	paramsSchema: CreateFileServiceParams,
 	validateParams: toValidateSchema(CreateFileServiceParams),
@@ -78,10 +78,10 @@ export const createFileService: Service<
 		// server.db.repos.account.validatePersona(account_id, actor_id);
 		const insertFilesResult = await server.db.repos.file.create(params);
 		if (insertFilesResult.ok) {
-			return {code: 200, data: {file: insertFilesResult.value}}; // TODO API types
+			return {status: 200, value: {file: insertFilesResult.value}}; // TODO API types
 		} else {
 			console.log('[create_file] error searching for files');
-			return {code: 500, data: {reason: 'error searching for files'}};
+			return {status: 500, value: {reason: 'error searching for files'}};
 		}
 	},
 };

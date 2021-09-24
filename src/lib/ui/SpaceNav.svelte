@@ -21,7 +21,10 @@
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
-		<a href="/{community.name}{space.url}" class:selected={space === selectedSpace}>
+		<a
+			href="/{community.name}{space.url === '/' ? '' : space.url}"
+			class:selected={space === selectedSpace}
+		>
 			{space.name}
 		</a>
 	{/each}
@@ -41,5 +44,12 @@
 
 	a {
 		padding: var(--spacing_xs) var(--spacing_sm);
+	}
+	a:hover {
+		/* TODO update Felt and use `--tint_light_N` */
+		background-color: rgba(255, 255, 255, 50%);
+	}
+	a.selected {
+		background-color: var(--interactive_color_active);
 	}
 </style>

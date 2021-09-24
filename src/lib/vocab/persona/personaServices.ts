@@ -27,7 +27,7 @@ export const createPersonaService: Service<
 	name: 'create_persona',
 	route: {
 		path: '/api/v1/personas',
-		method: 'post',
+		method: 'POST',
 	},
 	paramsSchema: CreatePersonaServiceParams,
 	validateParams: toValidateSchema(CreatePersonaServiceParams),
@@ -44,10 +44,10 @@ export const createPersonaService: Service<
 		// this begs the question, should repos use the `__Params` interfaces or not?
 		const createPersonaResult = await db.repos.persona.create(params, account_id);
 		if (createPersonaResult.ok) {
-			return {code: 200, data: createPersonaResult.value};
+			return {status: 200, value: createPersonaResult.value};
 		} else {
 			console.log('[create_persona] error searching for community personas');
-			return {code: 500, data: {reason: 'error searching for community personas'}};
+			return {status: 500, value: {reason: 'error searching for community personas'}};
 		}
 	},
 };

@@ -4,9 +4,9 @@
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import type {AccountModel} from '$lib/vocab/account/account';
-	import type {ApiStore} from '$lib/ui/api';
+	import type {Api} from '$lib/ui/api';
 
-	export let logOut: ApiStore['logOut'];
+	export let logOut: Api['logOut'];
 
 	let account: AccountModel;
 	$: account = $session?.account;

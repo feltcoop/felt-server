@@ -4,6 +4,13 @@ import {SpaceType} from '$lib/vocab/space/space';
 export const toDefaultSpaces = (community_id: number): SpaceParams[] => [
 	{
 		community_id,
+		name: 'home',
+		url: '/',
+		media_type: 'application/fuz+json',
+		content: `{"type": "${SpaceType.Home}", "props": {"data": "/home/files"}}`,
+	},
+	{
+		community_id,
 		name: 'room',
 		url: '/room',
 		media_type: 'application/fuz+json',

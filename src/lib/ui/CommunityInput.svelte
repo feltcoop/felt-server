@@ -8,12 +8,12 @@
 	const {api, ui} = getApp();
 
 	let open = false;
-	let newName = '';
+	let name = '';
 
 	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await api.createCommunity(newName, $ui.selectedPersonaId!);
-			newName = '';
+			await api.createCommunity({name, persona_id: $ui.selectedPersonaId!});
+			name = '';
 			open = false;
 		}
 	};
@@ -37,7 +37,7 @@
 					type="text"
 					placeholder="> name"
 					on:keydown={onKeydown}
-					bind:value={newName}
+					bind:value={name}
 					use:autofocus
 				/>
 			</p>

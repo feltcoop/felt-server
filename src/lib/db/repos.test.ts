@@ -18,6 +18,7 @@ import {
 	randomPersonaParams,
 	randomSpaceParams,
 } from '$lib/vocab/random';
+import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 
 // TODO this only depends on the database --
 // if we don't figure out a robust way to make a global reusable server,
@@ -66,6 +67,9 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
 		);
 	}
+	const spaceCount = 1;
+	const defaultSpaces = toDefaultSpaces(community.community_id);
+	const defaultSpaceCount = defaultSpaces.length;
 
 	const unwrapFile = async (promise: Promise<Result<{value: File}>>): Promise<File> => {
 		const file = unwrap(await promise);
@@ -120,7 +124,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const filterSpacesValue = unwrap(
 		await server.db.repos.space.filterByCommunity(community.community_id),
 	);
-	t.equal(filterSpacesValue.length, 8); // TODO do a better check
+	t.equal(filterSpacesValue.length, spaceCount + defaultSpaceCount);
 	filterSpacesValue.forEach((s) => {
 		if (!validateSpace()(s)) {
 			throw new Error(

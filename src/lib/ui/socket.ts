@@ -37,7 +37,7 @@ export interface HandleSocketMessage {
 	(rawMessage: any): void;
 }
 
-export const toSocketStore = (handleMessage: HandleSocketMessage) => {
+export const toSocketStore = (handleMessage: HandleSocketMessage): SocketStore => {
 	const {subscribe, update} = writable<SocketState>(toDefaultSocketState(), () => {
 		console.log('[socket] listen store');
 		return () => {
@@ -62,12 +62,11 @@ export const toSocketStore = (handleMessage: HandleSocketMessage) => {
 		};
 		ws.onmessage = (e) => {
 			// console.log('[socket] on message');
-			handleMessage(e.data);
+			handleMessage(e.data); // TODO should this forward the entire event?
 		};
 		ws.onerror = (e) => {
 			console.log('[socket] error', e);
 			update(($socket) => ({...$socket, status: 'failure', error: 'unknown websocket error'}));
-			status = 'failure';
 		};
 		console.log('[socket] ws', ws);
 
@@ -81,7 +80,8 @@ export const toSocketStore = (handleMessage: HandleSocketMessage) => {
 				// TODO this is buggy if `connect` is still pending
 				console.log('[socket] disconnect', code, $socket);
 				if (!$socket.connected || !$socket.ws || $socket.status !== 'success') {
-					throw Error('Socket cannot disconnect because it is not connected'); // TODO return errors instead?
+					console.error('[ws] cannot disconnect because it is not connected'); // TODO return errors instead?
+					return $socket;
 				}
 				$socket.ws.close(code);
 				return {...$socket, status: 'pending', connected: false, ws: null, url: null};
@@ -91,7 +91,8 @@ export const toSocketStore = (handleMessage: HandleSocketMessage) => {
 			update(($socket) => {
 				console.log('[socket] connect', $socket);
 				if ($socket.connected || $socket.ws || $socket.status !== 'initial') {
-					throw Error('Socket cannot connect because it is already connected'); // TODO return errors instead?
+					console.error('[ws] cannot connect because it is already connected'); // TODO return errors instead?
+					return $socket;
 				}
 				return {
 					...$socket,
@@ -106,7 +107,14 @@ export const toSocketStore = (handleMessage: HandleSocketMessage) => {
 		send: (data) => {
 			update(($socket) => {
 				console.log('[ws] send', data, $socket);
-				if (!$socket.ws) return $socket;
+				if (!$socket.ws) {
+					console.error('[ws] cannot send without a socket', data, $socket);
+					return $socket;
+				}
+				if (!$socket.connected) {
+					console.error('[ws] cannot send because the websocket is not connected', data, $socket);
+					return $socket;
+				}
 				$socket.ws.send(JSON.stringify(data));
 				return {...$socket, sendCount: $socket.sendCount + 1};
 			});

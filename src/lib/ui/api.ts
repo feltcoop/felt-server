@@ -1,8 +1,5 @@
-import {writable} from 'svelte/store';
-import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 import {session} from '$app/stores';
-import type {Result} from '@feltcoop/felt';
 
 import type {DataStore} from '$lib/ui/data';
 import type {UiStore} from '$lib/ui/ui';
@@ -11,70 +8,67 @@ import {toCommunityModel} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Membership, MembershipParams} from '$lib/vocab/membership/membership';
 import type {File, FileParams} from '$lib/vocab/file/file';
-import type {SocketStore} from '$lib/ui/socket';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
-import type {ErrorResponse} from '$lib/util/error';
+import type {ApiClient, ApiResult} from '$lib/ui/ApiClient';
+import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
 import type {Persona, PersonaParams} from '$lib/vocab/persona/persona';
 
-// TODO refactor/rethink
+// TODO This was originally implemented as a Svelte store
+// but we weren't using the state at all.
+// It's now a plain object with functions.
+// As our use cases develop, we may want to make it a store again,
+// or perhaps a plain object is best for composition and extension.
+// It may be best to have related state in optional external modules that
+// observe the behavior of the api, to keep this module small and efficient.
+
+const UNKNOWN_API_ERROR =
+	'Something went wrong. Maybe the server or your Internet connection is down. Please try again.';
 
 const KEY = Symbol();
 
-export const getApi = (): ApiStore => getContext(KEY);
+export const getApi = (): Api => getContext(KEY);
 
-export const setApi = (store: ApiStore): ApiStore => {
+export const setApi = (store: Api): Api => {
 	setContext(KEY, store);
 	return store;
 };
 
-export interface ApiState {}
-
-export type ApiResult<TValue> = Result<TValue, ErrorResponse>;
-
-export interface ApiStore {
-	subscribe: Readable<ApiState>['subscribe'];
+export interface Api {
 	logIn: (
 		accountName: string,
 		password: string,
-	) => Promise<ApiResult<{value: {session: ClientAccountSession}}>>;
+	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	logOut: () => Promise<ApiResult<{}>>;
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space: number | null) => void;
 	toggleMainNav: () => void;
+	toggleSecondaryNav: () => void;
 	createPersona: (
 		params: PersonaParams,
-	) => Promise<ApiResult<{value: {persona: Persona; community: Community}}>>;
-	createCommunity: (
-		name: string,
-		persona_id: number,
-	) => Promise<ApiResult<{value: {community: CommunityModel}}>>;
-	createSpace: (params: SpaceParams) => Promise<ApiResult<{value: {space: Space}}>>;
-	inviteMember: (
-		community_id: number,
-		persona_id: number,
-	) => Promise<ApiResult<{value: {membership: Membership}}>>;
-	createFile: (params: FileParams) => Promise<ApiResult<{value: {file: File}}>>;
-	loadFiles: (space_id: number) => Promise<ApiResult<{value: {file: File[]}}>>;
+	) => Promise<ApiResult<{persona: Persona; community: Community}>>;
+	createCommunity: (params: CommunityParams) => Promise<ApiResult<CommunityModel>>;
+	createSpace: (params: SpaceParams) => Promise<ApiResult<{space: Space}>>;
+	createMembership: (params: MembershipParams) => Promise<ApiResult<{membership: Membership}>>;
+	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
+	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
 }
 
-export const toApiStore = (ui: UiStore, data: DataStore, socket: SocketStore): ApiStore => {
-	// TODO set the `api` state with progress of remote calls
-	const {subscribe} = writable<ApiState>(toDefaultApiState());
-
-	// let $ui: UiState;
-	// let $data: DataState;
-	// ui.subscribe(($u) => ($ui = $u));
-	// data.subscribe(($d) => ($data = $d));
-
-	const store: ApiStore = {
-		subscribe,
-		// TODO these are just directly proxying
+export const toApi = (
+	ui: UiStore,
+	data: DataStore,
+	client: ApiClient<ServicesParamsMap, ServicesResultMap>,
+	client2: ApiClient<ServicesParamsMap, ServicesResultMap>, // TODO remove this after everything stabilizes
+): Api => {
+	const api: Api = {
+		// TODO these are just directly proxying and they don't have the normal `ApiResult` return value
+		// The motivation is that sometimes UI events may do API-related things, but this may not be the best design.
 		selectPersona: ui.selectPersona,
 		selectCommunity: ui.selectCommunity,
 		selectSpace: ui.selectSpace,
 		toggleMainNav: ui.toggleMainNav,
+		toggleSecondaryNav: ui.toggleSecondaryNav,
 		logIn: async (accountName, password) => {
 			console.log('[logIn] logging in with accountName', accountName); // TODO logging
 			try {
@@ -89,16 +83,17 @@ export const toApiStore = (ui: UiStore, data: DataStore, socket: SocketStore): A
 					console.log('[logIn] responseData', responseData); // TODO logging
 					accountName = '';
 					session.set(responseData.session);
-					return {ok: true, value: responseData};
+					return {ok: true, status: response.status, value: responseData}; // TODO doesn't this have other status codes?
 				} else {
 					console.error('[logIn] response not ok', responseData, response); // TODO logging
-					return {ok: false, reason: responseData.reason};
+					return {ok: false, status: response.status, reason: responseData.reason};
 				}
 			} catch (err) {
 				console.error('[logIn] error', err); // TODO logging
 				return {
 					ok: false,
-					reason: `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again.`,
+					status: 500,
+					reason: UNKNOWN_API_ERROR,
 				};
 			}
 		},
@@ -113,188 +108,86 @@ export const toApiStore = (ui: UiStore, data: DataStore, socket: SocketStore): A
 				console.log('[logOut] response', responseData); // TODO logging
 				if (response.ok) {
 					session.set({guest: true});
-					return {ok: true};
+					return {ok: true, status: response.status, value: responseData};
 				} else {
 					console.error('[logOut] response not ok', response); // TODO logging
-					return {ok: false, reason: responseData.reason};
+					return {ok: false, status: response.status, reason: responseData.reason};
 				}
 			} catch (err) {
 				console.error('[logOut] err', err); // TODO logging
 				return {
 					ok: false,
-					reason: `Something went wrong. Is your Internet connection working? Maybe the server is busted. Please try again!`,
+					status: 500,
+					reason: UNKNOWN_API_ERROR,
 				};
 			}
 		},
 		createPersona: async (params) => {
-			const res = await fetch(`/api/v1/personas`, {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify(params),
-			});
-			if (res.ok) {
-				try {
-					const result: {persona: Persona; community: Community} = await res.json(); // TODO api types
-					console.log('createPersona result', result);
-					const {persona, community: rawCommunity} = result;
-					const community = toCommunityModel(rawCommunity);
-					data.addCommunity(community, persona.persona_id);
-					data.addPersona(persona);
-					return {ok: true, value: {persona, community}};
-				} catch (err) {
-					return {ok: false, reason: err.message};
-				}
-			} else {
-				throw Error(`error: ${res.status}: ${res.statusText}`);
+			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
+			const result = await client2.invoke('create_persona', params);
+			console.log('[api] create_community result', result);
+			if (result.ok) {
+				const {persona, community: rawCommunity} = result.value;
+				const community = toCommunityModel(rawCommunity as Community); // TODO `Community` type is off with schema
+				data.addCommunity(community, persona.persona_id);
+				data.addPersona(persona);
+				// TODO refactor to not return here, do `return result` below --
+				// can't return `result` right now because the `CommunityModel` is different,
+				// but we probably want to change it to have associated data instead of a different interface
+				return {ok: true, status: result.status, value: {persona, community}};
 			}
+			return result;
 		},
-		createCommunity: async (name, persona_id) => {
-			if (!name) return {ok: false, reason: 'invalid name'};
-			//Needs to collect name
-			const communityParams: CommunityParams = {
-				name,
-				persona_id,
-			};
-			const res = await fetch(`/api/v1/communities`, {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify(communityParams),
-			});
-			if (res.ok) {
-				try {
-					const result: {community: Community} = await res.json(); // TODO api types
-					console.log('createCommunity result', result);
-					const community = toCommunityModel(result.community);
-					data.addCommunity(community, persona_id);
-					return {ok: true, value: {community}};
-				} catch (err) {
-					return {ok: false, reason: err.message};
-				}
-			} else {
-				throw Error(`error: ${res.status}: ${res.statusText}`);
+		createCommunity: async (params) => {
+			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
+			const result = await client2.invoke('create_community', params);
+			console.log('[api] create_community result', result);
+			if (result.ok) {
+				const community = toCommunityModel(result.value.community as any); // TODO `Community` type is off with schema
+				data.addCommunity(community, params.persona_id);
+				// TODO refactor to not return here, do `return result` below --
+				// can't return `result` right now because the `CommunityModel` is different,
+				// but we probably want to change it to have associated data instead of a different interface
+				return {ok: true, status: result.status, value: community};
 			}
+			return result;
 		},
 		createSpace: async (params) => {
-			try {
-				const res = await fetch(`/api/v1/communities/${params.community_id}/spaces`, {
-					method: 'POST',
-					headers: {'Content-Type': 'application/json'},
-					body: JSON.stringify(params),
-				});
-				if (res.ok) {
-					const result: {space: Space} = await res.json(); // TODO api types
-					console.log('[createSpace] result', result);
-					data.addSpace(result.space, params.community_id);
-					return {ok: true, value: result};
-				} else {
-					const json = await res.json();
-					throw Error(`[createSpace.failed] ${json.reason}`);
-				}
-			} catch (err) {
-				console.error(err.message);
-				return {ok: false, reason: err.message};
+			const result = await client2.invoke('create_space', params);
+			console.log('[api] create_space result', result);
+			if (result.ok) {
+				data.addSpace(result.value.space, params.community_id);
 			}
+			return result;
 		},
 		// TODO: This implementation is currently unconsentful,
 		// because does not give the potential member an opportunity to deny an invite
-		inviteMember: async (
-			community_id,
-			persona_id, // TODO `persona_id`
-		) => {
-			// TODO proper automated validation
-			if (community_id == null) return {ok: false, reason: 'invalid url'};
-			if (!persona_id) return {ok: false, reason: 'invalid persona'};
-
-			const doc: MembershipParams = {
-				persona_id,
-				community_id,
-			};
-
-			// TODO change this input, consider `/api/v1/invitations`
-			const res = await fetch(`/api/v1/memberships`, {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify(doc),
-			});
-			if (res.ok) {
-				try {
-					const result: {membership: Membership} = await res.json(); // TODO api types
-					console.log('inviteMember result', result);
-					return {ok: true, value: result};
-				} catch (err) {
-					return {ok: false, reason: err.message};
-				}
-			} else {
-				throw Error(`error: ${res.status}: ${res.statusText}`);
+		createMembership: async (params) => {
+			const result = await client2.invoke('create_membership', params);
+			if (result.ok) {
+				console.log('TODO handle create_membership result', result);
+				// data.addMembership(result.value.member);
 			}
+			return result;
 		},
-		createFile: async (params: FileParams) => {
-			// TODO type
-			const message: {type: 'create_file'; params: FileParams} = {
-				type: 'create_file',
-				params,
-			};
-			socket.send(message);
-			return {
-				ok: true,
-				get value() {
-					// TODO change API to be fire-and-forget? or return this value somehow?
-					throw Error('TODO currently incompatible with value');
-				},
-			} as any;
-			// TODO below is the REST API version -- need to extract separate clients
-			/*
-			const res = await fetch(`/api/v1/spaces/${space.space_id}/files`, {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({
-					content,
-					actor_id: persona_id,
-				}),
-			});
-			if (res.ok) {
-				try {
-					console.log('file sent, broadcasting to server');
-					const json = await res.json();
-					socket.send(json); // TODO refactor
-					return {ok: true, value: json};
-				} catch (err) {
-					return {ok: false, reason: err.message};
-				}
-			} else {
-				throw Error(`error sending file: ${res.status}: ${res.statusText}`);
+		createFile: async (params) => {
+			const result = await client.invoke('create_file', params);
+			console.log('create_file result', result);
+			if (result.ok) {
+				data.addFile(result.value.file);
 			}
-			*/
+			return result;
 		},
 		loadFiles: async (space_id) => {
 			data.setFiles(space_id, []);
-			const res = await fetch(`/api/v1/spaces/${space_id}/files`);
-			if (res.ok) {
-				try {
-					const json = await res.json();
-					data.setFiles(space_id, json.files);
-					return {ok: true, value: json};
-				} catch (err) {
-					console.error('err', err);
-					return {ok: false, reason: err.message};
-				}
-			} else {
-				let reason: string;
-				try {
-					const json = await res.json();
-					reason = json.reason;
-				} catch (err) {
-					reason = `error loading files: ${res.status}: ${res.statusText}`;
-				}
-				console.error('failed to load files:', reason);
-				return {ok: false, reason};
+			// TODO this breaks on startup because the websocket isn't connected yet
+			const result = await client.invoke('read_files', {space_id});
+			console.log('[api] read_files result', result);
+			if (result.ok) {
+				data.setFiles(space_id, result.value.files);
 			}
+			return result;
 		},
 	};
-	return store;
+	return api;
 };
-
-const toDefaultApiState = (): ApiState => ({
-	selectedCommunityId: null,
-	selectedSpaceIdByCommunity: {},
-});
