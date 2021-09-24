@@ -139,12 +139,12 @@ export const createSpaceService: Service<
 
 		if (!findByCommunityUrlResult.ok) {
 			console.log('[create_space] error validating unique url for new space');
-			return {code: 500, data: {reason: 'error validating unique url for new space'}};
+			return {status: 500, value: {reason: 'error validating unique url for new space'}};
 		}
 
 		if (findByCommunityUrlResult.value) {
 			console.log('[create_space] provided url for space already exists');
-			return {code: 409, data: {reason: 'a space with that url already exists'}};
+			return {status: 409, value: {reason: 'a space with that url already exists'}};
 		}
 
 		console.log('[create_space] creating space for community', params.community_id);
