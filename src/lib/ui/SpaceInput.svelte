@@ -15,14 +15,16 @@
 	let newName = '';
 	let newType = spaceTypes[0];
 	let nameEl: HTMLInputElement;
-	let errorMessage: string | undefined;
+	let errorMessage: string | undefined;	
 
 	const create = async () => {
 		if (!newName) {
+			errorMessage = 'please enter a name for your new space';
 			nameEl.focus();
 			return;
 		}
 		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
+		errorMessage = '';
 		const url = `/${newName}`;
 		const result = await api.createSpace({
 			community_id: community.community_id,
@@ -31,12 +33,11 @@
 			//TODO : add space type picker
 			media_type: 'application/fuz+json',
 			content: `{"type": "${newType}", "props": {"data": "${url}/files"}}`,
-		});		
+		});				
 		if (result.ok){
 			newName = '';
 			newType = spaceTypes[0];
-			open = false;
-			errorMessage = undefined;
+			open = false;			
 		} else {
 			errorMessage = result.reason
 		}
