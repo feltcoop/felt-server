@@ -15,7 +15,7 @@
 	let newName = '';
 	let newType = spaceTypes[0];
 	let nameEl: HTMLInputElement;
-	let errorMessage: string | undefined;	
+	let errorMessage: string | undefined;
 
 	const create = async () => {
 		if (!newName) {
@@ -33,15 +33,14 @@
 			//TODO : add space type picker
 			media_type: 'application/fuz+json',
 			content: `{"type": "${newType}", "props": {"data": "${url}/files"}}`,
-		});				
-		if (result.ok){
+		});
+		if (result.ok) {
 			newName = '';
 			newType = spaceTypes[0];
-			open = false;			
+			open = false;
 		} else {
-			errorMessage = result.reason
+			errorMessage = result.reason;
 		}
-		
 	};
 
 	const onKeydown = async (e: KeyboardEvent) => {
@@ -78,7 +77,7 @@
 							{/each}
 						</select>
 					</label>
-					<button type="button" on:click={create}> Create space </button>					
+					<button type="button" on:click={create}> Create space </button>
 				</form>
 			</Markup>
 		</div>
