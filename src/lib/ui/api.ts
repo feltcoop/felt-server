@@ -3,8 +3,7 @@ import {session} from '$app/stores';
 
 import type {DataStore} from '$lib/ui/data';
 import type {UiStore} from '$lib/ui/ui';
-import type {Community, CommunityModel, CommunityParams} from '$lib/vocab/community/community';
-import {toCommunityModel} from '$lib/vocab/community/community';
+import type {Community, Community, CommunityParams} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Membership, MembershipParams} from '$lib/vocab/membership/membership';
 import type {File, FileParams} from '$lib/vocab/file/file';
@@ -48,7 +47,7 @@ export interface Api {
 	createPersona: (
 		params: PersonaParams,
 	) => Promise<ApiResult<{persona: Persona; community: Community}>>;
-	createCommunity: (params: CommunityParams) => Promise<ApiResult<CommunityModel>>;
+	createCommunity: (params: CommunityParams) => Promise<ApiResult<Community>>;
 	createSpace: (params: SpaceParams) => Promise<ApiResult<{space: Space}>>;
 	createMembership: (params: MembershipParams) => Promise<ApiResult<{membership: Membership}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
@@ -128,11 +127,11 @@ export const toApi = (
 			console.log('[api] create_community result', result);
 			if (result.ok) {
 				const {persona, community: rawCommunity} = result.value;
-				const community = toCommunityModel(rawCommunity as Community); // TODO `Community` type is off with schema
+				const community = toCommunity(rawCommunity as Community); // TODO `Community` type is off with schema
 				data.addCommunity(community, persona.persona_id);
 				data.addPersona(persona);
 				// TODO refactor to not return here, do `return result` below --
-				// can't return `result` right now because the `CommunityModel` is different,
+				// can't return `result` right now because the `Community` is different,
 				// but we probably want to change it to have associated data instead of a different interface
 				return {ok: true, status: result.status, value: {persona, community}};
 			}
@@ -143,10 +142,10 @@ export const toApi = (
 			const result = await client2.invoke('create_community', params);
 			console.log('[api] create_community result', result);
 			if (result.ok) {
-				const community = toCommunityModel(result.value.community as any); // TODO `Community` type is off with schema
+				const community = toCommunity(result.value.community as any); // TODO `Community` type is off with schema
 				data.addCommunity(community, params.persona_id);
 				// TODO refactor to not return here, do `return result` below --
-				// can't return `result` right now because the `CommunityModel` is different,
+				// can't return `result` right now because the `Community` is different,
 				// but we probably want to change it to have associated data instead of a different interface
 				return {ok: true, status: result.status, value: community};
 			}

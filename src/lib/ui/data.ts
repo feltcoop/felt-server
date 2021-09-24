@@ -3,8 +3,7 @@ import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 import type {ClientSession} from '$lib/session/clientSession';
-import {toCommunityModel} from '$lib/vocab/community/community';
-import type {CommunityModel} from '$lib/vocab/community/community';
+import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
 import type {AccountModel} from '$lib/vocab/account/account';
 import type {Persona} from '$lib/vocab/persona/persona';
@@ -26,7 +25,7 @@ export const setData = (session: ClientSession): DataStore => {
 
 export interface DataState {
 	account: AccountModel | null;
-	communities: CommunityModel[];
+	communities: Community[];
 	spaces: Space[];
 	allPersonas: Persona[]; //TODO; remove this when a real invite system is in place
 	personas: Persona[];
@@ -37,7 +36,7 @@ export interface DataStore {
 	subscribe: Readable<DataState>['subscribe'];
 	updateSession: (session: ClientSession) => void;
 	addPersona: (persona: Persona) => void;
-	addCommunity: (community: CommunityModel, persona_id: number) => void;
+	addCommunity: (community: Community, persona_id: number) => void;
 	addSpace: (space: Space, community_id: number) => void;
 	addFile: (file: File) => void;
 	setFiles: (space_id: number, files: File[]) => void;
@@ -127,7 +126,7 @@ const toDefaultData = (session: ClientSession): DataState => {
 	} else {
 		return {
 			account: session.account,
-			communities: session.communities.map((community) => toCommunityModel(community)),
+			communities: session.communities.map((community) => toCommunity(community)),
 			// TODO session should already have a flat array of spaces
 			spaces: session.communities.flatMap((community) => community.spaces),
 			allPersonas: session.allPersonas,
