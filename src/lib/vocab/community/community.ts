@@ -45,7 +45,6 @@ export interface CommunityModel {
 
 export const toCommunityModel = (community: Community): CommunityModel => ({
 	...community,
-	memberPersonas: community.memberPersonas,
 	memberPersonasById: new Map(
 		community.memberPersonas.map((persona) => [persona.persona_id, persona]),
 	),
