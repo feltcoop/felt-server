@@ -11,7 +11,6 @@
 	$: selectedCommunity = ui.selectedCommunity;
 	$: selectedSpace = ui.selectedSpace;
 	// TODO should display just the space's members, not the community's
-	// TODO cache this on the data
 	$: memberPersonasById = new Map(
 		$selectedCommunity?.memberPersonas.map((persona) => [persona.persona_id, persona]) || [],
 	);
