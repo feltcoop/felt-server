@@ -7,9 +7,10 @@ import type {Space} from '$lib/vocab/space/space';
 import type {Persona} from '$lib/vocab/persona/persona';
 
 // TODO in the current design,
-// the methods on the `UiStore` are intended to be called *only* by the `api`
-// when we're talking about being inside an app context.
-// Of course you can make more of these stores than what's given to you in the app.
+// the methods on the `UiStore` should not be called directly in an app context.
+// They're intended to be called by the api for future orchestration reasons.
+// Of course you can make more of these stores than what's given to you in the app,
+// and call methods all you want without weird bugs.
 // Use cases may include documentation and dueling apps.
 
 const KEY = Symbol();
