@@ -5,19 +5,17 @@
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import type {Community} from '$lib/vocab/community/community.js';
 	import MembershipInput from '$lib/ui/MembershipInput.svelte';
-	import type {Persona} from '$lib/vocab/persona/persona.js';
 
 	export let community: Community;
 	export let spaces: Space[];
 	export let selectedSpace: Space | null;
-	export let allPersonas: Persona[];
 	$: browser && console.log('spaces', spaces);
 </script>
 
 <div class="space-nav">
 	<div class="header">
 		<SpaceInput {community} />
-		<MembershipInput {community} {allPersonas} />
+		<MembershipInput {community} />
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}

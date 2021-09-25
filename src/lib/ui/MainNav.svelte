@@ -19,9 +19,7 @@
 	// Maybe use `window.matchMedia` and store in `ui`:
 	// https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia
 
-	const {data, ui, api} = getApp();
-
-	$: allPersonas = $data.allPersonas;
+	const {ui, api} = getApp();
 
 	$: selectedPersona = ui.selectedPersona;
 	$: selectedCommunity = ui.selectedCommunity;
@@ -64,7 +62,6 @@
 						community={$selectedCommunity}
 						spaces={$selectedCommunity.spaces}
 						selectedSpace={$selectedSpace}
-						{allPersonas}
 					/>
 				{/if}
 			</div>

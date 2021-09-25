@@ -29,13 +29,16 @@ export interface DataState {
 	communities: Community[];
 	memberships: Membership[]; // TODO needs to be used, currently only gets populated when a new membership is created
 	spaces: Space[];
-	allPersonas: Persona[]; //TODO; remove this when a real invite system is in place
 	personas: Persona[];
 	filesBySpace: Record<number, File[]>;
 }
 
 export interface DataStore {
 	subscribe: Readable<DataState>['subscribe'];
+	// TODO this is actually a writable as implemented, but with the type do we care?
+	// or do we want to protect the API from being called in unexpected ways?
+	personas: Readable<Readable<Persona>[]>;
+	personasById: Readable<Map<number, Readable<Persona>>>;
 	updateSession: (session: ClientSession) => void;
 	addPersona: (persona: Persona) => void;
 	addCommunity: (community: Community, persona_id: number) => void;
@@ -55,7 +58,9 @@ export const toDataStore = (initialSession: ClientSession): DataStore => {
 
 	// importantly, this only changes when items are added or removed from the collection,
 	// not when the items themselves change; each item is a store that can be subscribed to
-	const personas = writable<Readable<Persona>[]>(initialData.allPersonas.map((p) => writable(p)));
+	const personas = writable<Readable<Persona>[]>(
+		initialSession.guest ? [] : initialSession.allPersonas.map((p) => writable(p)),
+	);
 	// TODO do this more efficiently
 	const personasById: Readable<Map<number, Readable<Persona>>> = derived(
 		personas,
@@ -64,6 +69,8 @@ export const toDataStore = (initialSession: ClientSession): DataStore => {
 
 	const store: DataStore = {
 		subscribe,
+		personas,
+		personasById,
 		updateSession: (session) => {
 			console.log('[data.updateSession]', session);
 			set(toDefaultData(session));
@@ -75,6 +82,7 @@ export const toDataStore = (initialSession: ClientSession): DataStore => {
 		addCommunity: (community, persona_id) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.addCommunity]', community);
+			// TODO update `personas` writable
 			update(($data) => ({
 				...$data,
 				communities: $data.communities.concat(community),
@@ -147,7 +155,6 @@ const toDefaultData = (session: ClientSession): DataState => {
 			communities: [],
 			memberships: [],
 			spaces: [],
-			allPersonas: [],
 			personas: [],
 			filesBySpace: {},
 		};
@@ -158,7 +165,6 @@ const toDefaultData = (session: ClientSession): DataState => {
 			memberships: [], // TODO should be on session
 			// TODO session should already have a flat array of spaces
 			spaces: session.communities.flatMap((community) => community.spaces),
-			allPersonas: session.allPersonas,
 			personas: session.personas,
 			filesBySpace: {},
 		};
