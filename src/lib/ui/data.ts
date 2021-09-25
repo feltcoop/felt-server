@@ -1,4 +1,4 @@
-import {writable} from 'svelte/store';
+import {writable, derived, get} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
@@ -43,11 +43,19 @@ export interface DataStore {
 	addSpace: (space: Space, community_id: number) => void;
 	addFile: (file: File) => void;
 	setFiles: (space_id: number, files: File[]) => void;
+	// TODO experimental api -- returning derived stores as lazily created live queries
+	findMemberPersonasByIdByCommunity: (
+		community_id: number,
+	) => Readable<Map<number, Map<number, Persona>>>;
 }
 
 // TODO probably don't want to pass `initialSession` because it'll never be GC'd
 export const toDataStore = (initialSession: ClientSession): DataStore => {
 	const {subscribe, set, update} = writable(toDefaultData(initialSession));
+	const memberPersonasByIdByCommunity = new Map();
+	// TODO refactor this, way too slow
+	const findCommunityById = (community_id: number): Community | undefined =>
+		get(store).communities.find((c) => c.community_id === community_id);
 	const store: DataStore = {
 		subscribe,
 		updateSession: (session) => {
@@ -120,6 +128,22 @@ export const toDataStore = (initialSession: ClientSession): DataStore => {
 					[space_id]: files,
 				},
 			}));
+		},
+		// TODO extract helpers
+		findMemberPersonasByIdByCommunity: (community_id) => {
+			let value = memberPersonasByIdByCommunity.get(community_id);
+			if (!value) {
+				const community = findCommunityById(community_id);
+				value = new Map(
+					community?.memberPersonas.map((persona) => [persona.persona_id, persona]) || [],
+				);
+				memberPersonasByIdByCommunity.set(community_id, value);
+			}
+			return value;
+			// derived({subscribe}, ($state) => {
+			// 	$state.communities;
+			// 	// TODO implement a lazy map that reifies the cache when it's asked for, creating a derived store
+			// });
 		},
 	};
 	return store;

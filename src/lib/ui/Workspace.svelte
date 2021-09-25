@@ -6,14 +6,19 @@
 	import MarqueeButton from '$lib/ui/MarqueeButton.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {ui, api} = getApp();
+	const {ui, api, data} = getApp();
 
 	$: selectedCommunity = ui.selectedCommunity;
 	$: selectedSpace = ui.selectedSpace;
+
 	// TODO should display just the space's members, not the community's
-	$: memberPersonasById = new Map(
-		$selectedCommunity?.memberPersonas.map((persona) => [persona.persona_id, persona]) || [],
-	);
+
+	$: memberPersonasByIdByCommunity =
+		$selectedCommunity && data.findMemberPersonasByIdByCommunity($selectedCommunity.community_id);
+
+	$: memberPersonasById =
+		memberPersonasByIdByCommunity &&
+		$memberPersonasByIdByCommunity.get($selectedCommunity!.community_id)!;
 </script>
 
 <div class="workspace">
