@@ -69,12 +69,8 @@ export const toDataStore = (initialSession: ClientSession): DataStore => {
 			set(toDefaultData(session));
 		},
 		addPersona: (persona) => {
-			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.addPersona]', persona);
-			update(($data) => ({
-				...$data,
-				personas: $data.personas.concat(persona),
-			}));
+			personas.update(($personas) => $personas.concat(writable(persona)));
 		},
 		addCommunity: (community, persona_id) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
