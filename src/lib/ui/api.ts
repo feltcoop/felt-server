@@ -151,21 +151,21 @@ export const toApi = (
 			}
 			return result;
 		},
+		// TODO: This implementation is currently unconsentful,
+		// because does not give the potential member an opportunity to deny an invite
+		createMembership: async (params) => {
+			const result = await client2.invoke('create_membership', params);
+			console.log('[api] create_membership result', result);
+			if (result.ok) {
+				data.addMembership(result.value.membership);
+			}
+			return result;
+		},
 		createSpace: async (params) => {
 			const result = await client2.invoke('create_space', params);
 			console.log('[api] create_space result', result);
 			if (result.ok) {
 				data.addSpace(result.value.space, params.community_id);
-			}
-			return result;
-		},
-		// TODO: This implementation is currently unconsentful,
-		// because does not give the potential member an opportunity to deny an invite
-		createMembership: async (params) => {
-			const result = await client2.invoke('create_membership', params);
-			if (result.ok) {
-				console.log('TODO handle create_membership result', result);
-				// data.addMembership(result.value.member);
 			}
 			return result;
 		},
