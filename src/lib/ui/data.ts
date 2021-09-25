@@ -52,7 +52,10 @@ export interface DataStore {
 // TODO probably don't want to pass `initialSession` because it'll never be GC'd
 export const toDataStore = (initialSession: ClientSession): DataStore => {
 	const {subscribe, set, update} = writable(toDefaultData(initialSession));
-	const memberPersonasByIdByCommunity = new Map();
+	const memberPersonasByIdByCommunity: Map<
+		number,
+		Readable<Map<number, Map<number, Persona>>>
+	> = new Map();
 	// TODO refactor this, way too slow
 	const findCommunityById = (community_id: number): Community | undefined =>
 		get(store).communities.find((c) => c.community_id === community_id);
@@ -139,7 +142,7 @@ export const toDataStore = (initialSession: ClientSession): DataStore => {
 				);
 				memberPersonasByIdByCommunity.set(community_id, value);
 			}
-			return value;
+			return value!;
 			// derived({subscribe}, ($state) => {
 			// 	$state.communities;
 			// 	// TODO implement a lazy map that reifies the cache when it's asked for, creating a derived store
