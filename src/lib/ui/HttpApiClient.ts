@@ -60,7 +60,7 @@ export const toHttpApiClient = <
 				return {
 					ok: false,
 					status: null,
-					reason: 'Something went wrong. Is your Internet down?',
+					reason: 'Something went wrong. Is your Internet ok?',
 				};
 			}
 		},
