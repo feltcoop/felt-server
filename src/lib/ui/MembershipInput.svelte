@@ -13,7 +13,7 @@
 
 	const {personas} = data;
 
-	let open = false;
+	let opened = false;
 
 	// TODO speed this up with a better cached data structures; the use of `get` is particularly bad
 	$: invitableMembers = community
@@ -28,12 +28,12 @@
 	aria-label="Invite users to {community.name}"
 	type="button"
 	class="button-emoji"
-	on:click={() => (open = true)}
+	on:click={() => (opened = true)}
 >
 	✉️
 </button>
-{#if open}
-	<Dialog on:close={() => (open = false)}>
+{#if opened}
+	<Dialog on:close={() => (opened = false)}>
 		<Markup>
 			<h1>Invite users to {community.name}</h1>
 			{#each invitableMembers as persona (persona)}

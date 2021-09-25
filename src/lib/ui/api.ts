@@ -128,8 +128,8 @@ export const toApi = (
 			if (result.ok) {
 				const {persona, community: rawCommunity} = result.value;
 				const community = rawCommunity as Community; // TODO `Community` type is off with schema
-				data.addCommunity(community, persona.persona_id);
 				data.addPersona(persona);
+				data.addCommunity(community, persona.persona_id);
 				// TODO refactor to not return here, do `return result` below --
 				// can't return `result` right now because the `Community` is different,
 				// but we probably want to change it to have associated data instead of a different interface

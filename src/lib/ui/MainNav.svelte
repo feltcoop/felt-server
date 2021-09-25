@@ -21,7 +21,8 @@
 
 	const {ui, api} = getApp();
 
-	$: selectedPersona = ui.selectedPersona;
+	const selectedPersonaStore = ui.selectedPersona;
+	$: selectedPersona = $selectedPersonaStore!; // TODO type?
 	$: selectedCommunity = ui.selectedCommunity;
 	$: selectedSpace = ui.selectedSpace;
 

@@ -42,8 +42,10 @@
 	const app = setApp({data, ui, api, devmode, socket});
 	browser && console.log('app', app);
 
+	const {sessionPersonas} = data;
+
 	$: guest = $session.guest;
-	$: onboarding = !$session.guest && !$data.personas.length;
+	$: onboarding = !$session.guest && !$sessionPersonas.length;
 
 	// TODO refactor -- where should this logic go?
 	$: updateStateFromPageParams($page.params);

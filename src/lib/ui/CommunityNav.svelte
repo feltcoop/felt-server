@@ -1,4 +1,6 @@
 <script lang="ts">
+	import {get} from 'svelte/store';
+
 	import type {Community} from '$lib/vocab/community/community.js';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
 	import CommunityNavButton from '$lib/ui/CommunityNavButton.svelte';
@@ -13,6 +15,8 @@
 
 	$: selectedSpaceIdByCommunity = $ui.selectedSpaceIdByCommunity;
 
+	const {sessionPersonas} = data;
+
 	// TODO improve the efficiency of this with better data structures and caching
 	const toPersonaCommunity = (persona: Persona): Community =>
 		$communitiesByPersonaId[persona.persona_id].find((c) => c.name === persona.name)!;
@@ -24,17 +28,18 @@
 	</div>
 	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
 	<div>
-		{#each $data.personas as persona (persona.persona_id)}
+		{#each $sessionPersonas as persona (persona)}
+			<!-- TODO refactor this hacky usage of `get` -->
 			<CommunityNavButton
-				community={toPersonaCommunity(persona)}
+				community={toPersonaCommunity(get(persona))}
 				{persona}
 				selected={persona === $selectedPersona &&
-					toPersonaCommunity(persona) === $selectedCommunity}
+					toPersonaCommunity(get(persona)) === $selectedCommunity}
 				{selectedSpaceIdByCommunity}
 				selectPersona={ui.selectPersona}
 			/>
-			{#each $communitiesByPersonaId[persona.persona_id] as community (community.community_id)}
-				{#if community.name !== persona.name}
+			{#each $communitiesByPersonaId[get(persona).persona_id] as community (community.community_id)}
+				{#if community.name !== get(persona).name}
 					<CommunityNavButton
 						{community}
 						{persona}

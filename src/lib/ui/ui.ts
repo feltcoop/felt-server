@@ -1,6 +1,7 @@
 import type {Readable} from 'svelte/store';
-import {writable, derived} from 'svelte/store';
+import {writable, derived, get} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
+
 import type {DataState, DataStore} from '$lib/ui/data';
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
@@ -24,7 +25,7 @@ export const setUi = (store: UiStore): UiStore => {
 
 export interface UiState {
 	// TODO should these be store references instead of ids?
-	selectedPersonaId: number | null;
+	selectedPersonaId: number | null; // TODO remove for store
 	selectedCommunityId: number | null;
 	selectedCommunityIdByPersona: {[key: number]: number};
 	selectedSpaceIdByCommunity: {[key: number]: number | null};
@@ -36,7 +37,8 @@ export interface UiState {
 export interface UiStore {
 	subscribe: Readable<UiState>['subscribe'];
 	// derived state
-	selectedPersona: Readable<Persona | null>;
+	selectedPersonaId: Readable<number | null>;
+	selectedPersona: Readable<Readable<Persona> | null>;
 	selectedCommunity: Readable<Community | null>;
 	selectedSpace: Readable<Space | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Community[]}>; // TODO or name `personaCommunities`?
@@ -56,10 +58,14 @@ export const toUiStore = (data: DataStore): UiStore => {
 	const {subscribe, update} = state;
 
 	// derived state
+	// TODO derive from `selectedPersonaId` state -- should it handle any changes to the map? or can/should we assume a store exists? lazy load?
 	// TODO speed up these lookups with id maps
+	// TODO remove it from `state`
+	const selectedPersonaId = derived([state], ([$ui]) => $ui.selectedPersonaId || null);
 	const selectedPersona = derived(
-		[state, data],
-		([$ui, $data]) => $data.personas.find((p) => p.persona_id === $ui.selectedPersonaId) || null,
+		[selectedPersonaId, data.personasById],
+		([$selectedPersonaId, $personasById]) =>
+			($selectedPersonaId && $personasById.get($selectedPersonaId)) || null,
 	);
 	const selectedCommunity = derived(
 		[state, data],
@@ -73,58 +79,73 @@ export const toUiStore = (data: DataStore): UiStore => {
 				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[$selectedCommunity.community_id],
 			) || null,
 	);
-	const communitiesByPersonaId = derived([data], ([$data]) =>
-		$data.personas.reduce((result, persona) => {
-			// TODO speed up this lookup, probably with a map of all communities by id
-			result[persona.persona_id] = $data.communities.filter((community) =>
-				persona.community_ids.includes(community.community_id),
-			);
-			return result;
-		}, {} as {[persona_id: number]: Community[]}),
+	// TODO this belongs on `data`
+	const communitiesByPersonaId = derived(
+		[data, data.sessionPersonas],
+		([$data, $sessionPersonas]) =>
+			$sessionPersonas.reduce((result, persona) => {
+				// TODO refactor this to be reactive
+				const $persona = get(persona);
+				// TODO speed up this lookup, probably with a map of all communities by id
+				result[$persona.persona_id] = $data.communities.filter(
+					(community) =>
+						// TODO why no `community_ids`?
+						$persona.community_ids && $persona.community_ids.includes(community.community_id),
+				);
+				return result;
+			}, {} as {[persona_id: number]: Community[]}),
 	);
 
 	const store: UiStore = {
 		subscribe,
 		// derived state
+		selectedPersonaId,
 		selectedPersona,
 		selectedCommunity,
 		selectedSpace,
 		communitiesByPersonaId,
 		// methods
-		updateData: (data) => {
-			console.log('[ui.updateData]', {data});
+		updateData: (updated) => {
+			console.log('[ui.updateData]', {data: updated});
 			update(($ui) => {
 				// TODO this needs to be rethought, it's just preserving the existing ui state
 				// when new data gets set, which happens when e.g. a new community is created --
 				// most likely `updateData` *should* wipe away UI state by default,
 				// and should not be called when data changes, only when a new session's data is set,
 				// so the naming is misleading
-				if (data.account) {
-					const selectedPersona =
-						($ui.selectedPersonaId !== null &&
-							data.personas.find((c) => c.persona_id === $ui.selectedPersonaId)) ||
-						data.personas[0] ||
-						null;
-					console.log('ui selectedPersona is', selectedPersona);
+				console.log('data.sessionPersonas', get(get(data.sessionPersonas)[0]));
+				if (updated.account) {
+					let {selectedPersonaId} = $ui;
+					if (!selectedPersonaId) {
+						const initialSessionPersona = get(data.sessionPersonas)[0];
+						if (initialSessionPersona) {
+							selectedPersonaId = get(initialSessionPersona).persona_id;
+						}
+					}
 					const selectedCommunity =
 						($ui.selectedCommunityId !== null &&
-							data.communities.find((c) => c.community_id === $ui.selectedCommunityId)) ||
-						data.communities[0] ||
+							updated.communities.find((c) => c.community_id === $ui.selectedCommunityId)) ||
+						updated.communities[0] ||
 						null;
-					return {
+					const newState: UiState = {
 						...$ui,
-						selectedPersonaId: selectedPersona?.persona_id ?? null,
+						selectedPersonaId,
 						selectedCommunityId: selectedCommunity?.community_id ?? null,
 						selectedCommunityIdByPersona: Object.fromEntries(
-							data.personas.map((persona) => [
-								persona.persona_id,
-								$ui.selectedCommunityIdByPersona[persona.persona_id] ??
-									persona.community_ids[0] ??
-									null,
-							]),
+							get(data.sessionPersonas).map((persona) => {
+								// TODO needs to be rethought, the `get` isn't reactive
+								const $persona = get(persona);
+								console.log('$persona', $persona);
+								return [
+									$persona.persona_id,
+									$ui.selectedCommunityIdByPersona[$persona.persona_id] ??
+										($persona.community_ids && $persona.community_ids[0]) ?? // TODO hacky
+										null,
+								];
+							}),
 						),
 						selectedSpaceIdByCommunity: Object.fromEntries(
-							data.communities.map((community) => [
+							updated.communities.map((community) => [
 								community.community_id,
 								$ui.selectedSpaceIdByCommunity[community.community_id] ??
 									community.spaces[0]?.space_id ??
@@ -132,9 +153,10 @@ export const toUiStore = (data: DataStore): UiStore => {
 							]),
 						),
 					};
+					return newState;
 				} else {
 					// might want to preserve some state, so this doesn't use `toDefaultUiState`
-					return {
+					const newState: UiState = {
 						...$ui,
 						selectedPersonaId: null,
 						selectedCommunityId: null,
@@ -142,6 +164,7 @@ export const toUiStore = (data: DataStore): UiStore => {
 						selectedSpaceIdByCommunity: {},
 						mainNavView: 'explorer',
 					};
+					return newState;
 				}
 			});
 		},
