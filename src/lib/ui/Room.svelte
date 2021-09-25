@@ -1,21 +1,22 @@
 <script lang="ts">
 	import {browser} from '$app/env';
 
+	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
-	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import RoomItems from '$lib/ui/RoomItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
 	const {api, ui, data, socket} = getApp();
 
+	export let community: Community;
 	export let space: Space;
-	export let memberPersonasById: Map<number, Persona>;
+
+	community;
 
 	let text = '';
 
 	$: browser && $socket.connected && api.loadFiles(space.space_id); // TODO move this to SvelteKit `load` so it works with http clients
 	$: console.log(`[Room] fetching files for ${space.space_id}`);
-	$: selectedPersonaId = $ui.selectedPersonaId;
 
 	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
@@ -23,7 +24,7 @@
 		await api.createFile({
 			space_id: space.space_id,
 			content,
-			actor_id: selectedPersonaId!,
+			actor_id: $ui.selectedPersonaId!,
 		});
 		text = '';
 	};
@@ -39,7 +40,7 @@
 
 <div class="room">
 	<div class="files">
-		<RoomItems {files} {memberPersonasById} />
+		<RoomItems {files} />
 	</div>
 	<input type="text" placeholder="> chat" on:keydown={onKeydown} bind:value={text} />
 </div>

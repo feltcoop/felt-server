@@ -6,19 +6,10 @@
 	import MarqueeButton from '$lib/ui/MarqueeButton.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {ui, api, data} = getApp();
+	const {ui, api} = getApp();
 
 	$: selectedCommunity = ui.selectedCommunity;
 	$: selectedSpace = ui.selectedSpace;
-
-	// TODO should display just the space's members, not the community's
-
-	$: memberPersonasByIdByCommunity =
-		$selectedCommunity && data.findMemberPersonasByIdByCommunity($selectedCommunity.community_id);
-
-	$: memberPersonasById =
-		memberPersonasByIdByCommunity &&
-		$memberPersonasByIdByCommunity.get($selectedCommunity!.community_id)!;
 </script>
 
 <div class="workspace">
@@ -30,17 +21,17 @@
 	{/if}
 	<div class="column">
 		<WorkspaceHeader space={$selectedSpace} community={$selectedCommunity} />
-		{#if $selectedCommunity && $selectedSpace && memberPersonasById}
-			<SpaceView community={$selectedCommunity} space={$selectedSpace} {memberPersonasById} />
+		{#if $selectedCommunity && $selectedSpace}
+			<SpaceView community={$selectedCommunity} space={$selectedSpace} />
 		{:else if $selectedCommunity}
 			<SpaceInput community={$selectedCommunity}>Create a new space</SpaceInput>
 		{/if}
 		<MarqueeButton />
 	</div>
 	<!-- TODO extract to some shared abstractions with the `Luggage` probably -->
-	{#if $ui.expandSecondaryNav && $selectedCommunity && $selectedSpace && memberPersonasById}
+	{#if $ui.expandSecondaryNav && $selectedCommunity && $selectedSpace}
 		<div class="marquee">
-			<Marquee community={$selectedCommunity} space={$selectedSpace} {memberPersonasById} />
+			<Marquee community={$selectedCommunity} space={$selectedSpace} />
 		</div>
 	{/if}
 </div>

@@ -9,7 +9,7 @@ export interface Community {
 	community_id: number;
 	name: string;
 	spaces: Space[];
-	memberPersonas: Persona[];
+	memberPersonas: Persona[]; // TODO if we normalize all data, this should be an array of ids
 }
 // TODO can't get the static inference correct here -- change to schema after normalizing data, or maybe generate plain types
 // export type Community = Static<typeof CommunitySchema>;

@@ -1,12 +1,10 @@
 <script lang="ts">
 	import {spaceViews} from '$lib/ui/spaceViews';
 	import type {Space, SpaceViewData} from '$lib/vocab/space/space';
-	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
 
 	export let community: Community;
 	export let space: Space;
-	export let memberPersonasById: Map<number, Persona>;
 
 	const toSpaceData = (space: Space): SpaceViewData => {
 		switch (space.media_type) {
@@ -24,13 +22,7 @@
 </script>
 
 {#if component}
-	<svelte:component
-		this={component}
-		{community}
-		{space}
-		{memberPersonasById}
-		{...spaceData.props}
-	/>
+	<svelte:component this={component} {community} {space} {...spaceData.props} />
 {:else}
 	unknown space type: {spaceData.type}
 {/if}

@@ -2,7 +2,6 @@
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	import type {Space} from '$lib/vocab/space/space.js';
-	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import SpaceInfo from '$lib/ui/SpaceInfo.svelte';
 	import {getApp} from '$lib/ui/app';
@@ -13,7 +12,6 @@
 
 	export let community: Community;
 	export let space: Space;
-	export let memberPersonasById: Map<number, Persona>;
 
 	space; // TODO we're ignoring the space, but should probably mount its `content` as markup
 
@@ -22,18 +20,13 @@
 	$: spaces = community?.spaces || [];
 
 	$: selectedSpace = ui.selectedSpace;
-	$: selectedCommunity = ui.selectedCommunity;
-	$: community = $selectedCommunity!; // TODO assert? or is this wrong?
-
-	// TODO cache data better to speed this up!!
-	$: personas = Array.from(memberPersonasById.values());
 </script>
 
 <Markup>
 	<section>
 		<h2>members</h2>
 		<!-- TODO display other meta info about the community -->
-		{#each personas as persona (persona.persona_id)}
+		{#each community.memberPersonas as persona (persona.persona_id)}
 			<Avatar name={toName(persona)} icon={toIcon(persona)} />
 		{/each}
 	</section>

@@ -1,9 +1,13 @@
 <script lang="ts">
+	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
 	import PendingAnimationOverlay from '$lib/ui/PendingAnimationOverlay.svelte';
 
+	export let community: Community;
 	export let space: Space;
 	export let url: string; // TODO type
+
+	community;
 
 	let loaded = false;
 </script>

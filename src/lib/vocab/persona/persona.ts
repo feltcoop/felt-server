@@ -9,6 +9,7 @@ export const PersonaSchema = Type.Object(
 		persona_id: Type.Number(),
 		account_id: Type.Number(),
 		name: Type.String(),
+		icon: Type.Optional(Type.String()),
 		community_ids: Type.Array(Type.Number()),
 	},
 	{$id: 'Persona', additionalProperties: false},
