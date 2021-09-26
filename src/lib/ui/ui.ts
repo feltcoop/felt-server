@@ -31,8 +31,6 @@ export interface UiState {
 	memberships: Membership[]; // TODO needs to be used, currently only gets populated when a new membership is created
 	spaces: Space[];
 	filesBySpace: Record<number, File[]>;
-	// TODO should these be store references instead of ids?
-	selectedCommunityIdByPersona: {[key: number]: number};
 	selectedSpaceIdByCommunity: {[key: number]: number | null};
 	expandMainNav: boolean;
 	expandSecondaryNav: boolean; // TODO name?
@@ -61,6 +59,7 @@ export interface UiStore {
 	selectedPersonaId: Readable<number | null>;
 	selectedPersona: Readable<Readable<Persona> | null>;
 	selectedCommunityId: Readable<number | null>;
+	selectedCommunityIdByPersona: Readable<{[key: number]: number}>;
 	selectedCommunity: Readable<Community | null>;
 	selectedSpace: Readable<Space | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Community[]}>; // TODO or name `personaCommunities`?
@@ -118,6 +117,17 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		([$ui, $selectedCommunityId]) =>
 			$ui.communities.find((c) => c.community_id === $selectedCommunityId) || null,
 	);
+	// TODO should these be store references instead of ids?
+	// TODO maybe make this a lazy map, not a derived store?
+	const selectedCommunityIdByPersona = writable<{[key: number]: number}>(
+		Object.fromEntries(
+			get(sessionPersonas).map((persona) => {
+				// TODO needs to be rethought, the `get` isn't reactive
+				const $persona = get(persona);
+				return [$persona.persona_id, ($persona.community_ids && $persona.community_ids[0]) ?? null];
+			}),
+		),
+	);
 	const selectedSpace = derived(
 		[state, selectedCommunity],
 		([$ui, $selectedCommunity]) =>
@@ -156,7 +166,7 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 			);
 
 			// TODO improve this with the other code
-			const initialSessionPersona = get(sessionPersonas)[0];
+			const initialSessionPersona = session.guest ? null : get(sessionPersonas)[0];
 			if (initialSessionPersona) {
 				selectedPersonaId.set(get(initialSessionPersona).persona_id);
 			} else {
@@ -164,6 +174,19 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 			}
 
 			selectedCommunityId.set(updated.communities[0]?.community_id || null);
+			selectedCommunityIdByPersona.set(
+				// TODO copypasta from above
+				Object.fromEntries(
+					get(sessionPersonas).map((persona) => {
+						// TODO needs to be rethought, the `get` isn't reactive
+						const $persona = get(persona);
+						return [
+							$persona.persona_id,
+							($persona.community_ids && $persona.community_ids[0]) ?? null,
+						];
+					}),
+				),
+			);
 
 			update(($ui) => {
 				// TODO this needs to be rethought, it's just preserving the existing ui state
@@ -175,19 +198,6 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 					const newState: UiState = {
 						...$ui,
 						...updated,
-						selectedCommunityIdByPersona: Object.fromEntries(
-							get(sessionPersonas).map((persona) => {
-								// TODO needs to be rethought, the `get` isn't reactive
-								const $persona = get(persona);
-								console.log('$persona', $persona);
-								return [
-									$persona.persona_id,
-									$ui.selectedCommunityIdByPersona[$persona.persona_id] ??
-										($persona.community_ids && $persona.community_ids[0]) ?? // TODO hacky
-										null,
-								];
-							}),
-						),
 						selectedSpaceIdByCommunity: Object.fromEntries(
 							updated.communities.map((community) => [
 								community.community_id,
@@ -284,6 +294,7 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		// derived state
 		selectedPersonaId,
 		selectedPersona,
+		selectedCommunityIdByPersona,
 		selectedCommunityId,
 		selectedCommunity,
 		selectedSpace,
@@ -293,22 +304,18 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 			console.log('[ui.selectPersona] persona_id', {persona_id});
 			selectedPersonaId.set(persona_id);
 			// TODO looks like `selectedCommunityId` should be derived from `selectedCommunityIdByPersona`
-			selectedCommunityId.set(get(state).selectedCommunityIdByPersona[persona_id]);
+			selectedCommunityId.set(get(selectedCommunityIdByPersona)[persona_id]);
 		},
 		selectCommunity: (community_id) => {
 			console.log('[ui.selectCommunity] community_id', {community_id});
-			const $selectedPersonaId = get(selectedPersonaId);
+			const $selectedPersonaId = get(selectedPersonaId); // TODO how to remove the `!`?
 			selectedCommunityId.set(community_id);
-			update(($ui) => ({
-				...$ui,
-				selectedCommunityIdByPersona:
-					community_id === null || $selectedPersonaId === null
-						? $ui.selectedCommunityIdByPersona
-						: {
-								...$ui.selectedCommunityIdByPersona,
-								[$selectedPersonaId]: community_id,
-						  },
-			}));
+			if (community_id && $selectedPersonaId) {
+				selectedCommunityIdByPersona.update(($selectedCommunityIdByPersona) => ({
+					...$selectedCommunityIdByPersona,
+					[$selectedPersonaId]: community_id,
+				}));
+			}
 		},
 		selectSpace: (community_id, space_id) => {
 			console.log('[ui.selectSpace] community_id, space_id', {community_id, space_id});
@@ -343,7 +350,6 @@ const toDefaultUiState = (session: ClientSession): UiState => {
 		memberships: guest ? [] : [], // TODO should be on session
 		spaces: guest ? [] : session.communities.flatMap((community) => community.spaces), // TODO return flat from server
 		filesBySpace: {},
-		selectedCommunityIdByPersona: {},
 		selectedSpaceIdByCommunity: {},
 		expandMainNav: true,
 		expandSecondaryNav: true, // TODO default to `false` for mobile -- how?
