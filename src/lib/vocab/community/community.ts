@@ -1,24 +1,17 @@
 import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
 
-import type {Space} from '$lib/vocab/space/space.js';
-import type {Persona} from '$lib/vocab/persona/persona.js';
+import {SpaceSchema} from '$lib/vocab/space/space.js';
+import {PersonaSchema} from '$lib/vocab/persona/persona.js';
 import {toValidateSchema} from '$lib/util/ajv';
 
-export interface Community {
-	community_id: number;
-	name: string;
-	spaces: Space[];
-	memberPersonas: Persona[];
-}
-// TODO can't get the static inference correct here -- change to schema after normalizing data, or maybe generate plain types
-// export type Community = Static<typeof CommunitySchema>;
+export interface Community extends Static<typeof CommunitySchema> {}
 export const CommunitySchema = Type.Object(
 	{
 		community_id: Type.Number(),
 		name: Type.String(),
-		// spaces: Type.Ref(SpaceSchema), // TODO reference types
-		// members: Type.Number(),
+		spaces: Type.Array(SpaceSchema),
+		memberPersonas: Type.Array(PersonaSchema),
 	},
 	{$id: 'CommunitySchema', additionalProperties: true}, // TODO `true` is a hack
 );
