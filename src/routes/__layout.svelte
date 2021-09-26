@@ -15,7 +15,7 @@
 	import Luggage from '$lib/ui/Luggage.svelte';
 	import MainNav from '$lib/ui/MainNav.svelte';
 	import Onboard from '$lib/ui/Onboard.svelte';
-	import {setUi, toUiStore} from '$lib/ui/ui';
+	import {setUi, toUi} from '$lib/ui/ui';
 	import {setApi, toApi} from '$lib/ui/api';
 	import {setApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
@@ -29,7 +29,7 @@
 	// TODO some of this shouldn't run during SSR, see the `onMount` function below
 	const devmode = setDevmode();
 	const socket = setSocket(toSocketStore((data) => websocketApiClient.handle(data)));
-	const ui = setUi(toUiStore(session));
+	const ui = setUi(toUi(session));
 	// TODO create only the websocket client, not the http client
 	const websocketApiClient = toWebsocketApiClient<ServicesParamsMap, ServicesResultMap>(
 		socket.send,

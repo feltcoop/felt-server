@@ -1,7 +1,7 @@
 import {setContext, getContext} from 'svelte';
 import {session} from '$app/stores';
 
-import type {UiStore} from '$lib/ui/ui';
+import type {Ui} from '$lib/ui/ui';
 import type {Community, CommunityParams} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Membership, MembershipParams} from '$lib/vocab/membership/membership';
@@ -51,7 +51,7 @@ export interface Api {
 }
 
 export const toApi = (
-	ui: UiStore,
+	ui: Ui,
 	client: ApiClient<ServicesParamsMap, ServicesResultMap>,
 	client2: ApiClient<ServicesParamsMap, ServicesResultMap>, // TODO remove this after everything stabilizes
 ): Api => {

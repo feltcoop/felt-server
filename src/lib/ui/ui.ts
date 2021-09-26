@@ -11,7 +11,7 @@ import type {File} from '$lib/vocab/file/file';
 import type {Membership} from '$lib/vocab/membership/membership';
 
 // TODO in the current design,
-// the methods on the `UiStore` should not be called directly in an app context.
+// the methods on the `Ui` should not be called directly in an app context.
 // They're intended to be called by the api for future orchestration reasons.
 // Of course you can make more of these stores than what's given to you in the app,
 // and call methods all you want without weird bugs.
@@ -19,14 +19,14 @@ import type {Membership} from '$lib/vocab/membership/membership';
 
 const KEY = Symbol();
 
-export const getUi = (): UiStore => getContext(KEY);
+export const getUi = (): Ui => getContext(KEY);
 
-export const setUi = (store: UiStore): UiStore => {
+export const setUi = (store: Ui): Ui => {
 	setContext(KEY, store);
 	return store;
 };
 
-export interface UiStore {
+export interface Ui {
 	// TODO this is actually a writable as implemented, but with the type do we care?
 	// or do we want to protect the API from being called in unexpected ways?
 	account: Readable<AccountModel | null>;
@@ -71,7 +71,7 @@ export interface UiStore {
 	setMainNavView: (value: MainNavView) => void;
 }
 
-export const toUiStore = (session: Readable<ClientSession>): UiStore => {
+export const toUi = (session: Readable<ClientSession>): Ui => {
 	const initialSession = get(session);
 
 	// TODO would it helpfully simplify things to put these stores on the actual store state?
@@ -182,7 +182,7 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 	const expandSecondaryNav = writable(true); // TODO default to `false` for mobile -- how?
 	const mainNavView: Writable<MainNavView> = writable('explorer');
 
-	const store: UiStore = {
+	const store: Ui = {
 		account,
 		personas,
 		personasById,

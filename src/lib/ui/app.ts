@@ -1,7 +1,7 @@
 import {setContext, getContext} from 'svelte';
 import type {Writable} from 'svelte/store';
 
-import type {UiStore} from '$lib/ui/ui';
+import type {Ui} from '$lib/ui/ui';
 import type {Api} from '$lib/ui/api';
 import type {SocketStore} from '$lib/ui/socket';
 
@@ -9,7 +9,7 @@ import type {SocketStore} from '$lib/ui/socket';
 
 export interface AppStores {
 	api: Api;
-	ui: UiStore;
+	ui: Ui;
 	socket: SocketStore;
 	devmode: Writable<boolean>;
 }
