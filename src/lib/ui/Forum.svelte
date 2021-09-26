@@ -17,8 +17,10 @@
 
 	let text = '';
 
-	$: browser && $socket.connected && api.loadFiles(space.space_id); // TODO move this to SvelteKit `load` so it works with http clients
+	$: shouldLoadFiles = browser && $socket.connected; // TODO make this only load if not already cached -- !ui.filesBySpace.has(space.space_id);
+	$: if (shouldLoadFiles) api.loadFiles(space.space_id); // TODO move this to SvelteKit `load` so it works with http clients
 	$: console.log(`[Forum] fetching files for ${space.space_id}`);
+	$: files = ui.getFilesBySpace(space.space_id);
 
 	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
@@ -36,8 +38,6 @@
 			await createFile();
 		}
 	};
-
-	$: files = $ui.filesBySpace[space.space_id] || [];
 </script>
 
 <div class="forum">

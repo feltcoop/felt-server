@@ -27,8 +27,6 @@ export const setUi = (store: UiStore): UiStore => {
 };
 
 export interface UiState {
-	filesBySpace: Record<number, File[]>;
-
 	expandMainNav: boolean;
 	expandSecondaryNav: boolean; // TODO name?
 	mainNavView: MainNavView;
@@ -45,6 +43,7 @@ export interface UiStore {
 	communities: Readable<Readable<Community>[]>;
 	spaces: Readable<Readable<Space>[]>;
 	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
+	filesBySpace: Map<number, Writable<Writable<File>[]>>;
 	setSession: (session: ClientSession) => void;
 	addPersona: (persona: Persona) => void;
 	addCommunity: (community: Community, persona_id: number) => void;
@@ -52,8 +51,11 @@ export interface UiStore {
 	addSpace: (space: Space, community_id: number) => void;
 	addFile: (file: File) => void;
 	setFiles: (space_id: number, files: File[]) => void;
-	// TODO experimental api -- returning derived stores as lazily created live queries
+	// TODO experimental api -- returning stores as lazily created live queries,
+	// and part of the current behavior is that the queries themselves aren't stores that change,
+	// but the queries return stores for their values, which may be slices of values cached elsewhere
 	// findPersonasByIdByCommunity: (community_id: number) => Readable<Map<number, Persona>>;
+	getFilesBySpace: (space_id: number) => Writable<Writable<File>[]>; // keep as `get`? `filter`? `query`? something else?
 	findPersonaById: (persona_id: number) => Readable<Persona>;
 	// derived state
 	selectedPersonaId: Readable<number | null>;
@@ -180,6 +182,8 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 				return result;
 			}, {} as {[persona_id: number]: Readable<Community>[]}),
 	);
+	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
+	const filesBySpace: Map<number, Writable<Writable<File>[]>> = new Map();
 
 	const store: UiStore = {
 		subscribe,
@@ -190,6 +194,7 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		communities,
 		spaces,
 		memberships,
+		filesBySpace,
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
@@ -281,23 +286,30 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		},
 		addFile: (file) => {
 			console.log('[data.addFile]', file);
-			update(($ui) => ({
-				...$ui,
-				filesBySpace: {
-					...$ui.filesBySpace,
-					[file.space_id]: ($ui.filesBySpace[file.space_id] || []).concat(file),
-				},
-			}));
+			const fileStore = writable(file);
+			const files = filesBySpace.get(file.space_id);
+			if (files) {
+				// TODO check if it already exists -- maybe by getting `fileStore` from a `fileById` map
+				files.update(($files) => $files.concat(fileStore));
+			} else {
+				filesBySpace.set(file.space_id, writable([fileStore]));
+			}
 		},
 		setFiles: (space_id, files) => {
 			console.log('[data.setFiles]', files);
-			update(($ui) => ({
-				...$ui,
-				filesBySpace: {
-					...$ui.filesBySpace,
-					[space_id]: files,
-				},
-			}));
+			const existingFiles = filesBySpace.get(space_id);
+			if (existingFiles) {
+				existingFiles.set(files.map((f) => writable(f)));
+			} else {
+				filesBySpace.set(space_id, writable(files.map((f) => writable(f))));
+			}
+		},
+		getFilesBySpace: (space_id) => {
+			let files = filesBySpace.get(space_id);
+			if (!files) {
+				filesBySpace.set(space_id, (files = writable([])));
+			}
+			return files;
 		},
 		findPersonaById: (persona_id: number): Readable<Persona> => {
 			const persona = get(personasById).get(persona_id);
@@ -351,7 +363,6 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 
 const toDefaultUiState = (): UiState => {
 	return {
-		filesBySpace: {},
 		expandMainNav: true,
 		expandSecondaryNav: true, // TODO default to `false` for mobile -- how?
 		mainNavView: 'explorer',

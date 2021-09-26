@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type {Writable} from 'svelte/store';
+
 	import type {File} from '$lib/vocab/file/file.js';
 	import {randomHue} from '$lib/ui/color';
 	import Avatar from '$lib/ui/Avatar.svelte';
@@ -7,9 +9,9 @@
 
 	const {ui} = getApp();
 
-	export let file: File;
+	export let file: Writable<File>;
 
-	$: persona = ui.findPersonaById(file.actor_id); // TODO should this be `Actor` and `actor`?
+	$: persona = ui.findPersonaById($file.actor_id); // TODO should this be `Actor` and `actor`?
 
 	// TODO refactor to some client view-model for the actor
 	$: hue = randomHue($persona.name);
@@ -17,7 +19,7 @@
 
 <li style="--hue: {hue}">
 	<div class="content">
-		{file.content}
+		{$file.content}
 	</div>
 	<Avatar name={toName($persona)} icon={toIcon($persona)} />
 </li>

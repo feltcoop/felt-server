@@ -1,11 +1,13 @@
 <script lang="ts">
+	import type {Writable} from 'svelte/store';
+
 	import type {File} from '$lib/vocab/file/file.js';
 
-	export let file: File;
+	export let file: Writable<File>;
 </script>
 
 <li>
-	{file.content}
+	{$file.content}
 </li>
 
 <style>
