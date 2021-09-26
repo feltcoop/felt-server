@@ -7,7 +7,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {expandSecondaryNav, selectedSpace, selectedCommunity: selectedCommunityStore},
+		ui: {expandMarquee, selectedSpace, selectedCommunity: selectedCommunityStore},
 		api,
 	} = getApp();
 
@@ -15,11 +15,8 @@
 </script>
 
 <div class="workspace">
-	{#if $expandSecondaryNav}
-		<div
-			class="marquee-bg"
-			on:click={() => ($expandSecondaryNav ? api.toggleSecondaryNav() : null)}
-		/>
+	{#if $expandMarquee}
+		<div class="marquee-bg" on:click={() => ($expandMarquee ? api.toggleSecondaryNav() : null)} />
 	{/if}
 	<div class="column">
 		<!-- TODO pass stores here instead of dereferncing -->
@@ -32,7 +29,7 @@
 		<MarqueeButton />
 	</div>
 	<!-- TODO extract to some shared abstractions with the `Luggage` probably -->
-	{#if $expandSecondaryNav && selectedCommunity && $selectedSpace}
+	{#if $expandMarquee && selectedCommunity && $selectedSpace}
 		<div class="marquee">
 			<Marquee community={$selectedCommunity} space={$selectedSpace} />
 		</div>

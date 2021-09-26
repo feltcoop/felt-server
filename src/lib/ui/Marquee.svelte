@@ -7,7 +7,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {expandSecondaryNav},
+		ui: {expandMarquee},
 	} = getApp();
 
 	export let community: Community;
@@ -17,7 +17,7 @@
 <MarqueeNav {community} {space} />
 
 <!-- TODO display other meta info about the community -->
-{#if $expandSecondaryNav}
+{#if $expandMarquee}
 	<section>
 		<!-- TODO probably want these to be sorted so the selected persona is always first -->
 		{#each community.memberPersonas as persona (persona.persona_id)}

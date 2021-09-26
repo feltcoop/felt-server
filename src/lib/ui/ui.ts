@@ -20,8 +20,6 @@ export const setUi = (store: Ui): Ui => {
 };
 
 export interface Ui {
-	// TODO this is actually a writable as implemented, but with the type do we care?
-	// or do we want to protect the API from being called in unexpected ways?
 	account: Readable<AccountModel | null>;
 	personas: Readable<Readable<Persona>[]>;
 	personasById: Readable<Map<number, Readable<Persona>>>;
@@ -31,7 +29,7 @@ export interface Ui {
 	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
 	filesBySpace: Map<number, Writable<Writable<File>[]>>;
 	expandMainNav: Writable<boolean>;
-	expandSecondaryNav: Writable<boolean>; // TODO name?
+	expandMarquee: Writable<boolean>; // TODO name?
 	mainNavView: Writable<MainNavView>;
 	setSession: (session: ClientSession) => void;
 	addPersona: (persona: Persona) => void;
@@ -172,7 +170,7 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 	const filesBySpace: Map<number, Writable<Writable<File>[]>> = new Map();
 
 	const expandMainNav = writable(true);
-	const expandSecondaryNav = writable(true); // TODO default to `false` for mobile -- how?
+	const expandMarquee = writable(true); // TODO default to `false` for mobile -- how?
 	const mainNavView: Writable<MainNavView> = writable('explorer');
 
 	const store: Ui = {
@@ -185,7 +183,7 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 		memberships,
 		filesBySpace,
 		expandMainNav,
-		expandSecondaryNav,
+		expandMarquee,
 		mainNavView,
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
@@ -344,7 +342,7 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 			expandMainNav.update(($expandMainNav) => !$expandMainNav);
 		},
 		toggleSecondaryNav: () => {
-			expandSecondaryNav.update(($expandSecondaryNav) => !$expandSecondaryNav);
+			expandMarquee.update(($expandMarquee) => !$expandMarquee);
 		},
 		setMainNavView: (value) => {
 			mainNavView.set(value);
