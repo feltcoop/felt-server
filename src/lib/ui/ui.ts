@@ -20,17 +20,16 @@ export const setUi = (store: Ui): Ui => {
 };
 
 export interface Ui {
+	// db state and caches
 	account: Readable<AccountModel | null>;
 	personas: Readable<Readable<Persona>[]>;
 	personasById: Readable<Map<number, Readable<Persona>>>;
 	sessionPersonas: Readable<Readable<Persona>[]>;
 	communities: Readable<Readable<Community>[]>;
 	spaces: Readable<Readable<Space>[]>;
+	spacesById: Readable<Map<number, Readable<Space>>>;
 	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
 	filesBySpace: Map<number, Writable<Writable<File>[]>>;
-	expandMainNav: Writable<boolean>;
-	expandMarquee: Writable<boolean>; // TODO name?
-	mainNavView: Writable<MainNavView>;
 	setSession: (session: ClientSession) => void;
 	addPersona: (persona: Persona) => void;
 	addCommunity: (community: Community, persona_id: number) => void;
@@ -40,6 +39,11 @@ export interface Ui {
 	setFiles: (space_id: number, files: File[]) => void;
 	getFilesBySpace: (space_id: number) => Writable<Writable<File>[]>;
 	findPersonaById: (persona_id: number) => Readable<Persona>;
+	findSpaceById: (space_id: number) => Readable<Space>;
+	// view state
+	expandMainNav: Writable<boolean>;
+	expandMarquee: Writable<boolean>; // TODO name?
+	mainNavView: Writable<MainNavView>;
 	// derived state
 	selectedPersonaId: Readable<number | null>;
 	selectedPersona: Readable<Readable<Persona> | null>;
@@ -49,7 +53,7 @@ export interface Ui {
 	selectedSpaceIdByCommunity: Readable<{[key: number]: number | null}>;
 	selectedSpace: Readable<Space | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
-	// methods
+	// view methods
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space_id: number | null) => void;
@@ -66,13 +70,12 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 	const account = writable<AccountModel | null>(
 		initialSession.guest ? null : initialSession.account, // TODO shared helper with the session updater?
 	);
-
-	// importantly, this only changes when items are added or removed from the collection,
-	// not when the items themselves change; each item is a store that can be subscribed to
+	// Importantly, this only changes when items are added or removed from the collection,
+	// not when the items themselves change; each item is a store that can be subscribed to.
 	const personas = writable<Writable<Persona>[]>(
 		initialSession.guest ? [] : toInitialPersonas(initialSession).map((p) => writable(p)),
 	);
-	// TODO do this more efficiently
+	// TODO do these maps more efficiently
 	const personasById: Readable<Map<number, Writable<Persona>>> = derived(
 		personas,
 		($personas) => new Map($personas.map((persona) => [get(persona).persona_id, persona])),
@@ -83,6 +86,20 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 			? []
 			: initialSession.personas.map((p) => get(personasById).get(p.persona_id)!),
 	);
+	const communities = writable<Writable<Community>[]>(
+		initialSession.guest ? [] : initialSession.communities.map((p) => writable(p)),
+	);
+	const spaces = writable<Writable<Space>[]>(
+		initialSession.guest
+			? []
+			: initialSession.communities.flatMap((community) => community.spaces).map((s) => writable(s)),
+	);
+	// TODO do these maps more efficiently
+	const spacesById: Readable<Map<number, Writable<Space>>> = derived(
+		spaces,
+		($spaces) => new Map($spaces.map((space) => [get(space).space_id, space])),
+	);
+	const memberships = writable<Membership[]>([]); // TODO should be on the session:  initialSession.guest ? [] : [],
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -105,16 +122,6 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 			}),
 		),
 	);
-	const communities = writable<Writable<Community>[]>(
-		initialSession.guest ? [] : initialSession.communities.map((p) => writable(p)),
-	);
-	// TODO these aren't currently being used
-	const spaces = writable<Writable<Space>[]>(
-		initialSession.guest
-			? []
-			: initialSession.communities.flatMap((community) => community.spaces).map((s) => writable(s)),
-	);
-	const memberships = writable<Membership[]>([]); // TODO should be on the session:  initialSession.guest ? [] : [],
 	const selectedCommunityId = derived(
 		[selectedPersonaId, selectedCommunityIdByPersona],
 		([$selectedPersonaId, $selectedCommunityIdByPersona]) =>
@@ -172,15 +179,13 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 	const store: Ui = {
 		account,
 		personas,
-		personasById,
 		sessionPersonas,
-		communities,
 		spaces,
+		communities,
 		memberships,
+		personasById,
+		spacesById,
 		filesBySpace,
-		expandMainNav,
-		expandMarquee,
-		mainNavView,
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
@@ -229,6 +234,7 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 							]),
 					  ),
 			);
+			mainNavView.set('explorer');
 		},
 		addPersona: (persona) => {
 			console.log('[data.addPersona]', persona);
@@ -302,7 +308,15 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 			if (!persona) throw Error(`Unknown persona ${persona_id}`);
 			return persona;
 		},
-
+		findSpaceById: (space_id: number): Readable<Space> => {
+			const space = get(spacesById).get(space_id);
+			if (!space) throw Error(`Unknown space ${space_id}`);
+			return space;
+		},
+		// view state
+		expandMainNav,
+		expandMarquee,
+		mainNavView,
 		// derived state
 		selectedPersonaId,
 		selectedPersona,

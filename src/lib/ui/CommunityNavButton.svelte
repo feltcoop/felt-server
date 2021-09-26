@@ -9,7 +9,7 @@
 	import {toUrl} from '$lib/vocab/persona/constants';
 
 	const {
-		ui: {selectedSpace},
+		ui: {selectedSpaceIdByCommunity, findSpaceById},
 	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
@@ -18,6 +18,10 @@
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
 	export let selected: boolean = false;
+
+	$: selectedCommunitySpaceId = $selectedSpaceIdByCommunity[$community.community_id];
+	$: selectedCommunitySpace =
+		selectedCommunitySpaceId === null ? null : findSpaceById(selectedCommunitySpaceId);
 
 	// TODO this is causing a double state change (rendering an invalid in between state)
 	// because it's both navigating and setting state internally in the same user action
@@ -28,7 +32,7 @@
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
 <a
 	class="community"
-	href="/{$community.name}{toUrl($selectedSpace && $selectedSpace.url)}"
+	href="/{$community.name}{toUrl(selectedCommunitySpace && $selectedCommunitySpace.url)}"
 	class:selected
 	class:persona={$community.name === $persona.name}
 	style="--hue: {randomHue($community.name)}"
