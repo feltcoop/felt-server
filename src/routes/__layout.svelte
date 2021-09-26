@@ -74,9 +74,7 @@
 		// this expression re-runs when `$socket.status` changes, so we can ignore the `pending` status
 		// and do the right thing after it finishes whatever is in progress
 		if (guest) {
-			// due to how Svelte works, this will not be called if `mounted = false` is assigned
-			// while the component is being destroyed, so we duplicate the call during unmount
-			if ($socket.status === 'success' || $socket.status === 'failure') {
+			if ($socket.status === 'success') {
 				socket.disconnect();
 			}
 		} else {
@@ -91,7 +89,12 @@
 		// to abstract away `$socket.connected`? Probably so to support websocketless usage.
 		mounted = true;
 		return () => {
-			socket.disconnect();
+			// due to how Svelte works, this component's reactive expression that calls `socket.disconnect`
+			// will not be called if `mounted = false` is assigned here while
+			// the component is being destroyed, so we duplicate `socket.disconnect()`
+			if ($socket.status === 'success') {
+				socket.disconnect();
+			}
 		};
 	});
 </script>
