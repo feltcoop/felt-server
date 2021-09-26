@@ -10,7 +10,7 @@
 
 	const {ui} = getApp();
 
-	const {selectedSpaceIdByCommunity} = ui;
+	const {selectedSpace} = ui;
 
 	// TODO should this just use `ui` instead of taking all of these props?
 	// could `ui` be more composable, so it could be easily reused e.g. in docs for demonstration purposes?
@@ -23,18 +23,12 @@
 	// because it's both navigating and setting state internally in the same user action
 	// TODO should this be an event?
 	export let selectPersona: (persona_id: number) => void;
-
-	// TODO should `$ui.spaces` be a prop like the rest?
-	// TODO speed this up with better caching data structures
-	$: selectedSpace =
-		$ui.spaces.find((s) => s.space_id === $selectedSpaceIdByCommunity[$community.community_id]) ||
-		null;
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
 <a
 	class="community"
-	href="/{$community.name}{toUrl(selectedSpace && selectedSpace.url)}"
+	href="/{$community.name}{toUrl($selectedSpace && $selectedSpace.url)}"
 	class:selected
 	class:persona={$community.name === $persona.name}
 	style="--hue: {randomHue($community.name)}"

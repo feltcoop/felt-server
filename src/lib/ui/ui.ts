@@ -27,7 +27,6 @@ export const setUi = (store: UiStore): UiStore => {
 };
 
 export interface UiState {
-	spaces: Space[];
 	filesBySpace: Record<number, File[]>;
 
 	expandMainNav: boolean;
@@ -44,6 +43,7 @@ export interface UiStore {
 	personasById: Readable<Map<number, Readable<Persona>>>;
 	sessionPersonas: Readable<Readable<Persona>[]>;
 	communities: Readable<Readable<Community>[]>;
+	spaces: Readable<Readable<Space>[]>;
 	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
 	setSession: (session: ClientSession) => void;
 	addPersona: (persona: Persona) => void;
@@ -75,7 +75,7 @@ export interface UiStore {
 
 export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 	const initialSession = get(session);
-	const state = writable<UiState>(toDefaultUiState(initialSession));
+	const state = writable<UiState>(toDefaultUiState());
 
 	const {subscribe, update} = state;
 
@@ -125,6 +125,12 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 	);
 	const communities = writable<Writable<Community>[]>(
 		initialSession.guest ? [] : initialSession.communities.map((p) => writable(p)),
+	);
+	// TODO these aren't currently being used
+	const spaces = writable<Writable<Space>[]>(
+		initialSession.guest
+			? []
+			: initialSession.communities.flatMap((community) => community.spaces).map((s) => writable(s)),
 	);
 	const memberships = writable<Membership[]>([]); // TODO should be on the session:  initialSession.guest ? [] : [],
 	const selectedCommunityId = derived(
@@ -182,6 +188,7 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		personasById,
 		sessionPersonas,
 		communities,
+		spaces,
 		memberships,
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
@@ -201,6 +208,12 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 			}
 
 			communities.set(session.guest ? [] : session.communities.map((p) => writable(p)));
+			// TODO init memberships when they're added to the session
+			spaces.set(
+				session.guest
+					? []
+					: session.communities.flatMap((community) => community.spaces).map((s) => writable(s)),
+			);
 			selectedCommunityIdByPersona.set(
 				// TODO copypasta from above
 				Object.fromEntries(
@@ -256,17 +269,15 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 			memberships.update(($memberships) => $memberships.concat(membership));
 		},
 		addSpace: (space, community_id) => {
-			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.addSpace]', space);
 			const communityStore = get(communities).find((c) => get(c).community_id === community_id);
 			communityStore?.update((community) => ({
 				...community,
-				spaces: community.spaces.concat(space), // TODO should this check if it's already there?
+				// TODO `community.spaces` is not reactive, and should be replaced with flat data structures,
+				// but we may want to make them readable stores in the meantime
+				spaces: community.spaces.concat(space), // TODO should this check if it's already there? yes but for different data structures
 			}));
-			update(($ui) => ({
-				...$ui,
-				spaces: $ui.spaces.concat(space),
-			}));
+			spaces.update(($spaces) => $spaces.concat(writable(space)));
 		},
 		addFile: (file) => {
 			console.log('[data.addFile]', file);
@@ -338,10 +349,8 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 	return store;
 };
 
-const toDefaultUiState = (session: ClientSession): UiState => {
-	const {guest} = session;
+const toDefaultUiState = (): UiState => {
 	return {
-		spaces: guest ? [] : session.communities.flatMap((community) => community.spaces), // TODO return flat from server
 		filesBySpace: {},
 		expandMainNav: true,
 		expandSecondaryNav: true, // TODO default to `false` for mobile -- how?
