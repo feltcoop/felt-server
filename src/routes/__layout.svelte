@@ -38,7 +38,7 @@
 	const app = setApp({ui, api, devmode, socket});
 	browser && console.log('app', app);
 
-	const {account, sessionPersonas} = ui;
+	const {account, sessionPersonas, selectedCommunityId} = ui;
 
 	$: ui.setSession($session);
 
@@ -52,7 +52,7 @@
 		const community = $ui.communities.find((c) => c.name === params.community);
 		if (!community) return; // occurs when a session routes to a community they can't access
 		const {community_id} = community;
-		if (community_id !== $ui.selectedCommunityId) {
+		if (community_id !== $selectedCommunityId) {
 			ui.selectCommunity(community_id);
 		}
 		if (community_id) {
