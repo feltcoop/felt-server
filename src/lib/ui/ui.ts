@@ -32,7 +32,6 @@ export interface UiState {
 	spaces: Space[];
 	filesBySpace: Record<number, File[]>;
 	// TODO should these be store references instead of ids?
-	selectedPersonaId: number | null; // TODO remove for store
 	selectedCommunityId: number | null;
 	selectedCommunityIdByPersona: {[key: number]: number};
 	selectedSpaceIdByCommunity: {[key: number]: number | null};
@@ -104,10 +103,9 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 	);
 
 	// derived state
-	// TODO derive from `selectedPersonaId` state -- should it handle any changes to the map? or can/should we assume a store exists? lazy load?
 	// TODO speed up these lookups with id maps
 	// TODO remove it from `state`
-	const selectedPersonaId = derived([state], ([$ui]) => $ui.selectedPersonaId || null);
+	const selectedPersonaId = writable<number | null>(null);
 	const selectedPersona = derived(
 		[selectedPersonaId, personasById],
 		([$selectedPersonaId, $personasById]) =>
@@ -153,6 +151,15 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 			sessionPersonas.set(
 				session.guest ? [] : session.personas.map((p) => get(personasById).get(p.persona_id)!),
 			);
+
+			// TODO improve this with the other code
+			const initialSessionPersona = get(sessionPersonas)[0];
+			if (initialSessionPersona) {
+				selectedPersonaId.set(get(initialSessionPersona).persona_id);
+			} else {
+				selectedPersonaId.set(null);
+			}
+
 			// TODO update all of the writable stores
 			update(($ui) => {
 				// TODO this needs to be rethought, it's just preserving the existing ui state
@@ -160,15 +167,7 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 				// most likely `updateData` *should* wipe away UI state by default,
 				// and should not be called when data changes, only when a new session's data is set,
 				// so the naming is misleading
-				console.log('data.sessionPersonas', get(get(sessionPersonas)[0]));
 				if (!session.guest) {
-					let {selectedPersonaId} = $ui;
-					if (!selectedPersonaId) {
-						const initialSessionPersona = get(sessionPersonas)[0];
-						if (initialSessionPersona) {
-							selectedPersonaId = get(initialSessionPersona).persona_id;
-						}
-					}
 					const selectedCommunity =
 						($ui.selectedCommunityId !== null &&
 							updated.communities.find((c) => c.community_id === $ui.selectedCommunityId)) ||
@@ -177,7 +176,6 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 					const newState: UiState = {
 						...$ui,
 						...updated,
-						selectedPersonaId,
 						selectedCommunityId: selectedCommunity?.community_id ?? null,
 						selectedCommunityIdByPersona: Object.fromEntries(
 							get(sessionPersonas).map((persona) => {
@@ -294,23 +292,24 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		// methods
 		selectPersona: (persona_id) => {
 			console.log('[ui.selectPersona] persona_id', {persona_id});
+			selectedPersonaId.set(persona_id);
 			update(($ui) => ({
 				...$ui,
-				selectedPersonaId: persona_id,
-				selectedCommunityId: $ui.selectedCommunityIdByPersona[persona_id],
+				selectedCommunityId: $ui.selectedCommunityIdByPersona[persona_id], // TODO derive
 			}));
 		},
 		selectCommunity: (community_id) => {
 			console.log('[ui.selectCommunity] community_id', {community_id});
+			const $selectedPersonaId = get(selectedPersonaId);
 			update(($ui) => ({
 				...$ui,
 				selectedCommunityId: community_id,
 				selectedCommunityIdByPersona:
-					community_id === null || $ui.selectedPersonaId === null
+					community_id === null || $selectedPersonaId === null
 						? $ui.selectedCommunityIdByPersona
 						: {
 								...$ui.selectedCommunityIdByPersona,
-								[$ui.selectedPersonaId]: community_id,
+								[$selectedPersonaId]: community_id,
 						  },
 			}));
 		},
@@ -347,7 +346,6 @@ const toDefaultUiState = (session: ClientSession): UiState => {
 		memberships: guest ? [] : [], // TODO should be on session
 		spaces: guest ? [] : session.communities.flatMap((community) => community.spaces), // TODO return flat from server
 		filesBySpace: {},
-		selectedPersonaId: null,
 		selectedCommunityId: null,
 		selectedCommunityIdByPersona: {},
 		selectedSpaceIdByCommunity: {},

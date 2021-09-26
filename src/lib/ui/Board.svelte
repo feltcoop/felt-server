@@ -13,6 +13,8 @@
 
 	community;
 
+	const {selectedPersonaId} = ui;
+
 	let text = '';
 
 	$: browser && $socket.connected && api.loadFiles(space.space_id); // TODO move this to SvelteKit `load` so it works with http clients
@@ -24,7 +26,7 @@
 		await api.createFile({
 			space_id: space.space_id,
 			content,
-			actor_id: $ui.selectedPersonaId!,
+			actor_id: $selectedPersonaId!, // TODO generic erorr check for no selected persona?
 		});
 		text = '';
 	};

@@ -10,9 +10,11 @@
 	let opened = false;
 	let name = '';
 
+	const {selectedPersonaId} = ui;
+
 	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await api.createCommunity({name, persona_id: $ui.selectedPersonaId!});
+			await api.createCommunity({name, persona_id: $selectedPersonaId!}); // TODO generic erorr check for no selected persona?
 			name = '';
 			opened = false;
 		}
