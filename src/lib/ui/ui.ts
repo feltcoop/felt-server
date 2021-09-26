@@ -10,13 +10,6 @@ import type {AccountModel} from '$lib/vocab/account/account';
 import type {File} from '$lib/vocab/file/file';
 import type {Membership} from '$lib/vocab/membership/membership';
 
-// TODO in the current design,
-// the methods on the `Ui` should not be called directly in an app context.
-// They're intended to be called by the api for future orchestration reasons.
-// Of course you can make more of these stores than what's given to you in the app,
-// and call methods all you want without weird bugs.
-// Use cases may include documentation and dueling apps.
-
 const KEY = Symbol();
 
 export const getUi = (): Ui => getContext(KEY);
