@@ -86,22 +86,10 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		initialSession.guest ? null : initialSession.account, // TODO shared helper with the session updater?
 	);
 
-	// TODO this is a hack until we have `community_ids` normalized and off the `Persona`,
-	// the issue is that the "session personas" are different than the rest of the personas
-	// by having their `community_ids` populated, so we need to prefer that instance in the global
-	// persona map (or we could store `sessionPersonasById` separately?
-	// maybe not, because we probably want `community_ids` for all personas anyway, lazily loaded)
-	const initialPersonas = initialSession.guest
-		? []
-		: initialSession.personas.concat(
-				initialSession.allPersonas.filter(
-					(p1) => !initialSession.personas.find((p2) => p2.persona_id === p1.persona_id),
-				),
-		  );
 	// importantly, this only changes when items are added or removed from the collection,
 	// not when the items themselves change; each item is a store that can be subscribed to
 	const personas = writable<Writable<Persona>[]>(
-		initialSession.guest ? [] : initialPersonas.map((p) => writable(p)),
+		initialSession.guest ? [] : toInitialPersonas(initialSession).map((p) => writable(p)),
 	);
 	// TODO do this more efficiently
 	const personasById: Readable<Map<number, Writable<Persona>>> = derived(
@@ -159,7 +147,12 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
 			const updated = toDefaultUiState(session);
+			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
 			account.set(session.guest ? null : session.account);
+			personas.set(session.guest ? [] : toInitialPersonas(session).map((p) => writable(p)));
+			sessionPersonas.set(
+				session.guest ? [] : session.personas.map((p) => get(personasById).get(p.persona_id)!),
+			);
 			// TODO update all of the writable stores
 			update(($ui) => {
 				// TODO this needs to be rethought, it's just preserving the existing ui state
@@ -226,14 +219,16 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		addCommunity: (community, persona_id) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.addCommunity]', community, persona_id);
-			// TODO update `personas` writable
-			console.log('get(personasById)', get(personasById));
+			// TODO how should `persona.community_ids` by modeled and kept up to date?
 			const persona = get(personasById).get(persona_id)!;
-			persona.update(($persona) => ({
-				...$persona,
-				// TODO how should this be modeled and kept up to date?
-				community_ids: $persona.community_ids.concat(community.community_id),
-			}));
+			const $persona = get(persona);
+			if (!$persona.community_ids.includes(community.community_id)) {
+				persona.update(($persona) => ({
+					...$persona,
+					community_ids: $persona.community_ids.concat(community.community_id),
+				}));
+				console.log('updated persona community ids', get(persona));
+			}
 			update(($ui) => ({
 				...$ui,
 				communities: $ui.communities.concat(community),
@@ -363,3 +358,17 @@ const toDefaultUiState = (session: ClientSession): UiState => {
 };
 
 export type MainNavView = 'explorer' | 'account';
+
+// TODO this is a hack until we have `community_ids` normalized and off the `Persona`,
+// the issue is that the "session personas" are different than the rest of the personas
+// by having their `community_ids` populated, so as a hack we prefer that instance in the global,
+// but these probably need to be split into two separate collections --
+// notice that comparison checks between the two types of personas will not be able to use store reference equality
+const toInitialPersonas = (session: ClientSession): Persona[] =>
+	session.guest
+		? []
+		: session.personas.concat(
+				session.allPersonas.filter(
+					(p1) => !session.personas.find((p2) => p2.persona_id === p1.persona_id),
+				),
+		  );
