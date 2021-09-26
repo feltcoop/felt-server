@@ -38,7 +38,7 @@
 	const app = setApp({ui, api, devmode, socket});
 	browser && console.log('app', app);
 
-	const {account, sessionPersonas, selectedCommunityId} = ui;
+	const {account, sessionPersonas, selectedCommunityId, selectedSpaceIdByCommunity} = ui;
 
 	$: ui.setSession($session);
 
@@ -60,7 +60,7 @@
 			const space = community.spaces.find((s) => s.url === spaceUrl);
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = space;
-			if (space_id !== $ui.selectedSpaceIdByCommunity[community_id]) {
+			if (space_id !== $selectedSpaceIdByCommunity[community_id]) {
 				ui.selectSpace(community_id, space_id);
 			}
 		} else {

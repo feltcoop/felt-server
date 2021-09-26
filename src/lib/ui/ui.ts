@@ -31,7 +31,7 @@ export interface UiState {
 	memberships: Membership[]; // TODO needs to be used, currently only gets populated when a new membership is created
 	spaces: Space[];
 	filesBySpace: Record<number, File[]>;
-	selectedSpaceIdByCommunity: {[key: number]: number | null};
+
 	expandMainNav: boolean;
 	expandSecondaryNav: boolean; // TODO name?
 	mainNavView: MainNavView;
@@ -58,9 +58,10 @@ export interface UiStore {
 	// derived state
 	selectedPersonaId: Readable<number | null>;
 	selectedPersona: Readable<Readable<Persona> | null>;
-	selectedCommunityId: Readable<number | null>;
 	selectedCommunityIdByPersona: Readable<{[key: number]: number}>;
+	selectedCommunityId: Readable<number | null>;
 	selectedCommunity: Readable<Community | null>;
+	selectedSpaceIdByCommunity: Readable<{[key: number]: number | null}>;
 	selectedSpace: Readable<Space | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Community[]}>; // TODO or name `personaCommunities`?
 	// methods
@@ -132,11 +133,23 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		([$ui, $selectedCommunityId]) =>
 			$ui.communities.find((c) => c.community_id === $selectedCommunityId) || null,
 	);
+	// TODO do we care about making this reactive to new communities, or is `undefined` ok?
+	const selectedSpaceIdByCommunity = writable<{[key: number]: number | null}>(
+		initialSession.guest
+			? {}
+			: Object.fromEntries(
+					initialSession.communities.map((community) => [
+						community.community_id,
+						community.spaces[0]?.space_id ?? null,
+					]),
+			  ),
+	);
 	const selectedSpace = derived(
-		[state, selectedCommunity],
-		([$ui, $selectedCommunity]) =>
+		[selectedCommunity, selectedSpaceIdByCommunity],
+		([$selectedCommunity, $selectedSpaceIdByCommunity]) =>
+			// TODO faster lookup
 			$selectedCommunity?.spaces.find(
-				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[$selectedCommunity.community_id],
+				(s) => s.space_id === $selectedSpaceIdByCommunity[$selectedCommunity.community_id],
 			) || null,
 	);
 	const communitiesByPersonaId = derived([state, sessionPersonas], ([$ui, $sessionPersonas]) =>
@@ -190,31 +203,15 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 					}),
 				),
 			);
-
-			update(($ui) => {
-				// TODO this needs to be rethought, it's just preserving the existing ui state
-				// when new data gets set, which happens when e.g. a new community is created --
-				// most likely `updateData` *should* wipe away UI state by default,
-				// and should not be called when data changes, only when a new session's data is set,
-				// so the naming is misleading
-				if (!session.guest) {
-					const newState: UiState = {
-						...$ui,
-						...updated,
-						selectedSpaceIdByCommunity: Object.fromEntries(
-							updated.communities.map((community) => [
-								community.community_id,
-								$ui.selectedSpaceIdByCommunity[community.community_id] ??
-									community.spaces[0]?.space_id ??
-									null,
-							]),
-						),
-					};
-					return newState;
-				} else {
-					return updated;
-				}
-			});
+			selectedSpaceIdByCommunity.set(
+				// TODO copypasta from above
+				Object.fromEntries(
+					updated.communities.map((community) => [
+						community.community_id,
+						community.spaces[0]?.space_id ?? null,
+					]),
+				),
+			);
 		},
 		addPersona: (persona) => {
 			console.log('[data.addPersona]', persona);
@@ -300,6 +297,7 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		selectedCommunityIdByPersona,
 		selectedCommunityId,
 		selectedCommunity,
+		selectedSpaceIdByCommunity,
 		selectedSpace,
 		communitiesByPersonaId,
 		// methods
@@ -319,16 +317,10 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		},
 		selectSpace: (community_id, space_id) => {
 			console.log('[ui.selectSpace] community_id, space_id', {community_id, space_id});
-			update(($ui) => {
-				// TODO speed this up using stores maybe?
-				return {
-					...$ui,
-					selectedSpaceIdByCommunity: {
-						...$ui.selectedSpaceIdByCommunity,
-						[community_id]: space_id,
-					},
-				};
-			});
+			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => ({
+				...$selectedSpaceIdByCommunity,
+				[community_id]: space_id,
+			}));
 		},
 		toggleMainNav: () => {
 			update(($ui) => ({...$ui, expandMainNav: !$ui.expandMainNav}));
@@ -350,7 +342,6 @@ const toDefaultUiState = (session: ClientSession): UiState => {
 		memberships: guest ? [] : [], // TODO should be on session
 		spaces: guest ? [] : session.communities.flatMap((community) => community.spaces), // TODO return flat from server
 		filesBySpace: {},
-		selectedSpaceIdByCommunity: {},
 		expandMainNav: true,
 		expandSecondaryNav: true, // TODO default to `false` for mobile -- how?
 		mainNavView: 'explorer',

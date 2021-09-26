@@ -10,6 +10,8 @@
 
 	const {ui} = getApp();
 
+	const {selectedSpaceIdByCommunity} = ui;
+
 	// TODO should this just use `ui` instead of taking all of these props?
 	// could `ui` be more composable, so it could be easily reused e.g. in docs for demonstration purposes?
 
@@ -20,7 +22,6 @@
 	// export let communitiesByPersonaId: {
 	// 	[persona_id: number]: Community[];
 	// };
-	export let selectedSpaceIdByCommunity: {[key: number]: number | null};
 	// TODO this is causing a double state change (rendering an invalid in between state)
 	// because it's both navigating and setting state internally in the same user action
 	// TODO should this be an event?
@@ -29,7 +30,7 @@
 	// TODO should `$ui.spaces` be a prop like the rest?
 	// TODO speed this up with better caching data structures
 	$: selectedSpace =
-		$ui.spaces.find((s) => s.space_id === selectedSpaceIdByCommunity[community.community_id]) ||
+		$ui.spaces.find((s) => s.space_id === $selectedSpaceIdByCommunity[community.community_id]) ||
 		null;
 </script>
 

@@ -9,13 +9,7 @@
 
 	const {ui} = getApp();
 
-	$: selectedPersona = ui.selectedPersona;
-	$: selectedCommunity = ui.selectedCommunity;
-	$: communitiesByPersonaId = ui.communitiesByPersonaId;
-
-	$: selectedSpaceIdByCommunity = $ui.selectedSpaceIdByCommunity;
-
-	const {sessionPersonas} = ui;
+	const {sessionPersonas, selectedPersona, selectedCommunity, communitiesByPersonaId} = ui;
 
 	// TODO improve the efficiency of this with better data structures and caching
 	const toPersonaCommunity = (persona: Persona): Community =>
@@ -35,7 +29,6 @@
 				{persona}
 				selected={persona === $selectedPersona &&
 					toPersonaCommunity(get(persona)) === $selectedCommunity}
-				{selectedSpaceIdByCommunity}
 				selectPersona={ui.selectPersona}
 			/>
 			{#each $communitiesByPersonaId[get(persona).persona_id] as community (community.community_id)}
@@ -44,7 +37,6 @@
 						{community}
 						{persona}
 						selected={persona === $selectedPersona && community === $selectedCommunity}
-						{selectedSpaceIdByCommunity}
 						selectPersona={ui.selectPersona}
 					/>
 				{/if}
