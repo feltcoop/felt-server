@@ -14,7 +14,6 @@
 	import Luggage from '$lib/ui/Luggage.svelte';
 	import MainNav from '$lib/ui/MainNav.svelte';
 	import Onboard from '$lib/ui/Onboard.svelte';
-	import {setData} from '$lib/ui/data';
 	import {setUi, toUiStore} from '$lib/ui/ui';
 	import {setApi, toApi} from '$lib/ui/api';
 	import {setApp} from '$lib/ui/app';
@@ -28,22 +27,20 @@
 
 	// TODO some of this shouldn't run during SSR, see the `onMount` function below
 	const devmode = setDevmode();
-	const data = setData($session);
 	const socket = setSocket(toSocketStore((data) => websocketApiClient.handle(data)));
-	const ui = setUi(toUiStore(data));
+	const ui = setUi(toUiStore(session));
 	// TODO create only the websocket client, not the http client
 	const websocketApiClient = toWebsocketApiClient<ServicesParamsMap, ServicesResultMap>(
 		socket.send,
 	);
 	const httpApiClient = toHttpApiClient<ServicesParamsMap, ServicesResultMap>();
-	const api = setApi(toApi(ui, data, websocketApiClient, httpApiClient));
-	const app = setApp({data, ui, api, devmode, socket});
+	const api = setApi(toApi(ui, websocketApiClient, httpApiClient));
+	const app = setApp({ui, api, devmode, socket});
 	browser && console.log('app', app);
 
-	const {sessionPersonas} = data;
+	const {account, sessionPersonas} = ui;
 
-	$: data.updateSession($session);
-	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
+	$: ui.setSession($session);
 
 	$: guest = $session.guest;
 	$: onboarding = !$session.guest && !$sessionPersonas.length;
@@ -52,11 +49,11 @@
 	$: updateStateFromPageParams($page.params);
 	const updateStateFromPageParams = (params: {community?: string; space?: string}) => {
 		if (!params.community) return;
-		const community = $data.communities.find((c) => c.name === params.community);
+		const community = $ui.communities.find((c) => c.name === params.community);
 		if (!community) return; // occurs when a session routes to a community they can't access
 		const {community_id} = community;
 		if (community_id !== $ui.selectedCommunityId) {
-			api.selectCommunity(community_id);
+			ui.selectCommunity(community_id);
 		}
 		if (community_id) {
 			const spaceUrl = '/' + (params.space || '');
@@ -64,7 +61,7 @@
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = space;
 			if (space_id !== $ui.selectedSpaceIdByCommunity[community_id]) {
-				api.selectSpace(community_id, space_id);
+				ui.selectSpace(community_id, space_id);
 			}
 		} else {
 			// TODO what is this condition?
@@ -108,7 +105,7 @@
 	<Devmode {devmode} />
 </div>
 
-<FeltWindowHost query={() => ({hue: randomHue($data.account?.name || GUEST_PERSONA_NAME)})} />
+<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 
 <style>
 	.layout {

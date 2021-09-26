@@ -8,7 +8,7 @@
 	import {getApp} from '$lib/ui/app';
 	import {toUrl} from '$lib/vocab/persona/constants';
 
-	const {data} = getApp();
+	const {ui} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
 	// could `ui` be more composable, so it could be easily reused e.g. in docs for demonstration purposes?
@@ -26,10 +26,10 @@
 	// TODO should this be an event?
 	export let selectPersona: (persona_id: number) => void;
 
-	// TODO should `$data.spaces` be a prop like the rest?
+	// TODO should `$ui.spaces` be a prop like the rest?
 	// TODO speed this up with better caching data structures
 	$: selectedSpace =
-		$data.spaces.find((s) => s.space_id === selectedSpaceIdByCommunity[community.community_id]) ||
+		$ui.spaces.find((s) => s.space_id === selectedSpaceIdByCommunity[community.community_id]) ||
 		null;
 </script>
 

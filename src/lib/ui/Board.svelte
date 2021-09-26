@@ -6,7 +6,7 @@
 	import BoardItems from '$lib/ui/BoardItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {api, ui, data, socket} = getApp();
+	const {api, ui, socket} = getApp();
 
 	export let community: Community;
 	export let space: Space;
@@ -35,7 +35,7 @@
 		}
 	};
 
-	$: files = $data.filesBySpace[space.space_id] || [];
+	$: files = $ui.filesBySpace[space.space_id] || [];
 </script>
 
 <div class="board">

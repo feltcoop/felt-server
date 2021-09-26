@@ -7,7 +7,7 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 
-	const {data, ui} = getApp();
+	const {ui} = getApp();
 
 	$: selectedPersona = ui.selectedPersona;
 	$: selectedCommunity = ui.selectedCommunity;
@@ -15,7 +15,7 @@
 
 	$: selectedSpaceIdByCommunity = $ui.selectedSpaceIdByCommunity;
 
-	const {sessionPersonas} = data;
+	const {sessionPersonas} = ui;
 
 	// TODO improve the efficiency of this with better data structures and caching
 	const toPersonaCommunity = (persona: Persona): Community =>

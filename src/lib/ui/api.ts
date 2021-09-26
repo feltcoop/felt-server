@@ -1,7 +1,6 @@
 import {setContext, getContext} from 'svelte';
 import {session} from '$app/stores';
 
-import type {DataStore} from '$lib/ui/data';
 import type {UiStore} from '$lib/ui/ui';
 import type {Community, CommunityParams} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
@@ -39,9 +38,6 @@ export interface Api {
 		password: string,
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	logOut: () => Promise<ApiResult<{}>>;
-	selectPersona: (persona_id: number) => void;
-	selectCommunity: (community_id: number | null) => void;
-	selectSpace: (community_id: number, space: number | null) => void;
 	toggleMainNav: () => void;
 	toggleSecondaryNav: () => void;
 	createPersona: (
@@ -56,16 +52,12 @@ export interface Api {
 
 export const toApi = (
 	ui: UiStore,
-	data: DataStore,
 	client: ApiClient<ServicesParamsMap, ServicesResultMap>,
 	client2: ApiClient<ServicesParamsMap, ServicesResultMap>, // TODO remove this after everything stabilizes
 ): Api => {
 	const api: Api = {
 		// TODO these are just directly proxying and they don't have the normal `ApiResult` return value
 		// The motivation is that sometimes UI events may do API-related things, but this may not be the best design.
-		selectPersona: ui.selectPersona,
-		selectCommunity: ui.selectCommunity,
-		selectSpace: ui.selectSpace,
 		toggleMainNav: ui.toggleMainNav,
 		toggleSecondaryNav: ui.toggleSecondaryNav,
 		logIn: async (accountName, password) => {
@@ -128,8 +120,8 @@ export const toApi = (
 			if (result.ok) {
 				const {persona, community: rawCommunity} = result.value;
 				const community = rawCommunity as Community; // TODO `Community` type is off with schema
-				data.addPersona(persona);
-				data.addCommunity(community, persona.persona_id);
+				ui.addPersona(persona);
+				ui.addCommunity(community, persona.persona_id);
 				// TODO refactor to not return here, do `return result` below --
 				// can't return `result` right now because the `Community` is different,
 				// but we probably want to change it to have associated data instead of a different interface
@@ -143,7 +135,7 @@ export const toApi = (
 			console.log('[api] create_community result', result);
 			if (result.ok) {
 				const community = result.value.community as any; // TODO `Community` type is off with schema
-				data.addCommunity(community, params.persona_id);
+				ui.addCommunity(community, params.persona_id);
 				// TODO refactor to not return here, do `return result` below --
 				// can't return `result` right now because the `Community` is different,
 				// but we probably want to change it to have associated data instead of a different interface
@@ -157,7 +149,7 @@ export const toApi = (
 			const result = await client2.invoke('create_membership', params);
 			console.log('[api] create_membership result', result);
 			if (result.ok) {
-				data.addMembership(result.value.membership);
+				ui.addMembership(result.value.membership);
 			}
 			return result;
 		},
@@ -165,7 +157,7 @@ export const toApi = (
 			const result = await client2.invoke('create_space', params);
 			console.log('[api] create_space result', result);
 			if (result.ok) {
-				data.addSpace(result.value.space, params.community_id);
+				ui.addSpace(result.value.space, params.community_id);
 			}
 			return result;
 		},
@@ -173,17 +165,17 @@ export const toApi = (
 			const result = await client.invoke('create_file', params);
 			console.log('create_file result', result);
 			if (result.ok) {
-				data.addFile(result.value.file);
+				ui.addFile(result.value.file);
 			}
 			return result;
 		},
 		loadFiles: async (space_id) => {
-			data.setFiles(space_id, []);
+			ui.setFiles(space_id, []);
 			// TODO this breaks on startup because the websocket isn't connected yet
 			const result = await client.invoke('read_files', {space_id});
 			console.log('[api] read_files result', result);
 			if (result.ok) {
-				data.setFiles(space_id, result.value.files);
+				ui.setFiles(space_id, result.value.files);
 			}
 			return result;
 		},
