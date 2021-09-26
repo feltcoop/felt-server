@@ -54,7 +54,8 @@ export interface DataStore {
 // TODO probably don't want to pass `initialSession` because it'll never be GC'd
 export const toDataStore = (initialSession: ClientSession): DataStore => {
 	const initialData = toDefaultData(initialSession);
-	const {subscribe, set, update} = writable(initialData);
+	const state = writable(initialData);
+	const {subscribe, set, update} = state;
 
 	// TODO this is a hack until we have `community_ids` normalized and off the `Persona`,
 	// the issue is that the "session personas" are different than the rest of the personas
@@ -95,7 +96,12 @@ export const toDataStore = (initialSession: ClientSession): DataStore => {
 		},
 		addPersona: (persona) => {
 			console.log('[data.addPersona]', persona);
-			personas.update(($personas) => $personas.concat(writable(persona)));
+			const personaStore = writable(persona);
+			personas.update(($personas) => $personas.concat(personaStore));
+			// TODO better way to check this? should `sessionPersonas` be a `derived` store?
+			if (persona.account_id == get(state).account?.account_id) {
+				sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
+			}
 		},
 		addCommunity: (community, persona_id) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
