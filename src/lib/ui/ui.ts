@@ -27,7 +27,6 @@ export const setUi = (store: UiStore): UiStore => {
 };
 
 export interface UiState {
-	memberships: Membership[]; // TODO needs to be used, currently only gets populated when a new membership is created
 	spaces: Space[];
 	filesBySpace: Record<number, File[]>;
 
@@ -41,10 +40,11 @@ export interface UiStore {
 	// TODO this is actually a writable as implemented, but with the type do we care?
 	// or do we want to protect the API from being called in unexpected ways?
 	account: Readable<AccountModel | null>;
-	communities: Readable<Readable<Community>[]>;
 	personas: Readable<Readable<Persona>[]>;
 	personasById: Readable<Map<number, Readable<Persona>>>;
 	sessionPersonas: Readable<Readable<Persona>[]>;
+	communities: Readable<Readable<Community>[]>;
+	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
 	setSession: (session: ClientSession) => void;
 	addPersona: (persona: Persona) => void;
 	addCommunity: (community: Community, persona_id: number) => void;
@@ -126,6 +126,7 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 	const communities = writable<Writable<Community>[]>(
 		initialSession.guest ? [] : initialSession.communities.map((p) => writable(p)),
 	);
+	const memberships = writable<Membership[]>([]); // TODO should be on the session:  initialSession.guest ? [] : [],
 	const selectedCommunityId = derived(
 		[selectedPersonaId, selectedCommunityIdByPersona],
 		([$selectedPersonaId, $selectedCommunityIdByPersona]) =>
@@ -181,6 +182,7 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		personasById,
 		sessionPersonas,
 		communities,
+		memberships,
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
@@ -234,7 +236,6 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 			}
 		},
 		addCommunity: (community, persona_id) => {
-			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.addCommunity]', community, persona_id);
 			// TODO how should `persona.community_ids` by modeled and kept up to date?
 			const persona = get(personasById).get(persona_id)!;
@@ -250,13 +251,9 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 			communities.update(($communities) => $communities.concat(communityStore));
 		},
 		addMembership: (membership) => {
-			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.addMembership]', membership);
-			update(($ui) => ({
-				...$ui,
-				memberships: $ui.memberships.concat(membership),
-				// TODO update `communities.personas` (which will be refactored)
-			}));
+			// TODO also update `communities.personas` (which will be refactored)
+			memberships.update(($memberships) => $memberships.concat(membership));
 		},
 		addSpace: (space, community_id) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
@@ -344,7 +341,6 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 const toDefaultUiState = (session: ClientSession): UiState => {
 	const {guest} = session;
 	return {
-		memberships: guest ? [] : [], // TODO should be on session
 		spaces: guest ? [] : session.communities.flatMap((community) => community.spaces), // TODO return flat from server
 		filesBySpace: {},
 		expandMainNav: true,
