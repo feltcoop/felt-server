@@ -29,10 +29,8 @@
 	// TODO some of this shouldn't run during SSR, see the `onMount` function below
 	const devmode = setDevmode();
 	const data = setData($session);
-	$: data.updateSession($session);
 	const socket = setSocket(toSocketStore((data) => websocketApiClient.handle(data)));
 	const ui = setUi(toUiStore(data));
-	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
 	// TODO create only the websocket client, not the http client
 	const websocketApiClient = toWebsocketApiClient<ServicesParamsMap, ServicesResultMap>(
 		socket.send,
@@ -43,6 +41,9 @@
 	browser && console.log('app', app);
 
 	const {sessionPersonas} = data;
+
+	$: data.updateSession($session);
+	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
 
 	$: guest = $session.guest;
 	$: onboarding = !$session.guest && !$sessionPersonas.length;
