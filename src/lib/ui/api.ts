@@ -124,7 +124,7 @@ export const toApi = (
 		createPersona: async (params) => {
 			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
 			const result = await client2.invoke('create_persona', params);
-			console.log('[api] create_community result', result);
+			console.log('[api] create_persona result', result);
 			if (result.ok) {
 				const {persona, community: rawCommunity} = result.value;
 				const community = rawCommunity as Community; // TODO `Community` type is off with schema
