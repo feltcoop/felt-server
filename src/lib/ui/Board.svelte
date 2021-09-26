@@ -17,10 +17,10 @@
 
 	let text = '';
 
-	$: shouldLoadFiles = browser && $socket.connected; // TODO make this only load if not already cached -- !ui.filesBySpace.has(space.space_id);
-	$: if (shouldLoadFiles) api.loadFiles(space.space_id); // TODO move this to SvelteKit `load` so it works with http clients
-	$: console.log(`[Board] fetching files for ${space.space_id}`);
-	$: files = ui.getFilesBySpace(space.space_id);
+	$: shouldLoadFiles = browser && $socket.connected; // TODO make this only load if not already cached
+	$: shouldLoadFiles && api.loadFiles(space.space_id); // TODO move this to SvelteKit `load` so it works with http clients
+	$: shouldLoadFiles && console.log(`[Board] fetching files for ${space.space_id}\n1\n2\n3`);
+	$: files = ui.getFilesBySpace(space.space_id); // TODO should probably be a query
 
 	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
