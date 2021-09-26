@@ -1,6 +1,4 @@
 <script lang="ts">
-	import {browser} from '$app/env';
-
 	import type {Space} from '$lib/vocab/space/space.js';
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import type {Community} from '$lib/vocab/community/community.js';
@@ -9,7 +7,6 @@
 	export let community: Community;
 	export let spaces: Space[];
 	export let selectedSpace: Space | null;
-	$: browser && console.log('spaces', spaces);
 </script>
 
 <div class="space-nav">
