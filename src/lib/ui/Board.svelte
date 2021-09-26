@@ -6,21 +6,23 @@
 	import BoardItems from '$lib/ui/BoardItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {api, ui, socket} = getApp();
+	const {
+		api,
+		ui: {getFilesBySpace, selectedPersonaId},
+		socket,
+	} = getApp();
 
 	export let community: Community;
 	export let space: Space;
 
 	community;
 
-	const {selectedPersonaId} = ui;
-
 	let text = '';
 
 	$: shouldLoadFiles = browser && $socket.connected; // TODO make this only load if not already cached
 	$: shouldLoadFiles && api.loadFiles(space.space_id); // TODO move this to SvelteKit `load` so it works with http clients
-	$: shouldLoadFiles && console.log(`[Board] fetching files for ${space.space_id}\n1\n2\n3`);
-	$: files = ui.getFilesBySpace(space.space_id); // TODO should probably be a query
+	$: shouldLoadFiles && console.log(`fetching files for ${space.space_id}`);
+	$: files = getFilesBySpace(space.space_id); // TODO should probably be a query
 
 	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?

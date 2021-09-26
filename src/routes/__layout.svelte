@@ -39,10 +39,18 @@
 	const app = setApp({ui, api, devmode, socket});
 	browser && console.log('app', app);
 
-	const {account, sessionPersonas, communities, selectedCommunityId, selectedSpaceIdByCommunity} =
-		ui;
+	const {
+		account,
+		sessionPersonas,
+		communities,
+		selectedCommunityId,
+		selectedSpaceIdByCommunity,
+		setSession,
+		selectCommunity,
+		selectSpace,
+	} = ui;
 
-	$: ui.setSession($session);
+	$: setSession($session);
 
 	$: guest = $session.guest;
 	$: onboarding = !$session.guest && !$sessionPersonas.length;
@@ -57,7 +65,7 @@
 		const community = get(communityStore);
 		const {community_id} = community;
 		if (community_id !== $selectedCommunityId) {
-			ui.selectCommunity(community_id);
+			selectCommunity(community_id);
 		}
 		if (community_id) {
 			const spaceUrl = '/' + (params.space || '');
@@ -65,7 +73,7 @@
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = space;
 			if (space_id !== $selectedSpaceIdByCommunity[community_id]) {
-				ui.selectSpace(community_id, space_id);
+				selectSpace(community_id, space_id);
 			}
 		} else {
 			// TODO what is this condition?

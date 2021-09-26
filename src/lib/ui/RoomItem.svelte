@@ -7,11 +7,13 @@
 	import {toIcon, toName} from '$lib/vocab/entity/entity';
 	import {getApp} from '$lib/ui/app';
 
-	const {ui} = getApp();
+	const {
+		ui: {findPersonaById},
+	} = getApp();
 
 	export let file: Writable<File>;
 
-	$: persona = ui.findPersonaById($file.actor_id); // TODO should this be `Actor` and `actor`?
+	$: persona = findPersonaById($file.actor_id); // TODO should this be `Actor` and `actor`?
 
 	// TODO refactor to some client view-model for the actor
 	$: hue = randomHue($persona.name);

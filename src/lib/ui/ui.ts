@@ -26,14 +26,7 @@ export const setUi = (store: UiStore): UiStore => {
 	return store;
 };
 
-export interface UiState {
-	expandMainNav: boolean;
-	expandSecondaryNav: boolean; // TODO name?
-	mainNavView: MainNavView;
-}
-
 export interface UiStore {
-	subscribe: Readable<UiState>['subscribe'];
 	// TODO this is actually a writable as implemented, but with the type do we care?
 	// or do we want to protect the API from being called in unexpected ways?
 	account: Readable<AccountModel | null>;
@@ -44,6 +37,9 @@ export interface UiStore {
 	spaces: Readable<Readable<Space>[]>;
 	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
 	filesBySpace: Map<number, Writable<Writable<File>[]>>;
+	expandMainNav: Writable<boolean>;
+	expandSecondaryNav: Writable<boolean>; // TODO name?
+	mainNavView: Writable<MainNavView>;
 	setSession: (session: ClientSession) => void;
 	addPersona: (persona: Persona) => void;
 	addCommunity: (community: Community, persona_id: number) => void;
@@ -72,14 +68,11 @@ export interface UiStore {
 	selectSpace: (community_id: number, space_id: number | null) => void;
 	toggleMainNav: () => void;
 	toggleSecondaryNav: () => void;
-	setMainNavView: (mainNavView: MainNavView) => void;
+	setMainNavView: (value: MainNavView) => void;
 }
 
 export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 	const initialSession = get(session);
-	const state = writable<UiState>(toDefaultUiState());
-
-	const {subscribe, update} = state;
 
 	// TODO would it helpfully simplify things to put these stores on the actual store state?
 	// Could then put these calculations in one place.
@@ -185,8 +178,11 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const filesBySpace: Map<number, Writable<Writable<File>[]>> = new Map();
 
+	const expandMainNav = writable(true);
+	const expandSecondaryNav = writable(true); // TODO default to `false` for mobile -- how?
+	const mainNavView: Writable<MainNavView> = writable('explorer');
+
 	const store: UiStore = {
-		subscribe,
 		account,
 		personas,
 		personasById,
@@ -195,6 +191,9 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		spaces,
 		memberships,
 		filesBySpace,
+		expandMainNav,
+		expandSecondaryNav,
+		mainNavView,
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
@@ -349,24 +348,16 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 			}));
 		},
 		toggleMainNav: () => {
-			update(($ui) => ({...$ui, expandMainNav: !$ui.expandMainNav}));
+			expandMainNav.update(($expandMainNav) => !$expandMainNav);
 		},
 		toggleSecondaryNav: () => {
-			update(($ui) => ({...$ui, expandSecondaryNav: !$ui.expandSecondaryNav}));
+			expandSecondaryNav.update(($expandSecondaryNav) => !$expandSecondaryNav);
 		},
-		setMainNavView: (mainNavView) => {
-			update(($ui) => ({...$ui, mainNavView}));
+		setMainNavView: (value) => {
+			mainNavView.set(value);
 		},
 	};
 	return store;
-};
-
-const toDefaultUiState = (): UiState => {
-	return {
-		expandMainNav: true,
-		expandSecondaryNav: true, // TODO default to `false` for mobile -- how?
-		mainNavView: 'explorer',
-	};
 };
 
 export type MainNavView = 'explorer' | 'account';

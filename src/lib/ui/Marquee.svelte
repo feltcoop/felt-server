@@ -6,7 +6,9 @@
 	import {toIcon, toName} from '$lib/vocab/entity/entity';
 	import {getApp} from '$lib/ui/app';
 
-	const {ui} = getApp();
+	const {
+		ui: {expandSecondaryNav},
+	} = getApp();
 
 	export let community: Community;
 	export let space: Space;
@@ -15,7 +17,7 @@
 <MarqueeNav {community} {space} />
 
 <!-- TODO display other meta info about the community -->
-{#if $ui.expandSecondaryNav}
+{#if $expandSecondaryNav}
 	<section>
 		<!-- TODO probably want these to be sorted so the selected persona is always first -->
 		{#each community.memberPersonas as persona (persona.persona_id)}

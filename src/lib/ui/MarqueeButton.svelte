@@ -1,18 +1,20 @@
 <script lang="ts">
 	import {getApp} from '$lib/ui/app';
 
-	const {ui} = getApp();
+	const {
+		ui: {toggleSecondaryNav, expandSecondaryNav},
+	} = getApp();
 
 	const marquee_width = 320; // TODO where to get this?
-	$: right = $ui.expandSecondaryNav ? marquee_width : 0;
+	$: right = $expandSecondaryNav ? marquee_width : 0;
 </script>
 
 <button
 	class="icon-button"
-	class:expanded={$ui.expandSecondaryNav}
+	class:expanded={$expandSecondaryNav}
 	style="transform: translate3d({right}px, 0, 0)"
 	aria-label="toggle marquee"
-	on:click={ui.toggleSecondaryNav}
+	on:click={toggleSecondaryNav}
 >
 	<div class="content">⚆</div>
 </button>

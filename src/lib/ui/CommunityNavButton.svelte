@@ -8,9 +8,9 @@
 	import {getApp} from '$lib/ui/app';
 	import {toUrl} from '$lib/vocab/persona/constants';
 
-	const {ui} = getApp();
-
-	const {selectedSpace} = ui;
+	const {
+		ui: {selectedSpace},
+	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
 	// could `ui` be more composable, so it could be easily reused e.g. in docs for demonstration purposes?

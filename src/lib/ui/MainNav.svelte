@@ -19,43 +19,51 @@
 	// Maybe use `window.matchMedia` and store in `ui`:
 	// https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia
 
-	const {ui, api} = getApp();
+	const {
+		ui: {
+			mainNavView,
+			expandMainNav,
+			setMainNavView,
+			selectedSpace,
+			selectedPersona: selectedPersonaStore,
+			selectedCommunity: selectedCommunityStore,
+		},
+		api,
+	} = getApp();
 
-	const {selectedPersona: selectedPersonaStore, selectedCommunity: selectedCommunityStore} = ui;
 	$: selectedPersona = $selectedPersonaStore!; // TODO type?
 	$: selectedCommunity = $selectedCommunityStore;
-	$: selectedSpace = ui.selectedSpace;
 
 	// TODO refactor to some client view-model for the account
 	$: selectedPersonaName = $selectedPersona?.name || GUEST_PERSONA_NAME;
 	$: hue = randomHue(selectedPersonaName);
 </script>
 
-{#if $ui.expandMainNav}
-	<div class="main-nav-bg" on:click={() => ($ui.expandMainNav ? api.toggleMainNav() : null)} />
+{#if $expandMainNav}
+	<div class="main-nav-bg" on:click={() => ($expandMainNav ? api.toggleMainNav() : null)} />
 {/if}
-<div class="main-nav-panel" class:expanded={$ui.expandMainNav} style="--hue: {hue}">
+<div class="main-nav-panel" class:expanded={$expandMainNav} style="--hue: {hue}">
 	<div class="main-nav">
 		<div class="header">
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
 			<button
-				on:click={() => ui.setMainNavView('explorer')}
-				class:selected={$ui.mainNavView === 'explorer'}
+				on:click={() => setMainNavView('explorer')}
+				class:selected={$mainNavView === 'explorer'}
 				class="explorer-button"
 			>
 				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
 			</button>
 			<button
-				on:click={() => ui.setMainNavView('account')}
-				class:selected={$ui.mainNavView === 'account'}
+				on:click={() => setMainNavView('account')}
+				class:selected={$mainNavView === 'account'}
 				class="account-button"
 			>
 				<!-- TODO `icons.dotDotDot` -->
 				{icons.bulletPoint}{icons.bulletPoint}{icons.bulletPoint}
 			</button>
 		</div>
-		{#if $ui.mainNavView === 'explorer'}
+		{#if $mainNavView === 'explorer'}
 			<div class="explorer">
 				<CommunityNav />
 				{#if selectedCommunity && $selectedCommunity}
@@ -66,7 +74,7 @@
 					/>
 				{/if}
 			</div>
-		{:else if $ui.mainNavView === 'account'}
+		{:else if $mainNavView === 'account'}
 			<Markup>
 				<AccountForm guest={$session.guest} logIn={api.logIn} logOut={api.logOut} />
 			</Markup>

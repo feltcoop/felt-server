@@ -7,11 +7,11 @@
 	import MembershipInputItem from '$lib/ui/MembershipInputItem.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {ui} = getApp();
+	const {
+		ui: {personas},
+	} = getApp();
 
 	export let community: Community;
-
-	const {personas} = ui;
 
 	let opened = false;
 

@@ -5,12 +5,13 @@
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
 
-	const {api, ui} = getApp();
+	const {
+		api,
+		ui: {selectedPersonaId},
+	} = getApp();
 
 	let opened = false;
 	let name = '';
-
-	const {selectedPersonaId} = ui;
 
 	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {

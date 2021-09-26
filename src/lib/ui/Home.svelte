@@ -8,7 +8,9 @@
 	import type {Community} from '$lib/vocab/community/community';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
-	const {ui} = getApp();
+	const {
+		ui: {selectedSpace},
+	} = getApp();
 
 	export let community: Community;
 	export let space: Space;
@@ -18,8 +20,6 @@
 	// TODO refactor to be normalized
 	// this will also fix the UX issue where `spaces` aren't available for SSR, so they pop in
 	$: spaces = community?.spaces || [];
-
-	$: selectedSpace = ui.selectedSpace;
 </script>
 
 <Markup>

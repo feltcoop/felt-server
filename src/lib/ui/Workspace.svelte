@@ -6,19 +6,19 @@
 	import MarqueeButton from '$lib/ui/MarqueeButton.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {ui, api} = getApp();
+	const {
+		ui: {expandSecondaryNav, selectedSpace, selectedCommunity: selectedCommunityStore},
+		api,
+	} = getApp();
 
-	const {selectedCommunity: selectedCommunityStore} = ui;
 	$: selectedCommunity = $selectedCommunityStore;
-
-	$: selectedSpace = ui.selectedSpace;
 </script>
 
 <div class="workspace">
-	{#if $ui.expandSecondaryNav}
+	{#if $expandSecondaryNav}
 		<div
 			class="marquee-bg"
-			on:click={() => ($ui.expandSecondaryNav ? api.toggleSecondaryNav() : null)}
+			on:click={() => ($expandSecondaryNav ? api.toggleSecondaryNav() : null)}
 		/>
 	{/if}
 	<div class="column">
@@ -32,7 +32,7 @@
 		<MarqueeButton />
 	</div>
 	<!-- TODO extract to some shared abstractions with the `Luggage` probably -->
-	{#if $ui.expandSecondaryNav && selectedCommunity && $selectedSpace}
+	{#if $expandSecondaryNav && selectedCommunity && $selectedSpace}
 		<div class="marquee">
 			<Marquee community={$selectedCommunity} space={$selectedSpace} />
 		</div>

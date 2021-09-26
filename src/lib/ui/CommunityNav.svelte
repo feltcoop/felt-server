@@ -8,9 +8,15 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 
-	const {ui} = getApp();
-
-	const {sessionPersonas, selectedPersona, selectedCommunity, communitiesByPersonaId} = ui;
+	const {
+		ui: {
+			sessionPersonas,
+			selectedPersona,
+			selectedCommunity,
+			communitiesByPersonaId,
+			selectPersona,
+		},
+	} = getApp();
 
 	// TODO improve the efficiency of this with better data structures and caching
 	const toPersonaCommunity = (persona: Persona): Readable<Community> =>
@@ -30,7 +36,7 @@
 				{persona}
 				selected={persona === $selectedPersona &&
 					toPersonaCommunity(get(persona)) === $selectedCommunity}
-				selectPersona={ui.selectPersona}
+				{selectPersona}
 			/>
 			{#each $communitiesByPersonaId[get(persona).persona_id] as community (community)}
 				{#if get(community).name !== get(persona).name}
@@ -38,7 +44,7 @@
 						{community}
 						{persona}
 						selected={persona === $selectedPersona && community === $selectedCommunity}
-						selectPersona={ui.selectPersona}
+						{selectPersona}
 					/>
 				{/if}
 			{/each}
