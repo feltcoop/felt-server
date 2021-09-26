@@ -38,11 +38,7 @@ export interface Ui {
 	addSpace: (space: Space, community_id: number) => void;
 	addFile: (file: File) => void;
 	setFiles: (space_id: number, files: File[]) => void;
-	// TODO experimental api -- returning stores as lazily created live queries,
-	// and part of the current behavior is that the queries themselves aren't stores that change,
-	// but the queries return stores for their values, which may be slices of values cached elsewhere
-	// findPersonasByIdByCommunity: (community_id: number) => Readable<Map<number, Persona>>;
-	getFilesBySpace: (space_id: number) => Writable<Writable<File>[]>; // keep as `get`? `filter`? `query`? something else?
+	getFilesBySpace: (space_id: number) => Writable<Writable<File>[]>;
 	findPersonaById: (persona_id: number) => Readable<Persona>;
 	// derived state
 	selectedPersonaId: Readable<number | null>;
