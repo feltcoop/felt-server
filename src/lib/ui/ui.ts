@@ -110,13 +110,6 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		([$selectedPersonaId, $personasById]) =>
 			($selectedPersonaId && $personasById.get($selectedPersonaId)) || null,
 	);
-	const selectedCommunityId = writable<number | null>(null);
-	const selectedCommunity = derived(
-		[state, selectedCommunityId],
-		// TODO lookup from `communitiesById` map instead
-		([$ui, $selectedCommunityId]) =>
-			$ui.communities.find((c) => c.community_id === $selectedCommunityId) || null,
-	);
 	// TODO should these be store references instead of ids?
 	// TODO maybe make this a lazy map, not a derived store?
 	const selectedCommunityIdByPersona = writable<{[key: number]: number}>(
@@ -127,6 +120,17 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 				return [$persona.persona_id, ($persona.community_ids && $persona.community_ids[0]) ?? null];
 			}),
 		),
+	);
+	const selectedCommunityId = derived(
+		[selectedPersonaId, selectedCommunityIdByPersona],
+		([$selectedPersonaId, $selectedCommunityIdByPersona]) =>
+			$selectedPersonaId && $selectedCommunityIdByPersona[$selectedPersonaId],
+	);
+	const selectedCommunity = derived(
+		[state, selectedCommunityId],
+		// TODO lookup from `communitiesById` map instead
+		([$ui, $selectedCommunityId]) =>
+			$ui.communities.find((c) => c.community_id === $selectedCommunityId) || null,
 	);
 	const selectedSpace = derived(
 		[state, selectedCommunity],
@@ -173,7 +177,6 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 				selectedPersonaId.set(null);
 			}
 
-			selectedCommunityId.set(updated.communities[0]?.community_id || null);
 			selectedCommunityIdByPersona.set(
 				// TODO copypasta from above
 				Object.fromEntries(
@@ -303,13 +306,10 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		selectPersona: (persona_id) => {
 			console.log('[ui.selectPersona] persona_id', {persona_id});
 			selectedPersonaId.set(persona_id);
-			// TODO looks like `selectedCommunityId` should be derived from `selectedCommunityIdByPersona`
-			selectedCommunityId.set(get(selectedCommunityIdByPersona)[persona_id]);
 		},
 		selectCommunity: (community_id) => {
 			console.log('[ui.selectCommunity] community_id', {community_id});
 			const $selectedPersonaId = get(selectedPersonaId); // TODO how to remove the `!`?
-			selectedCommunityId.set(community_id);
 			if (community_id && $selectedPersonaId) {
 				selectedCommunityIdByPersona.update(($selectedCommunityIdByPersona) => ({
 					...$selectedCommunityIdByPersona,
