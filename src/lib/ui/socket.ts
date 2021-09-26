@@ -38,12 +38,7 @@ export interface HandleSocketMessage {
 }
 
 export const toSocketStore = (handleMessage: HandleSocketMessage): SocketStore => {
-	const {subscribe, update} = writable<SocketState>(toDefaultSocketState(), () => {
-		console.log('[socket] listen store');
-		return () => {
-			console.log('[socket] unlisten store');
-		};
-	});
+	const {subscribe, update} = writable<SocketState>(toDefaultSocketState());
 
 	const createWebSocket = (url: string): WebSocket => {
 		const ws = new WebSocket(url);
