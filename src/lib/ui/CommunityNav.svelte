@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {get} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 
 	import type {Community} from '$lib/vocab/community/community.js';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
@@ -12,8 +13,8 @@
 	const {sessionPersonas, selectedPersona, selectedCommunity, communitiesByPersonaId} = ui;
 
 	// TODO improve the efficiency of this with better data structures and caching
-	const toPersonaCommunity = (persona: Persona): Community =>
-		$communitiesByPersonaId[persona.persona_id].find((c) => c.name === persona.name)!;
+	const toPersonaCommunity = (persona: Persona): Readable<Community> =>
+		$communitiesByPersonaId[persona.persona_id].find((c) => get(c).name === persona.name)!;
 </script>
 
 <div class="community-nav">
@@ -31,8 +32,8 @@
 					toPersonaCommunity(get(persona)) === $selectedCommunity}
 				selectPersona={ui.selectPersona}
 			/>
-			{#each $communitiesByPersonaId[get(persona).persona_id] as community (community.community_id)}
-				{#if community.name !== get(persona).name}
+			{#each $communitiesByPersonaId[get(persona).persona_id] as community (community)}
+				{#if get(community).name !== get(persona).name}
 					<CommunityNavButton
 						{community}
 						{persona}

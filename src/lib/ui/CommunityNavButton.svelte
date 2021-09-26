@@ -16,12 +16,9 @@
 	// could `ui` be more composable, so it could be easily reused e.g. in docs for demonstration purposes?
 
 	export let persona: Readable<Persona>;
-	export let community: Community;
+	export let community: Readable<Community>;
 	export let selected: boolean = false;
 
-	// export let communitiesByPersonaId: {
-	// 	[persona_id: number]: Community[];
-	// };
 	// TODO this is causing a double state change (rendering an invalid in between state)
 	// because it's both navigating and setting state internally in the same user action
 	// TODO should this be an event?
@@ -30,20 +27,20 @@
 	// TODO should `$ui.spaces` be a prop like the rest?
 	// TODO speed this up with better caching data structures
 	$: selectedSpace =
-		$ui.spaces.find((s) => s.space_id === $selectedSpaceIdByCommunity[community.community_id]) ||
+		$ui.spaces.find((s) => s.space_id === $selectedSpaceIdByCommunity[$community.community_id]) ||
 		null;
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
 <a
 	class="community"
-	href="/{community.name}{toUrl(selectedSpace && selectedSpace.url)}"
+	href="/{$community.name}{toUrl(selectedSpace && selectedSpace.url)}"
 	class:selected
-	class:persona={community.name === $persona.name}
-	style="--hue: {randomHue(community.name)}"
+	class:persona={$community.name === $persona.name}
+	style="--hue: {randomHue($community.name)}"
 	on:click={() => selectPersona($persona.persona_id)}
 >
-	<ActorIcon name={community.name} />
+	<ActorIcon name={$community.name} />
 </a>
 
 <style>

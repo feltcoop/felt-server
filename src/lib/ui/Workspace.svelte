@@ -8,7 +8,9 @@
 
 	const {ui, api} = getApp();
 
-	$: selectedCommunity = ui.selectedCommunity;
+	const {selectedCommunity: selectedCommunityStore} = ui;
+	$: selectedCommunity = $selectedCommunityStore;
+
 	$: selectedSpace = ui.selectedSpace;
 </script>
 
@@ -20,16 +22,17 @@
 		/>
 	{/if}
 	<div class="column">
-		<WorkspaceHeader space={$selectedSpace} community={$selectedCommunity} />
-		{#if $selectedCommunity && $selectedSpace}
+		<!-- TODO pass stores here instead of dereferncing -->
+		<WorkspaceHeader space={$selectedSpace} community={selectedCommunity} />
+		{#if selectedCommunity && $selectedSpace}
 			<SpaceView community={$selectedCommunity} space={$selectedSpace} />
-		{:else if $selectedCommunity}
+		{:else if selectedCommunity}
 			<SpaceInput community={$selectedCommunity}>Create a new space</SpaceInput>
 		{/if}
 		<MarqueeButton />
 	</div>
 	<!-- TODO extract to some shared abstractions with the `Luggage` probably -->
-	{#if $ui.expandSecondaryNav && $selectedCommunity && $selectedSpace}
+	{#if $ui.expandSecondaryNav && selectedCommunity && $selectedSpace}
 		<div class="marquee">
 			<Marquee community={$selectedCommunity} space={$selectedSpace} />
 		</div>

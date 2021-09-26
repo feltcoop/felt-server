@@ -21,9 +21,9 @@
 
 	const {ui, api} = getApp();
 
-	const selectedPersonaStore = ui.selectedPersona;
+	const {selectedPersona: selectedPersonaStore, selectedCommunity: selectedCommunityStore} = ui;
 	$: selectedPersona = $selectedPersonaStore!; // TODO type?
-	$: selectedCommunity = ui.selectedCommunity;
+	$: selectedCommunity = $selectedCommunityStore;
 	$: selectedSpace = ui.selectedSpace;
 
 	// TODO refactor to some client view-model for the account
@@ -58,7 +58,7 @@
 		{#if $ui.mainNavView === 'explorer'}
 			<div class="explorer">
 				<CommunityNav />
-				{#if $selectedCommunity}
+				{#if selectedCommunity && $selectedCommunity}
 					<SpaceNav
 						community={$selectedCommunity}
 						spaces={$selectedCommunity.spaces}

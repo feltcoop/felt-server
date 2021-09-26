@@ -27,7 +27,6 @@ export const setUi = (store: UiStore): UiStore => {
 };
 
 export interface UiState {
-	communities: Community[];
 	memberships: Membership[]; // TODO needs to be used, currently only gets populated when a new membership is created
 	spaces: Space[];
 	filesBySpace: Record<number, File[]>;
@@ -42,6 +41,7 @@ export interface UiStore {
 	// TODO this is actually a writable as implemented, but with the type do we care?
 	// or do we want to protect the API from being called in unexpected ways?
 	account: Readable<AccountModel | null>;
+	communities: Readable<Readable<Community>[]>;
 	personas: Readable<Readable<Persona>[]>;
 	personasById: Readable<Map<number, Readable<Persona>>>;
 	sessionPersonas: Readable<Readable<Persona>[]>;
@@ -60,10 +60,10 @@ export interface UiStore {
 	selectedPersona: Readable<Readable<Persona> | null>;
 	selectedCommunityIdByPersona: Readable<{[key: number]: number}>;
 	selectedCommunityId: Readable<number | null>;
-	selectedCommunity: Readable<Community | null>;
+	selectedCommunity: Readable<Readable<Community> | null>;
 	selectedSpaceIdByCommunity: Readable<{[key: number]: number | null}>;
 	selectedSpace: Readable<Space | null>;
-	communitiesByPersonaId: Readable<{[persona_id: number]: Community[]}>; // TODO or name `personaCommunities`?
+	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	// methods
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
@@ -111,6 +111,7 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		([$selectedPersonaId, $personasById]) =>
 			($selectedPersonaId && $personasById.get($selectedPersonaId)) || null,
 	);
+
 	// TODO should these be store references instead of ids?
 	// TODO maybe make this a lazy map, not a derived store?
 	const selectedCommunityIdByPersona = writable<{[key: number]: number}>(
@@ -122,16 +123,19 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 			}),
 		),
 	);
+	const communities = writable<Writable<Community>[]>(
+		initialSession.guest ? [] : initialSession.communities.map((p) => writable(p)),
+	);
 	const selectedCommunityId = derived(
 		[selectedPersonaId, selectedCommunityIdByPersona],
 		([$selectedPersonaId, $selectedCommunityIdByPersona]) =>
 			$selectedPersonaId && $selectedCommunityIdByPersona[$selectedPersonaId],
 	);
 	const selectedCommunity = derived(
-		[state, selectedCommunityId],
+		[communities, selectedCommunityId],
 		// TODO lookup from `communitiesById` map instead
-		([$ui, $selectedCommunityId]) =>
-			$ui.communities.find((c) => c.community_id === $selectedCommunityId) || null,
+		([$communities, $selectedCommunityId]) =>
+			$communities.find((c) => get(c).community_id === $selectedCommunityId) || null,
 	);
 	// TODO do we care about making this reactive to new communities, or is `undefined` ok?
 	const selectedSpaceIdByCommunity = writable<{[key: number]: number | null}>(
@@ -148,22 +152,26 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		[selectedCommunity, selectedSpaceIdByCommunity],
 		([$selectedCommunity, $selectedSpaceIdByCommunity]) =>
 			// TODO faster lookup
-			$selectedCommunity?.spaces.find(
-				(s) => s.space_id === $selectedSpaceIdByCommunity[$selectedCommunity.community_id],
-			) || null,
+			($selectedCommunity &&
+				get($selectedCommunity).spaces.find(
+					(s) => s.space_id === $selectedSpaceIdByCommunity[get($selectedCommunity)!.community_id],
+				)) ||
+			null,
 	);
-	const communitiesByPersonaId = derived([state, sessionPersonas], ([$ui, $sessionPersonas]) =>
-		$sessionPersonas.reduce((result, persona) => {
-			// TODO refactor this to be reactive
-			const $persona = get(persona);
-			// TODO speed up this lookup, probably with a map of all communities by id
-			result[$persona.persona_id] = $ui.communities.filter(
-				(community) =>
-					// TODO why no `community_ids`?
-					$persona.community_ids && $persona.community_ids.includes(community.community_id),
-			);
-			return result;
-		}, {} as {[persona_id: number]: Community[]}),
+	const communitiesByPersonaId = derived(
+		[communities, sessionPersonas],
+		([$communities, $sessionPersonas]) =>
+			$sessionPersonas.reduce((result, persona) => {
+				// TODO refactor this to be reactive
+				const $persona = get(persona);
+				// TODO speed up this lookup, probably with a map of all communities by id
+				result[$persona.persona_id] = $communities.filter(
+					(community) =>
+						// TODO why no `community_ids`?
+						$persona.community_ids && $persona.community_ids.includes(get(community).community_id),
+				);
+				return result;
+			}, {} as {[persona_id: number]: Readable<Community>[]}),
 	);
 
 	const store: UiStore = {
@@ -172,9 +180,9 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		personas,
 		personasById,
 		sessionPersonas,
+		communities,
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
-			const updated = toDefaultUiState(session);
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
 			account.set(session.guest ? null : session.account);
 			personas.set(session.guest ? [] : toInitialPersonas(session).map((p) => writable(p)));
@@ -190,6 +198,7 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 				selectedPersonaId.set(null);
 			}
 
+			communities.set(session.guest ? [] : session.communities.map((p) => writable(p)));
 			selectedCommunityIdByPersona.set(
 				// TODO copypasta from above
 				Object.fromEntries(
@@ -205,12 +214,14 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 			);
 			selectedSpaceIdByCommunity.set(
 				// TODO copypasta from above
-				Object.fromEntries(
-					updated.communities.map((community) => [
-						community.community_id,
-						community.spaces[0]?.space_id ?? null,
-					]),
-				),
+				session.guest
+					? {}
+					: Object.fromEntries(
+							session.communities.map((community) => [
+								community.community_id,
+								community.spaces[0]?.space_id ?? null,
+							]),
+					  ),
 			);
 		},
 		addPersona: (persona) => {
@@ -235,10 +246,8 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 				}));
 				console.log('updated persona community ids', get(persona));
 			}
-			update(($ui) => ({
-				...$ui,
-				communities: $ui.communities.concat(community),
-			}));
+			const communityStore = writable(community);
+			communities.update(($communities) => $communities.concat(communityStore));
 		},
 		addMembership: (membership) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
@@ -252,17 +261,14 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 		addSpace: (space, community_id) => {
 			// TODO instead of this, probably want to set more granularly with nested stores
 			console.log('[data.addSpace]', space);
+			const communityStore = get(communities).find((c) => get(c).community_id === community_id);
+			communityStore?.update((community) => ({
+				...community,
+				spaces: community.spaces.concat(space), // TODO should this check if it's already there?
+			}));
 			update(($ui) => ({
 				...$ui,
 				spaces: $ui.spaces.concat(space),
-				communities: $ui.communities.map((community) =>
-					community.community_id !== community_id
-						? community
-						: {
-								...community,
-								spaces: community.spaces.concat(space),
-						  },
-				),
 			}));
 		},
 		addFile: (file) => {
@@ -338,7 +344,6 @@ export const toUiStore = (session: Readable<ClientSession>): UiStore => {
 const toDefaultUiState = (session: ClientSession): UiState => {
 	const {guest} = session;
 	return {
-		communities: guest ? [] : session.communities,
 		memberships: guest ? [] : [], // TODO should be on session
 		spaces: guest ? [] : session.communities.flatMap((community) => community.spaces), // TODO return flat from server
 		filesBySpace: {},

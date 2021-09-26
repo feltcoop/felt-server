@@ -9,6 +9,7 @@
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {page} from '$app/stores';
 	import {browser} from '$app/env';
+	import {get} from 'svelte/store';
 
 	import {setSocket, toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
@@ -38,7 +39,8 @@
 	const app = setApp({ui, api, devmode, socket});
 	browser && console.log('app', app);
 
-	const {account, sessionPersonas, selectedCommunityId, selectedSpaceIdByCommunity} = ui;
+	const {account, sessionPersonas, communities, selectedCommunityId, selectedSpaceIdByCommunity} =
+		ui;
 
 	$: ui.setSession($session);
 
@@ -49,8 +51,10 @@
 	$: updateStateFromPageParams($page.params);
 	const updateStateFromPageParams = (params: {community?: string; space?: string}) => {
 		if (!params.community) return;
-		const community = $ui.communities.find((c) => c.name === params.community);
-		if (!community) return; // occurs when a session routes to a community they can't access
+		// TODO speed this up with a map of communities by name
+		const communityStore = $communities.find((c) => get(c).name === params.community);
+		if (!communityStore) return; // occurs when a session routes to a community they can't access
+		const community = get(communityStore);
 		const {community_id} = community;
 		if (community_id !== $selectedCommunityId) {
 			ui.selectCommunity(community_id);
