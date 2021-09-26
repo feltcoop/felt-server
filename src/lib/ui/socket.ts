@@ -42,11 +42,7 @@ export const toSocketStore = (handleMessage: HandleSocketMessage): SocketStore =
 		console.log('[socket] listen store');
 		return () => {
 			console.log('[socket] unlisten store');
-			unsubscribe();
 		};
-	});
-	const unsubscribe = subscribe((value) => {
-		console.log('[socket] store subscriber', value);
 	});
 
 	const createWebSocket = (url: string): WebSocket => {
