@@ -1,7 +1,9 @@
 <script lang="ts">
+	import type {ActorType} from '$lib/vocab/actor/actor';
+
 	export let icon: string | null = null;
 	export let name: string;
-	export let type: 'persona' | 'community' = 'persona';
+	export let type: ActorType = 'persona';
 </script>
 
 {#if icon}

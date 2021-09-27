@@ -5,6 +5,7 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 	import {toUrl} from '$lib/vocab/persona/constants';
+	import type {ActorType} from '$lib/vocab/actor/actor';
 
 	const {data} = getApp();
 
@@ -31,7 +32,7 @@
 
 	$: personaCommunity = community.name === persona.name;
 
-	let type: 'persona' | 'community'; // TODO extract type where?
+	let type: ActorType; // TODO extract type where?
 	$: type = personaCommunity ? 'persona' : 'community';
 </script>
 
