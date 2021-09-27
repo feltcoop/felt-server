@@ -13,12 +13,6 @@
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
-	// TODO when the `SpaceNav` is clicked for navigation,
-	// it should call `api.toggleMainNav` on the mobile view.
-	// Main thing to figure out is how to make JS check if we're in mobile or not.
-	// Maybe use `window.matchMedia` and store in `ui`:
-	// https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia
-
 	const {data, ui, api} = getApp();
 
 	$: allPersonas = $data.allPersonas;
@@ -114,20 +108,17 @@
 		/* TODO from felt */
 		background-color: rgba(0, 0, 0, 0.4);
 	}
-	/* `50rem` in media queries is the same as `800px`, which is `--column_width` */
-	@media (max-width: 50rem) {
-		.main-nav {
-			position: fixed;
-			left: 0;
-			top: 0;
-		}
-		.main-nav-bg {
-			display: block;
-			animation: fade-in var(--transition_duration_xl) ease-out;
-		}
-		.main-nav-panel.expanded {
-			width: 0;
-		}
+	:global(.mobile) .main-nav {
+		position: fixed;
+		left: 0;
+		top: 0;
+	}
+	:global(.mobile) .main-nav-bg {
+		display: block;
+		animation: fade-in var(--transition_duration_xl) ease-out;
+	}
+	:global(.mobile) .main-nav-panel.expanded {
+		width: 0;
 	}
 	.header {
 		display: flex;

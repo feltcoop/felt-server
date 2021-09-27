@@ -1,6 +1,7 @@
 import type {Readable} from 'svelte/store';
 import {writable, derived} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
+
 import type {DataState, DataStore} from '$lib/ui/data';
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
@@ -35,12 +36,15 @@ export interface UiState {
 
 export interface UiStore {
 	subscribe: Readable<UiState>['subscribe'];
+	// state
 	// derived state
 	selectedPersona: Readable<Persona | null>;
 	selectedCommunity: Readable<Community | null>;
 	selectedSpace: Readable<Space | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Community[]}>; // TODO or name `personaCommunities`?
-	// methods
+	// methods and stores
+	mobile: Readable<boolean>;
+	setMobile: (mobile: boolean) => void;
 	updateData: (data: DataState) => void;
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
@@ -50,10 +54,12 @@ export interface UiStore {
 	setMainNavView: (mainNavView: MainNavView) => void;
 }
 
-export const toUiStore = (data: DataStore): UiStore => {
-	const state = writable<UiState>(toDefaultUiState());
+export const toUiStore = (data: DataStore, mobile: boolean) => {
+	const state = writable<UiState>(toDefaultUiState(mobile));
 
 	const {subscribe, update} = state;
+
+	const {subscribe: subscribeMobile, set: setMobile} = writable(mobile);
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -90,7 +96,9 @@ export const toUiStore = (data: DataStore): UiStore => {
 		selectedCommunity,
 		selectedSpace,
 		communitiesByPersonaId,
-		// methods
+		// methods and stores
+		mobile: {subscribe: subscribeMobile}, // don't expose the writable store
+		setMobile,
 		updateData: (data) => {
 			console.log('[ui.updateData]', {data});
 			update(($ui) => {
@@ -193,14 +201,14 @@ export const toUiStore = (data: DataStore): UiStore => {
 	return store;
 };
 
-const toDefaultUiState = (): UiState => ({
+const toDefaultUiState = (mobile: boolean): UiState => ({
+	expandMainNav: !mobile,
+	expandSecondaryNav: !mobile,
+	mainNavView: 'explorer',
 	selectedPersonaId: null,
 	selectedCommunityId: null,
 	selectedCommunityIdByPersona: {},
 	selectedSpaceIdByCommunity: {},
-	expandMainNav: true,
-	expandSecondaryNav: true, // TODO default to `false` for mobile -- how?
-	mainNavView: 'explorer',
 });
 
 export type MainNavView = 'explorer' | 'account';

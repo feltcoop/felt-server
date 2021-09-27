@@ -36,10 +36,10 @@ export const readCommunitiesService: Service<
 		const {db} = server;
 		const findCommunitiesResult = await db.repos.community.filterByAccount(account_id);
 		if (findCommunitiesResult.ok) {
-			return {status: 200, value: {communities: findCommunitiesResult.value}};
+			return {ok: true, status: 200, value: {communities: findCommunitiesResult.value}};
 		} else {
 			console.log('[read_communities] error searching for communities');
-			return {status: 500, value: {reason: 'error searching for communities'}};
+			return {ok: false, status: 500, reason: 'error searching for communities'};
 		}
 	},
 };
@@ -78,11 +78,12 @@ export const readCommunityService: Service<
 
 		const findCommunityResult = await db.repos.community.findById(params.community_id);
 		if (findCommunityResult.ok) {
-			return {status: 200, value: {community: findCommunityResult.value}};
+			return {ok: true, status: 200, value: {community: findCommunityResult.value}};
 		} else {
 			return {
+				ok: false,
 				status: findCommunityResult.type === 'no_community_found' ? 404 : 500,
-				value: {reason: findCommunityResult.reason},
+				reason: findCommunityResult.reason,
 			};
 		}
 	},
@@ -121,7 +122,11 @@ export const createCommunityService: Service<
 	perform: async ({server, params, account_id}) => {
 		if (!params.name) {
 			// TODO declarative validation
-			return {status: 400, value: {reason: 'invalid name'}};
+			return {
+				ok: false,
+				status: 400,
+				reason: 'invalid name',
+			};
 		}
 		console.log('created community account_id', account_id);
 		// TODO validate that `account_id` is `persona_id`
@@ -136,6 +141,7 @@ export const createCommunityService: Service<
 				console.log('community_id', community_id);
 				console.log('communityData', communityData);
 				return {
+					ok: true,
 					status: 200,
 					value: {
 						community: communityData.value.find((c) => c.community_id === community_id)!,
@@ -143,11 +149,19 @@ export const createCommunityService: Service<
 				}; // TODO API types
 			} else {
 				console.log('[create_community] error retrieving community data');
-				return {status: 500, value: {reason: 'error retrieving community data'}};
+				return {
+					ok: false,
+					status: 500,
+					reason: 'error retrieving community data',
+				};
 			}
 		} else {
 			console.log('[create_community] error creating community');
-			return {status: 500, value: {reason: 'error creating community'}};
+			return {
+				ok: false,
+				status: 500,
+				reason: 'error creating community',
+			};
 		}
 	},
 };
@@ -186,10 +200,10 @@ export const createMembershipService: Service<
 
 		const createMembershipResult = await server.db.repos.membership.create(params);
 		if (createMembershipResult.ok) {
-			return {status: 200, value: {membership: createMembershipResult.value}};
+			return {ok: true, status: 200, value: {membership: createMembershipResult.value}};
 		} else {
 			console.log('[create_membership] error creating membership');
-			return {status: 500, value: {reason: 'error creating membership'}};
+			return {ok: false, status: 500, reason: 'error creating membership'};
 		}
 	},
 };

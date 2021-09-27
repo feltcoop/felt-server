@@ -26,12 +26,25 @@
 	import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 
-	// TODO some of this shouldn't run during SSR, see the `onMount` function below
+	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
+	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
+	if (browser) {
+		// TODO to let the user override with their own preferred mobile setting,
+		// which I could see wanting to do for various reasons including in `devmode`,
+		// we need to either branch logic here, or have a different derived `media` value
+		// that only reads this default value when the user has no override.
+		const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_WIDTH})`);
+		initialMobileValue = mediaQuery.matches;
+		mediaQuery.onchange = (e) => ui.setMobile(e.matches);
+	}
+
 	const devmode = setDevmode();
 	const data = setData($session);
 	$: data.updateSession($session);
 	const socket = setSocket(toSocketStore((data) => websocketApiClient.handle(data)));
-	const ui = setUi(toUiStore(data));
+	const ui = setUi(toUiStore(data, initialMobileValue));
+	const mobile = ui.mobile;
+
 	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
 	// TODO create only the websocket client, not the http client
 	const websocketApiClient = toWebsocketApiClient<ServicesParamsMap, ServicesResultMap>(
@@ -44,6 +57,8 @@
 
 	$: guest = $session.guest;
 	$: onboarding = !$session.guest && !$data.personas.length;
+
+	$: console.log('$ui', $ui);
 
 	// TODO refactor -- where should this logic go?
 	$: updateStateFromPageParams($page.params);
@@ -82,7 +97,7 @@
 	<link rel="shortcut icon" href="/favicon.png" />
 </svelte:head>
 
-<div class="layout">
+<div class="layout" class:mobile={$mobile}>
 	{#if !guest && !onboarding}
 		<Luggage />
 		<MainNav />

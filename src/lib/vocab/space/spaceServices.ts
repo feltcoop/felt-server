@@ -38,12 +38,13 @@ export const readSpaceService: Service<
 
 		const findSpaceResult = await db.repos.space.findById(params.space_id);
 		if (findSpaceResult.ok) {
-			return {status: 200, value: {space: findSpaceResult.value}};
+			return {ok: true, status: 200, value: {space: findSpaceResult.value}};
 		} else {
 			console.log('[read_space] no space found');
 			return {
+				ok: false,
 				status: findSpaceResult.type === 'no_space_found' ? 404 : 500,
-				value: {reason: findSpaceResult.reason},
+				reason: findSpaceResult.reason,
 			};
 		}
 	},
@@ -83,10 +84,10 @@ export const readSpacesService: Service<
 
 		const findSpacesResult = await db.repos.space.filterByCommunity(params.community_id);
 		if (findSpacesResult.ok) {
-			return {status: 200, value: {spaces: findSpacesResult.value}};
+			return {ok: true, status: 200, value: {spaces: findSpacesResult.value}};
 		} else {
 			console.log('[read_spaces] error searching for community spaces');
-			return {status: 500, value: {reason: 'error searching for community spaces'}};
+			return {ok: false, status: 500, reason: 'error searching for community spaces'};
 		}
 	},
 };
@@ -139,21 +140,21 @@ export const createSpaceService: Service<
 
 		if (!findByCommunityUrlResult.ok) {
 			console.log('[create_space] error validating unique url for new space');
-			return {ok: false, status: 500, value: {reason: 'error validating unique url for new space'}};
+			return {ok: false, status: 500, reason: 'error validating unique url for new space'};
 		}
 
 		if (findByCommunityUrlResult.value) {
 			console.log('[create_space] provided url for space already exists');
-			return {ok: false, status: 409, value: {reason: 'a space with that url already exists'}};
+			return {ok: false, status: 409, reason: 'a space with that url already exists'};
 		}
 
 		console.log('[create_space] creating space for community', params.community_id);
 		const createSpaceResult = await db.repos.space.create(params);
 		if (createSpaceResult.ok) {
-			return {status: 200, value: {space: createSpaceResult.value}};
+			return {ok: true, status: 200, value: {space: createSpaceResult.value}};
 		} else {
 			console.log('[create_space] error searching for community spaces');
-			return {ok: false, status: 500, value: {reason: 'error searching for community spaces'}};
+			return {ok: false, status: 500, reason: 'error searching for community spaces'};
 		}
 	},
 };

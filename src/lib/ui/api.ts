@@ -9,7 +9,8 @@ import type {Membership, MembershipParams} from '$lib/vocab/membership/membershi
 import type {File, FileParams} from '$lib/vocab/file/file';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
-import type {ApiClient, ApiResult} from '$lib/ui/ApiClient';
+import type {ApiClient} from '$lib/ui/ApiClient';
+import type {ApiResult} from '$lib/server/api';
 import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
 import type {Persona, PersonaParams} from '$lib/vocab/persona/persona';
 
