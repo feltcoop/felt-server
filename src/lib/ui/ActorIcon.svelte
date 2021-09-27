@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type {ActorType} from '$lib/vocab/actor/actor';
+	import type {EntityType} from '$lib/vocab/entity/entity';
 
 	export let name: string;
 	export let icon: string | null = null;
-	export let type: ActorType = 'persona';
+	export let type: EntityType = 'persona';
 </script>
 
 {#if icon}

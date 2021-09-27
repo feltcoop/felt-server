@@ -5,7 +5,7 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 	import {toUrl} from '$lib/vocab/persona/constants';
-	import type {ActorType} from '$lib/vocab/actor/actor';
+	import type {EntityType} from '$lib/vocab/entity/entity';
 
 	const {data} = getApp();
 
@@ -32,7 +32,7 @@
 
 	$: isPersonaHomeCommunity = community.name === persona.name;
 
-	let type: ActorType;
+	let type: EntityType;
 	$: type = isPersonaHomeCommunity ? 'persona' : 'community';
 </script>
 
