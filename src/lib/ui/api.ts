@@ -3,11 +3,7 @@ import {session} from '$app/stores';
 
 import type {DataStore} from '$lib/ui/data';
 import type {UiStore} from '$lib/ui/ui';
-import type {
-	Community,
-	CommunityParams,
-	HackCommunitySchemaType,
-} from '$lib/vocab/community/community';
+import type {Community, CommunityParams} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Membership, MembershipParams} from '$lib/vocab/membership/membership';
 import type {File, FileParams} from '$lib/vocab/file/file';
