@@ -1,13 +1,14 @@
 <script lang="ts">
-	export let name: string;
 	export let icon: string | null = null;
+	export let name: string;
+	export let type: 'persona' | 'community' = 'persona';
 </script>
 
 {#if icon}
 	<img class="actor-icon" src={icon} alt="icon for {name}" />
 {:else}
 	<div class="actor-icon">
-		{name[0]}
+		{#if type === 'persona'}⚘{:else}⚝{/if}
 	</div>
 {/if}
 

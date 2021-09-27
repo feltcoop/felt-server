@@ -28,6 +28,11 @@
 	$: selectedSpace =
 		$data.spaces.find((s) => s.space_id === selectedSpaceIdByCommunity[community.community_id]) ||
 		null;
+
+	$: personaCommunity = community.name === persona.name;
+
+	let type: 'persona' | 'community'; // TODO extract type where?
+	$: type = personaCommunity ? 'persona' : 'community';
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
@@ -35,11 +40,11 @@
 	class="community"
 	href="/{community.name}{toUrl(selectedSpace && selectedSpace.url)}"
 	class:selected
-	class:persona={community.name === persona.name}
+	class:persona={personaCommunity}
 	style="--hue: {randomHue(community.name)}"
 	on:click={() => selectPersona(persona.persona_id)}
 >
-	<ActorIcon name={community.name} />
+	<ActorIcon name={community.name} {type} />
 </a>
 
 <style>
