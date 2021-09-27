@@ -8,7 +8,11 @@
 	<img class="actor-icon" src={icon} alt="icon for {name}" />
 {:else}
 	<div class="actor-icon">
-		{#if type === 'persona'}⚘{:else}⚝{/if}
+		{#if type === 'persona'}
+			⚘
+		{:else}
+			⚝
+		{/if}
 	</div>
 {/if}
 
