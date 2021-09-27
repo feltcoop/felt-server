@@ -6,8 +6,8 @@
 	import type {Readable} from 'svelte/store';
 
 	export let community: Readable<Community>;
-	export let spaces: Space[];
-	export let selectedSpace: Space | null;
+	export let spaces: Space[]; // TODO array of stores?
+	export let selectedSpace: Readable<Space | null>;
 </script>
 
 <div class="space-nav">
@@ -19,7 +19,7 @@
 	{#each spaces as space (space.space_id)}
 		<a
 			href="/{$community.name}{space.url === '/' ? '' : space.url}"
-			class:selected={space === selectedSpace}
+			class:selected={space === $selectedSpace}
 		>
 			{space.name}
 		</a>

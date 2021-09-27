@@ -20,7 +20,7 @@
 
 	// TODO refactor to be normalized
 	// this will also fix the UX issue where `spaces` aren't available for SSR, so they pop in
-	$: spaces = $community?.spaces || [];
+	$: spaces = $community?.spaces || []; // TODO spacesByCommunity array, probably
 </script>
 
 <Markup>

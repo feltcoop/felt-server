@@ -70,7 +70,7 @@
 					<SpaceNav
 						community={selectedCommunity}
 						spaces={$selectedCommunity.spaces}
-						selectedSpace={$selectedSpace}
+						{selectedSpace}
 					/>
 				{/if}
 			</div>
