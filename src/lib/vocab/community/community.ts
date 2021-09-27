@@ -17,8 +17,9 @@ export const CommunitySchema = Type.Object(
 	{
 		community_id: Type.Number(),
 		name: Type.String(),
-		// spaces: Type.Array({...SpaceSchema, $id: 'CommunitySpaceSchema'}),
-		// memberPersonas: Type.Array({...PersonaSchema, $id: 'CommunityPersonaSchema'}),
+		// TODO this fails because Community circularly references itself via `Vocab`
+		// spaces: Type.Array(Type.Ref(Vocab, {...SpaceSchema, $id: 'CommunitySpaceSchema'})),
+		// memberPersonas: Type.Array(Type.Ref(Vocab, {...PersonaSchema, $id: 'CommunityPersonaSchema'})),
 	},
 	{$id: 'Community', additionalProperties: true}, // TODO `true` is a hack related to the above
 );
