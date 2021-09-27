@@ -54,7 +54,7 @@ const ReadSpacesServiceSchema = Type.Object(
 	{
 		community_id: Type.Number(),
 	},
-	{$id: 'ReadSpacesServiceSchema', additionalProperties: false},
+	{$id: 'ReadSpacesService', additionalProperties: false},
 );
 const ReadSpacesServiceResponse = Type.Object(
 	{

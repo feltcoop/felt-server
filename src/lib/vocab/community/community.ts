@@ -13,7 +13,7 @@ export const CommunitySchema = Type.Object(
 		spaces: Type.Array(SpaceSchema),
 		memberPersonas: Type.Array(PersonaSchema),
 	},
-	{$id: 'CommunitySchema', additionalProperties: true}, // TODO `true` is a hack
+	{$id: 'Community', additionalProperties: true}, // TODO `true` is a hack
 );
 export const validateCommunity = toValidateSchema<Community>(CommunitySchema);
 
