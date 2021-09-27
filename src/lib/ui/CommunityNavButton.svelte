@@ -30,10 +30,10 @@
 		$data.spaces.find((s) => s.space_id === selectedSpaceIdByCommunity[community.community_id]) ||
 		null;
 
-	$: personaCommunity = community.name === persona.name;
+	$: isPersonaHomeCommunity = community.name === persona.name;
 
 	let type: ActorType;
-	$: type = personaCommunity ? 'persona' : 'community';
+	$: type = isPersonaHomeCommunity ? 'persona' : 'community';
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
@@ -41,7 +41,7 @@
 	class="community"
 	href="/{community.name}{toUrl(selectedSpace && selectedSpace.url)}"
 	class:selected
-	class:persona={personaCommunity}
+	class:persona={isPersonaHomeCommunity}
 	style="--hue: {randomHue(community.name)}"
 	on:click={() => selectPersona(persona.persona_id)}
 >
