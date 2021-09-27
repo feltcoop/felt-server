@@ -1,9 +1,11 @@
 <script lang="ts">
 	import type {EntityType} from '$lib/vocab/entity/entity';
 
+	// TODO maybe rename this to `EntityIcon`?
+
 	export let name: string;
 	export let icon: string | null = null;
-	export let type: EntityType = 'persona';
+	export let type: EntityType = 'Persona';
 </script>
 
 {#if icon}
@@ -30,10 +32,10 @@
 		align-items: center;
 		justify-content: center;
 	}
-	div.community {
+	div.Community {
 		border-radius: calc(var(--icon_size) / 4);
 	}
-	div.community:active {
+	div.Community:active {
 		border-radius: calc(var(--icon_size) / 4 + 2px);
 	}
 </style>

@@ -33,7 +33,7 @@
 	$: isPersonaHomeCommunity = community.name === persona.name;
 
 	let type: EntityType;
-	$: type = isPersonaHomeCommunity ? 'persona' : 'community';
+	$: type = isPersonaHomeCommunity ? 'Persona' : 'Community';
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
