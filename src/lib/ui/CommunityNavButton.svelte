@@ -32,7 +32,7 @@
 
 	$: personaCommunity = community.name === persona.name;
 
-	let type: ActorType; // TODO extract type where?
+	let type: ActorType;
 	$: type = personaCommunity ? 'persona' : 'community';
 </script>
 
