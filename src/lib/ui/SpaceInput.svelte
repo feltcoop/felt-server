@@ -2,14 +2,14 @@
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
-	import type {CommunityModel} from '$lib/vocab/community/community.js';
+	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
 	import {spaceTypes} from '$lib/vocab/space/space';
 
 	const {api} = getApp();
 
-	export let community: CommunityModel;
+	export let community: Community;
 
 	let open = false;
 	let newName = '';

@@ -1,11 +1,4 @@
-import type {Result} from '@feltcoop/felt';
-
-import type {ErrorResponse} from '$lib/util/error';
-
-export type ApiResult<TValue> = Result<
-	{status: number; value: TValue},
-	ErrorResponse & {status: number | null}
->;
+import type {ApiResult} from '$lib/server/api';
 
 export interface ApiClient<
 	TParamsMap extends Record<string, any> = any, // TODO default type?

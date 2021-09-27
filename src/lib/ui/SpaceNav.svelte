@@ -4,14 +4,14 @@
 
 	import type {Space} from '$lib/vocab/space/space.js';
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
-	import type {CommunityModel} from '$lib/vocab/community/community.js';
+	import type {Community} from '$lib/vocab/community/community.js';
 	import MembershipInput from '$lib/ui/MembershipInput.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import {getApp} from '$lib/ui/app';
 
 	const {ui, api} = getApp();
 
-	export let community: CommunityModel;
+	export let community: Community;
 	export let spaces: Space[];
 	export let selectedSpace: Space | null;
 	export let allPersonas: Persona[];

@@ -3,12 +3,12 @@ import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 import type {ClientSession} from '$lib/session/clientSession';
-import {toCommunityModel} from '$lib/vocab/community/community';
-import type {CommunityModel} from '$lib/vocab/community/community';
+import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
 import type {AccountModel} from '$lib/vocab/account/account';
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {File} from '$lib/vocab/file/file';
+import type {Membership} from '$lib/vocab/membership/membership';
 
 // TODO refactor/rethink
 
@@ -26,7 +26,8 @@ export const setData = (session: ClientSession): DataStore => {
 
 export interface DataState {
 	account: AccountModel | null;
-	communities: CommunityModel[];
+	communities: Community[];
+	memberships: Membership[]; // TODO needs to be used, currently only gets populated when a new membership is created
 	spaces: Space[];
 	allPersonas: Persona[]; //TODO; remove this when a real invite system is in place
 	personas: Persona[];
@@ -37,7 +38,8 @@ export interface DataStore {
 	subscribe: Readable<DataState>['subscribe'];
 	updateSession: (session: ClientSession) => void;
 	addPersona: (persona: Persona) => void;
-	addCommunity: (community: CommunityModel, persona_id: number) => void;
+	addCommunity: (community: Community, persona_id: number) => void;
+	addMembership: (membership: Membership) => void;
 	addSpace: (space: Space, community_id: number) => void;
 	addFile: (file: File) => void;
 	setFiles: (space_id: number, files: File[]) => void;
@@ -72,6 +74,15 @@ export const toDataStore = (initialSession: ClientSession): DataStore => {
 						? {...persona, community_ids: persona.community_ids.concat(community.community_id)}
 						: persona,
 				),
+			}));
+		},
+		addMembership: (membership) => {
+			// TODO instead of this, probably want to set more granularly with nested stores
+			console.log('[data.addMembership]', membership);
+			update(($data) => ({
+				...$data,
+				memberships: $data.memberships.concat(membership),
+				// TODO update `communities.memberPersonas` (which will be refactored)
 			}));
 		},
 		addSpace: (space, community_id) => {
@@ -119,6 +130,7 @@ const toDefaultData = (session: ClientSession): DataState => {
 		return {
 			account: null,
 			communities: [],
+			memberships: [],
 			spaces: [],
 			allPersonas: [],
 			personas: [],
@@ -127,7 +139,8 @@ const toDefaultData = (session: ClientSession): DataState => {
 	} else {
 		return {
 			account: session.account,
-			communities: session.communities.map((community) => toCommunityModel(community)),
+			communities: session.communities,
+			memberships: [], // TODO should be on session
 			// TODO session should already have a flat array of spaces
 			spaces: session.communities.flatMap((community) => community.spaces),
 			allPersonas: session.allPersonas,

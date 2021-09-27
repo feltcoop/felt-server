@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {CommunityModel} from '$lib/vocab/community/community.js';
+	import type {Community} from '$lib/vocab/community/community.js';
 	import ActorIcon from '$lib/ui/ActorIcon.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import type {Persona} from '$lib/vocab/persona/persona';
@@ -12,10 +12,10 @@
 	// could `ui` be more composable, so it could be easily reused e.g. in docs for demonstration purposes?
 
 	export let persona: Persona;
-	export let community: CommunityModel;
+	export let community: Community;
 	export let selected: boolean = false;
 	// export let communitiesByPersonaId: {
-	// 	[persona_id: number]: CommunityModel[];
+	// 	[persona_id: number]: Community[];
 	// };
 	export let selectedSpaceIdByCommunity: {[key: number]: number | null};
 	// TODO this is causing a double state change (rendering an invalid in between state)

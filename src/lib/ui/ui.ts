@@ -3,11 +3,16 @@ import {writable, derived} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 import type {DataState, DataStore} from '$lib/ui/data';
-import type {CommunityModel} from '$lib/vocab/community/community';
+import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
 import type {Persona} from '$lib/vocab/persona/persona';
 
-// TODO refactor/rethink
+// TODO in the current design,
+// the methods on the `UiStore` should not be called directly in an app context.
+// They're intended to be called by the api for future orchestration reasons.
+// Of course you can make more of these stores than what's given to you in the app,
+// and call methods all you want without weird bugs.
+// Use cases may include documentation and dueling apps.
 
 const KEY = Symbol();
 
@@ -34,9 +39,9 @@ export interface UiStore {
 	// state
 	// derived state
 	selectedPersona: Readable<Persona | null>;
-	selectedCommunity: Readable<CommunityModel | null>;
+	selectedCommunity: Readable<Community | null>;
 	selectedSpace: Readable<Space | null>;
-	communitiesByPersonaId: Readable<{[persona_id: number]: CommunityModel[]}>; // TODO or name `personaCommunities`?
+	communitiesByPersonaId: Readable<{[persona_id: number]: Community[]}>; // TODO or name `personaCommunities`?
 	// methods and stores
 	mobile: Readable<boolean>;
 	setMobile: (mobile: boolean) => void;
@@ -81,7 +86,7 @@ export const toUiStore = (data: DataStore, mobile: boolean) => {
 				persona.community_ids.includes(community.community_id),
 			);
 			return result;
-		}, {} as {[persona_id: number]: CommunityModel[]}),
+		}, {} as {[persona_id: number]: Community[]}),
 	);
 
 	const store: UiStore = {
