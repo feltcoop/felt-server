@@ -131,15 +131,29 @@ export const createSpaceService: Service<
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
 	perform: async ({server, params}) => {
 		const {db} = server;
+		console.log('[create_space] validating space url uniqueness');
+		const findByCommunityUrlResult = await db.repos.space.findByCommunityUrl(
+			params.community_id,
+			params.url,
+		);
+
+		if (!findByCommunityUrlResult.ok) {
+			console.log('[create_space] error validating unique url for new space');
+			return {ok: false, status: 500, value: {reason: 'error validating unique url for new space'}};
+		}
+
+		if (findByCommunityUrlResult.value) {
+			console.log('[create_space] provided url for space already exists');
+			return {ok: false, status: 409, value: {reason: 'a space with that url already exists'}};
+		}
 
 		console.log('[create_space] creating space for community', params.community_id);
-
 		const createSpaceResult = await db.repos.space.create(params);
 		if (createSpaceResult.ok) {
 			return {status: 200, value: {space: createSpaceResult.value}};
 		} else {
 			console.log('[create_space] error searching for community spaces');
-			return {status: 500, value: {reason: 'error searching for community spaces'}};
+			return {ok: false, status: 500, value: {reason: 'error searching for community spaces'}};
 		}
 	},
 };
