@@ -50,7 +50,9 @@ export interface Api {
 	createMembership: (params: MembershipParams) => Promise<ApiResult<{membership: Membership}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
 	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
-	getFilesBySpace: (space_id: number) => Readable<Readable<File>[]>;
+	getFilesBySpace: (
+		space_id: number,
+	) => [Readable<Readable<File>[]>, null | Promise<ApiResult<{files: File[]}>>];
 }
 
 export const toApi = (
@@ -185,11 +187,12 @@ export const toApi = (
 		// TODO do we want to return the promise? maybe as `[value, resultPromise]`
 		getFilesBySpace: (space_id) => {
 			let files = ui.filesBySpace.get(space_id);
+			let promise = null;
 			if (!files) {
 				ui.filesBySpace.set(space_id, (files = writable([])));
-				api.loadFiles(space_id);
+				promise = api.loadFiles(space_id);
 			}
-			return files;
+			return [files, promise];
 		},
 	};
 	return api;
