@@ -11,8 +11,8 @@ export interface Community {
 	spaces: Space[];
 	memberPersonas: Persona[];
 }
-// TODO can't get the static inference correct here -- change to schema after normalizing data, or maybe generate plain types
-// export type Community = Static<typeof CommunitySchema>;
+// TODO fix this type to infer `Community` like with the other schemas --
+// need to handle the various kinds of `Community` doc variations we return from the database
 export const CommunitySchema = Type.Object(
 	{
 		community_id: Type.Number(),

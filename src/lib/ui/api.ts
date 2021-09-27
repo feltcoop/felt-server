@@ -3,7 +3,11 @@ import {session} from '$app/stores';
 
 import type {DataStore} from '$lib/ui/data';
 import type {UiStore} from '$lib/ui/ui';
-import type {Community, CommunityParams} from '$lib/vocab/community/community';
+import type {
+	Community,
+	CommunityParams,
+	HackCommunitySchemaType,
+} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Membership, MembershipParams} from '$lib/vocab/membership/membership';
 import type {File, FileParams} from '$lib/vocab/file/file';
@@ -128,19 +132,19 @@ export const toApi = (
 			console.log('[api] create_community result', result);
 			if (result.ok) {
 				const {persona, community} = result.value;
-				data.addCommunity(community, persona.persona_id);
+				data.addCommunity(community as Community, persona.persona_id); // TODO fix when Community type is fixed
 				data.addPersona(persona);
 			}
-			return result;
+			return result as any; // TODO fix when Community type is fixed
 		},
 		createCommunity: async (params) => {
 			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
 			const result = await client2.invoke('create_community', params);
 			console.log('[api] create_community result', result);
 			if (result.ok) {
-				data.addCommunity(result.value.community, params.persona_id);
+				data.addCommunity(result.value.community as Community, params.persona_id); // TODO fix when Community type is fixed
 			}
-			return result as any; // TODO why is this type off?
+			return result as any; // TODO fix when Community type is fixed
 		},
 		// TODO: This implementation is currently unconsentful,
 		// because does not give the potential member an opportunity to deny an invite
