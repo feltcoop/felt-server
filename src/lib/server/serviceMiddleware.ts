@@ -57,7 +57,7 @@ export const toServiceMiddleware =
 			}
 			const result = await service.perform({server, params, account_id: req.account_id});
 			if (!result.ok) {
-				send(res, result.status || 500, {reason: result.reason}); // TODO consider returning the entire `result` for convenience (but it's less efficient)
+				send(res, result.status || 500, {reason: result.reason});
 				return;
 			}
 			if (process.env.NODE_ENV !== 'production') {
