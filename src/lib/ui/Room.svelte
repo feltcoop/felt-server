@@ -21,7 +21,7 @@
 	let text = '';
 
 	$: shouldLoadFiles = browser && $socket.connected;
-	$: files = shouldLoadFiles ? api.getFilesBySpace(space.space_id) : null;
+	$: [files] = shouldLoadFiles ? api.getFilesBySpace(space.space_id) : [null];
 
 	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
