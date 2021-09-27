@@ -182,11 +182,12 @@ export const toApi = (
 			}
 			return result;
 		},
+		// TODO do we want to return the promise? maybe as `[value, resultPromise]`
 		getFilesBySpace: (space_id) => {
 			let files = ui.filesBySpace.get(space_id);
 			if (!files) {
 				ui.filesBySpace.set(space_id, (files = writable([])));
-				api.loadFiles(space_id); // TODO how to handle the return value?
+				api.loadFiles(space_id);
 			}
 			return files;
 		},
