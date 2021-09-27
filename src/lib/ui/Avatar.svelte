@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ActorIcon from '$lib/ui/ActorIcon.svelte';
+	import EntityIcon from '$lib/ui/EntityIcon.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 
@@ -13,7 +13,7 @@
 
 <div class="avatar" style="--hue: {randomHue(name)}">
 	{#if showIcon}
-		<ActorIcon {name} {icon} />
+		<EntityIcon {name} {icon} />
 	{/if}
 	{#if showName}
 		<span class="actor">{name}</span>

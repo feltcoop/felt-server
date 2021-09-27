@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type {CommunityModel} from '$lib/vocab/community/community.js';
-	import ActorIcon from '$lib/ui/ActorIcon.svelte';
+	import EntityIcon from '$lib/ui/EntityIcon.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
@@ -45,7 +45,7 @@
 	style="--hue: {randomHue(community.name)}"
 	on:click={() => selectPersona(persona.persona_id)}
 >
-	<ActorIcon name={community.name} {type} />
+	<EntityIcon name={community.name} {type} />
 </a>
 
 <style>

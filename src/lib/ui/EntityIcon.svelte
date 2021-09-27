@@ -1,28 +1,26 @@
 <script lang="ts">
 	import type {EntityType} from '$lib/vocab/entity/entity';
 
-	// TODO maybe rename this to `EntityIcon`?
-
 	export let name: string;
 	export let icon: string | null = null;
 	export let type: EntityType = 'Persona';
 </script>
 
 {#if icon}
-	<img class="actor-icon" src={icon} alt="icon for {name}" />
+	<img class="entity-icon" src={icon} alt="icon for {name}" />
 {:else}
-	<div class="actor-icon {type}">
+	<div class="entity-icon {type}">
 		{name[0]}
 	</div>
 {/if}
 
 <style>
-	.actor-icon {
+	.entity-icon {
 		height: var(--icon_size);
 		width: var(--icon_size);
 		min-width: var(--icon_size);
 	}
-	div.actor-icon {
+	div.entity-icon {
 		background-color: hsl(var(--hue), 50%, 50%);
 		border-radius: 50%;
 		color: white;
