@@ -29,7 +29,7 @@ export interface Ui {
 	spaces: Readable<Readable<Space>[]>;
 	spacesById: Readable<Map<number, Readable<Space>>>;
 	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
-	filesBySpace: Map<number, Writable<Writable<File>[]>>;
+	filesBySpace: Map<number, Readable<Readable<File>[]>>;
 	setSession: (session: ClientSession) => void;
 	addPersona: (persona: Persona) => void;
 	addCommunity: (community: Community, persona_id: number) => void;
@@ -37,13 +37,12 @@ export interface Ui {
 	addSpace: (space: Space, community_id: number) => void;
 	addFile: (file: File) => void;
 	setFiles: (space_id: number, files: File[]) => void;
-	getFilesBySpace: (space_id: number) => Writable<Writable<File>[]>;
 	findPersonaById: (persona_id: number) => Readable<Persona>;
 	findSpaceById: (space_id: number) => Readable<Space>;
 	// view state
-	expandMainNav: Writable<boolean>;
-	expandMarquee: Writable<boolean>; // TODO name?
-	mainNavView: Writable<MainNavView>;
+	expandMainNav: Readable<boolean>;
+	expandMarquee: Readable<boolean>; // TODO name?
+	mainNavView: Readable<MainNavView>;
 	// derived state
 	selectedPersonaId: Readable<number | null>;
 	selectedPersona: Readable<Readable<Persona> | null>;
@@ -295,13 +294,6 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 			} else {
 				filesBySpace.set(space_id, writable(files.map((f) => writable(f))));
 			}
-		},
-		getFilesBySpace: (space_id) => {
-			let files = filesBySpace.get(space_id);
-			if (!files) {
-				filesBySpace.set(space_id, (files = writable([])));
-			}
-			return files;
 		},
 		findPersonaById: (persona_id: number): Readable<Persona> => {
 			const persona = get(personasById).get(persona_id);

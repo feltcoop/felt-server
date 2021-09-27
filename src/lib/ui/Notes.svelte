@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {browser} from '$app/env';
+	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
@@ -8,7 +9,7 @@
 
 	const {
 		api,
-		ui: {selectedPersonaId, getFilesBySpace},
+		ui: {selectedPersonaId},
 		socket,
 	} = getApp();
 
@@ -19,10 +20,8 @@
 
 	let text = '';
 
-	$: shouldLoadFiles = browser && $socket.connected; // TODO make this only load if not already cached
-	$: shouldLoadFiles && api.loadFiles(space.space_id); // TODO move this to SvelteKit `load` so it works with http clients
-	$: shouldLoadFiles && console.log(`fetching files for ${space.space_id}`);
-	$: files = getFilesBySpace(space.space_id); // TODO should probably be a query
+	$: shouldLoadFiles = browser && $socket.connected;
+	$: files = shouldLoadFiles ? api.getFilesBySpace(space.space_id) : null;
 
 	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
@@ -45,7 +44,11 @@
 <div class="notes">
 	<textarea type="text" placeholder="> note" on:keydown={onKeydown} bind:value={text} />
 	<div class="files">
-		<NoteItems {files} />
+		{#if files}
+			<NoteItems {files} />
+		{:else}
+			<PendingAnimation />
+		{/if}
 	</div>
 </div>
 

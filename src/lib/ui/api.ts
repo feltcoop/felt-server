@@ -1,5 +1,7 @@
 import {setContext, getContext} from 'svelte';
 import {session} from '$app/stores';
+import {writable} from 'svelte/store';
+import type {Readable} from 'svelte/store';
 
 import type {Ui} from '$lib/ui/ui';
 import type {Community, CommunityParams} from '$lib/vocab/community/community';
@@ -48,6 +50,7 @@ export interface Api {
 	createMembership: (params: MembershipParams) => Promise<ApiResult<{membership: Membership}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
 	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
+	getFilesBySpace: (space_id: number) => Readable<Readable<File>[]>;
 }
 
 export const toApi = (
@@ -178,6 +181,14 @@ export const toApi = (
 				ui.setFiles(space_id, result.value.files);
 			}
 			return result;
+		},
+		getFilesBySpace: (space_id) => {
+			let files = ui.filesBySpace.get(space_id);
+			if (!files) {
+				ui.filesBySpace.set(space_id, (files = writable([])));
+				api.loadFiles(space_id); // TODO how to handle the return value?
+			}
+			return files;
 		},
 	};
 	return api;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
-	import type {Writable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 
 	import type {File} from '$lib/vocab/file/file.js';
 	import {randomHue} from '$lib/ui/color';
@@ -12,7 +12,7 @@
 		ui: {findPersonaById},
 	} = getApp();
 
-	export let file: Writable<File>;
+	export let file: Readable<File>;
 
 	$: persona = findPersonaById($file.actor_id); // TODO should this be `Actor` and `actor`?
 

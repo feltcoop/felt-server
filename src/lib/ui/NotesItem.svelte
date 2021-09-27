@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type {Writable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 
 	import type {File} from '$lib/vocab/file/file.js';
 
-	export let file: Writable<File>;
+	export let file: Readable<File>;
 </script>
 
 <li>
