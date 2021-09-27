@@ -68,7 +68,7 @@
 				<CommunityNav />
 				{#if selectedCommunity && $selectedCommunity}
 					<SpaceNav
-						community={$selectedCommunity}
+						community={selectedCommunity}
 						spaces={$selectedCommunity.spaces}
 						selectedSpace={$selectedSpace}
 					/>

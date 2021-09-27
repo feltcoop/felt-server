@@ -3,8 +3,9 @@
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import type {Community} from '$lib/vocab/community/community.js';
 	import MembershipInput from '$lib/ui/MembershipInput.svelte';
+	import type {Readable} from 'svelte/store';
 
-	export let community: Community;
+	export let community: Readable<Community>;
 	export let spaces: Space[];
 	export let selectedSpace: Space | null;
 </script>
@@ -17,7 +18,7 @@
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
 		<a
-			href="/{community.name}{space.url === '/' ? '' : space.url}"
+			href="/{$community.name}{space.url === '/' ? '' : space.url}"
 			class:selected={space === selectedSpace}
 		>
 			{space.name}
