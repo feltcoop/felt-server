@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {CommunityModel} from '$lib/vocab/community/community.js';
+	import type {Community} from '$lib/vocab/community/community.js';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
 	import CommunityNavButton from '$lib/ui/CommunityNavButton.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
@@ -14,7 +14,7 @@
 	$: selectedSpaceIdByCommunity = $ui.selectedSpaceIdByCommunity;
 
 	// TODO improve the efficiency of this with better data structures and caching
-	const toPersonaCommunity = (persona: Persona): CommunityModel =>
+	const toPersonaCommunity = (persona: Persona): Community =>
 		$communitiesByPersonaId[persona.persona_id].find((c) => c.name === persona.name)!;
 </script>
 

@@ -34,23 +34,6 @@ export const CommunityParamsSchema = Type.Object(
 );
 export const validateCommunityParams = toValidateSchema<CommunityParams>(CommunityParamsSchema);
 
-// TODO think through alternatives to this, probably caching `membershipById` on `data`
-export interface CommunityModel {
-	community_id: number;
-	name: string;
-	spaces: Space[];
-	memberPersonas: Persona[];
-	memberPersonasById: Map<number, Persona>;
-}
-
-export const toCommunityModel = (community: Community): CommunityModel => ({
-	...community,
-	memberPersonas: community.memberPersonas,
-	memberPersonasById: new Map(
-		community.memberPersonas.map((persona) => [persona.persona_id, persona]),
-	),
-});
-
 export interface CommunitySpaces {
 	community_id: number;
 	space_id: number;

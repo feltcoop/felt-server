@@ -28,16 +28,16 @@ test__services('perform services', async ({server}) => {
 				)}`,
 			);
 		}
-		const response = await service.perform({server, params, account_id: account.account_id});
-		if (!validateSchema(service.responseSchema)(response.value)) {
-			console.error(red(`failed to validate service response: ${service.name}`), response);
+		const result = await service.perform({server, params, account_id: account.account_id});
+		if (!result.ok || !validateSchema(service.responseSchema)(result.value)) {
+			console.error(red(`failed to validate service response: ${service.name}`), result);
 			throw new Error(
 				`Failed to validate response for service: ${service.name}: ${toValidationErrorMessage(
 					validateSchema(service.responseSchema).errors![0],
 				)}`,
 			);
 		}
-		t.is(response.status, 200); // TODO generate invalid data and test those params+responses too
+		t.is(result.status, 200); // TODO generate invalid data and test those params+responses too
 	}
 });
 

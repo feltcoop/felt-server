@@ -9,8 +9,6 @@
 
 	const {ui} = getApp();
 
-	// TODO better name than `Marquee`?
-
 	export let community: Community;
 	export let space: Space;
 	export let memberPersonasById: Map<number, Persona>;
