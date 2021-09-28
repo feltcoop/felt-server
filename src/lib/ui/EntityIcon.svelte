@@ -4,12 +4,14 @@
 	export let name: string;
 	export let icon: string | null = null;
 	export let type: EntityType = 'Persona';
+
+	$: squared = type === 'Community';
 </script>
 
 {#if icon}
-	<img class="entity-icon" src={icon} alt="icon for {name}" />
+	<img class="entity-icon" class:squared src={icon} alt="icon for {name}" />
 {:else}
-	<div class="entity-icon {type}">
+	<div class="entity-icon" class:squared>
 		{name[0]}
 	</div>
 {/if}
@@ -30,10 +32,10 @@
 		align-items: center;
 		justify-content: center;
 	}
-	div.Community {
+	div.squared {
 		border-radius: calc(var(--icon_size) / 4);
 	}
-	div.Community:active {
+	div.squared:active {
 		border-radius: calc(var(--icon_size) / 4 + 2px);
 	}
 </style>
