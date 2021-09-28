@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
+	import type {Readable} from 'svelte/store';
 
 	import type {Space} from '$lib/vocab/space/space.js';
 	import Avatar from '$lib/ui/Avatar.svelte';
@@ -12,21 +13,21 @@
 		ui: {selectedSpace},
 	} = getApp();
 
-	export let community: Community;
-	export let space: Space;
+	export let community: Readable<Community>;
+	export let space: Readable<Space>;
 
 	space; // TODO we're ignoring the space, but should probably mount its `content` as markup
 
 	// TODO refactor to be normalized
 	// this will also fix the UX issue where `spaces` aren't available for SSR, so they pop in
-	$: spaces = community?.spaces || [];
+	$: spaces = $community?.spaces || []; // TODO spacesByCommunity array, probably
 </script>
 
 <Markup>
 	<section>
 		<h2>members</h2>
 		<!-- TODO display other meta info about the community -->
-		{#each community.memberPersonas as persona (persona.persona_id)}
+		{#each $community.memberPersonas as persona (persona.persona_id)}
 			<Avatar name={toName(persona)} icon={toIcon(persona)} />
 		{/each}
 	</section>

@@ -8,7 +8,7 @@
 	const {api} = getApp();
 
 	export let persona: Readable<Persona>;
-	export let community: Community;
+	export let community: Readable<Community>;
 </script>
 
 <p>
@@ -17,7 +17,7 @@
 		class="button-join"
 		on:click={() =>
 			api.createMembership({
-				community_id: community.community_id,
+				community_id: $community.community_id,
 				persona_id: $persona.persona_id,
 			})}
 	>

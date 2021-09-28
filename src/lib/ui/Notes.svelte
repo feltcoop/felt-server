@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {browser} from '$app/env';
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
+	import type {Readable} from 'svelte/store';
 
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
@@ -13,21 +14,21 @@
 		socket,
 	} = getApp();
 
-	export let community: Community;
-	export let space: Space;
+	export let community: Readable<Community>;
+	export let space: Readable<Space>;
 
 	community; // silence unused prop warning
 
 	let text = '';
 
 	$: shouldLoadFiles = browser && $socket.connected;
-	$: files = shouldLoadFiles ? api.getFilesBySpace(space.space_id) : null;
+	$: files = shouldLoadFiles ? api.getFilesBySpace($space.space_id) : null;
 
 	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
 		if (!content) return;
 		await api.createFile({
-			space_id: space.space_id,
+			space_id: $space.space_id,
 			content,
 			actor_id: $selectedPersonaId!, // TODO generic erorr check for no selected persona?
 		});

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
+	import type {Readable} from 'svelte/store';
 
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
@@ -9,7 +10,7 @@
 
 	const {api} = getApp();
 
-	export let community: Community;
+	export let community: Readable<Community>;
 
 	let opened = false;
 	let newName = '';
@@ -27,7 +28,7 @@
 		errorMessage = '';
 		const url = `/${newName}`;
 		const result = await api.createSpace({
-			community_id: community.community_id,
+			community_id: $community.community_id,
 			name: newName,
 			url,
 			//TODO : add space type picker

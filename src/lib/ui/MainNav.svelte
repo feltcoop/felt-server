@@ -60,11 +60,11 @@
 		{#if $mainNavView === 'explorer'}
 			<div class="explorer">
 				<CommunityNav />
-				{#if selectedCommunity && $selectedCommunity}
+				{#if selectedCommunity}
 					<SpaceNav
-						community={$selectedCommunity}
+						community={selectedCommunity}
 						spaces={$selectedCommunity.spaces}
-						selectedSpace={$selectedSpace}
+						{selectedSpace}
 					/>
 				{/if}
 			</div>

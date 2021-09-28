@@ -1,7 +1,13 @@
 <script lang="ts">
-	import type {Space} from '$lib/vocab/space/space.js';
+	import type {Readable} from 'svelte/store';
 
-	export let space: Space;
+	import type {Space} from '$lib/vocab/space/space.js';
+	import type {Community} from '$lib/vocab/community/community';
+
+	export let space: Readable<Space>;
+	export let community: Readable<Community>;
+
+	community;
 </script>
 
-TODO voice -- {space.name}
+TODO voice -- {$space.name}
