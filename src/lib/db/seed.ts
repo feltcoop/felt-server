@@ -22,7 +22,9 @@ export const seed = async (db: Database): Promise<void> => {
 		create table if not exists accounts (
 		account_id serial primary key,
 			name text,
-			password text
+			password text,
+			created timestamptz,
+			updated timestamptz
 		)
 	`;
 	if (createAccountsTableResult.count) {
@@ -112,8 +114,8 @@ export const seed = async (db: Database): Promise<void> => {
 
 	// example: insert literal values
 	const accountsParams: AccountParams[] = [
-		{name: 'a', password: 'a'},
-		{name: 'b', password: 'b'},
+		{name: 'a', password: 'a', created: '2021-01-01 13:01:00-07'},
+		{name: 'b', password: 'b', created: '2021-01-01 13:01:00-07'},
 	];
 	const personasParams: {[key: string]: string[]} = {
 		a: ['alice', 'andy'],

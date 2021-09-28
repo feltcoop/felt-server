@@ -8,6 +8,8 @@ export const AccountSchema = Type.Object(
 		account_id: Type.Number(),
 		name: Type.String(),
 		password: Type.String(),
+		created: Type.String(),
+		updated: Type.Optional(Type.String())
 	},
 	{$id: 'Account', additionalProperties: false},
 );
@@ -18,6 +20,8 @@ export const AccountParamsSchema = Type.Object(
 	{
 		name: Type.String(),
 		password: Type.String(),
+		created: Type.String(),
+		updated: Type.Optional(Type.String())
 	},
 	{$id: 'AccountParams', additionalProperties: false},
 );
@@ -27,8 +31,10 @@ export const validateAccountParams = toValidateSchema<AccountParams>(AccountPara
 export interface AccountModel {
 	account_id: number;
 	name: string;
+	created: string;
+	updated: string;
 }
 
 // TODO improve types so they're exhaustive but still static (maybe via schema/codegen)
-export const accountProperties: (keyof Account)[] = ['account_id', 'name', 'password'];
-export const accountModelProperties: (keyof AccountModel)[] = ['account_id', 'name'];
+export const accountProperties: (keyof Account)[] = ['account_id', 'name', 'password', 'created', 'updated'];
+export const accountModelProperties: (keyof AccountModel)[] = ['account_id', 'name', 'created', 'updated'];
