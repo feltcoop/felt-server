@@ -1,17 +1,19 @@
 <script lang="ts">
+	import type {Readable} from 'svelte/store';
+
 	import type {Space} from '$lib/vocab/space/space.js';
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {randomHue} from '$lib/ui/color';
 
 	export let space: Space;
-	export let community: Community;
+	export let community: Readable<Community>;
 	export let selected: boolean = false;
 
 	$: hue = randomHue(space.name); // TODO add custom setting on spaces
 </script>
 
 <a
-	href="/{community.name}{space.url === '/' ? '' : space.url}"
+	href="/{$community.name}{space.url === '/' ? '' : space.url}"
 	class:selected
 	class="space-info"
 	style="--hue: {hue}"

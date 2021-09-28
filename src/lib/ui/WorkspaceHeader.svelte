@@ -9,14 +9,14 @@
 		ui: {expandMainNav},
 	} = getApp();
 
-	export let space: Space | null | undefined;
-	export let community: Readable<Community> | null | undefined;
+	export let space: Readable<Space | null>;
+	export let community: Readable<Community> | null;
 </script>
 
 <ul class="workspace-header" class:expanded-nav={$expandMainNav}>
 	<li class="luggage-placeholder" />
 	<li class="breadcrumbs">
-		{community && $community.name} / {space?.url.split('/').filter(Boolean).join(' / ') || ''}
+		{community && $community.name} / {$space?.url.split('/').filter(Boolean).join(' / ') || ''}
 	</li>
 </ul>
 

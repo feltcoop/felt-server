@@ -3,6 +3,7 @@
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import type {Community} from '$lib/vocab/community/community.js';
 	import MembershipInput from '$lib/ui/MembershipInput.svelte';
+	import type {Readable} from 'svelte/store';
 	import {getApp} from '$lib/ui/app';
 
 	const {
@@ -10,9 +11,9 @@
 		api,
 	} = getApp();
 
-	export let community: Community;
-	export let spaces: Space[];
-	export let selectedSpace: Space | null;
+	export let community: Readable<Community>;
+	export let spaces: Space[]; // TODO array of stores?
+	export let selectedSpace: Readable<Space | null>;
 </script>
 
 <div class="space-nav">
@@ -23,8 +24,8 @@
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
 		<a
-			href="/{community.name}{space.url === '/' ? '' : space.url}"
-			class:selected={space === selectedSpace}
+			href="/{$community.name}{space.url === '/' ? '' : space.url}"
+			class:selected={space === $selectedSpace}
 			on:click={() => {
 				// TODO Should this be a click handler or react to UI system events/changes?
 				// Might make more UX sense to make it react to any state changes,

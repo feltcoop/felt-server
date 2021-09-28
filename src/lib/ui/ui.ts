@@ -20,6 +20,7 @@ export const setUi = (store: Ui): Ui => {
 };
 
 export interface Ui {
+	// TODO single code path for UI actions:
 	// dispatch('setSession', {session: ClientSession});
 
 	// db state and caches
@@ -53,6 +54,7 @@ export interface Ui {
 	selectedCommunityId: Readable<number | null>;
 	selectedCommunity: Readable<Readable<Community> | null>;
 	selectedSpaceIdByCommunity: Readable<{[key: number]: number | null}>;
+	// TODO selectedSpace: Readable<Readable<Space> | null>;
 	selectedSpace: Readable<Space | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	// view methods
@@ -265,6 +267,7 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			}
 			const communityStore = writable(community);
 			communities.update(($communities) => $communities.concat(communityStore));
+			// TODO update spaces
 		},
 		addMembership: (membership) => {
 			console.log('[data.addMembership]', membership);
