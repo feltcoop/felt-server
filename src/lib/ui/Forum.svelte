@@ -16,7 +16,7 @@
 	export let community: Community;
 	export let space: Space;
 
-	community;
+	community; // silence unused prop warning
 
 	let text = '';
 

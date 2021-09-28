@@ -20,6 +20,8 @@ export const setUi = (store: Ui): Ui => {
 };
 
 export interface Ui {
+	// dispatch('setSession', {session: ClientSession});
+
 	// db state and caches
 	account: Readable<AccountModel | null>;
 	personas: Readable<Readable<Persona>[]>;
@@ -82,6 +84,7 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 		($personas) => new Map($personas.map((persona) => [get(persona).persona_id, persona])),
 	);
 	// not derived from session because the session has only the initial snapshot
+	// TODO these `Persona`s need additional data compared to every other `Persona`
 	const sessionPersonas = writable<Writable<Persona>[]>(
 		initialSession.guest
 			? []
@@ -179,7 +182,7 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 	const expandMarquee = writable(!mobile);
 	const mainNavView: Writable<MainNavView> = writable('explorer');
 
-	const store: Ui = {
+	const ui: Ui = {
 		account,
 		personas,
 		sessionPersonas,
@@ -328,6 +331,7 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 		selectPersona: (persona_id) => {
 			console.log('[ui.selectPersona] persona_id', {persona_id});
 			selectedPersonaId.set(persona_id);
+			// selectedPersona
 		},
 		selectCommunity: (community_id) => {
 			console.log('[ui.selectCommunity] community_id', {community_id});
@@ -356,7 +360,7 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			mainNavView.set(value);
 		},
 	};
-	return store;
+	return ui;
 };
 
 export type MainNavView = 'explorer' | 'account';

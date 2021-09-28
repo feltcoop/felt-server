@@ -13,12 +13,6 @@
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
-	// TODO when the `SpaceNav` is clicked for navigation,
-	// it should call `api.toggleMainNav` on the mobile view.
-	// Main thing to figure out is how to make JS check if we're in mobile or not.
-	// Maybe use `window.matchMedia` and store in `ui`:
-	// https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia
-
 	const {
 		ui: {
 			mainNavView,
