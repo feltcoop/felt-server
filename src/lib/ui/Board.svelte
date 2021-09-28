@@ -17,10 +17,13 @@
 	export let community: Readable<Community>;
 	export let space: Readable<Space>;
 
-	community;
+	community; // silence unused prop warning
 
 	let text = '';
 
+	// TODO `shouldLoadFiles` should be managed inside the `api` layer
+	// then the code could simply be:
+	// $: files = api.getFilesBySpace(space.space_id);
 	$: shouldLoadFiles = browser && $socket.connected;
 	$: files = shouldLoadFiles ? api.getFilesBySpace($space.space_id) : null;
 

@@ -55,14 +55,18 @@ export const toServiceMiddleware =
 				// Should each service declare if `account_id` is required?
 				return send(res, 401, {reason: 'not logged in'});
 			}
-			const response = await service.perform({server, params, account_id: req.account_id});
+			const result = await service.perform({server, params, account_id: req.account_id});
+			if (!result.ok) {
+				send(res, result.status || 500, {reason: result.reason});
+				return;
+			}
 			if (process.env.NODE_ENV !== 'production') {
-				if (!service.validateResponse()(response.value)) {
-					console.error(red('validation failed:'), response, service.validateResponse().errors);
+				if (!service.validateResponse()(result.value)) {
+					console.error(red('validation failed:'), result, service.validateResponse().errors);
 				}
 			}
-			console.log('[serviceMiddleware] result.code', response.status);
-			send(res, response.status, response.value);
+			console.log('[serviceMiddleware] result.status', result.status);
+			send(res, result.status, result.value); // TODO consider returning the entire `result` for convenience (but it's less efficient)
 		} catch (err) {
 			console.error(err);
 			send(res, 500, {reason: 'unknown server error'});

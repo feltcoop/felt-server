@@ -52,6 +52,8 @@ export interface Ui {
 	selectedSpaceIdByCommunity: Readable<{[key: number]: number | null}>;
 	selectedSpace: Readable<Space | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
+	mobile: Readable<boolean>;
+	setMobile: (mobile: boolean) => void;
 	// view methods
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
@@ -61,7 +63,7 @@ export interface Ui {
 	setMainNavView: (value: MainNavView) => void;
 }
 
-export const toUi = (session: Readable<ClientSession>): Ui => {
+export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 	const initialSession = get(session);
 
 	// TODO would it helpfully simplify things to put these stores on the actual store state?
@@ -80,6 +82,7 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 		($personas) => new Map($personas.map((persona) => [get(persona).persona_id, persona])),
 	);
 	// not derived from session because the session has only the initial snapshot
+	// TODO these `Persona`s need additional data compared to every other `Persona`
 	const sessionPersonas = writable<Writable<Persona>[]>(
 		initialSession.guest
 			? []
@@ -99,6 +102,8 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 		($spaces) => new Map($spaces.map((space) => [get(space).space_id, space])),
 	);
 	const memberships = writable<Membership[]>([]); // TODO should be on the session:  initialSession.guest ? [] : [],
+
+	const {subscribe: subscribeMobile, set: setMobile} = writable(mobile);
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -171,11 +176,11 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const filesBySpace: Map<number, Writable<Writable<File>[]>> = new Map();
 
-	const expandMainNav = writable(true);
-	const expandMarquee = writable(true); // TODO default to `false` for mobile -- how?
+	const expandMainNav = writable(!mobile);
+	const expandMarquee = writable(!mobile);
 	const mainNavView: Writable<MainNavView> = writable('explorer');
 
-	const store: Ui = {
+	const ui: Ui = {
 		account,
 		personas,
 		sessionPersonas,
@@ -306,6 +311,8 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 			return space;
 		},
 		// view state
+		mobile: {subscribe: subscribeMobile}, // don't expose the writable store
+		setMobile,
 		expandMainNav,
 		expandMarquee,
 		mainNavView,
@@ -350,7 +357,7 @@ export const toUi = (session: Readable<ClientSession>): Ui => {
 			mainNavView.set(value);
 		},
 	};
-	return store;
+	return ui;
 };
 
 export type MainNavView = 'explorer' | 'account';

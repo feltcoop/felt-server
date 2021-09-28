@@ -20,18 +20,18 @@
 	{/if}
 	<div class="column">
 		<!-- TODO pass stores here instead of dereferncing -->
-		<WorkspaceHeader space={selectedSpace} community={selectedCommunity} />
+		<WorkspaceHeader space={$selectedSpace} community={selectedCommunity} />
 		{#if selectedCommunity && $selectedSpace}
-			<SpaceView community={selectedCommunity} space={selectedSpace} />
+			<SpaceView community={$selectedCommunity} space={$selectedSpace} />
 		{:else if selectedCommunity}
-			<SpaceInput community={selectedCommunity}>Create a new space</SpaceInput>
+			<SpaceInput community={$selectedCommunity}>Create a new space</SpaceInput>
 		{/if}
 		<MarqueeButton />
 	</div>
 	<!-- TODO extract to some shared abstractions with the `Luggage` probably -->
 	{#if $expandMarquee && selectedCommunity && $selectedSpace}
 		<div class="marquee">
-			<Marquee community={selectedCommunity} space={selectedSpace} />
+			<Marquee community={$selectedCommunity} space={$selectedSpace} />
 		</div>
 	{/if}
 </div>
@@ -74,25 +74,23 @@
 		top: 0;
 		/* TODO from felt */
 		background-color: rgba(0, 0, 0, 0.4);
-	} /* `50rem` in media queries is the same as `800px`, which is `--column_width` */
-	@media (max-width: 50rem) {
-		.marquee {
-			z-index: 3;
-			position: fixed;
-			right: 0;
-			top: 0;
-		}
-		.marquee-bg {
-			display: block;
-			animation: fade-in var(--transition_duration_xl) ease-out;
-		}
-		/* remove borders on things when not necessary, makes things look cleaner and crisper */
-		.column {
-			border-right: none;
-			border-left: none;
-		}
-		.marquee {
-			border-right: none;
-		}
+	}
+	:global(.mobile) .marquee {
+		z-index: 3;
+		position: fixed;
+		right: 0;
+		top: 0;
+	}
+	:global(.mobile) .marquee-bg {
+		display: block;
+		animation: fade-in var(--transition_duration_xl) ease-out;
+	}
+	/* remove borders on things when not necessary, makes things look cleaner and crisper */
+	:global(.mobile) .column {
+		border-right: none;
+		border-left: none;
+	}
+	:global(.mobile) .marquee {
+		border-right: none;
 	}
 </style>

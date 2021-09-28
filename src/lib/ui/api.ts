@@ -2,6 +2,7 @@ import {setContext, getContext} from 'svelte';
 import {session} from '$app/stores';
 import {writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
+import {randomItem} from '@feltcoop/felt/util/random.js';
 
 import type {Ui} from '$lib/ui/ui';
 import type {Community, CommunityParams} from '$lib/vocab/community/community';
@@ -10,7 +11,8 @@ import type {Membership, MembershipParams} from '$lib/vocab/membership/membershi
 import type {File, FileParams} from '$lib/vocab/file/file';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
-import type {ApiClient, ApiResult} from '$lib/ui/ApiClient';
+import type {ApiClient} from '$lib/ui/ApiClient';
+import type {ApiResult} from '$lib/server/api';
 import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
 import type {Persona, PersonaParams} from '$lib/vocab/persona/persona';
 
@@ -58,6 +60,9 @@ export const toApi = (
 	client: ApiClient<ServicesParamsMap, ServicesResultMap>,
 	client2: ApiClient<ServicesParamsMap, ServicesResultMap>, // TODO remove this after everything stabilizes
 ): Api => {
+	// TODO delete this and `client2` after adding tests for both the websocket and http clients
+	const clients = [client, client2];
+	const randomClient = () => randomItem(clients);
 	const api: Api = {
 		// TODO these are just directly proxying and they don't have the normal `ApiResult` return value
 		// The motivation is that sometimes UI events may do API-related things, but this may not be the best design.
@@ -118,38 +123,28 @@ export const toApi = (
 		},
 		createPersona: async (params) => {
 			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
-			const result = await client2.invoke('create_persona', params);
+			const result = await randomClient().invoke('create_persona', params);
 			console.log('[api] create_persona result', result);
 			if (result.ok) {
-				const {persona, community: rawCommunity} = result.value;
-				const community = rawCommunity as Community; // TODO `Community` type is off with schema
+				const {persona, community} = result.value;
 				ui.addPersona(persona);
-				ui.addCommunity(community, persona.persona_id);
-				// TODO refactor to not return here, do `return result` below --
-				// can't return `result` right now because the `Community` is different,
-				// but we probably want to change it to have associated data instead of a different interface
-				return {ok: true, status: result.status, value: {persona, community}};
+				ui.addCommunity(community as Community, persona.persona_id); // TODO fix when Community type is fixed
 			}
-			return result;
+			return result as any; // TODO fix when Community type is fixed
 		},
 		createCommunity: async (params) => {
 			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
-			const result = await client2.invoke('create_community', params);
+			const result = await randomClient().invoke('create_community', params);
 			console.log('[api] create_community result', result);
 			if (result.ok) {
-				const community = result.value.community as any; // TODO `Community` type is off with schema
-				ui.addCommunity(community, params.persona_id);
-				// TODO refactor to not return here, do `return result` below --
-				// can't return `result` right now because the `Community` is different,
-				// but we probably want to change it to have associated data instead of a different interface
-				return {ok: true, status: result.status, value: community};
+				ui.addCommunity(result.value.community as Community, params.persona_id); // TODO fix when Community type is fixed
 			}
-			return result;
+			return result as any; // TODO fix when Community type is fixed
 		},
 		// TODO: This implementation is currently unconsentful,
 		// because does not give the potential member an opportunity to deny an invite
 		createMembership: async (params) => {
-			const result = await client2.invoke('create_membership', params);
+			const result = await randomClient().invoke('create_membership', params);
 			console.log('[api] create_membership result', result);
 			if (result.ok) {
 				ui.addMembership(result.value.membership);
@@ -157,7 +152,7 @@ export const toApi = (
 			return result;
 		},
 		createSpace: async (params) => {
-			const result = await client2.invoke('create_space', params);
+			const result = await randomClient().invoke('create_space', params);
 			console.log('[api] create_space result', result);
 			if (result.ok) {
 				ui.addSpace(result.value.space, params.community_id);
@@ -165,7 +160,7 @@ export const toApi = (
 			return result;
 		},
 		createFile: async (params) => {
-			const result = await client.invoke('create_file', params);
+			const result = await randomClient().invoke('create_file', params);
 			console.log('create_file result', result);
 			if (result.ok) {
 				ui.addFile(result.value.file);
@@ -175,7 +170,7 @@ export const toApi = (
 		loadFiles: async (space_id) => {
 			ui.setFiles(space_id, []);
 			// TODO this breaks on startup because the websocket isn't connected yet
-			const result = await client.invoke('read_files', {space_id});
+			const result = await randomClient().invoke('read_files', {space_id});
 			console.log('[api] read_files result', result);
 			if (result.ok) {
 				ui.setFiles(space_id, result.value.files);

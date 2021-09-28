@@ -17,7 +17,7 @@
 	export let community: Readable<Community>;
 	export let space: Readable<Space>;
 
-	community;
+	community; // silence unused prop warning
 
 	let text = '';
 
