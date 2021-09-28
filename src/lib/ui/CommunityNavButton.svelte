@@ -7,7 +7,6 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 	import {toUrl} from '$lib/vocab/persona/constants';
-	import type {EntityType} from '$lib/vocab/entity/entity';
 
 	const {
 		ui: {selectedSpaceIdByCommunity, findSpaceById},
@@ -30,9 +29,6 @@
 	export let selectPersona: (persona_id: number) => void;
 
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
-
-	let type: EntityType;
-	$: type = isPersonaHomeCommunity ? 'Persona' : 'Community';
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
@@ -44,7 +40,7 @@
 	style="--hue: {randomHue($community.name)}"
 	on:click={() => selectPersona($persona.persona_id)}
 >
-	<EntityIcon name={$community.name} {type} />
+	<EntityIcon name={$community.name} type="Community" />
 </a>
 
 <style>

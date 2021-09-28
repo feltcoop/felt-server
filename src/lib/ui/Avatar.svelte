@@ -2,18 +2,20 @@
 	import EntityIcon from '$lib/ui/EntityIcon.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
+	import type {EntityType} from '$lib/vocab/entity/entity';
 
 	export let name: string = GUEST_PERSONA_NAME; // TODO should this handle "default" or "empty" or "blank" avatars?
 	export let icon: string | null = null;
 	export let showName: boolean = true;
 	export let showIcon: boolean = true;
+	export let type: EntityType = 'Persona';
 </script>
 
 <!-- TODO add link option? -->
 
 <div class="avatar" style="--hue: {randomHue(name)}">
 	{#if showIcon}
-		<EntityIcon {name} {icon} />
+		<EntityIcon {name} {icon} {type} />
 	{/if}
 	{#if showName}
 		<span class="actor">{name}</span>

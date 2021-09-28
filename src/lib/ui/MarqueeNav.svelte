@@ -26,7 +26,7 @@
 		href="/{$community.name}{toUrl($space && $space.url)}"
 		style="--hue: {randomHue($community.name)}"
 	>
-		<Avatar name={$community.name} showName={false} />
+		<Avatar name={$community.name} showName={false} type="Community" />
 		{#if $space}
 			<Avatar name={$space.name} showIcon={false} />
 		{/if}
