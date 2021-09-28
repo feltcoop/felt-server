@@ -44,10 +44,10 @@ export const createPersonaService: Service<
 		// this begs the question, should repos use the `__Params` interfaces or not?
 		const createPersonaResult = await db.repos.persona.create(params, account_id);
 		if (createPersonaResult.ok) {
-			return {status: 200, value: createPersonaResult.value};
+			return {ok: true, status: 200, value: createPersonaResult.value};
 		} else {
 			console.log('[create_persona] error searching for community personas');
-			return {status: 500, value: {reason: 'error searching for community personas'}};
+			return {ok: false, status: 500, reason: 'error searching for community personas'};
 		}
 	},
 };

@@ -120,20 +120,17 @@
 		/* TODO from felt */
 		background-color: rgba(0, 0, 0, 0.4);
 	}
-	/* `50rem` in media queries is the same as `800px`, which is `--column_width` */
-	@media (max-width: 50rem) {
-		.main-nav {
-			position: fixed;
-			left: 0;
-			top: 0;
-		}
-		.main-nav-bg {
-			display: block;
-			animation: fade-in var(--transition_duration_xl) ease-out;
-		}
-		.main-nav-panel.expanded {
-			width: 0;
-		}
+	:global(.mobile) .main-nav {
+		position: fixed;
+		left: 0;
+		top: 0;
+	}
+	:global(.mobile) .main-nav-bg {
+		display: block;
+		animation: fade-in var(--transition_duration_xl) ease-out;
+	}
+	:global(.mobile) .main-nav-panel.expanded {
+		width: 0;
 	}
 	.header {
 		display: flex;
