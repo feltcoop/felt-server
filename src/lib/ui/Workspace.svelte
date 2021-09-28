@@ -6,36 +6,32 @@
 	import MarqueeButton from '$lib/ui/MarqueeButton.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {ui, api} = getApp();
+	const {
+		ui: {expandMarquee, selectedSpace, selectedCommunity: selectedCommunityStore},
+		api,
+	} = getApp();
 
-	$: selectedCommunity = ui.selectedCommunity;
-	$: selectedSpace = ui.selectedSpace;
-	// TODO should display just the space's members, not the community's
-	$: memberPersonasById = new Map(
-		$selectedCommunity?.memberPersonas.map((persona) => [persona.persona_id, persona]) || [],
-	);
+	$: selectedCommunity = $selectedCommunityStore;
 </script>
 
 <div class="workspace">
-	{#if $ui.expandSecondaryNav}
-		<div
-			class="marquee-bg"
-			on:click={() => ($ui.expandSecondaryNav ? api.toggleSecondaryNav() : null)}
-		/>
+	{#if $expandMarquee}
+		<div class="marquee-bg" on:click={() => ($expandMarquee ? api.toggleSecondaryNav() : null)} />
 	{/if}
 	<div class="column">
-		<WorkspaceHeader space={$selectedSpace} community={$selectedCommunity} />
-		{#if $selectedCommunity && $selectedSpace && memberPersonasById}
-			<SpaceView community={$selectedCommunity} space={$selectedSpace} {memberPersonasById} />
-		{:else if $selectedCommunity}
+		<!-- TODO pass stores here instead of dereferncing -->
+		<WorkspaceHeader space={$selectedSpace} community={selectedCommunity} />
+		{#if selectedCommunity && $selectedSpace}
+			<SpaceView community={$selectedCommunity} space={$selectedSpace} />
+		{:else if selectedCommunity}
 			<SpaceInput community={$selectedCommunity}>Create a new space</SpaceInput>
 		{/if}
 		<MarqueeButton />
 	</div>
 	<!-- TODO extract to some shared abstractions with the `Luggage` probably -->
-	{#if $ui.expandSecondaryNav && $selectedCommunity && $selectedSpace && memberPersonasById}
+	{#if $expandMarquee && selectedCommunity && $selectedSpace}
 		<div class="marquee">
-			<Marquee community={$selectedCommunity} space={$selectedSpace} {memberPersonasById} />
+			<Marquee community={$selectedCommunity} space={$selectedSpace} />
 		</div>
 	{/if}
 </div>

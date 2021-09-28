@@ -9,13 +9,13 @@
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {page} from '$app/stores';
 	import {browser} from '$app/env';
+	import {get} from 'svelte/store';
 
 	import {setSocket, toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
 	import MainNav from '$lib/ui/MainNav.svelte';
 	import Onboard from '$lib/ui/Onboard.svelte';
-	import {setData} from '$lib/ui/data';
-	import {setUi, toUiStore} from '$lib/ui/ui';
+	import {setUi, toUi} from '$lib/ui/ui';
 	import {setApi, toApi} from '$lib/ui/api';
 	import {setApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
@@ -39,45 +39,55 @@
 	}
 
 	const devmode = setDevmode();
-	const data = setData($session);
-	$: data.updateSession($session);
 	const socket = setSocket(toSocketStore((data) => websocketApiClient.handle(data)));
-	const ui = setUi(toUiStore(data, initialMobileValue));
-	const mobile = ui.mobile;
+	const ui = setUi(toUi(session, initialMobileValue));
 
-	$: ui.updateData($data); // TODO this or make it an arg to the ui store?
 	// TODO create only the websocket client, not the http client
 	const websocketApiClient = toWebsocketApiClient<ServicesParamsMap, ServicesResultMap>(
 		socket.send,
 	);
 	const httpApiClient = toHttpApiClient<ServicesParamsMap, ServicesResultMap>();
-	const api = setApi(toApi(ui, data, websocketApiClient, httpApiClient));
-	const app = setApp({data, ui, api, devmode, socket});
+	const api = setApi(toApi(ui, websocketApiClient, httpApiClient));
+	const app = setApp({ui, api, devmode, socket});
 	browser && console.log('app', app);
 	$: browser && console.log('$session', $session);
 
-	$: guest = $session.guest;
-	$: onboarding = !guest && !$data.personas.length;
+	const {
+		mobile,
+		account,
+		sessionPersonas,
+		communities,
+		selectedCommunityId,
+		selectedSpaceIdByCommunity,
+		setSession,
+		selectCommunity,
+		selectSpace,
+	} = ui;
 
-	$: console.log('$ui', $ui);
+	$: setSession($session);
+
+	$: guest = $session.guest;
+	$: onboarding = !guest && !$sessionPersonas.length;
 
 	// TODO refactor -- where should this logic go?
 	$: updateStateFromPageParams($page.params);
 	const updateStateFromPageParams = (params: {community?: string; space?: string}) => {
 		if (!params.community) return;
-		const community = $data.communities.find((c) => c.name === params.community);
-		if (!community) return; // occurs when a session routes to a community they can't access
+		// TODO speed this up with a map of communities by name
+		const communityStore = $communities.find((c) => get(c).name === params.community);
+		if (!communityStore) return; // occurs when a session routes to a community they can't access
+		const community = get(communityStore);
 		const {community_id} = community;
-		if (community_id !== $ui.selectedCommunityId) {
-			api.selectCommunity(community_id);
+		if (community_id !== $selectedCommunityId) {
+			selectCommunity(community_id);
 		}
 		if (community_id) {
 			const spaceUrl = '/' + (params.space || '');
 			const space = community.spaces.find((s) => s.url === spaceUrl);
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = space;
-			if (space_id !== $ui.selectedSpaceIdByCommunity[community_id]) {
-				api.selectSpace(community_id, space_id);
+			if (space_id !== $selectedSpaceIdByCommunity[community_id]) {
+				selectSpace(community_id, space_id);
 			}
 		} else {
 			// TODO what is this condition?
@@ -141,7 +151,7 @@
 	<Devmode {devmode} />
 </div>
 
-<FeltWindowHost query={() => ({hue: randomHue($data.account?.name || GUEST_PERSONA_NAME)})} />
+<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 
 <style>
 	.layout {

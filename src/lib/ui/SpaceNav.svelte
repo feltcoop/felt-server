@@ -1,27 +1,24 @@
 <script lang="ts">
-	import {browser} from '$app/env';
-	import {get} from 'svelte/store';
-
 	import type {Space} from '$lib/vocab/space/space.js';
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import type {Community} from '$lib/vocab/community/community.js';
 	import MembershipInput from '$lib/ui/MembershipInput.svelte';
-	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import {getApp} from '$lib/ui/app';
 
-	const {ui, api} = getApp();
+	const {
+		ui: {mobile, expandMainNav},
+		api,
+	} = getApp();
 
 	export let community: Community;
 	export let spaces: Space[];
 	export let selectedSpace: Space | null;
-	export let allPersonas: Persona[];
-	$: browser && console.log('spaces', spaces);
 </script>
 
 <div class="space-nav">
 	<div class="header">
 		<SpaceInput {community} />
-		<MembershipInput {community} {allPersonas} />
+		<MembershipInput {community} />
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
@@ -35,7 +32,7 @@
 				// That's probably what the user wants,
 				// but the problem is that we also want to close the main nav
 				// when the user clicks the already-selected space. For now this is fine.
-				if (get(ui.mobile) && $ui.expandMainNav) api.toggleMainNav();
+				if ($mobile && $expandMainNav) api.toggleMainNav();
 			}}
 		>
 			{space.name}

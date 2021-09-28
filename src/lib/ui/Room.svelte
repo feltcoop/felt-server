@@ -1,21 +1,27 @@
 <script lang="ts">
 	import {browser} from '$app/env';
+	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 
+	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
-	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import RoomItems from '$lib/ui/RoomItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {api, ui, data, socket} = getApp();
+	const {
+		api,
+		ui: {selectedPersonaId},
+		socket,
+	} = getApp();
 
+	export let community: Community;
 	export let space: Space;
-	export let memberPersonasById: Map<number, Persona>;
+
+	community; // silence unused prop warning
 
 	let text = '';
 
-	$: browser && $socket.connected && api.loadFiles(space.space_id); // TODO move this to SvelteKit `load` so it works with http clients
-	$: console.log(`[Room] fetching files for ${space.space_id}`);
-	$: selectedPersonaId = $ui.selectedPersonaId;
+	$: shouldLoadFiles = browser && $socket.connected;
+	$: files = shouldLoadFiles ? api.getFilesBySpace(space.space_id) : null;
 
 	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
@@ -23,7 +29,7 @@
 		await api.createFile({
 			space_id: space.space_id,
 			content,
-			actor_id: selectedPersonaId!,
+			actor_id: $selectedPersonaId!, // TODO generic erorr check for no selected persona?
 		});
 		text = '';
 	};
@@ -33,13 +39,15 @@
 			await createFile();
 		}
 	};
-
-	$: files = $data.filesBySpace[space.space_id] || [];
 </script>
 
 <div class="room">
 	<div class="files">
-		<RoomItems {files} {memberPersonasById} />
+		{#if files}
+			<RoomItems {files} />
+		{:else}
+			<PendingAnimation />
+		{/if}
 	</div>
 	<input type="text" placeholder="> chat" on:keydown={onKeydown} bind:value={text} />
 </div>

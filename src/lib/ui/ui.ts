@@ -1,214 +1,380 @@
-import type {Readable} from 'svelte/store';
-import {writable, derived} from 'svelte/store';
+import type {Readable, Writable} from 'svelte/store';
+import {writable, derived, get} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
-import type {DataState, DataStore} from '$lib/ui/data';
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
 import type {Persona} from '$lib/vocab/persona/persona';
-
-// TODO in the current design,
-// the methods on the `UiStore` should not be called directly in an app context.
-// They're intended to be called by the api for future orchestration reasons.
-// Of course you can make more of these stores than what's given to you in the app,
-// and call methods all you want without weird bugs.
-// Use cases may include documentation and dueling apps.
+import type {ClientSession} from '$lib/session/clientSession';
+import type {AccountModel} from '$lib/vocab/account/account';
+import type {File} from '$lib/vocab/file/file';
+import type {Membership} from '$lib/vocab/membership/membership';
 
 const KEY = Symbol();
 
-export const getUi = (): UiStore => getContext(KEY);
+export const getUi = (): Ui => getContext(KEY);
 
-export const setUi = (store: UiStore): UiStore => {
+export const setUi = (store: Ui): Ui => {
 	setContext(KEY, store);
 	return store;
 };
 
-export interface UiState {
-	// TODO should these be store references instead of ids?
-	selectedPersonaId: number | null;
-	selectedCommunityId: number | null;
-	selectedCommunityIdByPersona: {[key: number]: number};
-	selectedSpaceIdByCommunity: {[key: number]: number | null};
-	expandMainNav: boolean;
-	expandSecondaryNav: boolean; // TODO name?
-	mainNavView: MainNavView;
-}
+export interface Ui {
+	// dispatch('setSession', {session: ClientSession});
 
-export interface UiStore {
-	subscribe: Readable<UiState>['subscribe'];
-	// state
+	// db state and caches
+	account: Readable<AccountModel | null>;
+	personas: Readable<Readable<Persona>[]>;
+	personasById: Readable<Map<number, Readable<Persona>>>;
+	sessionPersonas: Readable<Readable<Persona>[]>;
+	communities: Readable<Readable<Community>[]>;
+	spaces: Readable<Readable<Space>[]>;
+	spacesById: Readable<Map<number, Readable<Space>>>;
+	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
+	filesBySpace: Map<number, Readable<Readable<File>[]>>;
+	setSession: (session: ClientSession) => void;
+	addPersona: (persona: Persona) => void;
+	addCommunity: (community: Community, persona_id: number) => void;
+	addMembership: (membership: Membership) => void;
+	addSpace: (space: Space, community_id: number) => void;
+	addFile: (file: File) => void;
+	setFiles: (space_id: number, files: File[]) => void;
+	findPersonaById: (persona_id: number) => Readable<Persona>;
+	findSpaceById: (space_id: number) => Readable<Space>;
+	// view state
+	expandMainNav: Readable<boolean>;
+	expandMarquee: Readable<boolean>; // TODO name?
+	mainNavView: Readable<MainNavView>;
 	// derived state
-	selectedPersona: Readable<Persona | null>;
-	selectedCommunity: Readable<Community | null>;
+	selectedPersonaId: Readable<number | null>;
+	selectedPersona: Readable<Readable<Persona> | null>;
+	selectedCommunityIdByPersona: Readable<{[key: number]: number}>;
+	selectedCommunityId: Readable<number | null>;
+	selectedCommunity: Readable<Readable<Community> | null>;
+	selectedSpaceIdByCommunity: Readable<{[key: number]: number | null}>;
 	selectedSpace: Readable<Space | null>;
-	communitiesByPersonaId: Readable<{[persona_id: number]: Community[]}>; // TODO or name `personaCommunities`?
-	// methods and stores
+	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	mobile: Readable<boolean>;
 	setMobile: (mobile: boolean) => void;
-	updateData: (data: DataState) => void;
+	// view methods
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space_id: number | null) => void;
 	toggleMainNav: () => void;
 	toggleSecondaryNav: () => void;
-	setMainNavView: (mainNavView: MainNavView) => void;
+	setMainNavView: (value: MainNavView) => void;
 }
 
-export const toUiStore = (data: DataStore, mobile: boolean) => {
-	const state = writable<UiState>(toDefaultUiState(mobile));
+export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
+	const initialSession = get(session);
 
-	const {subscribe, update} = state;
+	// TODO would it helpfully simplify things to put these stores on the actual store state?
+	// Could then put these calculations in one place.
+	const account = writable<AccountModel | null>(
+		initialSession.guest ? null : initialSession.account, // TODO shared helper with the session updater?
+	);
+	// Importantly, this only changes when items are added or removed from the collection,
+	// not when the items themselves change; each item is a store that can be subscribed to.
+	const personas = writable<Writable<Persona>[]>(
+		initialSession.guest ? [] : toInitialPersonas(initialSession).map((p) => writable(p)),
+	);
+	// TODO do these maps more efficiently
+	const personasById: Readable<Map<number, Writable<Persona>>> = derived(
+		personas,
+		($personas) => new Map($personas.map((persona) => [get(persona).persona_id, persona])),
+	);
+	// not derived from session because the session has only the initial snapshot
+	// TODO these `Persona`s need additional data compared to every other `Persona`
+	const sessionPersonas = writable<Writable<Persona>[]>(
+		initialSession.guest
+			? []
+			: initialSession.personas.map((p) => get(personasById).get(p.persona_id)!),
+	);
+	const communities = writable<Writable<Community>[]>(
+		initialSession.guest ? [] : initialSession.communities.map((p) => writable(p)),
+	);
+	const spaces = writable<Writable<Space>[]>(
+		initialSession.guest
+			? []
+			: initialSession.communities.flatMap((community) => community.spaces).map((s) => writable(s)),
+	);
+	// TODO do these maps more efficiently
+	const spacesById: Readable<Map<number, Writable<Space>>> = derived(
+		spaces,
+		($spaces) => new Map($spaces.map((space) => [get(space).space_id, space])),
+	);
+	const memberships = writable<Membership[]>([]); // TODO should be on the session:  initialSession.guest ? [] : [],
 
 	const {subscribe: subscribeMobile, set: setMobile} = writable(mobile);
 
 	// derived state
 	// TODO speed up these lookups with id maps
+	// TODO remove it from `state`
+	const selectedPersonaId = writable<number | null>(null);
 	const selectedPersona = derived(
-		[state, data],
-		([$ui, $data]) => $data.personas.find((p) => p.persona_id === $ui.selectedPersonaId) || null,
-	);
-	const selectedCommunity = derived(
-		[state, data],
-		([$ui, $data]) =>
-			$data.communities.find((c) => c.community_id === $ui.selectedCommunityId) || null,
-	);
-	const selectedSpace = derived(
-		[state, selectedCommunity],
-		([$ui, $selectedCommunity]) =>
-			$selectedCommunity?.spaces.find(
-				(s) => s.space_id === $ui.selectedSpaceIdByCommunity[$selectedCommunity.community_id],
-			) || null,
-	);
-	const communitiesByPersonaId = derived([data], ([$data]) =>
-		$data.personas.reduce((result, persona) => {
-			// TODO speed up this lookup, probably with a map of all communities by id
-			result[persona.persona_id] = $data.communities.filter((community) =>
-				persona.community_ids.includes(community.community_id),
-			);
-			return result;
-		}, {} as {[persona_id: number]: Community[]}),
+		[selectedPersonaId, personasById],
+		([$selectedPersonaId, $personasById]) =>
+			($selectedPersonaId && $personasById.get($selectedPersonaId)) || null,
 	);
 
-	const store: UiStore = {
-		subscribe,
-		// derived state
-		selectedPersona,
-		selectedCommunity,
-		selectedSpace,
-		communitiesByPersonaId,
-		// methods and stores
+	// TODO should these be store references instead of ids?
+	// TODO maybe make this a lazy map, not a derived store?
+	const selectedCommunityIdByPersona = writable<{[key: number]: number}>(
+		Object.fromEntries(
+			get(sessionPersonas).map((persona) => {
+				// TODO needs to be rethought, the `get` isn't reactive
+				const $persona = get(persona);
+				return [$persona.persona_id, ($persona.community_ids && $persona.community_ids[0]) ?? null];
+			}),
+		),
+	);
+	const selectedCommunityId = derived(
+		[selectedPersonaId, selectedCommunityIdByPersona],
+		([$selectedPersonaId, $selectedCommunityIdByPersona]) =>
+			$selectedPersonaId && $selectedCommunityIdByPersona[$selectedPersonaId],
+	);
+	const selectedCommunity = derived(
+		[communities, selectedCommunityId],
+		// TODO lookup from `communitiesById` map instead
+		([$communities, $selectedCommunityId]) =>
+			$communities.find((c) => get(c).community_id === $selectedCommunityId) || null,
+	);
+	// TODO do we care about making this reactive to new communities, or is `undefined` ok?
+	const selectedSpaceIdByCommunity = writable<{[key: number]: number | null}>(
+		initialSession.guest
+			? {}
+			: Object.fromEntries(
+					initialSession.communities.map((community) => [
+						community.community_id,
+						community.spaces[0]?.space_id ?? null,
+					]),
+			  ),
+	);
+	const selectedSpace = derived(
+		[selectedCommunity, selectedSpaceIdByCommunity],
+		([$selectedCommunity, $selectedSpaceIdByCommunity]) =>
+			// TODO faster lookup
+			($selectedCommunity &&
+				get($selectedCommunity).spaces.find(
+					(s) => s.space_id === $selectedSpaceIdByCommunity[get($selectedCommunity)!.community_id],
+				)) ||
+			null,
+	);
+	const communitiesByPersonaId = derived(
+		[communities, sessionPersonas],
+		([$communities, $sessionPersonas]) =>
+			$sessionPersonas.reduce((result, persona) => {
+				// TODO refactor this to be reactive
+				const $persona = get(persona);
+				// TODO speed up this lookup, probably with a map of all communities by id
+				result[$persona.persona_id] = $communities.filter(
+					(community) =>
+						// TODO why no `community_ids`?
+						$persona.community_ids && $persona.community_ids.includes(get(community).community_id),
+				);
+				return result;
+			}, {} as {[persona_id: number]: Readable<Community>[]}),
+	);
+	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
+	const filesBySpace: Map<number, Writable<Writable<File>[]>> = new Map();
+
+	const expandMainNav = writable(!mobile);
+	const expandMarquee = writable(!mobile);
+	const mainNavView: Writable<MainNavView> = writable('explorer');
+
+	const ui: Ui = {
+		account,
+		personas,
+		sessionPersonas,
+		spaces,
+		communities,
+		memberships,
+		personasById,
+		spacesById,
+		filesBySpace,
+		setSession: (session) => {
+			console.log('[data.setSession]', session);
+			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
+			account.set(session.guest ? null : session.account);
+			personas.set(session.guest ? [] : toInitialPersonas(session).map((p) => writable(p)));
+			sessionPersonas.set(
+				session.guest ? [] : session.personas.map((p) => get(personasById).get(p.persona_id)!),
+			);
+
+			// TODO improve this with the other code
+			const initialSessionPersona = session.guest ? null : get(sessionPersonas)[0];
+			if (initialSessionPersona) {
+				selectedPersonaId.set(get(initialSessionPersona).persona_id);
+			} else {
+				selectedPersonaId.set(null);
+			}
+
+			communities.set(session.guest ? [] : session.communities.map((p) => writable(p)));
+			// TODO init memberships when they're added to the session
+			spaces.set(
+				session.guest
+					? []
+					: session.communities.flatMap((community) => community.spaces).map((s) => writable(s)),
+			);
+			selectedCommunityIdByPersona.set(
+				// TODO copypasta from above
+				Object.fromEntries(
+					get(sessionPersonas).map((persona) => {
+						// TODO needs to be rethought, the `get` isn't reactive
+						const $persona = get(persona);
+						return [
+							$persona.persona_id,
+							($persona.community_ids && $persona.community_ids[0]) ?? null,
+						];
+					}),
+				),
+			);
+			selectedSpaceIdByCommunity.set(
+				// TODO copypasta from above
+				session.guest
+					? {}
+					: Object.fromEntries(
+							session.communities.map((community) => [
+								community.community_id,
+								community.spaces[0]?.space_id ?? null,
+							]),
+					  ),
+			);
+			mainNavView.set('explorer');
+		},
+		addPersona: (persona) => {
+			console.log('[data.addPersona]', persona);
+			const personaStore = writable(persona);
+			personas.update(($personas) => $personas.concat(personaStore));
+			// TODO better way to check this? should `sessionPersonas` be a `derived` store?
+			if (persona.account_id == get(account)?.account_id) {
+				sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
+			}
+		},
+		addCommunity: (community, persona_id) => {
+			console.log('[data.addCommunity]', community, persona_id);
+			// TODO how should `persona.community_ids` by modeled and kept up to date?
+			const persona = get(personasById).get(persona_id)!;
+			const $persona = get(persona);
+			if (!$persona.community_ids.includes(community.community_id)) {
+				persona.update(($persona) => ({
+					...$persona,
+					community_ids: $persona.community_ids.concat(community.community_id),
+				}));
+				console.log('updated persona community ids', get(persona));
+			}
+			const communityStore = writable(community);
+			communities.update(($communities) => $communities.concat(communityStore));
+		},
+		addMembership: (membership) => {
+			console.log('[data.addMembership]', membership);
+			// TODO also update `communities.personas` (which will be refactored)
+			memberships.update(($memberships) => $memberships.concat(membership));
+		},
+		addSpace: (space, community_id) => {
+			console.log('[data.addSpace]', space);
+			const communityStore = get(communities).find((c) => get(c).community_id === community_id);
+			communityStore?.update((community) => ({
+				...community,
+				// TODO `community.spaces` is not reactive, and should be replaced with flat data structures,
+				// but we may want to make them readable stores in the meantime
+				spaces: community.spaces.concat(space), // TODO should this check if it's already there? yes but for different data structures
+			}));
+			spaces.update(($spaces) => $spaces.concat(writable(space)));
+		},
+		addFile: (file) => {
+			console.log('[data.addFile]', file);
+			const fileStore = writable(file);
+			const files = filesBySpace.get(file.space_id);
+			if (files) {
+				// TODO check if it already exists -- maybe by getting `fileStore` from a `fileById` map
+				files.update(($files) => $files.concat(fileStore));
+			} else {
+				filesBySpace.set(file.space_id, writable([fileStore]));
+			}
+		},
+		setFiles: (space_id, files) => {
+			console.log('[data.setFiles]', files);
+			const existingFiles = filesBySpace.get(space_id);
+			if (existingFiles) {
+				existingFiles.set(files.map((f) => writable(f)));
+			} else {
+				filesBySpace.set(space_id, writable(files.map((f) => writable(f))));
+			}
+		},
+		findPersonaById: (persona_id: number): Readable<Persona> => {
+			const persona = get(personasById).get(persona_id);
+			if (!persona) throw Error(`Unknown persona ${persona_id}`);
+			return persona;
+		},
+		findSpaceById: (space_id: number): Readable<Space> => {
+			const space = get(spacesById).get(space_id);
+			if (!space) throw Error(`Unknown space ${space_id}`);
+			return space;
+		},
+		// view state
 		mobile: {subscribe: subscribeMobile}, // don't expose the writable store
 		setMobile,
-		updateData: (data) => {
-			console.log('[ui.updateData]', {data});
-			update(($ui) => {
-				// TODO this needs to be rethought, it's just preserving the existing ui state
-				// when new data gets set, which happens when e.g. a new community is created --
-				// most likely `updateData` *should* wipe away UI state by default,
-				// and should not be called when data changes, only when a new session's data is set,
-				// so the naming is misleading
-				if (data.account) {
-					const selectedPersona =
-						($ui.selectedPersonaId !== null &&
-							data.personas.find((c) => c.persona_id === $ui.selectedPersonaId)) ||
-						data.personas[0] ||
-						null;
-					console.log('ui selectedPersona is', selectedPersona);
-					const selectedCommunity =
-						($ui.selectedCommunityId !== null &&
-							data.communities.find((c) => c.community_id === $ui.selectedCommunityId)) ||
-						data.communities[0] ||
-						null;
-					return {
-						...$ui,
-						selectedPersonaId: selectedPersona?.persona_id ?? null,
-						selectedCommunityId: selectedCommunity?.community_id ?? null,
-						selectedCommunityIdByPersona: Object.fromEntries(
-							data.personas.map((persona) => [
-								persona.persona_id,
-								$ui.selectedCommunityIdByPersona[persona.persona_id] ??
-									persona.community_ids[0] ??
-									null,
-							]),
-						),
-						selectedSpaceIdByCommunity: Object.fromEntries(
-							data.communities.map((community) => [
-								community.community_id,
-								$ui.selectedSpaceIdByCommunity[community.community_id] ??
-									community.spaces[0]?.space_id ??
-									null,
-							]),
-						),
-					};
-				} else {
-					// might want to preserve some state, so this doesn't use `toDefaultUiState`
-					return {
-						...$ui,
-						selectedPersonaId: null,
-						selectedCommunityId: null,
-						selectedCommunityIdByPersona: {},
-						selectedSpaceIdByCommunity: {},
-						mainNavView: 'explorer',
-					};
-				}
-			});
-		},
+		expandMainNav,
+		expandMarquee,
+		mainNavView,
+		// derived state
+		selectedPersonaId,
+		selectedPersona,
+		selectedCommunityIdByPersona,
+		selectedCommunityId,
+		selectedCommunity,
+		selectedSpaceIdByCommunity,
+		selectedSpace,
+		communitiesByPersonaId,
+		// methods
 		selectPersona: (persona_id) => {
 			console.log('[ui.selectPersona] persona_id', {persona_id});
-			update(($ui) => ({
-				...$ui,
-				selectedPersonaId: persona_id,
-				selectedCommunityId: $ui.selectedCommunityIdByPersona[persona_id],
-			}));
+			selectedPersonaId.set(persona_id);
+			// selectedPersona
 		},
 		selectCommunity: (community_id) => {
 			console.log('[ui.selectCommunity] community_id', {community_id});
-			update(($ui) => ({
-				...$ui,
-				selectedCommunityId: community_id,
-				selectedCommunityIdByPersona:
-					community_id === null || $ui.selectedPersonaId === null
-						? $ui.selectedCommunityIdByPersona
-						: {
-								...$ui.selectedCommunityIdByPersona,
-								[$ui.selectedPersonaId]: community_id,
-						  },
-			}));
+			const $selectedPersonaId = get(selectedPersonaId); // TODO how to remove the `!`?
+			if (community_id && $selectedPersonaId) {
+				selectedCommunityIdByPersona.update(($selectedCommunityIdByPersona) => ({
+					...$selectedCommunityIdByPersona,
+					[$selectedPersonaId]: community_id,
+				}));
+			}
 		},
 		selectSpace: (community_id, space_id) => {
 			console.log('[ui.selectSpace] community_id, space_id', {community_id, space_id});
-			update(($ui) => {
-				// TODO speed this up using stores maybe?
-				return {
-					...$ui,
-					selectedSpaceIdByCommunity: {
-						...$ui.selectedSpaceIdByCommunity,
-						[community_id]: space_id,
-					},
-				};
-			});
+			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => ({
+				...$selectedSpaceIdByCommunity,
+				[community_id]: space_id,
+			}));
 		},
 		toggleMainNav: () => {
-			update(($ui) => ({...$ui, expandMainNav: !$ui.expandMainNav}));
+			expandMainNav.update(($expandMainNav) => !$expandMainNav);
 		},
 		toggleSecondaryNav: () => {
-			update(($ui) => ({...$ui, expandSecondaryNav: !$ui.expandSecondaryNav}));
+			expandMarquee.update(($expandMarquee) => !$expandMarquee);
 		},
-		setMainNavView: (mainNavView) => {
-			update(($ui) => ({...$ui, mainNavView}));
+		setMainNavView: (value) => {
+			mainNavView.set(value);
 		},
 	};
-	return store;
+	return ui;
 };
 
-const toDefaultUiState = (mobile: boolean): UiState => ({
-	expandMainNav: !mobile,
-	expandSecondaryNav: !mobile,
-	mainNavView: 'explorer',
-	selectedPersonaId: null,
-	selectedCommunityId: null,
-	selectedCommunityIdByPersona: {},
-	selectedSpaceIdByCommunity: {},
-});
-
 export type MainNavView = 'explorer' | 'account';
+
+// TODO this is a hack until we have `community_ids` normalized and off the `Persona`,
+// the issue is that the "session personas" are different than the rest of the personas
+// by having their `community_ids` populated, so as a hack we prefer that instance in the global,
+// but these probably need to be split into two separate collections --
+// notice that comparison checks between the two types of personas will not be able to use store reference equality
+const toInitialPersonas = (session: ClientSession): Persona[] =>
+	session.guest
+		? []
+		: session.personas.concat(
+				session.allPersonas.filter(
+					(p1) => !session.personas.find((p2) => p2.persona_id === p1.persona_id),
+				),
+		  );

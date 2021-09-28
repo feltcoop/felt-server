@@ -1,9 +1,10 @@
 import {setContext, getContext} from 'svelte';
 import {session} from '$app/stores';
+import {writable} from 'svelte/store';
+import type {Readable} from 'svelte/store';
 import {randomItem} from '@feltcoop/felt/util/random.js';
 
-import type {DataStore} from '$lib/ui/data';
-import type {UiStore} from '$lib/ui/ui';
+import type {Ui} from '$lib/ui/ui';
 import type {Community, CommunityParams} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Membership, MembershipParams} from '$lib/vocab/membership/membership';
@@ -41,9 +42,6 @@ export interface Api {
 		password: string,
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	logOut: () => Promise<ApiResult<{}>>;
-	selectPersona: (persona_id: number) => void;
-	selectCommunity: (community_id: number | null) => void;
-	selectSpace: (community_id: number, space: number | null) => void;
 	toggleMainNav: () => void;
 	toggleSecondaryNav: () => void;
 	createPersona: (
@@ -54,11 +52,11 @@ export interface Api {
 	createMembership: (params: MembershipParams) => Promise<ApiResult<{membership: Membership}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
 	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
+	getFilesBySpace: (space_id: number) => Readable<Readable<File>[]>;
 }
 
 export const toApi = (
-	ui: UiStore,
-	data: DataStore,
+	ui: Ui,
 	client: ApiClient<ServicesParamsMap, ServicesResultMap>,
 	client2: ApiClient<ServicesParamsMap, ServicesResultMap>, // TODO remove this after everything stabilizes
 ): Api => {
@@ -68,9 +66,6 @@ export const toApi = (
 	const api: Api = {
 		// TODO these are just directly proxying and they don't have the normal `ApiResult` return value
 		// The motivation is that sometimes UI events may do API-related things, but this may not be the best design.
-		selectPersona: ui.selectPersona,
-		selectCommunity: ui.selectCommunity,
-		selectSpace: ui.selectSpace,
 		toggleMainNav: ui.toggleMainNav,
 		toggleSecondaryNav: ui.toggleSecondaryNav,
 		logIn: async (accountName, password) => {
@@ -129,11 +124,11 @@ export const toApi = (
 		createPersona: async (params) => {
 			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
 			const result = await randomClient().invoke('create_persona', params);
-			console.log('[api] create_community result', result);
+			console.log('[api] create_persona result', result);
 			if (result.ok) {
 				const {persona, community} = result.value;
-				data.addCommunity(community as Community, persona.persona_id); // TODO fix when Community type is fixed
-				data.addPersona(persona);
+				ui.addPersona(persona);
+				ui.addCommunity(community as Community, persona.persona_id); // TODO fix when Community type is fixed
 			}
 			return result as any; // TODO fix when Community type is fixed
 		},
@@ -142,7 +137,7 @@ export const toApi = (
 			const result = await randomClient().invoke('create_community', params);
 			console.log('[api] create_community result', result);
 			if (result.ok) {
-				data.addCommunity(result.value.community as Community, params.persona_id); // TODO fix when Community type is fixed
+				ui.addCommunity(result.value.community as Community, params.persona_id); // TODO fix when Community type is fixed
 			}
 			return result as any; // TODO fix when Community type is fixed
 		},
@@ -152,7 +147,7 @@ export const toApi = (
 			const result = await randomClient().invoke('create_membership', params);
 			console.log('[api] create_membership result', result);
 			if (result.ok) {
-				data.addMembership(result.value.membership);
+				ui.addMembership(result.value.membership);
 			}
 			return result;
 		},
@@ -160,7 +155,7 @@ export const toApi = (
 			const result = await randomClient().invoke('create_space', params);
 			console.log('[api] create_space result', result);
 			if (result.ok) {
-				data.addSpace(result.value.space, params.community_id);
+				ui.addSpace(result.value.space, params.community_id);
 			}
 			return result;
 		},
@@ -168,19 +163,28 @@ export const toApi = (
 			const result = await randomClient().invoke('create_file', params);
 			console.log('create_file result', result);
 			if (result.ok) {
-				data.addFile(result.value.file);
+				ui.addFile(result.value.file);
 			}
 			return result;
 		},
 		loadFiles: async (space_id) => {
-			data.setFiles(space_id, []);
+			ui.setFiles(space_id, []);
 			// TODO this breaks on startup because the websocket isn't connected yet
 			const result = await randomClient().invoke('read_files', {space_id});
 			console.log('[api] read_files result', result);
 			if (result.ok) {
-				data.setFiles(space_id, result.value.files);
+				ui.setFiles(space_id, result.value.files);
 			}
 			return result;
+		},
+		// TODO do we want to return the promise? maybe as `[value, resultPromise]`
+		getFilesBySpace: (space_id) => {
+			let files = ui.filesBySpace.get(space_id);
+			if (!files) {
+				ui.filesBySpace.set(space_id, (files = writable([])));
+				api.loadFiles(space_id);
+			}
+			return files;
 		},
 	};
 	return api;

@@ -9,7 +9,7 @@ export interface Community {
 	community_id: number;
 	name: string;
 	spaces: Space[];
-	memberPersonas: Persona[];
+	memberPersonas: Persona[]; // TODO if we normalize all data, this should be an array of ids or stores
 }
 // TODO fix this type to infer `Community` like with the other schemas --
 // need to handle the various kinds of `Community` doc variations we return from the database

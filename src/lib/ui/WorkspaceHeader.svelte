@@ -1,18 +1,22 @@
 <script lang="ts">
+	import type {Readable} from 'svelte/store';
+
 	import type {Space} from '$lib/vocab/space/space';
 	import type {Community} from '$lib/vocab/community/community';
 	import {getApp} from '$lib/ui/app';
 
-	const {ui} = getApp();
+	const {
+		ui: {expandMainNav},
+	} = getApp();
 
 	export let space: Space | null | undefined;
-	export let community: Community | null | undefined;
+	export let community: Readable<Community> | null | undefined;
 </script>
 
-<ul class="workspace-header" class:expanded-nav={$ui.expandMainNav}>
+<ul class="workspace-header" class:expanded-nav={$expandMainNav}>
 	<li class="luggage-placeholder" />
 	<li class="breadcrumbs">
-		{community?.name} / {space?.url.split('/').filter(Boolean).join(' / ') || ''}
+		{community && $community.name} / {space?.url.split('/').filter(Boolean).join(' / ') || ''}
 	</li>
 </ul>
 
