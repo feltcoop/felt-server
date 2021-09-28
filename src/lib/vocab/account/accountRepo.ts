@@ -10,11 +10,12 @@ export const accountRepo = (db: Database) => ({
 	create: async ({
 		name,
 		password,
+		created,
 	}: AccountParams): Promise<Result<{value: Account}, ErrorResponse>> => {
 		const passwordKey = await toPasswordKey(password);
 		const data = await db.sql<Account[]>`
-      insert into accounts (name, password) values (
-        ${name}, ${passwordKey}
+      insert into accounts (name, password, created) values (
+        ${name}, ${passwordKey}, ${created}
       ) RETURNING *`;
 		console.log('[db] created account', data);
 		const account = data[0];
