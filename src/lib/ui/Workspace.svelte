@@ -20,18 +20,18 @@
 	{/if}
 	<div class="column">
 		<!-- TODO pass stores here instead of dereferncing -->
-		<WorkspaceHeader space={$selectedSpace} community={selectedCommunity} />
+		<WorkspaceHeader space={selectedSpace} community={selectedCommunity} />
 		{#if selectedCommunity && $selectedSpace}
-			<SpaceView community={$selectedCommunity} space={$selectedSpace} />
+			<SpaceView community={selectedCommunity} space={selectedSpace} />
 		{:else if selectedCommunity}
-			<SpaceInput community={$selectedCommunity}>Create a new space</SpaceInput>
+			<SpaceInput community={selectedCommunity}>Create a new space</SpaceInput>
 		{/if}
 		<MarqueeButton />
 	</div>
 	<!-- TODO extract to some shared abstractions with the `Luggage` probably -->
 	{#if $expandMarquee && selectedCommunity && $selectedSpace}
 		<div class="marquee">
-			<Marquee community={$selectedCommunity} space={$selectedSpace} />
+			<Marquee community={selectedCommunity} space={selectedSpace} />
 		</div>
 	{/if}
 </div>
