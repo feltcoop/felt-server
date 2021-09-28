@@ -10,7 +10,7 @@ export interface WebsocketHandler {
 
 export const websocketHandler: WebsocketHandler = async (
 	server: ApiServer,
-	_socket: ws,
+	socket: ws,
 	messageData: ws.Data,
 	account_id: number,
 ) => {
@@ -46,14 +46,25 @@ export const websocketHandler: WebsocketHandler = async (
 		return;
 	}
 
-	// TODO this should perhaps be `result` with a `result.response` alongside other effects/messages
-	const response = await service.perform({server, params, account_id});
+	const result = await service.perform({server, params, account_id});
+
+	const responseMessage: JsonRpcResponse = {
+		jsonrpc: '2.0',
+		id: message.id, // TODO this should only be set for the client we're responding to -- maybe don't use `response`?
+		result,
+	};
+	const serializedResponse = JSON.stringify(responseMessage);
+
+	if (!result.ok) {
+		socket.send(serializedResponse);
+		return; // TODO or do we need to broadcast in some cases?
+	}
 
 	if (process.env.NODE_ENV !== 'production') {
-		if (!service.validateResponse()(response.value)) {
+		if (!service.validateResponse()(result.value)) {
 			console.error(
 				red(`failed to validate service response: ${service.name}`),
-				response,
+				result,
 				service.validateResponse().errors,
 			);
 		}
@@ -63,13 +74,7 @@ export const websocketHandler: WebsocketHandler = async (
 	// A quick improvement would be to scope to the community.
 	// We probably also want 2 types of messages, `JsonRpcResponse` for this specific client
 	// and some generic broadcast message type for everyone else.
-	const responseMessage: JsonRpcResponse = {
-		jsonrpc: '2.0',
-		id: message.id, // TODO this should only be set for the client we're responding to -- maybe don't use `response`?
-		result: response, // TODO see above where `response` is assigned, should probably be `response.data`
-	};
 	console.log('[websocketHandler] broadcasting', responseMessage);
-	const serializedResponse = JSON.stringify(responseMessage);
 	for (const client of server.websocketServer.wss.clients) {
 		client.send(serializedResponse);
 	}

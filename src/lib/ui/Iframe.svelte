@@ -7,7 +7,7 @@
 	export let space: Space;
 	export let url: string; // TODO type
 
-	community;
+	community; // silence unused prop warning
 
 	let loaded = false;
 </script>
