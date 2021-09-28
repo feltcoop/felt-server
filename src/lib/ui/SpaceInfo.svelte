@@ -5,22 +5,22 @@
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {randomHue} from '$lib/ui/color';
 
-	export let space: Space;
+	export let space: Readable<Space>;
 	export let community: Readable<Community>;
 	export let selected: boolean = false;
 
-	$: hue = randomHue(space.name); // TODO add custom setting on spaces
+	$: hue = randomHue($space.name); // TODO add custom setting on spaces
 </script>
 
 <a
-	href="/{$community.name}{space.url === '/' ? '' : space.url}"
+	href="/{$community.name}{$space.url === '/' ? '' : $space.url}"
 	class:selected
 	class="space-info"
 	style="--hue: {hue}"
 >
-	<div class="name">{space.name}</div>
+	<div class="name">{$space.name}</div>
 	<div>
-		{space.url}
+		{$space.url}
 	</div>
 </a>
 

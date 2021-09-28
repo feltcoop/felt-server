@@ -10,7 +10,7 @@
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
 	const {
-		ui: {selectedSpace},
+		ui: {selectedSpace, spacesByCommunityId},
 	} = getApp();
 
 	export let community: Readable<Community>;
@@ -18,9 +18,7 @@
 
 	space; // TODO we're ignoring the space, but should probably mount its `content` as markup
 
-	// TODO refactor to be normalized
-	// this will also fix the UX issue where `spaces` aren't available for SSR, so they pop in
-	$: spaces = $community?.spaces || []; // TODO spacesByCommunity array, probably
+	$: communitySpaces = $spacesByCommunityId.get($community.community_id)!;
 </script>
 
 <Markup>
@@ -33,9 +31,13 @@
 	</section>
 	<section>
 		<!-- TODO this is just a stubbed out idea -->
-		<h2>recent spaces</h2>
-		{#each spaces as space (space.space_id)}
-			<SpaceInfo {space} {community} selected={space === $selectedSpace} />
+		<h2>community spaces</h2>
+		{#each communitySpaces as communitySpace (communitySpace)}
+			<SpaceInfo
+				space={communitySpace}
+				{community}
+				selected={communitySpace === (selectedSpace && $selectedSpace)}
+			/>
 		{/each}
 	</section>
 	<section>
