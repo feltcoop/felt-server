@@ -1,20 +1,25 @@
 <script lang="ts">
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
+	import {get} from 'svelte/store';
 
 	import type {Community} from '$lib/vocab/community/community.js';
-	import type {Persona} from '$lib/vocab/persona/persona.js';
+	import MembershipInputItem from '$lib/ui/MembershipInputItem.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {api} = getApp();
+	const {
+		ui: {personas},
+	} = getApp();
 
-	export let allPersonas: Persona[];
 	export let community: Community;
 
-	let open = false;
+	let opened = false;
 
+	// TODO speed this up with a better cached data structures; the use of `get` is particularly bad
 	$: invitableMembers = community
-		? allPersonas.filter((x) => !community.memberPersonas.some((y) => x.persona_id == y.persona_id))
+		? $personas.filter(
+				(x) => !community.memberPersonas.some((y) => get(x).persona_id == y.persona_id),
+		  )
 		: [];
 </script>
 
@@ -23,28 +28,16 @@
 	aria-label="Invite users to {community.name}"
 	type="button"
 	class="button-emoji"
-	on:click={() => (open = true)}
+	on:click={() => (opened = true)}
 >
 	✉️
 </button>
-{#if open}
-	<Dialog on:close={() => (open = false)}>
+{#if opened}
+	<Dialog on:close={() => (opened = false)}>
 		<Markup>
 			<h1>Invite users to {community.name}</h1>
-			{#each invitableMembers as member (member.persona_id)}
-				<p>
-					<button
-						type="button"
-						class="button-join"
-						on:click={() =>
-							api.createMembership({
-								community_id: community.community_id,
-								persona_id: member.persona_id,
-							})}
-					>
-						{member.name}
-					</button>
-				</p>
+			{#each invitableMembers as persona (persona)}
+				<MembershipInputItem {persona} {community} />
 			{:else}
 				<p>There's no one new to invite</p>
 			{/each}

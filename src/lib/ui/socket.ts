@@ -1,5 +1,5 @@
 import type {AsyncStatus} from '@feltcoop/felt';
-import {writable} from 'svelte/store';
+import {get, writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
@@ -23,14 +23,13 @@ export interface SocketState {
 	connected: boolean;
 	status: AsyncStatus; // rename? `connectionStatus`?
 	error: string | null;
-	sendCount: number;
 }
 
 export interface SocketStore {
 	subscribe: Readable<SocketState>['subscribe'];
 	disconnect: (code?: number) => void;
 	connect: (url: string) => void;
-	send: (data: object) => void;
+	send: (data: object) => boolean; // returns `true` if sent, `false` if not for some reason
 }
 
 export interface HandleSocketMessage {
@@ -38,16 +37,7 @@ export interface HandleSocketMessage {
 }
 
 export const toSocketStore = (handleMessage: HandleSocketMessage): SocketStore => {
-	const {subscribe, update} = writable<SocketState>(toDefaultSocketState(), () => {
-		console.log('[socket] listen store');
-		return () => {
-			console.log('[socket] unlisten store');
-			unsubscribe();
-		};
-	});
-	const unsubscribe = subscribe((value) => {
-		console.log('[socket] store subscriber', value);
-	});
+	const {subscribe, update} = writable<SocketState>(toDefaultSocketState());
 
 	const createWebSocket = (url: string): WebSocket => {
 		const ws = new WebSocket(url);
@@ -105,19 +95,18 @@ export const toSocketStore = (handleMessage: HandleSocketMessage): SocketStore =
 			});
 		},
 		send: (data) => {
-			update(($socket) => {
-				console.log('[ws] send', data, $socket);
-				if (!$socket.ws) {
-					console.error('[ws] cannot send without a socket', data, $socket);
-					return $socket;
-				}
-				if (!$socket.connected) {
-					console.error('[ws] cannot send because the websocket is not connected', data, $socket);
-					return $socket;
-				}
-				$socket.ws.send(JSON.stringify(data));
-				return {...$socket, sendCount: $socket.sendCount + 1};
-			});
+			const $socket = get(store);
+			console.log('[ws] send', data, $socket);
+			if (!$socket.ws) {
+				console.error('[ws] cannot send without a socket', data, $socket);
+				return false;
+			}
+			if (!$socket.connected) {
+				console.error('[ws] cannot send because the websocket is not connected', data, $socket);
+				return false;
+			}
+			$socket.ws.send(JSON.stringify(data));
+			return true;
 		},
 	};
 
@@ -130,5 +119,4 @@ const toDefaultSocketState = (): SocketState => ({
 	connected: false,
 	status: 'initial',
 	error: null,
-	sendCount: 0,
 });

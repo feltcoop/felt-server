@@ -45,7 +45,9 @@
 			disabled={status === 'pending'}
 			on:keydown={onKeydown}
 		/>
-		<button type="button" on:click={create} disabled={status === 'pending'}> Create </button>
+		<button type="button" on:click={create} disabled={status === 'pending'}>
+			Create persona
+		</button>
 	</form>
 </Markup>
 <div class="centered-block">

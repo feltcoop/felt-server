@@ -2,16 +2,16 @@
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
-	import type {CommunityModel} from '$lib/vocab/community/community.js';
+	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
 	import {spaceTypes} from '$lib/vocab/space/space';
 
 	const {api} = getApp();
 
-	export let community: CommunityModel;
+	export let community: Community;
 
-	let open = false;
+	let opened = false;
 	let newName = '';
 	let newType = spaceTypes[0];
 	let nameEl: HTMLInputElement;
@@ -37,7 +37,7 @@
 		if (result.ok) {
 			newName = '';
 			newType = spaceTypes[0];
-			open = false;
+			opened = false;
 		} else {
 			errorMessage = result.reason;
 		}
@@ -51,11 +51,16 @@
 	};
 </script>
 
-<button aria-label="Create Space" type="button" class="button-emoji" on:click={() => (open = true)}>
+<button
+	aria-label="Create Space"
+	type="button"
+	class="button-emoji"
+	on:click={() => (opened = true)}
+>
 	➕
 </button>
-{#if open}
-	<Dialog on:close={() => (open = false)}>
+{#if opened}
+	<Dialog on:close={() => (opened = false)}>
 		<div>
 			<Markup>
 				<h1>Create a new space</h1>

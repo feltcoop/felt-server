@@ -9,18 +9,19 @@ export interface Community {
 	community_id: number;
 	name: string;
 	spaces: Space[];
-	memberPersonas: Persona[];
+	memberPersonas: Persona[]; // TODO if we normalize all data, this should be an array of ids or stores
 }
-// TODO can't get the static inference correct here -- change to schema after normalizing data, or maybe generate plain types
-// export type Community = Static<typeof CommunitySchema>;
+// TODO fix this type to infer `Community` like with the other schemas --
+// need to handle the various kinds of `Community` doc variations we return from the database
 export const CommunitySchema = Type.Object(
 	{
 		community_id: Type.Number(),
 		name: Type.String(),
-		// spaces: Type.Ref(SpaceSchema), // TODO reference types
-		// members: Type.Number(),
+		// TODO this fails because Community circularly references itself via `Vocab`
+		// spaces: Type.Array(Type.Ref(Vocab, {...SpaceSchema, $id: 'CommunitySpaceSchema'})),
+		// memberPersonas: Type.Array(Type.Ref(Vocab, {...PersonaSchema, $id: 'CommunityPersonaSchema'})),
 	},
-	{$id: 'CommunitySchema', additionalProperties: true}, // TODO `true` is a hack
+	{$id: 'Community', additionalProperties: true}, // TODO `true` is a hack related to the above
 );
 export const validateCommunity = toValidateSchema<Community>(CommunitySchema);
 
@@ -33,23 +34,6 @@ export const CommunityParamsSchema = Type.Object(
 	{$id: 'CommunityParams', additionalProperties: false},
 );
 export const validateCommunityParams = toValidateSchema<CommunityParams>(CommunityParamsSchema);
-
-// TODO think through alternatives to this, probably caching `membershipById` on `data`
-export interface CommunityModel {
-	community_id: number;
-	name: string;
-	spaces: Space[];
-	memberPersonas: Persona[];
-	memberPersonasById: Map<number, Persona>;
-}
-
-export const toCommunityModel = (community: Community): CommunityModel => ({
-	...community,
-	memberPersonas: community.memberPersonas,
-	memberPersonasById: new Map(
-		community.memberPersonas.map((persona) => [persona.persona_id, persona]),
-	),
-});
 
 export interface CommunitySpaces {
 	community_id: number;

@@ -1,5 +1,7 @@
 <script lang="ts">
-	import type {CommunityModel} from '$lib/vocab/community/community.js';
+	import type {Readable} from 'svelte/store';
+
+	import type {Community} from '$lib/vocab/community/community.js';
 	import EntityIcon from '$lib/ui/EntityIcon.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import type {Persona} from '$lib/vocab/persona/persona';
@@ -7,30 +9,27 @@
 	import {toUrl} from '$lib/vocab/persona/constants';
 	import type {EntityType} from '$lib/vocab/entity/entity';
 
-	const {data} = getApp();
+	const {
+		ui: {selectedSpaceIdByCommunity, findSpaceById},
+	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
 	// could `ui` be more composable, so it could be easily reused e.g. in docs for demonstration purposes?
 
-	export let persona: Persona;
-	export let community: CommunityModel;
+	export let persona: Readable<Persona>;
+	export let community: Readable<Community>;
 	export let selected: boolean = false;
-	// export let communitiesByPersonaId: {
-	// 	[persona_id: number]: CommunityModel[];
-	// };
-	export let selectedSpaceIdByCommunity: {[key: number]: number | null};
+
+	$: selectedCommunitySpaceId = $selectedSpaceIdByCommunity[$community.community_id];
+	$: selectedCommunitySpace =
+		selectedCommunitySpaceId === null ? null : findSpaceById(selectedCommunitySpaceId);
+
 	// TODO this is causing a double state change (rendering an invalid in between state)
 	// because it's both navigating and setting state internally in the same user action
 	// TODO should this be an event?
 	export let selectPersona: (persona_id: number) => void;
 
-	// TODO should `$data.spaces` be a prop like the rest?
-	// TODO speed this up with better caching data structures
-	$: selectedSpace =
-		$data.spaces.find((s) => s.space_id === selectedSpaceIdByCommunity[community.community_id]) ||
-		null;
-
-	$: isPersonaHomeCommunity = community.name === persona.name;
+	$: isPersonaHomeCommunity = $community.name === $persona.name;
 
 	let type: EntityType;
 	$: type = isPersonaHomeCommunity ? 'Persona' : 'Community';
@@ -39,13 +38,13 @@
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
 <a
 	class="community"
-	href="/{community.name}{toUrl(selectedSpace && selectedSpace.url)}"
+	href="/{$community.name}{toUrl(selectedCommunitySpace && $selectedCommunitySpace.url)}"
 	class:selected
 	class:persona={isPersonaHomeCommunity}
-	style="--hue: {randomHue(community.name)}"
-	on:click={() => selectPersona(persona.persona_id)}
+	style="--hue: {randomHue($community.name)}"
+	on:click={() => selectPersona($persona.persona_id)}
 >
-	<EntityIcon name={community.name} {type} />
+	<EntityIcon name={$community.name} {type} />
 </a>
 
 <style>

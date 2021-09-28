@@ -1,16 +1,18 @@
 import {setContext, getContext} from 'svelte';
 import {session} from '$app/stores';
+import {writable} from 'svelte/store';
+import type {Readable} from 'svelte/store';
+import {randomItem} from '@feltcoop/felt/util/random.js';
 
-import type {DataStore} from '$lib/ui/data';
-import type {UiStore} from '$lib/ui/ui';
-import type {Community, CommunityModel, CommunityParams} from '$lib/vocab/community/community';
-import {toCommunityModel} from '$lib/vocab/community/community';
+import type {Ui} from '$lib/ui/ui';
+import type {Community, CommunityParams} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Membership, MembershipParams} from '$lib/vocab/membership/membership';
 import type {File, FileParams} from '$lib/vocab/file/file';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
-import type {ApiClient, ApiResult} from '$lib/ui/ApiClient';
+import type {ApiClient} from '$lib/ui/ApiClient';
+import type {ApiResult} from '$lib/server/api';
 import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
 import type {Persona, PersonaParams} from '$lib/vocab/persona/persona';
 
@@ -40,33 +42,30 @@ export interface Api {
 		password: string,
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	logOut: () => Promise<ApiResult<{}>>;
-	selectPersona: (persona_id: number) => void;
-	selectCommunity: (community_id: number | null) => void;
-	selectSpace: (community_id: number, space: number | null) => void;
 	toggleMainNav: () => void;
 	toggleSecondaryNav: () => void;
 	createPersona: (
 		params: PersonaParams,
 	) => Promise<ApiResult<{persona: Persona; community: Community}>>;
-	createCommunity: (params: CommunityParams) => Promise<ApiResult<CommunityModel>>;
+	createCommunity: (params: CommunityParams) => Promise<ApiResult<Community>>;
 	createSpace: (params: SpaceParams) => Promise<ApiResult<{space: Space}>>;
 	createMembership: (params: MembershipParams) => Promise<ApiResult<{membership: Membership}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
 	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
+	getFilesBySpace: (space_id: number) => Readable<Readable<File>[]>;
 }
 
 export const toApi = (
-	ui: UiStore,
-	data: DataStore,
+	ui: Ui,
 	client: ApiClient<ServicesParamsMap, ServicesResultMap>,
 	client2: ApiClient<ServicesParamsMap, ServicesResultMap>, // TODO remove this after everything stabilizes
 ): Api => {
+	// TODO delete this and `client2` after adding tests for both the websocket and http clients
+	const clients = [client, client2];
+	const randomClient = () => randomItem(clients);
 	const api: Api = {
 		// TODO these are just directly proxying and they don't have the normal `ApiResult` return value
 		// The motivation is that sometimes UI events may do API-related things, but this may not be the best design.
-		selectPersona: ui.selectPersona,
-		selectCommunity: ui.selectCommunity,
-		selectSpace: ui.selectSpace,
 		toggleMainNav: ui.toggleMainNav,
 		toggleSecondaryNav: ui.toggleSecondaryNav,
 		logIn: async (accountName, password) => {
@@ -124,69 +123,68 @@ export const toApi = (
 		},
 		createPersona: async (params) => {
 			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
-			const result = await client2.invoke('create_persona', params);
-			console.log('[api] create_community result', result);
+			const result = await randomClient().invoke('create_persona', params);
+			console.log('[api] create_persona result', result);
 			if (result.ok) {
-				const {persona, community: rawCommunity} = result.value;
-				const community = toCommunityModel(rawCommunity as Community); // TODO `Community` type is off with schema
-				data.addCommunity(community, persona.persona_id);
-				data.addPersona(persona);
-				// TODO refactor to not return here, do `return result` below --
-				// can't return `result` right now because the `CommunityModel` is different,
-				// but we probably want to change it to have associated data instead of a different interface
-				return {ok: true, status: result.status, value: {persona, community}};
+				const {persona, community} = result.value;
+				ui.addPersona(persona);
+				ui.addCommunity(community as Community, persona.persona_id); // TODO fix when Community type is fixed
 			}
-			return result;
+			return result as any; // TODO fix when Community type is fixed
 		},
 		createCommunity: async (params) => {
 			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
-			const result = await client2.invoke('create_community', params);
+			const result = await randomClient().invoke('create_community', params);
 			console.log('[api] create_community result', result);
 			if (result.ok) {
-				const community = toCommunityModel(result.value.community as any); // TODO `Community` type is off with schema
-				data.addCommunity(community, params.persona_id);
-				// TODO refactor to not return here, do `return result` below --
-				// can't return `result` right now because the `CommunityModel` is different,
-				// but we probably want to change it to have associated data instead of a different interface
-				return {ok: true, status: result.status, value: community};
+				ui.addCommunity(result.value.community as Community, params.persona_id); // TODO fix when Community type is fixed
 			}
-			return result;
-		},
-		createSpace: async (params) => {
-			const result = await client2.invoke('create_space', params);
-			console.log('[api] create_space result', result);
-			if (result.ok) {
-				data.addSpace(result.value.space, params.community_id);
-			}
-			return result;
+			return result as any; // TODO fix when Community type is fixed
 		},
 		// TODO: This implementation is currently unconsentful,
 		// because does not give the potential member an opportunity to deny an invite
 		createMembership: async (params) => {
-			const result = await client2.invoke('create_membership', params);
+			const result = await randomClient().invoke('create_membership', params);
+			console.log('[api] create_membership result', result);
 			if (result.ok) {
-				console.log('TODO handle create_membership result', result);
-				// data.addMembership(result.value.member);
+				ui.addMembership(result.value.membership);
+			}
+			return result;
+		},
+		createSpace: async (params) => {
+			const result = await randomClient().invoke('create_space', params);
+			console.log('[api] create_space result', result);
+			if (result.ok) {
+				ui.addSpace(result.value.space, params.community_id);
 			}
 			return result;
 		},
 		createFile: async (params) => {
-			const result = await client.invoke('create_file', params);
+			const result = await randomClient().invoke('create_file', params);
 			console.log('create_file result', result);
 			if (result.ok) {
-				data.addFile(result.value.file);
+				ui.addFile(result.value.file);
 			}
 			return result;
 		},
 		loadFiles: async (space_id) => {
-			data.setFiles(space_id, []);
+			ui.setFiles(space_id, []);
 			// TODO this breaks on startup because the websocket isn't connected yet
-			const result = await client.invoke('read_files', {space_id});
+			const result = await randomClient().invoke('read_files', {space_id});
 			console.log('[api] read_files result', result);
 			if (result.ok) {
-				data.setFiles(space_id, result.value.files);
+				ui.setFiles(space_id, result.value.files);
 			}
 			return result;
+		},
+		// TODO do we want to return the promise? maybe as `[value, resultPromise]`
+		getFilesBySpace: (space_id) => {
+			let files = ui.filesBySpace.get(space_id);
+			if (!files) {
+				ui.filesBySpace.set(space_id, (files = writable([])));
+				api.loadFiles(space_id);
+			}
+			return files;
 		},
 	};
 	return api;

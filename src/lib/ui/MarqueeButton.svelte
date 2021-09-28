@@ -1,18 +1,20 @@
 <script lang="ts">
 	import {getApp} from '$lib/ui/app';
 
-	const {ui} = getApp();
+	const {
+		ui: {toggleSecondaryNav, expandMarquee},
+	} = getApp();
 
 	const marquee_width = 320; // TODO where to get this?
-	$: right = $ui.expandSecondaryNav ? marquee_width : 0;
+	$: right = $expandMarquee ? marquee_width : 0;
 </script>
 
 <button
 	class="icon-button"
-	class:expanded={$ui.expandSecondaryNav}
+	class:expanded={$expandMarquee}
 	style="transform: translate3d({right}px, 0, 0)"
 	aria-label="toggle marquee"
-	on:click={ui.toggleSecondaryNav}
+	on:click={toggleSecondaryNav}
 >
 	<div class="content">⚆</div>
 </button>
@@ -34,12 +36,10 @@
 	.expanded .content {
 		transform: rotate(180deg);
 	}
-	@media (max-width: 50rem) {
-		button {
-			transform: translate3d(0, 0, 0) !important;
-		}
-		button.expanded {
-			z-index: 4;
-		}
+	:global(.mobile) button {
+		transform: translate3d(0, 0, 0) !important;
+	}
+	:global(.mobile) button.expanded {
+		z-index: 4;
 	}
 </style>

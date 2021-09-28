@@ -5,16 +5,19 @@
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
 
-	const {api, ui} = getApp();
+	const {
+		api,
+		ui: {selectedPersonaId},
+	} = getApp();
 
-	let open = false;
+	let opened = false;
 	let name = '';
 
 	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await api.createCommunity({name, persona_id: $ui.selectedPersonaId!});
+			await api.createCommunity({name, persona_id: $selectedPersonaId!}); // TODO generic erorr check for no selected persona?
 			name = '';
-			open = false;
+			opened = false;
 		}
 	};
 </script>
@@ -24,12 +27,12 @@
 	aria-label="Create Community"
 	type="button"
 	class="button-emoji"
-	on:click={() => (open = true)}
+	on:click={() => (opened = true)}
 >
 	➕
 </button>
-{#if open}
-	<Dialog on:close={() => (open = false)}>
+{#if opened}
+	<Dialog on:close={() => (opened = false)}>
 		<Markup>
 			<h1>Create a new community</h1>
 			<p>

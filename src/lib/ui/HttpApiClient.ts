@@ -16,7 +16,9 @@ import type {ServiceMeta} from '$lib/server/servicesMeta';
 export const toHttpApiClient = <
 	TParamsMap extends Record<string, any>,
 	TResultMap extends Record<string, any>,
->(): ApiClient<TParamsMap, TResultMap> => {
+>(
+	fetch: typeof globalThis.fetch = globalThis.fetch,
+): ApiClient<TParamsMap, TResultMap> => {
 	const client: ApiClient<TParamsMap, TResultMap> = {
 		invoke: async (name, params) => {
 			console.log('[http api client] invoke', name, params);
@@ -58,7 +60,7 @@ export const toHttpApiClient = <
 				return {
 					ok: false,
 					status: null,
-					reason: 'Network error: please check your Internet connection and try again',
+					reason: 'Something went wrong. Is your Internet ok?',
 				};
 			}
 		},
