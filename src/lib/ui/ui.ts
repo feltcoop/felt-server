@@ -9,6 +9,11 @@ import type {ClientSession} from '$lib/session/clientSession';
 import type {AccountModel} from '$lib/vocab/account/account';
 import type {File} from '$lib/vocab/file/file';
 import type {Membership} from '$lib/vocab/membership/membership';
+import type {ApiResult} from '$lib/server/api';
+import type {
+	create_community_params,
+	create_community_response,
+} from '$lib/vocab/community/communityEvents';
 
 const KEY = Symbol();
 
@@ -20,8 +25,11 @@ export const setUi = (store: Ui): Ui => {
 };
 
 export interface Ui {
-	// TODO single code path for UI actions:
-	// dispatch('setSession', {session: ClientSession});
+	dispatch: (eventName: string, params: any, result: ApiResult<any> | null) => void;
+	create_community: (
+		params: typeof create_community_params,
+		result: ApiResult<typeof create_community_response> | null,
+	) => void;
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
@@ -209,6 +217,52 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 		spacesById,
 		spacesByCommunityId,
 		filesBySpace,
+		// TODO consider something like:
+		// create_community_request: (
+		// create_community_response: (
+		create_community: (params, result) => {
+			if (!result) return; // TODO this means it's the initial request
+			// This handle doesn't care about failed values.
+			// Could we do something here to make it ergonomic to handle errors from the components?
+			if (!result.ok) return;
+			const {persona_id} = params;
+			const {community} = result.value;
+			console.log('[data.addCommunity]', community, persona_id);
+			// TODO how should `persona.community_ids` by modeled and kept up to date?
+			const persona = get(personasById).get(persona_id)!;
+			const $persona = get(persona);
+			if (!$persona.community_ids.includes(community.community_id)) {
+				persona.update(($persona) => ({
+					...$persona,
+					community_ids: $persona.community_ids.concat(community.community_id),
+				}));
+				console.log('updated persona community ids', get(persona));
+			}
+			const $spacesById = get(spacesById);
+			let spacesToAdd: Space[] | null = null;
+			for (const space of community.spaces) {
+				if (!$spacesById.has(space.space_id)) {
+					(spacesToAdd || (spacesToAdd = [])).push(space);
+				}
+			}
+			if (spacesToAdd) {
+				spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
+			}
+			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => {
+				$selectedSpaceIdByCommunity[community.community_id] = community.spaces[0].space_id;
+				return $selectedSpaceIdByCommunity;
+			});
+			const communityStore = writable(community);
+			communities.update(($communities) => $communities.concat(communityStore));
+		},
+		dispatch: (eventName, params, result) => {
+			switch (eventName) {
+				case 'create_community': {
+					ui.create_community(params, result);
+				}
+			}
+			// TODO update spaces
+		},
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?

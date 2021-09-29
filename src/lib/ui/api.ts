@@ -37,6 +37,7 @@ export const setApi = (store: Api): Api => {
 };
 
 export interface Api {
+	dispatch: (eventName: string, params: any) => Promise<ApiResult<any>>;
 	logIn: (
 		accountName: string,
 		password: string,
@@ -64,6 +65,25 @@ export const toApi = (
 	const clients = [client, client2];
 	const randomClient = () => randomItem(clients);
 	const api: Api = {
+		// TODO could validate the params here, but for now we'll just let the server validate2
+		dispatch: async (eventName, params) => {
+			// TODO maybe ask the client if it handles the event, and if not skip to the local processing
+			// and if not skip to the `ui` part
+			console.log('[api] invoking', eventName, params);
+			ui.dispatch(eventName, params, null);
+			const result = await randomClient().invoke(eventName, params);
+			console.log('[api] invoked', eventName, result);
+			ui.dispatch(eventName, params, result);
+			// if (result.ok) {
+			// 	// TODO should the `result` be passed through? in all cases?
+			// 	ui.dispatch(eventName, params, result.value);
+			// }
+			// const uiEventHandler = ui[eventName];
+			// if (uiEventHandler) {
+			// 	uiEventHandler(params, result);
+			// } // else warn?
+			return result;
+		},
 		// TODO these are just directly proxying and they don't have the normal `ApiResult` return value
 		// The motivation is that sometimes UI events may do API-related things, but this may not be the best design.
 		toggleMainNav: ui.toggleMainNav,
