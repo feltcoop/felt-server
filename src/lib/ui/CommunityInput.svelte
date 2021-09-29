@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
+	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
+	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
@@ -12,10 +14,22 @@
 
 	let opened = false;
 	let name = '';
+	let pending = false;
+	let errorMessage: string | null = null;
+
+	const create = async (): Promise<void> => {
+		if (pending) return;
+		errorMessage = null;
+		pending = true;
+		const result = await api.createCommunity({name, persona_id: $selectedPersonaId!});
+		pending = false;
+		errorMessage = result.ok ? null : result.reason;
+	};
 
 	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await api.createCommunity({name, persona_id: $selectedPersonaId!}); // TODO generic erorr check for no selected persona?
+			e.preventDefault();
+			await create();
 			name = '';
 			opened = false;
 		}
@@ -35,7 +49,7 @@
 	<Dialog on:close={() => (opened = false)}>
 		<Markup>
 			<h1>Create a new community</h1>
-			<p>
+			<form>
 				<input
 					type="text"
 					placeholder="> name"
@@ -43,7 +57,13 @@
 					bind:value={name}
 					use:autofocus
 				/>
-			</p>
+				<PendingButton type="button" on:click={() => create()} {pending}>
+					Create community
+				</PendingButton>
+			</form>
+			{#if errorMessage}
+				<Message status="error">{errorMessage}</Message>
+			{/if}
 		</Markup>
 	</Dialog>
 {/if}
