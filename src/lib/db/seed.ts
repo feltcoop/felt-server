@@ -114,8 +114,8 @@ export const seed = async (db: Database): Promise<void> => {
 
 	// example: insert literal values
 	const accountsParams: AccountParams[] = [
-		{name: 'a', password: 'a', created: '2021-01-01 13:01:00-07'},
-		{name: 'b', password: 'b', created: '2021-01-01 13:01:00-07'},
+		{name: 'a', password: 'a'},
+		{name: 'b', password: 'b'},
 	];
 	const personasParams: {[key: string]: string[]} = {
 		a: ['alice', 'andy'],

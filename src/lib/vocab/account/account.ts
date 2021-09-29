@@ -20,20 +20,23 @@ export const AccountParamsSchema = Type.Object(
 	{
 		name: Type.String(),
 		password: Type.String(),
-		created: Type.String(),
-		updated: Type.Optional(Type.String()),
 	},
 	{$id: 'AccountParams', additionalProperties: false},
 );
 export const validateAccountParams = toValidateSchema<AccountParams>(AccountParamsSchema);
 
 // TODO rename? `AccountClientDoc`? above could be `AccountDbDoc` and `AccountRequestDoc`
-export interface AccountModel {
-	account_id: number;
-	name: string;
-	created: string;
-	updated: string;
-}
+export interface AccountModel extends Static<typeof AccountModelSchema> {}
+export const AccountModelSchema = Type.Object(
+	{
+		account_id: Type.Number(),
+		name: Type.String(),
+		created: Type.String(),
+		updated: Type.Optional(Type.String()),
+	},
+	{$id: 'AccountModel', additionalProperties: false},
+);
+export const validateAccountModel = toValidateSchema<AccountModel>(AccountModelSchema);
 
 // TODO improve types so they're exhaustive but still static (maybe via schema/codegen)
 export const accountProperties: (keyof Account)[] = [

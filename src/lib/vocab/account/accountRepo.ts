@@ -1,7 +1,7 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {Account, AccountParams} from '$lib/vocab/account/account.js';
-import {accountProperties} from '$lib/vocab/account/account';
+import type {Account, AccountModel, AccountParams} from '$lib/vocab/account/account.js';
+import {accountModelProperties} from '$lib/vocab/account/account';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 import {toPasswordKey} from '$lib/util/password';
@@ -12,8 +12,6 @@ export const accountRepo = (db: Database) => ({
 		password,
 	}: AccountParams): Promise<Result<{value: Account}, ErrorResponse>> => {
 		const passwordKey = await toPasswordKey(password);
-		process.env.TZ = 'America/Denver';
-		console.log('[db] timezone ', process.env.TZ);
 		const data = await db.sql<Account[]>`		
       insert into accounts (name, password) values (
         ${name}, ${passwordKey}
@@ -24,14 +22,15 @@ export const accountRepo = (db: Database) => ({
 	},
 	findById: async (
 		account_id: number,
-		columns: string[] = accountProperties,
-	): Promise<Result<{value: Account}, {type: 'no_account_found'} & ErrorResponse>> => {
+		columns: string[] = accountModelProperties,
+	): Promise<Result<{value: AccountModel}, {type: 'no_account_found'} & ErrorResponse>> => {
 		console.log('[accountRepo] loading account', account_id);
-		const data = await db.sql<Account[]>`
+		const data = await db.sql<AccountModel[]>`
       select ${db.sql(columns)} from accounts where account_id = ${account_id}
     `;
 		if (data.length) {
 			console.log('[accountRepo] account found, returning', account_id);
+			console.log('[accountRepo] json ', data[0].created);
 			return {ok: true, value: data[0]};
 		}
 		return {
