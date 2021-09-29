@@ -50,7 +50,7 @@
 			<PendingAnimation />
 		{/if}
 	</div>
-	<input type="text" placeholder="> chat" on:keydown={onKeydown} bind:value={text} />
+	<input placeholder="> chat" on:keydown={onKeydown} bind:value={text} />
 </div>
 
 <style>

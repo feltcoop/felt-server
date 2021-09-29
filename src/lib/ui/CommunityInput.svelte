@@ -36,13 +36,7 @@
 		<Markup>
 			<h1>Create a new community</h1>
 			<p>
-				<input
-					type="text"
-					placeholder="> name"
-					on:keydown={onKeydown}
-					bind:value={name}
-					use:autofocus
-				/>
+				<input placeholder="> name" on:keydown={onKeydown} bind:value={name} use:autofocus />
 			</p>
 		</Markup>
 	</Dialog>
