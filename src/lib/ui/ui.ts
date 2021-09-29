@@ -141,7 +141,8 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 		([$communities, $selectedCommunityId]) =>
 			$communities.find((c) => get(c).community_id === $selectedCommunityId) || null,
 	);
-	// TODO this should store the selected space by community+persona
+	// TODO this should store the selected space by community+persona,
+	// possibly alongside additional UI state, maybe in a store or namespace of stores
 	const selectedSpaceIdByCommunity = writable<{[key: number]: number | null}>(
 		initialSession.guest
 			? {}
