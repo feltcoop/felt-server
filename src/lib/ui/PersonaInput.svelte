@@ -37,7 +37,6 @@
 	<h2>Create a persona</h2>
 	<form>
 		<input
-			type="text"
 			placeholder="> name"
 			bind:this={inputEl}
 			bind:value={name}

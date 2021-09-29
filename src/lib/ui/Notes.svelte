@@ -43,7 +43,7 @@
 </script>
 
 <div class="notes">
-	<textarea type="text" placeholder="> note" on:keydown={onKeydown} bind:value={text} />
+	<textarea placeholder="> note" on:keydown={onKeydown} bind:value={text} />
 	<div class="files">
 		{#if files}
 			<NoteItems {files} />

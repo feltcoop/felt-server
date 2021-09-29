@@ -68,7 +68,6 @@
 				<form>
 					<div class:error={!!errorMessage}>{errorMessage || ''}</div>
 					<input
-						type="text"
 						placeholder="> name"
 						bind:value={newName}
 						use:autofocus
