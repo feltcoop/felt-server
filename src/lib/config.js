@@ -11,3 +11,6 @@ export const WEBSOCKET_URL = dev ? 'ws://localhost:3001/ws' : 'wss://staging.fel
 export const DEPLOY_SERVER_HOST = 'felt.dev';
 export const DEPLOY_IP = '96.126.116.174';
 export const DEPLOY_USER = 'root';
+
+// TODO figure out how to set process.env.TZ
+process.env.tz = 'America/Denver';

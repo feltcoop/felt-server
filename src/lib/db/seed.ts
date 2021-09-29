@@ -23,8 +23,8 @@ export const seed = async (db: Database): Promise<void> => {
 		account_id serial primary key,
 			name text,
 			password text,
-			created timestamptz,
-			updated timestamptz
+			created timestamp NOT NULL DEFAULT now(),
+			updated timestamp
 		)
 	`;
 	if (createAccountsTableResult.count) {

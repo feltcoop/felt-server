@@ -10,12 +10,13 @@ export const accountRepo = (db: Database) => ({
 	create: async ({
 		name,
 		password,
-		created,
 	}: AccountParams): Promise<Result<{value: Account}, ErrorResponse>> => {
 		const passwordKey = await toPasswordKey(password);
-		const data = await db.sql<Account[]>`
-      insert into accounts (name, password, created) values (
-        ${name}, ${passwordKey}, ${created}
+		process.env.TZ = 'America/Denver';
+		console.log('[db] timezone ', process.env.TZ);
+		const data = await db.sql<Account[]>`		
+      insert into accounts (name, password) values (
+        ${name}, ${passwordKey}
       ) RETURNING *`;
 		console.log('[db] created account', data);
 		const account = data[0];
