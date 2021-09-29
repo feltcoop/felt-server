@@ -7,11 +7,16 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {expandMarquee, selectedSpace, selectedCommunity: selectedCommunityStore},
+		ui: {
+			expandMarquee,
+			selectedSpace: selectedSpaceStore,
+			selectedCommunity: selectedCommunityStore,
+		},
 		api,
 	} = getApp();
 
 	$: selectedCommunity = $selectedCommunityStore;
+	$: selectedSpace = $selectedSpaceStore;
 </script>
 
 <div class="workspace">
@@ -21,7 +26,7 @@
 	<div class="column">
 		<!-- TODO pass stores here instead of dereferncing -->
 		<WorkspaceHeader space={selectedSpace} community={selectedCommunity} />
-		{#if selectedCommunity && $selectedSpace}
+		{#if selectedCommunity && selectedSpace}
 			<SpaceView community={selectedCommunity} space={selectedSpace} />
 		{:else if selectedCommunity}
 			<SpaceInput community={selectedCommunity}>Create a new space</SpaceInput>
@@ -29,7 +34,7 @@
 		<MarqueeButton />
 	</div>
 	<!-- TODO extract to some shared abstractions with the `Luggage` probably -->
-	{#if $expandMarquee && selectedCommunity && $selectedSpace}
+	{#if $expandMarquee && selectedCommunity && selectedSpace}
 		<div class="marquee">
 			<Marquee community={selectedCommunity} space={selectedSpace} />
 		</div>

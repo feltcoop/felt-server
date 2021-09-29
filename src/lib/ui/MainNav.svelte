@@ -18,7 +18,7 @@
 			mainNavView,
 			expandMainNav,
 			setMainNavView,
-			selectedSpace,
+			selectedSpace: selectedSpaceStore,
 			selectedPersona: selectedPersonaStore,
 			selectedCommunity: selectedCommunityStore,
 		},
@@ -27,6 +27,7 @@
 
 	$: selectedPersona = $selectedPersonaStore!; // TODO type?
 	$: selectedCommunity = $selectedCommunityStore;
+	$: selectedSpace = $selectedSpaceStore;
 
 	// TODO refactor to some client view-model for the account
 	$: selectedPersonaName = $selectedPersona?.name || GUEST_PERSONA_NAME;
@@ -60,7 +61,7 @@
 		{#if $mainNavView === 'explorer'}
 			<div class="explorer">
 				<CommunityNav />
-				{#if selectedCommunity}
+				{#if selectedCommunity && selectedSpace}
 					<SpaceNav
 						community={selectedCommunity}
 						spaces={$selectedCommunity.spaces}

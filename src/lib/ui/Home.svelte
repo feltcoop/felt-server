@@ -36,7 +36,7 @@
 			<SpaceInfo
 				space={communitySpace}
 				{community}
-				selected={communitySpace === (selectedSpace && $selectedSpace)}
+				selected={selectedSpace && communitySpace === $selectedSpace}
 			/>
 		{/each}
 	</section>

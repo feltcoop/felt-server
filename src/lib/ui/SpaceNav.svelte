@@ -13,7 +13,7 @@
 
 	export let community: Readable<Community>;
 	export let spaces: Space[]; // TODO array of stores?
-	export let selectedSpace: Readable<Space | null>;
+	export let selectedSpace: Readable<Space>;
 </script>
 
 <div class="space-nav">

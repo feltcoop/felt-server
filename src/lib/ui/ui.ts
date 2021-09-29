@@ -55,7 +55,7 @@ export interface Ui {
 	selectedCommunity: Readable<Readable<Community> | null>;
 	selectedSpaceIdByCommunity: Readable<{[key: number]: number | null}>;
 	// TODO selectedSpace: Readable<Readable<Space> | null>;
-	selectedSpace: Readable<Space | null>;
+	selectedSpace: Readable<Readable<Space> | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	mobile: Readable<boolean>;
 	setMobile: (mobile: boolean) => void;
@@ -172,11 +172,8 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 	const selectedSpace = derived(
 		[selectedCommunity, selectedSpaceIdByCommunity],
 		([$selectedCommunity, $selectedSpaceIdByCommunity]) =>
-			// TODO faster lookup
 			($selectedCommunity &&
-				get($selectedCommunity).spaces.find(
-					(s) => s.space_id === $selectedSpaceIdByCommunity[get($selectedCommunity)!.community_id],
-				)) ||
+				get(spacesById).get($selectedSpaceIdByCommunity[get($selectedCommunity)!.community_id]!)) ||
 			null,
 	);
 	const communitiesByPersonaId = derived(
