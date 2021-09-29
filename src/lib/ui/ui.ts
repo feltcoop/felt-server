@@ -265,6 +265,7 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 				}));
 				console.log('updated persona community ids', get(persona));
 			}
+			// TODO can this be derived? efficiently?
 			const $spacesById = get(spacesById);
 			let spacesToAdd: Space[] | null = null;
 			for (const space of community.spaces) {
@@ -275,6 +276,7 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			if (spacesToAdd) {
 				spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
 			}
+			// TODO change this to derived?
 			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => {
 				// TODO is it ok to mutate here as long as nothing relies on reacting to new keys?
 				// Is it better to make this a map of community id to space ids or stores?
