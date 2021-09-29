@@ -128,6 +128,8 @@
 		width: 0;
 	}
 	.header {
+		position: sticky;
+		top: 0;
 		display: flex;
 		height: calc(var(--navbar_size) + var(--border_width));
 		border-bottom: var(--border);
