@@ -265,6 +265,23 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 				}));
 				console.log('updated persona community ids', get(persona));
 			}
+			const $spacesById = get(spacesById);
+			let spacesToAdd: Space[] | null = null;
+			for (const space of community.spaces) {
+				if (!$spacesById.has(space.space_id)) {
+					(spacesToAdd || (spacesToAdd = [])).push(space);
+				}
+			}
+			if (spacesToAdd) {
+				spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
+			}
+			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => {
+				// TODO is it ok to mutate here as long as nothing relies on reacting to new keys?
+				// Is it better to make this a map of community id to space ids or stores?
+				$selectedSpaceIdByCommunity[community.community_id] = community.spaces[0].space_id;
+				return $selectedSpaceIdByCommunity;
+			});
+			// TODO selectedSpaceIdByCommunity isn't updated
 			const communityStore = writable(community);
 			communities.update(($communities) => $communities.concat(communityStore));
 			// TODO update spaces
