@@ -141,7 +141,8 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 		([$communities, $selectedCommunityId]) =>
 			$communities.find((c) => get(c).community_id === $selectedCommunityId) || null,
 	);
-	// TODO do we care about making this reactive to new communities, or is `undefined` ok?
+	// TODO this should store the selected space by community+persona,
+	// possibly alongside additional UI state, maybe in a store or namespace of stores
 	const selectedSpaceIdByCommunity = writable<{[key: number]: number | null}>(
 		initialSession.guest
 			? {}
@@ -265,6 +266,20 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 				}));
 				console.log('updated persona community ids', get(persona));
 			}
+			const $spacesById = get(spacesById);
+			let spacesToAdd: Space[] | null = null;
+			for (const space of community.spaces) {
+				if (!$spacesById.has(space.space_id)) {
+					(spacesToAdd || (spacesToAdd = [])).push(space);
+				}
+			}
+			if (spacesToAdd) {
+				spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
+			}
+			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => {
+				$selectedSpaceIdByCommunity[community.community_id] = community.spaces[0].space_id;
+				return $selectedSpaceIdByCommunity;
+			});
 			const communityStore = writable(community);
 			communities.update(($communities) => $communities.concat(communityStore));
 			// TODO update spaces
