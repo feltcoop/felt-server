@@ -284,13 +284,10 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			}
 		},
 		// TODO consider something like:
-		// create_community_request: (
-		// create_community_response: (
+		// create_community: (
+		// create_community_result: (
 		create_community: (params, result) => {
-			if (!result) return; // TODO this means it's the initial request
-			// This handle doesn't care about failed values.
-			// Could we do something here to make it ergonomic to handle errors from the components?
-			if (!result.ok) return;
+			if (!result?.ok) return;
 			const {persona_id} = params;
 			const community = result.value.community as Community; // TODO fix type mismatch
 			console.log('[data.create_community]', community, persona_id);
