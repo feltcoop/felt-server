@@ -274,6 +274,15 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			);
 			mainNavView.set('explorer');
 		},
+		addPersona: (persona) => {
+			console.log('[data.addPersona]', persona);
+			const personaStore = writable(persona);
+			personas.update(($personas) => $personas.concat(personaStore));
+			// TODO better way to check this? should `sessionPersonas` be a `derived` store?
+			if (persona.account_id == get(account)?.account_id) {
+				sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
+			}
+		},
 		// TODO consider something like:
 		// create_community_request: (
 		// create_community_response: (
@@ -311,15 +320,6 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			});
 			const communityStore = writable(community);
 			communities.update(($communities) => $communities.concat(communityStore));
-		},
-		addPersona: (persona) => {
-			console.log('[data.addPersona]', persona);
-			const personaStore = writable(persona);
-			personas.update(($personas) => $personas.concat(personaStore));
-			// TODO better way to check this? should `sessionPersonas` be a `derived` store?
-			if (persona.account_id == get(account)?.account_id) {
-				sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
-			}
 		},
 		addMembership: (membership) => {
 			console.log('[data.addMembership]', membership);
