@@ -8,7 +8,7 @@
 import {inject} from 'regexparam';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
-import {lookupService} from '$lib/ui/services';
+import type {ServiceMeta} from '$lib/server/servicesMeta';
 
 // TODO make `fetch` a parameter once the client isn't created for SSR
 // fetch: typeof window.fetch,
@@ -16,7 +16,7 @@ export const toHttpApiClient = <
 	TParamsMap extends Record<string, any>,
 	TResultMap extends Record<string, any>,
 >(
-	// TODO should it accept a services map here? or maybe just `lookupService`?
+	lookupService: (name: string) => ServiceMeta | undefined,
 	fetch: typeof globalThis.fetch = globalThis.fetch,
 ): ApiClient<TParamsMap, TResultMap> => {
 	const client: ApiClient<TParamsMap, TResultMap> = {
