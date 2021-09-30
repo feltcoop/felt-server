@@ -11,10 +11,7 @@ import type {AccountModel} from '$lib/vocab/account/account';
 import type {File} from '$lib/vocab/file/file';
 import type {Membership} from '$lib/vocab/membership/membership';
 import type {ApiResult} from '$lib/server/api';
-import type {
-	create_community_params,
-	create_community_response,
-} from '$lib/vocab/community/communityEvents';
+import type {create_community} from '$lib/vocab/community/communityEvents';
 
 const KEY = Symbol();
 
@@ -29,8 +26,8 @@ export interface Ui {
 	dispatch: (eventName: string, params: any, result: ApiResult<any> | null) => void;
 	// TODO generate these
 	create_community: (
-		params: Static<typeof create_community_params>,
-		result: ApiResult<Static<typeof create_community_response>> | null,
+		params: Static<typeof create_community.params>,
+		result: ApiResult<Static<typeof create_community.response>> | null,
 	) => void;
 
 	// db state and caches
