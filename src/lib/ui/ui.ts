@@ -285,8 +285,9 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			const personaStore = writable(persona);
 			personas.update(($personas) => $personas.concat(personaStore));
 			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
-			// TODO how should this work?
+			ui.selectPersona(persona.persona_id);
 			ui.create_community({name: community.name, persona_id: persona.persona_id}, result);
+			ui.selectCommunity(result.value.community.community_id);
 		},
 		create_community: (params, result) => {
 			if (!result?.ok) return;
