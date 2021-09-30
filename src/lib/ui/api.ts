@@ -37,8 +37,19 @@ export const setApi = (store: Api): Api => {
 	return store;
 };
 
+// TODO this name may be confusing because it's not used by the `dispatch` function types below
+export interface DispatchContext<
+	TParams extends object = object,
+	TResult extends ApiResult<any> | void = void,
+> {
+	eventName: string;
+	params: TParams;
+	dispatch: Dispatch;
+	invoke: TResult extends void ? null : (params?: TParams) => Promise<TResult>;
+}
+
+// TODO generate this interface from data
 export interface Dispatch {
-	// TODO generate these
 	(
 		eventName: 'create_community',
 		params: Static<typeof createCommunityService.paramsSchema>,
@@ -93,18 +104,14 @@ export const toApi = (
 		// TODO could validate the params here, but for now we'll just let the server validate2
 		dispatch: (eventName, params) => {
 			console.log('[api] invoking', eventName, params ?? '');
-			const returnedSync = ui.dispatch(eventName, params, null, api.dispatch);
 			const client = randomClient();
-			if (client.has(eventName)) {
-				return client.invoke(eventName, params).then((result) => {
-					console.log('[api] invoked', eventName, result);
-					const returnedAsync = ui.dispatch(eventName, params, result, api.dispatch);
-					// TODO looks like this check fails to return `result` if `ui.dispatch` returns an async function,
-					// should we just make downstream callers return the result if they want it forwarded?
-					return returnedAsync !== undefined ? returnedAsync : result;
-				});
-			}
-			return returnedSync as any;
+			const ctx: DispatchContext = {
+				eventName,
+				params,
+				dispatch: api.dispatch,
+				invoke: client.has(eventName) ? (p = params) => client.invoke(eventName, p) : (null as any), // TODO fix typecast?
+			};
+			return ui.dispatch(ctx);
 		},
 		logIn: async (accountName, password) => {
 			console.log('[logIn] logging in with accountName', accountName); // TODO logging

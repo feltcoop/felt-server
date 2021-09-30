@@ -16,7 +16,7 @@ import type {createPersonaService} from '$lib/vocab/persona/personaServices';
 import type {createMembershipService} from '$lib/vocab/community/communityServices';
 import type {createSpaceService} from '$lib/vocab/space/spaceServices';
 import type {createFileService, readFilesService} from '$lib/vocab/file/fileServices';
-import type {Dispatch} from '$lib/ui/api';
+import type {Dispatch, DispatchContext} from '$lib/ui/api';
 
 const KEY = Symbol();
 
@@ -27,41 +27,54 @@ export const setUi = (store: Ui): Ui => {
 	return store;
 };
 
-export interface Ui {
-	dispatch: (eventName: string, params: any, result: ApiResult<any> | null, dispatch: any) => any; // TODO return value
-	// TODO generate these
+// TODO generate this interface from data
+export interface UiHandlers {
 	create_community: (
-		params: Static<typeof createCommunityService.paramsSchema>,
-		result: ApiResult<Static<typeof createCommunityService.responseSchema>> | null,
-	) => void;
+		ctx: DispatchContext<
+			Static<typeof createCommunityService.paramsSchema>,
+			ApiResult<Static<typeof createCommunityService.responseSchema>>
+		>,
+	) => Promise<ApiResult<Static<typeof createCommunityService.responseSchema>>>;
 	create_persona: (
-		params: Static<typeof createPersonaService.paramsSchema>,
-		result: ApiResult<Static<typeof createPersonaService.responseSchema>> | null,
-	) => void;
+		ctx: DispatchContext<
+			Static<typeof createPersonaService.paramsSchema>,
+			ApiResult<Static<typeof createPersonaService.responseSchema>>
+		>,
+	) => Promise<ApiResult<Static<typeof createPersonaService.responseSchema>>>;
 	create_membership: (
-		params: Static<typeof createMembershipService.paramsSchema>,
-		result: ApiResult<Static<typeof createMembershipService.responseSchema>> | null,
-	) => void;
+		ctx: DispatchContext<
+			Static<typeof createMembershipService.paramsSchema>,
+			ApiResult<Static<typeof createMembershipService.responseSchema>>
+		>,
+	) => Promise<ApiResult<Static<typeof createMembershipService.responseSchema>>>;
 	create_space: (
-		params: Static<typeof createSpaceService.paramsSchema>,
-		result: ApiResult<Static<typeof createSpaceService.responseSchema>> | null,
-	) => void;
+		ctx: DispatchContext<
+			Static<typeof createSpaceService.paramsSchema>,
+			ApiResult<Static<typeof createSpaceService.responseSchema>>
+		>,
+	) => Promise<ApiResult<Static<typeof createSpaceService.responseSchema>>>;
 	create_file: (
-		params: Static<typeof createFileService.paramsSchema>,
-		result: ApiResult<Static<typeof createFileService.responseSchema>> | null,
-	) => void;
+		ctx: DispatchContext<
+			Static<typeof createFileService.paramsSchema>,
+			ApiResult<Static<typeof createFileService.responseSchema>>
+		>,
+	) => Promise<ApiResult<Static<typeof createFileService.responseSchema>>>;
 	read_files: (
-		params: Static<typeof readFilesService.paramsSchema>,
-		result: ApiResult<Static<typeof readFilesService.responseSchema>> | null,
-	) => void;
+		ctx: DispatchContext<
+			Static<typeof readFilesService.paramsSchema>,
+			ApiResult<Static<typeof readFilesService.responseSchema>>
+		>,
+	) => Promise<ApiResult<Static<typeof readFilesService.responseSchema>>>;
 	query_files: (
-		params: Static<typeof readFilesService.paramsSchema>,
-		result: null,
+		ctx: DispatchContext<Static<typeof readFilesService.paramsSchema>>,
 		dispatch: Dispatch,
-		// TODO `void` to handle the case with a result -- good example of reason to make it 2 methods
-	) => void | Readable<Readable<File>[]>;
+	) => Readable<Readable<File>[]>;
 	toggle_main_nav: () => void;
 	toggle_secondary_nav: () => void;
+}
+
+export interface Ui extends UiHandlers {
+	dispatch: (ctx: DispatchContext) => any; // TODO return value type?
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
@@ -230,6 +243,34 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 	const expandMarquee = writable(!mobile);
 	const mainNavView: Writable<MainNavView> = writable('explorer');
 
+	const addCommunity = (community: Community, persona_id: number): void => {
+		const persona = get(personasById).get(persona_id)!;
+		const $persona = get(persona);
+		if (!$persona.community_ids.includes(community.community_id)) {
+			persona.update(($persona) => ({
+				...$persona,
+				community_ids: $persona.community_ids.concat(community.community_id),
+			}));
+			console.log('updated persona community ids', get(persona));
+		}
+		const $spacesById = get(spacesById);
+		let spacesToAdd: Space[] | null = null;
+		for (const space of community.spaces) {
+			if (!$spacesById.has(space.space_id)) {
+				(spacesToAdd || (spacesToAdd = [])).push(space);
+			}
+		}
+		if (spacesToAdd) {
+			spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
+		}
+		selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => {
+			$selectedSpaceIdByCommunity[community.community_id] = community.spaces[0].space_id;
+			return $selectedSpaceIdByCommunity;
+		});
+		const communityStore = writable(community);
+		communities.update(($communities) => $communities.concat(communityStore));
+	};
+
 	const ui: Ui = {
 		account,
 		personas,
@@ -241,13 +282,13 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 		spacesById,
 		spacesByCommunityId,
 		filesBySpace,
-		dispatch: (eventName, params, result, dispatch) => {
-			const handler = (ui as any)[eventName];
+		dispatch: (ctx) => {
+			const handler = (ui as any)[ctx.eventName];
 			// const handler = handlers.get(eventName); // TODO ? would make it easy to do external registration
 			if (handler) {
-				return handler(params, result, dispatch);
+				return handler(ctx);
 			} else {
-				console.warn('[ui] ignored a dispatched event', eventName, params, result);
+				console.warn('[ui] ignoring a dispatched event', ctx);
 			}
 		},
 		setSession: (session) => {
@@ -300,58 +341,42 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			);
 			mainNavView.set('explorer');
 		},
-		create_persona: (_params, result) => {
-			if (!result?.ok) return;
+		create_persona: async ({invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
 			const {persona, community} = result.value;
 			console.log('[ui.create_persona]', persona);
 			const personaStore = writable(persona);
 			personas.update(($personas) => $personas.concat(personaStore));
 			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
 			ui.selectPersona(persona.persona_id);
-			ui.create_community({name: community.name, persona_id: persona.persona_id}, result);
-			ui.selectCommunity(result.value.community.community_id);
+			addCommunity(community as Community, persona.persona_id); // TODO fix type mismatch
+			ui.selectCommunity(community.community_id);
+			return result;
 		},
-		create_community: (params, result) => {
-			if (!result?.ok) return;
+		create_community: async ({params, invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
 			const {persona_id} = params;
 			const community = result.value.community as Community; // TODO fix type mismatch
 			console.log('[ui.create_community]', community, persona_id);
-			// TODO how should `persona.community_ids` by modeled and kept up to date?
-			const persona = get(personasById).get(persona_id)!;
-			const $persona = get(persona);
-			if (!$persona.community_ids.includes(community.community_id)) {
-				persona.update(($persona) => ({
-					...$persona,
-					community_ids: $persona.community_ids.concat(community.community_id),
-				}));
-				console.log('updated persona community ids', get(persona));
-			}
-			const $spacesById = get(spacesById);
-			let spacesToAdd: Space[] | null = null;
-			for (const space of community.spaces) {
-				if (!$spacesById.has(space.space_id)) {
-					(spacesToAdd || (spacesToAdd = [])).push(space);
-				}
-			}
-			if (spacesToAdd) {
-				spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
-			}
-			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => {
-				$selectedSpaceIdByCommunity[community.community_id] = community.spaces[0].space_id;
-				return $selectedSpaceIdByCommunity;
-			});
-			const communityStore = writable(community);
-			communities.update(($communities) => $communities.concat(communityStore));
+			// TODO how should `persona.community_ids` be modeled and kept up to date?
+			addCommunity(community, persona_id);
+			ui.selectCommunity(community.community_id);
+			return result;
 		},
-		create_membership: (_params, result) => {
-			if (!result?.ok) return;
+		create_membership: async ({invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
 			const {membership} = result.value;
 			console.log('[ui.create_membership]', membership);
 			// TODO also update `communities.personas`
 			memberships.update(($memberships) => $memberships.concat(membership));
+			return result;
 		},
-		create_space: (params, result) => {
-			if (!result?.ok) return;
+		create_space: async ({params, invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
 			const {space} = result.value;
 			const {community_id} = params;
 			console.log('[ui.create_space]', space);
@@ -363,9 +388,11 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 				spaces: $community.spaces.concat(space), // TODO should this check if it's already there? yes but for different data structures
 			}));
 			spaces.update(($spaces) => $spaces.concat(writable(space)));
+			return result;
 		},
-		create_file: (_params, result) => {
-			if (!result?.ok) return;
+		create_file: async ({invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
 			const {file} = result.value;
 			console.log('[ui.create_file]', file);
 			const fileStore = writable(file);
@@ -376,35 +403,11 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			} else {
 				filesBySpace.set(file.space_id, writable([fileStore]));
 			}
+			return result;
 		},
-		read_files: (params, result) => {
-			if (result && !result.ok) return;
-			const {space_id} = params;
-			const existingFiles = filesBySpace.get(space_id);
-			// TODO probably check to make sure they don't already exist
-			const newFiles = result ? result.value.files.map((f) => writable(f)) : [];
-			console.log('[ui.read_files]', newFiles);
-			if (existingFiles) {
-				existingFiles.set(newFiles);
-			} else {
-				filesBySpace.set(space_id, writable(newFiles));
-			}
-		},
-		query_files: (params, result, dispatch) => {
-			if (result) return;
-			const {space_id} = params;
-			let files = filesBySpace.get(space_id);
-			if (!files) {
-				filesBySpace.set(space_id, (files = writable([])));
-				// TODO hmmm
-				dispatch('read_files', {space_id});
-			}
-			return files;
-		},
-		// TODO playing with api variants
-		read_files: (params, result, invoke) => {
+		read_files: async ({params, invoke}) => {
 			const result = await invoke();
-			const result = await invoke(params); // TODO allow mapping params?
+			if (!result.ok) return result;
 			const {space_id} = params;
 			const existingFiles = filesBySpace.get(space_id);
 			// TODO probably check to make sure they don't already exist
@@ -415,29 +418,16 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			} else {
 				filesBySpace.set(space_id, writable(newFiles));
 			}
+			return result;
 		},
-		query_files: (params, result, dispatch) => {
-			const {space_id} = params;
-			let files = filesBySpace.get(space_id);
+		query_files: ({params, dispatch}) => {
+			let files = filesBySpace.get(params.space_id);
 			if (!files) {
-				filesBySpace.set(space_id, (files = writable([])));
-				// TODO hmmm
-				dispatch('read_files', {space_id});
+				filesBySpace.set(params.space_id, (files = writable([])));
+				dispatch('read_files', params);
 			}
 			return files;
 		},
-		// TODO how to make this work? should `query_files` call this?
-		// query_files_async: (params, result, dispatch) => {
-		// 	if (result) return;
-		// 	const {space_id} = params;
-		// 	let files = filesBySpace.get(space_id);
-		// 	if (!files) {
-		// 		filesBySpace.set(space_id, (files = writable([])));
-		// 		// TODO hmmm
-		// 		return dispatch('read_files', {space_id});
-		// 	}
-		// 	return files;
-		// },
 		findPersonaById: (persona_id: number): Readable<Persona> => {
 			const persona = get(personasById).get(persona_id);
 			if (!persona) throw Error(`Unknown persona ${persona_id}`);
