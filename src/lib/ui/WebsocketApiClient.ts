@@ -5,9 +5,9 @@
 import {toToClientId} from '@feltcoop/felt/util/id.js';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
+import type {ServiceMeta} from '$lib/server/servicesMeta';
 import type {JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
-import {lookupService} from '$lib/ui/services';
 
 const toId = toToClientId('', undefined, '');
 
@@ -31,6 +31,7 @@ export const toWebsocketApiClient = <
 	TParamsMap extends Record<string, any>,
 	TResultMap extends Record<string, any>,
 >(
+	findService: (name: string) => ServiceMeta | undefined,
 	send: (request: JsonRpcRequest) => void,
 ): WebsocketApiClient<TParamsMap, TResultMap> => {
 	// TODO maybe extract a `WebsocketRequests` interface, with `add`/`remove` functions (and `pending` items?)
@@ -45,7 +46,7 @@ export const toWebsocketApiClient = <
 	};
 
 	const client: WebsocketApiClient<TParamsMap, TResultMap> = {
-		has: (name) => !!lookupService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
+		has: (name) => !!findService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
 		invoke: async (name, params) => {
 			console.log('[websocket api client] invoke', name, params);
 			const request: JsonRpcRequest<typeof name, TParamsMap> = {
