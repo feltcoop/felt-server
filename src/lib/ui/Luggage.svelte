@@ -1,11 +1,17 @@
 <script lang="ts">
 	import {getApp} from '$lib/ui/app';
 
-	const {api} = getApp();
+	const {
+		api: {dispatch},
+	} = getApp();
 </script>
 
 <div class="luggage">
-	<button class="icon-button" aria-label="toggle luggage" on:click={() => api.toggleMainNav()}>
+	<button
+		class="icon-button"
+		aria-label="toggle luggage"
+		on:click={() => dispatch('toggle_main_nav')}
+	>
 		☰
 	</button>
 </div>

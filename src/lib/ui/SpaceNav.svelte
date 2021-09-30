@@ -7,8 +7,8 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
+		api: {dispatch},
 		ui: {mobile, expandMainNav},
-		api,
 	} = getApp();
 
 	export let community: Readable<Community>;
@@ -33,7 +33,7 @@
 				// That's probably what the user wants,
 				// but the problem is that we also want to close the main nav
 				// when the user clicks the already-selected space. For now this is fine.
-				if ($mobile && $expandMainNav) api.toggleMainNav();
+				if ($mobile && $expandMainNav) dispatch('toggle_main_nav');
 			}}
 		>
 			{space.name}

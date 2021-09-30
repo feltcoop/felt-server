@@ -14,6 +14,7 @@
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
 	const {
+		api: {dispatch, logIn, logOut},
 		ui: {
 			mainNavView,
 			expandMainNav,
@@ -22,7 +23,6 @@
 			selectedPersona: selectedPersonaStore,
 			selectedCommunity: selectedCommunityStore,
 		},
-		api,
 	} = getApp();
 
 	$: selectedPersona = $selectedPersonaStore!; // TODO type?
@@ -35,7 +35,7 @@
 </script>
 
 {#if $expandMainNav}
-	<div class="main-nav-bg" on:click={() => ($expandMainNav ? api.toggleMainNav() : null)} />
+	<div class="main-nav-bg" on:click={() => ($expandMainNav ? dispatch('toggle_main_nav') : null)} />
 {/if}
 <div class="main-nav-panel" class:expanded={$expandMainNav} style="--hue: {hue}">
 	<div class="main-nav">
@@ -71,7 +71,7 @@
 			</div>
 		{:else if $mainNavView === 'account'}
 			<Markup>
-				<AccountForm guest={$session.guest} logIn={api.logIn} logOut={api.logOut} />
+				<AccountForm guest={$session.guest} {logIn} {logOut} />
 			</Markup>
 			<SocketConnection />
 		{/if}

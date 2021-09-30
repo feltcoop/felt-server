@@ -2,7 +2,8 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {toggleSecondaryNav, expandMarquee},
+		api: {dispatch},
+		ui: {expandMarquee},
 	} = getApp();
 
 	const marquee_width = 320; // TODO where to get this?
@@ -14,7 +15,7 @@
 	class:expanded={$expandMarquee}
 	style="transform: translate3d({right}px, 0, 0)"
 	aria-label="toggle marquee"
-	on:click={toggleSecondaryNav}
+	on:click={() => dispatch('toggle_secondary_nav')}
 >
 	<div class="content">⚆</div>
 </button>

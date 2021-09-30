@@ -57,8 +57,10 @@ export interface Dispatch {
 	(eventName: 'create_file', params: Static<typeof createFileService.paramsSchema>): Promise<
 		ApiResult<Static<typeof createFileService.responseSchema>>
 	>;
+	(eventName: 'toggle_main_nav', params?: any): void;
+	(eventName: 'toggle_secondary_nav', params?: any): void;
 	// fallback to any
-	(eventName: string, params: any): null | Promise<ApiResult<any>>;
+	(eventName: string, params?: any): void | Promise<ApiResult<any>>;
 }
 
 export interface Api {
@@ -68,8 +70,6 @@ export interface Api {
 		password: string,
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	logOut: () => Promise<ApiResult<{}>>;
-	toggleMainNav: () => void;
-	toggleSecondaryNav: () => void;
 	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
 	getFilesBySpace: (space_id: number) => Readable<Readable<File>[]>;
 }
@@ -88,18 +88,15 @@ export const toApi = (
 			console.log('[api] invoking', eventName, params);
 			ui.dispatch(eventName, params, null);
 			const client = randomClient();
-			return client.has(eventName)
-				? client.invoke(eventName, params).then((result) => {
-						console.log('[api] invoked', eventName, result);
-						ui.dispatch(eventName, params, result);
-						return result as ApiResult<any>;
-				  })
-				: null!;
+			if (client.has(eventName)) {
+				return client.invoke(eventName, params).then((result) => {
+					console.log('[api] invoked', eventName, result);
+					ui.dispatch(eventName, params, result);
+					return result as ApiResult<any>;
+				});
+			}
+			return undefined as any; // TODO typescript is complaining without this explicit return
 		},
-		// TODO these are just directly proxying and they don't have the normal `ApiResult` return value
-		// The motivation is that sometimes UI events may do API-related things, but this may not be the best design.
-		toggleMainNav: ui.toggleMainNav,
-		toggleSecondaryNav: ui.toggleSecondaryNav,
 		logIn: async (accountName, password) => {
 			console.log('[logIn] logging in with accountName', accountName); // TODO logging
 			try {

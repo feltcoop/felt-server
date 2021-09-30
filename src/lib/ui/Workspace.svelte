@@ -7,12 +7,12 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
+		api: {dispatch},
 		ui: {
 			expandMarquee,
 			selectedSpace: selectedSpaceStore,
 			selectedCommunity: selectedCommunityStore,
 		},
-		api,
 	} = getApp();
 
 	$: selectedCommunity = $selectedCommunityStore;
@@ -21,7 +21,10 @@
 
 <div class="workspace">
 	{#if $expandMarquee}
-		<div class="marquee-bg" on:click={() => ($expandMarquee ? api.toggleSecondaryNav() : null)} />
+		<div
+			class="marquee-bg"
+			on:click={() => ($expandMarquee ? dispatch('toggle_secondary_nav') : null)}
+		/>
 	{/if}
 	<div class="column">
 		<!-- TODO pass stores here instead of dereferncing -->

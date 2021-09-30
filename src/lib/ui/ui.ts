@@ -49,6 +49,8 @@ export interface Ui {
 		params: Static<typeof createFileService.paramsSchema>,
 		result: ApiResult<Static<typeof createFileService.responseSchema>> | null,
 	) => void;
+	toggle_main_nav: () => void;
+	toggle_secondary_nav: () => void;
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
@@ -85,8 +87,6 @@ export interface Ui {
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space_id: number | null) => void;
-	toggleMainNav: () => void;
-	toggleSecondaryNav: () => void;
 	setMainNavView: (value: MainNavView) => void;
 }
 
@@ -423,10 +423,10 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 				[community_id]: space_id,
 			}));
 		},
-		toggleMainNav: () => {
+		toggle_main_nav: () => {
 			expandMainNav.update(($expandMainNav) => !$expandMainNav);
 		},
-		toggleSecondaryNav: () => {
+		toggle_secondary_nav: () => {
 			expandMarquee.update(($expandMarquee) => !$expandMarquee);
 		},
 		setMainNavView: (value) => {
