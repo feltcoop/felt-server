@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
 
-	import type {File} from '$lib/vocab/file/file';
+	import type {File} from '$lib/vocab/file/file.js';
 	import BoardItem from '$lib/ui/BoardItem.svelte';
 
 	// TODO this should possibly be a generic component instead of this named one
