@@ -75,15 +75,13 @@ export const toApi = (
 		dispatch: (eventName, params) => {
 			console.log('[api] invoking', eventName, params);
 			ui.dispatch(eventName, params, null);
+			const client = randomClient();
 			return client.invokes(eventName)
-				? randomClient()
-						.invoke(eventName, params)
-						.then(async () => {
-							const result: ApiResult<any> = await randomClient().invoke(eventName, params); // TODO better type?
-							console.log('[api] invoked', eventName, result);
-							ui.dispatch(eventName, params, result);
-							return result;
-						})
+				? client.invoke(eventName, params).then((result) => {
+						console.log('[api] invoked', eventName, result);
+						ui.dispatch(eventName, params, result);
+						return result as ApiResult<any>;
+				  })
 				: null!;
 		},
 		// TODO these are just directly proxying and they don't have the normal `ApiResult` return value
