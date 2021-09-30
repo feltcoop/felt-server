@@ -6,7 +6,7 @@ import type {Static} from '@sinclair/typebox';
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
 import type {Persona} from '$lib/vocab/persona/persona';
-import type {ClientSession} from '$lib/session/clientSession';
+import type {ClientAccountSession, ClientSession} from '$lib/session/clientSession';
 import type {AccountModel} from '$lib/vocab/account/account';
 import type {File} from '$lib/vocab/file/file';
 import type {Membership} from '$lib/vocab/membership/membership';
@@ -17,6 +17,10 @@ import type {createMembershipService} from '$lib/vocab/community/communityServic
 import type {createSpaceService} from '$lib/vocab/space/spaceServices';
 import type {createFileService, readFilesService} from '$lib/vocab/file/fileServices';
 import type {Dispatch, DispatchContext} from '$lib/ui/api';
+import type {LoginRequest} from '$lib/session/loginMiddleware.js';
+
+const UNKNOWN_API_ERROR =
+	'Something went wrong. Maybe the server or your Internet connection is down. Please try again.';
 
 const KEY = Symbol();
 
@@ -29,6 +33,14 @@ export const setUi = (store: Ui): Ui => {
 
 // TODO generate this interface from data
 export interface UiHandlers {
+	// TODO `log_in` and `log_out` have no service or schema; they're custom endpoints right now,
+	// but they should be converted to services to match the rest.
+	// For now they serve as good examples of a usecase needing an escape hatch,
+	// because they need to use the api client directly. (because `invoke` is only for services)
+	log_in: (
+		ctx: DispatchContext<LoginRequest, ApiResult<{session: ClientAccountSession}>>,
+	) => Promise<ApiResult<{session: ClientAccountSession}>>;
+	log_out: (ctx: DispatchContext<null, ApiResult<void>>) => Promise<ApiResult<void>>;
 	create_community: (
 		ctx: DispatchContext<
 			Static<typeof createCommunityService.paramsSchema>,
@@ -113,7 +125,7 @@ export interface Ui extends UiHandlers {
 	setMainNavView: (value: MainNavView) => void;
 }
 
-export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
+export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
 	const initialSession = get(session);
 
 	// TODO would it helpfully simplify things to put these stores on the actual store state?
@@ -289,6 +301,59 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 				return handler(ctx);
 			} else {
 				console.warn('[ui] ignoring a dispatched event', ctx);
+			}
+		},
+		// TODO convert to a service (and use `invoke` instead of the `client`)
+		log_in: async ({params}) => {
+			console.log('[log_in] logging in as', params.accountName); // TODO logging
+			try {
+				const response = await fetch('/api/v1/login', {
+					method: 'POST',
+					headers: {'content-type': 'application/json'},
+					body: JSON.stringify(params),
+				});
+				const responseData = await response.json();
+				if (response.ok) {
+					console.log('[logIn] responseData', responseData); // TODO logging
+					session.set(responseData.session);
+					return {ok: true, status: response.status, value: responseData}; // TODO doesn't this have other status codes?
+				} else {
+					console.error('[logIn] response not ok', responseData, response); // TODO logging
+					return {ok: false, status: response.status, reason: responseData.reason};
+				}
+			} catch (err) {
+				console.error('[logIn] error', err); // TODO logging
+				return {
+					ok: false,
+					status: 500,
+					reason: UNKNOWN_API_ERROR,
+				};
+			}
+		},
+		// TODO convert to a service (and use `invoke` instead of the `client`)
+		log_out: async () => {
+			try {
+				console.log('[log_out] logging out'); // TODO logging
+				const response = await fetch('/api/v1/logout', {
+					method: 'POST',
+					headers: {'content-type': 'application/json'},
+				});
+				const responseData = await response.json();
+				console.log('[logOut] response', responseData); // TODO logging
+				if (response.ok) {
+					session.set({guest: true});
+					return {ok: true, status: response.status, value: responseData};
+				} else {
+					console.error('[logOut] response not ok', response); // TODO logging
+					return {ok: false, status: response.status, reason: responseData.reason};
+				}
+			} catch (err) {
+				console.error('[logOut] err', err); // TODO logging
+				return {
+					ok: false,
+					status: 500,
+					reason: UNKNOWN_API_ERROR,
+				};
 			}
 		},
 		setSession: (session) => {

@@ -14,7 +14,7 @@
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
 	const {
-		api: {dispatch, logIn, logOut},
+		api: {dispatch},
 		ui: {
 			mainNavView,
 			expandMainNav,
@@ -71,7 +71,7 @@
 			</div>
 		{:else if $mainNavView === 'account'}
 			<Markup>
-				<AccountForm guest={$session.guest} {logIn} {logOut} />
+				<AccountForm guest={$session.guest} />
 			</Markup>
 			<SocketConnection />
 		{/if}

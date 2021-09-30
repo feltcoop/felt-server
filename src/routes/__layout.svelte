@@ -139,7 +139,7 @@
 		{#if guest}
 			<div class="column">
 				<Markup>
-					<AccountForm {guest} logIn={api.logIn} logOut={api.logOut} />
+					<AccountForm {guest} />
 				</Markup>
 			</div>
 		{:else if onboarding}

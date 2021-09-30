@@ -1,11 +1,9 @@
 import {setContext, getContext} from 'svelte';
-import {session} from '$app/stores';
 import {randomItem} from '@feltcoop/felt/util/random.js';
 import type {Static} from '@sinclair/typebox';
 import type {Readable} from 'svelte/store';
 
 import type {Ui} from '$lib/ui/ui';
-import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
@@ -16,6 +14,7 @@ import type {createMembershipService} from '$lib/vocab/community/communityServic
 import type {createSpaceService} from '$lib/vocab/space/spaceServices';
 import type {createFileService, readFilesService} from '$lib/vocab/file/fileServices';
 import type {File} from '$lib/vocab/file/file';
+import type {LoginRequest} from '$lib/session/loginMiddleware';
 
 // TODO This was originally implemented as a Svelte store
 // but we weren't using the state at all.
@@ -24,9 +23,6 @@ import type {File} from '$lib/vocab/file/file';
 // or perhaps a plain object is best for composition and extension.
 // It may be best to have related state in optional external modules that
 // observe the behavior of the api, to keep this module small and efficient.
-
-const UNKNOWN_API_ERROR =
-	'Something went wrong. Maybe the server or your Internet connection is down. Please try again.';
 
 const KEY = Symbol();
 
@@ -39,17 +35,21 @@ export const setApi = (store: Api): Api => {
 
 // TODO this name may be confusing because it's not used by the `dispatch` function types below
 export interface DispatchContext<
-	TParams extends object = object,
+	TParams extends any = object,
 	TResult extends ApiResult<any> | void = void,
 > {
 	eventName: string;
 	params: TParams;
 	dispatch: Dispatch;
+	client: ApiClient<ServicesParamsMap, ServicesResultMap>;
 	invoke: TResult extends void ? null : (params?: TParams) => Promise<TResult>;
 }
 
 // TODO generate this interface from data
 export interface Dispatch {
+	// TODO convert log_in and log_out to services
+	(eventName: 'log_in', params: LoginRequest): Promise<ApiResult<{session: ClientAccountSession}>>; // TODO
+	(eventName: 'log_out', params?: undefined): Promise<ApiResult<void>>; // TODO type?
 	(
 		eventName: 'create_community',
 		params: Static<typeof createCommunityService.paramsSchema>,
@@ -85,11 +85,6 @@ export interface Dispatch {
 
 export interface Api {
 	dispatch: Dispatch;
-	logIn: (
-		accountName: string,
-		password: string,
-	) => Promise<ApiResult<{session: ClientAccountSession}>>;
-	logOut: () => Promise<ApiResult<{}>>;
 }
 
 export const toApi = (
@@ -109,62 +104,10 @@ export const toApi = (
 				eventName,
 				params,
 				dispatch: api.dispatch,
+				client,
 				invoke: client.has(eventName) ? (p = params) => client.invoke(eventName, p) : (null as any), // TODO fix typecast?
 			};
 			return ui.dispatch(ctx);
-		},
-		logIn: async (accountName, password) => {
-			console.log('[logIn] logging in with accountName', accountName); // TODO logging
-			try {
-				const loginRequest: LoginRequest = {accountName, password};
-				const response = await fetch('/api/v1/login', {
-					method: 'POST',
-					headers: {'content-type': 'application/json'},
-					body: JSON.stringify(loginRequest),
-				});
-				const responseData = await response.json();
-				if (response.ok) {
-					console.log('[logIn] responseData', responseData); // TODO logging
-					accountName = '';
-					session.set(responseData.session);
-					return {ok: true, status: response.status, value: responseData}; // TODO doesn't this have other status codes?
-				} else {
-					console.error('[logIn] response not ok', responseData, response); // TODO logging
-					return {ok: false, status: response.status, reason: responseData.reason};
-				}
-			} catch (err) {
-				console.error('[logIn] error', err); // TODO logging
-				return {
-					ok: false,
-					status: 500,
-					reason: UNKNOWN_API_ERROR,
-				};
-			}
-		},
-		logOut: async () => {
-			try {
-				console.log('[logOut] logging out'); // TODO logging
-				const response = await fetch('/api/v1/logout', {
-					method: 'POST',
-					headers: {'content-type': 'application/json'},
-				});
-				const responseData = await response.json();
-				console.log('[logOut] response', responseData); // TODO logging
-				if (response.ok) {
-					session.set({guest: true});
-					return {ok: true, status: response.status, value: responseData};
-				} else {
-					console.error('[logOut] response not ok', response); // TODO logging
-					return {ok: false, status: response.status, reason: responseData.reason};
-				}
-			} catch (err) {
-				console.error('[logOut] err', err); // TODO logging
-				return {
-					ok: false,
-					status: 500,
-					reason: UNKNOWN_API_ERROR,
-				};
-			}
 		},
 	};
 	return api;
