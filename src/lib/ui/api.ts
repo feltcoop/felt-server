@@ -1,12 +1,10 @@
 import {setContext, getContext} from 'svelte';
 import {session} from '$app/stores';
-import {writable} from 'svelte/store';
-import type {Readable} from 'svelte/store';
 import {randomItem} from '@feltcoop/felt/util/random.js';
 import type {Static} from '@sinclair/typebox';
+import type {Readable} from 'svelte/store';
 
 import type {Ui} from '$lib/ui/ui';
-import type {File} from '$lib/vocab/file/file';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ApiClient} from '$lib/ui/ApiClient';
@@ -17,6 +15,7 @@ import type {createPersonaService} from '$lib/vocab/persona/personaServices';
 import type {createMembershipService} from '$lib/vocab/community/communityServices';
 import type {createSpaceService} from '$lib/vocab/space/spaceServices';
 import type {createFileService, readFilesService} from '$lib/vocab/file/fileServices';
+import type {File} from '$lib/vocab/file/file';
 
 // TODO This was originally implemented as a Svelte store
 // but we weren't using the state at all.
@@ -60,6 +59,12 @@ export interface Dispatch {
 	(eventName: 'read_files', params: Static<typeof readFilesService.paramsSchema>): Promise<
 		ApiResult<Static<typeof readFilesService.responseSchema>>
 	>;
+	// TODO This query is different than the rest -- does it make sense to use the same dispatch system?
+	// As currently implemented, `query_files` is not a registered service,
+	// so `dispatch` will return whatever synchronous result is returned by the `ui` handler.
+	(eventName: 'query_files', params: Static<typeof readFilesService.paramsSchema>): Readable<
+		Readable<File>[]
+	>;
 	(eventName: 'toggle_main_nav', params?: any): void;
 	(eventName: 'toggle_secondary_nav', params?: any): void;
 	// TODO declare this with function overloading instead of this interface
@@ -74,7 +79,6 @@ export interface Api {
 		password: string,
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	logOut: () => Promise<ApiResult<{}>>;
-	getFilesBySpace: (space_id: number) => Readable<Readable<File>[]>;
 }
 
 export const toApi = (
@@ -89,16 +93,18 @@ export const toApi = (
 		// TODO could validate the params here, but for now we'll just let the server validate2
 		dispatch: (eventName, params) => {
 			console.log('[api] invoking', eventName, params ?? '');
-			ui.dispatch(eventName, params, null);
+			const returnedSync = ui.dispatch(eventName, params, null, api.dispatch);
 			const client = randomClient();
 			if (client.has(eventName)) {
 				return client.invoke(eventName, params).then((result) => {
 					console.log('[api] invoked', eventName, result);
-					ui.dispatch(eventName, params, result);
-					return result as ApiResult<any>;
+					const returnedAsync = ui.dispatch(eventName, params, result, api.dispatch);
+					// TODO looks like this check fails to return `result` if `ui.dispatch` returns an async function,
+					// should we just make downstream callers return the result if they want it forwarded?
+					return returnedAsync !== undefined ? returnedAsync : result;
 				});
 			}
-			return undefined as any; // TODO typescript is complaining without this explicit return
+			return returnedSync as any;
 		},
 		logIn: async (accountName, password) => {
 			console.log('[logIn] logging in with accountName', accountName); // TODO logging
@@ -152,15 +158,6 @@ export const toApi = (
 					reason: UNKNOWN_API_ERROR,
 				};
 			}
-		},
-		// TODO do we want to return the promise? maybe as `[value, resultPromise]`
-		getFilesBySpace: (space_id) => {
-			let files = ui.filesBySpace.get(space_id);
-			if (!files) {
-				ui.filesBySpace.set(space_id, (files = writable([])));
-				api.dispatch('read_files', {space_id});
-			}
-			return files;
 		},
 	};
 	return api;

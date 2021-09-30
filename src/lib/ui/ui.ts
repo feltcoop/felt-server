@@ -16,6 +16,7 @@ import type {createPersonaService} from '$lib/vocab/persona/personaServices';
 import type {createMembershipService} from '$lib/vocab/community/communityServices';
 import type {createSpaceService} from '$lib/vocab/space/spaceServices';
 import type {createFileService, readFilesService} from '$lib/vocab/file/fileServices';
+import type {Dispatch} from '$lib/ui/api';
 
 const KEY = Symbol();
 
@@ -27,7 +28,7 @@ export const setUi = (store: Ui): Ui => {
 };
 
 export interface Ui {
-	dispatch: (eventName: string, params: any, result: ApiResult<any> | null) => void;
+	dispatch: (eventName: string, params: any, result: ApiResult<any> | null, dispatch: any) => any; // TODO return value
 	// TODO generate these
 	create_community: (
 		params: Static<typeof createCommunityService.paramsSchema>,
@@ -53,6 +54,12 @@ export interface Ui {
 		params: Static<typeof readFilesService.paramsSchema>,
 		result: ApiResult<Static<typeof readFilesService.responseSchema>> | null,
 	) => void;
+	query_files: (
+		params: Static<typeof readFilesService.paramsSchema>,
+		result: null,
+		dispatch: Dispatch,
+		// TODO `void` to handle the case with a result -- good example of reason to make it 2 methods
+	) => void | Readable<Readable<File>[]>;
 	toggle_main_nav: () => void;
 	toggle_secondary_nav: () => void;
 
@@ -234,11 +241,11 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 		spacesById,
 		spacesByCommunityId,
 		filesBySpace,
-		dispatch: (eventName, params, result) => {
+		dispatch: (eventName, params, result, dispatch) => {
 			const handler = (ui as any)[eventName];
 			// const handler = handlers.get(eventName); // TODO ? would make it easy to do external registration
 			if (handler) {
-				return handler(params, result);
+				return handler(params, result, dispatch);
 			} else {
 				console.warn('[ui] ignored a dispatched event', eventName, params, result);
 			}
@@ -383,6 +390,29 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 				filesBySpace.set(space_id, writable(newFiles));
 			}
 		},
+		query_files: (params, result, dispatch) => {
+			if (result) return;
+			const {space_id} = params;
+			let files = filesBySpace.get(space_id);
+			if (!files) {
+				filesBySpace.set(space_id, (files = writable([])));
+				// TODO hmmm
+				dispatch('read_files', {space_id});
+			}
+			return files;
+		},
+		// TODO how to make this work?
+		// query_files_async: (params, result, dispatch) => {
+		// 	if (result) return;
+		// 	const {space_id} = params;
+		// 	let files = filesBySpace.get(space_id);
+		// 	if (!files) {
+		// 		filesBySpace.set(space_id, (files = writable([])));
+		// 		// TODO hmmm
+		// 		return dispatch('read_files', {space_id});
+		// 	}
+		// 	return files;
+		// },
 		findPersonaById: (persona_id: number): Readable<Persona> => {
 			const persona = get(personasById).get(persona_id);
 			if (!persona) throw Error(`Unknown persona ${persona_id}`);

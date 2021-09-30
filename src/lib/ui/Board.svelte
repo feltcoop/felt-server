@@ -9,7 +9,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		api: {dispatch, getFilesBySpace},
+		api: {dispatch},
 		ui: {selectedPersonaId},
 		socket,
 	} = getApp();
@@ -25,7 +25,7 @@
 	// then the code could simply be:
 	// $: files = api.getFilesBySpace(space.space_id);
 	$: shouldLoadFiles = browser && $socket.connected;
-	$: files = shouldLoadFiles ? getFilesBySpace($space.space_id) : null;
+	$: files = shouldLoadFiles ? dispatch('query_files', {space_id: $space.space_id}) : null;
 
 	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
