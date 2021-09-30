@@ -12,6 +12,7 @@ import type {File} from '$lib/vocab/file/file';
 import type {Membership} from '$lib/vocab/membership/membership';
 import type {ApiResult} from '$lib/server/api';
 import type {createCommunityService} from '$lib/vocab/community/communityServices';
+import type {createPersonaService} from '$lib/vocab/persona/personaServices';
 
 const KEY = Symbol();
 
@@ -29,6 +30,10 @@ export interface Ui {
 		params: Static<typeof createCommunityService.paramsSchema>,
 		result: ApiResult<Static<typeof createCommunityService.responseSchema>> | null,
 	) => void;
+	create_persona: (
+		params: Static<typeof createPersonaService.paramsSchema>,
+		result: ApiResult<Static<typeof createPersonaService.responseSchema>> | null,
+	) => void;
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
@@ -42,7 +47,6 @@ export interface Ui {
 	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
 	filesBySpace: Map<number, Readable<Readable<File>[]>>;
 	setSession: (session: ClientSession) => void;
-	addPersona: (persona: Persona) => void;
 	addMembership: (membership: Membership) => void;
 	addSpace: (space: Space, community_id: number) => void;
 	addFile: (file: File) => void;
@@ -274,20 +278,21 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			);
 			mainNavView.set('explorer');
 		},
-		addPersona: (persona) => {
-			console.log('[data.addPersona]', persona);
+		create_persona: (_params, result) => {
+			if (!result?.ok) return;
+			const {persona, community} = result.value;
+			console.log('[ui.create_persona]', persona);
 			const personaStore = writable(persona);
 			personas.update(($personas) => $personas.concat(personaStore));
-			// TODO better way to check this? should `sessionPersonas` be a `derived` store?
-			if (persona.account_id == get(account)?.account_id) {
-				sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
-			}
+			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
+			// TODO how should this work?
+			ui.create_community({name: community.name, persona_id: persona.persona_id}, result);
 		},
 		create_community: (params, result) => {
 			if (!result?.ok) return;
 			const {persona_id} = params;
 			const community = result.value.community as Community; // TODO fix type mismatch
-			console.log('[data.create_community]', community, persona_id);
+			console.log('[ui.create_community]', community, persona_id);
 			// TODO how should `persona.community_ids` by modeled and kept up to date?
 			const persona = get(personasById).get(persona_id)!;
 			const $persona = get(persona);

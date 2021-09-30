@@ -3,9 +3,9 @@ import {session} from '$app/stores';
 import {writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {randomItem} from '@feltcoop/felt/util/random.js';
+import type {Static} from '@sinclair/typebox';
 
 import type {Ui} from '$lib/ui/ui';
-import type {Community, CommunityParams} from '$lib/vocab/community/community';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {Membership, MembershipParams} from '$lib/vocab/membership/membership';
 import type {File, FileParams} from '$lib/vocab/file/file';
@@ -14,7 +14,8 @@ import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
 import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
-import type {Persona, PersonaParams} from '$lib/vocab/persona/persona';
+import type {createCommunityService} from '$lib/vocab/community/communityServices';
+import type {createPersonaService} from '$lib/vocab/persona/personaServices';
 
 // TODO This was originally implemented as a Svelte store
 // but we weren't using the state at all.
@@ -38,7 +39,13 @@ export const setApi = (store: Api): Api => {
 
 export interface Dispatch {
 	// TODO generate these
-	(eventName: 'create_community', params: CommunityParams): Promise<ApiResult<Community>>;
+	(
+		eventName: 'create_community',
+		params: Static<typeof createCommunityService.paramsSchema>,
+	): Promise<ApiResult<Static<typeof createCommunityService.responseSchema>>>;
+	(eventName: 'create_persona', params: Static<typeof createPersonaService.paramsSchema>): Promise<
+		ApiResult<Static<typeof createPersonaService.responseSchema>>
+	>;
 	(eventName: string, params: any): null | Promise<ApiResult<any>>;
 }
 
@@ -51,9 +58,6 @@ export interface Api {
 	logOut: () => Promise<ApiResult<{}>>;
 	toggleMainNav: () => void;
 	toggleSecondaryNav: () => void;
-	createPersona: (
-		params: PersonaParams,
-	) => Promise<ApiResult<{persona: Persona; community: Community}>>;
 	createSpace: (params: SpaceParams) => Promise<ApiResult<{space: Space}>>;
 	createMembership: (params: MembershipParams) => Promise<ApiResult<{membership: Membership}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
@@ -139,18 +143,6 @@ export const toApi = (
 					reason: UNKNOWN_API_ERROR,
 				};
 			}
-		},
-		createPersona: async (params) => {
-			if (!params.name) return {ok: false, status: 400, reason: 'invalid name'};
-			const result = await randomClient().invoke('create_persona', params);
-			console.log('[api] create_persona result', result);
-			if (result.ok) {
-				const {persona, community} = result.value;
-				ui.addPersona(persona);
-				// TODO rethink this
-				ui.create_community({name: community.name, persona_id: persona.persona_id}, result);
-			}
-			return result as any; // TODO fix when Community type is fixed
 		},
 		// TODO: This implementation is currently unconsentful,
 		// because does not give the potential member an opportunity to deny an invite
