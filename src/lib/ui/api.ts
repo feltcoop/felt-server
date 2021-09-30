@@ -6,7 +6,7 @@ import {randomItem} from '@feltcoop/felt/util/random.js';
 import type {Static} from '@sinclair/typebox';
 
 import type {Ui} from '$lib/ui/ui';
-import type {File, FileParams} from '$lib/vocab/file/file';
+import type {File} from '$lib/vocab/file/file';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ApiClient} from '$lib/ui/ApiClient';
@@ -16,6 +16,7 @@ import type {createCommunityService} from '$lib/vocab/community/communityService
 import type {createPersonaService} from '$lib/vocab/persona/personaServices';
 import type {createMembershipService} from '$lib/vocab/community/communityServices';
 import type {createSpaceService} from '$lib/vocab/space/spaceServices';
+import type {createFileService} from '$lib/vocab/file/fileServices';
 
 // TODO This was originally implemented as a Svelte store
 // but we weren't using the state at all.
@@ -53,6 +54,9 @@ export interface Dispatch {
 	(eventName: 'create_space', params: Static<typeof createSpaceService.paramsSchema>): Promise<
 		ApiResult<Static<typeof createSpaceService.responseSchema>>
 	>;
+	(eventName: 'create_file', params: Static<typeof createFileService.paramsSchema>): Promise<
+		ApiResult<Static<typeof createFileService.responseSchema>>
+	>;
 	// fallback to any
 	(eventName: string, params: any): null | Promise<ApiResult<any>>;
 }
@@ -66,7 +70,6 @@ export interface Api {
 	logOut: () => Promise<ApiResult<{}>>;
 	toggleMainNav: () => void;
 	toggleSecondaryNav: () => void;
-	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
 	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
 	getFilesBySpace: (space_id: number) => Readable<Readable<File>[]>;
 }
@@ -149,14 +152,6 @@ export const toApi = (
 					reason: UNKNOWN_API_ERROR,
 				};
 			}
-		},
-		createFile: async (params) => {
-			const result = await randomClient().invoke('create_file', params);
-			console.log('create_file result', result);
-			if (result.ok) {
-				ui.addFile(result.value.file);
-			}
-			return result;
 		},
 		loadFiles: async (space_id) => {
 			ui.setFiles(space_id, []);

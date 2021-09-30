@@ -15,6 +15,7 @@ import type {createCommunityService} from '$lib/vocab/community/communityService
 import type {createPersonaService} from '$lib/vocab/persona/personaServices';
 import type {createMembershipService} from '$lib/vocab/community/communityServices';
 import type {createSpaceService} from '$lib/vocab/space/spaceServices';
+import type {createFileService} from '$lib/vocab/file/fileServices';
 
 const KEY = Symbol();
 
@@ -44,6 +45,10 @@ export interface Ui {
 		params: Static<typeof createSpaceService.paramsSchema>,
 		result: ApiResult<Static<typeof createSpaceService.responseSchema>> | null,
 	) => void;
+	create_file: (
+		params: Static<typeof createFileService.paramsSchema>,
+		result: ApiResult<Static<typeof createFileService.responseSchema>> | null,
+	) => void;
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
@@ -57,7 +62,6 @@ export interface Ui {
 	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
 	filesBySpace: Map<number, Readable<Readable<File>[]>>;
 	setSession: (session: ClientSession) => void;
-	addFile: (file: File) => void;
 	setFiles: (space_id: number, files: File[]) => void;
 	findPersonaById: (persona_id: number) => Readable<Persona>;
 	findSpaceById: (space_id: number) => Readable<Space>;
@@ -350,8 +354,10 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			}));
 			spaces.update(($spaces) => $spaces.concat(writable(space)));
 		},
-		addFile: (file) => {
-			console.log('[data.addFile]', file);
+		create_file: (_params, result) => {
+			if (!result?.ok) return;
+			const {file} = result.value;
+			console.log('[ui.create_file]', file);
 			const fileStore = writable(file);
 			const files = filesBySpace.get(file.space_id);
 			if (files) {

@@ -9,7 +9,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		api,
+		api: {dispatch, getFilesBySpace},
 		ui: {selectedPersonaId},
 		socket,
 	} = getApp();
@@ -22,12 +22,12 @@
 	let text = '';
 
 	$: shouldLoadFiles = browser && $socket.connected;
-	$: files = shouldLoadFiles ? api.getFilesBySpace($space.space_id) : null;
+	$: files = shouldLoadFiles ? getFilesBySpace($space.space_id) : null;
 
 	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
 		if (!content) return;
-		await api.createFile({
+		await dispatch('create_file', {
 			space_id: $space.space_id,
 			content,
 			actor_id: $selectedPersonaId!, // TODO generic erorr check for no selected persona?
