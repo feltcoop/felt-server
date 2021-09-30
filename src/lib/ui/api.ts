@@ -16,7 +16,7 @@ import type {createCommunityService} from '$lib/vocab/community/communityService
 import type {createPersonaService} from '$lib/vocab/persona/personaServices';
 import type {createMembershipService} from '$lib/vocab/community/communityServices';
 import type {createSpaceService} from '$lib/vocab/space/spaceServices';
-import type {createFileService} from '$lib/vocab/file/fileServices';
+import type {createFileService, readFilesService} from '$lib/vocab/file/fileServices';
 
 // TODO This was originally implemented as a Svelte store
 // but we weren't using the state at all.
@@ -57,10 +57,14 @@ export interface Dispatch {
 	(eventName: 'create_file', params: Static<typeof createFileService.paramsSchema>): Promise<
 		ApiResult<Static<typeof createFileService.responseSchema>>
 	>;
+	(eventName: 'read_files', params: Static<typeof readFilesService.paramsSchema>): Promise<
+		ApiResult<Static<typeof readFilesService.responseSchema>>
+	>;
 	(eventName: 'toggle_main_nav', params?: any): void;
 	(eventName: 'toggle_secondary_nav', params?: any): void;
+	// TODO declare this with function overloading instead of this interface
 	// fallback to any
-	(eventName: string, params?: any): void | Promise<ApiResult<any>>;
+	// (eventName: string, params?: any): void | Promise<ApiResult<any>>;
 }
 
 export interface Api {
@@ -70,7 +74,6 @@ export interface Api {
 		password: string,
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	logOut: () => Promise<ApiResult<{}>>;
-	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
 	getFilesBySpace: (space_id: number) => Readable<Readable<File>[]>;
 }
 
@@ -150,22 +153,12 @@ export const toApi = (
 				};
 			}
 		},
-		loadFiles: async (space_id) => {
-			ui.setFiles(space_id, []);
-			// TODO this breaks on startup because the websocket isn't connected yet
-			const result = await randomClient().invoke('read_files', {space_id});
-			console.log('[api] read_files result', result);
-			if (result.ok) {
-				ui.setFiles(space_id, result.value.files);
-			}
-			return result;
-		},
 		// TODO do we want to return the promise? maybe as `[value, resultPromise]`
 		getFilesBySpace: (space_id) => {
 			let files = ui.filesBySpace.get(space_id);
 			if (!files) {
 				ui.filesBySpace.set(space_id, (files = writable([])));
-				api.loadFiles(space_id);
+				api.dispatch('read_files', {space_id});
 			}
 			return files;
 		},

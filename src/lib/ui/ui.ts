@@ -15,7 +15,7 @@ import type {createCommunityService} from '$lib/vocab/community/communityService
 import type {createPersonaService} from '$lib/vocab/persona/personaServices';
 import type {createMembershipService} from '$lib/vocab/community/communityServices';
 import type {createSpaceService} from '$lib/vocab/space/spaceServices';
-import type {createFileService} from '$lib/vocab/file/fileServices';
+import type {createFileService, readFilesService} from '$lib/vocab/file/fileServices';
 
 const KEY = Symbol();
 
@@ -49,6 +49,10 @@ export interface Ui {
 		params: Static<typeof createFileService.paramsSchema>,
 		result: ApiResult<Static<typeof createFileService.responseSchema>> | null,
 	) => void;
+	read_files: (
+		params: Static<typeof readFilesService.paramsSchema>,
+		result: ApiResult<Static<typeof readFilesService.responseSchema>> | null,
+	) => void;
 	toggle_main_nav: () => void;
 	toggle_secondary_nav: () => void;
 
@@ -64,7 +68,6 @@ export interface Ui {
 	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
 	filesBySpace: Map<number, Readable<Readable<File>[]>>;
 	setSession: (session: ClientSession) => void;
-	setFiles: (space_id: number, files: File[]) => void;
 	findPersonaById: (persona_id: number) => Readable<Persona>;
 	findSpaceById: (space_id: number) => Readable<Space>;
 	// view state
@@ -367,13 +370,17 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 				filesBySpace.set(file.space_id, writable([fileStore]));
 			}
 		},
-		setFiles: (space_id, files) => {
-			console.log('[data.setFiles]', files);
+		read_files: (params, result) => {
+			if (result && !result.ok) return;
+			const {space_id} = params;
 			const existingFiles = filesBySpace.get(space_id);
+			// TODO probably check to make sure they don't already exist
+			const newFiles = result ? result.value.files.map((f) => writable(f)) : [];
+			console.log('[ui.read_files]', newFiles);
 			if (existingFiles) {
-				existingFiles.set(files.map((f) => writable(f)));
+				existingFiles.set(newFiles);
 			} else {
-				filesBySpace.set(space_id, writable(files.map((f) => writable(f))));
+				filesBySpace.set(space_id, writable(newFiles));
 			}
 		},
 		findPersonaById: (persona_id: number): Readable<Persona> => {

@@ -17,6 +17,7 @@ const ReadFilesServiceResponse = Type.Object(
 	{$id: 'ReadFilesServiceResponse', additionalProperties: false},
 );
 
+// TODO rename to `getFiles`? `loadFiles`?
 export const readFilesService: Service<
 	typeof ReadFilesServiceParams,
 	typeof ReadFilesServiceResponse
