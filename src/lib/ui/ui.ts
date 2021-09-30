@@ -224,44 +224,6 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 				console.warn('[ui] ignored a dispatched event', eventName, params, result);
 			}
 		},
-		// TODO consider something like:
-		// create_community_request: (
-		// create_community_response: (
-		create_community: (params, result) => {
-			if (!result) return; // TODO this means it's the initial request
-			// This handle doesn't care about failed values.
-			// Could we do something here to make it ergonomic to handle errors from the components?
-			if (!result.ok) return;
-			const {persona_id} = params;
-			const community = result.value.community as Community; // TODO fix type mismatch
-			console.log('[data.create_community]', community, persona_id);
-			// TODO how should `persona.community_ids` by modeled and kept up to date?
-			const persona = get(personasById).get(persona_id)!;
-			const $persona = get(persona);
-			if (!$persona.community_ids.includes(community.community_id)) {
-				persona.update(($persona) => ({
-					...$persona,
-					community_ids: $persona.community_ids.concat(community.community_id),
-				}));
-				console.log('updated persona community ids', get(persona));
-			}
-			const $spacesById = get(spacesById);
-			let spacesToAdd: Space[] | null = null;
-			for (const space of community.spaces) {
-				if (!$spacesById.has(space.space_id)) {
-					(spacesToAdd || (spacesToAdd = [])).push(space);
-				}
-			}
-			if (spacesToAdd) {
-				spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
-			}
-			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => {
-				$selectedSpaceIdByCommunity[community.community_id] = community.spaces[0].space_id;
-				return $selectedSpaceIdByCommunity;
-			});
-			const communityStore = writable(community);
-			communities.update(($communities) => $communities.concat(communityStore));
-		},
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
@@ -311,6 +273,44 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 					  ),
 			);
 			mainNavView.set('explorer');
+		},
+		// TODO consider something like:
+		// create_community_request: (
+		// create_community_response: (
+		create_community: (params, result) => {
+			if (!result) return; // TODO this means it's the initial request
+			// This handle doesn't care about failed values.
+			// Could we do something here to make it ergonomic to handle errors from the components?
+			if (!result.ok) return;
+			const {persona_id} = params;
+			const community = result.value.community as Community; // TODO fix type mismatch
+			console.log('[data.create_community]', community, persona_id);
+			// TODO how should `persona.community_ids` by modeled and kept up to date?
+			const persona = get(personasById).get(persona_id)!;
+			const $persona = get(persona);
+			if (!$persona.community_ids.includes(community.community_id)) {
+				persona.update(($persona) => ({
+					...$persona,
+					community_ids: $persona.community_ids.concat(community.community_id),
+				}));
+				console.log('updated persona community ids', get(persona));
+			}
+			const $spacesById = get(spacesById);
+			let spacesToAdd: Space[] | null = null;
+			for (const space of community.spaces) {
+				if (!$spacesById.has(space.space_id)) {
+					(spacesToAdd || (spacesToAdd = [])).push(space);
+				}
+			}
+			if (spacesToAdd) {
+				spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
+			}
+			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => {
+				$selectedSpaceIdByCommunity[community.community_id] = community.spaces[0].space_id;
+				return $selectedSpaceIdByCommunity;
+			});
+			const communityStore = writable(community);
+			communities.update(($communities) => $communities.concat(communityStore));
 		},
 		addPersona: (persona) => {
 			console.log('[data.addPersona]', persona);
