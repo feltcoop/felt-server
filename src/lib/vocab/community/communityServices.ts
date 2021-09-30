@@ -1,26 +1,37 @@
+import {Type} from '@sinclair/typebox';
+
 import type {Service} from '$lib/server/service';
+import {CommunitySchema} from '$lib/vocab/community/community';
+import {MembershipSchema} from '$lib/vocab/membership/membership';
 import {toValidateSchema} from '$lib/util/ajv';
-import {
-	read_communities,
-	read_community,
-	create_community,
-	create_membership,
-} from '$lib/vocab/community/communityEvents';
+
+const ReadCommunitiesServiceParams = Type.Object(
+	{
+		// TODO query params
+	},
+	{$id: 'ReadCommunitiesServiceParams', additionalProperties: false},
+);
+const ReadCommunitiesServiceResponse = Type.Object(
+	{
+		communities: Type.Array(CommunitySchema),
+	},
+	{$id: 'ReadCommunitiesServiceResponse', additionalProperties: false},
+);
 
 // Returns a list of community objects
 export const readCommunitiesService: Service<
-	typeof read_communities.params,
-	typeof read_communities.response
+	typeof ReadCommunitiesServiceParams,
+	typeof ReadCommunitiesServiceResponse
 > = {
 	name: 'read_communities',
 	route: {
 		path: '/api/v1/communities',
 		method: 'GET',
 	},
-	paramsSchema: read_communities.params,
-	validateParams: toValidateSchema(read_communities.params),
-	responseSchema: read_communities.response,
-	validateResponse: toValidateSchema(read_communities.response),
+	paramsSchema: ReadCommunitiesServiceParams,
+	validateParams: toValidateSchema(ReadCommunitiesServiceParams),
+	responseSchema: ReadCommunitiesServiceResponse,
+	validateResponse: toValidateSchema(ReadCommunitiesServiceResponse),
 	perform: async ({server, account_id}) => {
 		const {db} = server;
 		const findCommunitiesResult = await db.repos.community.filterByAccount(account_id);
@@ -33,20 +44,33 @@ export const readCommunitiesService: Service<
 	},
 };
 
+const ReadCommunityServiceParams = Type.Object(
+	{
+		community_id: Type.Number(),
+	},
+	{$id: 'ReadCommunityServiceParams', additionalProperties: false},
+);
+const ReadCommunityServiceResponse = Type.Object(
+	{
+		community: CommunitySchema,
+	},
+	{$id: 'ReadCommunityServiceResponse', additionalProperties: false},
+);
+
 //Returns a single community object
 export const readCommunityService: Service<
-	typeof read_community.params,
-	typeof read_community.response
+	typeof ReadCommunityServiceParams,
+	typeof ReadCommunityServiceResponse
 > = {
 	name: 'read_community',
 	route: {
 		path: '/api/v1/communities/:community_id',
 		method: 'GET',
 	},
-	paramsSchema: read_community.params,
-	validateParams: toValidateSchema(read_community.params),
-	responseSchema: read_community.response,
-	validateResponse: toValidateSchema(read_community.response),
+	paramsSchema: ReadCommunityServiceParams,
+	validateParams: toValidateSchema(ReadCommunityServiceParams),
+	responseSchema: ReadCommunityServiceResponse,
+	validateResponse: toValidateSchema(ReadCommunityServiceResponse),
 	perform: async ({server, params, account_id}) => {
 		const {db} = server;
 		console.log('[read_community] account', account_id); // TODO logging
@@ -65,21 +89,35 @@ export const readCommunityService: Service<
 	},
 };
 
+const CreateCommunityServiceParams = Type.Object(
+	{
+		name: Type.String(),
+		persona_id: Type.Number(),
+	},
+	{$id: 'CreateCommunityServiceParams', additionalProperties: false},
+);
+const CreateCommunityServiceResponse = Type.Object(
+	{
+		community: CommunitySchema,
+	},
+	{$id: 'CreateCommunityServiceResponse', additionalProperties: false},
+);
+
 //Creates a new community for an instance
 // TODO automatic params type and validation
 export const createCommunityService: Service<
-	typeof create_community.params,
-	typeof create_community.response
+	typeof CreateCommunityServiceParams,
+	typeof CreateCommunityServiceResponse
 > = {
 	name: 'create_community',
 	route: {
 		path: '/api/v1/communities',
 		method: 'POST',
 	},
-	paramsSchema: create_community.params,
-	validateParams: toValidateSchema(create_community.params),
-	responseSchema: create_community.response,
-	validateResponse: toValidateSchema(create_community.response),
+	paramsSchema: CreateCommunityServiceParams,
+	validateParams: toValidateSchema(CreateCommunityServiceParams),
+	responseSchema: CreateCommunityServiceResponse,
+	validateResponse: toValidateSchema(CreateCommunityServiceResponse),
 	// TODO declarative validation for `req.body` and the rest
 	perform: async ({server, params, account_id}) => {
 		if (!params.name) {
@@ -128,21 +166,35 @@ export const createCommunityService: Service<
 	},
 };
 
+const CreateMembershipServiceParams = Type.Object(
+	{
+		persona_id: Type.Number(),
+		community_id: Type.Number(),
+	},
+	{$id: 'CreateMembershipServiceParams', additionalProperties: false},
+);
+const CreateMembershipServiceResponse = Type.Object(
+	{
+		membership: MembershipSchema,
+	},
+	{$id: 'CreateMembershipServiceResponse', additionalProperties: false},
+);
+
 // TODO move to `$lib/vocab/member`
 //Creates a new member relation for a community
 export const createMembershipService: Service<
-	typeof create_membership.params,
-	typeof create_membership.response
+	typeof CreateMembershipServiceParams,
+	typeof CreateMembershipServiceResponse
 > = {
 	name: 'create_membership',
 	route: {
 		path: '/api/v1/memberships',
 		method: 'POST',
 	},
-	paramsSchema: create_membership.params,
-	validateParams: toValidateSchema(create_membership.params),
-	responseSchema: create_membership.response,
-	validateResponse: toValidateSchema(create_membership.response),
+	paramsSchema: CreateMembershipServiceParams,
+	validateParams: toValidateSchema(CreateMembershipServiceParams),
+	responseSchema: CreateMembershipServiceResponse,
+	validateResponse: toValidateSchema(CreateMembershipServiceResponse),
 	perform: async ({server, params}) => {
 		console.log('[create_membership] creating membership', params.persona_id, params.community_id);
 

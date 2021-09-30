@@ -73,8 +73,6 @@ export const toApi = (
 	const api: Api = {
 		// TODO could validate the params here, but for now we'll just let the server validate2
 		dispatch: (eventName, params) => {
-			// TODO maybe ask the client if it handles the event, and if not skip to the local processing
-			// and if not skip to the `ui` part
 			console.log('[api] invoking', eventName, params);
 			ui.dispatch(eventName, params, null);
 			return client.invokes(eventName)

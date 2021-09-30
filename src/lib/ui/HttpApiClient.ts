@@ -16,6 +16,7 @@ export const toHttpApiClient = <
 	TParamsMap extends Record<string, any>,
 	TResultMap extends Record<string, any>,
 >(
+	// TODO should it accept a services map here? or maybe just `lookupService`?
 	fetch: typeof globalThis.fetch = globalThis.fetch,
 ): ApiClient<TParamsMap, TResultMap> => {
 	const client: ApiClient<TParamsMap, TResultMap> = {
