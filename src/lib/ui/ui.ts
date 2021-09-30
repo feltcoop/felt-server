@@ -283,9 +283,6 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 				sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
 			}
 		},
-		// TODO consider something like:
-		// create_community: (
-		// create_community_result: (
 		create_community: (params, result) => {
 			if (!result?.ok) return;
 			const {persona_id} = params;
