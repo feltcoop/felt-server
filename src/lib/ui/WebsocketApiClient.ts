@@ -31,7 +31,7 @@ export const toWebsocketApiClient = <
 	TParamsMap extends Record<string, any>,
 	TResultMap extends Record<string, any>,
 >(
-	lookupService: (name: string) => ServiceMeta | undefined,
+	findService: (name: string) => ServiceMeta | undefined,
 	send: (request: JsonRpcRequest) => void,
 ): WebsocketApiClient<TParamsMap, TResultMap> => {
 	// TODO maybe extract a `WebsocketRequests` interface, with `add`/`remove` functions (and `pending` items?)
@@ -46,7 +46,7 @@ export const toWebsocketApiClient = <
 	};
 
 	const client: WebsocketApiClient<TParamsMap, TResultMap> = {
-		has: (name) => !!lookupService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
+		has: (name) => !!findService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
 		invoke: async (name, params) => {
 			console.log('[websocket api client] invoke', name, params);
 			const request: JsonRpcRequest<typeof name, TParamsMap> = {

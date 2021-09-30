@@ -25,7 +25,7 @@
 	import {toHttpApiClient} from '$lib/ui/HttpApiClient';
 	import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
-	import {lookupService} from '$lib/ui/services';
+	import {findService} from '$lib/ui/services';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -45,10 +45,10 @@
 
 	// TODO create only the websocket client, not the http client
 	const websocketApiClient = toWebsocketApiClient<ServicesParamsMap, ServicesResultMap>(
-		lookupService,
+		findService,
 		socket.send,
 	);
-	const httpApiClient = toHttpApiClient<ServicesParamsMap, ServicesResultMap>(lookupService);
+	const httpApiClient = toHttpApiClient<ServicesParamsMap, ServicesResultMap>(findService);
 	const api = setApi(toApi(ui, websocketApiClient, httpApiClient));
 	const app = setApp({ui, api, devmode, socket});
 	browser && console.log('app', app);
