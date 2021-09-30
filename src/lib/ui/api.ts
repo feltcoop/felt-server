@@ -85,7 +85,7 @@ export const toApi = (
 	const api: Api = {
 		// TODO could validate the params here, but for now we'll just let the server validate2
 		dispatch: (eventName, params) => {
-			console.log('[api] invoking', eventName, params);
+			console.log('[api] invoking', eventName, params ?? '');
 			ui.dispatch(eventName, params, null);
 			const client = randomClient();
 			if (client.has(eventName)) {
