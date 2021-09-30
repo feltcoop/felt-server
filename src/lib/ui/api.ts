@@ -75,7 +75,7 @@ export const toApi = (
 			console.log('[api] invoking', eventName, params);
 			ui.dispatch(eventName, params, null);
 			const client = randomClient();
-			return client.invokes(eventName)
+			return client.has(eventName)
 				? client.invoke(eventName, params).then((result) => {
 						console.log('[api] invoked', eventName, result);
 						ui.dispatch(eventName, params, result);

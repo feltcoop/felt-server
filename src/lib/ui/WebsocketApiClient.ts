@@ -45,7 +45,7 @@ export const toWebsocketApiClient = <
 	};
 
 	const client: WebsocketApiClient<TParamsMap, TResultMap> = {
-		invokes: (name) => !!lookupService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
+		has: (name) => !!lookupService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
 		invoke: async (name, params) => {
 			console.log('[websocket api client] invoke', name, params);
 			const request: JsonRpcRequest<typeof name, TParamsMap> = {

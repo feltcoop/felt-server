@@ -20,7 +20,7 @@ export const toHttpApiClient = <
 	fetch: typeof globalThis.fetch = globalThis.fetch,
 ): ApiClient<TParamsMap, TResultMap> => {
 	const client: ApiClient<TParamsMap, TResultMap> = {
-		invokes: (name) => !!lookupService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
+		has: (name) => !!lookupService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
 		invoke: async (name, params) => {
 			console.log('[http api client] invoke', name, params);
 			const serviceMeta = lookupService(name);
