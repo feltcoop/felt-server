@@ -401,7 +401,32 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			}
 			return files;
 		},
-		// TODO how to make this work?
+		// TODO playing with api variants
+		read_files: (params, result, invoke) => {
+			const result = await invoke();
+			const result = await invoke(params); // TODO allow mapping params?
+			const {space_id} = params;
+			const existingFiles = filesBySpace.get(space_id);
+			// TODO probably check to make sure they don't already exist
+			const newFiles = result ? result.value.files.map((f) => writable(f)) : [];
+			console.log('[ui.read_files]', newFiles);
+			if (existingFiles) {
+				existingFiles.set(newFiles);
+			} else {
+				filesBySpace.set(space_id, writable(newFiles));
+			}
+		},
+		query_files: (params, result, dispatch) => {
+			const {space_id} = params;
+			let files = filesBySpace.get(space_id);
+			if (!files) {
+				filesBySpace.set(space_id, (files = writable([])));
+				// TODO hmmm
+				dispatch('read_files', {space_id});
+			}
+			return files;
+		},
+		// TODO how to make this work? should `query_files` call this?
 		// query_files_async: (params, result, dispatch) => {
 		// 	if (result) return;
 		// 	const {space_id} = params;
