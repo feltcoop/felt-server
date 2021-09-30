@@ -9,7 +9,7 @@ import type {JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 import {lookupService} from '$lib/ui/services';
 
-const toId = toToClientId('');
+const toId = toToClientId('', undefined, '');
 
 // TODO doesn't handle the case where the client never hears back from the server,
 // might want a timeout on each request

@@ -7,7 +7,6 @@ import type {Static} from '@sinclair/typebox';
 
 import type {Ui} from '$lib/ui/ui';
 import type {Space, SpaceParams} from '$lib/vocab/space/space';
-import type {Membership, MembershipParams} from '$lib/vocab/membership/membership';
 import type {File, FileParams} from '$lib/vocab/file/file';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
@@ -16,6 +15,7 @@ import type {ApiResult} from '$lib/server/api';
 import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
 import type {createCommunityService} from '$lib/vocab/community/communityServices';
 import type {createPersonaService} from '$lib/vocab/persona/personaServices';
+import type {createMembershipService} from '$lib/vocab/community/communityServices';
 
 // TODO This was originally implemented as a Svelte store
 // but we weren't using the state at all.
@@ -46,6 +46,10 @@ export interface Dispatch {
 	(eventName: 'create_persona', params: Static<typeof createPersonaService.paramsSchema>): Promise<
 		ApiResult<Static<typeof createPersonaService.responseSchema>>
 	>;
+	(
+		eventName: 'create_membership',
+		params: Static<typeof createMembershipService.paramsSchema>,
+	): Promise<ApiResult<Static<typeof createMembershipService.responseSchema>>>;
 	(eventName: string, params: any): null | Promise<ApiResult<any>>;
 }
 
@@ -59,7 +63,6 @@ export interface Api {
 	toggleMainNav: () => void;
 	toggleSecondaryNav: () => void;
 	createSpace: (params: SpaceParams) => Promise<ApiResult<{space: Space}>>;
-	createMembership: (params: MembershipParams) => Promise<ApiResult<{membership: Membership}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
 	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
 	getFilesBySpace: (space_id: number) => Readable<Readable<File>[]>;
@@ -143,16 +146,6 @@ export const toApi = (
 					reason: UNKNOWN_API_ERROR,
 				};
 			}
-		},
-		// TODO: This implementation is currently unconsentful,
-		// because does not give the potential member an opportunity to deny an invite
-		createMembership: async (params) => {
-			const result = await randomClient().invoke('create_membership', params);
-			console.log('[api] create_membership result', result);
-			if (result.ok) {
-				ui.addMembership(result.value.membership);
-			}
-			return result;
 		},
 		createSpace: async (params) => {
 			const result = await randomClient().invoke('create_space', params);

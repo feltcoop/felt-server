@@ -13,6 +13,7 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import type {ApiResult} from '$lib/server/api';
 import type {createCommunityService} from '$lib/vocab/community/communityServices';
 import type {createPersonaService} from '$lib/vocab/persona/personaServices';
+import type {createMembershipService} from '$lib/vocab/community/communityServices';
 
 const KEY = Symbol();
 
@@ -34,6 +35,10 @@ export interface Ui {
 		params: Static<typeof createPersonaService.paramsSchema>,
 		result: ApiResult<Static<typeof createPersonaService.responseSchema>> | null,
 	) => void;
+	create_membership: (
+		params: Static<typeof createMembershipService.paramsSchema>,
+		result: ApiResult<Static<typeof createMembershipService.responseSchema>> | null,
+	) => void;
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
@@ -47,7 +52,6 @@ export interface Ui {
 	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
 	filesBySpace: Map<number, Readable<Readable<File>[]>>;
 	setSession: (session: ClientSession) => void;
-	addMembership: (membership: Membership) => void;
 	addSpace: (space: Space, community_id: number) => void;
 	addFile: (file: File) => void;
 	setFiles: (space_id: number, files: File[]) => void;
@@ -321,9 +325,11 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			const communityStore = writable(community);
 			communities.update(($communities) => $communities.concat(communityStore));
 		},
-		addMembership: (membership) => {
-			console.log('[data.addMembership]', membership);
-			// TODO also update `communities.personas` (which will be refactored)
+		create_membership: (_params, result) => {
+			if (!result?.ok) return;
+			const {membership} = result.value;
+			console.log('[ui.create_membership]', membership);
+			// TODO also update `communities.personas`
 			memberships.update(($memberships) => $memberships.concat(membership));
 		},
 		addSpace: (space, community_id) => {

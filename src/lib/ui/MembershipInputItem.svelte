@@ -5,7 +5,9 @@
 	import {getApp} from '$lib/ui/app';
 	import type {Persona} from '$lib/vocab/persona/persona';
 
-	const {api} = getApp();
+	const {
+		api: {dispatch},
+	} = getApp();
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
@@ -16,7 +18,7 @@
 		type="button"
 		class="button-join"
 		on:click={() =>
-			api.createMembership({
+			dispatch('create_membership', {
 				community_id: $community.community_id,
 				persona_id: $persona.persona_id,
 			})}
