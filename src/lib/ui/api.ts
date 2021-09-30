@@ -39,8 +39,7 @@ export const setApi = (store: Api): Api => {
 export interface Dispatch {
 	// TODO generate these
 	(eventName: 'create_community', params: CommunityParams): Promise<ApiResult<Community>>;
-	// TODO can a generic fallback like this work?
-	// (eventName: string, params: any): null | Promise<ApiResult<any>>;
+	(eventName: string, params: any): null | Promise<ApiResult<any>>;
 }
 
 export interface Api {
