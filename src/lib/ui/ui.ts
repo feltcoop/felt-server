@@ -1,6 +1,7 @@
 import type {Readable, Writable} from 'svelte/store';
 import {writable, derived, get} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
+import type {Static} from '@sinclair/typebox';
 
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
@@ -26,9 +27,10 @@ export const setUi = (store: Ui): Ui => {
 
 export interface Ui {
 	dispatch: (eventName: string, params: any, result: ApiResult<any> | null) => void;
+	// TODO generate these
 	create_community: (
-		params: typeof create_community_params,
-		result: ApiResult<typeof create_community_response> | null,
+		params: Static<typeof create_community_params>,
+		result: ApiResult<Static<typeof create_community_response>> | null,
 	) => void;
 
 	// db state and caches
@@ -44,7 +46,6 @@ export interface Ui {
 	filesBySpace: Map<number, Readable<Readable<File>[]>>;
 	setSession: (session: ClientSession) => void;
 	addPersona: (persona: Persona) => void;
-	addCommunity: (community: Community, persona_id: number) => void;
 	addMembership: (membership: Membership) => void;
 	addSpace: (space: Space, community_id: number) => void;
 	addFile: (file: File) => void;
@@ -217,6 +218,15 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 		spacesById,
 		spacesByCommunityId,
 		filesBySpace,
+		dispatch: (eventName, params, result) => {
+			const handler = (ui as any)[eventName];
+			// const handler = handlers.get(eventName); // TODO ? would make it easy to do external registration
+			if (handler) {
+				return handler(params, result);
+			} else {
+				console.warn('[ui] ignored a dispatched event', eventName, params, result);
+			}
+		},
 		// TODO consider something like:
 		// create_community_request: (
 		// create_community_response: (
@@ -226,8 +236,8 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			// Could we do something here to make it ergonomic to handle errors from the components?
 			if (!result.ok) return;
 			const {persona_id} = params;
-			const {community} = result.value;
-			console.log('[data.addCommunity]', community, persona_id);
+			const community = result.value.community as Community; // TODO fix type mismatch
+			console.log('[data.create_community]', community, persona_id);
 			// TODO how should `persona.community_ids` by modeled and kept up to date?
 			const persona = get(personasById).get(persona_id)!;
 			const $persona = get(persona);
@@ -254,14 +264,6 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			});
 			const communityStore = writable(community);
 			communities.update(($communities) => $communities.concat(communityStore));
-		},
-		dispatch: (eventName, params, result) => {
-			switch (eventName) {
-				case 'create_community': {
-					ui.create_community(params, result);
-				}
-			}
-			// TODO update spaces
 		},
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
@@ -321,36 +323,6 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			if (persona.account_id == get(account)?.account_id) {
 				sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
 			}
-		},
-		addCommunity: (community, persona_id) => {
-			console.log('[data.addCommunity]', community, persona_id);
-			// TODO how should `persona.community_ids` by modeled and kept up to date?
-			const persona = get(personasById).get(persona_id)!;
-			const $persona = get(persona);
-			if (!$persona.community_ids.includes(community.community_id)) {
-				persona.update(($persona) => ({
-					...$persona,
-					community_ids: $persona.community_ids.concat(community.community_id),
-				}));
-				console.log('updated persona community ids', get(persona));
-			}
-			const $spacesById = get(spacesById);
-			let spacesToAdd: Space[] | null = null;
-			for (const space of community.spaces) {
-				if (!$spacesById.has(space.space_id)) {
-					(spacesToAdd || (spacesToAdd = [])).push(space);
-				}
-			}
-			if (spacesToAdd) {
-				spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
-			}
-			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => {
-				$selectedSpaceIdByCommunity[community.community_id] = community.spaces[0].space_id;
-				return $selectedSpaceIdByCommunity;
-			});
-			const communityStore = writable(community);
-			communities.update(($communities) => $communities.concat(communityStore));
-			// TODO update spaces
 		},
 		addMembership: (membership) => {
 			console.log('[data.addMembership]', membership);

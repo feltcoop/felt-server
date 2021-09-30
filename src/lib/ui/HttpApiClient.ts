@@ -8,8 +8,7 @@
 import {inject} from 'regexparam';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
-import * as servicesMeta from '$lib/server/servicesMeta';
-import type {ServiceMeta} from '$lib/server/servicesMeta';
+import {lookupService} from '$lib/ui/services';
 
 // TODO make `fetch` a parameter once the client isn't created for SSR
 // fetch: typeof window.fetch,
@@ -20,9 +19,10 @@ export const toHttpApiClient = <
 	fetch: typeof globalThis.fetch = globalThis.fetch,
 ): ApiClient<TParamsMap, TResultMap> => {
 	const client: ApiClient<TParamsMap, TResultMap> = {
+		invokes: (name) => !!lookupService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
 		invoke: async (name, params) => {
 			console.log('[http api client] invoke', name, params);
-			const serviceMeta: ServiceMeta = (servicesMeta as any)[name];
+			const serviceMeta = lookupService(name);
 			if (!serviceMeta) {
 				return {ok: false, status: 400, reason: `Failed to invoke unknown service: ${name}`};
 			}

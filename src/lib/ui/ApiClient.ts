@@ -4,6 +4,7 @@ export interface ApiClient<
 	TParamsMap extends Record<string, any> = any, // TODO default type?
 	TResultMap extends Record<string, any> = any, // TODO default type?
 > {
+	invokes: (name: string) => boolean;
 	// TODO `name`?
 	invoke: <TServiceName extends string, TParams extends TParamsMap[TServiceName]>(
 		name: TServiceName,
