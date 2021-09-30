@@ -6,7 +6,6 @@ import {randomItem} from '@feltcoop/felt/util/random.js';
 import type {Static} from '@sinclair/typebox';
 
 import type {Ui} from '$lib/ui/ui';
-import type {Space, SpaceParams} from '$lib/vocab/space/space';
 import type {File, FileParams} from '$lib/vocab/file/file';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {ClientAccountSession} from '$lib/session/clientSession';
@@ -16,6 +15,7 @@ import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTyp
 import type {createCommunityService} from '$lib/vocab/community/communityServices';
 import type {createPersonaService} from '$lib/vocab/persona/personaServices';
 import type {createMembershipService} from '$lib/vocab/community/communityServices';
+import type {createSpaceService} from '$lib/vocab/space/spaceServices';
 
 // TODO This was originally implemented as a Svelte store
 // but we weren't using the state at all.
@@ -50,6 +50,10 @@ export interface Dispatch {
 		eventName: 'create_membership',
 		params: Static<typeof createMembershipService.paramsSchema>,
 	): Promise<ApiResult<Static<typeof createMembershipService.responseSchema>>>;
+	(eventName: 'create_space', params: Static<typeof createSpaceService.paramsSchema>): Promise<
+		ApiResult<Static<typeof createSpaceService.responseSchema>>
+	>;
+	// fallback to any
 	(eventName: string, params: any): null | Promise<ApiResult<any>>;
 }
 
@@ -62,7 +66,6 @@ export interface Api {
 	logOut: () => Promise<ApiResult<{}>>;
 	toggleMainNav: () => void;
 	toggleSecondaryNav: () => void;
-	createSpace: (params: SpaceParams) => Promise<ApiResult<{space: Space}>>;
 	createFile: (params: FileParams) => Promise<ApiResult<{file: File}>>;
 	loadFiles: (space_id: number) => Promise<ApiResult<{files: File[]}>>;
 	getFilesBySpace: (space_id: number) => Readable<Readable<File>[]>;
@@ -146,14 +149,6 @@ export const toApi = (
 					reason: UNKNOWN_API_ERROR,
 				};
 			}
-		},
-		createSpace: async (params) => {
-			const result = await randomClient().invoke('create_space', params);
-			console.log('[api] create_space result', result);
-			if (result.ok) {
-				ui.addSpace(result.value.space, params.community_id);
-			}
-			return result;
 		},
 		createFile: async (params) => {
 			const result = await randomClient().invoke('create_file', params);

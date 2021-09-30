@@ -8,7 +8,9 @@
 	import {getApp} from '$lib/ui/app';
 	import {spaceTypes} from '$lib/vocab/space/space';
 
-	const {api} = getApp();
+	const {
+		api: {dispatch},
+	} = getApp();
 
 	export let community: Readable<Community>;
 
@@ -27,7 +29,7 @@
 		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
 		errorMessage = '';
 		const url = `/${newName}`;
-		const result = await api.createSpace({
+		const result = await dispatch('create_space', {
 			community_id: $community.community_id,
 			name: newName,
 			url,

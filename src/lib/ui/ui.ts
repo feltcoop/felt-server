@@ -14,6 +14,7 @@ import type {ApiResult} from '$lib/server/api';
 import type {createCommunityService} from '$lib/vocab/community/communityServices';
 import type {createPersonaService} from '$lib/vocab/persona/personaServices';
 import type {createMembershipService} from '$lib/vocab/community/communityServices';
+import type {createSpaceService} from '$lib/vocab/space/spaceServices';
 
 const KEY = Symbol();
 
@@ -39,6 +40,10 @@ export interface Ui {
 		params: Static<typeof createMembershipService.paramsSchema>,
 		result: ApiResult<Static<typeof createMembershipService.responseSchema>> | null,
 	) => void;
+	create_space: (
+		params: Static<typeof createSpaceService.paramsSchema>,
+		result: ApiResult<Static<typeof createSpaceService.responseSchema>> | null,
+	) => void;
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
@@ -52,7 +57,6 @@ export interface Ui {
 	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
 	filesBySpace: Map<number, Readable<Readable<File>[]>>;
 	setSession: (session: ClientSession) => void;
-	addSpace: (space: Space, community_id: number) => void;
 	addFile: (file: File) => void;
 	setFiles: (space_id: number, files: File[]) => void;
 	findPersonaById: (persona_id: number) => Readable<Persona>;
@@ -332,14 +336,17 @@ export const toUi = (session: Readable<ClientSession>, mobile: boolean): Ui => {
 			// TODO also update `communities.personas`
 			memberships.update(($memberships) => $memberships.concat(membership));
 		},
-		addSpace: (space, community_id) => {
-			console.log('[data.addSpace]', space);
-			const communityStore = get(communities).find((c) => get(c).community_id === community_id);
-			communityStore?.update((community) => ({
-				...community,
+		create_space: (params, result) => {
+			if (!result?.ok) return;
+			const {space} = result.value;
+			const {community_id} = params;
+			console.log('[ui.create_space]', space);
+			const community = get(communities).find((c) => get(c).community_id === community_id)!;
+			community.update(($community) => ({
+				...$community,
 				// TODO `community.spaces` is not reactive, and should be replaced with flat data structures,
 				// but we may want to make them readable stores in the meantime
-				spaces: community.spaces.concat(space), // TODO should this check if it's already there? yes but for different data structures
+				spaces: $community.spaces.concat(space), // TODO should this check if it's already there? yes but for different data structures
 			}));
 			spaces.update(($spaces) => $spaces.concat(writable(space)));
 		},
