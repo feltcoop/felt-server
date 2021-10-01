@@ -67,9 +67,10 @@ export interface Dispatch {
 	(eventName: 'read_files', params: Static<typeof readFilesService.paramsSchema>): Promise<
 		ApiResult<Static<typeof readFilesService.responseSchema>>
 	>;
-	// TODO This query is different than the rest -- does it make sense to use the same dispatch system?
-	// As currently implemented, `query_files` is not a registered service,
-	// so `dispatch` will return whatever synchronous result is returned by the `ui` handler.
+	// `query_files` differs from `read_files` in that
+	// it returns a reactive store containing the requested files.
+	// Its API could be expanded to give callers access to its async status or promise,
+	// maybe via a third `options` arg with callbacks.
 	(eventName: 'query_files', params: Static<typeof readFilesService.paramsSchema>): Readable<
 		Readable<File>[]
 	>;
@@ -80,9 +81,6 @@ export interface Dispatch {
 	(eventName: 'select_persona', params: {persona_id: number}): void;
 	(eventName: 'select_community', params: {community_id: number | null}): void;
 	(eventName: 'select_space', params: {community_id: number; space_id: number | null}): void;
-	// TODO declare this with function overloading instead of this interface
-	// fallback to any
-	// (eventName: string, params?: any): void | Promise<ApiResult<any>>;
 }
 
 export interface Api {
@@ -98,7 +96,7 @@ export const toApi = (
 	const clients = [client, client2];
 	const randomClient = () => randomItem(clients);
 	const api: Api = {
-		// TODO could validate the params here, but for now we'll just let the server validate2
+		// TODO validate the params here to improve UX, but for now we're safe letting the server validate
 		dispatch: (eventName, params) => {
 			console.log(
 				'%c[dispatch.%c' + eventName + '%c]',
