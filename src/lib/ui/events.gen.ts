@@ -8,9 +8,9 @@ import {events as persona_events} from '$lib/vocab/persona/persona.events';
 import {events as membership_events} from '$lib/vocab/membership/membership.events';
 import {events as space_events} from '$lib/vocab/space/space.events';
 import {events as file_events} from '$lib/vocab/file/file.events';
-import type {EventData} from '$lib/vocab/event/event';
+import type {EventInfo} from '$lib/vocab/event/event';
 
-const events: EventData[] = session_events.concat(
+const events: EventInfo[] = session_events.concat(
 	community_events,
 	persona_events,
 	membership_events,

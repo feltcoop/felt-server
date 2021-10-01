@@ -1,4 +1,4 @@
-import type {EventData} from '$lib/vocab/event/event';
+import type {EventInfo} from '$lib/vocab/event/event';
 
 // TODO should `session` be in `$lib/vocab` ?
 
@@ -7,7 +7,7 @@ const log_in_params_type = `{
   accountName: string;
   password: string;
 }`;
-export const log_in: EventData = {
+export const log_in: EventInfo = {
 	name: 'log_in',
 	params: {
 		type: log_in_params_type,
@@ -22,7 +22,7 @@ export const log_in: EventData = {
 };
 
 const log_out_response_type = 'ApiResult<void>';
-export const log_out: EventData = {
+export const log_out: EventInfo = {
 	name: 'log_out',
 	params: {
 		type: 'void',

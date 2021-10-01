@@ -5,6 +5,9 @@ import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Service} from '$lib/server/service';
 import {toValidationErrorMessage} from '$lib/util/ajv';
 
+// TODO use
+import {toValidateSchema} from '$lib/util/ajv';
+
 // TODO refactor this with the `ApiServer` websocket handler,
 // probably just a config object
 

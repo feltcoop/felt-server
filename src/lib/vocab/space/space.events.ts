@@ -1,4 +1,4 @@
-import type {EventData} from '$lib/vocab/event/event';
+import type {EventInfo} from '$lib/vocab/event/event';
 
 // TODO generate the type from the schema with json-schema-to-typescript
 const create_space_params_type = `{
@@ -9,7 +9,7 @@ const create_space_params_type = `{
 	content: string;
 }`;
 const create_space_response_type = '{space: Space}';
-export const create_space: EventData = {
+export const create_space: EventInfo = {
 	name: 'create_space',
 	params: {
 		type: create_space_params_type,

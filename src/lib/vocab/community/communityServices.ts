@@ -99,16 +99,7 @@ export const createCommunityService: Service<
 	create_community_params_type,
 	create_community_response_type
 > = {
-	name: 'create_community',
-	route: {
-		path: '/api/v1/communities',
-		method: 'POST',
-	},
-	paramsSchema: create_community.params.schema!,
-	validateParams: toValidateSchema(create_community.params.schema!),
-	responseSchema: create_community.response.schema!,
-	validateResponse: toValidateSchema(create_community.response.schema!),
-	// TODO declarative validation for `req.body` and the rest
+	event: create_community,
 	perform: async ({server, params, account_id}) => {
 		if (!params.name) {
 			// TODO declarative validation
@@ -162,15 +153,7 @@ export const createMembershipService: Service<
 	create_membership_params_type,
 	create_membership_response_type
 > = {
-	name: 'create_membership',
-	route: {
-		path: '/api/v1/memberships',
-		method: 'POST',
-	},
-	paramsSchema: create_membership.params.schema!,
-	validateParams: toValidateSchema(create_membership.params.schema!),
-	responseSchema: create_membership.response.schema!,
-	validateResponse: toValidateSchema(create_membership.response.schema!),
+	event: create_membership,
 	perform: async ({server, params}) => {
 		console.log('[create_membership] creating membership', params.persona_id, params.community_id);
 

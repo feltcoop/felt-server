@@ -1,4 +1,4 @@
-import type {EventData} from '$lib/vocab/event/event';
+import type {EventInfo} from '$lib/vocab/event/event';
 
 // TODO generate the type from the schema with json-schema-to-typescript
 const create_file_params_type = `{
@@ -7,7 +7,7 @@ const create_file_params_type = `{
 	content: string;
 }`;
 const create_file_response_type = '{file: File}';
-export const create_file: EventData = {
+export const create_file: EventInfo = {
 	name: 'create_file',
 	params: {
 		type: create_file_params_type,
@@ -42,7 +42,7 @@ export const create_file: EventData = {
 
 const read_files_params_type = '{space_id: number}';
 const read_files_response_type = '{files: File[]}';
-export const read_files: EventData = {
+export const read_files: EventInfo = {
 	name: 'read_files',
 	params: {
 		type: read_files_params_type,

@@ -1,5 +1,4 @@
 import type {Service} from '$lib/server/service';
-import {toValidateSchema} from '$lib/util/ajv';
 import type {
 	create_file_params_type,
 	create_file_response_type,
@@ -10,15 +9,7 @@ import {read_files, create_file} from '$lib/vocab/file/file.events';
 
 // TODO rename to `getFiles`? `loadFiles`?
 export const readFilesService: Service<read_files_params_type, read_files_response_type> = {
-	name: 'read_files',
-	route: {
-		path: '/api/v1/spaces/:space_id/files',
-		method: 'GET',
-	},
-	paramsSchema: read_files.params.schema!,
-	validateParams: toValidateSchema(read_files.params.schema!),
-	responseSchema: read_files.response.schema!,
-	validateResponse: toValidateSchema(read_files.response.schema!),
+	event: read_files,
 	perform: async ({server, params}) => {
 		const {db} = server;
 		const findFilesResult = await db.repos.file.filterBySpace(params.space_id);
@@ -33,15 +24,7 @@ export const readFilesService: Service<read_files_params_type, read_files_respon
 
 // TODO should this use the `FileParams` type?
 export const createFileService: Service<create_file_params_type, create_file_response_type> = {
-	name: 'create_file',
-	route: {
-		path: '/api/v1/spaces/:space_id/files',
-		method: 'POST',
-	},
-	paramsSchema: create_file.params.schema!,
-	validateParams: toValidateSchema(create_file.params.schema!),
-	responseSchema: create_file.response.schema!,
-	validateResponse: toValidateSchema(create_file.response.schema!),
+	event: create_file,
 	perform: async ({server, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
 		// server.db.repos.account.validatePersona(account_id, actor_id);

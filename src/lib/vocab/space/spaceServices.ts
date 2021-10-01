@@ -3,6 +3,8 @@ import {Type} from '@sinclair/typebox';
 import type {Service} from '$lib/server/service';
 import {SpaceSchema} from '$lib/vocab/space/space';
 import {toValidateSchema} from '$lib/util/ajv';
+import type {create_space_params_type, create_space_response_type} from '$lib/ui/events';
+import {create_space} from '$lib/vocab/space/space.events';
 
 const ReadSpaceServiceParams = Type.Object(
 	{
@@ -92,42 +94,9 @@ export const readSpacesService: Service<
 	},
 };
 
-const CreateSpaceServiceSchema = Type.Object(
-	{
-		// TODO should we do something like this for composition?
-		// params: SpaceParamsSchema,
-		// or maybe:
-		// secureParams: // or `serverParams` or `trustedParams`
-		// inputParams: // or `clientParams` or `params` or `untrustedParams` or `unsecureParams`
-		community_id: Type.Number(),
-		name: Type.String(),
-		url: Type.String(),
-		media_type: Type.String(),
-		content: Type.String(),
-	},
-	{$id: 'CreateSpaceServiceSchema', additionalProperties: false},
-);
-const CreateSpaceServiceResponse = Type.Object(
-	{
-		space: SpaceSchema,
-	},
-	{$id: 'CreateSpaceServiceResponse', additionalProperties: false},
-);
-
 //Creates a new space for a given community
-export const createSpaceService: Service<
-	typeof CreateSpaceServiceSchema,
-	typeof CreateSpaceServiceResponse
-> = {
-	name: 'create_space',
-	route: {
-		path: '/api/v1/communities/:community_id/spaces',
-		method: 'POST',
-	},
-	paramsSchema: CreateSpaceServiceSchema,
-	validateParams: toValidateSchema(CreateSpaceServiceSchema),
-	responseSchema: CreateSpaceServiceResponse,
-	validateResponse: toValidateSchema(CreateSpaceServiceResponse),
+export const createSpaceService: Service<create_space_params_type, create_space_response_type> = {
+	event: create_space,
 	// TODO security: verify the `account_id` has permission to modify this space
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
 	perform: async ({server, params}) => {

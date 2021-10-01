@@ -1,8 +1,8 @@
-import type {EventData} from '$lib/vocab/event/event';
+import type {EventInfo} from '$lib/vocab/event/event';
 
 // TODO keep extracting these events to other events files
 // (which are then imported in $lib/ui/events.gen.ts)
-export const events: EventData[] = [
+export const events: EventInfo[] = [
 	{
 		name: 'toggle_main_nav',
 		params: {

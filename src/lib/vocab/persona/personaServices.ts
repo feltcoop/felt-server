@@ -1,5 +1,4 @@
 import type {Service} from '$lib/server/service';
-import {toValidateSchema} from '$lib/util/ajv';
 import type {create_persona_params_type, create_persona_response_type} from '$lib/ui/events';
 import {create_persona} from '$lib/vocab/persona/persona.events';
 
@@ -8,15 +7,7 @@ export const createPersonaService: Service<
 	create_persona_params_type,
 	create_persona_response_type
 > = {
-	name: 'create_persona',
-	route: {
-		path: '/api/v1/personas',
-		method: 'POST',
-	},
-	paramsSchema: create_persona.params.schema!,
-	validateParams: toValidateSchema(create_persona.params.schema!),
-	responseSchema: create_persona.response.schema!,
-	validateResponse: toValidateSchema(create_persona.response.schema!),
+	event: create_persona,
 	// TODO verify the `account_id` has permission to modify this persona
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
 	perform: async ({server, params, account_id}) => {

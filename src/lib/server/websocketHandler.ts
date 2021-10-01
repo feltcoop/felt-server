@@ -4,6 +4,9 @@ import {red} from '@feltcoop/felt/util/terminal.js';
 import {JsonRpcResponse, parseJsonRpcRequest} from '$lib/util/jsonRpc';
 import type {ApiServer} from '$lib/server/ApiServer';
 
+// TODO use
+import {toValidateSchema} from '$lib/util/ajv';
+
 export interface WebsocketHandler {
 	(server: ApiServer, socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
 }

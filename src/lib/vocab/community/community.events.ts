@@ -1,9 +1,9 @@
-import type {EventData} from '$lib/vocab/event/event';
+import type {EventInfo} from '$lib/vocab/event/event';
 
 // TODO generate the type from the schema with json-schema-to-typescript
 const create_community_params_type = '{name: string; persona_id: number}';
 const create_community_response_type = '{community: Community}'; // TODO declrs?
-export const create_community: EventData = {
+export const create_community: EventInfo = {
 	name: 'create_community',
 	params: {
 		type: create_community_params_type,
