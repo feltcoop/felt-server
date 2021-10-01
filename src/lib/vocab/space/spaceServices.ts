@@ -1,38 +1,17 @@
-import {Type} from '@sinclair/typebox';
-
 import type {Service} from '$lib/server/service';
-import {SpaceSchema} from '$lib/vocab/space/space';
-import {toValidateSchema} from '$lib/util/ajv';
-import type {create_space_params_type, create_space_response_type} from '$lib/ui/events';
-import {create_space} from '$lib/vocab/space/space.events';
-
-const ReadSpaceServiceParams = Type.Object(
-	{
-		space_id: Type.Number(),
-	},
-	{$id: 'ReadSpaceServiceParams', additionalProperties: false},
-);
-const ReadSpaceServiceResponse = Type.Object(
-	{
-		space: SpaceSchema,
-	},
-	{$id: 'ReadSpaceServiceResponse', additionalProperties: false},
-);
+import type {
+	create_space_params_type,
+	create_space_response_type,
+	read_space_params_type,
+	read_space_response_type,
+	read_spaces_params_type,
+	read_spaces_response_type,
+} from '$lib/ui/events';
+import {create_space, read_space, read_spaces} from '$lib/vocab/space/space.events';
 
 //Returns a single space object
-export const readSpaceService: Service<
-	typeof ReadSpaceServiceParams,
-	typeof ReadSpaceServiceResponse
-> = {
-	name: 'read_space',
-	route: {
-		path: '/api/v1/spaces/:space_id',
-		method: 'GET',
-	},
-	paramsSchema: ReadSpaceServiceParams,
-	validateParams: toValidateSchema(ReadSpaceServiceParams),
-	responseSchema: ReadSpaceServiceResponse,
-	validateResponse: toValidateSchema(ReadSpaceServiceResponse),
+export const readSpaceService: Service<read_space_params_type, read_space_response_type> = {
+	event: read_space,
 	perform: async ({server, params}) => {
 		const {db} = server;
 
@@ -52,33 +31,9 @@ export const readSpaceService: Service<
 	},
 };
 
-const ReadSpacesServiceSchema = Type.Object(
-	{
-		community_id: Type.Number(),
-	},
-	{$id: 'ReadSpacesService', additionalProperties: false},
-);
-const ReadSpacesServiceResponse = Type.Object(
-	{
-		spaces: Type.Array(SpaceSchema),
-	},
-	{$id: 'ReadSpacesServiceResponse', additionalProperties: false},
-);
-
 //Returns all spaces in a given community
-export const readSpacesService: Service<
-	typeof ReadSpacesServiceSchema,
-	typeof ReadSpacesServiceResponse
-> = {
-	name: 'read_spaces',
-	route: {
-		path: '/api/v1/communities/:community_id/spaces',
-		method: 'GET',
-	},
-	paramsSchema: ReadSpacesServiceSchema,
-	validateParams: toValidateSchema(ReadSpacesServiceSchema),
-	responseSchema: ReadSpacesServiceResponse,
-	validateResponse: toValidateSchema(ReadSpacesServiceResponse),
+export const readSpacesService: Service<read_spaces_params_type, read_spaces_response_type> = {
+	event: read_spaces,
 	perform: async ({server, params}) => {
 		const {db} = server;
 

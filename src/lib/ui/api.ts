@@ -4,7 +4,7 @@ import {randomItem} from '@feltcoop/felt/util/random.js';
 import type {Ui} from '$lib/ui/ui';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
-import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
+import type {EventsParams, EventsResponse} from '$lib/ui/events';
 import type {Dispatch} from '$lib/ui/events';
 
 // TODO this has evolved to the point where perhaps this module should be `dispatch.ts`
@@ -28,7 +28,7 @@ export interface DispatchContext<
 	eventName: string;
 	params: TParams;
 	dispatch: Dispatch;
-	client: ApiClient<ServicesParamsMap, ServicesResultMap>;
+	client: ApiClient<EventsParams, EventsResponse>;
 	invoke: TResult extends void ? null : (params?: TParams) => Promise<TResult>;
 }
 
@@ -38,8 +38,8 @@ export interface Api {
 
 export const toApi = (
 	ui: Ui,
-	client: ApiClient<ServicesParamsMap, ServicesResultMap>,
-	client2: ApiClient<ServicesParamsMap, ServicesResultMap>, // TODO remove this after everything stabilizes
+	client: ApiClient<EventsParams, EventsResponse>,
+	client2: ApiClient<EventsParams, EventsResponse>, // TODO remove this after everything stabilizes
 ): Api => {
 	// TODO delete this and `client2` after adding tests for both the websocket and http clients
 	const clients = [client, client2];

@@ -52,6 +52,27 @@ export type ${eventData.name}_response_type = ${eventData.response.type};
 	'',
 )}
 
+export interface EventsParams {
+	${events.reduce(
+		(str, eventData) =>
+			str +
+			`
+${eventData.name}: ${eventData.name}_params_type;
+`.trim(),
+		'',
+	)}
+}
+export interface EventsResponse {
+	${events.reduce(
+		(str, eventData) =>
+			str +
+			`
+${eventData.name}: ${eventData.name}_response_type;
+`.trim(),
+		'',
+	)}
+}
+
 export interface Dispatch {
 	${events.reduce(
 		(str, eventData) =>

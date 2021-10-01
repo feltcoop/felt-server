@@ -26,5 +26,5 @@ export const services: Map<string, Service<any, any>> = new Map(
 		readSpaceService,
 		readSpacesService,
 		readFilesService,
-	].map((s) => [s.name, s]),
+	].map((s) => [s.event.name, s]),
 );

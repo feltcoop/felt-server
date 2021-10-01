@@ -27,15 +27,17 @@ export interface ServiceMeta {
 ${Array.from(services.values()).reduce(
 	(str, service) =>
 		str +
-		`
-export const ${service.name}: ServiceMeta = {
-  name: '${service.name}',
+		(service.event.route
+			? `
+export const ${service.event.name}: ServiceMeta = {
+  name: '${service.event.name}',
   route: {
-    path: '${service.route.path}',
-    method: '${service.route.method}',
+    path: '${service.event.route.path}',
+    method: '${service.event.route.method}',
   },
 };
-`,
+`
+			: ''),
 	'',
 )}
 

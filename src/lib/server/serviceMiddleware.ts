@@ -4,9 +4,9 @@ import {red} from '@feltcoop/felt/util/terminal.js';
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Service} from '$lib/server/service';
 import {toValidationErrorMessage} from '$lib/util/ajv';
+import {toValidateSchema} from '$lib/util/ajv';
 
 // TODO use
-import {toValidateSchema} from '$lib/util/ajv';
 
 // TODO refactor this with the `ApiServer` websocket handler,
 // probably just a config object
@@ -44,11 +44,18 @@ export const toServiceMiddleware =
 				}
 			}
 
+			if (!service.event.params.schema || !service.event.response.schema) {
+				return send(res, 500, {reason: 'unimplemented service schema'});
+			}
+
+			const validateParams = toValidateSchema(service.event.params.schema)();
+			const validateResponse = toValidateSchema(service.event.response.schema)();
+
 			const params = {...reqBody, ...reqParams};
-			if (!service.validateParams()(params)) {
+			if (!validateParams(params)) {
 				// TODO handle multiple errors instead of just the first
-				console.error('validation failed:', params, service.validateParams().errors);
-				const validationError = service.validateParams().errors![0];
+				console.error('validation failed:', params, validateParams.errors);
+				const validationError = validateParams.errors![0];
 				return send(res, 400, {reason: toValidationErrorMessage(validationError)});
 			}
 			if (!req.account_id) {
@@ -63,8 +70,8 @@ export const toServiceMiddleware =
 				return;
 			}
 			if (process.env.NODE_ENV !== 'production') {
-				if (!service.validateResponse()(result.value)) {
-					console.error(red('validation failed:'), result, service.validateResponse().errors);
+				if (!validateResponse(result.value)) {
+					console.error(red('validation failed:'), result, validateResponse.errors);
 				}
 			}
 			console.log('[serviceMiddleware] result.status', result.status);

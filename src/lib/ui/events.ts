@@ -21,8 +21,13 @@ export type log_in_response_type = ApiResult<{session: ClientAccountSession}>;
 export type log_out_params_type = void;
 export type log_out_response_type = ApiResult<void>;
 
-export type create_community_params_type = {name: string; persona_id: number};
-export type create_community_response_type = ApiResult<{community: Community}>;
+export type create_community_params_type = {
+	name: string;
+	persona_id: number;
+};
+export type create_community_response_type = ApiResult<{
+	community: Community;
+}>;
 
 export type create_persona_params_type = {name: string};
 export type create_persona_response_type = ApiResult<{persona: Persona; community: Community}>;
@@ -38,6 +43,16 @@ export type create_space_params_type = {
 	content: string;
 };
 export type create_space_response_type = ApiResult<{space: Space}>;
+
+export type read_space_params_type = {
+	space_id: number;
+};
+export type read_space_response_type = ApiResult<{space: Space}>;
+
+export type read_spaces_params_type = {
+	community_id: number;
+};
+export type read_spaces_response_type = ApiResult<{spaces: Space[]}>;
 
 export type create_file_params_type = {
 	actor_id: number;
@@ -73,6 +88,47 @@ export type select_community_response_type = void;
 export type select_space_params_type = {community_id: number; space_id: number};
 export type select_space_response_type = void;
 
+export interface EventsParams {
+	log_in: log_in_params_type;
+	log_out: log_out_params_type;
+	create_community: create_community_params_type;
+	create_persona: create_persona_params_type;
+	create_membership: create_membership_params_type;
+	create_space: create_space_params_type;
+	read_space: read_space_params_type;
+	read_spaces: read_spaces_params_type;
+	create_file: create_file_params_type;
+	read_files: read_files_params_type;
+	query_files: query_files_params_type;
+	toggle_main_nav: toggle_main_nav_params_type;
+	toggle_secondary_nav: toggle_secondary_nav_params_type;
+	set_main_nav_view: set_main_nav_view_params_type;
+	set_mobile: set_mobile_params_type;
+	select_persona: select_persona_params_type;
+	select_community: select_community_params_type;
+	select_space: select_space_params_type;
+}
+export interface EventsResponse {
+	log_in: log_in_response_type;
+	log_out: log_out_response_type;
+	create_community: create_community_response_type;
+	create_persona: create_persona_response_type;
+	create_membership: create_membership_response_type;
+	create_space: create_space_response_type;
+	read_space: read_space_response_type;
+	read_spaces: read_spaces_response_type;
+	create_file: create_file_response_type;
+	read_files: read_files_response_type;
+	query_files: query_files_response_type;
+	toggle_main_nav: toggle_main_nav_response_type;
+	toggle_secondary_nav: toggle_secondary_nav_response_type;
+	set_main_nav_view: set_main_nav_view_response_type;
+	set_mobile: set_mobile_response_type;
+	select_persona: select_persona_response_type;
+	select_community: select_community_response_type;
+	select_space: select_space_response_type;
+}
+
 export interface Dispatch {
 	(
 		eventName: 'log_in',
@@ -82,8 +138,16 @@ export interface Dispatch {
 		},
 	): Promise<ApiResult<{session: ClientAccountSession}>>;
 	(eventName: 'log_out', params: void): Promise<ApiResult<void>>;
-	(eventName: 'create_community', params: {name: string; persona_id: number}): Promise<
-		ApiResult<{community: Community}>
+	(
+		eventName: 'create_community',
+		params: {
+			name: string;
+			persona_id: number;
+		},
+	): Promise<
+		ApiResult<{
+			community: Community;
+		}>
 	>;
 	(eventName: 'create_persona', params: {name: string}): Promise<
 		ApiResult<{persona: Persona; community: Community}>
@@ -101,6 +165,18 @@ export interface Dispatch {
 			content: string;
 		},
 	): Promise<ApiResult<{space: Space}>>;
+	(
+		eventName: 'read_space',
+		params: {
+			space_id: number;
+		},
+	): Promise<ApiResult<{space: Space}>>;
+	(
+		eventName: 'read_spaces',
+		params: {
+			community_id: number;
+		},
+	): Promise<ApiResult<{spaces: Space[]}>>;
 	(
 		eventName: 'create_file',
 		params: {
@@ -132,8 +208,20 @@ export interface UiHandlers {
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	log_out: (ctx: DispatchContext<void, ApiResult<void>>) => Promise<ApiResult<void>>;
 	create_community: (
-		ctx: DispatchContext<{name: string; persona_id: number}, ApiResult<{community: Community}>>,
-	) => Promise<ApiResult<{community: Community}>>;
+		ctx: DispatchContext<
+			{
+				name: string;
+				persona_id: number;
+			},
+			ApiResult<{
+				community: Community;
+			}>
+		>,
+	) => Promise<
+		ApiResult<{
+			community: Community;
+		}>
+	>;
 	create_persona: (
 		ctx: DispatchContext<{name: string}, ApiResult<{persona: Persona; community: Community}>>,
 	) => Promise<ApiResult<{persona: Persona; community: Community}>>;
@@ -155,6 +243,22 @@ export interface UiHandlers {
 			ApiResult<{space: Space}>
 		>,
 	) => Promise<ApiResult<{space: Space}>>;
+	read_space: (
+		ctx: DispatchContext<
+			{
+				space_id: number;
+			},
+			ApiResult<{space: Space}>
+		>,
+	) => Promise<ApiResult<{space: Space}>>;
+	read_spaces: (
+		ctx: DispatchContext<
+			{
+				community_id: number;
+			},
+			ApiResult<{spaces: Space[]}>
+		>,
+	) => Promise<ApiResult<{spaces: Space[]}>>;
 	create_file: (
 		ctx: DispatchContext<
 			{

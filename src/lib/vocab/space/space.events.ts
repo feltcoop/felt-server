@@ -44,4 +44,74 @@ export const create_space: EventInfo = {
 	},
 };
 
-export const events = [create_space];
+const read_space_params_type = `{
+	space_id: number;
+}`;
+const read_space_response_type = '{space: Space}';
+export const read_space: EventInfo = {
+	name: 'read_space',
+	params: {
+		type: read_space_params_type,
+		schema: {
+			$id: 'read_space_params',
+			properties: {
+				space_id: {type: 'number'},
+			},
+			required: ['space_id'],
+			additionalProperties: false,
+		},
+	},
+	response: {
+		type: `ApiResult<${read_space_response_type}>`,
+		schema: {
+			$id: 'read_space_response',
+			properties: {
+				space: {$ref: '#/$defs/space'},
+			},
+			required: ['space'],
+			additionalProperties: false,
+		},
+	},
+	returns: `Promise<ApiResult<${read_space_response_type}>>`,
+	route: {
+		path: '/api/v1/spaces/:space_id',
+		method: 'GET',
+	},
+};
+
+const read_spaces_params_type = `{
+	community_id: number;
+}`;
+const read_spaces_response_type = '{spaces: Space[]}';
+export const read_spaces: EventInfo = {
+	name: 'read_spaces',
+	params: {
+		type: read_spaces_params_type,
+		schema: {
+			$id: 'read_spaces_params',
+			properties: {
+				community_id: {type: 'number'},
+			},
+			required: ['community_id'],
+			additionalProperties: false,
+		},
+	},
+	response: {
+		type: `ApiResult<${read_spaces_response_type}>`,
+		schema: {
+			$id: 'read_spaces_response',
+			properties: {
+				spaces: {type: 'array', items: {$ref: '#/$defs/space'}},
+			},
+			required: ['spaces'],
+			additionalProperties: false,
+		},
+	},
+	returns: `Promise<ApiResult<${read_spaces_response_type}>>`,
+	route: {
+		path: '/api/v1/communities/:community_id/spaces',
+		method: 'GET',
+	},
+};
+
+export const events = [create_space, read_space, read_spaces];

@@ -60,9 +60,9 @@ export const read_files: EventInfo = {
 		schema: {
 			$id: 'read_files_response',
 			properties: {
-				files: {type: 'array', items: {$ref: '#/$defs/persona'}},
+				files: {type: 'array', items: {$ref: '#/$defs/file'}},
 			},
-			required: ['persona', 'community'],
+			required: ['files'],
 			additionalProperties: false,
 		},
 	},
