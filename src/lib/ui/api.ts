@@ -23,8 +23,8 @@ export const setApi = (store: Api): Api => {
 
 // TODO this name may be confusing because it's not used by the `dispatch` function types below
 export interface DispatchContext<
-	TParams extends any = object,
-	TResult extends ApiResult<any> | void = void,
+	TParams extends unknown = unknown, // TODO can be any json, but type currently doesn't work with our events
+	TResult extends ApiResult<unknown> | void = void,
 > {
 	eventName: string;
 	params: TParams;
