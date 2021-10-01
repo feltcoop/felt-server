@@ -18,21 +18,6 @@ export const SpaceSchema = {
 	additionalProperties: false,
 };
 
-// TODO the `community_id` belongs here, but it's not used in the REST post payload, only the params
-export interface SpaceParams {}
-export const SpaceParamsSchema = {
-	$id: 'https://felt.social/vocab/SpaceParams.json',
-	properties: {
-		community_id: {type: 'number'},
-		name: {type: 'string'},
-		url: {type: 'string'},
-		media_type: {type: 'string'},
-		content: {type: 'string'},
-	},
-	required: ['community_id', 'name', 'url', 'media_type', 'content'],
-	additionalProperties: false,
-};
-
 export enum SpaceType {
 	Home = 'Home',
 	Room = 'Room',

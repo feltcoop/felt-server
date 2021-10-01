@@ -88,10 +88,8 @@ export const read_communities: EventInfo = {
 		type: read_communities_params_type,
 		schema: {
 			$id: 'https://felt.social/vocab/read_communities_params.json',
-			properties: {
-				community_id: {type: 'number'},
-			},
-			required: ['community_id'],
+			properties: {},
+			required: [],
 			additionalProperties: false,
 		},
 	},

@@ -1,6 +1,7 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {Space, SpaceParams} from '$lib/vocab/space/space.js';
+import type {create_space_params_type} from '$lib/ui/events';
+import type {Space} from '$lib/vocab/space/space.js';
 import type {Database} from '$lib/db/Database';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import type {ErrorResponse} from '$lib/util/error';
@@ -50,7 +51,7 @@ export const spaceRepo = (db: Database) => ({
 		media_type,
 		url,
 		community_id,
-	}: SpaceParams): Promise<Result<{value: Space}>> => {
+	}: create_space_params_type): Promise<Result<{value: Space}>> => {
 		const data = await db.sql<Space[]>`
       INSERT INTO spaces (name, url, media_type, content) VALUES (
         ${name},${url},${media_type},${content}

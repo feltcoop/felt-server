@@ -14,19 +14,11 @@ export const AccountSchema = {
 	additionalProperties: false,
 };
 
-export interface AccountParams {
+// TODO make the `create_account` event in account.events.ts
+export interface create_account_params_type {
 	name: string;
 	password: string;
 }
-export const AccountParamsSchema = {
-	$id: 'https://felt.social/vocab/AccountParams.json',
-	properties: {
-		name: {type: 'string'},
-		password: {type: 'string'},
-	},
-	required: ['name', 'password'],
-	additionalProperties: false,
-};
 
 // TODO rename? `AccountClientDoc`? above could be `AccountDbDoc` and `AccountRequestDoc`
 export interface AccountModel {

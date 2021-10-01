@@ -21,31 +21,3 @@ export const CommunitySchema = {
 	required: ['community_id', 'name'],
 	additionalProperties: true, // TODO `true` is a hack related to the above
 };
-
-export interface CommunityParams {
-	name: string;
-	persona_id: number;
-}
-export const CommunityParamsSchema = {
-	$id: 'https://felt.social/vocab/CommunityParams.json',
-	properties: {
-		name: {type: 'string'},
-		persona_id: {type: 'number'},
-	},
-	required: ['name', 'persona_id'],
-	additionalProperties: false,
-};
-
-export interface CommunitySpaces {
-	community_id: number;
-	space_id: number;
-}
-
-export type CommunitySpacesParams = CommunitySpaces;
-
-export interface PersonaCommunity {
-	persona_id: number;
-	community_id: number;
-}
-
-export type PersonaCommunityParams = PersonaCommunity;
