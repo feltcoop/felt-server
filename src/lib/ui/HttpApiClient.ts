@@ -8,7 +8,7 @@
 import {inject} from 'regexparam';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
-import type {ServiceMeta} from '$lib/server/servicesMeta';
+import type {ServiceEventInfo} from '$lib/vocab/event/event';
 
 // TODO make `fetch` a parameter once the client isn't created for SSR
 // fetch: typeof window.fetch,
@@ -16,19 +16,19 @@ export const toHttpApiClient = <
 	TParamsMap extends Record<string, any>,
 	TResultMap extends Record<string, any>,
 >(
-	findService: (name: string) => ServiceMeta | undefined,
+	findService: (name: string) => ServiceEventInfo | undefined,
 	fetch: typeof globalThis.fetch = globalThis.fetch,
 ): ApiClient<TParamsMap, TResultMap> => {
 	const client: ApiClient<TParamsMap, TResultMap> = {
 		has: (name) => !!findService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
 		invoke: async (name, params) => {
 			console.log('[http api client] invoke', name, params);
-			const serviceMeta = findService(name);
-			if (!serviceMeta) {
+			const service = findService(name);
+			if (!service) {
 				return {ok: false, status: 400, reason: `Failed to invoke unknown service: ${name}`};
 			}
-			const path = inject(serviceMeta.route.path, params);
-			const {method} = serviceMeta.route;
+			const path = inject(service.route.path, params);
+			const {method} = service.route;
 			try {
 				const res = await fetch(path, {
 					method,

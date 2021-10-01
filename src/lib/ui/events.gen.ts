@@ -1,23 +1,7 @@
 import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
 
-import {events as ui_events} from '$lib/ui/ui.events';
-import {events as session_events} from '$lib/session/session.events';
-import {events as community_events} from '$lib/vocab/community/community.events';
-import {events as persona_events} from '$lib/vocab/persona/persona.events';
-import {events as membership_events} from '$lib/vocab/membership/membership.events';
-import {events as space_events} from '$lib/vocab/space/space.events';
-import {events as file_events} from '$lib/vocab/file/file.events';
-import type {EventInfo} from '$lib/vocab/event/event';
-
-const events: EventInfo[] = session_events.concat(
-	community_events,
-	persona_events,
-	membership_events,
-	space_events,
-	file_events,
-	ui_events,
-);
+import {eventsInfo} from '$lib/vocab/event/eventsInfo';
 
 // Outputs a file with services metadata that can be imported from the client.
 export const gen: Gen = async ({originId}) => {
@@ -42,7 +26,7 @@ import type {File} from '$lib/vocab/file/file';
 import type {DispatchContext} from '$lib/ui/api';
 import type {MainNavView} from '$lib/ui/ui';
 
-${events.reduce(
+${eventsInfo.reduce(
 	(str, eventData) =>
 		str +
 		`
@@ -53,7 +37,7 @@ export type ${eventData.name}_response_type = ${eventData.response.type};
 )}
 
 export interface EventsParams {
-	${events.reduce(
+	${eventsInfo.reduce(
 		(str, eventData) =>
 			str +
 			`
@@ -63,7 +47,7 @@ ${eventData.name}: ${eventData.name}_params_type;
 	)}
 }
 export interface EventsResponse {
-	${events.reduce(
+	${eventsInfo.reduce(
 		(str, eventData) =>
 			str +
 			`
@@ -74,7 +58,7 @@ ${eventData.name}: ${eventData.name}_response_type;
 }
 
 export interface Dispatch {
-	${events.reduce(
+	${eventsInfo.reduce(
 		(str, eventData) =>
 			str +
 			`
@@ -88,7 +72,7 @@ export interface Dispatch {
 }
 
 export interface UiHandlers {
-  ${events.reduce(
+  ${eventsInfo.reduce(
 		(str, eventData) =>
 			str +
 			`

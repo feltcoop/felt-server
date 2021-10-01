@@ -1,5 +1,5 @@
 import type {ApiServer} from '$lib/server/ApiServer.js';
-import type {EventInfo} from '$lib/vocab/event/event';
+import type {ServiceEventInfo} from '$lib/vocab/event/event';
 
 export type ServiceMethod =
 	| 'GET'
@@ -15,7 +15,7 @@ export type ServiceMethod =
 // A `Service` can be reused across both http and websocket handlers.
 // The generics are required to avoid mistakes with service definitions.
 export interface Service<TParams extends object, TResponse extends object> {
-	event: EventInfo;
+	event: ServiceEventInfo;
 	perform(request: ServiceRequest<TParams>): Promise<TResponse>;
 }
 

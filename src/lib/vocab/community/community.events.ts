@@ -1,4 +1,4 @@
-import type {EventInfo} from '$lib/vocab/event/event';
+import type {ServiceEventInfo} from '$lib/vocab/event/event';
 
 // TODO generate the type from the schema with json-schema-to-typescript
 const create_community_params_type = `{
@@ -8,7 +8,7 @@ const create_community_params_type = `{
 const create_community_response_type = `{
 	community: Community;
 }`;
-export const create_community: EventInfo = {
+export const create_community: ServiceEventInfo = {
 	name: 'create_community',
 	params: {
 		type: create_community_params_type,
@@ -48,7 +48,7 @@ const read_community_params_type = `{
 const read_community_response_type = `{
 	community: Community;
 }`;
-export const read_community: EventInfo = {
+export const read_community: ServiceEventInfo = {
 	name: 'read_community',
 	params: {
 		type: read_community_params_type,
@@ -86,7 +86,7 @@ const read_communities_params_type = `{
 const read_communities_response_type = `{
 	communities: Community[];
 }`;
-export const read_communities: EventInfo = {
+export const read_communities: ServiceEventInfo = {
 	name: 'read_communities',
 	params: {
 		type: read_communities_params_type,
