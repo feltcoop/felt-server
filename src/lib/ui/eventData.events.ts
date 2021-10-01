@@ -260,6 +260,7 @@ const query_files = {
 };
 
 export const events: EventData[] = [
+	// TODO convert `log_in` and `log_out` to services
 	{
 		name: 'log_in',
 		params: {
