@@ -1,20 +1,11 @@
 import {setContext, getContext} from 'svelte';
 import {randomItem} from '@feltcoop/felt/util/random.js';
-import type {Static} from '@sinclair/typebox';
-import type {Readable} from 'svelte/store';
 
-import type {MainNavView, Ui} from '$lib/ui/ui';
-import type {ClientAccountSession} from '$lib/session/clientSession';
+import type {Ui} from '$lib/ui/ui';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
 import type {ServicesParamsMap, ServicesResultMap} from '$lib/server/servicesTypes';
-import type {createCommunityService} from '$lib/vocab/community/communityServices';
-import type {createPersonaService} from '$lib/vocab/persona/personaServices';
-import type {createMembershipService} from '$lib/vocab/community/communityServices';
-import type {createSpaceService} from '$lib/vocab/space/spaceServices';
-import type {createFileService, readFilesService} from '$lib/vocab/file/fileServices';
-import type {File} from '$lib/vocab/file/file';
-import type {LoginRequest} from '$lib/session/loginMiddleware';
+import type {Dispatch} from '$lib/ui/events';
 
 // TODO this has evolved to the point where perhaps this module should be `dispatch.ts`
 // and removing the `Api` namespace wrapper.
@@ -40,47 +31,6 @@ export interface DispatchContext<
 	dispatch: Dispatch;
 	client: ApiClient<ServicesParamsMap, ServicesResultMap>;
 	invoke: TResult extends void ? null : (params?: TParams) => Promise<TResult>;
-}
-
-// TODO generate this interface from data or define programmatically along with `UiHandlers`
-export interface Dispatch {
-	// TODO convert log_in and log_out to services
-	(eventName: 'log_in', params: LoginRequest): Promise<ApiResult<{session: ClientAccountSession}>>; // TODO
-	(eventName: 'log_out', params?: undefined): Promise<ApiResult<void>>; // TODO type?
-	(
-		eventName: 'create_community',
-		params: Static<typeof createCommunityService.paramsSchema>,
-	): Promise<ApiResult<Static<typeof createCommunityService.responseSchema>>>;
-	(eventName: 'create_persona', params: Static<typeof createPersonaService.paramsSchema>): Promise<
-		ApiResult<Static<typeof createPersonaService.responseSchema>>
-	>;
-	(
-		eventName: 'create_membership',
-		params: Static<typeof createMembershipService.paramsSchema>,
-	): Promise<ApiResult<Static<typeof createMembershipService.responseSchema>>>;
-	(eventName: 'create_space', params: Static<typeof createSpaceService.paramsSchema>): Promise<
-		ApiResult<Static<typeof createSpaceService.responseSchema>>
-	>;
-	(eventName: 'create_file', params: Static<typeof createFileService.paramsSchema>): Promise<
-		ApiResult<Static<typeof createFileService.responseSchema>>
-	>;
-	(eventName: 'read_files', params: Static<typeof readFilesService.paramsSchema>): Promise<
-		ApiResult<Static<typeof readFilesService.responseSchema>>
-	>;
-	// `query_files` differs from `read_files` in that
-	// it returns a reactive store containing the requested files.
-	// Its API could be expanded to give callers access to its async status or promise,
-	// maybe via a third `options` arg with callbacks.
-	(eventName: 'query_files', params: Static<typeof readFilesService.paramsSchema>): Readable<
-		Readable<File>[]
-	>;
-	(eventName: 'toggle_main_nav', params?: any): void;
-	(eventName: 'toggle_secondary_nav', params?: any): void;
-	(eventName: 'set_main_nav_view', params: MainNavView): void;
-	(eventName: 'set_mobile', params: boolean): void;
-	(eventName: 'select_persona', params: {persona_id: number}): void;
-	(eventName: 'select_community', params: {community_id: number | null}): void;
-	(eventName: 'select_space', params: {community_id: number; space_id: number | null}): void;
 }
 
 export interface Api {
