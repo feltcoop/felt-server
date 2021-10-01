@@ -19,7 +19,7 @@ test__eventsInfo.after(teardownServer);
 test__eventsInfo.before(setupApp);
 test__eventsInfo.after(teardownApp);
 
-test__eventsInfo('create and use eventsInfo', async ({server, app}) => {
+test__eventsInfo('dispatch random eventInfo in a client app', async ({server, app}) => {
 	// TODO in this context,
 	const random = toRandomVocabContext(server.db);
 
