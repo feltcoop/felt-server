@@ -10,12 +10,12 @@ import {toRandomVocabContext} from '$lib/vocab/random';
 import {randomEventParams} from '$lib/server/random';
 
 /* test__eventsInfo */
-const test__eventsInfo = suite<TestServerContext>('eventsInfo');
+const test__eventsInfo = suite<TestServerContext, TestAppContext>('eventsInfo');
 
 test__eventsInfo.before(setupServer);
 test__eventsInfo.after(teardownServer);
 
-test__eventsInfo('create and use eventsInfo', async ({server}) => {
+test__eventsInfo('create and use eventsInfo', async ({server, app}) => {
 	// TODO in this context,
 	const random = toRandomVocabContext(server.db);
 
@@ -35,7 +35,11 @@ test__eventsInfo('create and use eventsInfo', async ({server}) => {
 			throw Error(`Expected eventInfo to have a schema: ${eventInfo.name}`);
 		}
 
-		// const result = await dispatch(eventInfo, {server, params, account_id: account.account_id});
+		const result = await app.ui.dispatch(eventInfo, {
+			server,
+			params,
+			account_id: account.account_id,
+		});
 		// if (!result.ok || !validateSchema(eventInfo.response.schema!)(result.value)) {
 		// 	console.error(red(`failed to validate service response: ${eventInfo.name}`), result);
 		// 	throw new Error(

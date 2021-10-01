@@ -8,6 +8,7 @@ import {Database} from '$lib/db/Database';
 import {defaultPostgresOptions} from '$lib/db/postgres';
 import {WebsocketServer} from '$lib/server/WebsocketServer';
 import {services} from '$lib/server/services';
+import type {AppStores} from '$lib/ui/app';
 
 sourcemapSupport.install({
 	handleUncaughtExceptions: false,
@@ -38,6 +39,35 @@ export const setupServer = async (context: TestServerContext): Promise<void> => 
 };
 
 export const teardownServer = async (context: TestServerContext): Promise<void> => {
+	console.log('teardown server!!!');
+	const {server} = context;
+	context.server = null!;
+	try {
+		await server.close();
+	} catch (err) {
+		console.log('err', err);
+	}
+};
+
+export interface TestAppContext {
+	app: AppStores;
+}
+
+export const setupApp = async (context: TestAppContext): Promise<void> => {
+	console.log('setup server!!!');
+	const server = createApp();
+	context.server = new ApiApp({
+		server,
+		app: polka({server}),
+		websocketApp: new WebsocketApp(server),
+		db: new Database({sql: postgres(defaultPostgresOptions)}),
+		port: TEST_PORT,
+		services,
+	});
+	await context.server.init();
+};
+
+export const teardownApp = async (context: TestAppContext): Promise<void> => {
 	console.log('teardown server!!!');
 	const {server} = context;
 	context.server = null!;
