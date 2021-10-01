@@ -26,7 +26,7 @@ export const setUi = (store: Ui): Ui => {
 	return store;
 };
 
-export interface Ui extends UiHandlers {
+export interface Ui extends Partial<UiHandlers> {
 	dispatch: (ctx: DispatchContext) => any; // TODO return value type?
 
 	// db state and caches

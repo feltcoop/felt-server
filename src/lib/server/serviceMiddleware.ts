@@ -48,10 +48,9 @@ export const toServiceMiddleware =
 				return send(res, 500, {reason: 'unimplemented service schema'});
 			}
 
-			const validateParams = toValidateSchema(service.event.params.schema)();
-			const validateResponse = toValidateSchema(service.event.response.schema)();
-
 			const params = {...reqBody, ...reqParams};
+
+			const validateParams = toValidateSchema(service.event.params.schema)();
 			if (!validateParams(params)) {
 				// TODO handle multiple errors instead of just the first
 				console.error('validation failed:', params, validateParams.errors);
@@ -64,12 +63,15 @@ export const toServiceMiddleware =
 				// Should each service declare if `account_id` is required?
 				return send(res, 401, {reason: 'not logged in'});
 			}
+
 			const result = await service.perform({server, params, account_id: req.account_id});
+
 			if (!result.ok) {
 				send(res, result.status || 500, {reason: result.reason});
 				return;
 			}
 			if (process.env.NODE_ENV !== 'production') {
+				const validateResponse = toValidateSchema(service.event.response.schema)();
 				if (!validateResponse(result.value)) {
 					console.error(red('validation failed:'), result, validateResponse.errors);
 				}

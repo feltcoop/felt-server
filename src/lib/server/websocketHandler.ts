@@ -44,8 +44,14 @@ export const websocketHandler: WebsocketHandler = async (
 		return;
 	}
 
-	if (!service.validateParams()(params)) {
-		console.error(red('Failed to validate params'), service.validateParams().errors);
+	if (!service.event.params.schema || !service.event.response.schema) {
+		console.error('[websocketHandler] unimplemented service schema');
+		return;
+	}
+
+	const validateParams = toValidateSchema(service.event.params.schema)();
+	if (!validateParams(params)) {
+		console.error(red('Failed to validate params'), validateParams.errors);
 		return;
 	}
 
@@ -64,11 +70,12 @@ export const websocketHandler: WebsocketHandler = async (
 	}
 
 	if (process.env.NODE_ENV !== 'production') {
-		if (!service.validateResponse()(result.value)) {
+		const validateResponse = toValidateSchema(service.event.response.schema)();
+		if (!validateResponse(result.value)) {
 			console.error(
-				red(`failed to validate service response: ${service.name}`),
+				red(`failed to validate service response: ${service.event.name}`),
 				result,
-				service.validateResponse().errors,
+				validateResponse.errors,
 			);
 		}
 	}
