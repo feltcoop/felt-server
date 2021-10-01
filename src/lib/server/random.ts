@@ -55,6 +55,9 @@ export const randomServiceParams = async (
 			if (!space) space = await random.space(persona, account, community);
 			return {space_id: space.space_id};
 		}
+		// TODO could do an exhaustive typecheck (so it'll be caught by TS, not at runtime)
+		// by generating something like a type union of `ServiceEvent`s and
+		// replacing the generic service type in the above function signature
 		default: {
 			throw Error(`Unhandled service for randomServiceParams: ${service.event.name}`);
 		}
