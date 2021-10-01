@@ -3,8 +3,8 @@ import * as t from 'uvu/assert';
 import type {Result} from '@feltcoop/felt';
 import {unwrap} from '@feltcoop/felt';
 
-import type {TestServerContext} from '$lib/util/testHelpers';
-import {setupServer, teardownServer} from '$lib/util/testHelpers';
+import type {TestServerContext} from '$lib/util/testServerHelpers';
+import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
 import {validateFile} from '$lib/vocab/file/validateFile';
 import {validateSpace} from '$lib/vocab/space/validateSpace';
 import {toValidationErrorMessage} from '$lib/util/ajv';

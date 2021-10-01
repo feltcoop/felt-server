@@ -1,8 +1,8 @@
 import {suite} from 'uvu';
 import * as t from 'uvu/assert';
 
-import type {TestServerContext} from '$lib/util/testHelpers.js';
-import {setupServer, teardownServer} from '$lib/util/testHelpers.js';
+import type {TestServerContext} from '$lib/util/testServerHelpers.js';
+import {setupServer, teardownServer} from '$lib/util/testServerHelpers.js';
 import {ApiServer} from '$lib/server/ApiServer';
 
 // TODO hack because of broken test builds

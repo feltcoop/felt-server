@@ -2,8 +2,8 @@ import {suite} from 'uvu';
 import * as t from 'uvu/assert';
 import {red} from '@feltcoop/felt/util/terminal.js';
 
-import type {TestServerContext} from '$lib/util/testHelpers';
-import {setupServer, teardownServer} from '$lib/util/testHelpers';
+import type {TestServerContext} from '$lib/util/testServerHelpers';
+import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {services} from '$lib/server/services';
 import {toRandomVocabContext} from '$lib/vocab/random';

@@ -65,9 +65,6 @@ export const toHttpApiClient = <
 				};
 			}
 		},
-		close: () => {
-			// TODO ?
-		},
 	};
 	return client;
 };
