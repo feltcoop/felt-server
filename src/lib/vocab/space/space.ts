@@ -1,30 +1,37 @@
-import {Type} from '@sinclair/typebox';
-import type {Static} from '@sinclair/typebox';
-
-export interface Space extends Static<typeof SpaceSchema> {}
-export const SpaceSchema = Type.Object(
-	{
-		space_id: Type.Number(),
-		name: Type.String(),
-		url: Type.String(),
-		media_type: Type.String(),
-		content: Type.String(),
+export interface Space {
+	space_id: number;
+	name: string;
+	url: string;
+	media_type: string;
+	content: string;
+}
+export const SpaceSchema = {
+	$id: 'https://felt.social/vocab/Space.json',
+	properties: {
+		space_id: {type: 'number'},
+		name: {type: 'string'},
+		url: {type: 'string'},
+		media_type: {type: 'string'},
+		content: {type: 'string'},
 	},
-	{$id: 'https://felt.social/vocab/Space.json', additionalProperties: false},
-);
+	required: ['space_id', 'name', 'url', 'media_type', 'content'],
+	additionalProperties: false,
+};
 
 // TODO the `community_id` belongs here, but it's not used in the REST post payload, only the params
-export interface SpaceParams extends Static<typeof SpaceParamsSchema> {}
-export const SpaceParamsSchema = Type.Object(
-	{
-		community_id: Type.Number(),
-		name: Type.String(),
-		url: Type.String(),
-		media_type: Type.String(),
-		content: Type.String(),
+export interface SpaceParams {}
+export const SpaceParamsSchema = {
+	$id: 'https://felt.social/vocab/SpaceParams.json',
+	properties: {
+		community_id: {type: 'number'},
+		name: {type: 'string'},
+		url: {type: 'string'},
+		media_type: {type: 'string'},
+		content: {type: 'string'},
 	},
-	{$id: 'https://felt.social/vocab/SpaceParams.json', additionalProperties: false},
-);
+	required: ['community_id', 'name', 'url', 'media_type', 'content'],
+	additionalProperties: false,
+};
 
 export enum SpaceType {
 	Home = 'Home',

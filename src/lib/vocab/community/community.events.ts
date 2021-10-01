@@ -27,7 +27,7 @@ export const create_community: EventInfo = {
 		schema: {
 			$id: 'https://felt.social/vocab/create_community_response.json',
 			properties: {
-				community: {$ref: '#/$defs/community'},
+				community: {$ref: 'Community.json'},
 			},
 			required: ['community'],
 			additionalProperties: false,
@@ -64,7 +64,7 @@ export const read_community: EventInfo = {
 		schema: {
 			$id: 'https://felt.social/vocab/read_community_response.json',
 			properties: {
-				community: {$ref: '#/$defs/community'},
+				community: {$ref: 'Community.json'},
 			},
 			required: ['community'],
 			additionalProperties: false,
@@ -100,7 +100,7 @@ export const read_communities: EventInfo = {
 		schema: {
 			$id: 'https://felt.social/vocab/read_communities_response.json',
 			properties: {
-				communities: {type: 'array', items: {$ref: '#/$defs/community'}},
+				communities: {type: 'array', items: {$ref: 'Community.json'}},
 			},
 			required: ['communities'],
 			additionalProperties: false,

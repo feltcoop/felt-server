@@ -21,8 +21,8 @@ export const create_persona: EventInfo = {
 		schema: {
 			$id: 'https://felt.social/vocab/create_persona_response.json',
 			properties: {
-				persona: {$ref: '#/$defs/persona'},
-				community: {$ref: '#/$defs/community'},
+				persona: {$ref: 'Persona.json'},
+				community: {$ref: 'Community.json'},
 			},
 			required: ['persona', 'community'],
 			additionalProperties: false,

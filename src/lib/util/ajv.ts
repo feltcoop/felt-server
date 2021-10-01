@@ -17,7 +17,6 @@ export const ajv = (): Ajv => {
 	}
 	return ajvInstance;
 };
-// .addKeyword('kind')
 
 export interface CreateValidate<T = unknown> {
 	(): ValidateFunction<T>;

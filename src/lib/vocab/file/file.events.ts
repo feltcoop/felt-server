@@ -27,7 +27,7 @@ export const create_file: EventInfo = {
 		schema: {
 			$id: 'https://felt.social/vocab/create_file_response.json',
 			properties: {
-				file: {$ref: '#/$defs/file'},
+				file: {$ref: 'File.json'},
 			},
 			required: ['file'],
 			additionalProperties: false,
@@ -60,7 +60,7 @@ export const read_files: EventInfo = {
 		schema: {
 			$id: 'https://felt.social/vocab/read_files_response.json',
 			properties: {
-				files: {type: 'array', items: {$ref: '#/$defs/file'}},
+				files: {type: 'array', items: {$ref: 'File.json'}},
 			},
 			required: ['files'],
 			additionalProperties: false,

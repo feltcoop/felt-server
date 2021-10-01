@@ -22,7 +22,7 @@ export const create_membership: EventInfo = {
 		schema: {
 			$id: 'https://felt.social/vocab/create_membership_response.json',
 			properties: {
-				membership: {$ref: '#/$defs/membership'},
+				membership: {$ref: 'Membership.json'},
 			},
 			required: ['membership'],
 			additionalProperties: false,

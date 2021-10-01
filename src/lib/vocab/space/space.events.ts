@@ -31,7 +31,7 @@ export const create_space: EventInfo = {
 		schema: {
 			$id: 'https://felt.social/vocab/create_space_response.json',
 			properties: {
-				space: {$ref: '#/$defs/space'},
+				space: {$ref: 'Space.json'},
 			},
 			required: ['space'],
 			additionalProperties: false,
@@ -66,7 +66,7 @@ export const read_space: EventInfo = {
 		schema: {
 			$id: 'https://felt.social/vocab/read_space_response.json',
 			properties: {
-				space: {$ref: '#/$defs/space'},
+				space: {$ref: 'Space.json'},
 			},
 			required: ['space'],
 			additionalProperties: false,
@@ -101,7 +101,7 @@ export const read_spaces: EventInfo = {
 		schema: {
 			$id: 'https://felt.social/vocab/read_spaces_response.json',
 			properties: {
-				spaces: {type: 'array', items: {$ref: '#/$defs/space'}},
+				spaces: {type: 'array', items: {$ref: 'Space.json'}},
 			},
 			required: ['spaces'],
 			additionalProperties: false,

@@ -1,23 +1,33 @@
-import {Type} from '@sinclair/typebox';
-import type {Static} from '@sinclair/typebox';
-
-export interface File extends Static<typeof FileSchema> {}
-export const FileSchema = Type.Object(
-	{
-		file_id: Type.Number(),
-		actor_id: Type.Number(),
-		space_id: Type.Number(),
-		content: Type.String(),
+export interface File {
+	file_id: number;
+	actor_id: number;
+	space_id: number;
+	content: string;
+}
+export const FileSchema = {
+	$id: 'https://felt.social/vocab/File.json',
+	additionalProperties: false,
+	properties: {
+		file_id: {type: 'number'},
+		actor_id: {type: 'number'},
+		space_id: {type: 'number'},
+		content: {type: 'string'},
 	},
-	{$id: 'https://felt.social/vocab/File.json', additionalProperties: false},
-);
+	required: ['file_id', 'actor_id', 'space_id', 'content'],
+};
 
-export interface FileParams extends Static<typeof FileParamsSchema> {}
-export const FileParamsSchema = Type.Object(
-	{
-		actor_id: Type.Number(), // `persona_id` -- must be validated against the authenticated `account_id`
-		space_id: Type.Number(),
-		content: Type.String(),
+export interface FileParams {
+	actor_id: number;
+	space_id: number;
+	content: string;
+}
+export const FileParamsSchema = {
+	$id: 'https://felt.social/vocab/FileParams.json',
+	additionalProperties: false,
+	properties: {
+		actor_id: {type: 'number'}, // `persona_id` -- must be validated against the authenticated `account_id`
+		space_id: {type: 'number'},
+		content: {type: 'ntring'},
 	},
-	{$id: 'https://felt.social/vocab/FileParams.json', additionalProperties: false},
-);
+	required: ['actor_id', 'space_id', 'content'],
+};

@@ -1,25 +1,34 @@
-import {Type} from '@sinclair/typebox';
-import type {Static} from '@sinclair/typebox';
-
-export interface Persona extends Static<typeof PersonaSchema> {}
-export const PersonaSchema = Type.Object(
-	{
-		persona_id: Type.Number(),
-		account_id: Type.Number(),
-		name: Type.String(),
-		icon: Type.Optional(Type.String()),
-		community_ids: Type.Array(Type.Number()),
+export interface Persona {
+	persona_id: number;
+	account_id: number;
+	name: string;
+	icon?: string;
+	community_ids: number[];
+}
+export const PersonaSchema = {
+	$id: 'https://felt.social/vocab/Persona.json',
+	additionalProperties: false,
+	properties: {
+		persona_id: {type: 'number'},
+		account_id: {type: 'number'},
+		name: {type: 'string'},
+		icon: {type: 'string'},
+		community_ids: {type: 'array', items: {type: 'number'}},
 	},
-	{$id: 'https://felt.social/vocab/Persona.json', additionalProperties: false},
-);
+	required: ['persona_id', 'account_id', 'name', 'community_ids'],
+};
 
-export interface PersonaParams extends Static<typeof PersonaParamsSchema> {}
-export const PersonaParamsSchema = Type.Object(
-	{
-		name: Type.String(),
+export interface PersonaParams {
+	name: string;
+}
+export const PersonaParamsSchema = {
+	$id: 'https://felt.social/vocab/PersonaParams.json',
+	additionalProperties: false,
+	properties: {
+		name: {type: 'string'},
 	},
-	{$id: 'https://felt.social/vocab/PersonaParams.json', additionalProperties: false},
-);
+	required: ['name'],
+};
 
 //TODO
 //2.5: Render active persona
