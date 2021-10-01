@@ -245,6 +245,20 @@ const read_files: EventData = {
 	},
 };
 
+// `query_files` differs from `read_files` in that
+// it returns a reactive store containing the requested files.
+// Its API could be expanded to give callers access to its async status or promise,
+// maybe via a third `options` arg with callbacks.
+const query_files = {
+	name: 'query_files',
+	params: read_files.params,
+	response: {
+		type: 'void',
+		schema: null,
+	},
+	returns: 'Readable<Readable<File>[]>',
+};
+
 export const events: EventData[] = [
 	{
 		name: 'log_in',
@@ -276,22 +290,7 @@ export const events: EventData[] = [
 	create_space,
 	create_file,
 	read_files,
-	// `query_files` differs from `read_files` in that
-	// it returns a reactive store containing the requested files.
-	// Its API could be expanded to give callers access to its async status or promise,
-	// maybe via a third `options` arg with callbacks.
-	{
-		name: 'query_files',
-		params: {
-			type: 'Static<typeof readFilesService.paramsSchema>',
-			schema: null,
-		},
-		response: {
-			type: 'void',
-			schema: null,
-		},
-		returns: 'Readable<Readable<File>[]>',
-	},
+	query_files,
 	{
 		name: 'toggle_main_nav',
 		params: {

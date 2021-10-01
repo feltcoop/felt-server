@@ -45,9 +45,7 @@ export interface Dispatch {
 		},
 	): Promise<ApiResult<{file: File}>>;
 	(eventName: 'read_files', params: {space_id: number}): Promise<ApiResult<{files: File[]}>>;
-	(eventName: 'query_files', params: Static<typeof readFilesService.paramsSchema>): Readable<
-		Readable<File>[]
-	>;
+	(eventName: 'query_files', params: {space_id: number}): Readable<Readable<File>[]>;
 	(eventName: 'toggle_main_nav', params: void): void;
 	(eventName: 'toggle_secondary_nav', params: void): void;
 	(eventName: 'set_main_nav_view', params: MainNavView): void;
@@ -99,9 +97,7 @@ export interface UiHandlers {
 	read_files: (
 		ctx: DispatchContext<{space_id: number}, ApiResult<{files: File[]}>>,
 	) => Promise<ApiResult<{files: File[]}>>;
-	query_files: (
-		ctx: DispatchContext<Static<typeof readFilesService.paramsSchema>, void>,
-	) => Readable<Readable<File>[]>;
+	query_files: (ctx: DispatchContext<{space_id: number}, void>) => Readable<Readable<File>[]>;
 	toggle_main_nav: (ctx: DispatchContext<void, void>) => void;
 	toggle_secondary_nav: (ctx: DispatchContext<void, void>) => void;
 	set_main_nav_view: (ctx: DispatchContext<MainNavView, void>) => void;
