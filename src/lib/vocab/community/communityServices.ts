@@ -104,7 +104,6 @@ const CreateCommunityServiceResponse = Type.Object(
 );
 
 //Creates a new community for an instance
-// TODO automatic params type and validation
 export const createCommunityService: Service<
 	typeof CreateCommunityServiceParams,
 	typeof CreateCommunityServiceResponse
