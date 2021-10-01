@@ -27,7 +27,7 @@ export interface CommunityParams {
 	persona_id: number;
 }
 export const CommunityParamsSchema = {
-	$id: 'https://felt.social/vocab/Community.json',
+	$id: 'https://felt.social/vocab/CommunityParams.json',
 	properties: {
 		name: {type: 'string'},
 		persona_id: {type: 'number'},

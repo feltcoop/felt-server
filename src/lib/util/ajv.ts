@@ -1,10 +1,7 @@
 import Ajv from 'ajv';
 import type {ErrorObject, ValidateFunction, AnySchema} from 'ajv';
 
-import {AccountSchema} from '$lib/vocab/account/account';
-
-// TODO generate these?
-const schemas = [AccountSchema];
+import {schemas} from '$lib/vocab/schemas';
 
 let ajvInstance: Ajv | null = null;
 

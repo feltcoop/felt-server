@@ -19,7 +19,7 @@ export interface AccountParams {
 	password: string;
 }
 export const AccountParamsSchema = {
-	$id: 'https://felt.social/vocab/Account.json',
+	$id: 'https://felt.social/vocab/AccountParams.json',
 	properties: {
 		name: {type: 'string'},
 		password: {type: 'string'},
