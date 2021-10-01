@@ -1,7 +1,5 @@
 import type {AnySchema} from 'ajv';
-import {Type} from '@sinclair/typebox';
 
-import {CommunitySchema} from '$lib/vocab/community/community';
 import type {ServiceMethod} from '$lib/server/service';
 
 // TODO consider this `.events.` pattern
@@ -56,22 +54,26 @@ export const events: EventData[] = [
 		name: 'create_community',
 		params: {
 			type: 'Static<typeof createCommunityService.paramsSchema>',
-			schema: Type.Object(
-				{
-					name: Type.String(),
-					persona_id: Type.Number(),
+			schema: {
+				$id: 'create_community_params',
+				properties: {
+					name: 'string',
+					persona_id: 'number',
 				},
-				{$id: 'CreateCommunityServiceParams', additionalProperties: false},
-			),
+				required: ['name', 'persona_id'],
+				additionalProperties: false,
+			},
 		},
 		response: {
 			type: 'ApiResult<Static<typeof createCommunityService.responseSchema>>',
-			schema: Type.Object(
-				{
-					community: CommunitySchema,
+			schema: {
+				$id: 'create_community_params',
+				properties: {
+					community: {$ref: '#/$defs/community'},
 				},
-				{$id: 'CreateCommunityServiceResponse', additionalProperties: false},
-			),
+				required: ['community'],
+				additionalProperties: false,
+			},
 		},
 		returns: 'Promise<ApiResult<Static<typeof createCommunityService.responseSchema>>>',
 		route: {

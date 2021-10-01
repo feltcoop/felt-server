@@ -36,7 +36,7 @@ ${events.reduce(
 		`
   (
     eventName: '${eventData.name}',
-    params: ${eventData.params},
+    params: ${eventData.params.type},
   ): ${eventData.returns};`,
 	'',
 )}
@@ -48,7 +48,7 @@ export interface UiHandlers {
 			str +
 			`
       ${eventData.name}: (
-        ctx: DispatchContext<${eventData.params}, ${eventData.response}>,
+        ctx: DispatchContext<${eventData.params.type}, ${eventData.response.type}>,
       ) => ${eventData.returns};`,
 		'',
 	)}
