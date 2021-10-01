@@ -1,11 +1,12 @@
 import Ajv, {_} from 'ajv';
 import type {ErrorObject, ValidateFunction, AnySchema} from 'ajv';
 
-export const ajv = new Ajv()
-	// These are needed so the schemas created by `@sinclair/typebox` don't error --
-	// adding them like this easier than using `Strict`.
-	.addKeyword('kind')
-	.addKeyword('modifier');
+// TODO make this a lazily-created getter, so merely importing `ajv`
+export const ajv = new Ajv();
+// These are needed so the schemas created by `@sinclair/typebox` don't error --
+// adding them like this easier than using `Strict`.
+// .addKeyword('kind')
+// .addKeyword('modifier');
 
 export interface CreateValidate<T = unknown> {
 	(): ValidateFunction<T>;

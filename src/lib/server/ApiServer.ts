@@ -5,7 +5,6 @@ import bodyParser from 'body-parser';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue} from '@feltcoop/felt/util/terminal.js';
 import {promisify} from 'util';
-import type {TSchema} from '@sinclair/typebox';
 
 import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.js';
 import {toAuthorizationMiddleware} from '$lib/session/authorizationMiddleware.js';
@@ -34,7 +33,7 @@ export interface Options {
 	websocketServer: WebsocketServer;
 	port?: number;
 	db: Database;
-	services: Map<string, Service<TSchema, TSchema>>;
+	services: Map<string, Service<any, any>>;
 	loadInstance?: () => Promise<Polka | null>;
 }
 
@@ -44,7 +43,7 @@ export class ApiServer {
 	readonly websocketServer: WebsocketServer;
 	readonly port: number | undefined;
 	readonly db: Database;
-	readonly services: Map<string, Service<TSchema, TSchema>>;
+	readonly services: Map<string, Service<any, any>>;
 	readonly loadInstance: () => Promise<Polka | null>;
 
 	websocketListener = websocketHandler.bind(null, this);

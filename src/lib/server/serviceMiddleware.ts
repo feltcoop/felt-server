@@ -1,5 +1,4 @@
 import send from '@polka/send-type';
-import type {TSchema} from '@sinclair/typebox';
 import {red} from '@feltcoop/felt/util/terminal.js';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
@@ -11,7 +10,7 @@ import {toValidationErrorMessage} from '$lib/util/ajv';
 
 // Wraps a `Service` in an http `Middleware`
 export const toServiceMiddleware =
-	(server: ApiServer, service: Service<TSchema, TSchema>): Middleware =>
+	(server: ApiServer, service: Service<any, any>): Middleware =>
 	async (req, res) => {
 		// TODO validate input/output via properties on each `Service`
 		try {

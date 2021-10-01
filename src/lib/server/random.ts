@@ -1,5 +1,3 @@
-import type {TSchema} from '@sinclair/typebox';
-
 import type {Service} from '$lib/server/service';
 import {
 	randomFileParams,
@@ -11,8 +9,8 @@ import {randomPersonaParams, randomCommunityParams, randomSpaceParams} from '$li
 
 // TODO maybe move to `src/lib/util`
 // TODO keep factoring this until it's fully automated, generating from the schema
-export const randomServiceParams = async <TParamsSchema extends TSchema>(
-	service: Service<TParamsSchema, TSchema>,
+export const randomServiceParams = async (
+	service: Service<any, any>,
 	random: RandomVocabContext,
 	{account, persona, community, space}: RandomVocab,
 ): Promise<object> => {
