@@ -29,6 +29,18 @@ export type create_community_response_type = ApiResult<{
 	community: Community;
 }>;
 
+export type read_community_params_type = {
+	community_id: number;
+};
+export type read_community_response_type = ApiResult<{
+	community: Community;
+}>;
+
+export type read_communities_params_type = {};
+export type read_communities_response_type = ApiResult<{
+	communities: Community[];
+}>;
+
 export type create_persona_params_type = {name: string};
 export type create_persona_response_type = ApiResult<{persona: Persona; community: Community}>;
 
@@ -92,6 +104,8 @@ export interface EventsParams {
 	log_in: log_in_params_type;
 	log_out: log_out_params_type;
 	create_community: create_community_params_type;
+	read_community: read_community_params_type;
+	read_communities: read_communities_params_type;
 	create_persona: create_persona_params_type;
 	create_membership: create_membership_params_type;
 	create_space: create_space_params_type;
@@ -112,6 +126,8 @@ export interface EventsResponse {
 	log_in: log_in_response_type;
 	log_out: log_out_response_type;
 	create_community: create_community_response_type;
+	read_community: read_community_response_type;
+	read_communities: read_communities_response_type;
 	create_persona: create_persona_response_type;
 	create_membership: create_membership_response_type;
 	create_space: create_space_response_type;
@@ -147,6 +163,21 @@ export interface Dispatch {
 	): Promise<
 		ApiResult<{
 			community: Community;
+		}>
+	>;
+	(
+		eventName: 'read_community',
+		params: {
+			community_id: number;
+		},
+	): Promise<
+		ApiResult<{
+			community: Community;
+		}>
+	>;
+	(eventName: 'read_communities', params: {}): Promise<
+		ApiResult<{
+			communities: Community[];
 		}>
 	>;
 	(eventName: 'create_persona', params: {name: string}): Promise<
@@ -220,6 +251,32 @@ export interface UiHandlers {
 	) => Promise<
 		ApiResult<{
 			community: Community;
+		}>
+	>;
+	read_community: (
+		ctx: DispatchContext<
+			{
+				community_id: number;
+			},
+			ApiResult<{
+				community: Community;
+			}>
+		>,
+	) => Promise<
+		ApiResult<{
+			community: Community;
+		}>
+	>;
+	read_communities: (
+		ctx: DispatchContext<
+			{},
+			ApiResult<{
+				communities: Community[];
+			}>
+		>,
+	) => Promise<
+		ApiResult<{
+			communities: Community[];
 		}>
 	>;
 	create_persona: (

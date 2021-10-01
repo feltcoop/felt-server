@@ -113,4 +113,4 @@ export const read_communities: EventInfo = {
 	},
 };
 
-export const events = [create_community];
+export const events = [create_community, read_community, read_communities];

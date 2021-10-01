@@ -16,7 +16,10 @@ import type {create_membership_params_type, create_membership_response_type} fro
 import {create_membership} from '$lib/vocab/membership/membership.events';
 
 // Returns a list of community objects
-export const readCommunitiesService: Service<read_communities_params, read_communities_response> = {
+export const readCommunitiesService: Service<
+	read_communities_params_type,
+	read_communities_response_type
+> = {
 	event: read_communities,
 	perform: async ({server, account_id}) => {
 		const {db} = server;
