@@ -27,45 +27,51 @@ import type {DispatchContext} from '$lib/ui/api';
 import type {MainNavView} from '$lib/ui/ui';
 
 ${eventsInfo.reduce(
-	(str, eventData) =>
+	(str, eventInfo) =>
 		str +
 		`
-export type ${eventData.name}_params_type = ${eventData.params.type};
-export type ${eventData.name}_response_type = ${eventData.response.type};
+export type ${eventInfo.name}_params_type = ${eventInfo.params.type};
+${
+	eventInfo.type === 'ClientEvent'
+		? ''
+		: `export type ${eventInfo.name}_response_type = ${eventInfo.response.type};`
+}
 `,
 	'',
 )}
 
 export interface EventsParams {
 	${eventsInfo.reduce(
-		(str, eventData) =>
+		(str, eventInfo) =>
 			str +
 			`
-${eventData.name}: ${eventData.name}_params_type;
+${eventInfo.name}: ${eventInfo.name}_params_type;
 `.trim(),
 		'',
 	)}
 }
 export interface EventsResponse {
 	${eventsInfo.reduce(
-		(str, eventData) =>
+		(str, eventInfo) =>
 			str +
-			`
-${eventData.name}: ${eventData.name}_response_type;
-`.trim(),
+			(eventInfo.type === 'ClientEvent'
+				? ''
+				: `
+${eventInfo.name}: ${eventInfo.name}_response_type;
+`.trim()),
 		'',
 	)}
 }
 
 export interface Dispatch {
 	${eventsInfo.reduce(
-		(str, eventData) =>
+		(str, eventInfo) =>
 			str +
 			`
 		(
-			eventName: '${eventData.name}',
-			params: ${eventData.params.type},
-		): ${eventData.returns};
+			eventName: '${eventInfo.name}',
+			params: ${eventInfo.params.type},
+		): ${eventInfo.returns};
 `.trim(),
 		'',
 	)}
@@ -73,12 +79,14 @@ export interface Dispatch {
 
 export interface UiHandlers {
   ${eventsInfo.reduce(
-		(str, eventData) =>
+		(str, eventInfo) =>
 			str +
 			`
-      ${eventData.name}: (
-        ctx: DispatchContext<${eventData.params.type}, ${eventData.response.type}>,
-      ) => ${eventData.returns};
+      ${eventInfo.name}: (
+        ctx: DispatchContext<${eventInfo.params.type}, ${
+				eventInfo.type === 'ClientEvent' ? 'void' : eventInfo.response.type
+			}>,
+      ) => ${eventInfo.returns};
 `.trim(),
 		'',
 	)}

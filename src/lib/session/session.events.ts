@@ -1,4 +1,4 @@
-import type {EventInfo} from '$lib/vocab/event/event';
+import type {EventInfo, RemoteEventInfo} from '$lib/vocab/event/event';
 
 // TODO should `session` be in `$lib/vocab` ?
 
@@ -7,7 +7,8 @@ const log_in_params_type = `{
   accountName: string;
   password: string;
 }`;
-export const log_in: EventInfo = {
+export const log_in: RemoteEventInfo = {
+	type: 'RemoteEvent',
 	name: 'log_in',
 	params: {
 		type: log_in_params_type,
@@ -22,7 +23,8 @@ export const log_in: EventInfo = {
 };
 
 const log_out_response_type = 'ApiResult<void>';
-export const log_out: EventInfo = {
+export const log_out: RemoteEventInfo = {
+	type: 'RemoteEvent',
 	name: 'log_out',
 	params: {
 		type: 'void',
@@ -36,4 +38,4 @@ export const log_out: EventInfo = {
 	// TODO refactor into a service and add `route`
 };
 
-export const events = [log_in, log_out];
+export const events: EventInfo[] = [log_in, log_out];

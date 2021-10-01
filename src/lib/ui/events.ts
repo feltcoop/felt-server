@@ -77,28 +77,20 @@ export type read_files_params_type = {space_id: number};
 export type read_files_response_type = ApiResult<{files: File[]}>;
 
 export type query_files_params_type = {space_id: number};
-export type query_files_response_type = void;
 
 export type toggle_main_nav_params_type = void;
-export type toggle_main_nav_response_type = void;
 
 export type toggle_secondary_nav_params_type = void;
-export type toggle_secondary_nav_response_type = void;
 
 export type set_main_nav_view_params_type = MainNavView;
-export type set_main_nav_view_response_type = void;
 
 export type set_mobile_params_type = boolean;
-export type set_mobile_response_type = void;
 
 export type select_persona_params_type = {persona_id: number};
-export type select_persona_response_type = void;
 
 export type select_community_params_type = {community_id: number | null};
-export type select_community_response_type = void;
 
 export type select_space_params_type = {community_id: number; space_id: number};
-export type select_space_response_type = void;
 
 export interface EventsParams {
 	log_in: log_in_params_type;
@@ -135,14 +127,6 @@ export interface EventsResponse {
 	read_spaces: read_spaces_response_type;
 	create_file: create_file_response_type;
 	read_files: read_files_response_type;
-	query_files: query_files_response_type;
-	toggle_main_nav: toggle_main_nav_response_type;
-	toggle_secondary_nav: toggle_secondary_nav_response_type;
-	set_main_nav_view: set_main_nav_view_response_type;
-	set_mobile: set_mobile_response_type;
-	select_persona: select_persona_response_type;
-	select_community: select_community_response_type;
-	select_space: select_space_response_type;
 }
 
 export interface Dispatch {

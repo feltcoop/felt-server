@@ -1,4 +1,4 @@
-import type {ServiceEventInfo} from '$lib/vocab/event/event';
+import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
 // TODO generate the type from the schema with json-schema-to-typescript
 const create_space_params_type = `{
@@ -10,6 +10,7 @@ const create_space_params_type = `{
 }`;
 const create_space_response_type = '{space: Space}';
 export const create_space: ServiceEventInfo = {
+	type: 'ServiceEvent',
 	name: 'create_space',
 	params: {
 		type: create_space_params_type,
@@ -51,6 +52,7 @@ const read_space_params_type = `{
 }`;
 const read_space_response_type = '{space: Space}';
 export const read_space: ServiceEventInfo = {
+	type: 'ServiceEvent',
 	name: 'read_space',
 	params: {
 		type: read_space_params_type,
@@ -88,6 +90,7 @@ const read_spaces_params_type = `{
 }`;
 const read_spaces_response_type = '{spaces: Space[]}';
 export const read_spaces: ServiceEventInfo = {
+	type: 'ServiceEvent',
 	name: 'read_spaces',
 	params: {
 		type: read_spaces_params_type,
@@ -120,4 +123,4 @@ export const read_spaces: ServiceEventInfo = {
 	},
 };
 
-export const events = [create_space, read_space, read_spaces];
+export const events: EventInfo[] = [create_space, read_space, read_spaces];

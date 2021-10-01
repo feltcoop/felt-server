@@ -1,4 +1,4 @@
-import type {ServiceEventInfo} from '$lib/vocab/event/event';
+import type {EventInfo, ClientEventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
 // TODO generate the type from the schema with json-schema-to-typescript
 const create_file_params_type = `{
@@ -8,6 +8,7 @@ const create_file_params_type = `{
 }`;
 const create_file_response_type = '{file: File}';
 export const create_file: ServiceEventInfo = {
+	type: 'ServiceEvent',
 	name: 'create_file',
 	params: {
 		type: create_file_params_type,
@@ -45,6 +46,7 @@ export const create_file: ServiceEventInfo = {
 const read_files_params_type = '{space_id: number}';
 const read_files_response_type = '{files: File[]}';
 export const read_files: ServiceEventInfo = {
+	type: 'ServiceEvent',
 	name: 'read_files',
 	params: {
 		type: read_files_params_type,
@@ -81,14 +83,13 @@ export const read_files: ServiceEventInfo = {
 // it returns a reactive store containing the requested files.
 // Its API could be expanded to give callers access to its async status or promise,
 // maybe via a third `options` arg with callbacks.
-export const query_files = {
+export const query_files: ClientEventInfo = {
+	type: 'ClientEvent',
 	name: 'query_files',
 	params: read_files.params,
-	response: {
-		type: 'void',
-		schema: null,
-	},
+	// TODO Can/should this compose the `read_files` event info?
+	// Could make the `response` available.
 	returns: 'Readable<Readable<File>[]>',
 };
 
-export const events = [create_file, read_files, query_files];
+export const events: EventInfo[] = [create_file, read_files, query_files];
