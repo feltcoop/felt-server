@@ -22,7 +22,8 @@ test__eventsInfo('create and use eventsInfo', async ({server}) => {
 	for (const eventInfo of eventsInfo.values()) {
 		const account = await random.account();
 		const params = await randomEventParams(eventInfo, random, {account});
-		if (params && eventInfo.params.schema) {
+
+		if (eventInfo.params.schema) {
 			if (!validateSchema(eventInfo.params.schema)(params)) {
 				throw new Error(
 					`Failed to validate random params for service ${
@@ -30,10 +31,10 @@ test__eventsInfo('create and use eventsInfo', async ({server}) => {
 					}: ${toValidationErrorMessage(validateSchema(eventInfo.params.schema!).errors![0])}`,
 				);
 			}
-		} else {
-			// TODO hmm how to check undefined?
+		} else if (eventInfo.type === 'ServiceEvent' || eventInfo.type === 'RemoteEvent') {
+			throw Error(`Expected eventInfo to have a schema: ${eventInfo.name}`);
 		}
-		t.ok(eventInfo.type); // TODO dispatch
+
 		// const result = await dispatch(eventInfo, {server, params, account_id: account.account_id});
 		// if (!result.ok || !validateSchema(eventInfo.response.schema!)(result.value)) {
 		// 	console.error(red(`failed to validate service response: ${eventInfo.name}`), result);

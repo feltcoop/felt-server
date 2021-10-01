@@ -12,11 +12,21 @@ export const log_in: RemoteEventInfo = {
 	name: 'log_in',
 	params: {
 		type: log_in_params_type,
-		schema: null, // TODO refactor into a service
+		schema: {
+			$id: 'https://felt.social/vocab/log_in_params.json',
+			type: 'object',
+			properties: {
+				accountName: {type: 'string'},
+				password: {type: 'string'},
+			},
+			required: ['accountName', 'password'],
+		},
 	},
 	response: {
 		type: 'ApiResult<{session: ClientAccountSession}>',
-		schema: null, // TODO refactor into a service
+		schema: {
+			type: 'null',
+		},
 	},
 	returns: 'Promise<ApiResult<{session: ClientAccountSession}>>',
 	// TODO refactor into a service and add `route`
@@ -28,11 +38,13 @@ export const log_out: RemoteEventInfo = {
 	name: 'log_out',
 	params: {
 		type: 'void',
-		schema: null, // TODO refactor into a service
+		// TODO refactor into a service
+		schema: {},
 	},
 	response: {
 		type: log_out_response_type,
-		schema: null, // TODO refactor into a service
+		// TODO refactor into a service
+		schema: {},
 	},
 	returns: `Promise<${log_out_response_type}>`,
 	// TODO refactor into a service and add `route`

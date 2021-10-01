@@ -39,13 +39,14 @@ export interface RemoteEventInfo {
 	name: string; // `snake_cased`
 	params: {
 		type: string;
-		schema: AnySchema | null;
+		schema: AnySchema;
 	};
 	response: {
 		type: string;
-		schema: AnySchema | null;
+		schema: AnySchema;
 	};
 	returns: string;
+	// unlike services, these have no `route`
 }
 
 export const parseServiceEventInfo = (
