@@ -2,7 +2,6 @@ import {setContext, getContext} from 'svelte';
 import {randomItem} from '@feltcoop/felt/util/random.js';
 import type {Static} from '@sinclair/typebox';
 import type {Readable} from 'svelte/store';
-import {blue, gray} from '@feltcoop/felt/util/terminal.js';
 
 import type {MainNavView, Ui} from '$lib/ui/ui';
 import type {ClientAccountSession} from '$lib/session/clientSession';
@@ -99,7 +98,13 @@ export const toApi = (
 	const api: Api = {
 		// TODO could validate the params here, but for now we'll just let the server validate2
 		dispatch: (eventName, params) => {
-			console.log(gray('[dispatch:') + blue(eventName) + gray(']'), params ?? '');
+			console.log(
+				'%c[dispatch.%c' + eventName + '%c]',
+				'color: gray',
+				'color: blue',
+				'color: gray',
+				params,
+			);
 			const client = randomClient();
 			const ctx: DispatchContext = {
 				eventName,
