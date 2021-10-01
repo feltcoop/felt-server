@@ -12,6 +12,43 @@ import type {File} from '$lib/vocab/file/file';
 import type {DispatchContext} from '$lib/ui/api';
 import type {MainNavView} from '$lib/ui/ui';
 
+export interface EventsParams {
+	log_in: log_in_params_type;
+	log_out: log_out_params_type;
+	create_community: create_community_params_type;
+	read_community: read_community_params_type;
+	read_communities: read_communities_params_type;
+	create_persona: create_persona_params_type;
+	create_membership: create_membership_params_type;
+	create_space: create_space_params_type;
+	read_space: read_space_params_type;
+	read_spaces: read_spaces_params_type;
+	create_file: create_file_params_type;
+	read_files: read_files_params_type;
+	query_files: query_files_params_type;
+	toggle_main_nav: toggle_main_nav_params_type;
+	toggle_secondary_nav: toggle_secondary_nav_params_type;
+	set_main_nav_view: set_main_nav_view_params_type;
+	set_mobile: set_mobile_params_type;
+	select_persona: select_persona_params_type;
+	select_community: select_community_params_type;
+	select_space: select_space_params_type;
+}
+export interface EventsResponse {
+	log_in: log_in_response_type;
+	log_out: log_out_response_type;
+	create_community: create_community_response_type;
+	read_community: read_community_response_type;
+	read_communities: read_communities_response_type;
+	create_persona: create_persona_response_type;
+	create_membership: create_membership_response_type;
+	create_space: create_space_response_type;
+	read_space: read_space_response_type;
+	read_spaces: read_spaces_response_type;
+	create_file: create_file_response_type;
+	read_files: read_files_response_type;
+}
+
 export type log_in_params_type = {
 	accountName: string;
 	password: string;
@@ -91,43 +128,6 @@ export type select_persona_params_type = {persona_id: number};
 export type select_community_params_type = {community_id: number | null};
 
 export type select_space_params_type = {community_id: number; space_id: number};
-
-export interface EventsParams {
-	log_in: log_in_params_type;
-	log_out: log_out_params_type;
-	create_community: create_community_params_type;
-	read_community: read_community_params_type;
-	read_communities: read_communities_params_type;
-	create_persona: create_persona_params_type;
-	create_membership: create_membership_params_type;
-	create_space: create_space_params_type;
-	read_space: read_space_params_type;
-	read_spaces: read_spaces_params_type;
-	create_file: create_file_params_type;
-	read_files: read_files_params_type;
-	query_files: query_files_params_type;
-	toggle_main_nav: toggle_main_nav_params_type;
-	toggle_secondary_nav: toggle_secondary_nav_params_type;
-	set_main_nav_view: set_main_nav_view_params_type;
-	set_mobile: set_mobile_params_type;
-	select_persona: select_persona_params_type;
-	select_community: select_community_params_type;
-	select_space: select_space_params_type;
-}
-export interface EventsResponse {
-	log_in: log_in_response_type;
-	log_out: log_out_response_type;
-	create_community: create_community_response_type;
-	read_community: read_community_response_type;
-	read_communities: read_communities_response_type;
-	create_persona: create_persona_response_type;
-	create_membership: create_membership_response_type;
-	create_space: create_space_response_type;
-	read_space: read_space_response_type;
-	read_spaces: read_spaces_response_type;
-	create_file: create_file_response_type;
-	read_files: read_files_response_type;
-}
 
 export interface Dispatch {
 	(

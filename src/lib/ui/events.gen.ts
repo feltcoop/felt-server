@@ -26,20 +26,6 @@ import type {File} from '$lib/vocab/file/file';
 import type {DispatchContext} from '$lib/ui/api';
 import type {MainNavView} from '$lib/ui/ui';
 
-${eventsInfo.reduce(
-	(str, eventInfo) =>
-		str +
-		`
-export type ${eventInfo.name}_params_type = ${eventInfo.params.type};
-${
-	eventInfo.type === 'ClientEvent'
-		? ''
-		: `export type ${eventInfo.name}_response_type = ${eventInfo.response.type};`
-}
-`,
-	'',
-)}
-
 export interface EventsParams {
 	${eventsInfo.reduce(
 		(str, eventInfo) =>
@@ -62,6 +48,20 @@ ${eventInfo.name}: ${eventInfo.name}_response_type;
 		'',
 	)}
 }
+
+${eventsInfo.reduce(
+	(str, eventInfo) =>
+		str +
+		`
+export type ${eventInfo.name}_params_type = ${eventInfo.params.type};
+${
+	eventInfo.type === 'ClientEvent'
+		? ''
+		: `export type ${eventInfo.name}_response_type = ${eventInfo.response.type};`
+}
+`,
+	'',
+)}
 
 export interface Dispatch {
 	${eventsInfo.reduce(
