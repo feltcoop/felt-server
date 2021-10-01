@@ -44,7 +44,7 @@ test__eventsInfo('dispatch random eventInfo in a client app', async ({server, ap
 			continue;
 		}
 
-		// TODO fix typecase with a union for `eventInfo`
+		// TODO fix typecast with a union for `eventInfo`
 		const result = await app.api.dispatch(eventInfo.name as any, {
 			server,
 			params,
