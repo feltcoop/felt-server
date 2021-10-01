@@ -1,6 +1,4 @@
-import type {AnySchema} from 'ajv';
-
-import type {ServiceMethod} from '$lib/server/service';
+import type {EventData} from '$lib/vocab/event/event';
 
 // TODO consider this `.events.` pattern,
 // e.g. `$lib/vocab/community/community.events.ts`
@@ -9,23 +7,6 @@ import type {ServiceMethod} from '$lib/server/service';
 // maybe `gro gen` could automate some of the work for this usecase and similar
 // with configurable extension behavior.
 // (in this case, we want to aggregate all events across all `.events.` modules)
-
-interface EventData {
-	name: string;
-	params: {
-		type: string;
-		schema: AnySchema | null;
-	};
-	response: {
-		type: string;
-		schema: AnySchema | null;
-	};
-	returns: string;
-	route?: {
-		path: string;
-		method: ServiceMethod;
-	};
-}
 
 // TODO generate the type from the schema with json-schema-to-typescript
 const create_community_params_type = '{name: string; persona_id: number}';
