@@ -12,7 +12,7 @@ export const create_file: EventData = {
 	params: {
 		type: create_file_params_type,
 		schema: {
-			$id: 'create_file_response',
+			$id: 'create_file_params',
 			properties: {
 				actor_id: {type: 'number'},
 				space_id: {type: 'number'},
@@ -47,7 +47,7 @@ export const read_files: EventData = {
 	params: {
 		type: read_files_params_type,
 		schema: {
-			$id: 'read_files_response',
+			$id: 'read_files_params',
 			properties: {
 				space_id: {type: 'number'},
 			},

@@ -14,7 +14,7 @@ export const create_space: EventData = {
 	params: {
 		type: create_space_params_type,
 		schema: {
-			$id: 'create_space_response',
+			$id: 'create_space_params',
 			properties: {
 				community_id: {type: 'number'},
 				name: {type: 'string'},

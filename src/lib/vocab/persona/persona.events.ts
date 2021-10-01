@@ -8,7 +8,7 @@ export const create_persona: EventData = {
 	params: {
 		type: create_persona_params_type,
 		schema: {
-			$id: 'create_persona_response',
+			$id: 'create_persona_params',
 			properties: {
 				name: {type: 'string'},
 			},

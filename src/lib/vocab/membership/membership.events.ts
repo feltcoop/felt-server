@@ -8,7 +8,7 @@ export const create_membership: EventData = {
 	params: {
 		type: create_membership_params_type,
 		schema: {
-			$id: 'create_membership_response',
+			$id: 'create_membership_params',
 			properties: {
 				persona_id: {type: 'number'},
 				community_id: {type: 'number'},
