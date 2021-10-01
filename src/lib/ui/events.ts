@@ -13,6 +13,47 @@ import type {DispatchContext} from '$lib/ui/api';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {MainNavView} from './ui';
 
+// TODO generate this interface from data or define programmatically along with `UiHandlers`
+export interface Dispatch {
+	// TODO convert log_in and log_out to services
+	(eventName: 'log_in', params: LoginRequest): Promise<ApiResult<{session: ClientAccountSession}>>; // TODO
+	(eventName: 'log_out', params?: undefined): Promise<ApiResult<void>>; // TODO type?
+	(
+		eventName: 'create_community',
+		params: Static<typeof createCommunityService.paramsSchema>,
+	): Promise<ApiResult<Static<typeof createCommunityService.responseSchema>>>;
+	(eventName: 'create_persona', params: Static<typeof createPersonaService.paramsSchema>): Promise<
+		ApiResult<Static<typeof createPersonaService.responseSchema>>
+	>;
+	(
+		eventName: 'create_membership',
+		params: Static<typeof createMembershipService.paramsSchema>,
+	): Promise<ApiResult<Static<typeof createMembershipService.responseSchema>>>;
+	(eventName: 'create_space', params: Static<typeof createSpaceService.paramsSchema>): Promise<
+		ApiResult<Static<typeof createSpaceService.responseSchema>>
+	>;
+	(eventName: 'create_file', params: Static<typeof createFileService.paramsSchema>): Promise<
+		ApiResult<Static<typeof createFileService.responseSchema>>
+	>;
+	(eventName: 'read_files', params: Static<typeof readFilesService.paramsSchema>): Promise<
+		ApiResult<Static<typeof readFilesService.responseSchema>>
+	>;
+	// `query_files` differs from `read_files` in that
+	// it returns a reactive store containing the requested files.
+	// Its API could be expanded to give callers access to its async status or promise,
+	// maybe via a third `options` arg with callbacks.
+	(eventName: 'query_files', params: Static<typeof readFilesService.paramsSchema>): Readable<
+		Readable<File>[]
+	>;
+	(eventName: 'toggle_main_nav', params?: any): void;
+	(eventName: 'toggle_secondary_nav', params?: any): void;
+	(eventName: 'set_main_nav_view', params: MainNavView): void;
+	(eventName: 'set_mobile', params: boolean): void;
+	(eventName: 'select_persona', params: {persona_id: number}): void;
+	(eventName: 'select_community', params: {community_id: number | null}): void;
+	(eventName: 'select_space', params: {community_id: number; space_id: number | null}): void;
+}
+
 // TODO generate this interface from data or define programmatically along with `Dispatch`
 export interface UiHandlers {
 	// TODO `log_in` and `log_out` have no service or schema; they're custom endpoints right now,
@@ -70,45 +111,4 @@ export interface UiHandlers {
 	select_persona: (ctx: DispatchContext<{persona_id: number}>) => void;
 	select_community: (ctx: DispatchContext<{community_id: number | null}>) => void;
 	select_space: (ctx: DispatchContext<{community_id: number; space_id: number | null}>) => void;
-}
-
-// TODO generate this interface from data or define programmatically along with `UiHandlers`
-export interface Dispatch {
-	// TODO convert log_in and log_out to services
-	(eventName: 'log_in', params: LoginRequest): Promise<ApiResult<{session: ClientAccountSession}>>; // TODO
-	(eventName: 'log_out', params?: undefined): Promise<ApiResult<void>>; // TODO type?
-	(
-		eventName: 'create_community',
-		params: Static<typeof createCommunityService.paramsSchema>,
-	): Promise<ApiResult<Static<typeof createCommunityService.responseSchema>>>;
-	(eventName: 'create_persona', params: Static<typeof createPersonaService.paramsSchema>): Promise<
-		ApiResult<Static<typeof createPersonaService.responseSchema>>
-	>;
-	(
-		eventName: 'create_membership',
-		params: Static<typeof createMembershipService.paramsSchema>,
-	): Promise<ApiResult<Static<typeof createMembershipService.responseSchema>>>;
-	(eventName: 'create_space', params: Static<typeof createSpaceService.paramsSchema>): Promise<
-		ApiResult<Static<typeof createSpaceService.responseSchema>>
-	>;
-	(eventName: 'create_file', params: Static<typeof createFileService.paramsSchema>): Promise<
-		ApiResult<Static<typeof createFileService.responseSchema>>
-	>;
-	(eventName: 'read_files', params: Static<typeof readFilesService.paramsSchema>): Promise<
-		ApiResult<Static<typeof readFilesService.responseSchema>>
-	>;
-	// `query_files` differs from `read_files` in that
-	// it returns a reactive store containing the requested files.
-	// Its API could be expanded to give callers access to its async status or promise,
-	// maybe via a third `options` arg with callbacks.
-	(eventName: 'query_files', params: Static<typeof readFilesService.paramsSchema>): Readable<
-		Readable<File>[]
-	>;
-	(eventName: 'toggle_main_nav', params?: any): void;
-	(eventName: 'toggle_secondary_nav', params?: any): void;
-	(eventName: 'set_main_nav_view', params: MainNavView): void;
-	(eventName: 'set_mobile', params: boolean): void;
-	(eventName: 'select_persona', params: {persona_id: number}): void;
-	(eventName: 'select_community', params: {community_id: number | null}): void;
-	(eventName: 'select_space', params: {community_id: number; space_id: number | null}): void;
 }
