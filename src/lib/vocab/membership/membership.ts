@@ -13,17 +13,3 @@ export const MembershipSchema = {
 	},
 	required: ['persona_id', 'community_id'],
 };
-
-export interface MembershipParams {
-	persona_id: number;
-	community_id: number;
-}
-export const MembershipParamsSchema = {
-	$id: 'https://felt.social/vocab/MembershipParams.json',
-	additionalProperties: false,
-	properties: {
-		persona_id: {type: 'number'},
-		community_id: {type: 'number'},
-	},
-	required: ['persona_id', 'community_id'],
-};

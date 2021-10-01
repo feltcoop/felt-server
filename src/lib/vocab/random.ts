@@ -9,9 +9,9 @@ import type {
 	create_persona_params_type,
 	create_file_params_type,
 	create_space_params_type,
+	create_membership_params_type,
 } from '$lib/ui/events';
 import type {Database} from '$lib/db/Database';
-import type {MembershipParams} from '$lib/vocab/membership/membership';
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = () => Math.random().toString().slice(2);
@@ -32,7 +32,7 @@ export const randomPersonaParams = (): create_persona_params_type => ({
 export const randomMembershipParams = (
 	persona_id: number,
 	community_id: number,
-): MembershipParams => ({
+): create_membership_params_type => ({
 	persona_id,
 	community_id,
 });

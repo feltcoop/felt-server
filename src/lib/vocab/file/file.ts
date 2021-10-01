@@ -15,19 +15,3 @@ export const FileSchema = {
 	},
 	required: ['file_id', 'actor_id', 'space_id', 'content'],
 };
-
-export interface FileParams {
-	actor_id: number;
-	space_id: number;
-	content: string;
-}
-export const FileParamsSchema = {
-	$id: 'https://felt.social/vocab/FileParams.json',
-	additionalProperties: false,
-	properties: {
-		actor_id: {type: 'number'}, // `persona_id` -- must be validated against the authenticated `account_id`
-		space_id: {type: 'number'},
-		content: {type: 'ntring'},
-	},
-	required: ['actor_id', 'space_id', 'content'],
-};

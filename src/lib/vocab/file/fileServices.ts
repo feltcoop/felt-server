@@ -22,7 +22,6 @@ export const readFilesService: Service<read_files_params_type, read_files_respon
 	},
 };
 
-// TODO should this use the `FileParams` type?
 export const createFileService: Service<create_file_params_type, create_file_response_type> = {
 	event: create_file,
 	perform: async ({server, params}) => {
