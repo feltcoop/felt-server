@@ -3,8 +3,7 @@ import {red} from '@feltcoop/felt/util/terminal.js';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Service} from '$lib/server/service';
-import {toValidationErrorMessage} from '$lib/util/ajv';
-import {toValidateSchema} from '$lib/util/ajv';
+import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 
 // TODO use
 
@@ -50,7 +49,7 @@ export const toServiceMiddleware =
 
 			const params = {...reqBody, ...reqParams};
 
-			const validateParams = toValidateSchema(service.event.params.schema)();
+			const validateParams = validateSchema(service.event.params.schema);
 			if (!validateParams(params)) {
 				// TODO handle multiple errors instead of just the first
 				console.error('validation failed:', params, validateParams.errors);
@@ -71,7 +70,7 @@ export const toServiceMiddleware =
 				return;
 			}
 			if (process.env.NODE_ENV !== 'production') {
-				const validateResponse = toValidateSchema(service.event.response.schema)();
+				const validateResponse = validateSchema(service.event.response.schema);
 				if (!validateResponse(result.value)) {
 					console.error(red('validation failed:'), result, validateResponse.errors);
 				}

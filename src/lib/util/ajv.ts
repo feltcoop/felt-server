@@ -13,17 +13,16 @@ export interface CreateValidate<T = unknown> {
 
 const validators: Map<AnySchema, ValidateFunction> = new Map();
 
-// TODO improve this and `toValidateSchema` so they use the same cache
 // Memoizes the returned schema validation function in the module-level lookup `validators`.
+// Does not support multiple instantiations with different options.
 export const validateSchema = <T>(schema: AnySchema): ValidateFunction<T> => {
 	let validate = validators.get(schema) as ValidateFunction<T>;
 	if (!validate) {
-		validators.set(schema, (validate = toValidateSchema<T>(schema)()));
+		validators.set(schema, (validate = ajv().compile(schema)));
 	}
 	return validate;
 };
 
-// TODO try to fix this type, should use `Static`
 // Creates a lazily-compiled schema validation function to avoid wasteful compilation.
 // It's also faster than ajv's internal compiled schema cache
 // because we can assume a consistent environment.

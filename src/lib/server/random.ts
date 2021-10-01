@@ -14,7 +14,7 @@ export const randomServiceParams = async (
 	random: RandomVocabContext,
 	{account, persona, community, space}: RandomVocab,
 ): Promise<object> => {
-	switch (service.name) {
+	switch (service.event.name) {
 		case 'create_persona': {
 			return randomPersonaParams();
 		}
@@ -56,7 +56,7 @@ export const randomServiceParams = async (
 			return {space_id: space.space_id};
 		}
 		default: {
-			throw Error(`Unhandled service for randomServiceParams: ${service.name}`);
+			throw Error(`Unhandled service for randomServiceParams: ${service.event.name}`);
 		}
 	}
 };
