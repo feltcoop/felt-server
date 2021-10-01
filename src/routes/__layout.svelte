@@ -36,7 +36,7 @@
 		// that only reads this default value when the user has no override.
 		const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_WIDTH})`);
 		initialMobileValue = mediaQuery.matches;
-		mediaQuery.onchange = (e) => ui.setMobile(e.matches);
+		mediaQuery.onchange = (e) => dispatch('set_mobile', e.matches);
 	}
 
 	const devmode = setDevmode();
@@ -54,6 +54,7 @@
 	browser && console.log('app', app);
 	$: browser && console.log('$session', $session);
 
+	const {dispatch} = api;
 	const {
 		mobile,
 		account,
@@ -62,8 +63,6 @@
 		selectedCommunityId,
 		selectedSpaceIdByCommunity,
 		setSession,
-		selectCommunity,
-		selectSpace,
 	} = ui;
 
 	$: setSession($session);
@@ -81,7 +80,7 @@
 		const community = get(communityStore);
 		const {community_id} = community;
 		if (community_id !== $selectedCommunityId) {
-			selectCommunity(community_id);
+			dispatch('select_community', {community_id});
 		}
 		if (community_id) {
 			const spaceUrl = '/' + (params.space || '');
@@ -89,7 +88,7 @@
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = space;
 			if (space_id !== $selectedSpaceIdByCommunity[community_id]) {
-				selectSpace(community_id, space_id);
+				dispatch('select_space', {community_id, space_id});
 			}
 		} else {
 			// TODO what is this condition?

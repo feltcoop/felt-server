@@ -9,13 +9,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {
-			sessionPersonas,
-			selectedPersona,
-			selectedCommunity,
-			communitiesByPersonaId,
-			selectPersona,
-		},
+		ui: {sessionPersonas, selectedPersona, selectedCommunity, communitiesByPersonaId},
 	} = getApp();
 
 	// TODO improve the efficiency of this with better data structures and caching
@@ -36,7 +30,6 @@
 				{persona}
 				selected={persona === $selectedPersona &&
 					toPersonaCommunity(get(persona)) === $selectedCommunity}
-				{selectPersona}
 			/>
 			{#each $communitiesByPersonaId[get(persona).persona_id] as community (community)}
 				{#if get(community).name !== get(persona).name}
@@ -44,7 +37,6 @@
 						{community}
 						{persona}
 						selected={persona === $selectedPersona && community === $selectedCommunity}
-						{selectPersona}
 					/>
 				{/if}
 			{/each}

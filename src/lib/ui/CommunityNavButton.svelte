@@ -9,6 +9,7 @@
 	import {toUrl} from '$lib/vocab/persona/constants';
 
 	const {
+		api: {dispatch},
 		ui: {selectedSpaceIdByCommunity, findSpaceById},
 	} = getApp();
 
@@ -23,11 +24,6 @@
 	$: selectedCommunitySpace =
 		selectedCommunitySpaceId === null ? null : findSpaceById(selectedCommunitySpaceId);
 
-	// TODO this is causing a double state change (rendering an invalid in between state)
-	// because it's both navigating and setting state internally in the same user action
-	// TODO should this be an event?
-	export let selectPersona: (persona_id: number) => void;
-
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
 </script>
 
@@ -38,7 +34,7 @@
 	class:selected
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {randomHue($community.name)}"
-	on:click={() => selectPersona($persona.persona_id)}
+	on:click={() => dispatch('select_persona', {persona_id: $persona.persona_id})}
 >
 	<EntityIcon name={$community.name} type="Community" />
 </a>

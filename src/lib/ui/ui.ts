@@ -84,6 +84,10 @@ export interface UiHandlers {
 	toggle_main_nav: () => void;
 	toggle_secondary_nav: () => void;
 	set_main_nav_view: (ctx: DispatchContext<MainNavView>) => void;
+	set_mobile: (ctx: DispatchContext<boolean>) => void;
+	select_persona: (ctx: DispatchContext<{persona_id: number}>) => void;
+	select_community: (ctx: DispatchContext<{community_id: number | null}>) => void;
+	select_space: (ctx: DispatchContext<{community_id: number; space_id: number | null}>) => void;
 }
 
 export interface Ui extends UiHandlers {
@@ -118,14 +122,9 @@ export interface Ui extends UiHandlers {
 	selectedSpace: Readable<Readable<Space> | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	mobile: Readable<boolean>;
-	setMobile: (mobile: boolean) => void;
-	// view methods
-	selectPersona: (persona_id: number) => void;
-	selectCommunity: (community_id: number | null) => void;
-	selectSpace: (community_id: number, space_id: number | null) => void;
 }
 
-export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
+export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): Ui => {
 	const initialSession = get(session);
 
 	// TODO would it helpfully simplify things to put these stores on the actual store state?
@@ -180,7 +179,7 @@ export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
 	);
 	const memberships = writable<Membership[]>([]); // TODO should be on the session:  initialSession.guest ? [] : [],
 
-	const {subscribe: subscribeMobile, set: setMobile} = writable(mobile);
+	const mobile = writable(initialMobile);
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -251,8 +250,8 @@ export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const filesBySpace: Map<number, Writable<Writable<File>[]>> = new Map();
 
-	const expandMainNav = writable(!mobile);
-	const expandMarquee = writable(!mobile);
+	const expandMainNav = writable(!initialMobile);
+	const expandMarquee = writable(!initialMobile);
 	const mainNavView: Writable<MainNavView> = writable('explorer');
 
 	const addCommunity = (community: Community, persona_id: number): void => {
@@ -406,7 +405,7 @@ export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
 			);
 			mainNavView.set('explorer');
 		},
-		create_persona: async ({invoke}) => {
+		create_persona: async ({invoke, dispatch}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {persona, community} = result.value;
@@ -414,12 +413,12 @@ export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
 			const personaStore = writable(persona);
 			personas.update(($personas) => $personas.concat(personaStore));
 			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
-			ui.selectPersona(persona.persona_id);
+			dispatch('select_persona', {persona_id: persona.persona_id});
 			addCommunity(community as Community, persona.persona_id); // TODO fix type mismatch
-			ui.selectCommunity(community.community_id);
+			dispatch('select_community', {community_id: community.community_id});
 			return result;
 		},
-		create_community: async ({params, invoke}) => {
+		create_community: async ({params, invoke, dispatch}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {persona_id} = params;
@@ -427,7 +426,7 @@ export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
 			console.log('[ui.create_community]', community, persona_id);
 			// TODO how should `persona.community_ids` be modeled and kept up to date?
 			addCommunity(community, persona_id);
-			ui.selectCommunity(community.community_id);
+			dispatch('select_community', {community_id: community.community_id});
 			return result;
 		},
 		create_membership: async ({invoke}) => {
@@ -504,8 +503,7 @@ export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
 			return space;
 		},
 		// view state
-		mobile: {subscribe: subscribeMobile}, // don't expose the writable store
-		setMobile,
+		mobile,
 		expandMainNav,
 		expandMarquee,
 		mainNavView,
@@ -519,13 +517,17 @@ export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
 		selectedSpace,
 		communitiesByPersonaId,
 		// methods
-		selectPersona: (persona_id) => {
-			console.log('[ui.selectPersona] persona_id', {persona_id});
-			selectedPersonaId.set(persona_id);
+		set_mobile: ({params}) => {
+			mobile.set(params);
 		},
-		selectCommunity: (community_id) => {
-			console.log('[ui.selectCommunity] community_id', {community_id});
+		select_persona: ({params}) => {
+			console.log('[ui.select_persona] persona_id', params.persona_id);
+			selectedPersonaId.set(params.persona_id);
+		},
+		select_community: ({params}) => {
+			console.log('[ui.select_community] community_id', params.community_id);
 			const $selectedPersonaId = get(selectedPersonaId); // TODO how to remove the `!`?
+			const {community_id} = params;
 			if (community_id && $selectedPersonaId) {
 				selectedCommunityIdByPersona.update(($selectedCommunityIdByPersona) => ({
 					...$selectedCommunityIdByPersona,
@@ -533,8 +535,9 @@ export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
 				}));
 			}
 		},
-		selectSpace: (community_id, space_id) => {
-			console.log('[ui.selectSpace] community_id, space_id', {community_id, space_id});
+		select_space: ({params}) => {
+			console.log('[ui.select_space] community_id, space_id', params);
+			const {community_id, space_id} = params;
 			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => ({
 				...$selectedSpaceIdByCommunity,
 				[community_id]: space_id,

@@ -75,6 +75,10 @@ export interface Dispatch {
 	(eventName: 'toggle_main_nav', params?: any): void;
 	(eventName: 'toggle_secondary_nav', params?: any): void;
 	(eventName: 'set_main_nav_view', params: MainNavView): void;
+	(eventName: 'set_mobile', params: boolean): void;
+	(eventName: 'select_persona', params: {persona_id: number}): void;
+	(eventName: 'select_community', params: {community_id: number | null}): void;
+	(eventName: 'select_space', params: {community_id: number; space_id: number | null}): void;
 	// TODO declare this with function overloading instead of this interface
 	// fallback to any
 	// (eventName: string, params?: any): void | Promise<ApiResult<any>>;
@@ -95,7 +99,7 @@ export const toApi = (
 	const api: Api = {
 		// TODO could validate the params here, but for now we'll just let the server validate2
 		dispatch: (eventName, params) => {
-			console.log(gray('[dispatch] ') + blue(eventName), params ?? '');
+			console.log(gray('[dispatch:') + blue(eventName) + gray(']'), params ?? '');
 			const client = randomClient();
 			const ctx: DispatchContext = {
 				eventName,
