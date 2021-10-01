@@ -15,20 +15,20 @@ const validators: Map<AnySchema, ValidateFunction> = new Map();
 
 // Memoizes the returned schema validation function in the module-level lookup `validators`.
 // Does not support multiple instantiations with different options.
-export const validateSchema = <T>(schema: AnySchema): ValidateFunction<T> => {
-	let validate = validators.get(schema) as ValidateFunction<T>;
-	if (!validate) {
-		validators.set(schema, (validate = ajv().compile(schema)));
-	}
-	return validate;
-};
+export const validateSchema = <T>(schema: AnySchema): ValidateFunction<T> =>
+	toValidateSchema<T>(schema)();
 
 // Creates a lazily-compiled schema validation function to avoid wasteful compilation.
 // It's also faster than ajv's internal compiled schema cache
 // because we can assume a consistent environment.
 export const toValidateSchema = <T>(schema: AnySchema): CreateValidate<T> => {
-	let validate: ValidateFunction<T>;
-	return () => validate || (validate = ajv().compile(schema));
+	let validate = validators.get(schema) as ValidateFunction<T> | undefined;
+	return () => {
+		if (validate) return validate;
+		validate = ajv().compile(schema);
+		validators.set(schema, validate);
+		return validate;
+	};
 };
 
 // TODO probably misses a bunch of cases
