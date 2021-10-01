@@ -3,31 +3,6 @@ import type {EventData} from '$lib/vocab/event/event';
 // TODO keep extracting these events to other events files
 // (which are then imported in $lib/ui/events.gen.ts)
 export const events: EventData[] = [
-	// TODO convert `log_in` and `log_out` to services
-	{
-		name: 'log_in',
-		params: {
-			type: 'LoginRequest',
-			schema: null,
-		},
-		response: {
-			type: 'ApiResult<{session: ClientAccountSession}>',
-			schema: null,
-		},
-		returns: 'Promise<ApiResult<{session: ClientAccountSession}>>',
-	},
-	{
-		name: 'log_out',
-		params: {
-			type: 'void',
-			schema: null,
-		},
-		response: {
-			type: 'ApiResult<void>',
-			schema: null,
-		},
-		returns: 'Promise<ApiResult<void>>',
-	},
 	{
 		name: 'toggle_main_nav',
 		params: {

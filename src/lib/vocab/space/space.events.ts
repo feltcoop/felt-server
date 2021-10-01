@@ -1,5 +1,6 @@
 import type {EventData} from '$lib/vocab/event/event';
 
+// TODO generate the type from the schema with json-schema-to-typescript
 const create_space_params_type = `{
 	community_id: number;
 	name: string;

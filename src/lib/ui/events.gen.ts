@@ -2,6 +2,7 @@ import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
 
 import {events as other_events} from '$lib/ui/eventsData';
+import {events as session_events} from '$lib/session/session.events';
 import {events as community_events} from '$lib/vocab/community/community.events';
 import {events as persona_events} from '$lib/vocab/persona/persona.events';
 import {events as membership_events} from '$lib/vocab/membership/membership.events';
@@ -9,12 +10,13 @@ import {events as space_events} from '$lib/vocab/space/space.events';
 import {events as file_events} from '$lib/vocab/file/file.events';
 import type {EventData} from '$lib/vocab/event/event';
 
-const events: EventData[] = other_events.concat(
+const events: EventData[] = session_events.concat(
 	community_events,
 	persona_events,
 	membership_events,
 	space_events,
 	file_events,
+	other_events,
 );
 
 // Outputs a file with services metadata that can be imported from the client.
@@ -38,7 +40,6 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import type {Space} from '$lib/vocab/space/space';
 import type {File} from '$lib/vocab/file/file';
 import type {DispatchContext} from '$lib/ui/api';
-import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {MainNavView} from './ui';
 
 export interface Dispatch {
