@@ -76,8 +76,6 @@ export interface RandomVocabContext {
 // TODO generate from schema
 export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 	const random: RandomVocabContext = {
-		// TODO these aren't being used yet, storing context so there's more control
-		// over what gets regenerated versus reused. Can write tests more easily for example.
 		accounts: [],
 		personas: [],
 		communities: [],

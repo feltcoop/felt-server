@@ -10,6 +10,9 @@ import {
 } from '$lib/vocab/random';
 import {randomPersonaParams, randomCommunityParams, randomSpaceParams} from '$lib/vocab/random';
 
+// TODO consider the pattern below where every `create` event creates all dependencies from scratch.
+// We may want to instead test things for both new and existing objects.
+// TODO refactor to make it more ergnomic to read from the cache
 // TODO type should return the params associated with the event name
 // TODO maybe move to `src/lib/util`
 // TODO keep factoring this until it's fully automated, generating from the schema
@@ -33,7 +36,9 @@ export const randomEventParams = async (
 			return randomCommunityParams(persona.persona_id);
 		}
 		case 'read_community': {
-			if (!community) community = await random.community(persona, account);
+			if (!community) {
+				community = randomItem(random.communities) || (await random.community(persona, account));
+			}
 			return {community_id: community.community_id};
 		}
 		case 'read_communities': {
@@ -52,11 +57,15 @@ export const randomEventParams = async (
 			return randomSpaceParams(community.community_id);
 		}
 		case 'read_space': {
-			if (!space) space = await random.space(persona, account, community);
+			if (!space) {
+				space = randomItem(random.spaces) || (await random.space(persona, account, community));
+			}
 			return {space_id: space.space_id};
 		}
 		case 'read_spaces': {
-			if (!community) community = await random.community(persona, account);
+			if (!community) {
+				community = randomItem(random.communities) || (await random.community(persona, account));
+			}
 			return {community_id: community.community_id};
 		}
 		case 'create_file': {
@@ -65,11 +74,16 @@ export const randomEventParams = async (
 			return randomFileParams(persona.persona_id, space.space_id);
 		}
 		case 'read_files': {
-			if (!space) space = await random.space(persona, account, community);
+			if (!space) {
+				space = randomItem(random.spaces) || (await random.space(persona, account, community));
+			}
 			return {space_id: space.space_id};
 		}
 		case 'query_files': {
-			return {space_id: (await random.space(persona, account, community)).space_id};
+			return {
+				space_id: (randomItem(random.spaces) || (await random.space(persona, account, community)))
+					.space_id,
+			};
 		}
 		// TODO instead of randomizing, use existing ones from the arrays?
 		// what's the best way to do that?
@@ -86,21 +100,27 @@ export const randomEventParams = async (
 			return randomBool();
 		}
 		case 'select_persona': {
-			return {persona_id: (await random.persona(account)).persona_id};
+			return {
+				persona_id: (randomItem(random.personas) || (await random.persona(account))).persona_id,
+			};
 		}
 		case 'select_community': {
 			return {
 				// TODO refactor
 				community_id: await randomItem([
-					async () => (await random.community(persona, account)).community_id,
+					async () =>
+						(randomItem(random.communities) || (await random.community(persona, account)))
+							.community_id,
 					() => null,
 				])(),
 			};
 		}
 		case 'select_space': {
 			return {
-				community_id: (await random.community(persona, account)).community_id,
-				space_id: (await random.space(persona, account, community)).space_id,
+				community_id: (randomItem(random.communities) || (await random.community(persona, account)))
+					.community_id,
+				space_id: (randomItem(random.spaces) || (await random.space(persona, account, community)))
+					.space_id,
 			};
 		}
 		// TODO could do an exhaustive typecheck (so it'll be caught by TS, not at runtime)

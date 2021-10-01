@@ -1,5 +1,5 @@
 import {suite} from 'uvu';
-import * as t from 'uvu/assert';
+// import * as t from 'uvu/assert';
 // import {red} from '@feltcoop/felt/util/terminal.js';
 
 import type {TestServerContext} from '$lib/util/testHelpers';

@@ -29,7 +29,7 @@ export const spaceRepo = (db: Database) => ({
 		const data = await db.sql<Space[]>`
       SELECT s.space_id, s.name, s.url, s.media_type, s.content FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id= ${community_id}
     `;
-		console.log('[db] spaces data', data);
+		// console.log('[db] spaces data', data);
 		return {ok: true, value: data};
 	},
 	findByCommunityUrl: async (
