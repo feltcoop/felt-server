@@ -1,12 +1,11 @@
 import Ajv, {_} from 'ajv';
 import type {ErrorObject, ValidateFunction, AnySchema} from 'ajv';
 
-// TODO make this a lazily-created getter, so merely importing `ajv`
-export const ajv = new Ajv();
-// These are needed so the schemas created by `@sinclair/typebox` don't error --
-// adding them like this easier than using `Strict`.
+let ajvInstance: Ajv | null = null;
+
+// TODO maybe accept options, and store `ajv` references by each?
+export const ajv = () => ajvInstance || (ajvInstance = new Ajv());
 // .addKeyword('kind')
-// .addKeyword('modifier');
 
 export interface CreateValidate<T = unknown> {
 	(): ValidateFunction<T>;
@@ -30,7 +29,7 @@ export const validateSchema = <T>(schema: AnySchema): ValidateFunction<T> => {
 // because we can assume a consistent environment.
 export const toValidateSchema = <T>(schema: AnySchema): CreateValidate<T> => {
 	let validate: ValidateFunction<T>;
-	return () => validate || (validate = ajv.compile(schema));
+	return () => validate || (validate = ajv().compile(schema));
 };
 
 // TODO probably misses a bunch of cases
