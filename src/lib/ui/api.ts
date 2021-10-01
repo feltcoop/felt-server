@@ -103,7 +103,7 @@ export const toApi = (
 				'color: gray',
 				'color: blue',
 				'color: gray',
-				params,
+				params === undefined ? '' : params, // print null but not undefined
 			);
 			const client = randomClient();
 			const ctx: DispatchContext = {
