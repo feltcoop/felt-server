@@ -8,7 +8,7 @@ export const MembershipSchema = Type.Object(
 		community_id: Type.Number(),
 		name: Type.Optional(Type.String()), // TODO delete this, is returned in one query but that's now obsolete
 	},
-	{$id: 'Membership', additionalProperties: false},
+	{$id: 'https://felt.social/vocab/Membership.json', additionalProperties: false},
 );
 
 export interface MembershipParams extends Static<typeof MembershipParamsSchema> {}
@@ -17,5 +17,5 @@ export const MembershipParamsSchema = Type.Object(
 		persona_id: Type.Number(),
 		community_id: Type.Number(),
 	},
-	{$id: 'MembershipParams', additionalProperties: false},
+	{$id: 'https://felt.social/vocab/MembershipParams.json', additionalProperties: false},
 );

@@ -8,7 +8,7 @@ export const create_membership: EventInfo = {
 	params: {
 		type: create_membership_params_type,
 		schema: {
-			$id: 'create_membership_params',
+			$id: 'https://felt.social/vocab/create_membership_params.json',
 			properties: {
 				persona_id: {type: 'number'},
 				community_id: {type: 'number'},
@@ -20,7 +20,7 @@ export const create_membership: EventInfo = {
 	response: {
 		type: `ApiResult<${create_membership_response_type}>`,
 		schema: {
-			$id: 'create_membership_response',
+			$id: 'https://felt.social/vocab/create_membership_response.json',
 			properties: {
 				membership: {$ref: '#/$defs/membership'},
 			},

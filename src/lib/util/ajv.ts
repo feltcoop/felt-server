@@ -1,10 +1,22 @@
-import Ajv, {_} from 'ajv';
+import Ajv from 'ajv';
 import type {ErrorObject, ValidateFunction, AnySchema} from 'ajv';
+
+import {AccountSchema} from '$lib/vocab/account/account';
+
+// TODO generate these?
+const schemas = [AccountSchema];
 
 let ajvInstance: Ajv | null = null;
 
 // TODO maybe accept options, and store `ajv` references by each?
-export const ajv = () => ajvInstance || (ajvInstance = new Ajv());
+export const ajv = (): Ajv => {
+	if (ajvInstance) return ajvInstance;
+	ajvInstance = new Ajv();
+	for (const schema of schemas) {
+		ajvInstance.addSchema(schema);
+	}
+	return ajvInstance;
+};
 // .addKeyword('kind')
 
 export interface CreateValidate<T = unknown> {

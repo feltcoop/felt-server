@@ -14,7 +14,7 @@ export const create_space: EventInfo = {
 	params: {
 		type: create_space_params_type,
 		schema: {
-			$id: 'create_space_params',
+			$id: 'https://felt.social/vocab/create_space_params.json',
 			properties: {
 				community_id: {type: 'number'},
 				name: {type: 'string'},
@@ -29,7 +29,7 @@ export const create_space: EventInfo = {
 	response: {
 		type: `ApiResult<${create_space_response_type}>`,
 		schema: {
-			$id: 'create_space_response',
+			$id: 'https://felt.social/vocab/create_space_response.json',
 			properties: {
 				space: {$ref: '#/$defs/space'},
 			},
@@ -53,7 +53,7 @@ export const read_space: EventInfo = {
 	params: {
 		type: read_space_params_type,
 		schema: {
-			$id: 'read_space_params',
+			$id: 'https://felt.social/vocab/read_space_params.json',
 			properties: {
 				space_id: {type: 'number'},
 			},
@@ -64,7 +64,7 @@ export const read_space: EventInfo = {
 	response: {
 		type: `ApiResult<${read_space_response_type}>`,
 		schema: {
-			$id: 'read_space_response',
+			$id: 'https://felt.social/vocab/read_space_response.json',
 			properties: {
 				space: {$ref: '#/$defs/space'},
 			},
@@ -88,7 +88,7 @@ export const read_spaces: EventInfo = {
 	params: {
 		type: read_spaces_params_type,
 		schema: {
-			$id: 'read_spaces_params',
+			$id: 'https://felt.social/vocab/read_spaces_params.json',
 			properties: {
 				community_id: {type: 'number'},
 			},
@@ -99,7 +99,7 @@ export const read_spaces: EventInfo = {
 	response: {
 		type: `ApiResult<${read_spaces_response_type}>`,
 		schema: {
-			$id: 'read_spaces_response',
+			$id: 'https://felt.social/vocab/read_spaces_response.json',
 			properties: {
 				spaces: {type: 'array', items: {$ref: '#/$defs/space'}},
 			},

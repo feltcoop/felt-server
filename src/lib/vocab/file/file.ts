@@ -1,8 +1,6 @@
 import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
 
-import {toValidateSchema} from '$lib/util/ajv';
-
 export interface File extends Static<typeof FileSchema> {}
 export const FileSchema = Type.Object(
 	{
@@ -11,9 +9,8 @@ export const FileSchema = Type.Object(
 		space_id: Type.Number(),
 		content: Type.String(),
 	},
-	{$id: 'File', additionalProperties: false},
+	{$id: 'https://felt.social/vocab/File.json', additionalProperties: false},
 );
-export const validateFile = toValidateSchema<File>(FileSchema);
 
 export interface FileParams extends Static<typeof FileParamsSchema> {}
 export const FileParamsSchema = Type.Object(
@@ -22,6 +19,5 @@ export const FileParamsSchema = Type.Object(
 		space_id: Type.Number(),
 		content: Type.String(),
 	},
-	{$id: 'FileParams', additionalProperties: false},
+	{$id: 'https://felt.social/vocab/FileParams.json', additionalProperties: false},
 );
-export const validateFileParams = toValidateSchema<FileParams>(FileParamsSchema);

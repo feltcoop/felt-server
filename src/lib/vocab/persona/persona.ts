@@ -1,8 +1,6 @@
 import {Type} from '@sinclair/typebox';
 import type {Static} from '@sinclair/typebox';
 
-import {toValidateSchema} from '$lib/util/ajv';
-
 export interface Persona extends Static<typeof PersonaSchema> {}
 export const PersonaSchema = Type.Object(
 	{
@@ -12,18 +10,16 @@ export const PersonaSchema = Type.Object(
 		icon: Type.Optional(Type.String()),
 		community_ids: Type.Array(Type.Number()),
 	},
-	{$id: 'Persona', additionalProperties: false},
+	{$id: 'https://felt.social/vocab/Persona.json', additionalProperties: false},
 );
-export const validatePersona = toValidateSchema<Persona>(PersonaSchema);
 
 export interface PersonaParams extends Static<typeof PersonaParamsSchema> {}
 export const PersonaParamsSchema = Type.Object(
 	{
 		name: Type.String(),
 	},
-	{$id: 'PersonaParams', additionalProperties: false},
+	{$id: 'https://felt.social/vocab/PersonaParams.json', additionalProperties: false},
 );
-export const validatePersonaParams = toValidateSchema<PersonaParams>(PersonaParamsSchema);
 
 //TODO
 //2.5: Render active persona

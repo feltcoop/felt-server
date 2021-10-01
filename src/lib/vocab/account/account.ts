@@ -1,12 +1,10 @@
-import {toValidateSchema} from '$lib/util/ajv';
-
 export interface Account {
 	account_id: number;
 	name: string;
 	password: string;
 }
 export const AccountSchema = {
-	$id: 'Account',
+	$id: 'https://felt.social/vocab/Account.json',
 	properties: {
 		account_id: {type: 'number'},
 		name: {type: 'string'},
@@ -15,14 +13,13 @@ export const AccountSchema = {
 	required: ['account_id', 'name', 'password'],
 	additionalProperties: false,
 };
-export const validateAccount = toValidateSchema<Account>(AccountSchema);
 
 export interface AccountParams {
 	name: string;
 	password: string;
 }
 export const AccountParamsSchema = {
-	$id: 'Account',
+	$id: 'https://felt.social/vocab/Account.json',
 	properties: {
 		name: {type: 'string'},
 		password: {type: 'string'},
@@ -30,7 +27,6 @@ export const AccountParamsSchema = {
 	required: ['name', 'password'],
 	additionalProperties: false,
 };
-export const validateAccountParams = toValidateSchema<AccountParams>(AccountParamsSchema);
 
 // TODO rename? `AccountClientDoc`? above could be `AccountDbDoc` and `AccountRequestDoc`
 export interface AccountModel {
