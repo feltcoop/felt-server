@@ -25,6 +25,76 @@ interface EventData {
 	};
 }
 
+// TODO generate the type from the schema with json-schema-to-typescript
+const create_community_params_type = '{name: string; persona_id: number}';
+const create_community_response_type = '{community: Community}'; // TODO declrs?
+const create_community: EventData = {
+	name: 'create_community',
+	params: {
+		type: create_community_params_type,
+		schema: {
+			$id: 'create_community_params',
+			properties: {
+				name: {type: 'string'},
+				persona_id: {type: 'number'},
+			},
+			required: ['name', 'persona_id'],
+			additionalProperties: false,
+		},
+	},
+	response: {
+		type: `ApiResult<${create_community_response_type}>`,
+		schema: {
+			$id: 'create_community_response',
+			properties: {
+				community: {$ref: '#/$defs/community'},
+			},
+			required: ['community'],
+			additionalProperties: false,
+		},
+	},
+	returns: `Promise<ApiResult<${create_community_response_type}>>`,
+	route: {
+		path: '/api/v1/communities',
+		method: 'POST',
+		// TODO does `response` belong with the other `route` properties?
+	},
+};
+
+const create_persona_params_type = '{name: string}';
+const create_persona_response_type = '{persona: Persona; community: Community}';
+const create_persona: EventData = {
+	name: 'create_persona',
+	params: {
+		type: create_persona_params_type,
+		schema: {
+			$id: 'create_persona_response',
+			properties: {
+				name: {type: 'string'},
+			},
+			required: ['name'],
+			additionalProperties: false,
+		},
+	},
+	response: {
+		type: create_persona_response_type,
+		schema: {
+			$id: 'create_persona_response',
+			properties: {
+				persona: {$ref: '#/$defs/persona'},
+				community: {$ref: '#/$defs/community'},
+			},
+			required: ['persona', 'community'],
+			additionalProperties: false,
+		},
+	},
+	returns: `Promise<ApiResult<${create_persona_response_type}>>`,
+	route: {
+		path: '/api/v1/personas',
+		method: 'POST',
+	},
+};
+
 export const events: EventData[] = [
 	{
 		name: 'log_in',
@@ -50,50 +120,8 @@ export const events: EventData[] = [
 		},
 		returns: 'Promise<ApiResult<void>>',
 	},
-	{
-		name: 'create_community',
-		params: {
-			type: 'Static<typeof createCommunityService.paramsSchema>',
-			schema: {
-				$id: 'create_community_params',
-				properties: {
-					name: 'string',
-					persona_id: 'number',
-				},
-				required: ['name', 'persona_id'],
-				additionalProperties: false,
-			},
-		},
-		response: {
-			type: 'ApiResult<Static<typeof createCommunityService.responseSchema>>',
-			schema: {
-				$id: 'create_community_params',
-				properties: {
-					community: {$ref: '#/$defs/community'},
-				},
-				required: ['community'],
-				additionalProperties: false,
-			},
-		},
-		returns: 'Promise<ApiResult<Static<typeof createCommunityService.responseSchema>>>',
-		route: {
-			path: '/api/v1/communities',
-			method: 'POST',
-			// TODO does `response` belong with the other `route` properties?
-		},
-	},
-	{
-		name: 'create_persona',
-		params: {
-			type: 'Static<typeof createPersonaService.paramsSchema>',
-			schema: null,
-		},
-		response: {
-			type: 'ApiResult<Static<typeof createPersonaService.responseSchema>>',
-			schema: null,
-		},
-		returns: 'Promise<ApiResult<Static<typeof createPersonaService.responseSchema>>>',
-	},
+	create_community,
+	create_persona,
 	{
 		name: 'create_membership',
 		params: {
