@@ -48,7 +48,7 @@ export interface UiHandlers {
 			str +
 			`
       ${eventData.name}: (
-        ctx: DispatchContext<${eventData.params}, ${eventData.result}>,
+        ctx: DispatchContext<${eventData.params}, ${eventData.response}>,
       ) => ${eventData.returns};`,
 		'',
 	)}
