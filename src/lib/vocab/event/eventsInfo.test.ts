@@ -21,14 +21,17 @@ test__eventsInfo('create and use eventsInfo', async ({server}) => {
 
 	for (const eventInfo of eventsInfo.values()) {
 		const account = await random.account();
-		// TGODO
 		const params = await randomEventParams(eventInfo, random, {account});
-		if (!validateSchema(eventInfo.params.schema!)(params)) {
-			throw new Error(
-				`Failed to validate random params for service ${eventInfo.name}: ${toValidationErrorMessage(
-					validateSchema(eventInfo.params.schema!).errors![0],
-				)}`,
-			);
+		if (params && eventInfo.params.schema) {
+			if (!validateSchema(eventInfo.params.schema)(params)) {
+				throw new Error(
+					`Failed to validate random params for service ${
+						eventInfo.name
+					}: ${toValidationErrorMessage(validateSchema(eventInfo.params.schema!).errors![0])}`,
+				);
+			}
+		} else {
+			// TODO hmm how to check undefined?
 		}
 		t.ok(eventInfo.type); // TODO dispatch
 		// const result = await dispatch(eventInfo, {server, params, account_id: account.account_id});
