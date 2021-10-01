@@ -4,13 +4,12 @@ import type {Readable} from 'svelte/store';
 import type {Static} from '@sinclair/typebox';
 
 import type {ClientAccountSession} from '$lib/session/clientSession';
-import type {File} from '$lib/vocab/file/file';
 import type {ApiResult} from '$lib/server/api';
-import type {createCommunityService} from '$lib/vocab/community/communityServices';
-import type {createPersonaService} from '$lib/vocab/persona/personaServices';
-import type {createMembershipService} from '$lib/vocab/community/communityServices';
-import type {createSpaceService} from '$lib/vocab/space/spaceServices';
-import type {createFileService, readFilesService} from '$lib/vocab/file/fileServices';
+import type {Community} from '$lib/vocab/community/community';
+import type {Persona} from '$lib/vocab/persona/persona';
+import type {Membership} from '$lib/vocab/membership/membership';
+import type {Space} from '$lib/vocab/space/space';
+import type {File} from '$lib/vocab/file/file';
 import type {DispatchContext} from '$lib/ui/api';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {MainNavView} from './ui';
@@ -18,26 +17,34 @@ import type {MainNavView} from './ui';
 export interface Dispatch {
 	(eventName: 'log_in', params: LoginRequest): Promise<ApiResult<{session: ClientAccountSession}>>;
 	(eventName: 'log_out', params: void): Promise<ApiResult<void>>;
-	(
-		eventName: 'create_community',
-		params: Static<typeof createCommunityService.paramsSchema>,
-	): Promise<ApiResult<Static<typeof createCommunityService.responseSchema>>>;
-	(eventName: 'create_persona', params: Static<typeof createPersonaService.paramsSchema>): Promise<
-		ApiResult<Static<typeof createPersonaService.responseSchema>>
+	(eventName: 'create_community', params: {name: string; persona_id: number}): Promise<
+		ApiResult<{community: Community}>
+	>;
+	(eventName: 'create_persona', params: {name: string}): Promise<
+		ApiResult<{persona: Persona; community: Community}>
+	>;
+	(eventName: 'create_membership', params: {persona_id: number; community_id: number}): Promise<
+		ApiResult<{membership: Membership}>
 	>;
 	(
-		eventName: 'create_membership',
-		params: Static<typeof createMembershipService.paramsSchema>,
-	): Promise<ApiResult<Static<typeof createMembershipService.responseSchema>>>;
-	(eventName: 'create_space', params: Static<typeof createSpaceService.paramsSchema>): Promise<
-		ApiResult<Static<typeof createSpaceService.responseSchema>>
-	>;
-	(eventName: 'create_file', params: Static<typeof createFileService.paramsSchema>): Promise<
-		ApiResult<Static<typeof createFileService.responseSchema>>
-	>;
-	(eventName: 'read_files', params: Static<typeof readFilesService.paramsSchema>): Promise<
-		ApiResult<Static<typeof readFilesService.responseSchema>>
-	>;
+		eventName: 'create_space',
+		params: {
+			community_id: number;
+			name: string;
+			url: string;
+			media_type: string;
+			content: string;
+		},
+	): Promise<ApiResult<{space: Space}>>;
+	(
+		eventName: 'create_file',
+		params: {
+			actor_id: number;
+			space_id: number;
+			content: string;
+		},
+	): Promise<ApiResult<{file: File}>>;
+	(eventName: 'read_files', params: {space_id: number}): Promise<ApiResult<{files: File[]}>>;
 	(eventName: 'query_files', params: Static<typeof readFilesService.paramsSchema>): Readable<
 		Readable<File>[]
 	>;
@@ -56,41 +63,42 @@ export interface UiHandlers {
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	log_out: (ctx: DispatchContext<void, ApiResult<void>>) => Promise<ApiResult<void>>;
 	create_community: (
-		ctx: DispatchContext<
-			Static<typeof createCommunityService.paramsSchema>,
-			ApiResult<Static<typeof createCommunityService.responseSchema>>
-		>,
-	) => Promise<ApiResult<Static<typeof createCommunityService.responseSchema>>>;
+		ctx: DispatchContext<{name: string; persona_id: number}, ApiResult<{community: Community}>>,
+	) => Promise<ApiResult<{community: Community}>>;
 	create_persona: (
-		ctx: DispatchContext<
-			Static<typeof createPersonaService.paramsSchema>,
-			ApiResult<Static<typeof createPersonaService.responseSchema>>
-		>,
-	) => Promise<ApiResult<Static<typeof createPersonaService.responseSchema>>>;
+		ctx: DispatchContext<{name: string}, ApiResult<{persona: Persona; community: Community}>>,
+	) => Promise<ApiResult<{persona: Persona; community: Community}>>;
 	create_membership: (
 		ctx: DispatchContext<
-			Static<typeof createMembershipService.paramsSchema>,
-			ApiResult<Static<typeof createMembershipService.responseSchema>>
+			{persona_id: number; community_id: number},
+			ApiResult<{membership: Membership}>
 		>,
-	) => Promise<ApiResult<Static<typeof createMembershipService.responseSchema>>>;
+	) => Promise<ApiResult<{membership: Membership}>>;
 	create_space: (
 		ctx: DispatchContext<
-			Static<typeof createSpaceService.paramsSchema>,
-			ApiResult<Static<typeof createSpaceService.responseSchema>>
+			{
+				community_id: number;
+				name: string;
+				url: string;
+				media_type: string;
+				content: string;
+			},
+			ApiResult<{space: Space}>
 		>,
-	) => Promise<ApiResult<Static<typeof createSpaceService.responseSchema>>>;
+	) => Promise<ApiResult<{space: Space}>>;
 	create_file: (
 		ctx: DispatchContext<
-			Static<typeof createFileService.paramsSchema>,
-			ApiResult<Static<typeof createFileService.responseSchema>>
+			{
+				actor_id: number;
+				space_id: number;
+				content: string;
+			},
+			ApiResult<{file: File}>
 		>,
-	) => Promise<ApiResult<Static<typeof createFileService.responseSchema>>>;
+	) => Promise<ApiResult<{file: File}>>;
 	read_files: (
-		ctx: DispatchContext<
-			Static<typeof readFilesService.paramsSchema>,
-			ApiResult<Static<typeof readFilesService.responseSchema>>
-		>,
-	) => Promise<ApiResult<Static<typeof readFilesService.responseSchema>>>;
+		ctx: DispatchContext<{space_id: number}, ApiResult<{files: File[]}>>,
+	) => Promise<ApiResult<{files: File[]}>>;
 	query_files: (
 		ctx: DispatchContext<Static<typeof readFilesService.paramsSchema>, void>,
 	) => Readable<Readable<File>[]>;

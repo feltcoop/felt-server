@@ -18,13 +18,12 @@ import type {Readable} from 'svelte/store';
 import type {Static} from '@sinclair/typebox';
 
 import type {ClientAccountSession} from '$lib/session/clientSession';
-import type {File} from '$lib/vocab/file/file';
 import type {ApiResult} from '$lib/server/api';
-import type {createCommunityService} from '$lib/vocab/community/communityServices';
-import type {createPersonaService} from '$lib/vocab/persona/personaServices';
-import type {createMembershipService} from '$lib/vocab/community/communityServices';
-import type {createSpaceService} from '$lib/vocab/space/spaceServices';
-import type {createFileService, readFilesService} from '$lib/vocab/file/fileServices';
+import type {Community} from '$lib/vocab/community/community';
+import type {Persona} from '$lib/vocab/persona/persona';
+import type {Membership} from '$lib/vocab/membership/membership';
+import type {Space} from '$lib/vocab/space/space';
+import type {File} from '$lib/vocab/file/file';
 import type {DispatchContext} from '$lib/ui/api';
 import type {LoginRequest} from '$lib/session/loginMiddleware.js';
 import type {MainNavView} from './ui';

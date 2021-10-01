@@ -78,7 +78,7 @@ const create_persona: EventData = {
 		},
 	},
 	response: {
-		type: create_persona_response_type,
+		type: `ApiResult<${create_persona_response_type}>`,
 		schema: {
 			$id: 'create_persona_response',
 			properties: {
@@ -113,7 +113,7 @@ const create_membership: EventData = {
 		},
 	},
 	response: {
-		type: create_membership_response_type,
+		type: `ApiResult<${create_membership_response_type}>`,
 		schema: {
 			$id: 'create_membership_response',
 			properties: {
@@ -156,7 +156,7 @@ const create_space: EventData = {
 		},
 	},
 	response: {
-		type: create_space_response_type,
+		type: `ApiResult<${create_space_response_type}>`,
 		schema: {
 			$id: 'create_space_response',
 			properties: {
@@ -195,7 +195,7 @@ const create_file: EventData = {
 		},
 	},
 	response: {
-		type: create_file_response_type,
+		type: `ApiResult<${create_file_response_type}>`,
 		schema: {
 			$id: 'create_file_response',
 			properties: {
@@ -228,7 +228,7 @@ const read_files: EventData = {
 		},
 	},
 	response: {
-		type: read_files_response_type,
+		type: `ApiResult<${read_files_response_type}>`,
 		schema: {
 			$id: 'read_files_response',
 			properties: {
