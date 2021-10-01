@@ -302,7 +302,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 				console.warn('[ui] ignoring a dispatched event', ctx);
 			}
 		},
-		// TODO convert to a service (and use `invoke` instead of the `client`)
+		// TODO convert to a service (and use `invoke` instead of `fetch`)
 		log_in: async ({params}) => {
 			console.log('[log_in] logging in as', params.accountName); // TODO logging
 			try {
@@ -329,7 +329,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 				};
 			}
 		},
-		// TODO convert to a service (and use `invoke` instead of the `client`)
+		// TODO convert to a service (and use `invoke` instead of `fetch`)
 		log_out: async () => {
 			try {
 				console.log('[log_out] logging out'); // TODO logging
