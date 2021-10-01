@@ -1,7 +1,7 @@
 import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
 
-import {events as other_events} from '$lib/ui/eventsData';
+import {events as ui_events} from '$lib/ui/ui.events';
 import {events as session_events} from '$lib/session/session.events';
 import {events as community_events} from '$lib/vocab/community/community.events';
 import {events as persona_events} from '$lib/vocab/persona/persona.events';
@@ -16,7 +16,7 @@ const events: EventData[] = session_events.concat(
 	membership_events,
 	space_events,
 	file_events,
-	other_events,
+	ui_events,
 );
 
 // Outputs a file with services metadata that can be imported from the client.
