@@ -12,7 +12,6 @@
 
 	let account: AccountModel;
 	$: account = $session?.account;
-	$: console.log('<LogoutForm> account', account);
 
 	let errorMessage: string | undefined;
 	let submitting: boolean | undefined;
@@ -23,7 +22,7 @@
 		submitting = true;
 		errorMessage = '';
 		const result = await dispatch('log_out');
-		console.log('<LogoutForm> logOut result', result);
+		console.log('<LogoutForm> log_out result', result);
 		if (!result.ok) {
 			errorMessage = result.reason;
 		}

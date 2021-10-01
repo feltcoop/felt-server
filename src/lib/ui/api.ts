@@ -3,7 +3,7 @@ import {randomItem} from '@feltcoop/felt/util/random.js';
 import type {Static} from '@sinclair/typebox';
 import type {Readable} from 'svelte/store';
 
-import type {Ui} from '$lib/ui/ui';
+import type {MainNavView, Ui} from '$lib/ui/ui';
 import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
@@ -16,13 +16,8 @@ import type {createFileService, readFilesService} from '$lib/vocab/file/fileServ
 import type {File} from '$lib/vocab/file/file';
 import type {LoginRequest} from '$lib/session/loginMiddleware';
 
-// TODO This was originally implemented as a Svelte store
-// but we weren't using the state at all.
-// It's now a plain object with functions.
-// As our use cases develop, we may want to make it a store again,
-// or perhaps a plain object is best for composition and extension.
-// It may be best to have related state in optional external modules that
-// observe the behavior of the api, to keep this module small and efficient.
+// TODO this has evolved to the point where perhaps this module should be `dispatch.ts`
+// and removing the `Api` namespace wrapper.
 
 const KEY = Symbol();
 
@@ -45,7 +40,7 @@ export interface DispatchContext<
 	invoke: TResult extends void ? null : (params?: TParams) => Promise<TResult>;
 }
 
-// TODO generate this interface from data
+// TODO generate this interface from data or define programmatically along with `UiHandlers`
 export interface Dispatch {
 	// TODO convert log_in and log_out to services
 	(eventName: 'log_in', params: LoginRequest): Promise<ApiResult<{session: ClientAccountSession}>>; // TODO
@@ -78,6 +73,7 @@ export interface Dispatch {
 	>;
 	(eventName: 'toggle_main_nav', params?: any): void;
 	(eventName: 'toggle_secondary_nav', params?: any): void;
+	(eventName: 'set_main_nav_view', params: MainNavView): void;
 	// TODO declare this with function overloading instead of this interface
 	// fallback to any
 	// (eventName: string, params?: any): void | Promise<ApiResult<any>>;

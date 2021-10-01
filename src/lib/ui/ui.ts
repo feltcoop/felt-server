@@ -31,7 +31,7 @@ export const setUi = (store: Ui): Ui => {
 	return store;
 };
 
-// TODO generate this interface from data
+// TODO generate this interface from data or define programmatically along with `Dispatch`
 export interface UiHandlers {
 	// TODO `log_in` and `log_out` have no service or schema; they're custom endpoints right now,
 	// but they should be converted to services to match the rest.
@@ -83,6 +83,7 @@ export interface UiHandlers {
 	) => Readable<Readable<File>[]>;
 	toggle_main_nav: () => void;
 	toggle_secondary_nav: () => void;
+	set_main_nav_view: (ctx: DispatchContext<MainNavView>) => void;
 }
 
 export interface Ui extends UiHandlers {
@@ -122,7 +123,6 @@ export interface Ui extends UiHandlers {
 	selectPersona: (persona_id: number) => void;
 	selectCommunity: (community_id: number | null) => void;
 	selectSpace: (community_id: number, space_id: number | null) => void;
-	setMainNavView: (value: MainNavView) => void;
 }
 
 export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
@@ -314,15 +314,15 @@ export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
 				});
 				const responseData = await response.json();
 				if (response.ok) {
-					console.log('[logIn] responseData', responseData); // TODO logging
+					console.log('[log_in] responseData', responseData); // TODO logging
 					session.set(responseData.session);
 					return {ok: true, status: response.status, value: responseData}; // TODO doesn't this have other status codes?
 				} else {
-					console.error('[logIn] response not ok', responseData, response); // TODO logging
+					console.error('[log_in] response not ok', responseData, response); // TODO logging
 					return {ok: false, status: response.status, reason: responseData.reason};
 				}
 			} catch (err) {
-				console.error('[logIn] error', err); // TODO logging
+				console.error('[log_in] error', err); // TODO logging
 				return {
 					ok: false,
 					status: 500,
@@ -339,16 +339,16 @@ export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
 					headers: {'content-type': 'application/json'},
 				});
 				const responseData = await response.json();
-				console.log('[logOut] response', responseData); // TODO logging
+				console.log('[log_out] response', responseData); // TODO logging
 				if (response.ok) {
 					session.set({guest: true});
 					return {ok: true, status: response.status, value: responseData};
 				} else {
-					console.error('[logOut] response not ok', response); // TODO logging
+					console.error('[log_out] response not ok', response); // TODO logging
 					return {ok: false, status: response.status, reason: responseData.reason};
 				}
 			} catch (err) {
-				console.error('[logOut] err', err); // TODO logging
+				console.error('[log_out] err', err); // TODO logging
 				return {
 					ok: false,
 					status: 500,
@@ -546,8 +546,8 @@ export const toUi = (session: Writable<ClientSession>, mobile: boolean): Ui => {
 		toggle_secondary_nav: () => {
 			expandMarquee.update(($expandMarquee) => !$expandMarquee);
 		},
-		setMainNavView: (value) => {
-			mainNavView.set(value);
+		set_main_nav_view: ({params}) => {
+			mainNavView.set(params);
 		},
 	};
 	return ui;

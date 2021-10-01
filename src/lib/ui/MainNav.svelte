@@ -18,7 +18,6 @@
 		ui: {
 			mainNavView,
 			expandMainNav,
-			setMainNavView,
 			selectedSpace: selectedSpaceStore,
 			selectedPersona: selectedPersonaStore,
 			selectedCommunity: selectedCommunityStore,
@@ -43,14 +42,14 @@
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
 			<button
-				on:click={() => setMainNavView('explorer')}
+				on:click={() => dispatch('set_main_nav_view', 'explorer')}
 				class:selected={$mainNavView === 'explorer'}
 				class="explorer-button"
 			>
 				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
 			</button>
 			<button
-				on:click={() => setMainNavView('account')}
+				on:click={() => dispatch('set_main_nav_view', 'account')}
 				class:selected={$mainNavView === 'account'}
 				class="account-button"
 			>
