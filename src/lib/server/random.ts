@@ -1,4 +1,4 @@
-import type {Service} from '$lib/server/service';
+import type {EventInfo} from '$lib/vocab/event/event';
 import {
 	randomFileParams,
 	randomMembershipParams,
@@ -9,12 +9,12 @@ import {randomPersonaParams, randomCommunityParams, randomSpaceParams} from '$li
 
 // TODO maybe move to `src/lib/util`
 // TODO keep factoring this until it's fully automated, generating from the schema
-export const randomServiceParams = async (
-	service: Service<any, any>,
+export const randomEventParams = async (
+	event: EventInfo,
 	random: RandomVocabContext,
 	{account, persona, community, space}: RandomVocab,
 ): Promise<object> => {
-	switch (service.event.name) {
+	switch (event.name) {
 		case 'create_persona': {
 			return randomPersonaParams();
 		}
@@ -56,10 +56,10 @@ export const randomServiceParams = async (
 			return {space_id: space.space_id};
 		}
 		// TODO could do an exhaustive typecheck (so it'll be caught by TS, not at runtime)
-		// by generating something like a type union of `ServiceEvent`s and
+		// by generating something like a type union of `EventInfo`s and
 		// replacing the generic service type in the above function signature
 		default: {
-			throw Error(`Unhandled service for randomServiceParams: ${service.event.name}`);
+			throw Error(`Unhandled service for randomEventParams: ${event.name}`);
 		}
 	}
 };

@@ -9,7 +9,7 @@ import type {EventInfo} from '$lib/vocab/event/event';
 
 // TODO rename this module? move it?
 // maybe `$lib/events.ts` or `$lib/eventsInfo.ts`
-// or `$lib/vocab/event/events.ts`
+// or `$lib/vocab/event/events.ts` or `$lib/vocab/event/eventInfos.ts`
 
 export const eventsInfo: EventInfo[] = session_events.concat(
 	community_events,

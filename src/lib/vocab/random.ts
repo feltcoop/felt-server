@@ -63,6 +63,10 @@ export interface RandomVocab {
 
 // TODO maybe compute in relation to `RandomVocab`
 export interface RandomVocabContext {
+	accounts: Account[];
+	personas: Persona[];
+	communities: Community[];
+	spaces: Space[];
 	account: () => Promise<Account>;
 	persona: (account?: Account) => Promise<Persona>;
 	community: (persona?: Persona, account?: Account) => Promise<Community>;
@@ -72,23 +76,41 @@ export interface RandomVocabContext {
 // TODO generate from schema
 export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 	const random: RandomVocabContext = {
+		// TODO these aren't being used yet, storing context so there's more control
+		// over what gets regenerated versus reused. Can write tests more easily for example.
+		accounts: [],
+		personas: [],
+		communities: [],
+		spaces: [],
 		account: async () => {
-			return unwrap(await db.repos.account.create(randomAccountParams()));
+			const account = unwrap(await db.repos.account.create(randomAccountParams()));
+			random.accounts.push(account);
+			return account;
 		},
 		persona: async (account) => {
 			if (!account) account = await random.account();
-			return unwrap(await db.repos.persona.create(randomPersonaParams(), account.account_id))
-				.persona;
+			const {community, persona} = unwrap(
+				await db.repos.persona.create(randomPersonaParams(), account.account_id),
+			);
+			random.communities.push(community);
+			random.personas.push(persona);
+			return persona;
 		},
 		community: async (persona, account) => {
 			if (!persona) persona = await random.persona(account);
-			return unwrap(await db.repos.community.create(randomCommunityParams(persona.persona_id)));
+			const community = unwrap(
+				await db.repos.community.create(randomCommunityParams(persona.persona_id)),
+			);
+			random.communities.push(community);
+			return community;
 		},
 		space: async (persona, account, community) => {
 			if (!account) account = await random.account();
 			if (!persona) persona = await random.persona(account);
 			if (!community) community = await random.community(persona, account);
-			return unwrap(await db.repos.space.create(randomSpaceParams(community.community_id)));
+			const space = unwrap(await db.repos.space.create(randomSpaceParams(community.community_id)));
+			random.spaces.push(space);
+			return space;
 		},
 	};
 	return random;

@@ -7,7 +7,7 @@ import {setupServer, teardownServer} from '$lib/util/testHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {services} from '$lib/server/services';
 import {toRandomVocabContext} from '$lib/vocab/random';
-import {randomServiceParams} from '$lib/server/random';
+import {randomEventParams} from '$lib/server/random';
 
 /* test__services */
 const test__services = suite<TestServerContext>('services');
@@ -20,7 +20,7 @@ test__services('perform services', async ({server}) => {
 
 	for (const service of services.values()) {
 		const account = await random.account();
-		const params = await randomServiceParams(service, random, {account});
+		const params = await randomEventParams(service.event, random, {account});
 		if (!validateSchema(service.event.params.schema!)(params)) {
 			throw new Error(
 				`Failed to validate random params for service ${
