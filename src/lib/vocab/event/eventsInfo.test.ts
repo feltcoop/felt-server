@@ -1,6 +1,5 @@
 import {suite} from 'uvu';
 import * as t from 'uvu/assert';
-import {red} from '@feltcoop/felt/util/terminal.js';
 
 import type {TestServerContext} from '$lib/util/testServerHelpers';
 import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
@@ -39,9 +38,9 @@ test__eventsInfo('dispatch random eventInfo in a client app', async ({server, ap
 			throw Error(`Expected eventInfo to have a schema: ${eventInfo.name}`);
 		}
 
-		// TODO hmm instead of passing `node-fetch`, maybe we do mocked responses?
-		if (['log_in', 'log_out'].includes(eventInfo.name)) {
-			// TODO skipping some that don't work
+		// TODO Can't make remote calls yet. Maybe instead of passing `node-fetch`,
+		// we do mocked responses? Or do we want it to be integration tests?
+		if (eventInfo.type !== 'ClientEvent') {
 			continue;
 		}
 
@@ -52,19 +51,23 @@ test__eventsInfo('dispatch random eventInfo in a client app', async ({server, ap
 			account_id: account.account_id,
 		});
 		if (eventInfo.type === 'ClientEvent') {
-			// TODO ?
-		} else {
-			if (!result.ok) {
-				console.error(red(`dispatch failed: ${eventInfo.name}`), result);
-			} else if (!validateSchema(eventInfo.response.schema!)(result.value)) {
-				console.error(red(`failed to validate service response: ${eventInfo.name}`), result);
-				throw new Error(
-					`Failed to validate response for service ${eventInfo.name}: ${toValidationErrorMessage(
-						validateSchema(eventInfo.response.schema!).errors![0],
-					)}`,
-				);
+			// TODO don't have schema for responses yet, but eventually we'll want them and then validate here
+			if (eventInfo.returns !== 'void') {
+				t.ok(result !== undefined);
 			}
-			t.is(result.status, 200); // TODO generate invalid data and test those params+responses too
+		} else {
+			// TODO can't make remote calls yet -- see comments above
+			// if (!result.ok) {
+			// 	console.error(red(`dispatch failed: ${eventInfo.name}`), result);
+			// } else if (!validateSchema(eventInfo.response.schema!)(result.value)) {
+			// 	console.error(red(`failed to validate service response: ${eventInfo.name}`), result);
+			// 	throw new Error(
+			// 		`Failed to validate response for service ${eventInfo.name}: ${toValidationErrorMessage(
+			// 			validateSchema(eventInfo.response.schema!).errors![0],
+			// 		)}`,
+			// 	);
+			// }
+			// t.is(result.status, 200); // TODO generate invalid data and test those params+responses too
 		}
 	}
 });
