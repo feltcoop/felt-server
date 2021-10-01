@@ -26,8 +26,13 @@ export const events: EventData[] = [
 	},
 	{
 		name: 'create_community',
+		route: {
+			path: '/api/v1/communities',
+			method: 'POST',
+			// TODO does `result` belong with the other `route` properties?
+			result: 'ApiResult<Static<typeof createCommunityService.responseSchema>>',
+		},
 		params: 'Static<typeof createCommunityService.paramsSchema>',
-		result: 'ApiResult<Static<typeof createCommunityService.responseSchema>>',
 		returns: 'Promise<ApiResult<Static<typeof createCommunityService.responseSchema>>>',
 	},
 	{

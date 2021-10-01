@@ -59,7 +59,6 @@ const CreateFileServiceResponse = Type.Object(
 	{$id: 'CreateFileServiceResponse', additionalProperties: false},
 );
 
-// TODO automatic params type and validation
 // TODO should this use the `FileParams` type?
 export const createFileService: Service<
 	typeof CreateFileServiceParams,

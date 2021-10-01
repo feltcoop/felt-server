@@ -104,6 +104,8 @@ const CreateCommunityServiceResponse = Type.Object(
 );
 
 //Creates a new community for an instance
+// TODO think about extracting this to a `.services.` file
+// that imports a generated type and declares only `perform`
 export const createCommunityService: Service<
 	typeof CreateCommunityServiceParams,
 	typeof CreateCommunityServiceResponse
