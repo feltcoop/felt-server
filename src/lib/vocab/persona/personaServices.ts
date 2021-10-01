@@ -1,38 +1,22 @@
-import {Type} from '@sinclair/typebox';
-
 import type {Service} from '$lib/server/service';
-import {PersonaSchema} from '$lib/vocab/persona/persona';
-import {CommunitySchema} from '$lib/vocab/community/community';
 import {toValidateSchema} from '$lib/util/ajv';
-
-const CreatePersonaServiceParams = Type.Object(
-	{
-		name: Type.String(),
-	},
-	{$id: 'CreatePersonaServiceParams', additionalProperties: false},
-);
-const CreatePersonaServiceResponse = Type.Object(
-	{
-		persona: PersonaSchema,
-		community: CommunitySchema,
-	},
-	{$id: 'CreatePersonaServiceResponse', additionalProperties: false},
-);
+import type {create_persona_params_type, create_persona_response_type} from '$lib/ui/events';
+import {create_persona} from '$lib/vocab/persona/persona.events';
 
 //Creates a new persona
 export const createPersonaService: Service<
-	typeof CreatePersonaServiceParams,
-	typeof CreatePersonaServiceResponse
+	create_persona_params_type,
+	create_persona_response_type
 > = {
 	name: 'create_persona',
 	route: {
 		path: '/api/v1/personas',
 		method: 'POST',
 	},
-	paramsSchema: CreatePersonaServiceParams,
-	validateParams: toValidateSchema(CreatePersonaServiceParams),
-	responseSchema: CreatePersonaServiceResponse,
-	validateResponse: toValidateSchema(CreatePersonaServiceResponse),
+	paramsSchema: create_persona.params.schema!,
+	validateParams: toValidateSchema(create_persona.params.schema!),
+	responseSchema: create_persona.response.schema!,
+	validateResponse: toValidateSchema(create_persona.response.schema!),
 	// TODO verify the `account_id` has permission to modify this persona
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
 	perform: async ({server, params, account_id}) => {

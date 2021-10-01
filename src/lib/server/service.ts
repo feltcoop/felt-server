@@ -1,8 +1,6 @@
-import type {ValidateFunction} from 'ajv';
-import type {TSchema, Static} from '@sinclair/typebox';
+import type {ValidateFunction, AnySchema} from 'ajv';
 
 import type {ApiServer} from '$lib/server/ApiServer.js';
-import type {ApiResult} from '$lib/server/api';
 
 export type ServiceMethod =
 	| 'GET'
@@ -17,22 +15,22 @@ export type ServiceMethod =
 
 // A `Service` can be reused across both http and websocket handlers.
 // The generics are required to avoid mistakes with service definitions.
-export interface Service<TParamsSchema extends TSchema, TResponseSchema extends TSchema> {
+export interface Service<TParams extends object, TResponse extends object> {
 	name: string; // `snake_cased`
 	route: {
 		path: string; // e.g. '/api/v1/some/:neat/:path'
 		// supports each `trouter` http method: https://github.com/lukeed/trouter#method
 		method: ServiceMethod;
 	};
-	paramsSchema: TParamsSchema;
-	validateParams: () => ValidateFunction<Static<TParamsSchema>>; // lazy to avoid wasteful compilation
-	responseSchema: TResponseSchema;
-	validateResponse: () => ValidateFunction<Static<TResponseSchema>>; // lazy to avoid wasteful compilation
-	perform(request: ServiceRequest<TParamsSchema>): Promise<ApiResult<Static<TResponseSchema>>>;
+	paramsSchema: AnySchema;
+	validateParams: () => ValidateFunction<TParams>; // lazy to avoid wasteful compilation
+	responseSchema: AnySchema;
+	validateResponse: () => ValidateFunction<TResponse>; // lazy to avoid wasteful compilation
+	perform(request: ServiceRequest<TParams>): Promise<TResponse>;
 }
 
-export interface ServiceRequest<TParamsSchema extends TSchema> {
+export interface ServiceRequest<TParams extends object> {
 	server: ApiServer;
-	params: Static<TParamsSchema>;
+	params: TParams;
 	account_id: number;
 }

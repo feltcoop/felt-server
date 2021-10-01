@@ -2,8 +2,11 @@ import {Type} from '@sinclair/typebox';
 
 import type {Service} from '$lib/server/service';
 import {CommunitySchema} from '$lib/vocab/community/community';
-import {MembershipSchema} from '$lib/vocab/membership/membership';
 import {toValidateSchema} from '$lib/util/ajv';
+import type {create_community_params_type, create_community_response_type} from '$lib/ui/events';
+import {create_community} from '$lib/vocab/community/community.events';
+import type {create_membership_params_type, create_membership_response_type} from '$lib/ui/events';
+import {create_membership} from '$lib/vocab/membership/membership.events';
 
 const ReadCommunitiesServiceParams = Type.Object(
 	{
@@ -89,36 +92,22 @@ export const readCommunityService: Service<
 	},
 };
 
-const CreateCommunityServiceParams = Type.Object(
-	{
-		name: Type.String(),
-		persona_id: Type.Number(),
-	},
-	{$id: 'CreateCommunityServiceParams', additionalProperties: false},
-);
-const CreateCommunityServiceResponse = Type.Object(
-	{
-		community: CommunitySchema,
-	},
-	{$id: 'CreateCommunityServiceResponse', additionalProperties: false},
-);
-
 //Creates a new community for an instance
 // TODO think about extracting this to a `.services.` file
 // that imports a generated type and declares only `perform`
 export const createCommunityService: Service<
-	typeof CreateCommunityServiceParams,
-	typeof CreateCommunityServiceResponse
+	create_community_params_type,
+	create_community_response_type
 > = {
 	name: 'create_community',
 	route: {
 		path: '/api/v1/communities',
 		method: 'POST',
 	},
-	paramsSchema: CreateCommunityServiceParams,
-	validateParams: toValidateSchema(CreateCommunityServiceParams),
-	responseSchema: CreateCommunityServiceResponse,
-	validateResponse: toValidateSchema(CreateCommunityServiceResponse),
+	paramsSchema: create_community.params.schema!,
+	validateParams: toValidateSchema(create_community.params.schema!),
+	responseSchema: create_community.response.schema!,
+	validateResponse: toValidateSchema(create_community.response.schema!),
 	// TODO declarative validation for `req.body` and the rest
 	perform: async ({server, params, account_id}) => {
 		if (!params.name) {
@@ -167,35 +156,21 @@ export const createCommunityService: Service<
 	},
 };
 
-const CreateMembershipServiceParams = Type.Object(
-	{
-		persona_id: Type.Number(),
-		community_id: Type.Number(),
-	},
-	{$id: 'CreateMembershipServiceParams', additionalProperties: false},
-);
-const CreateMembershipServiceResponse = Type.Object(
-	{
-		membership: MembershipSchema,
-	},
-	{$id: 'CreateMembershipServiceResponse', additionalProperties: false},
-);
-
 // TODO move to `$lib/vocab/member`
 //Creates a new member relation for a community
 export const createMembershipService: Service<
-	typeof CreateMembershipServiceParams,
-	typeof CreateMembershipServiceResponse
+	create_membership_params_type,
+	create_membership_response_type
 > = {
 	name: 'create_membership',
 	route: {
 		path: '/api/v1/memberships',
 		method: 'POST',
 	},
-	paramsSchema: CreateMembershipServiceParams,
-	validateParams: toValidateSchema(CreateMembershipServiceParams),
-	responseSchema: CreateMembershipServiceResponse,
-	validateResponse: toValidateSchema(CreateMembershipServiceResponse),
+	paramsSchema: create_membership.params.schema!,
+	validateParams: toValidateSchema(create_membership.params.schema!),
+	responseSchema: create_membership.response.schema!,
+	validateResponse: toValidateSchema(create_membership.response.schema!),
 	perform: async ({server, params}) => {
 		console.log('[create_membership] creating membership', params.persona_id, params.community_id);
 

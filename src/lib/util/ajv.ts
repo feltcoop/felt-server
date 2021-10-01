@@ -1,6 +1,5 @@
 import Ajv, {_} from 'ajv';
-import type {ErrorObject, ValidateFunction} from 'ajv';
-import type {TSchema} from '@sinclair/typebox';
+import type {ErrorObject, ValidateFunction, AnySchema} from 'ajv';
 
 export const ajv = new Ajv()
 	// These are needed so the schemas created by `@sinclair/typebox` don't error --
@@ -12,11 +11,11 @@ export interface CreateValidate<T = unknown> {
 	(): ValidateFunction<T>;
 }
 
-const validators: Map<TSchema, ValidateFunction> = new Map();
+const validators: Map<AnySchema, ValidateFunction> = new Map();
 
 // TODO improve this and `toValidateSchema` so they use the same cache
 // Memoizes the returned schema validation function in the module-level lookup `validators`.
-export const validateSchema = <T>(schema: TSchema): ValidateFunction<T> => {
+export const validateSchema = <T>(schema: AnySchema): ValidateFunction<T> => {
 	let validate = validators.get(schema) as ValidateFunction<T>;
 	if (!validate) {
 		validators.set(schema, (validate = toValidateSchema<T>(schema)()));
@@ -28,7 +27,7 @@ export const validateSchema = <T>(schema: TSchema): ValidateFunction<T> => {
 // Creates a lazily-compiled schema validation function to avoid wasteful compilation.
 // It's also faster than ajv's internal compiled schema cache
 // because we can assume a consistent environment.
-export const toValidateSchema = <T>(schema: TSchema): CreateValidate<T> => {
+export const toValidateSchema = <T>(schema: AnySchema): CreateValidate<T> => {
 	let validate: ValidateFunction<T>;
 	return () => validate || (validate = ajv.compile(schema));
 };
