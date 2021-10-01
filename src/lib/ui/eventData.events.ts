@@ -2,7 +2,9 @@ import type {AnySchema} from 'ajv';
 
 import type {ServiceMethod} from '$lib/server/service';
 
-// TODO consider this `.events.` pattern
+// TODO consider this `.events.` pattern,
+// e.g. `$lib/vocab/community/community.events.ts`
+// and `$lib/ui/ui.events.ts`
 // to break it into many modules across the project's directories --
 // maybe `gro gen` could automate some of the work for this usecase and similar
 // with configurable extension behavior.
@@ -57,7 +59,6 @@ const create_community: EventData = {
 	route: {
 		path: '/api/v1/communities',
 		method: 'POST',
-		// TODO does `response` belong with the other `route` properties?
 	},
 };
 
@@ -95,6 +96,155 @@ const create_persona: EventData = {
 	},
 };
 
+const create_membership_params_type = '{persona_id: number; community_id: number}';
+const create_membership_response_type = '{membership: Membership}';
+const create_membership: EventData = {
+	name: 'create_membership',
+	params: {
+		type: create_membership_params_type,
+		schema: {
+			$id: 'create_membership_response',
+			properties: {
+				persona_id: {type: 'number'},
+				community_id: {type: 'number'},
+			},
+			required: ['persona_id', 'community_id'],
+			additionalProperties: false,
+		},
+	},
+	response: {
+		type: create_membership_response_type,
+		schema: {
+			$id: 'create_membership_response',
+			properties: {
+				membership: {$ref: '#/$defs/membership'},
+			},
+			required: ['membership'],
+			additionalProperties: false,
+		},
+	},
+	returns: `Promise<ApiResult<${create_membership_response_type}>>`,
+	route: {
+		path: '/api/v1/memberships',
+		method: 'POST',
+	},
+};
+
+const create_space_params_type = `{
+	community_id: number;
+	name: string;
+	url: string;
+	media_type: string;
+	content: string;
+}`;
+const create_space_response_type = '{space: Space}';
+const create_space: EventData = {
+	name: 'create_space',
+	params: {
+		type: create_space_params_type,
+		schema: {
+			$id: 'create_space_response',
+			properties: {
+				community_id: {type: 'number'},
+				name: {type: 'string'},
+				url: {type: 'string'},
+				media_type: {type: 'string'},
+				content: {type: 'string'},
+			},
+			required: ['community_id', 'name', 'url', 'media_type', 'content'],
+			additionalProperties: false,
+		},
+	},
+	response: {
+		type: create_space_response_type,
+		schema: {
+			$id: 'create_space_response',
+			properties: {
+				space: {$ref: '#/$defs/space'},
+			},
+			required: ['space'],
+			additionalProperties: false,
+		},
+	},
+	returns: `Promise<ApiResult<${create_space_response_type}>>`,
+	route: {
+		path: '/api/v1/communities/:community_id/spaces',
+		method: 'POST',
+	},
+};
+
+const create_file_params_type = `{
+	actor_id: number;
+	space_id: number;
+	content: string;
+}`;
+const create_file_response_type = '{file: File}';
+const create_file: EventData = {
+	name: 'create_file',
+	params: {
+		type: create_file_params_type,
+		schema: {
+			$id: 'create_file_response',
+			properties: {
+				actor_id: {type: 'number'},
+				space_id: {type: 'number'},
+				content: {type: 'string'},
+			},
+			required: ['actor_id', 'space_id', 'content'],
+			additionalProperties: false,
+		},
+	},
+	response: {
+		type: create_file_response_type,
+		schema: {
+			$id: 'create_file_response',
+			properties: {
+				file: {$ref: '#/$defs/file'},
+			},
+			required: ['file'],
+			additionalProperties: false,
+		},
+	},
+	returns: `Promise<ApiResult<${create_file_response_type}>>`,
+	route: {
+		path: '/api/v1/spaces/:space_id/files',
+		method: 'POST',
+	},
+};
+
+const read_files_params_type = '{space_id: number}';
+const read_files_response_type = '{files: File[]}';
+const read_files: EventData = {
+	name: 'read_files',
+	params: {
+		type: read_files_params_type,
+		schema: {
+			$id: 'read_files_response',
+			properties: {
+				space_id: {type: 'number'},
+			},
+			required: ['space_id'],
+			additionalProperties: false,
+		},
+	},
+	response: {
+		type: read_files_response_type,
+		schema: {
+			$id: 'read_files_response',
+			properties: {
+				files: {type: 'array', items: {$ref: '#/$defs/persona'}},
+			},
+			required: ['persona', 'community'],
+			additionalProperties: false,
+		},
+	},
+	returns: `Promise<ApiResult<${read_files_response_type}>>`,
+	route: {
+		path: '/api/v1/spaces/:space_id/files',
+		method: 'GET',
+	},
+};
+
 export const events: EventData[] = [
 	{
 		name: 'log_in',
@@ -122,54 +272,10 @@ export const events: EventData[] = [
 	},
 	create_community,
 	create_persona,
-	{
-		name: 'create_membership',
-		params: {
-			type: 'Static<typeof createMembershipService.paramsSchema>',
-			schema: null,
-		},
-		response: {
-			type: 'ApiResult<Static<typeof createMembershipService.responseSchema>>',
-			schema: null,
-		},
-		returns: 'Promise<ApiResult<Static<typeof createMembershipService.responseSchema>>>',
-	},
-	{
-		name: 'create_space',
-		params: {
-			type: 'Static<typeof createSpaceService.paramsSchema>',
-			schema: null,
-		},
-		response: {
-			type: 'ApiResult<Static<typeof createSpaceService.responseSchema>>',
-			schema: null,
-		},
-		returns: 'Promise<ApiResult<Static<typeof createSpaceService.responseSchema>>>',
-	},
-	{
-		name: 'create_file',
-		params: {
-			type: 'Static<typeof createFileService.paramsSchema>',
-			schema: null,
-		},
-		response: {
-			type: 'ApiResult<Static<typeof createFileService.responseSchema>>',
-			schema: null,
-		},
-		returns: 'Promise<ApiResult<Static<typeof createFileService.responseSchema>>>',
-	},
-	{
-		name: 'read_files',
-		params: {
-			type: 'Static<typeof readFilesService.paramsSchema>',
-			schema: null,
-		},
-		response: {
-			type: 'ApiResult<Static<typeof readFilesService.responseSchema>>',
-			schema: null,
-		},
-		returns: 'Promise<ApiResult<Static<typeof readFilesService.responseSchema>>>',
-	},
+	create_membership,
+	create_space,
+	create_file,
+	read_files,
 	// `query_files` differs from `read_files` in that
 	// it returns a reactive store containing the requested files.
 	// Its API could be expanded to give callers access to its async status or promise,
