@@ -1,0 +1,37 @@
+import type {EventData} from '$lib/vocab/event/event';
+
+const create_persona_params_type = '{name: string}';
+const create_persona_response_type = '{persona: Persona; community: Community}';
+export const create_persona: EventData = {
+	name: 'create_persona',
+	params: {
+		type: create_persona_params_type,
+		schema: {
+			$id: 'create_persona_response',
+			properties: {
+				name: {type: 'string'},
+			},
+			required: ['name'],
+			additionalProperties: false,
+		},
+	},
+	response: {
+		type: `ApiResult<${create_persona_response_type}>`,
+		schema: {
+			$id: 'create_persona_response',
+			properties: {
+				persona: {$ref: '#/$defs/persona'},
+				community: {$ref: '#/$defs/community'},
+			},
+			required: ['persona', 'community'],
+			additionalProperties: false,
+		},
+	},
+	returns: `Promise<ApiResult<${create_persona_response_type}>>`,
+	route: {
+		path: '/api/v1/personas',
+		method: 'POST',
+	},
+};
+
+export const events = [create_persona];
