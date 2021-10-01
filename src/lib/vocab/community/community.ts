@@ -11,6 +11,7 @@ export interface Community {
 // need to handle the various kinds of `Community` doc variations we return from the database
 export const CommunitySchema = {
 	$id: 'https://felt.social/vocab/Community.json',
+	type: 'object',
 	properties: {
 		community_id: {type: 'number'},
 		name: {type: 'string'},

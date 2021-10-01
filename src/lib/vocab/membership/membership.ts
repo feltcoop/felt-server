@@ -5,11 +5,12 @@ export interface Membership {
 }
 export const MembershipSchema = {
 	$id: 'https://felt.social/vocab/Membership.json',
-	additionalProperties: false,
+	type: 'object',
 	properties: {
 		persona_id: {type: 'number'},
 		community_id: {type: 'number'},
 		name: {type: 'string'}, // TODO delete this, is returned in one query but that's now obsolete
 	},
 	required: ['persona_id', 'community_id'],
+	additionalProperties: false,
 };

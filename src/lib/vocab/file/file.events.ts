@@ -13,6 +13,7 @@ export const create_file: EventInfo = {
 		type: create_file_params_type,
 		schema: {
 			$id: 'https://felt.social/vocab/create_file_params.json',
+			type: 'object',
 			properties: {
 				actor_id: {type: 'number'},
 				space_id: {type: 'number'},
@@ -26,6 +27,7 @@ export const create_file: EventInfo = {
 		type: `ApiResult<${create_file_response_type}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/create_file_response.json',
+			type: 'object',
 			properties: {
 				file: {$ref: 'File.json'},
 			},
@@ -48,6 +50,7 @@ export const read_files: EventInfo = {
 		type: read_files_params_type,
 		schema: {
 			$id: 'https://felt.social/vocab/read_files_params.json',
+			type: 'object',
 			properties: {
 				space_id: {type: 'number'},
 			},
@@ -59,6 +62,7 @@ export const read_files: EventInfo = {
 		type: `ApiResult<${read_files_response_type}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/read_files_response.json',
+			type: 'object',
 			properties: {
 				files: {type: 'array', items: {$ref: 'File.json'}},
 			},

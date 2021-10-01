@@ -14,6 +14,7 @@ export const create_community: EventInfo = {
 		type: create_community_params_type,
 		schema: {
 			$id: 'https://felt.social/vocab/create_community_params.json',
+			type: 'object',
 			properties: {
 				name: {type: 'string'},
 				persona_id: {type: 'number'},
@@ -26,6 +27,7 @@ export const create_community: EventInfo = {
 		type: `ApiResult<${create_community_response_type}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/create_community_response.json',
+			type: 'object',
 			properties: {
 				community: {$ref: 'Community.json'},
 			},
@@ -52,6 +54,7 @@ export const read_community: EventInfo = {
 		type: read_community_params_type,
 		schema: {
 			$id: 'https://felt.social/vocab/read_community_params.json',
+			type: 'object',
 			properties: {
 				community_id: {type: 'number'},
 			},
@@ -63,6 +66,7 @@ export const read_community: EventInfo = {
 		type: `ApiResult<${read_community_response_type}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/read_community_response.json',
+			type: 'object',
 			properties: {
 				community: {$ref: 'Community.json'},
 			},
@@ -88,6 +92,7 @@ export const read_communities: EventInfo = {
 		type: read_communities_params_type,
 		schema: {
 			$id: 'https://felt.social/vocab/read_communities_params.json',
+			type: 'object',
 			properties: {},
 			required: [],
 			additionalProperties: false,
@@ -97,6 +102,7 @@ export const read_communities: EventInfo = {
 		type: `ApiResult<${read_communities_response_type}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/read_communities_response.json',
+			type: 'object',
 			properties: {
 				communities: {type: 'array', items: {$ref: 'Community.json'}},
 			},

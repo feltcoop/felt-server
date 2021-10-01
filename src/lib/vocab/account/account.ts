@@ -5,6 +5,7 @@ export interface Account {
 }
 export const AccountSchema = {
 	$id: 'https://felt.social/vocab/Account.json',
+	type: 'object',
 	properties: {
 		account_id: {type: 'number'},
 		name: {type: 'string'},

@@ -6,7 +6,7 @@ export interface File {
 }
 export const FileSchema = {
 	$id: 'https://felt.social/vocab/File.json',
-	additionalProperties: false,
+	type: 'object',
 	properties: {
 		file_id: {type: 'number'},
 		actor_id: {type: 'number'},
@@ -14,4 +14,5 @@ export const FileSchema = {
 		content: {type: 'string'},
 	},
 	required: ['file_id', 'actor_id', 'space_id', 'content'],
+	additionalProperties: false,
 };

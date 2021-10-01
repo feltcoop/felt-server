@@ -7,7 +7,7 @@ export interface Persona {
 }
 export const PersonaSchema = {
 	$id: 'https://felt.social/vocab/Persona.json',
-	additionalProperties: false,
+	type: 'object',
 	properties: {
 		persona_id: {type: 'number'},
 		account_id: {type: 'number'},
@@ -16,6 +16,7 @@ export const PersonaSchema = {
 		community_ids: {type: 'array', items: {type: 'number'}},
 	},
 	required: ['persona_id', 'account_id', 'name', 'community_ids'],
+	additionalProperties: false,
 };
 
 export interface PersonaParams {
@@ -23,11 +24,12 @@ export interface PersonaParams {
 }
 export const PersonaParamsSchema = {
 	$id: 'https://felt.social/vocab/PersonaParams.json',
-	additionalProperties: false,
+	type: 'object',
 	properties: {
 		name: {type: 'string'},
 	},
 	required: ['name'],
+	additionalProperties: false,
 };
 
 //TODO

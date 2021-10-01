@@ -9,6 +9,7 @@ export const create_persona: EventInfo = {
 		type: create_persona_params_type,
 		schema: {
 			$id: 'https://felt.social/vocab/create_persona_params.json',
+			type: 'object',
 			properties: {
 				name: {type: 'string'},
 			},
@@ -20,6 +21,7 @@ export const create_persona: EventInfo = {
 		type: `ApiResult<${create_persona_response_type}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/create_persona_response.json',
+			type: 'object',
 			properties: {
 				persona: {$ref: 'Persona.json'},
 				community: {$ref: 'Community.json'},
