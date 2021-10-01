@@ -18,6 +18,8 @@ import type {LoginRequest} from '$lib/session/loginMiddleware';
 
 // TODO this has evolved to the point where perhaps this module should be `dispatch.ts`
 // and removing the `Api` namespace wrapper.
+// One reason we wouldn't do this is if we wanted to bundle other data/functions
+// inside the same closure as `dispatch`.
 
 const KEY = Symbol();
 
