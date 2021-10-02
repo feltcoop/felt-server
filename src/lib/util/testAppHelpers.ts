@@ -1,6 +1,5 @@
 import sourcemapSupport from 'source-map-support';
 import {writable} from 'svelte/store';
-import fetch from 'node-fetch';
 
 import type {AppStores} from '$lib/ui/app';
 import {toUi} from '$lib/ui/ui';
@@ -18,18 +17,21 @@ export interface TestAppContext {
 	app: AppStores;
 }
 
-export const setupApp = async (context: TestAppContext): Promise<void> => {
-	console.log('setup app!!!');
-	const session = writable<ClientSession>({guest: true});
-	const ui = toUi(session, false);
-	const httpApiClient = toHttpApiClient<EventsParams, EventsResponse>(findService, fetch as any);
-	context.app = {
-		ui,
-		api: toApi(ui, httpApiClient),
-		devmode: writable(false),
-		socket: null as any, // TODO ?
+export const setupApp =
+	(fetch: typeof globalThis.fetch) =>
+	async (context: TestAppContext): Promise<void> => {
+		console.log('setup app!!!');
+		const session = writable<ClientSession>({guest: true});
+		const ui = toUi(session, false);
+		const httpApiClient = toHttpApiClient<EventsParams, EventsResponse>(findService, fetch);
+		// maybe lazy to get late binding to optoions?
+		context.app = {
+			ui,
+			api: toApi(ui, httpApiClient),
+			devmode: writable(false),
+			socket: null as any, // TODO ?
+		};
 	};
-};
 
 export const teardownApp = async (context: TestAppContext): Promise<void> => {
 	console.log('teardown app!!!');

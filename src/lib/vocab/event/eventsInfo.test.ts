@@ -10,12 +10,23 @@ import {randomEventParams} from '$lib/server/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {setupApp, teardownApp} from '$lib/util/testAppHelpers';
 
+const fetch: typeof globalThis.fetch = async (input, options) => {
+	console.log('input, options', input, options);
+	return {
+		ok: false,
+		status: 500,
+		statusText: 'TODO',
+		json: async () => ({status: 500, reason: 'TODO test data'}),
+	} as any; // TODO add more?
+};
+
 /* test__eventsInfo */
 const test__eventsInfo = suite<TestServerContext & TestAppContext>('eventsInfo');
 
+// TODO maybe setup fetch or api client here?
 test__eventsInfo.before(setupServer);
 test__eventsInfo.after(teardownServer);
-test__eventsInfo.before(setupApp);
+test__eventsInfo.before(setupApp(fetch));
 test__eventsInfo.after(teardownApp);
 
 test__eventsInfo('dispatch random eventInfo in a client app', async ({server, app}) => {
