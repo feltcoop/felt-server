@@ -30,6 +30,7 @@
 	};
 </script>
 
+<div>This account was created {account.created}</div>
 <form>
 	<PendingButton pending={!!submitting} type="button" on:click={doLogOut} {disabled}>
 		log out
