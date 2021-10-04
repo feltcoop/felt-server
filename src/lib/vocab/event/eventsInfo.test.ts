@@ -10,12 +10,19 @@ import {randomEventParams} from '$lib/server/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {setupApp, teardownApp} from '$lib/util/testAppHelpers';
 
-const fetch: typeof globalThis.fetch = async (input, options) => {
-	console.log('input, options', input, options);
+const fetch: typeof globalThis.fetch = async (input, init) => {
+	console.log('input, init', input, init);
+	if (init) {
+		init.method;
+		init.headers;
+		init?.body;
+	} else {
+		// TODO get
+	}
 	return {
 		ok: false,
 		status: 500,
-		statusText: 'TODO',
+		statusText: 'mock failure statusText',
 		json: async () => ({status: 500, reason: 'TODO test data'}),
 	} as any; // TODO add more?
 };
