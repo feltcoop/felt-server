@@ -39,8 +39,8 @@ export const AccountModelSchema = {
 	properties: {
 		account_id: {type: 'number'},
 		name: {type: 'string'},
-		created: {type: 'Date'},
-		updated: {type: 'Date'},
+		created: {type: 'string'},
+		updated: {type: 'string'},
 	},
 	required: ['account_id', 'name', 'created'],
 	additionalProperties: false,
