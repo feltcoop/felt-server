@@ -1,6 +1,7 @@
 import type {Readable, Writable} from 'svelte/store';
 import {writable, derived, get} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
+import type {Static} from '@sinclair/typebox';
 
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
