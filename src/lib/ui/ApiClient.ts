@@ -9,4 +9,5 @@ export interface ApiClient<
 		name: TServiceName,
 		params: TParams,
 	) => Promise<ApiResult<TResultMap[TServiceName]>>;
+	close: () => void;
 }

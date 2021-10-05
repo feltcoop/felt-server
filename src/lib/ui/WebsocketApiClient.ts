@@ -73,6 +73,9 @@ export const toWebsocketApiClient = <
 			// TODO upstream the `ok` instead of creating a new object? could return `message.result` directly
 			found.resolve({ok: message.result.status === 200, ...message.result});
 		},
+		close: () => {
+			// ?
+		},
 	};
 	return client;
 };
