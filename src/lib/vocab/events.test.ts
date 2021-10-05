@@ -19,7 +19,6 @@ test__eventsInfo.before(setupApp((() => {}) as any)); // TODO either use `node-f
 test__eventsInfo.after(teardownApp);
 
 test__eventsInfo('dispatch random eventInfo in a client app', async ({server, app}) => {
-	// TODO in this context,
 	const random = toRandomVocabContext(server.db);
 
 	for (const eventInfo of eventInfos.values()) {
@@ -55,7 +54,7 @@ test__eventsInfo('dispatch random eventInfo in a client app', async ({server, ap
 				t.ok(result !== undefined);
 			}
 		} else {
-			// TODO can't make remote calls yet -- see comments above
+			// TODO can't make remote calls yet -- need to use either `node-fetch` or mock
 			// if (!result.ok) {
 			// 	console.error(red(`dispatch failed: ${eventInfo.name}`), result);
 			// } else if (!validateSchema(eventInfo.response.schema!)(result.value)) {
