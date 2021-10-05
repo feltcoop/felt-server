@@ -1,5 +1,7 @@
 <script lang="ts">
+	import SchemaInfo from '$lib/ui/SchemaInfo.svelte';
 	import {eventsInfo} from '$lib/vocab/event/eventsInfo';
+	import {schemas} from '$lib/vocab/schema/schemas';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	const title = 'docs';
@@ -12,6 +14,16 @@
 		<Markup>
 			<h1>docs</h1>
 			<hr />
+			<h2>vocab</h2>
+		</Markup>
+		<ul>
+			{#each schemas as vocabSchema (vocabSchema)}
+				<li>
+					<SchemaInfo schema={vocabSchema} />
+				</li>
+			{/each}
+		</ul>
+		<Markup>
 			<h2>events</h2>
 		</Markup>
 		<ul>

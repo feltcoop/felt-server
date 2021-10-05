@@ -1,3 +1,5 @@
+import type {AnySchema} from 'ajv';
+
 import {AccountSchema} from '$lib/vocab/account/account';
 import {PersonaSchema} from '$lib/vocab/persona/persona';
 import {CommunitySchema} from '$lib/vocab/community/community';
@@ -12,7 +14,7 @@ import {FileSchema} from '$lib/vocab/file/file';
 
 // TODO generate this file?
 
-export const schemas = [
+export const schemas: AnySchema[] = [
 	AccountSchema,
 	PersonaSchema,
 	CommunitySchema,

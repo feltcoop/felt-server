@@ -1,7 +1,7 @@
 import Ajv from 'ajv';
 import type {ErrorObject, ValidateFunction, AnySchema} from 'ajv';
 
-import {schemas} from '$lib/vocab/schemas';
+import {schemas} from '$lib/vocab/schema/schemas';
 
 let ajvInstance: Ajv | null = null;
 
