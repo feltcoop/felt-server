@@ -80,7 +80,7 @@
 		padding: var(--spacing_md) var(--spacing_md) var(--spacing_md) var(--spacing_xl4);
 		background-color: var(--tint_dark_1);
 	}
-	.property:nth-child(2n) {
+	.property:nth-child(2n + 1) {
 		background-color: var(--tint_dark_0);
 	}
 	.property > span {
