@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type {AnySchema} from 'ajv';
 
+	import {toSchemaName} from '$lib/vocab/schema/schema';
+
 	export let schema: AnySchema;
 
 	let properties: undefined | [string, AnySchema][];
@@ -18,7 +20,7 @@
 	{:else}
 		<div class="title">
 			{#if schema.$id}
-				<code class="name">{schema.$id}</code>
+				<code class="name">{toSchemaName(schema.$id)}</code>
 			{/if}
 			<small class="type">{schema.type || 'unknown'}</small>
 		</div>
@@ -27,10 +29,11 @@
 				<div class="property">
 					<span class="name">{propertyName}</span>
 					<small class="required">
+						<!-- TODO cache this on a viewmodel? -->
 						{#if schema.required && schema.required.includes(propertyName)}
 							<!-- leave blank? -->
 						{:else}
-							optional
+							<span title="{propertyName} is optional">?</span>
 						{/if}
 					</small>
 					<svelte:self schema={propertySchema} />
@@ -49,6 +52,7 @@
 	.title .name {
 		font-size: var(--font_size_lg);
 		padding: var(--spacing_md);
+		font-family: var(--font_family_mono);
 	}
 	.type {
 		padding: var(--spacing_lg);
@@ -70,6 +74,6 @@
 	}
 	.required {
 		display: flex;
-		width: 60px;
+		width: 30px;
 	}
 </style>

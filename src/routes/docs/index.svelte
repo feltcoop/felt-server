@@ -12,9 +12,13 @@
 <div class="wrapper">
 	<div class="column">
 		<Markup>
-			<h1>docs</h1>
+			<h1 id="docs">docs</h1>
+			<ul>
+				<li><a href="#vocab">vocab</a></li>
+				<li><a href="#events">events</a></li>
+			</ul>
 			<hr />
-			<h2>vocab</h2>
+			<h2 id="vocab">vocab</h2>
 		</Markup>
 		<ul>
 			{#each schemas as vocabSchema (vocabSchema)}
@@ -23,8 +27,9 @@
 				</li>
 			{/each}
 		</ul>
+		<hr />
 		<Markup>
-			<h2>events</h2>
+			<h2 id="events">events</h2>
 		</Markup>
 		<ul>
 			{#each eventsInfo as eventInfo (eventInfo.name)}
@@ -56,6 +61,18 @@
 				</li>
 			{/each}
 		</ul>
+		<hr />
+		<Markup>
+			<ul>
+				<li>
+					<a href="#docs">docs</a>
+					<ul>
+						<li><a href="#vocab">vocab</a></li>
+						<li><a href="#events">events</a></li>
+					</ul>
+				</li>
+			</ul>
+		</Markup>
 	</div>
 </div>
 
