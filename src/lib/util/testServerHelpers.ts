@@ -1,4 +1,3 @@
-import sourcemapSupport from 'source-map-support';
 import polka from 'polka';
 import postgres from 'postgres';
 import {createServer} from 'http';
@@ -8,10 +7,9 @@ import {Database} from '$lib/db/Database';
 import {defaultPostgresOptions} from '$lib/db/postgres';
 import {WebsocketServer} from '$lib/server/WebsocketServer';
 import {services} from '$lib/server/services';
+import {installSourceMaps} from '$lib/util/testHelpers';
 
-sourcemapSupport.install({
-	handleUncaughtExceptions: false,
-});
+installSourceMaps();
 
 // TODO we want to create this once and close it after all tests have run --
 // maybe refactor to use the Felt obtainable helper --

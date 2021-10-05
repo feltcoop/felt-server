@@ -1,4 +1,3 @@
-import sourcemapSupport from 'source-map-support';
 import {writable} from 'svelte/store';
 
 import type {AppStores} from '$lib/ui/app';
@@ -8,10 +7,9 @@ import type {EventsParams, EventsResponse} from '$lib/ui/events';
 import {toApi} from '$lib/ui/api';
 import {findService} from '$lib/ui/services';
 import type {ClientSession} from '$lib/session/clientSession';
+import {installSourceMaps} from '$lib/util/testHelpers';
 
-sourcemapSupport.install({
-	handleUncaughtExceptions: false,
-});
+installSourceMaps();
 
 export interface TestAppContext {
 	app: AppStores;
