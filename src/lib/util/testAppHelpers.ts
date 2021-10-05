@@ -20,22 +20,21 @@ export interface TestAppContext {
 export const setupApp =
 	(fetch: typeof globalThis.fetch) =>
 	async (context: TestAppContext): Promise<void> => {
-		console.log('setup app!!!');
 		const session = writable<ClientSession>({guest: true});
 		const ui = toUi(session, false);
 		const httpApiClient = toHttpApiClient<EventsParams, EventsResponse>(findService, fetch);
-		// maybe lazy to get late binding to optoions?
 		context.app = {
 			ui,
 			api: toApi(ui, httpApiClient),
 			devmode: writable(false),
-			socket: null as any, // TODO ?
+			// TODO refactor this so the socket isn't an app dependency,
+			// instead the socket should only exist for the websocket client
+			socket: null as any,
 		};
 	};
 
 export const teardownApp = async (context: TestAppContext): Promise<void> => {
-	console.log('teardown app!!!');
-	// const {app} = context;
 	context.app = null!;
-	// app.close();
+	// currently doesn't need any explicit teardown:
+	// context.app.close();
 };
