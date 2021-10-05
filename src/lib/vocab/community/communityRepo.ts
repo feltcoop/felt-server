@@ -31,7 +31,7 @@ export const communityRepo = (db: Database) => ({
 	): Promise<Result<{value: Community}, {type: 'no_community_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for community id: ${community_id}`);
 		const data = await db.sql<Community[]>`
-      SELECT community_id, name FROM communities where community_id = ${community_id}
+      SELECT community_id, name, created, updated FROM communities where community_id = ${community_id}
     `;
 		// console.log('[db.findById]', data);
 		if (data.length) {
@@ -48,7 +48,7 @@ export const communityRepo = (db: Database) => ({
 	): Promise<Result<{value: Community[]}, ErrorResponse>> => {
 		console.log(`[db] preparing to query for communities & spaces persona: ${account_id}`);
 		const data = await db.sql<Community[]>`		
-			SELECT c.community_id, c.name,
+			SELECT c.community_id, c.name, c.created, c.updated,
 				(
 					SELECT array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
 					FROM (

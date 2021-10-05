@@ -43,6 +43,7 @@
 	<section>
 		<!-- TODO this is just a stubbed out idea -->
 		<h2>activity</h2>
+		<div>This community was created at {$community.created}</div>
 		<code>TODO</code>
 	</section>
 </Markup>
