@@ -1,4 +1,5 @@
 <script lang="ts">
+	import {get} from 'svelte/store';
 	import {session} from '$app/stores';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
@@ -8,6 +9,7 @@
 
 	const {
 		api: {dispatch},
+		ui: {selectedPersona},
 	} = getApp();
 
 	let account: AccountModel;
@@ -30,6 +32,9 @@
 	};
 </script>
 
+{#if $selectedPersona}
+	<div>This persona was created {get($selectedPersona).created}</div>
+{/if}
 <form>
 	<PendingButton pending={!!submitting} type="button" on:click={doLogOut} {disabled}>
 		log out
