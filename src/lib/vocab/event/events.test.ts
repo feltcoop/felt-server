@@ -18,7 +18,7 @@ test__eventInfos.after(teardownServer);
 test__eventInfos.before(setupApp((() => {}) as any)); // TODO either use `node-fetch` or mock
 test__eventInfos.after(teardownApp);
 
-test__eventInfos('dispatch random eventInfo in a client app', async ({server, app}) => {
+test__eventInfos('dispatch random events in a client app', async ({server, app}) => {
 	const random = toRandomVocabContext(server.db);
 
 	for (const eventInfo of eventInfos.values()) {
