@@ -27,7 +27,7 @@ export interface ServiceEventInfo {
 		schema: AnySchema;
 	};
 	returns: string;
-	// `ServiceEvent`s have a `route` for http clients; websocket clients just use the `name`
+	// `ServiceEvent`s have a `route` for http clients; websocket clients only need the event `name`
 	route: {
 		path: string; // e.g. '/api/v1/some/:neat/:path'
 		method: ServiceMethod; // supports each `trouter` http method: https://github.com/lukeed/trouter#method

@@ -23,7 +23,6 @@
 	import {WEBSOCKET_URL} from '$lib/config';
 	import {toWebsocketApiClient} from '$lib/ui/WebsocketApiClient';
 	// import {toHttpApiClient} from '$lib/ui/HttpApiClient';
-	import type {EventsParams, EventsResponse} from '$lib/ui/events';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {findService} from '$lib/ui/services';
 
@@ -43,12 +42,9 @@
 	const socket = setSocket(toSocketStore((data) => websocketApiClient.handle(data)));
 	const ui = setUi(toUi(session, initialMobileValue));
 
-	const websocketApiClient = toWebsocketApiClient<EventsParams, EventsResponse>(
-		findService,
-		socket.send,
-	);
+	const websocketApiClient = toWebsocketApiClient(findService, socket.send);
 	// alternative http client:
-	// const httpApiClient = toHttpApiClient<EventsParams, EventsResponse>(findService);
+	// const httpApiClient = toHttpApiClient(findService);
 	const api = setApi(toApi(ui, websocketApiClient));
 	const app = setApp({ui, api, devmode, socket});
 	browser && console.log('app', app);
