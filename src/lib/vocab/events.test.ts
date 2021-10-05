@@ -4,7 +4,7 @@ import * as t from 'uvu/assert';
 import type {TestServerContext} from '$lib/util/testServerHelpers';
 import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
-import {events} from '$lib/vocab/events';
+import {eventInfos} from '$lib/vocab/events';
 import {toRandomVocabContext} from '$lib/vocab/random';
 import {randomEventParams} from '$lib/server/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
@@ -22,7 +22,7 @@ test__eventsInfo('dispatch random eventInfo in a client app', async ({server, ap
 	// TODO in this context,
 	const random = toRandomVocabContext(server.db);
 
-	for (const eventInfo of events.values()) {
+	for (const eventInfo of eventInfos.values()) {
 		const account = await random.account();
 		const params = await randomEventParams(eventInfo, random, {account});
 

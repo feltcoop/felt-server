@@ -7,7 +7,7 @@ import {events as space_events} from '$lib/vocab/space/space.events';
 import {events as file_events} from '$lib/vocab/file/file.events';
 import type {EventInfo} from '$lib/vocab/event/event';
 
-export const events: EventInfo[] = session_events.concat(
+export const eventInfos: EventInfo[] = session_events.concat(
 	community_events,
 	persona_events,
 	membership_events,
@@ -16,4 +16,4 @@ export const events: EventInfo[] = session_events.concat(
 	ui_events,
 );
 
-export const eventByName: Map<string, EventInfo> = new Map(events.map((e) => [e.name, e]));
+export const eventInfoByName: Map<string, EventInfo> = new Map(eventInfos.map((e) => [e.name, e]));
