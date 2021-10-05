@@ -10,15 +10,15 @@ import {randomEventParams} from '$lib/server/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {setupApp, teardownApp} from '$lib/util/testAppHelpers';
 
-/* test__eventsInfo */
-const test__eventsInfo = suite<TestServerContext & TestAppContext>('eventsInfo');
+/* test__eventInfos */
+const test__eventInfos = suite<TestServerContext & TestAppContext>('eventInfos');
 
-test__eventsInfo.before(setupServer);
-test__eventsInfo.after(teardownServer);
-test__eventsInfo.before(setupApp((() => {}) as any)); // TODO either use `node-fetch` or mock
-test__eventsInfo.after(teardownApp);
+test__eventInfos.before(setupServer);
+test__eventInfos.after(teardownServer);
+test__eventInfos.before(setupApp((() => {}) as any)); // TODO either use `node-fetch` or mock
+test__eventInfos.after(teardownApp);
 
-test__eventsInfo('dispatch random eventInfo in a client app', async ({server, app}) => {
+test__eventInfos('dispatch random eventInfo in a client app', async ({server, app}) => {
 	const random = toRandomVocabContext(server.db);
 
 	for (const eventInfo of eventInfos.values()) {
@@ -70,5 +70,5 @@ test__eventsInfo('dispatch random eventInfo in a client app', async ({server, ap
 	}
 });
 
-test__eventsInfo.run();
-/* test__eventsInfo */
+test__eventInfos.run();
+/* test__eventInfos */
