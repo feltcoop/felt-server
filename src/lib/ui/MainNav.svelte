@@ -22,6 +22,7 @@
 			selectedPersona: selectedPersonaStore,
 			selectedCommunity: selectedCommunityStore,
 		},
+		devmode,
 	} = getApp();
 
 	$: selectedPersona = $selectedPersonaStore!; // TODO type?
@@ -71,6 +72,9 @@
 		{:else if $mainNavView === 'account'}
 			<Markup>
 				<AccountForm guest={$session.guest} />
+				{#if $devmode}
+					<a class="menu-link" href="/docs">/docs</a>
+				{/if}
 			</Markup>
 			<SocketConnection />
 		{/if}
@@ -147,5 +151,8 @@
 	.account-button {
 		height: var(--navbar_size);
 		width: var(--navbar_size);
+	}
+	.menu-link {
+		padding: var(--spacing_xs) var(--spacing_sm);
 	}
 </style>
