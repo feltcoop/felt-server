@@ -2,7 +2,6 @@ import type {AnySchema} from 'ajv';
 
 import type {ServiceMethod} from '$lib/server/service';
 
-// TODO maybe rename `EventInfo` to `AppEvent`
 export type EventInfo = ClientEventInfo | ServiceEventInfo | RemoteEventInfo;
 
 export interface ClientEventInfo {
