@@ -90,9 +90,15 @@
 		if (!persona) {
 			console.warn(`unable to find persona at index ${persona}, falling back to a valid value`);
 			if (browser) {
-				goto(location.pathname + '?' + setUrlPersona(0, new URLSearchParams(location.search)), {
-					replaceState: true,
-				});
+				const fallbackPersonaId = 0;
+				goto(
+					location.pathname +
+						'?' +
+						setUrlPersona(fallbackPersonaId, new URLSearchParams(location.search)),
+					{
+						replaceState: true,
+					},
+				);
 				return; // exit early; this function re-runs from the `goto` call with the updated `$page`
 			}
 		} else if (personaIndex !== $selectedPersonaIndex) {
