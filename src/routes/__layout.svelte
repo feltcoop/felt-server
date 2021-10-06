@@ -64,7 +64,7 @@
 		account,
 		sessionPersonas,
 		communities,
-		selectedPersona: selectedPersonaStore,
+		selectedPersonaIndex,
 		selectedCommunityId,
 		selectedSpaceIdByCommunity,
 		setSession,
@@ -75,16 +75,15 @@
 	$: guest = $session.guest;
 	$: onboarding = !guest && !$sessionPersonas.length;
 
-	$: selectedPersona = $selectedPersonaStore;
-	// TODO maybe cache this someplace? this pattern is repeated in multiple places
-	$: selectedPersonaIndex = selectedPersona && $sessionPersonas.indexOf(selectedPersona);
-
 	// TODO refactor -- where should this logic go? maybe just take `app` as a param?
-	$: updateStateFromPageParams($page.params);
-	const updateStateFromPageParams = (params: {community?: string; space?: string}) => {
+	$: updateStateFromPageParams($page.params, $page.query);
+	const updateStateFromPageParams = (
+		params: {community?: string; space?: string},
+		query: URLSearchParams,
+	) => {
 		if (!params.community) return;
 
-		const rawPersonaIndex = $page.query.get(PERSONA_QUERY_KEY);
+		const rawPersonaIndex = query.get(PERSONA_QUERY_KEY);
 		const personaIndex = rawPersonaIndex === null ? null : Number(rawPersonaIndex);
 		const persona: Readable<Persona> | undefined =
 			personaIndex === null ? undefined : $sessionPersonas[personaIndex];
@@ -94,13 +93,12 @@
 				goto(location.pathname + '?' + setUrlPersona(0, new URLSearchParams(location.search)), {
 					replaceState: true,
 				});
-				return; // exit early; this function re-runs with the new `$page.params`
+				return; // exit early; this function re-runs from the `goto` call with the updated `$page`
 			}
-		} else if (personaIndex !== selectedPersonaIndex) {
-			console.log('$page.query', personaIndex);
+		} else if (personaIndex !== $selectedPersonaIndex) {
 			// TODO instead of dispatching this event on startup, try to initialize with correct values
 			dispatch('select_persona', {persona_id: get(persona).persona_id});
-		}
+		} // else already selected
 
 		// TODO speed this up with a map of communities by name
 		const communityStore = $communities.find((c) => get(c).name === params.community);

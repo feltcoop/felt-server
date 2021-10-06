@@ -50,6 +50,7 @@ export interface Ui extends Partial<UiHandlers> {
 	// derived state
 	selectedPersonaId: Readable<number | null>;
 	selectedPersona: Readable<Readable<Persona> | null>;
+	selectedPersonaIndex: Readable<number | null>;
 	selectedCommunityIdByPersona: Readable<{[key: number]: number}>;
 	selectedCommunityId: Readable<number | null>;
 	selectedCommunity: Readable<Readable<Community> | null>;
@@ -125,6 +126,11 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		[selectedPersonaId, personasById],
 		([$selectedPersonaId, $personasById]) =>
 			($selectedPersonaId && $personasById.get($selectedPersonaId)) || null,
+	);
+	const selectedPersonaIndex = derived(
+		[selectedPersona, sessionPersonas],
+		([$selectedPersona, $sessionPersonas]) =>
+			$selectedPersona === null ? null : $sessionPersonas.indexOf($selectedPersona),
 	);
 
 	// TODO should these be store references instead of ids?
@@ -446,6 +452,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		// derived state
 		selectedPersonaId,
 		selectedPersona,
+		selectedPersonaIndex,
 		selectedCommunityIdByPersona,
 		selectedCommunityId,
 		selectedCommunity,
