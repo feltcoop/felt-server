@@ -9,6 +9,7 @@
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {page} from '$app/stores';
 	import {browser} from '$app/env';
+	import type {Readable} from 'svelte/store';
 	import {get} from 'svelte/store';
 
 	import {setSocket, toSocketStore} from '$lib/ui/socket';
@@ -26,6 +27,9 @@
 	import type {EventsParams, EventsResponse} from '$lib/ui/events';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {findService} from '$lib/ui/services';
+	import type {Persona} from '$lib/vocab/persona/persona';
+	import {goto} from '$app/navigation';
+	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -60,6 +64,7 @@
 		account,
 		sessionPersonas,
 		communities,
+		selectedPersona: selectedPersonaStore,
 		selectedCommunityId,
 		selectedSpaceIdByCommunity,
 		setSession,
@@ -70,17 +75,30 @@
 	$: guest = $session.guest;
 	$: onboarding = !guest && !$sessionPersonas.length;
 
+	$: selectedPersona = $selectedPersonaStore;
+	// TODO maybe cache this someplace? this pattern is repeated in multiple places
+	$: selectedPersonaIndex = selectedPersona && $sessionPersonas.indexOf(selectedPersona);
+
 	// TODO refactor -- where should this logic go? maybe just take `app` as a param?
 	$: updateStateFromPageParams($page.params);
 	const updateStateFromPageParams = (params: {community?: string; space?: string}) => {
 		if (!params.community) return;
 
-		const personaIndex = $page.query.get('persona');
-		const persona = $sessionPersonas[personaIndex as any];
+		const rawPersonaIndex = $page.query.get(PERSONA_QUERY_KEY);
+		const personaIndex = rawPersonaIndex === null ? null : Number(rawPersonaIndex);
+		const persona: Readable<Persona> | undefined =
+			personaIndex === null ? undefined : $sessionPersonas[personaIndex];
 		if (!persona) {
-			console.error(`TODO Unable to find persona: ${persona}`);
-		} else {
+			console.warn(`unable to find persona at index ${persona}, falling back to a valid value`);
+			if (browser) {
+				goto(location.pathname + '?' + setUrlPersona(0, new URLSearchParams(location.search)), {
+					replaceState: true,
+				});
+				return; // exit early; this function re-runs with the new `$page.params`
+			}
+		} else if (personaIndex !== selectedPersonaIndex) {
 			console.log('$page.query', personaIndex);
+			// TODO instead of dispatching this event on startup, try to initialize with correct values
 			dispatch('select_persona', {persona_id: get(persona).persona_id});
 		}
 

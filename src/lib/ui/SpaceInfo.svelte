@@ -5,11 +5,11 @@
 	import type {Community} from '$lib/vocab/community/community.js';
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import {randomHue} from '$lib/ui/color';
-	import {toSpaceUrl} from '$lib/vocab/persona/util';
+	import {toSpaceUrl} from '$lib/ui/url';
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {personas},
+		ui: {sessionPersonas},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -20,7 +20,7 @@
 	$: hue = randomHue($space.name); // TODO add custom setting on spaces
 
 	// TODO maybe cache this someplace? this pattern is repeated in multiple places
-	$: personaIndex = $personas.indexOf(persona);
+	$: personaIndex = $sessionPersonas.indexOf(persona);
 </script>
 
 <a

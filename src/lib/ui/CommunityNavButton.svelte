@@ -6,11 +6,11 @@
 	import {randomHue} from '$lib/ui/color';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
-	import {toSpaceUrl} from '$lib/vocab/persona/util';
+	import {toSpaceUrl} from '$lib/ui/url';
 
 	const {
 		api: {dispatch},
-		ui: {selectedSpaceIdByCommunity, findSpaceById, personas},
+		ui: {selectedSpaceIdByCommunity, findSpaceById, sessionPersonas},
 	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
@@ -27,7 +27,7 @@
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
 
 	// TODO maybe cache this someplace? this pattern is repeated in multiple places
-	$: personaIndex = $personas.indexOf(persona);
+	$: personaIndex = $sessionPersonas.indexOf(persona);
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
