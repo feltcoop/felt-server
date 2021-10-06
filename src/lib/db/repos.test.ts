@@ -8,7 +8,7 @@ import {setupServer, teardownServer} from '$lib/util/testHelpers';
 import {validateFile} from '$lib/vocab/file/validateFile';
 import {validateSpace} from '$lib/vocab/space/validateSpace';
 import {toValidationErrorMessage} from '$lib/util/ajv';
-import {validateAccount} from '$lib/vocab/account/validateAccount';
+import {validateAccount, validateAccountModel} from '$lib/vocab/account/validateAccount';
 import {validateCommunity} from '$lib/vocab/community/validateCommunity';
 import {validatePersona} from '$lib/vocab/persona/validatePersona';
 import type {File} from '$lib/vocab/file/file';
@@ -169,9 +169,9 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 
 	const findAccountByIdValue = unwrap(await server.db.repos.account.findById(account.account_id));
 	t.is(findAccountByIdValue.name, account.name); // TODO do a better check
-	if (!validateAccount()(findAccountByIdValue)) {
+	if (!validateAccountModel()(findAccountByIdValue)) {
 		throw new Error(
-			`Failed to validate account: ${toValidationErrorMessage(validateAccount().errors![0])}`,
+			`Failed to validate account: ${toValidationErrorMessage(validateAccountModel().errors![0])}`,
 		);
 	}
 	const findAccountByNameValue = unwrap(await server.db.repos.account.findByName(account.name));

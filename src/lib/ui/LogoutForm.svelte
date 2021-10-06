@@ -32,6 +32,7 @@
 	};
 </script>
 
+<div>This account was created {account.created}</div>
 {#if $selectedPersona}
 	<div>This persona was created {get($selectedPersona).created}</div>
 {/if}

@@ -23,7 +23,9 @@ export const seed = async (db: Database): Promise<void> => {
 		create table if not exists accounts (
 		account_id serial primary key,
 			name text,
-			password text
+			password text,
+			created timestamp NOT NULL DEFAULT now(),
+			updated timestamp
 		)
 	`;
 	if (createAccountsTableResult.count) {
