@@ -85,8 +85,8 @@
 
 		const rawPersonaIndex = query.get(PERSONA_QUERY_KEY);
 		const personaIndex = rawPersonaIndex === null ? null : Number(rawPersonaIndex);
-		const persona: Readable<Persona> | undefined =
-			personaIndex === null ? undefined : $sessionPersonas[personaIndex];
+		const persona: Readable<Persona> | null =
+			personaIndex === null ? null : $sessionPersonas[personaIndex];
 		if (!persona) {
 			console.warn(`unable to find persona at index ${persona}, falling back to a valid value`);
 			if (browser) {
