@@ -44,13 +44,12 @@
 		const community = $data.communities.find((c) => c.name === params.community);
 		if (!community) return; // occurs when a session routes to a community they can't access
 
-		// TODO look up faster with caching data structure
-		const personaName = $page.query.get('persona');
-		const persona = $data.personas.find((p) => p.name === personaName);
+		const personaIndex = $page.query.get('persona');
+		const persona = $data.personas[personaIndex as any];
 		if (!persona) {
 			console.error(`TODO Unable to find persona: ${persona}`);
 		} else {
-			console.log('$page.query', $page.query.get('persona'));
+			console.log('$page.query', personaIndex);
 			api.selectPersona(persona.persona_id);
 		}
 

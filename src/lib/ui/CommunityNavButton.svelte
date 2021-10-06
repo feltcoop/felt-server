@@ -28,7 +28,7 @@
 
 <a
 	class="community"
-	href={toSpaceUrl(persona, community, selectedSpace)}
+	href={toSpaceUrl($data.personas.indexOf(persona), community, selectedSpace)}
 	class:selected
 	class:persona={community.name === persona.name}
 	style="--hue: {randomHue(community.name)}"
