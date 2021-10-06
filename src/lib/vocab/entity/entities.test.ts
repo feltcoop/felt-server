@@ -2,7 +2,7 @@ import {suite} from 'uvu';
 import * as t from 'uvu/assert';
 
 import {schemas} from '$lib/vocab/entity/entities';
-import {ID_VOCAB_PREFIX} from '$lib/vocab/schema';
+import {ID_VOCAB_PREFIX} from '$lib/vocab/util';
 
 const test__schemas = suite('schemas');
 

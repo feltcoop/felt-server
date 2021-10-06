@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {AnySchema} from 'ajv';
 
-	import {toSchemaName} from '$lib/vocab/schema';
+	import {toSchemaName} from '$lib/vocab/util';
 
 	export let schema: AnySchema;
 
