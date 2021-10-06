@@ -34,6 +34,7 @@ export interface Ui extends Partial<UiHandlers> {
 	personas: Readable<Readable<Persona>[]>;
 	personasById: Readable<Map<number, Readable<Persona>>>;
 	sessionPersonas: Readable<Readable<Persona>[]>;
+	sessionPersonaIndices: Readable<Map<Readable<Persona>, number>>;
 	communities: Readable<Readable<Community>[]>;
 	spaces: Readable<Readable<Space>[]>;
 	spacesById: Readable<Map<number, Readable<Space>>>;
@@ -132,6 +133,10 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		([$selectedPersona, $sessionPersonas]) =>
 			$selectedPersona === null ? null : $sessionPersonas.indexOf($selectedPersona),
 	);
+	const sessionPersonaIndices = derived(
+		[sessionPersonas],
+		([$sessionPersonas]) => new Map($sessionPersonas.map((p, i) => [p, i])),
+	);
 
 	// TODO should these be store references instead of ids?
 	// TODO maybe make this a lazy map, not a derived store?
@@ -228,6 +233,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		account,
 		personas,
 		sessionPersonas,
+		sessionPersonaIndices,
 		spaces,
 		communities,
 		memberships,

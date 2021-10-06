@@ -9,7 +9,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {sessionPersonas},
+		ui: {sessionPersonaIndices},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -19,8 +19,7 @@
 
 	$: hue = randomHue($space.name); // TODO add custom setting on spaces
 
-	// TODO maybe cache this someplace? this pattern is repeated in multiple places
-	$: personaIndex = $sessionPersonas.indexOf(persona);
+	$: personaIndex = $sessionPersonaIndices.get(persona)!;
 </script>
 
 <a

@@ -9,7 +9,7 @@
 
 	const {
 		api: {dispatch},
-		ui: {mobile, expandMainNav, sessionPersonas},
+		ui: {mobile, expandMainNav, sessionPersonaIndices},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -17,8 +17,7 @@
 	export let space: Space;
 	export let selected: boolean;
 
-	// TODO maybe cache this someplace? this pattern is repeated in multiple places
-	$: personaIndex = $sessionPersonas.indexOf(persona);
+	$: personaIndex = $sessionPersonaIndices.get(persona)!;
 </script>
 
 <a

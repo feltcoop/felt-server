@@ -10,7 +10,7 @@
 
 	const {
 		api: {dispatch},
-		ui: {selectedSpaceIdByCommunity, findSpaceById, sessionPersonas},
+		ui: {selectedSpaceIdByCommunity, findSpaceById, sessionPersonaIndices},
 	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
@@ -26,8 +26,7 @@
 
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
 
-	// TODO maybe cache this someplace? this pattern is repeated in multiple places
-	$: personaIndex = $sessionPersonas.indexOf(persona);
+	$: personaIndex = $sessionPersonaIndices.get(persona)!;
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
