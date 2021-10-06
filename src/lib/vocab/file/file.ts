@@ -1,27 +1,18 @@
-import {Type} from '@sinclair/typebox';
-import type {Static} from '@sinclair/typebox';
-
-import {toValidateSchema} from '$lib/util/ajv';
-
-export interface File extends Static<typeof FileSchema> {}
-export const FileSchema = Type.Object(
-	{
-		file_id: Type.Number(),
-		actor_id: Type.Number(),
-		space_id: Type.Number(),
-		content: Type.String(),
+export interface File {
+	file_id: number;
+	actor_id: number;
+	space_id: number;
+	content: string;
+}
+export const FileSchema = {
+	$id: 'https://felt.social/vocab/File.json',
+	type: 'object',
+	properties: {
+		file_id: {type: 'number'},
+		actor_id: {type: 'number'},
+		space_id: {type: 'number'},
+		content: {type: 'string'},
 	},
-	{$id: 'File', additionalProperties: false},
-);
-export const validateFile = toValidateSchema<File>(FileSchema);
-
-export interface FileParams extends Static<typeof FileParamsSchema> {}
-export const FileParamsSchema = Type.Object(
-	{
-		actor_id: Type.Number(), // `persona_id` -- must be validated against the authenticated `account_id`
-		space_id: Type.Number(),
-		content: Type.String(),
-	},
-	{$id: 'FileParams', additionalProperties: false},
-);
-export const validateFileParams = toValidateSchema<FileParams>(FileParamsSchema);
+	required: ['file_id', 'actor_id', 'space_id', 'content'],
+	additionalProperties: false,
+};

@@ -4,13 +4,14 @@
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import type {AccountModel} from '$lib/vocab/account/account';
-	import type {ApiStore} from '$lib/ui/api';
+	import {getApp} from '$lib/ui/app';
 
-	export let logOut: ApiStore['logOut'];
+	const {
+		api: {dispatch},
+	} = getApp();
 
 	let account: AccountModel;
 	$: account = $session?.account;
-	$: console.log('<LogoutForm> account', account);
 
 	let errorMessage: string | undefined;
 	let submitting: boolean | undefined;
@@ -20,8 +21,8 @@
 	const doLogOut = async () => {
 		submitting = true;
 		errorMessage = '';
-		const result = await logOut();
-		console.log('<LogoutForm> logOut result', result);
+		const result = await dispatch('log_out');
+		console.log('<LogoutForm> log_out result', result);
 		if (!result.ok) {
 			errorMessage = result.reason;
 		}

@@ -1,21 +1,20 @@
 <script lang="ts">
-	import type {CommunityModel} from '$lib/vocab/community/community.js';
+	import {get} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
+
+	import type {Community} from '$lib/vocab/community/community.js';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';
 	import CommunityNavButton from '$lib/ui/CommunityNavButton.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 
-	const {data, ui} = getApp();
-
-	$: selectedPersona = ui.selectedPersona;
-	$: selectedCommunity = ui.selectedCommunity;
-	$: communitiesByPersonaId = ui.communitiesByPersonaId;
-
-	$: selectedSpaceIdByCommunity = $ui.selectedSpaceIdByCommunity;
+	const {
+		ui: {sessionPersonas, selectedPersona, selectedCommunity, communitiesByPersonaId},
+	} = getApp();
 
 	// TODO improve the efficiency of this with better data structures and caching
-	const toPersonaCommunity = (persona: Persona): CommunityModel =>
-		$communitiesByPersonaId[persona.persona_id].find((c) => c.name === persona.name)!;
+	const toPersonaCommunity = (persona: Persona): Readable<Community> =>
+		$communitiesByPersonaId[persona.persona_id].find((c) => get(c).name === persona.name)!;
 </script>
 
 <div class="community-nav">
@@ -24,21 +23,20 @@
 	</div>
 	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
 	<div>
-		{#each $data.personas as persona (persona.persona_id)}
+		{#each $sessionPersonas as persona (persona)}
+			<!-- TODO refactor this hacky usage of `get` -->
 			<CommunityNavButton
-				community={toPersonaCommunity(persona)}
+				community={toPersonaCommunity(get(persona))}
 				{persona}
 				selected={persona === $selectedPersona &&
-					toPersonaCommunity(persona) === $selectedCommunity}
-				{selectedSpaceIdByCommunity}
+					toPersonaCommunity(get(persona)) === $selectedCommunity}
 			/>
-			{#each $communitiesByPersonaId[persona.persona_id] as community (community.community_id)}
-				{#if community.name !== persona.name}
+			{#each $communitiesByPersonaId[get(persona).persona_id] as community (community)}
+				{#if get(community).name !== get(persona).name}
 					<CommunityNavButton
 						{community}
 						{persona}
 						selected={persona === $selectedPersona && community === $selectedCommunity}
-						{selectedSpaceIdByCommunity}
 					/>
 				{/if}
 			{/each}

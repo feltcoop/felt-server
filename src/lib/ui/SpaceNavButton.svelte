@@ -1,21 +1,48 @@
 <script lang="ts">
+	import type {Readable} from 'svelte/store';
+
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import type {Space} from '$lib/vocab/space/space.js';
 	import type {CommunityModel} from '$lib/vocab/community/community.js';
 	import {toSpaceUrl} from '$lib/vocab/persona/util';
+	import {getApp} from '$lib/ui/app';
 
-	export let persona: Persona;
-	export let community: CommunityModel;
+	const {
+		api: {dispatch},
+		ui: {mobile, expandMainNav},
+	} = getApp();
+
+	export let persona: Readable<Persona>;
+	export let community: Readable<CommunityModel>;
 	export let space: Space;
 	export let selected: boolean;
 </script>
 
-<a href={toSpaceUrl(persona, community, space)} class:selected>
+<a
+	href={toSpaceUrl(persona, community, space)}
+	class:selected
+	on:click={() => {
+		// TODO Should this be a click handler or react to UI system events/changes?
+		// Might make more UX sense to make it react to any state changes,
+		// no matter the source -- e.g. we'll add commands that don't involve this click handler.
+		// That's probably what the user wants,
+		// but the problem is that we also want to close the main nav
+		// when the user clicks the already-selected space. For now this is fine.
+		if ($mobile && $expandMainNav) dispatch('toggle_main_nav');
+	}}
+>
 	{space.name}
 </a>
 
 <style>
 	a {
 		padding: var(--spacing_xs) var(--spacing_sm);
+	}
+	a:hover {
+		/* TODO update Felt and use `--tint_light_N` */
+		background-color: rgba(255, 255, 255, 50%);
+	}
+	a.selected {
+		background-color: var(--interactive_color_active);
 	}
 </style>

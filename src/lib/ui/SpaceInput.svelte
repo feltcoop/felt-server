@@ -1,39 +1,49 @@
 <script lang="ts">
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
+	import type {Readable} from 'svelte/store';
 
-	import type {CommunityModel} from '$lib/vocab/community/community.js';
+	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
 	import {spaceTypes} from '$lib/vocab/space/space';
 
-	const {api} = getApp();
+	const {
+		api: {dispatch},
+	} = getApp();
 
-	export let community: CommunityModel;
+	export let community: Readable<Community>;
 
-	let open = false;
+	let opened = false;
 	let newName = '';
 	let newType = spaceTypes[0];
 	let nameEl: HTMLInputElement;
+	let errorMessage: string | undefined;
 
 	const create = async () => {
 		if (!newName) {
+			errorMessage = 'please enter a name for your new space';
 			nameEl.focus();
 			return;
 		}
 		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
+		errorMessage = '';
 		const url = `/${newName}`;
-		await api.createSpace({
-			community_id: community.community_id,
+		const result = await dispatch('create_space', {
+			community_id: $community.community_id,
 			name: newName,
 			url,
 			//TODO : add space type picker
 			media_type: 'application/fuz+json',
 			content: `{"type": "${newType}", "props": {"data": "${url}/files"}}`,
 		});
-		newName = '';
-		newType = spaceTypes[0];
-		open = false;
+		if (result.ok) {
+			newName = '';
+			newType = spaceTypes[0];
+			opened = false;
+		} else {
+			errorMessage = result.reason;
+		}
 	};
 
 	const onKeydown = async (e: KeyboardEvent) => {
@@ -44,17 +54,22 @@
 	};
 </script>
 
-<button aria-label="Create Space" type="button" class="button-emoji" on:click={() => (open = true)}>
+<button
+	aria-label="Create Space"
+	type="button"
+	class="button-emoji"
+	on:click={() => (opened = true)}
+>
 	➕
 </button>
-{#if open}
-	<Dialog on:close={() => (open = false)}>
+{#if opened}
+	<Dialog on:close={() => (opened = false)}>
 		<div>
 			<Markup>
 				<h1>Create a new space</h1>
 				<form>
+					<div class:error={!!errorMessage}>{errorMessage || ''}</div>
 					<input
-						type="text"
 						placeholder="> name"
 						bind:value={newName}
 						use:autofocus
@@ -77,6 +92,10 @@
 {/if}
 
 <style>
+	.error {
+		font-weight: bold;
+		color: rgb(73, 84, 153);
+	}
 	.button-emoji {
 		background: none;
 		border: none;

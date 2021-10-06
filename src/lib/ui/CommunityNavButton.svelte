@@ -1,39 +1,46 @@
 <script lang="ts">
-	import type {CommunityModel} from '$lib/vocab/community/community.js';
-	import ActorIcon from '$lib/ui/ActorIcon.svelte';
+	import type {Readable} from 'svelte/store';
+
+	import type {Community} from '$lib/vocab/community/community.js';
+	import EntityIcon from '$lib/ui/EntityIcon.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 	import {toSpaceUrl} from '$lib/vocab/persona/util';
 
-	const {data} = getApp();
+	const {
+		api: {dispatch},
+		ui: {selectedSpaceIdByCommunity, findSpaceById, personas},
+	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
 	// could `ui` be more composable, so it could be easily reused e.g. in docs for demonstration purposes?
 
-	export let persona: Persona;
-	export let community: CommunityModel;
+	export let persona: Readable<Persona>;
+	export let community: Readable<Community>;
 	export let selected: boolean = false;
-	// export let communitiesByPersonaId: {
-	// 	[persona_id: number]: CommunityModel[];
-	// };
-	export let selectedSpaceIdByCommunity: {[key: number]: number | null};
 
-	// TODO should `$data.spaces` be a prop like the rest?
-	// TODO speed this up with better caching data structures
-	$: selectedSpace =
-		$data.spaces.find((s) => s.space_id === selectedSpaceIdByCommunity[community.community_id]) ||
-		null;
+	$: selectedCommunitySpaceId = $selectedSpaceIdByCommunity[$community.community_id];
+	$: selectedCommunitySpace =
+		selectedCommunitySpaceId === null ? null : findSpaceById(selectedCommunitySpaceId);
+
+	$: isPersonaHomeCommunity = $community.name === $persona.name;
 </script>
 
+<!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
 <a
 	class="community"
-	href={toSpaceUrl($data.personas.indexOf(persona), community, selectedSpace)}
+	href={toSpaceUrl(
+		$personas.indexOf(persona),
+		$community,
+		selectedCommunitySpace && $selectedCommunitySpace,
+	)}
 	class:selected
-	class:persona={community.name === persona.name}
-	style="--hue: {randomHue(community.name)}"
+	class:persona={isPersonaHomeCommunity}
+	style="--hue: {randomHue($community.name)}"
+	on:click={() => dispatch('select_persona', {persona_id: $persona.persona_id})}
 >
-	<ActorIcon name={community.name} />
+	<EntityIcon name={$community.name} type="Community" />
 </a>
 
 <style>

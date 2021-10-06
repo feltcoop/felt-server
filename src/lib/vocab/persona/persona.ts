@@ -1,28 +1,36 @@
-import {Type} from '@sinclair/typebox';
-import type {Static} from '@sinclair/typebox';
-
-import {toValidateSchema} from '$lib/util/ajv';
-
-export interface Persona extends Static<typeof PersonaSchema> {}
-export const PersonaSchema = Type.Object(
-	{
-		persona_id: Type.Number(),
-		account_id: Type.Number(),
-		name: Type.String(),
-		community_ids: Type.Array(Type.Number()),
+export interface Persona {
+	persona_id: number;
+	account_id: number;
+	name: string;
+	icon?: string;
+	community_ids: number[];
+}
+export const PersonaSchema = {
+	$id: 'https://felt.social/vocab/Persona.json',
+	type: 'object',
+	properties: {
+		persona_id: {type: 'number'},
+		account_id: {type: 'number'},
+		name: {type: 'string'},
+		icon: {type: 'string'},
+		community_ids: {type: 'array', items: {type: 'number'}},
 	},
-	{$id: 'Persona', additionalProperties: false},
-);
-export const validatePersona = toValidateSchema<Persona>(PersonaSchema);
+	required: ['persona_id', 'account_id', 'name', 'community_ids'],
+	additionalProperties: false,
+};
 
-export interface PersonaParams extends Static<typeof PersonaParamsSchema> {}
-export const PersonaParamsSchema = Type.Object(
-	{
-		name: Type.String(),
+export interface PersonaParams {
+	name: string;
+}
+export const PersonaParamsSchema = {
+	$id: 'https://felt.social/vocab/PersonaParams.json',
+	type: 'object',
+	properties: {
+		name: {type: 'string'},
 	},
-	{$id: 'PersonaParams', additionalProperties: false},
-);
-export const validatePersonaParams = toValidateSchema<PersonaParams>(PersonaParamsSchema);
+	required: ['name'],
+	additionalProperties: false,
+};
 
 //TODO
 //2.5: Render active persona

@@ -1,13 +1,14 @@
 <script lang="ts">
+	import type {Readable} from 'svelte/store';
+
 	import {spaceViews} from '$lib/ui/spaceViews';
 	import type {Space, SpaceViewData} from '$lib/vocab/space/space';
-	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
+	import type {Persona} from '$lib/vocab/persona/persona';
 
-	export let persona: Persona;
-	export let community: Community;
-	export let space: Space;
-	export let memberPersonasById: Map<number, Persona>;
+	export let persona: Readable<Persona>;
+	export let community: Readable<Community>;
+	export let space: Readable<Space | null>; // TODO the `| null` is a hack that gets bypassed below, not sure how to make it work with nullable "selected" stores
 
 	const toSpaceData = (space: Space): SpaceViewData => {
 		switch (space.media_type) {
@@ -20,19 +21,12 @@
 		}
 	};
 
-	$: spaceData = toSpaceData(space);
+	$: spaceData = toSpaceData($space!);
 	$: component = spaceViews[spaceData.type];
 </script>
 
 {#if component}
-	<svelte:component
-		this={component}
-		{persona}
-		{community}
-		{space}
-		{memberPersonasById}
-		{...spaceData.props}
-	/>
+	<svelte:component this={component} {persona} {community} {space} {...spaceData.props} />
 {:else}
 	unknown space type: {spaceData.type}
 {/if}

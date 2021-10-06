@@ -1,27 +1,25 @@
-import {Type} from '@sinclair/typebox';
-import type {Static} from '@sinclair/typebox';
-import {toValidateSchema} from '$lib/util/ajv';
-
-export interface Account extends Static<typeof AccountSchema> {}
-export const AccountSchema = Type.Object(
-	{
-		account_id: Type.Number(),
-		name: Type.String(),
-		password: Type.String(),
+export interface Account {
+	account_id: number;
+	name: string;
+	password: string;
+}
+export const AccountSchema = {
+	$id: 'https://felt.social/vocab/Account.json',
+	type: 'object',
+	properties: {
+		account_id: {type: 'number'},
+		name: {type: 'string'},
+		password: {type: 'string'},
 	},
-	{$id: 'Account', additionalProperties: false},
-);
-export const validateAccount = toValidateSchema<Account>(AccountSchema);
+	required: ['account_id', 'name', 'password'],
+	additionalProperties: false,
+};
 
-export interface AccountParams extends Static<typeof AccountParamsSchema> {}
-export const AccountParamsSchema = Type.Object(
-	{
-		name: Type.String(),
-		password: Type.String(),
-	},
-	{$id: 'AccountParams', additionalProperties: false},
-);
-export const validateAccountParams = toValidateSchema<AccountParams>(AccountParamsSchema);
+// TODO make the `create_account` event in account.events.ts
+export interface create_account_params_type {
+	name: string;
+	password: string;
+}
 
 // TODO rename? `AccountClientDoc`? above could be `AccountDbDoc` and `AccountRequestDoc`
 export interface AccountModel {

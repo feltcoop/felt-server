@@ -1,76 +1,44 @@
-import {Type} from '@sinclair/typebox';
-
 import type {Service} from '$lib/server/service';
-import {CommunitySchema} from '$lib/vocab/community/community';
-import {MembershipSchema} from '$lib/vocab/membership/membership';
-import {toValidateSchema} from '$lib/util/ajv';
-
-const ReadCommunitiesServiceParams = Type.Object(
-	{
-		// TODO query params
-	},
-	{$id: 'ReadCommunitiesServiceParams', additionalProperties: false},
-);
-const ReadCommunitiesServiceResponse = Type.Object(
-	{
-		communities: Type.Array(CommunitySchema),
-	},
-	{$id: 'ReadCommunitiesServiceResponse', additionalProperties: false},
-);
+import type {
+	create_community_params_type,
+	create_community_response_type,
+	read_community_params_type,
+	read_community_response_type,
+	read_communities_params_type,
+	read_communities_response_type,
+} from '$lib/ui/events';
+import {
+	create_community,
+	read_communities,
+	read_community,
+} from '$lib/vocab/community/community.events';
+import type {create_membership_params_type, create_membership_response_type} from '$lib/ui/events';
+import {create_membership} from '$lib/vocab/membership/membership.events';
 
 // Returns a list of community objects
 export const readCommunitiesService: Service<
-	typeof ReadCommunitiesServiceParams,
-	typeof ReadCommunitiesServiceResponse
+	read_communities_params_type,
+	read_communities_response_type
 > = {
-	name: 'read_communities',
-	route: {
-		path: '/api/v1/communities',
-		method: 'get',
-	},
-	paramsSchema: ReadCommunitiesServiceParams,
-	validateParams: toValidateSchema(ReadCommunitiesServiceParams),
-	responseSchema: ReadCommunitiesServiceResponse,
-	validateResponse: toValidateSchema(ReadCommunitiesServiceResponse),
+	event: read_communities,
 	perform: async ({server, account_id}) => {
 		const {db} = server;
 		const findCommunitiesResult = await db.repos.community.filterByAccount(account_id);
 		if (findCommunitiesResult.ok) {
-			return {code: 200, data: {communities: findCommunitiesResult.value}};
+			return {ok: true, status: 200, value: {communities: findCommunitiesResult.value}};
 		} else {
 			console.log('[read_communities] error searching for communities');
-			return {code: 500, data: {reason: 'error searching for communities'}};
+			return {ok: false, status: 500, reason: 'error searching for communities'};
 		}
 	},
 };
 
-const ReadCommunityServiceParams = Type.Object(
-	{
-		community_id: Type.Number(),
-	},
-	{$id: 'ReadCommunityServiceParams', additionalProperties: false},
-);
-const ReadCommunityServiceResponse = Type.Object(
-	{
-		community: CommunitySchema,
-	},
-	{$id: 'ReadCommunityServiceResponse', additionalProperties: false},
-);
-
 //Returns a single community object
 export const readCommunityService: Service<
-	typeof ReadCommunityServiceParams,
-	typeof ReadCommunityServiceResponse
+	read_community_params_type,
+	read_community_response_type
 > = {
-	name: 'read_community',
-	route: {
-		path: '/api/v1/communities/:community_id',
-		method: 'get',
-	},
-	paramsSchema: ReadCommunityServiceParams,
-	validateParams: toValidateSchema(ReadCommunityServiceParams),
-	responseSchema: ReadCommunityServiceResponse,
-	validateResponse: toValidateSchema(ReadCommunityServiceResponse),
+	event: read_community,
 	perform: async ({server, params, account_id}) => {
 		const {db} = server;
 		console.log('[read_community] account', account_id); // TODO logging
@@ -78,50 +46,33 @@ export const readCommunityService: Service<
 
 		const findCommunityResult = await db.repos.community.findById(params.community_id);
 		if (findCommunityResult.ok) {
-			return {code: 200, data: {community: findCommunityResult.value}};
+			return {ok: true, status: 200, value: {community: findCommunityResult.value}};
 		} else {
 			return {
-				code: findCommunityResult.type === 'no_community_found' ? 404 : 500,
-				data: {reason: findCommunityResult.reason},
+				ok: false,
+				status: findCommunityResult.type === 'no_community_found' ? 404 : 500,
+				reason: findCommunityResult.reason,
 			};
 		}
 	},
 };
 
-const CreateCommunityServiceParams = Type.Object(
-	{
-		name: Type.String(),
-		persona_id: Type.Number(),
-	},
-	{$id: 'CreateCommunityServiceParams', additionalProperties: false},
-);
-const CreateCommunityServiceResponse = Type.Object(
-	{
-		community: CommunitySchema,
-	},
-	{$id: 'CreateCommunityServiceResponse', additionalProperties: false},
-);
-
 //Creates a new community for an instance
-// TODO automatic params type and validation
+// TODO think about extracting this to a `.services.` file
+// that imports a generated type and declares only `perform`
 export const createCommunityService: Service<
-	typeof CreateCommunityServiceParams,
-	typeof CreateCommunityServiceResponse
+	create_community_params_type,
+	create_community_response_type
 > = {
-	name: 'create_community',
-	route: {
-		path: '/api/v1/communities',
-		method: 'post',
-	},
-	paramsSchema: CreateCommunityServiceParams,
-	validateParams: toValidateSchema(CreateCommunityServiceParams),
-	responseSchema: CreateCommunityServiceResponse,
-	validateResponse: toValidateSchema(CreateCommunityServiceResponse),
-	// TODO declarative validation for `req.body` and the rest
+	event: create_community,
 	perform: async ({server, params, account_id}) => {
 		if (!params.name) {
 			// TODO declarative validation
-			return {code: 400, data: {reason: 'invalid name'}};
+			return {
+				ok: false,
+				status: 400,
+				reason: 'invalid name',
+			};
 		}
 		console.log('created community account_id', account_id);
 		// TODO validate that `account_id` is `persona_id`
@@ -136,60 +87,47 @@ export const createCommunityService: Service<
 				console.log('community_id', community_id);
 				console.log('communityData', communityData);
 				return {
-					code: 200,
-					data: {
+					ok: true,
+					status: 200,
+					value: {
 						community: communityData.value.find((c) => c.community_id === community_id)!,
 					},
 				}; // TODO API types
 			} else {
 				console.log('[create_community] error retrieving community data');
-				return {code: 500, data: {reason: 'error retrieving community data'}};
+				return {
+					ok: false,
+					status: 500,
+					reason: 'error retrieving community data',
+				};
 			}
 		} else {
 			console.log('[create_community] error creating community');
-			return {code: 500, data: {reason: 'error creating community'}};
+			return {
+				ok: false,
+				status: 500,
+				reason: 'error creating community',
+			};
 		}
 	},
 };
 
-const CreateMembershipServiceParams = Type.Object(
-	{
-		persona_id: Type.Number(),
-		community_id: Type.Number(),
-	},
-	{$id: 'CreateMembershipServiceParams', additionalProperties: false},
-);
-const CreateMembershipServiceResponse = Type.Object(
-	{
-		membership: MembershipSchema,
-	},
-	{$id: 'CreateMembershipServiceResponse', additionalProperties: false},
-);
-
 // TODO move to `$lib/vocab/member`
 //Creates a new member relation for a community
 export const createMembershipService: Service<
-	typeof CreateMembershipServiceParams,
-	typeof CreateMembershipServiceResponse
+	create_membership_params_type,
+	create_membership_response_type
 > = {
-	name: 'create_membership',
-	route: {
-		path: '/api/v1/memberships',
-		method: 'post',
-	},
-	paramsSchema: CreateMembershipServiceParams,
-	validateParams: toValidateSchema(CreateMembershipServiceParams),
-	responseSchema: CreateMembershipServiceResponse,
-	validateResponse: toValidateSchema(CreateMembershipServiceResponse),
+	event: create_membership,
 	perform: async ({server, params}) => {
 		console.log('[create_membership] creating membership', params.persona_id, params.community_id);
 
 		const createMembershipResult = await server.db.repos.membership.create(params);
 		if (createMembershipResult.ok) {
-			return {code: 200, data: {membership: createMembershipResult.value}};
+			return {ok: true, status: 200, value: {membership: createMembershipResult.value}};
 		} else {
 			console.log('[create_membership] error creating membership');
-			return {code: 500, data: {reason: 'error creating membership'}};
+			return {ok: false, status: 500, reason: 'error creating membership'};
 		}
 	},
 };

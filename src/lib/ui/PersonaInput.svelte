@@ -3,10 +3,12 @@
 	import type {AsyncStatus} from '@feltcoop/felt';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
-	import type {PersonaParams} from '$lib/vocab/persona/persona';
 	import {autofocus} from '$lib/ui/actions';
+	import {getApp} from '$lib/ui/app';
 
-	export let createPersona: (personaParams: PersonaParams) => Promise<unknown>; // TODO return type?
+	const {
+		api: {dispatch},
+	} = getApp();
 
 	let name = '';
 	let status: AsyncStatus = 'initial'; // TODO refactor
@@ -20,7 +22,7 @@
 			return;
 		}
 		status = 'pending';
-		await createPersona({name});
+		await dispatch('create_persona', {name});
 		status = 'success'; // TODO handle failure (also refactor to be generic)
 		name = '';
 	};
@@ -37,7 +39,6 @@
 	<h2>Create a persona</h2>
 	<form>
 		<input
-			type="text"
 			placeholder="> name"
 			bind:this={inputEl}
 			bind:value={name}
@@ -45,7 +46,9 @@
 			disabled={status === 'pending'}
 			on:keydown={onKeydown}
 		/>
-		<button type="button" on:click={create} disabled={status === 'pending'}> Create </button>
+		<button type="button" on:click={create} disabled={status === 'pending'}>
+			Create persona
+		</button>
 	</form>
 </Markup>
 <div class="centered-block">

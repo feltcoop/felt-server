@@ -29,7 +29,8 @@ npm test
 gro test
 ```
 
-> learn more [about Gro](https://github.com/feltcoop/gro)
+> learn more [about Gro](https://github.com/feltcoop/gro) and
+> [setting up a dev environment](/src/lib/docs/contributing.md)
 
 ## build
 

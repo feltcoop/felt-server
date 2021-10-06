@@ -1,38 +1,13 @@
-import {Type} from '@sinclair/typebox';
-
 import type {Service} from '$lib/server/service';
-import {PersonaSchema} from '$lib/vocab/persona/persona';
-import {CommunitySchema} from '$lib/vocab/community/community';
-import {toValidateSchema} from '$lib/util/ajv';
-
-const CreatePersonaServiceParams = Type.Object(
-	{
-		name: Type.String(),
-	},
-	{$id: 'CreatePersonaServiceParams', additionalProperties: false},
-);
-const CreatePersonaServiceResponse = Type.Object(
-	{
-		persona: PersonaSchema,
-		community: CommunitySchema,
-	},
-	{$id: 'CreatePersonaServiceResponse', additionalProperties: false},
-);
+import type {create_persona_params_type, create_persona_response_type} from '$lib/ui/events';
+import {create_persona} from '$lib/vocab/persona/persona.events';
 
 //Creates a new persona
 export const createPersonaService: Service<
-	typeof CreatePersonaServiceParams,
-	typeof CreatePersonaServiceResponse
+	create_persona_params_type,
+	create_persona_response_type
 > = {
-	name: 'create_persona',
-	route: {
-		path: '/api/v1/personas',
-		method: 'post',
-	},
-	paramsSchema: CreatePersonaServiceParams,
-	validateParams: toValidateSchema(CreatePersonaServiceParams),
-	responseSchema: CreatePersonaServiceResponse,
-	validateResponse: toValidateSchema(CreatePersonaServiceResponse),
+	event: create_persona,
 	// TODO verify the `account_id` has permission to modify this persona
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
 	perform: async ({server, params, account_id}) => {
@@ -44,10 +19,10 @@ export const createPersonaService: Service<
 		// this begs the question, should repos use the `__Params` interfaces or not?
 		const createPersonaResult = await db.repos.persona.create(params, account_id);
 		if (createPersonaResult.ok) {
-			return {code: 200, data: createPersonaResult.value};
+			return {ok: true, status: 200, value: createPersonaResult.value};
 		} else {
 			console.log('[create_persona] error searching for community personas');
-			return {code: 500, data: {reason: 'error searching for community personas'}};
+			return {ok: false, status: 500, reason: 'error searching for community personas'};
 		}
 	},
 };

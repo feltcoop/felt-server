@@ -9,5 +9,5 @@ export const API_SERVER_HOST = 'localhost:3001';
 export const WEBSOCKET_URL = dev ? 'ws://localhost:3001/ws' : 'wss://staging.felt.dev/ws';
 
 export const DEPLOY_SERVER_HOST = 'felt.dev';
-export const DEPLOY_IP = '50.116.30.248';
+export const DEPLOY_IP = '96.126.116.174';
 export const DEPLOY_USER = 'root';

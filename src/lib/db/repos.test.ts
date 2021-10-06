@@ -5,12 +5,12 @@ import {unwrap} from '@feltcoop/felt';
 
 import type {TestServerContext} from '$lib/util/testHelpers';
 import {setupServer, teardownServer} from '$lib/util/testHelpers';
-import {validateFile} from '$lib/vocab/file/file';
-import {validateSpace} from '$lib/vocab/space/space';
+import {validateFile} from '$lib/vocab/file/validateFile';
+import {validateSpace} from '$lib/vocab/space/validateSpace';
 import {toValidationErrorMessage} from '$lib/util/ajv';
-import {validateAccount} from '$lib/vocab/account/account';
-import {validateCommunity} from '$lib/vocab/community/community';
-import {validatePersona} from '$lib/vocab/persona/persona';
+import {validateAccount} from '$lib/vocab/account/validateAccount';
+import {validateCommunity} from '$lib/vocab/community/validateCommunity';
+import {validatePersona} from '$lib/vocab/persona/validatePersona';
 import type {File} from '$lib/vocab/file/file';
 import {
 	randomAccountParams,

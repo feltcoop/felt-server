@@ -5,9 +5,11 @@
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import {autofocus} from '$lib/ui/actions';
-	import type {ApiStore} from '$lib/ui/api';
+	import {getApp} from '$lib/ui/app';
 
-	export let logIn: ApiStore['logIn'];
+	const {
+		api: {dispatch},
+	} = getApp();
 
 	let accountName = '';
 	let password = '';
@@ -35,7 +37,7 @@
 		submitting = true;
 		errorMessage = '';
 		console.log('logging in with accountName', accountName);
-		const result = await logIn(accountName, password);
+		const result = await dispatch('log_in', {accountName, password});
 		submitting = false;
 		if (!result.ok) {
 			errorMessage = result.reason;
@@ -56,7 +58,6 @@
 </div>
 <form>
 	<input
-		type="text"
 		bind:this={accountNameEl}
 		bind:value={accountName}
 		on:keypress={onKeypress}

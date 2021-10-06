@@ -2,15 +2,12 @@
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {icons} from '@feltcoop/felt';
 
-	import {getApp} from '$lib/ui/app';
 	import PersonaInput from '$lib/ui/PersonaInput.svelte';
-
-	const {api} = getApp();
 </script>
 
 <Markup>
 	<div class="welcome">{icons.waving}</div>
-	<PersonaInput createPersona={api.createPersona} />
+	<PersonaInput />
 </Markup>
 
 <style>

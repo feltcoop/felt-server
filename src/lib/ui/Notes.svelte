@@ -1,27 +1,36 @@
 <script lang="ts">
 	import {browser} from '$app/env';
+	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
+	import type {Readable} from 'svelte/store';
 
+	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
 	import NoteItems from '$lib/ui/NotesItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {api, ui, data} = getApp();
+	const {
+		api: {dispatch},
+		ui: {selectedPersonaId},
+		socket,
+	} = getApp();
 
-	export let space: Space;
+	export let community: Readable<Community>;
+	export let space: Readable<Space>;
+
+	community; // silence unused prop warning
 
 	let text = '';
 
-	$: browser && api.loadFiles(space.space_id);
-	$: console.log(`[Notes] fetching files for ${space.space_id}`);
-	$: selectedPersonaId = $ui.selectedPersonaId;
+	$: shouldLoadFiles = browser && $socket.connected;
+	$: files = shouldLoadFiles ? dispatch('query_files', {space_id: $space.space_id}) : null;
 
 	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
 		if (!content) return;
-		await api.createFile({
-			space_id: space.space_id,
+		await dispatch('create_file', {
+			space_id: $space.space_id,
 			content,
-			actor_id: selectedPersonaId!,
+			actor_id: $selectedPersonaId!, // TODO generic erorr check for no selected persona?
 		});
 		text = '';
 	};
@@ -31,14 +40,16 @@
 			await createFile();
 		}
 	};
-
-	$: files = $data.filesBySpace[space.space_id] || [];
 </script>
 
 <div class="notes">
-	<textarea type="text" placeholder="> note" on:keydown={onKeydown} bind:value={text} />
+	<textarea placeholder="> note" on:keydown={onKeydown} bind:value={text} />
 	<div class="files">
-		<NoteItems {files} />
+		{#if files}
+			<NoteItems {files} />
+		{:else}
+			<PendingAnimation />
+		{/if}
 	</div>
 </div>
 

@@ -1,36 +1,42 @@
-import Ajv, {_} from 'ajv';
-import type {ErrorObject, ValidateFunction} from 'ajv';
-import type {TSchema} from '@sinclair/typebox';
+import Ajv from 'ajv';
+import type {ErrorObject, ValidateFunction, AnySchema} from 'ajv';
 
-export const ajv = new Ajv()
-	// These are needed so the schemas created by `@sinclair/typebox` don't error --
-	// adding them like this easier than using `Strict`.
-	.addKeyword('kind')
-	.addKeyword('modifier');
+import {schemas} from '$lib/vocab/schemas';
+
+let ajvInstance: Ajv | null = null;
+
+// TODO maybe accept options, and store `ajv` references by each?
+export const ajv = (): Ajv => {
+	if (ajvInstance) return ajvInstance;
+	ajvInstance = new Ajv();
+	for (const schema of schemas) {
+		ajvInstance.addSchema(schema);
+	}
+	return ajvInstance;
+};
 
 export interface CreateValidate<T = unknown> {
 	(): ValidateFunction<T>;
 }
 
-const validators: Map<TSchema, ValidateFunction> = new Map();
+const validators: Map<AnySchema, ValidateFunction> = new Map();
 
-// TODO improve this and `toValidateSchema` so they use the same cache
 // Memoizes the returned schema validation function in the module-level lookup `validators`.
-export const validateSchema = <T>(schema: TSchema): ValidateFunction<T> => {
-	let validate = validators.get(schema) as ValidateFunction<T>;
-	if (!validate) {
-		validators.set(schema, (validate = toValidateSchema<T>(schema)()));
-	}
-	return validate;
-};
+// Does not support multiple instantiations with different options.
+export const validateSchema = <T>(schema: AnySchema): ValidateFunction<T> =>
+	toValidateSchema<T>(schema)();
 
-// TODO try to fix this type, should use `Static`
 // Creates a lazily-compiled schema validation function to avoid wasteful compilation.
 // It's also faster than ajv's internal compiled schema cache
 // because we can assume a consistent environment.
-export const toValidateSchema = <T>(schema: TSchema): CreateValidate<T> => {
-	let validate: ValidateFunction<T>;
-	return () => validate || (validate = ajv.compile(schema));
+export const toValidateSchema = <T>(schema: AnySchema): CreateValidate<T> => {
+	let validate = validators.get(schema) as ValidateFunction<T> | undefined;
+	return () => {
+		if (validate) return validate;
+		validate = ajv().compile(schema);
+		validators.set(schema, validate);
+		return validate;
+	};
 };
 
 // TODO probably misses a bunch of cases

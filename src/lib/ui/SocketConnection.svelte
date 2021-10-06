@@ -12,7 +12,7 @@
 	<div class="socket-connection">
 		{#if $socket.connected}
 			<form>
-				<input bind:value={newUrl} type="text" disabled />
+				<input bind:value={newUrl} disabled />
 				<button
 					type="button"
 					on:click={() => socket.disconnect()}
@@ -23,7 +23,7 @@
 			</form>
 		{:else}
 			<form>
-				<input bind:value={newUrl} type="text" disabled={$socket.status === 'pending'} />
+				<input bind:value={newUrl} disabled={$socket.status === 'pending'} />
 				<button
 					type="button"
 					on:click={() => socket.connect(newUrl)}

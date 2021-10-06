@@ -6,65 +6,76 @@
 	import CommunityNav from '$lib/ui/CommunityNav.svelte';
 	import SpaceNav from '$lib/ui/SpaceNav.svelte';
 	import SocketConnection from '$lib/ui/SocketConnection.svelte';
-	import PersonaInfo from '$lib/ui/PersonaInfo.svelte';
+	import Avatar from '$lib/ui/Avatar.svelte';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
-	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/util';
+	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
+	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
-	const {data, ui, api} = getApp();
+	const {
+		api: {dispatch},
+		ui: {
+			mainNavView,
+			expandMainNav,
+			selectedSpace: selectedSpaceStore,
+			selectedPersona: selectedPersonaStore,
+			selectedCommunity: selectedCommunityStore,
+		},
+		devmode,
+	} = getApp();
 
-	$: allPersonas = $data.allPersonas;
-
-	$: selectedPersona = ui.selectedPersona;
-	$: selectedCommunity = ui.selectedCommunity;
-	$: selectedSpace = ui.selectedSpace;
+	$: selectedPersona = $selectedPersonaStore!; // TODO type?
+	$: selectedCommunity = $selectedCommunityStore;
+	$: selectedSpace = $selectedSpaceStore;
 
 	// TODO refactor to some client view-model for the account
 	$: selectedPersonaName = $selectedPersona?.name || GUEST_PERSONA_NAME;
 	$: hue = randomHue(selectedPersonaName);
 </script>
 
-{#if $ui.expandMainNav}
-	<div class="main-nav-bg" on:click={() => ($ui.expandMainNav ? api.toggleMainNav() : null)} />
+{#if $expandMainNav}
+	<div class="main-nav-bg" on:click={() => ($expandMainNav ? dispatch('toggle_main_nav') : null)} />
 {/if}
-<div class="main-nav-panel" class:expanded={$ui.expandMainNav} style="--hue: {hue}">
+<div class="main-nav-panel" class:expanded={$expandMainNav} style="--hue: {hue}">
 	<div class="main-nav">
 		<div class="header">
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
 			<button
-				on:click={() => ui.setMainNavView('explorer')}
-				class:selected={$ui.mainNavView === 'explorer'}
+				on:click={() => dispatch('set_main_nav_view', 'explorer')}
+				class:selected={$mainNavView === 'explorer'}
 				class="explorer-button"
 			>
-				<PersonaInfo persona={$selectedPersona} />
+				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
 			</button>
 			<button
-				on:click={() => ui.setMainNavView('account')}
-				class:selected={$ui.mainNavView === 'account'}
+				on:click={() => dispatch('set_main_nav_view', 'account')}
+				class:selected={$mainNavView === 'account'}
 				class="account-button"
 			>
 				<!-- TODO `icons.dotDotDot` -->
 				{icons.bulletPoint}{icons.bulletPoint}{icons.bulletPoint}
 			</button>
 		</div>
-		{#if $ui.mainNavView === 'explorer'}
+		{#if $mainNavView === 'explorer'}
 			<div class="explorer">
 				<CommunityNav />
-				{#if $selectedPersona && $selectedCommunity}
+				{#if selectedPersona && selectedCommunity && selectedSpace}
 					<SpaceNav
-						selectedPersona={$selectedPersona}
-						community={$selectedCommunity}
+						{selectedPersona}
+						community={selectedCommunity}
 						spaces={$selectedCommunity.spaces}
-						selectedSpace={$selectedSpace}
-						{allPersonas}
+						{selectedSpace}
 					/>
 				{/if}
 			</div>
-		{:else if $ui.mainNavView === 'account'}
+		{:else if $mainNavView === 'account'}
 			<Markup>
-				<AccountForm guest={$session.guest} logIn={api.logIn} logOut={api.logOut} />
+				<AccountForm guest={$session.guest} />
+				{#if $devmode}
+					<a class="menu-link" href="/docs">/docs</a>
+				{/if}
 			</Markup>
 			<SocketConnection />
 		{/if}
@@ -80,16 +91,15 @@
 	}
 	.main-nav {
 		position: relative;
-		z-index: 1;
+		z-index: 2;
 		height: 100%;
 		width: var(--column_width_min);
 		overflow: auto;
 		display: flex;
 		flex-direction: column;
 		flex-shrink: 0;
-		border-left: var(--border);
-		border-right: var(--border);
 		transform-origin: top left;
+		/* TODO what var is this? */
 		background-color: hsl(var(--bg_hue), var(--bg_saturation), var(--bg_lightness));
 		transform: translate3d(-100%, 0, 0) scale3d(1, 1, 1);
 		transition: transform var(--transition_duration_xs) ease-out;
@@ -99,7 +109,7 @@
 		transition-duration: var(--transition_duration_sm);
 	}
 	.main-nav-bg {
-		z-index: 1;
+		z-index: 2;
 		display: none;
 		position: fixed;
 		width: 100%;
@@ -109,23 +119,21 @@
 		/* TODO from felt */
 		background-color: rgba(0, 0, 0, 0.4);
 	}
-	/* `50rem` in media queries is the same as `800px`, which is `--column_width` */
-	@media (max-width: 50rem) {
-		.main-nav {
-			z-index: 1;
-			position: fixed;
-			left: 0;
-			top: 0;
-		}
-		.main-nav-bg {
-			display: block;
-			animation: fade-in var(--transition_duration_xl) ease-out;
-		}
-		.main-nav-panel.expanded {
-			width: 0;
-		}
+	:global(.mobile) .main-nav {
+		position: fixed;
+		left: 0;
+		top: 0;
+	}
+	:global(.mobile) .main-nav-bg {
+		display: block;
+		animation: fade-in var(--transition_duration_xl) ease-out;
+	}
+	:global(.mobile) .main-nav-panel.expanded {
+		width: 0;
 	}
 	.header {
+		position: sticky;
+		top: 0;
 		display: flex;
 		height: calc(var(--navbar_size) + var(--border_width));
 		border-bottom: var(--border);
@@ -144,5 +152,8 @@
 	.account-button {
 		height: var(--navbar_size);
 		width: var(--navbar_size);
+	}
+	.menu-link {
+		padding: var(--spacing_xs) var(--spacing_sm);
 	}
 </style>

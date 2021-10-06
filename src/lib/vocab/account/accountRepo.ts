@@ -1,6 +1,6 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {Account, AccountParams} from '$lib/vocab/account/account.js';
+import type {Account, create_account_params_type} from '$lib/vocab/account/account.js';
 import {accountProperties} from '$lib/vocab/account/account';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
@@ -10,7 +10,7 @@ export const accountRepo = (db: Database) => ({
 	create: async ({
 		name,
 		password,
-	}: AccountParams): Promise<Result<{value: Account}, ErrorResponse>> => {
+	}: create_account_params_type): Promise<Result<{value: Account}, ErrorResponse>> => {
 		const passwordKey = await toPasswordKey(password);
 		const data = await db.sql<Account[]>`
       insert into accounts (name, password) values (

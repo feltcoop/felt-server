@@ -1,34 +1,23 @@
-import {Type} from '@sinclair/typebox';
-import type {Static} from '@sinclair/typebox';
-
-import {toValidateSchema} from '$lib/util/ajv';
-
-export interface Space extends Static<typeof SpaceSchema> {}
-export const SpaceSchema = Type.Object(
-	{
-		space_id: Type.Number(),
-		name: Type.String(),
-		url: Type.String(),
-		media_type: Type.String(),
-		content: Type.String(),
+export interface Space {
+	space_id: number;
+	name: string;
+	url: string;
+	media_type: string;
+	content: string;
+}
+export const SpaceSchema = {
+	$id: 'https://felt.social/vocab/Space.json',
+	type: 'object',
+	properties: {
+		space_id: {type: 'number'},
+		name: {type: 'string'},
+		url: {type: 'string'},
+		media_type: {type: 'string'},
+		content: {type: 'string'},
 	},
-	{$id: 'Space', additionalProperties: false},
-);
-export const validateSpace = toValidateSchema<Space>(SpaceSchema);
-
-// TODO the `community_id` belongs here, but it's not used in the REST post payload, only the params
-export interface SpaceParams extends Static<typeof SpaceParamsSchema> {}
-export const SpaceParamsSchema = Type.Object(
-	{
-		community_id: Type.Number(),
-		name: Type.String(),
-		url: Type.String(),
-		media_type: Type.String(),
-		content: Type.String(),
-	},
-	{$id: 'SpaceParams', additionalProperties: false},
-);
-export const validateSpaceParams = toValidateSchema<SpaceParams>(SpaceParamsSchema);
+	required: ['space_id', 'name', 'url', 'media_type', 'content'],
+	additionalProperties: false,
+};
 
 export enum SpaceType {
 	Home = 'Home',
