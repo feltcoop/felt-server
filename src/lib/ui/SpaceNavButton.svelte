@@ -3,23 +3,26 @@
 
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import type {Space} from '$lib/vocab/space/space.js';
-	import type {CommunityModel} from '$lib/vocab/community/community.js';
+	import type {Community} from '$lib/vocab/community/community.js';
 	import {toSpaceUrl} from '$lib/vocab/persona/util';
 	import {getApp} from '$lib/ui/app';
 
 	const {
 		api: {dispatch},
-		ui: {mobile, expandMainNav},
+		ui: {mobile, expandMainNav, personas},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
-	export let community: Readable<CommunityModel>;
+	export let community: Readable<Community>;
 	export let space: Space;
 	export let selected: boolean;
+
+	// TODO maybe cache this someplace? this pattern is repeated in multiple places
+	$: personaIndex = $personas.indexOf(persona);
 </script>
 
 <a
-	href={toSpaceUrl(persona, community, space)}
+	href={toSpaceUrl(personaIndex, $community, space)}
 	class:selected
 	on:click={() => {
 		// TODO Should this be a click handler or react to UI system events/changes?

@@ -6,6 +6,11 @@
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import {randomHue} from '$lib/ui/color';
 	import {toSpaceUrl} from '$lib/vocab/persona/util';
+	import {getApp} from '$lib/ui/app';
+
+	const {
+		ui: {personas},
+	} = getApp();
 
 	export let persona: Readable<Persona>;
 	export let space: Readable<Space>;
@@ -13,10 +18,13 @@
 	export let selected: boolean = false;
 
 	$: hue = randomHue($space.name); // TODO add custom setting on spaces
+
+	// TODO maybe cache this someplace? this pattern is repeated in multiple places
+	$: personaIndex = $personas.indexOf(persona);
 </script>
 
 <a
-	href={toSpaceUrl(persona, community, space)}
+	href={toSpaceUrl(personaIndex, $community, $space)}
 	class:selected
 	class="space-info"
 	style="--hue: {hue}"

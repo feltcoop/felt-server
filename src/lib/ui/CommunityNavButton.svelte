@@ -25,16 +25,15 @@
 		selectedCommunitySpaceId === null ? null : findSpaceById(selectedCommunitySpaceId);
 
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
+
+	// TODO maybe cache this someplace? this pattern is repeated in multiple places
+	$: personaIndex = $personas.indexOf(persona);
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
 <a
 	class="community"
-	href={toSpaceUrl(
-		$personas.indexOf(persona),
-		$community,
-		selectedCommunitySpace && $selectedCommunitySpace,
-	)}
+	href={toSpaceUrl(personaIndex, $community, selectedCommunitySpace && $selectedCommunitySpace)}
 	class:selected
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {randomHue($community.name)}"

@@ -7,6 +7,7 @@
 	import SpaceInfo from '$lib/ui/SpaceInfo.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
+	import type {Persona} from '$lib/vocab/persona/persona';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
 	const {

@@ -10,9 +10,15 @@ export const GUEST_PERSONA_NAME = 'guest';
 
 // TODO should this api extend the existing `URLSearchParams`? (to preserve?)
 // TODO do this more robustly with the existing url
-export const toSpaceUrl = (personaIndex: number | null, community: Community, space: Space | null): string => {
+export const toSpaceUrl = (
+	personaIndex: number | null,
+	community: Community,
+	space: Space | null,
+): string => {
 	const url = space && space.url; // TODO could be `space.url` but that messes the types up for some reason, adds undefined and removes null
-	return `/${community.name}${!url || url === '/' ? '' : url}?${new URLSearchParams({
-		persona: personaIndex === -1 ? null : personaIndex,
-	})}`;
+	const params: Record<string, string> = {};
+	if (personaIndex !== null && personaIndex !== -1) {
+		params.persona = personaIndex.toString();
+	}
+	return `/${community.name}${!url || url === '/' ? '' : url}?${new URLSearchParams(params)}`;
 };
