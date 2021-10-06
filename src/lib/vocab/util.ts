@@ -6,6 +6,6 @@ export const ID_SUFFIX = '.json';
 
 const names: Record<string, string | undefined> = {};
 
-// TODO maybe cache `title` on each schema -- generatd?
+// TODO maybe cache `title` on each schema?
 export const toSchemaName = ($id: string): string =>
 	names[$id] || (names[$id] = stripEnd(stripStart($id, ID_VOCAB_PREFIX), ID_SUFFIX));
