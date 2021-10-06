@@ -3,7 +3,7 @@ export interface Account {
 	name: string;
 	password: string;
 	created: Date;
-	updated?: Date;
+	updated: Date | null;
 }
 export const AccountSchema = {
 	$id: 'https://felt.social/vocab/Account.json',
@@ -12,10 +12,10 @@ export const AccountSchema = {
 		account_id: {type: 'number'},
 		name: {type: 'string'},
 		password: {type: 'string'},
-		created: {type: 'object'},
-		updated: {type: ['object', 'null']},
+		created: {type: 'object', format: 'date-time'},
+		updated: {type: ['object', 'null'], format: 'date-time'},
 	},
-	required: ['account_id', 'name', 'password', 'created'],
+	required: ['account_id', 'name', 'password', 'created', 'updated'],
 	additionalProperties: false,
 };
 
@@ -30,7 +30,7 @@ export interface AccountModel {
 	account_id: number;
 	name: string;
 	created: Date;
-	updated?: Date;
+	updated: Date | null;
 }
 
 export const AccountModelSchema = {
@@ -39,10 +39,10 @@ export const AccountModelSchema = {
 	properties: {
 		account_id: {type: 'number'},
 		name: {type: 'string'},
-		created: {type: 'object'},
-		updated: {type: ['object', 'null']},
+		created: {type: 'object', format: 'date-time'},
+		updated: {type: ['object', 'null'], format: 'date-time'},
 	},
-	required: ['account_id', 'name', 'created'],
+	required: ['account_id', 'name', 'created', 'updated'],
 	additionalProperties: false,
 };
 

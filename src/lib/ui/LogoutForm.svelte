@@ -20,6 +20,8 @@
 
 	$: disabled = !account;
 
+	$: selectedPersonaValue = $selectedPersona;
+
 	const doLogOut = async () => {
 		submitting = true;
 		errorMessage = '';
@@ -33,8 +35,8 @@
 </script>
 
 <div>This account was created {account.created}</div>
-{#if $selectedPersona}
-	<div>This persona was created {get($selectedPersona).created}</div>
+{#if selectedPersonaValue}
+	<div>This persona was created {$selectedPersonaValue.created}</div>
 {/if}
 <form>
 	<PendingButton pending={!!submitting} type="button" on:click={doLogOut} {disabled}>
