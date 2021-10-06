@@ -88,9 +88,11 @@
 		const persona: Readable<Persona> | null =
 			personaIndex === null ? null : $sessionPersonas[personaIndex];
 		if (!persona) {
-			console.warn(`unable to find persona at index ${persona}, falling back to a valid value`);
 			if (browser) {
 				const fallbackPersonaIndex = 0;
+				console.warn(
+					`unable to find persona at index ${personaIndex}; falling back to index ${fallbackPersonaIndex}`,
+				);
 				goto(
 					location.pathname +
 						'?' +
