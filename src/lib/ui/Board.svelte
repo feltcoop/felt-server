@@ -3,6 +3,7 @@
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 	import type {Readable} from 'svelte/store';
 
+	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
 	import BoardItems from '$lib/ui/BoardItems.svelte';
@@ -14,9 +15,11 @@
 		socket,
 	} = getApp();
 
+	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
 	export let space: Readable<Space>;
 
+	persona; // silence unused prop warning
 	community; // silence unused prop warning
 
 	let text = '';
