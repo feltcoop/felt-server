@@ -75,6 +75,7 @@
 	$: guest = $session.guest;
 	$: onboarding = !guest && !$sessionPersonas.length;
 
+	// TODO instead of dispatching `select` events on startup, try to initialize with correct values
 	// TODO refactor -- where should this logic go?
 	$: updateStateFromPageParams($page.params, $page.query);
 	const updateStateFromPageParams = (
@@ -104,7 +105,6 @@
 				return; // exit early; this function re-runs from the `goto` call with the updated `$page`
 			}
 		} else if (personaIndex !== $selectedPersonaIndex) {
-			// TODO instead of dispatching this event on startup, try to initialize with correct values
 			dispatch('select_persona', {persona_id: get(persona).persona_id});
 		} // else already selected
 
