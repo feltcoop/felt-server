@@ -17,7 +17,7 @@ export const toSpaceUrl = (
 };
 
 export const setUrlPersona = (personaIndex: null | number, params = new URLSearchParams()) => {
-	if (personaIndex !== null && personaIndex !== -1) {
+	if (personaIndex !== null) {
 		params.set(PERSONA_QUERY_KEY, personaIndex.toString());
 	}
 	return params;
