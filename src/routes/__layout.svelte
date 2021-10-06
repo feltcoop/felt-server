@@ -98,9 +98,7 @@
 					location.pathname +
 						'?' +
 						setUrlPersona(fallbackPersonaIndex, new URLSearchParams(location.search)),
-					{
-						replaceState: true,
-					},
+					{replaceState: true},
 				);
 				return; // exit early; this function re-runs from the `goto` call with the updated `$page`
 			}
