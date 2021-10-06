@@ -1,8 +1,8 @@
 import {suite} from 'uvu';
 import * as t from 'uvu/assert';
 
-import {schemas} from '$lib/vocab/schema/schemas';
-import {ID_VOCAB_PREFIX} from '$lib/vocab/schema/schema';
+import {schemas} from '$lib/vocab/entity/entities';
+import {ID_VOCAB_PREFIX} from '$lib/vocab/schema';
 
 const test__schemas = suite('schemas');
 
