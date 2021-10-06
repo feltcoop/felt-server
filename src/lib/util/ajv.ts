@@ -1,7 +1,7 @@
 import Ajv from 'ajv';
 import type {ErrorObject, ValidateFunction, AnySchema} from 'ajv';
 
-import {schemas} from '$lib/vocab/entity/entities';
+import {entities} from '$lib/vocab/entity/entities';
 
 let ajvInstance: Ajv | null = null;
 
@@ -9,7 +9,7 @@ let ajvInstance: Ajv | null = null;
 export const ajv = (): Ajv => {
 	if (ajvInstance) return ajvInstance;
 	ajvInstance = new Ajv();
-	for (const schema of schemas) {
+	for (const schema of entities) {
 		ajvInstance.addSchema(schema);
 	}
 	return ajvInstance;

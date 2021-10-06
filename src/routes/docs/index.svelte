@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SchemaInfo from '$lib/ui/SchemaInfo.svelte';
 	import {eventsInfo} from '$lib/vocab/event/eventsInfo';
-	import {schemas} from '$lib/vocab/entity/entities';
+	import {entities} from '$lib/vocab/entity/entities';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	const title = 'docs';
@@ -21,9 +21,9 @@
 			<h2 id="vocab">vocab</h2>
 		</Markup>
 		<ul>
-			{#each schemas as vocabSchema (vocabSchema)}
+			{#each entities as schema (schema)}
 				<li>
-					<SchemaInfo schema={vocabSchema} />
+					<SchemaInfo {schema} />
 				</li>
 			{/each}
 		</ul>

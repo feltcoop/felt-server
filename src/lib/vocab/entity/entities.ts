@@ -9,7 +9,7 @@ import {FileSchema} from '$lib/vocab/file/file';
 
 // TODO generate this file?
 
-export const schemas: AnySchema[] = [
+export const entities: AnySchema[] = [
 	AccountSchema,
 	PersonaSchema,
 	CommunitySchema,
