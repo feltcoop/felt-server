@@ -90,11 +90,11 @@
 		if (!persona) {
 			console.warn(`unable to find persona at index ${persona}, falling back to a valid value`);
 			if (browser) {
-				const fallbackPersonaId = 0;
+				const fallbackPersonaIndex = 0;
 				goto(
 					location.pathname +
 						'?' +
-						setUrlPersona(fallbackPersonaId, new URLSearchParams(location.search)),
+						setUrlPersona(fallbackPersonaIndex, new URLSearchParams(location.search)),
 					{
 						replaceState: true,
 					},
