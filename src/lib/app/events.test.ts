@@ -4,7 +4,7 @@ import * as t from 'uvu/assert';
 import type {TestServerContext} from '$lib/util/testServerHelpers';
 import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
-import {eventInfos} from '$lib/vocab/event/events';
+import {eventInfos} from '$lib/app/events';
 import {toRandomVocabContext} from '$lib/vocab/random';
 import {randomEventParams} from '$lib/server/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';

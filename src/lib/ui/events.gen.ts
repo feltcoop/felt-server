@@ -1,7 +1,7 @@
 import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
 
-import {eventInfos} from '$lib/vocab/event/events';
+import {eventInfos} from '$lib/app/events';
 
 // Outputs a file with services metadata that can be imported from the client.
 export const gen: Gen = async ({originId}) => {

@@ -2,7 +2,7 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import type {ErrorObject, ValidateFunction, AnySchema} from 'ajv';
 
-import {entities} from '$lib/vocab/entity/entities';
+import {schemas} from '$lib/app/schemas';
 
 let ajvInstance: Ajv | null = null;
 
@@ -11,7 +11,7 @@ export const ajv = (): Ajv => {
 	if (ajvInstance) return ajvInstance;
 	ajvInstance = new Ajv();
 	addFormats(ajvInstance);
-	for (const schema of entities) {
+	for (const schema of schemas) {
 		ajvInstance.addSchema(schema);
 	}
 	return ajvInstance;

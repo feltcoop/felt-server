@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SchemaInfo from '$lib/ui/SchemaInfo.svelte';
-	import {eventInfos} from '$lib/vocab/event/events';
-	import {entities} from '$lib/vocab/entity/entities';
+	import {eventInfos} from '$lib/app/events';
+	import {entities} from '$lib/app/entities';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	const title = 'docs';

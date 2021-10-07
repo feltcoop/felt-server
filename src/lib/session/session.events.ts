@@ -26,6 +26,7 @@ export const log_in: RemoteEventInfo = {
 	response: {
 		type: `ApiResult<${log_in_response_type}>`,
 		schema: {
+			$id: 'https://felt.social/vocab/log_in_response.json',
 			type: 'null',
 		},
 	},
@@ -41,7 +42,10 @@ export const log_out: RemoteEventInfo = {
 	params: {
 		type: log_out_params_type,
 		// TODO refactor into a service
-		schema: {},
+		schema: {
+			$id: 'https://felt.social/vocab/log_out_params.json',
+			type: 'null',
+		},
 	},
 	response: {
 		type: `ApiResult<${log_out_response_type}>`,
