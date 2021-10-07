@@ -20,6 +20,7 @@
 			$space.url.split('/').filter(Boolean).join(' / ')) ||
 			''}
 	</li>
+	<li class="timestamp">created {space && $space.created}</li>
 </ul>
 
 <style>
@@ -38,6 +39,9 @@
 	}
 	.breadcrumbs {
 		padding: 0 var(--spacing_lg);
+	}
+	.timestamp {
+		font-size: var(--font_size_md);
 	}
 	.expanded-nav .luggage-placeholder {
 		display: none;

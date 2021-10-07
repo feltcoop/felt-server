@@ -79,7 +79,9 @@ export const seed = async (db: Database): Promise<void> => {
 			name text,
 			url text,
 			media_type text,
-			content text
+			content text,
+			created timestamp NOT NULL DEFAULT now(),
+			updated timestamp
 		)	
 	`;
 
