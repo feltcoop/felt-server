@@ -4,6 +4,8 @@ export interface Persona {
 	name: string;
 	icon?: string;
 	community_ids: number[];
+	created: Date;
+	updated: Date | null;
 }
 export const PersonaSchema = {
 	$id: 'https://felt.social/vocab/Persona.json',
@@ -14,8 +16,10 @@ export const PersonaSchema = {
 		name: {type: 'string'},
 		icon: {type: 'string'},
 		community_ids: {type: 'array', items: {type: 'number'}},
+		created: {type: 'object', format: 'date-time'},
+		updated: {type: ['object', 'null'], format: 'date-time'},
 	},
-	required: ['persona_id', 'account_id', 'name', 'community_ids'],
+	required: ['persona_id', 'account_id', 'name', 'community_ids', 'created', 'updated'],
 	additionalProperties: false,
 };
 

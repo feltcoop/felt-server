@@ -1,7 +1,5 @@
 import type {ClientEventInfo} from '$lib/vocab/event/event';
 
-// TODO keep extracting these events to other events files
-// (which are then imported in $lib/ui/events.gen.ts)
 export const events: ClientEventInfo[] = [
 	{
 		type: 'ClientEvent',

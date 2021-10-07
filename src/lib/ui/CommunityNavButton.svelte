@@ -6,11 +6,11 @@
 	import {randomHue} from '$lib/ui/color';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
-	import {toUrl} from '$lib/vocab/persona/constants';
+	import {toSpaceUrl} from '$lib/ui/url';
 
 	const {
 		api: {dispatch},
-		ui: {selectedSpaceIdByCommunity, findSpaceById},
+		ui: {selectedSpaceIdByCommunity, findSpaceById, sessionPersonaIndices},
 	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
@@ -25,12 +25,14 @@
 		selectedCommunitySpaceId === null ? null : findSpaceById(selectedCommunitySpaceId);
 
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
+
+	$: personaIndex = $sessionPersonaIndices.get(persona)!;
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
 <a
 	class="community"
-	href="/{$community.name}{toUrl(selectedCommunitySpace && $selectedCommunitySpace.url)}"
+	href={toSpaceUrl(personaIndex, $community, selectedCommunitySpace && $selectedCommunitySpace)}
 	class:selected
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {randomHue($community.name)}"

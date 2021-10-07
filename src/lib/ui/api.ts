@@ -1,5 +1,4 @@
 import {setContext, getContext} from 'svelte';
-import {randomItem} from '@feltcoop/felt/util/random.js';
 
 import type {Ui} from '$lib/ui/ui';
 import type {ApiClient} from '$lib/ui/ApiClient';
@@ -36,14 +35,8 @@ export interface Api {
 	dispatch: Dispatch;
 }
 
-export const toApi = (
-	ui: Ui,
-	client: ApiClient<EventsParams, EventsResponse>,
-	client2: ApiClient<EventsParams, EventsResponse>, // TODO remove this after everything stabilizes
-): Api => {
+export const toApi = (ui: Ui, client: ApiClient<EventsParams, EventsResponse>): Api => {
 	// TODO delete this and `client2` after adding tests for both the websocket and http clients
-	const clients = [client, client2];
-	const randomClient = () => randomItem(clients);
 	const api: Api = {
 		// TODO validate the params here to improve UX, but for now we're safe letting the server validate
 		dispatch: (eventName, params) => {
@@ -54,7 +47,6 @@ export const toApi = (
 				'color: gray',
 				params === undefined ? '' : params, // print null but not undefined
 			);
-			const client = randomClient();
 			const ctx: DispatchContext = {
 				eventName,
 				params,

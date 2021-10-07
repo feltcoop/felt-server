@@ -9,6 +9,7 @@
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {page} from '$app/stores';
 	import {browser} from '$app/env';
+	import type {Readable} from 'svelte/store';
 	import {get} from 'svelte/store';
 
 	import {setSocket, toSocketStore} from '$lib/ui/socket';
@@ -22,10 +23,12 @@
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {WEBSOCKET_URL} from '$lib/config';
 	import {toWebsocketApiClient} from '$lib/ui/WebsocketApiClient';
-	import {toHttpApiClient} from '$lib/ui/HttpApiClient';
-	import type {EventsParams, EventsResponse} from '$lib/ui/events';
+	// import {toHttpApiClient} from '$lib/ui/HttpApiClient';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {findService} from '$lib/ui/services';
+	import type {Persona} from '$lib/vocab/persona/persona';
+	import {goto} from '$app/navigation';
+	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -43,13 +46,10 @@
 	const socket = setSocket(toSocketStore((data) => websocketApiClient.handle(data)));
 	const ui = setUi(toUi(session, initialMobileValue));
 
-	// TODO create only the websocket client, not the http client
-	const websocketApiClient = toWebsocketApiClient<EventsParams, EventsResponse>(
-		findService,
-		socket.send,
-	);
-	const httpApiClient = toHttpApiClient<EventsParams, EventsResponse>(findService);
-	const api = setApi(toApi(ui, websocketApiClient, httpApiClient));
+	const websocketApiClient = toWebsocketApiClient(findService, socket.send);
+	// alternative http client:
+	// const httpApiClient = toHttpApiClient(findService);
+	const api = setApi(toApi(ui, websocketApiClient));
 	const app = setApp({ui, api, devmode, socket});
 	browser && console.log('app', app);
 	$: browser && console.log('$session', $session);
@@ -60,6 +60,7 @@
 		account,
 		sessionPersonas,
 		communities,
+		selectedPersonaIndex,
 		selectedCommunityId,
 		selectedSpaceIdByCommunity,
 		setSession,
@@ -70,10 +71,37 @@
 	$: guest = $session.guest;
 	$: onboarding = !guest && !$sessionPersonas.length;
 
+	// TODO instead of dispatching `select` events on startup, try to initialize with correct values
 	// TODO refactor -- where should this logic go?
-	$: updateStateFromPageParams($page.params);
-	const updateStateFromPageParams = (params: {community?: string; space?: string}) => {
+	$: updateStateFromPageParams($page.params, $page.query);
+	const updateStateFromPageParams = (
+		params: {community?: string; space?: string},
+		query: URLSearchParams,
+	) => {
 		if (!params.community) return;
+
+		const rawPersonaIndex = query.get(PERSONA_QUERY_KEY);
+		const personaIndex = rawPersonaIndex === null ? null : Number(rawPersonaIndex);
+		const persona: Readable<Persona> | null =
+			personaIndex === null ? null : $sessionPersonas[personaIndex];
+		if (!persona) {
+			if (browser) {
+				const fallbackPersonaIndex = 0;
+				console.warn(
+					`unable to find persona at index ${personaIndex}; falling back to index ${fallbackPersonaIndex}`,
+				);
+				goto(
+					location.pathname +
+						'?' +
+						setUrlPersona(fallbackPersonaIndex, new URLSearchParams(location.search)),
+					{replaceState: true},
+				);
+				return; // exit early; this function re-runs from the `goto` call with the updated `$page`
+			}
+		} else if (personaIndex !== $selectedPersonaIndex) {
+			dispatch('select_persona', {persona_id: get(persona).persona_id});
+		} // else already selected
+
 		// TODO speed this up with a map of communities by name
 		const communityStore = $communities.find((c) => get(c).name === params.community);
 		if (!communityStore) return; // occurs when a session routes to a community they can't access

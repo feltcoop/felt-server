@@ -4,7 +4,9 @@
 	import {spaceViews} from '$lib/ui/spaceViews';
 	import type {Space, SpaceViewData} from '$lib/vocab/space/space';
 	import type {Community} from '$lib/vocab/community/community';
+	import type {Persona} from '$lib/vocab/persona/persona';
 
+	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
 	export let space: Readable<Space | null>; // TODO the `| null` is a hack that gets bypassed below, not sure how to make it work with nullable "selected" stores
 
@@ -24,7 +26,7 @@
 </script>
 
 {#if component}
-	<svelte:component this={component} {community} {space} {...spaceData.props} />
+	<svelte:component this={component} {persona} {community} {space} {...spaceData.props} />
 {:else}
 	unknown space type: {spaceData.type}
 {/if}

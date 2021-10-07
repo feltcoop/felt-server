@@ -11,10 +11,12 @@
 		ui: {
 			expandMarquee,
 			selectedSpace: selectedSpaceStore,
+			selectedPersona: selectedPersonaStore,
 			selectedCommunity: selectedCommunityStore,
 		},
 	} = getApp();
 
+	$: selectedPersona = $selectedPersonaStore;
 	$: selectedCommunity = $selectedCommunityStore;
 	$: selectedSpace = $selectedSpaceStore;
 </script>
@@ -29,8 +31,8 @@
 	<div class="column">
 		<!-- TODO pass stores here instead of dereferncing -->
 		<WorkspaceHeader space={selectedSpace} community={selectedCommunity} />
-		{#if selectedCommunity && selectedSpace}
-			<SpaceView community={selectedCommunity} space={selectedSpace} />
+		{#if selectedPersona && selectedCommunity && selectedSpace}
+			<SpaceView persona={selectedPersona} community={selectedCommunity} space={selectedSpace} />
 		{:else if selectedCommunity}
 			<SpaceInput community={selectedCommunity}>Create a new space</SpaceInput>
 		{/if}

@@ -39,7 +39,7 @@ export const personaRepo = (db: Database) => ({
 	): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 		console.log('[personaRepo] filtering by account', account_id);
 		const data = await db.sql<Persona[]>`
-      SELECT p.persona_id, p.account_id, p.name,
+      SELECT p.persona_id, p.account_id, p.name, p.created, p.updated,
 
       (
         SELECT array_to_json(coalesce(array_agg(d.community_id)))

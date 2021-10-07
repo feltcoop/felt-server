@@ -1,7 +1,7 @@
 import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
 
-import {eventsInfo} from '$lib/vocab/event/eventsInfo';
+import {eventInfos} from '$lib/vocab/event/events';
 
 // Outputs a file with services metadata that can be imported from the client.
 export const gen: Gen = async ({originId}) => {
@@ -27,7 +27,7 @@ import type {DispatchContext} from '$lib/ui/api';
 import type {MainNavView} from '$lib/ui/ui';
 
 export interface EventsParams {
-	${eventsInfo.reduce(
+	${eventInfos.reduce(
 		(str, eventInfo) =>
 			str +
 			`
@@ -37,7 +37,7 @@ ${eventInfo.name}: ${eventInfo.name}_params_type;
 	)}
 }
 export interface EventsResponse {
-	${eventsInfo.reduce(
+	${eventInfos.reduce(
 		(str, eventInfo) =>
 			str +
 			(eventInfo.type === 'ClientEvent'
@@ -49,7 +49,7 @@ ${eventInfo.name}: ${eventInfo.name}_response_type;
 	)}
 }
 
-${eventsInfo.reduce(
+${eventInfos.reduce(
 	(str, eventInfo) =>
 		str +
 		`
@@ -64,7 +64,7 @@ ${
 )}
 
 export interface Dispatch {
-	${eventsInfo.reduce(
+	${eventInfos.reduce(
 		(str, eventInfo) =>
 			str +
 			`
@@ -78,7 +78,7 @@ export interface Dispatch {
 }
 
 export interface UiHandlers {
-  ${eventsInfo.reduce(
+  ${eventInfos.reduce(
 		(str, eventInfo) =>
 			str +
 			`

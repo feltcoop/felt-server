@@ -9,6 +9,7 @@ export interface ClientEventInfo {
 	name: string; // `snake_cased`
 	params: {
 		type: string;
+		// TODO we want to enforce schemas so we can generate params forms and automatic randomizers
 		schema: AnySchema | null;
 	};
 	returns: string;
@@ -26,7 +27,7 @@ export interface ServiceEventInfo {
 		schema: AnySchema;
 	};
 	returns: string;
-	// for services
+	// `ServiceEvent`s have a `route` for http clients; websocket clients only need the event `name`
 	route: {
 		path: string; // e.g. '/api/v1/some/:neat/:path'
 		method: ServiceMethod; // supports each `trouter` http method: https://github.com/lukeed/trouter#method

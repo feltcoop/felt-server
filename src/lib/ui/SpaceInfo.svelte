@@ -3,17 +3,27 @@
 
 	import type {Space} from '$lib/vocab/space/space.js';
 	import type {Community} from '$lib/vocab/community/community.js';
+	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import {randomHue} from '$lib/ui/color';
+	import {toSpaceUrl} from '$lib/ui/url';
+	import {getApp} from '$lib/ui/app';
 
+	const {
+		ui: {sessionPersonaIndices},
+	} = getApp();
+
+	export let persona: Readable<Persona>;
 	export let space: Readable<Space>;
 	export let community: Readable<Community>;
 	export let selected: boolean = false;
 
 	$: hue = randomHue($space.name); // TODO add custom setting on spaces
+
+	$: personaIndex = $sessionPersonaIndices.get(persona)!;
 </script>
 
 <a
-	href="/{$community.name}{$space.url === '/' ? '' : $space.url}"
+	href={toSpaceUrl(personaIndex, $community, $space)}
 	class:selected
 	class="space-info"
 	style="--hue: {hue}"

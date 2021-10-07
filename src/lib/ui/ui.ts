@@ -34,6 +34,7 @@ export interface Ui extends Partial<UiHandlers> {
 	personas: Readable<Readable<Persona>[]>;
 	personasById: Readable<Map<number, Readable<Persona>>>;
 	sessionPersonas: Readable<Readable<Persona>[]>;
+	sessionPersonaIndices: Readable<Map<Readable<Persona>, number>>;
 	communities: Readable<Readable<Community>[]>;
 	spaces: Readable<Readable<Space>[]>;
 	spacesById: Readable<Map<number, Readable<Space>>>;
@@ -50,6 +51,7 @@ export interface Ui extends Partial<UiHandlers> {
 	// derived state
 	selectedPersonaId: Readable<number | null>;
 	selectedPersona: Readable<Readable<Persona> | null>;
+	selectedPersonaIndex: Readable<number | null>;
 	selectedCommunityIdByPersona: Readable<{[key: number]: number}>;
 	selectedCommunityId: Readable<number | null>;
 	selectedCommunity: Readable<Readable<Community> | null>;
@@ -125,6 +127,15 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		[selectedPersonaId, personasById],
 		([$selectedPersonaId, $personasById]) =>
 			($selectedPersonaId && $personasById.get($selectedPersonaId)) || null,
+	);
+	const selectedPersonaIndex = derived(
+		[selectedPersona, sessionPersonas],
+		([$selectedPersona, $sessionPersonas]) =>
+			$selectedPersona === null ? null : $sessionPersonas.indexOf($selectedPersona),
+	);
+	const sessionPersonaIndices = derived(
+		[sessionPersonas],
+		([$sessionPersonas]) => new Map($sessionPersonas.map((p, i) => [p, i])),
 	);
 
 	// TODO should these be store references instead of ids?
@@ -222,6 +233,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		account,
 		personas,
 		sessionPersonas,
+		sessionPersonaIndices,
 		spaces,
 		communities,
 		memberships,
@@ -446,6 +458,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		// derived state
 		selectedPersonaId,
 		selectedPersona,
+		selectedPersonaIndex,
 		selectedCommunityIdByPersona,
 		selectedCommunityId,
 		selectedCommunity,

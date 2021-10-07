@@ -1,7 +1,11 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {Account, create_account_params_type} from '$lib/vocab/account/account.js';
-import {accountProperties} from '$lib/vocab/account/account';
+import type {
+	Account,
+	AccountModel,
+	create_account_params_type,
+} from '$lib/vocab/account/account.js';
+import {accountModelProperties} from '$lib/vocab/account/account';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 import {toPasswordKey} from '$lib/util/password';
@@ -22,10 +26,10 @@ export const accountRepo = (db: Database) => ({
 	},
 	findById: async (
 		account_id: number,
-		columns: string[] = accountProperties,
-	): Promise<Result<{value: Account}, {type: 'no_account_found'} & ErrorResponse>> => {
+		columns: string[] = accountModelProperties,
+	): Promise<Result<{value: AccountModel}, {type: 'no_account_found'} & ErrorResponse>> => {
 		console.log('[accountRepo] loading account', account_id);
-		const data = await db.sql<Account[]>`
+		const data = await db.sql<AccountModel[]>`
       select ${db.sql(columns)} from accounts where account_id = ${account_id}
     `;
 		if (data.length) {
@@ -42,7 +46,7 @@ export const accountRepo = (db: Database) => ({
 		name: string,
 	): Promise<Result<{value: Account}, {type: 'no_account_found'} & ErrorResponse>> => {
 		const data = await db.sql<Account[]>`
-      select account_id, name, password from accounts where name = ${name}
+      select account_id, name, password, created from accounts where name = ${name}
     `;
 		if (data.length) {
 			return {ok: true, value: data[0]};
