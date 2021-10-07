@@ -1,5 +1,4 @@
 <script lang="ts">
-	import {get} from 'svelte/store';
 	import {session} from '$app/stores';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
