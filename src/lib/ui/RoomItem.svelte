@@ -21,7 +21,10 @@
 
 <li style="--hue: {hue}">
 	<div class="content">
-		<Avatar name={toName($persona)} icon={toIcon($persona)} />
+		<div class="timestamp">
+			<Avatar name={toName($persona)} icon={toIcon($persona)} />
+			{$file.created}
+		</div>
 		<div>
 			{$file.content}
 		</div>
@@ -34,7 +37,10 @@
 		/* TODO experiment with a border color instead of bg */
 		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
 	}
-
+	.timestamp {
+		display: flex;
+		align-items: center;
+	}
 	.content {
 		padding-left: var(--spacing_sm);
 	}

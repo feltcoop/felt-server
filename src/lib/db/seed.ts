@@ -93,6 +93,8 @@ export const seed = async (db: Database): Promise<void> => {
 		create table if not exists community_spaces (
 			community_id int references communities (community_id) ON UPDATE CASCADE ON DELETE CASCADE,
 			space_id int references spaces (space_id) ON UPDATE CASCADE,
+			created timestamp NOT NULL DEFAULT now(),
+			updated timestamp,
 			CONSTRAINT community_spaces_pkey PRIMARY KEY (community_id,space_id)
 		)	
 	`;
@@ -106,7 +108,9 @@ export const seed = async (db: Database): Promise<void> => {
 			file_id serial primary key,
 			content text,
 			actor_id int,
-			space_id int references spaces (space_id) ON UPDATE CASCADE ON DELETE CASCADE
+			space_id int references spaces (space_id) ON UPDATE CASCADE ON DELETE CASCADE,
+			created timestamp NOT NULL DEFAULT now(),
+			updated timestamp
 		)	
 	`;
 
