@@ -86,7 +86,17 @@ export const read_files: ServiceEventInfo = {
 export const query_files: ClientEventInfo = {
 	type: 'ClientEvent',
 	name: 'query_files',
-	params: read_files.params,
+	// TODO this is saying "use `read_files`'s params but for this event"
+	// but it's verbose and awkward. If the pattern should stay, we could write a helper like:
+	// `renameSchema(read_files.params.schema, 'https://felt.social/vocab/query_files_response.json')`
+	// but that only handles extending the $id, which may not be the common case.
+	params: {
+		...read_files.params,
+		schema: {
+			...(read_files.params.schema as object),
+			$id: 'https://felt.social/vocab/query_files_response.json',
+		},
+	},
 	// TODO Can/should this compose the `read_files` event info?
 	// Could make the `response` available.
 	returns: 'Readable<Readable<File>[]>',

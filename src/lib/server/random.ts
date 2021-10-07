@@ -29,7 +29,7 @@ export const randomEventParams = async (
 			};
 		}
 		case 'log_out': {
-			return undefined;
+			return null;
 		}
 		case 'create_community': {
 			if (!persona) persona = await random.persona(account);
