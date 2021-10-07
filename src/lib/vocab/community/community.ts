@@ -7,7 +7,7 @@ export interface Community {
 	spaces: Space[];
 	memberPersonas: Persona[]; // TODO if we normalize all data, this should be an array of ids or stores
 	created: Date;
-	updated?: Date;
+	updated: Date | null;
 }
 // TODO fix this type to infer `Community` like with the other schemas --
 // need to handle the various kinds of `Community` doc variations we return from the database
@@ -23,6 +23,6 @@ export const CommunitySchema = {
 		// spaces: Type.Array(Type.Ref(Vocab, {...SpaceSchema, $id: 'https://felt.social/vocab/CommunitySpaceSchema.json'})),
 		// memberPersonas: Type.Array(Type.Ref(Vocab, {...PersonaSchema, $id: 'https://felt.social/vocab/CommunityPersonaSchema.json'})),
 	},
-	required: ['community_id', 'name', 'created'],
+	required: ['community_id', 'name', 'created', 'updated'],
 	additionalProperties: true, // TODO `true` is a hack related to the above
 };

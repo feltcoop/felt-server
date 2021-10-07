@@ -1,7 +1,8 @@
 export interface Membership {
 	persona_id: number;
 	community_id: number;
-	name?: string;
+	created: Date;
+	updated: Date | null;
 }
 export const MembershipSchema = {
 	$id: 'https://felt.social/vocab/Membership.json',
@@ -9,8 +10,9 @@ export const MembershipSchema = {
 	properties: {
 		persona_id: {type: 'number'},
 		community_id: {type: 'number'},
-		name: {type: 'string'}, // TODO delete this, is returned in one query but that's now obsolete
+		created: {type: 'object', format: 'date-time'},
+		updated: {type: ['object', 'null'], format: 'date-time'},
 	},
-	required: ['persona_id', 'community_id'],
+	required: ['persona_id', 'community_id', 'created', 'updated'],
 	additionalProperties: false,
 };
