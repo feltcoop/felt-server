@@ -46,7 +46,7 @@ export const accountRepo = (db: Database) => ({
 		name: string,
 	): Promise<Result<{value: Account}, {type: 'no_account_found'} & ErrorResponse>> => {
 		const data = await db.sql<Account[]>`
-      select account_id, name, password, created from accounts where name = ${name}
+      select account_id, name, password, created, updated from accounts where name = ${name}
     `;
 		if (data.length) {
 			return {ok: true, value: data[0]};
