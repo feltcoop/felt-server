@@ -185,7 +185,11 @@ const createDefaultFiles = async (db: Database, spaces: Space[], personas: Perso
 			'If the evidence says you’re wrong, you don’t have the right theory.',
 			'You change the theory, not the evidence.',
 		],
-		Notes: ['go to the place later', 'remember the thing', 'what a day!'],
+		Notes: [
+			'We have no guarantee about the future',
+			'but we exist in the hope of something better.',
+			'The 14th Dalai Lama',
+		],
 	};
 
 	let personaIndex = -1;
