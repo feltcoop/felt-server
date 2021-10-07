@@ -18,7 +18,6 @@ const test__schemas = suite('schemas');
 for (const schema of schemas) {
 	test__schemas('validate entity schema: ' + printSchema(schema), async () => {
 		t.ok(typeof schema !== 'boolean'); // compared to using `t.type`, this makes TypeScript understand
-		if (!schema.$id) console.log('schema', schema);
 		t.ok(schema.$id);
 		t.ok(schema.$id.startsWith(ID_VOCAB_PREFIX));
 	});
