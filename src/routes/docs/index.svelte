@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SchemaInfo from '$lib/ui/SchemaInfo.svelte';
-	import {eventsInfo} from '$lib/vocab/event/eventsInfo';
+	import {eventInfos} from '$lib/vocab/event/events';
 	import {entities} from '$lib/vocab/entity/entities';
 	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
@@ -32,7 +32,7 @@
 			<h2 id="events">events</h2>
 		</Markup>
 		<ul>
-			{#each eventsInfo as eventInfo (eventInfo.name)}
+			{#each eventInfos as eventInfo (eventInfo.name)}
 				<li>
 					<div class="title">
 						<code class="name">{eventInfo.name}</code>
