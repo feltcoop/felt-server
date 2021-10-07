@@ -56,7 +56,7 @@ export type log_in_params_type = {
 export type log_in_response_type = ApiResult<{session: ClientAccountSession}>;
 
 export type log_out_params_type = void;
-export type log_out_response_type = ApiResult<void>;
+export type log_out_response_type = ApiResult<{message: string}>;
 
 export type create_community_params_type = {
 	name: string;
@@ -137,7 +137,7 @@ export interface Dispatch {
 			password: string;
 		},
 	): Promise<ApiResult<{session: ClientAccountSession}>>;
-	(eventName: 'log_out', params: void): Promise<ApiResult<void>>;
+	(eventName: 'log_out', params: void): Promise<ApiResult<{message: string}>>;
 	(
 		eventName: 'create_community',
 		params: {
@@ -221,7 +221,9 @@ export interface UiHandlers {
 			ApiResult<{session: ClientAccountSession}>
 		>,
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
-	log_out: (ctx: DispatchContext<void, ApiResult<void>>) => Promise<ApiResult<void>>;
+	log_out: (
+		ctx: DispatchContext<void, ApiResult<{message: string}>>,
+	) => Promise<ApiResult<{message: string}>>;
 	create_community: (
 		ctx: DispatchContext<
 			{
