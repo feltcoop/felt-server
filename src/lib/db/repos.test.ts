@@ -46,13 +46,13 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	);
 	if (!validatePersona()(persona)) {
 		throw new Error(
-			`Failed to validate file: ${toValidationErrorMessage(validatePersona().errors![0])}`,
+			`Failed to validate persona: ${toValidationErrorMessage(validatePersona().errors![0])}`,
 		);
 	}
 	t.ok(personaHomeCommunity);
 	if (!validateCommunity()(personaHomeCommunity)) {
 		throw new Error(
-			`Failed to validate file: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
+			`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
 		);
 	}
 
