@@ -22,7 +22,7 @@ export const seed = async (db: Database): Promise<void> => {
 	const createAccountsTableResult = await sql`
 		create table if not exists accounts (
 		account_id serial primary key,
-			name text,
+			name text UNIQUE,
 			password text,
 			created timestamp NOT NULL DEFAULT now(),
 			updated timestamp
@@ -36,7 +36,7 @@ export const seed = async (db: Database): Promise<void> => {
 		create table if not exists personas (
 			persona_id serial primary key,
 			account_id int,
-			name text,
+			name text UNIQUE,
 			created timestamp NOT NULL DEFAULT now(),
 			updated timestamp
 		)
@@ -140,7 +140,7 @@ export const seed = async (db: Database): Promise<void> => {
 		log.trace('created account', account);
 		for (const personaName of personasParams[account.name]) {
 			const {persona, community} = unwrap(
-				await db.repos.persona.create({name: personaName}, account.account_id),
+				await db.repos.persona.create(personaName, account.account_id),
 			);
 			log.trace('created persona', persona);
 			personas.push(persona);
