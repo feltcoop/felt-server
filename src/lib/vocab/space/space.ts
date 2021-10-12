@@ -4,6 +4,8 @@ export interface Space {
 	url: string;
 	media_type: string;
 	content: string;
+	created: Date;
+	updated: Date | null;
 }
 export const SpaceSchema = {
 	$id: 'https://felt.social/vocab/Space.json',
@@ -14,8 +16,10 @@ export const SpaceSchema = {
 		url: {type: 'string'},
 		media_type: {type: 'string'},
 		content: {type: 'string'},
+		created: {type: 'object', format: 'date-time'},
+		updated: {type: ['object', 'null'], format: 'date-time'},
 	},
-	required: ['space_id', 'name', 'url', 'media_type', 'content'],
+	required: ['space_id', 'name', 'url', 'media_type', 'content', 'created', 'updated'],
 	additionalProperties: false,
 };
 

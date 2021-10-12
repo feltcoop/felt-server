@@ -63,6 +63,8 @@ export const seed = async (db: Database): Promise<void> => {
 		create table if not exists memberships (
 			persona_id int references personas (persona_id) ON UPDATE CASCADE ON DELETE CASCADE,
 			community_id int references communities (community_id) ON UPDATE CASCADE,
+			created timestamp NOT NULL DEFAULT now(),
+			updated timestamp,
 			CONSTRAINT membership_pkey PRIMARY KEY (persona_id,community_id)
 		)	
 	`;
@@ -77,7 +79,9 @@ export const seed = async (db: Database): Promise<void> => {
 			name text,
 			url text,
 			media_type text,
-			content text
+			content text,
+			created timestamp NOT NULL DEFAULT now(),
+			updated timestamp
 		)	
 	`;
 
@@ -89,6 +93,8 @@ export const seed = async (db: Database): Promise<void> => {
 		create table if not exists community_spaces (
 			community_id int references communities (community_id) ON UPDATE CASCADE ON DELETE CASCADE,
 			space_id int references spaces (space_id) ON UPDATE CASCADE,
+			created timestamp NOT NULL DEFAULT now(),
+			updated timestamp,
 			CONSTRAINT community_spaces_pkey PRIMARY KEY (community_id,space_id)
 		)	
 	`;
@@ -102,7 +108,9 @@ export const seed = async (db: Database): Promise<void> => {
 			file_id serial primary key,
 			content text,
 			actor_id int,
-			space_id int references spaces (space_id) ON UPDATE CASCADE ON DELETE CASCADE
+			space_id int references spaces (space_id) ON UPDATE CASCADE ON DELETE CASCADE,
+			created timestamp NOT NULL DEFAULT now(),
+			updated timestamp
 		)	
 	`;
 
@@ -177,7 +185,11 @@ const createDefaultFiles = async (db: Database, spaces: Space[], personas: Perso
 			'If the evidence says you’re wrong, you don’t have the right theory.',
 			'You change the theory, not the evidence.',
 		],
-		Notes: ['go to the place later', 'remember the thing', 'what a day!'],
+		Notes: [
+			'We have no guarantee about the future',
+			'but we exist in the hope of something better.',
+			'The 14th Dalai Lama',
+		],
 	};
 
 	let personaIndex = -1;
