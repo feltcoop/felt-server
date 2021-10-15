@@ -52,7 +52,9 @@ export const personaRepo = (db: Database) => ({
 		`;
 		return {ok: true, value: data};
 	},
-	findByName: async (name: string): Promise<Result<{value: Persona}, ErrorResponse>> => {
+	findByName: async (
+		name: string,
+	): Promise<Result<{value: Persona | undefined}, ErrorResponse>> => {
 		console.log('[personaRepo] filtering by name', name);
 		const data = await db.sql<Persona[]>`
       SELECT p.persona_id, p.account_id, p.name, p.created, p.updated

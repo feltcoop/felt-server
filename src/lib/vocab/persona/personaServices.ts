@@ -14,7 +14,7 @@ export const createPersonaService: Service<
 		const {db} = server;
 
 		console.log('[create_persona] creating persona', params.name);
-		const name = params.name.toLowerCase().trim();
+		const name = params.name.trim();
 
 		console.log('[create_persona] validating persona uniqueness', name);
 		const findByNameResult = await db.repos.persona.findByName(name);
