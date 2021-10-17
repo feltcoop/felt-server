@@ -3,9 +3,7 @@ import * as t from 'uvu/assert';
 
 import type {TestServerContext} from '$lib/util/testServerHelpers';
 import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
-import {create_persona} from '$lib/vocab/persona/persona.events';
 import {toRandomVocabContext} from '$lib/vocab/random';
-import {randomEventParams} from '$lib/server/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {setupApp, teardownApp} from '$lib/util/testAppHelpers';
 import {createPersonaService} from '$lib/vocab/persona/personaServices';
