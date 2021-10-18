@@ -66,6 +66,7 @@ gro deploy
 [Polka](https://github.com/lukeed/polka) ∙
 [Svelte](https://github.com/sveltejs/svelte) ∙
 [SvelteKit](https://github.com/sveltejs/kit) ∙
+[Ley](https://github.com/lukeed/ley) ∙
 [Vite](https://github.com/vitejs/vite) ∙
 [Gro](https://github.com/feltcoop/gro) ∙
 [Rollup](https://github.com/rollup/rollup) ∙

@@ -4,6 +4,7 @@
 
 - [PostgreSQL](https://www.postgresql.org)
 - [`postgres`](https://github.com/porsager/postgres)
+- [Ley](https://github.com/lukeed/ley)
 
 ## postgres setup
 
@@ -39,6 +40,13 @@ create database felt; # notice the semicolon
 ```
 
 > TODO figure out config, maybe through `src/gro.config.ts`
+
+## creating migrations
+
+Felt server uses [Ley](https://github.com/lukeed/ley) to manage its DB migrations.
+Migration files are located in the [migrations](./migrations) directory.
+To create a new migration file use the `ley new` command (see Ley's docs for more details)
+Use `ley up` to run migrations or `ley down` to rollback.
 
 ## database tasks
 
