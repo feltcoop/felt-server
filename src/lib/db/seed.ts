@@ -46,6 +46,15 @@ export const seed = async (db: Database): Promise<void> => {
 		log.trace('createPersonasTableResult', createPersonasTableResult);
 	}
 
+	const createPersonasNameIndexResult = await sql`
+		CREATE
+		INDEX ON personas (LOWER(name));
+	`;
+
+	if (createPersonasNameIndexResult.count) {
+		log.trace('createPersonasNameIndexResult', createPersonasNameIndexResult);
+	}
+
 	const createCommunitiesTableResult = await sql`
 		create table if not exists communities (
 			community_id serial primary key,

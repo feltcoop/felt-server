@@ -52,7 +52,7 @@ test__personaService('create a persona & test collisions', async ({server}) => {
 		account_id: account.account_id,
 	});
 
-	t.equal(result.ok, true);
+	t.equal(result.ok, false);
 });
 
 test__personaService.run();

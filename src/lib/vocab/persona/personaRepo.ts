@@ -58,7 +58,7 @@ export const personaRepo = (db: Database) => ({
 		console.log('[personaRepo] filtering by name', name);
 		const data = await db.sql<Persona[]>`
       SELECT p.persona_id, p.account_id, p.name, p.created, p.updated
-      FROM personas p WHERE p.name = ${name}
+      FROM personas p WHERE LOWER(p.name) = LOWER(${name})
 		`;
 		return {ok: true, value: data[0]};
 	},
