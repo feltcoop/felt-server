@@ -5,13 +5,17 @@
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
-	import {spaceTypes} from '$lib/vocab/space/space';
+	import {SpaceType, spaceTypes as allSpaceTypes} from '$lib/vocab/space/space';
 
 	const {
 		api: {dispatch},
 	} = getApp();
 
 	export let community: Readable<Community>;
+
+	// TODO instead of filtering here, this should probably be determined by metadata on space types,
+	// alongside additional information like their props schemas (which don't exist yet)
+	const spaceTypes = allSpaceTypes.filter((s) => s !== SpaceType.Home);
 
 	let opened = false;
 	let newName = '';
