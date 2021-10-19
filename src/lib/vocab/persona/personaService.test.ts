@@ -5,7 +5,6 @@ import type {TestServerContext} from '$lib/util/testServerHelpers';
 import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
 import {toRandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
-import {setupApp, teardownApp} from '$lib/util/testAppHelpers';
 import {createPersonaService} from '$lib/vocab/persona/personaServices';
 
 // TODO this only depends on the database --
@@ -18,8 +17,6 @@ const test__personaService = suite<TestServerContext & TestAppContext>('personaS
 
 test__personaService.before(setupServer);
 test__personaService.after(teardownServer);
-test__personaService.before(setupApp((() => {}) as any)); // TODO either use `node-fetch` or mock
-test__personaService.after(teardownApp);
 
 const personaName = 'jung';
 
