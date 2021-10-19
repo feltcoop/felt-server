@@ -13,8 +13,7 @@
 
 	export let community: Readable<Community>;
 
-	// TODO instead of filtering here, this should probably be determined by metadata on space types,
-	// alongside additional information like their props schemas (which don't exist yet)
+	// TODO instead of filtering here, this perhaps should be determined by metadata on space types
 	const spaceTypes = allSpaceTypes.filter((s) => s !== SpaceType.Home);
 
 	let opened = false;
