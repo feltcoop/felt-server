@@ -11,9 +11,9 @@ export interface TaskArgs {
 export const task: Task<TaskArgs> = {
 	summary: 'create the database from scratch, deleting and seeding data',
 	run: async ({invokeTask}) => {
-		const successes = await ley.up({dir: 'migrations', driver: 'felt'});
+		const successes = await ley.up({dir: 'migrations', driver: 'postgres'});
 		console.log(successes);
-		const status = await ley.status({dir: 'migrations', driver: 'felt'});
+		const status = await ley.status({dir: 'migrations', driver: 'postgres'});
 		console.log(status);
 	},
 };
