@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import type {AsyncStatus} from '@feltcoop/felt';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
@@ -35,7 +34,7 @@
 	};
 </script>
 
-<Markup>
+<div class="markup">
 	<h2>Create a persona</h2>
 	<form>
 		<input
@@ -50,7 +49,7 @@
 			Create persona
 		</button>
 	</form>
-</Markup>
+</div>
 <div class="centered-block">
 	<div>
 		<Message icon="‼">your persona name is visible to others</Message>

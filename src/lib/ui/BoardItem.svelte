@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import type {Readable} from 'svelte/store';
 
 	import type {File} from '$lib/vocab/file/file.js';
@@ -21,11 +20,11 @@
 </script>
 
 <li style="--hue: {hue}">
-	<Markup>
+	<div class="markup">
 		<p>
 			{$file.content}
 		</p>
-	</Markup>
+	</div>
 	<Avatar name={toName($persona)} icon={toIcon($persona)} />
 </li>
 

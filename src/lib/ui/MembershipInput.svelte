@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
-	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {get} from 'svelte/store';
 	import type {Readable} from 'svelte/store';
 
@@ -35,14 +34,14 @@
 </button>
 {#if opened}
 	<Dialog on:close={() => (opened = false)}>
-		<Markup>
+		<div class="markup">
 			<h1>Invite users to {$community.name}</h1>
 			{#each invitableMembers as persona (persona)}
 				<MembershipInputItem {persona} {community} />
 			{:else}
 				<p>There's no one new to invite</p>
 			{/each}
-		</Markup>
+		</div>
 	</Dialog>
 {/if}
 

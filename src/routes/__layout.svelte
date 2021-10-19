@@ -6,7 +6,6 @@
 	import FeltWindowHost from '@feltcoop/felt/ui/FeltWindowHost.svelte';
 	import {onMount} from 'svelte';
 	import {session} from '$app/stores';
-	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {page} from '$app/stores';
 	import {browser} from '$app/env';
 	import type {Readable} from 'svelte/store';
@@ -179,10 +178,8 @@
 	{/if}
 	<main>
 		{#if guest}
-			<div class="column">
-				<Markup>
-					<AccountForm {guest} />
-				</Markup>
+			<div class="column markup">
+				<AccountForm {guest} />
 			</div>
 		{:else if onboarding}
 			<div class="column">
