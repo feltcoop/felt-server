@@ -15,7 +15,7 @@ export const task: Task<TaskArgs> = {
 		const {seed = true} = args;
 		const [_, unobtainDb] = obtainDb();
 		await invokeTask('lib/db/destroy');
-		// await invokeTask('lib/db/up'); // TODO add task that migrates up using `ley`
+		await invokeTask('lib/db/migrate');
 		if (seed) await invokeTask('lib/db/seed');
 		unobtainDb();
 	},
