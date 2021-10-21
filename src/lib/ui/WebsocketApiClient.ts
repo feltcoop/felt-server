@@ -97,7 +97,7 @@ const parseSocketMessage = (rawMessage: any): JsonRpcResponse<any> | null => {
 	}
 	const response = parseJsonRpcResponse(message);
 	if (!response) {
-		console.error('[parseSocketMessage] message data is not valid JSON-RPC 2.0');
+		console.error('[parseSocketMessage] message data is not valid JSON-RPC 2.0', message);
 		return null;
 	}
 	return response;

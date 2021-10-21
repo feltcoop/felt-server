@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue} from '@feltcoop/felt/util/terminal.js';
 import {promisify} from 'util';
+import {} from '@sveltejs/adapter-node';
 
 import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.js';
 import {toAuthorizationMiddleware} from '$lib/session/authorizationMiddleware.js';
@@ -31,20 +32,18 @@ export interface Options {
 	server: HttpServer | HttpsServer;
 	app: Polka<Request>;
 	websocketServer: WebsocketServer;
-	port?: number;
+	port: number;
 	db: Database;
 	services: Map<string, Service<any, any>>;
-	loadInstance?: () => Promise<Polka | null>;
 }
 
 export class ApiServer {
 	readonly server: HttpServer | HttpsServer;
 	readonly app: Polka<Request>;
 	readonly websocketServer: WebsocketServer;
-	readonly port: number | undefined;
+	readonly port: number;
 	readonly db: Database;
 	readonly services: Map<string, Service<any, any>>;
-	readonly loadInstance: () => Promise<Polka | null>;
 
 	websocketListener = websocketHandler.bind(null, this);
 
@@ -55,7 +54,6 @@ export class ApiServer {
 		this.port = options.port;
 		this.db = options.db;
 		this.services = options.services;
-		this.loadInstance = options.loadInstance || (async () => null);
 		log.info('created');
 	}
 
@@ -103,25 +101,28 @@ export class ApiServer {
 		}
 
 		// SvelteKit Node adapter, adapted to our production API server
-		// TODO needs a lot of work, especially for production
-		const instance = await this.loadInstance();
-		if (instance) {
-			this.app.use(instance.handler);
+		if (process.env.NODE_ENV === 'production') {
+			const importPath = '../../../svelte-kit/' + 'middlewares.js';
+			console.log('importing importPath', importPath);
+			try {
+				// TODO this is a hack to make Rollup not bundle this - maybe configure Rollup to exclude it instead?
+				const {assetsMiddleware, prerenderedMiddleware, kitMiddleware} = (await import(
+					importPath
+				)) as any;
+				this.app.use(assetsMiddleware, prerenderedMiddleware, kitMiddleware);
+			} catch (err) {
+				// TODO this fails during build, but is that a problem?
+				console.error(
+					`Failed to import SvelteKit adapter-node middlewares: ${importPath} -- ${err}`,
+				);
+				// throw Error(`Failed to import SvelteKit adapter-node middlewares: ${importPath} -- ${err}`);
+			}
 		}
 
 		// Start the app.
-		const port = this.port || 3001;
-		// While building for production, `render` will be falsy
-		// and we want to use 3001 while building for prod.
-		// TODO maybe always default to env var `PORT`, upstream and instantiate `ApiServer` with it
-		// (instance && !dev
-		// 	? toEnvNumber('PORT', API_SERVER_DEFAULT_PORT_PROD)
-		// 	: API_SERVER_DEFAULT_PORT_DEV);
-		// TODO Gro utility to get next good port
-		// (wait no that doesn't work, static proxy, hmm... can fix when we switch frontend to Gro)
 		await new Promise<void>((resolve) => {
-			this.app.listen(port, () => {
-				log.info(`listening on localhost:${port}`);
+			this.app.listen(this.port, () => {
+				log.info(`listening on localhost:${this.port}`);
 				resolve();
 			});
 		});

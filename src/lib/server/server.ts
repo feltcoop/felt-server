@@ -13,20 +13,12 @@ const server = createServer();
 export const apiServer: ApiServer = new ApiServer({
 	server,
 	app: polka({server}),
+	// TODO Is this port check actually correct? Do we need to run on 3001 during the SvelteKit build?
+	// TODO maybe use process.env.PORT
+	port: process.env.NODE_ENV === 'production' ? 3000 : 3001,
 	websocketServer: new WebsocketServer(server),
 	db: new Database({sql: postgres(defaultPostgresOptions)}),
 	services,
-	loadInstance: async () => {
-		try {
-			// TODO this is a hack to make Rollup not bundle this - needs refactoring
-			// TODO what can we do with gro here with helpers or config?
-			const importPath = '../../../svelte-kit/' + 'index.js';
-			const mod = (await import(importPath)) as any;
-			return mod.instance || null;
-		} catch (err) {
-			return null;
-		}
-	},
 });
 
 apiServer.init().catch((err) => {
