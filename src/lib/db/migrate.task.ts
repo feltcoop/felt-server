@@ -8,7 +8,7 @@ export const task: Task = {
 		const status = await ley.status({
 			dir: 'migrations',
 			driver: 'postgres',
-			config: defaultPostgresOptions,
+			config: defaultPostgresOptions as any,
 		});
 
 		console.log('the following migrations will be run: ', status);
@@ -16,7 +16,7 @@ export const task: Task = {
 		const successes = await ley.up({
 			dir: 'migrations',
 			driver: 'postgres',
-			config: defaultPostgresOptions,
+			config: defaultPostgresOptions as any,
 		});
 		console.log('the following migrations were successful:', successes);
 		if (successes.length != status.length) {
