@@ -1,6 +1,6 @@
-exports.up = async (client) => {
-	client`
-	create table if not exists accounts (
+exports.up = async (sql) => {
+	const createAccountsTableResult = await sql`
+		create table if not exists accounts (
 		account_id serial primary key,
 			name text,
 			password text,
@@ -8,8 +8,12 @@ exports.up = async (client) => {
 			updated timestamp
 		)
 	`;
+
+	if (createAccountsTableResult.count) {
+		log.trace('createAccountsTableResult', createAccountsTableResult);
+	}
 };
 
 exports.down = async (client) => {
-	console.log('down');
+	client`drop table accounts`;
 };

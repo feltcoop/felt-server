@@ -2,29 +2,25 @@ import type {Task} from '@feltcoop/gro';
 import ley from 'ley';
 import {defaultPostgresOptions} from '$lib/db/postgres.js';
 
-// name? maybe `init` or `reset` is clearer?
-
-export interface TaskArgs {
-	'no-seed'?: boolean;
-	seed?: boolean; // defaults to `true`
-}
-
-export const task: Task<TaskArgs> = {
-	summary: 'create the database from scratch, deleting and seeding data',
-	run: async ({invokeTask}) => {
+export const task: Task = {
+	summary: 'running new migrations to bring database up to date',
+	run: async () => {
 		const status = await ley.status({
 			dir: 'migrations',
 			driver: 'postgres',
 			config: defaultPostgresOptions,
 		});
 
+		console.log('the following migrations will be run: ', status);
+
 		const successes = await ley.up({
 			dir: 'migrations',
 			driver: 'postgres',
 			config: defaultPostgresOptions,
 		});
-		console.log(successes);
-
-		console.log(status);
+		console.log('the following migrations were successful:', successes);
+		if (successes.length != status.length) {
+			console.error('not all pending migrations were applied, please double check');
+		}
 	},
 };
