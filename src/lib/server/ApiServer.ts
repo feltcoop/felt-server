@@ -5,7 +5,6 @@ import bodyParser from 'body-parser';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue} from '@feltcoop/felt/util/terminal.js';
 import {promisify} from 'util';
-import {} from '@sveltejs/adapter-node';
 
 import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.js';
 import {toAuthorizationMiddleware} from '$lib/session/authorizationMiddleware.js';
