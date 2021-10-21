@@ -45,18 +45,3 @@ export const AccountModelSchema = {
 	required: ['account_id', 'name', 'created', 'updated'],
 	additionalProperties: false,
 };
-
-// TODO improve types so they're exhaustive but still static (maybe via schema/codegen)
-export const accountProperties: (keyof Account)[] = [
-	'account_id',
-	'name',
-	'password',
-	'created',
-	'updated',
-];
-export const accountModelProperties: (keyof AccountModel)[] = [
-	'account_id',
-	'name',
-	'created',
-	'updated',
-];

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
-	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
@@ -47,7 +46,7 @@
 </button>
 {#if opened}
 	<Dialog on:close={() => (opened = false)}>
-		<Markup>
+		<div class="markup">
 			<h1>Create a new community</h1>
 			<form>
 				<input placeholder="> name" on:keydown={onKeydown} bind:value={name} use:autofocus />
@@ -58,7 +57,7 @@
 			{#if errorMessage}
 				<Message status="error">{errorMessage}</Message>
 			{/if}
-		</Markup>
+		</div>
 	</Dialog>
 {/if}
 

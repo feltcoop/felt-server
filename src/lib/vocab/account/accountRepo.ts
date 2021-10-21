@@ -5,7 +5,6 @@ import type {
 	AccountModel,
 	create_account_params_type,
 } from '$lib/vocab/account/account.js';
-import {accountModelProperties} from '$lib/vocab/account/account';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 import {toPasswordKey} from '$lib/util/password';
@@ -26,11 +25,10 @@ export const accountRepo = (db: Database) => ({
 	},
 	findById: async (
 		account_id: number,
-		columns: string[] = accountModelProperties,
 	): Promise<Result<{value: AccountModel}, {type: 'no_account_found'} & ErrorResponse>> => {
 		console.log('[accountRepo] loading account', account_id);
 		const data = await db.sql<AccountModel[]>`
-      select ${db.sql(columns)} from accounts where account_id = ${account_id}
+      select account_id, name, created, updated from accounts where account_id = ${account_id}
     `;
 		if (data.length) {
 			console.log('[accountRepo] account found, returning', account_id);

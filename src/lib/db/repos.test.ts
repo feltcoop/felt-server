@@ -42,7 +42,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	// TODO create 2 personas
 	const personaParams = randomPersonaParams();
 	const {persona, community: personaHomeCommunity} = unwrap(
-		await server.db.repos.persona.create(personaParams, account.account_id),
+		await server.db.repos.persona.create(personaParams.name, account.account_id),
 	);
 	if (!validatePersona()(persona)) {
 		throw new Error(

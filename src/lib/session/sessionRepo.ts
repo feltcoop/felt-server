@@ -2,7 +2,6 @@ import type {Result} from '@feltcoop/felt';
 
 import type {Database} from '$lib/db/Database';
 import type {ClientAccountSession} from '$lib/session/clientSession.js';
-import {accountModelProperties} from '$lib/vocab/account/account';
 import type {ErrorResponse} from '$lib/util/error';
 
 export const sessionRepo = (db: Database) => ({
@@ -12,7 +11,7 @@ export const sessionRepo = (db: Database) => ({
 		Result<{value: ClientAccountSession}, {type?: 'no_account_found'} & ErrorResponse>
 	> => {
 		console.log('[db] loadClientSession', account_id);
-		const accountResult = await db.repos.account.findById(account_id, accountModelProperties);
+		const accountResult = await db.repos.account.findById(account_id);
 		if (!accountResult.ok) return accountResult;
 		const account = accountResult.value;
 		// TODO make this a single query

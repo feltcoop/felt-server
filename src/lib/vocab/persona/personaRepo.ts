@@ -1,13 +1,13 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {Persona, PersonaParams} from '$lib/vocab/persona/persona.js';
+import type {Persona} from '$lib/vocab/persona/persona.js';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 import type {Community} from '$lib/vocab/community/community.js';
 
 export const personaRepo = (db: Database) => ({
 	create: async (
-		{name}: PersonaParams,
+		name: string,
 		// TODO should `account_id` be part of the params object?
 		// then we need a different abstraction? maybe `PersonaDoc` or something?
 		account_id: number,
@@ -51,6 +51,16 @@ export const personaRepo = (db: Database) => ({
       FROM personas p WHERE p.account_id = ${account_id}
 		`;
 		return {ok: true, value: data};
+	},
+	findByName: async (
+		name: string,
+	): Promise<Result<{value: Persona | undefined}, ErrorResponse>> => {
+		console.log('[personaRepo] filtering by name', name);
+		const data = await db.sql<Persona[]>`
+      SELECT p.persona_id, p.account_id, p.name, p.created, p.updated
+      FROM personas p WHERE LOWER(p.name) = LOWER(${name})
+		`;
+		return {ok: true, value: data[0]};
 	},
 	getAll: async (): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 		const data = await db.sql<Persona[]>`

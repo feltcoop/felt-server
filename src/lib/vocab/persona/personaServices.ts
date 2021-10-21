@@ -14,10 +14,23 @@ export const createPersonaService: Service<
 		const {db} = server;
 
 		console.log('[create_persona] creating persona', params.name);
+		const name = params.name.trim();
 
-		// TODO does it make more sense to pass `name` alone, or the whole `params`?
-		// this begs the question, should repos use the `__Params` interfaces or not?
-		const createPersonaResult = await db.repos.persona.create(params, account_id);
+		console.log('[create_persona] validating persona uniqueness', name);
+		const findByNameResult = await db.repos.persona.findByName(name);
+
+		if (!findByNameResult.ok) {
+			console.log('[create_persona] error validating unique name for new persona');
+			return {ok: false, status: 500, reason: 'error validating unique name for new persona'};
+		}
+
+		if (findByNameResult.value) {
+			console.log('[create_persona] provided name for persona already exists');
+			return {ok: false, status: 409, reason: 'a persona with that name already exists'};
+		}
+
+		console.log('[create_persona] creating persona', name);
+		const createPersonaResult = await db.repos.persona.create(name, account_id);
 		if (createPersonaResult.ok) {
 			return {ok: true, status: 200, value: createPersonaResult.value};
 		} else {

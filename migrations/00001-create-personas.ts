@@ -3,7 +3,7 @@ exports.up = async (sql) => {
 		create table if not exists personas (
 			persona_id serial primary key,
 			account_id int,
-			name text,
+			name text UNIQUE,
 			created timestamp NOT NULL DEFAULT now(),
 			updated timestamp
 		)
@@ -11,6 +11,15 @@ exports.up = async (sql) => {
 
 	if (createPersonasTableResult.count) {
 		log.trace('createPersonasTableResult', createPersonasTableResult);
+	}
+
+	const createPersonasNameIndexResult = await sql`
+		CREATE
+		INDEX ON personas (LOWER(name));
+	`;
+
+	if (createPersonasNameIndexResult.count) {
+		log.trace('createPersonasNameIndexResult', createPersonasNameIndexResult);
 	}
 };
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import {icons} from '@feltcoop/felt';
 	import {session} from '$app/stores';
 
@@ -71,12 +70,12 @@
 				{/if}
 			</div>
 		{:else if $mainNavView === 'account'}
-			<Markup>
+			<div class="markup">
 				<AccountForm guest={$session.guest} />
 				{#if $devmode}
 					<a class="menu-link" href="/docs">/docs</a>
 				{/if}
-			</Markup>
+			</div>
 			<SocketConnection />
 		{/if}
 	</div>

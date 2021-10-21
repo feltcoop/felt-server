@@ -1,18 +1,20 @@
 <script lang="ts">
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
-	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import type {Readable} from 'svelte/store';
 
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
-	import {spaceTypes} from '$lib/vocab/space/space';
+	import {SpaceType, spaceTypes as allSpaceTypes} from '$lib/vocab/space/space';
 
 	const {
 		api: {dispatch},
 	} = getApp();
 
 	export let community: Readable<Community>;
+
+	// TODO instead of filtering here, this perhaps should be determined by metadata on space types
+	const spaceTypes = allSpaceTypes.filter((s) => s !== SpaceType.Home);
 
 	let opened = false;
 	let newName = '';
@@ -64,29 +66,27 @@
 </button>
 {#if opened}
 	<Dialog on:close={() => (opened = false)}>
-		<div>
-			<Markup>
-				<h1>Create a new space</h1>
-				<form>
-					<div class:error={!!errorMessage}>{errorMessage || ''}</div>
-					<input
-						placeholder="> name"
-						bind:value={newName}
-						use:autofocus
-						bind:this={nameEl}
-						on:keydown={onKeydown}
-					/>
-					<label>
-						Select Type:
-						<select class="type-selector" bind:value={newType}>
-							{#each spaceTypes as type (type)}
-								<option value={type}>{type}</option>
-							{/each}
-						</select>
-					</label>
-					<button type="button" on:click={create}> Create space </button>
-				</form>
-			</Markup>
+		<div class="markup">
+			<h1>Create a new space</h1>
+			<form>
+				<div class:error={!!errorMessage}>{errorMessage || ''}</div>
+				<input
+					placeholder="> name"
+					bind:value={newName}
+					use:autofocus
+					bind:this={nameEl}
+					on:keydown={onKeydown}
+				/>
+				<label>
+					Select Type:
+					<select class="type-selector" bind:value={newType}>
+						{#each spaceTypes as type (type)}
+							<option value={type}>{type}</option>
+						{/each}
+					</select>
+				</label>
+				<button type="button" on:click={create}> Create space </button>
+			</form>
 		</div>
 	</Dialog>
 {/if}

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 	import type {Readable} from 'svelte/store';
 
 	import type {Space} from '$lib/vocab/space/space.js';
@@ -23,7 +22,7 @@
 	$: communitySpaces = $spacesByCommunityId.get($community.community_id)!;
 </script>
 
-<Markup>
+<div class="markup">
 	<section>
 		<h2>members</h2>
 		<!-- TODO display other meta info about the community -->
@@ -49,7 +48,7 @@
 		<div>This community was created at {$community.created}</div>
 		<code>TODO</code>
 	</section>
-</Markup>
+</div>
 
 <style>
 	section {

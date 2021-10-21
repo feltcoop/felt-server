@@ -2,7 +2,6 @@
 	import SchemaInfo from '$lib/ui/SchemaInfo.svelte';
 	import {eventInfos} from '$lib/app/events';
 	import {entities} from '$lib/app/entities';
-	import Markup from '@feltcoop/felt/ui/Markup.svelte';
 
 	const title = 'docs';
 </script>
@@ -11,7 +10,7 @@
 
 <div class="wrapper">
 	<div class="column">
-		<Markup>
+		<div class="markup">
 			<h1 id="docs">docs</h1>
 			<ul>
 				<li><a href="#vocab">vocab</a></li>
@@ -19,7 +18,7 @@
 			</ul>
 			<hr />
 			<h2 id="vocab">vocab</h2>
-		</Markup>
+		</div>
 		<ul>
 			{#each entities as schema (schema)}
 				<li>
@@ -28,9 +27,9 @@
 			{/each}
 		</ul>
 		<hr />
-		<Markup>
+		<div class="markup">
 			<h2 id="events">events</h2>
-		</Markup>
+		</div>
 		<ul>
 			{#each eventInfos as eventInfo (eventInfo.name)}
 				<li>
@@ -62,7 +61,7 @@
 			{/each}
 		</ul>
 		<hr />
-		<Markup>
+		<div class="markup">
 			<ul>
 				<li>
 					<a href="#docs">docs</a>
@@ -72,7 +71,7 @@
 					</ul>
 				</li>
 			</ul>
-		</Markup>
+		</div>
 	</div>
 </div>
 
