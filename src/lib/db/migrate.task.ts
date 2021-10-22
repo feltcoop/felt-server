@@ -6,7 +6,7 @@ export const task: Task = {
 	summary: 'running new migrations to bring database up to date',
 	run: async ({log}) => {
 		const status = await ley.status({
-			dir: 'migrations',
+			dir: 'src/lib/db/migrations',
 			driver: 'postgres',
 			config: defaultPostgresOptions as any,
 		});
@@ -14,7 +14,7 @@ export const task: Task = {
 		log.info('the following migrations will be run: ', status);
 
 		const successes = await ley.up({
-			dir: 'migrations',
+			dir: 'src/lib/db/migrations',
 			driver: 'postgres',
 			config: defaultPostgresOptions as any,
 		});

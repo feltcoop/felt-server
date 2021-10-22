@@ -1,4 +1,5 @@
-exports.up = async (sql) => {
+/** @param {import('pg').Client} sql */
+export const up = async (sql) => {
 	const createPersonasTableResult = await sql`
 		create table if not exists personas (
 			persona_id serial primary key,

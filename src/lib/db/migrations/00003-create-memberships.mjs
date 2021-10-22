@@ -1,4 +1,5 @@
-exports.up = async (sql) => {
+/** @param {import('pg').Client} sql */
+export const up = async (sql) => {
 	const createMembershipsResult = await sql`
 		create table if not exists memberships (
 			persona_id int references personas (persona_id) ON UPDATE CASCADE ON DELETE CASCADE,
