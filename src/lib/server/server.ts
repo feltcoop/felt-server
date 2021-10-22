@@ -11,7 +11,6 @@ const server = createServer();
 export const apiServer: ApiServer = new ApiServer({
 	server,
 	app: polka({server}),
-	// TODO Is this port check actually correct? Do we need to run on 3001 during the SvelteKit build?
 	// TODO maybe use process.env.PORT
 	port: process.env.NODE_ENV === 'production' ? 3000 : 3001,
 	websocketServer: new WebsocketServer(server),
