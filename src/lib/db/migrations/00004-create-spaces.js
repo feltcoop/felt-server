@@ -1,6 +1,6 @@
-/** @param {import('pg').Client} sql */
+/** @param {import('postgres').Sql<any>} sql */
 export const up = async (sql) => {
-	const createSpacesTableResult = await sql`
+	await sql`
 		create table if not exists spaces (
 			space_id serial primary key,
 			name text,
@@ -12,7 +12,7 @@ export const up = async (sql) => {
 		)	
 	`;
 
-	const createCommunitySpacesTableResult = await sql`
+	await sql`
 		create table if not exists community_spaces (
 			community_id int references communities (community_id) ON UPDATE CASCADE ON DELETE CASCADE,
 			space_id int references spaces (space_id) ON UPDATE CASCADE,

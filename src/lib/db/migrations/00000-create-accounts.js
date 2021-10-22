@@ -1,6 +1,6 @@
-/** @param {import('pg').Client} sql */
+/** @param {import('postgres').Sql<any>} sql */
 export const up = async (sql) => {
-	const createAccountsTableResult = await sql`
+	await sql`
 		create table if not exists accounts (
 		account_id serial primary key,
 			name text UNIQUE,

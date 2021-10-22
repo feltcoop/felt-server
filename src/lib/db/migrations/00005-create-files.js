@@ -1,6 +1,6 @@
-/** @param {import('pg').Client} sql */
+/** @param {import('postgres').Sql<any>} sql */
 export const up = async (sql) => {
-	const createFilesTableResult = await sql`
+	await sql`
 		create table if not exists files (
 			file_id serial primary key,
 			content text,

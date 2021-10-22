@@ -1,6 +1,6 @@
-/** @param {import('pg').Client} sql */
+/** @param {import('postgres').Sql<any>} sql */
 export const up = async (sql) => {
-	const createPersonasTableResult = await sql`
+	await sql`
 		create table if not exists personas (
 			persona_id serial primary key,
 			account_id int,
@@ -10,7 +10,7 @@ export const up = async (sql) => {
 		)
 	`;
 
-	const createPersonasNameIndexResult = await sql`
+	await sql`
 		CREATE
 		INDEX ON personas (LOWER(name));
 	`;
