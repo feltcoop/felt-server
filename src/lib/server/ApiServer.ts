@@ -105,17 +105,17 @@ export class ApiServer {
 			// The SvelteKit Node adapter does this here:
 			// https://github.com/sveltejs/kit/blob/101ab08197a2d7bab7eb2a14515ec548f577a618/packages/adapter-node/index.js#L87
 			const importPath = '../../../svelte-kit/' + 'middlewares.js';
+			let sveltekitMiddlewaresModule: any;
 			try {
-				const {assetsMiddleware, prerenderedMiddleware, kitMiddleware} = (await import(
-					importPath
-				)) as any;
-				this.app.use(assetsMiddleware, prerenderedMiddleware, kitMiddleware);
+				sveltekitMiddlewaresModule = await import(importPath);
 			} catch (err) {
 				// TODO this fails during build, but is that a problem?
 				console.error(
 					`Failed to import SvelteKit adapter-node middlewares: ${importPath} -- ${err}`,
 				);
 			}
+			const {assetsMiddleware, prerenderedMiddleware, kitMiddleware} = sveltekitMiddlewaresModule;
+			this.app.use(assetsMiddleware, prerenderedMiddleware, kitMiddleware);
 		}
 
 		// Start the app.
