@@ -108,10 +108,8 @@ export class ApiServer {
 			} catch (err) {
 				throw Error(`Failed to import SvelteKit adapter-node middlewares: ${importPath} -- ${err}`);
 			}
-			if (sveltekitMiddlewaresModule) {
-				const {assetsMiddleware, prerenderedMiddleware, kitMiddleware} = sveltekitMiddlewaresModule;
-				this.app.use(assetsMiddleware, prerenderedMiddleware, kitMiddleware);
-			}
+			const {assetsMiddleware, prerenderedMiddleware, kitMiddleware} = sveltekitMiddlewaresModule;
+			this.app.use(assetsMiddleware, prerenderedMiddleware, kitMiddleware);
 		}
 
 		// Start the app.
