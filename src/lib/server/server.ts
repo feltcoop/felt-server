@@ -5,14 +5,14 @@ import {ApiServer} from '$lib/server/ApiServer.js';
 import {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import {services} from '$lib/server/services';
 import {db} from '$lib/db/db';
+import {API_SERVER_PORT} from '$lib/config';
 
 const server = createServer();
 
 export const apiServer: ApiServer = new ApiServer({
 	server,
 	app: polka({server}),
-	// TODO maybe use process.env.PORT
-	port: process.env.NODE_ENV === 'production' ? 3000 : 3001,
+	port: API_SERVER_PORT,
 	websocketServer: new WebsocketServer(server),
 	db,
 	services,
