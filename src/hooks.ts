@@ -1,14 +1,9 @@
 import type {GetSession} from '@sveltejs/kit';
-import postgres from 'postgres';
 
 import type {ClientSession} from '$lib/session/clientSession.js';
 import type {CookieSessionRequest} from '$lib/session/cookieSession.js';
 import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
-import {Database} from '$lib/db/Database';
-import {defaultPostgresOptions} from '$lib/db/postgres';
-
-// TODO source this from wherever ApiServer.js does
-const db = new Database({sql: postgres(defaultPostgresOptions)});
+import {db} from '$lib/db/db';
 
 const cookieSessionMiddleware = toCookieSessionMiddleware();
 

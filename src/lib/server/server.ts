@@ -1,12 +1,10 @@
 import polka from 'polka';
-import postgres from 'postgres';
 import {createServer} from 'http';
 
 import {ApiServer} from '$lib/server/ApiServer.js';
-import {Database} from '$lib/db/Database.js';
-import {defaultPostgresOptions} from '$lib/db/postgres.js';
 import {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import {services} from '$lib/server/services';
+import {db} from '$lib/db/db';
 
 const server = createServer();
 
@@ -17,7 +15,7 @@ export const apiServer: ApiServer = new ApiServer({
 	// TODO maybe use process.env.PORT
 	port: process.env.NODE_ENV === 'production' ? 3000 : 3001,
 	websocketServer: new WebsocketServer(server),
-	db: new Database({sql: postgres(defaultPostgresOptions)}),
+	db,
 	services,
 });
 

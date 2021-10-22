@@ -101,10 +101,9 @@ export class ApiServer {
 
 		// SvelteKit Node adapter, adapted to our production API server
 		if (process.env.NODE_ENV === 'production') {
+			// TODO this is a hack to make Rollup not bundle this - maybe configure Rollup to exclude it instead?
 			const importPath = '../../../svelte-kit/' + 'middlewares.js';
-			console.log('importing importPath', importPath);
 			try {
-				// TODO this is a hack to make Rollup not bundle this - maybe configure Rollup to exclude it instead?
 				const {assetsMiddleware, prerenderedMiddleware, kitMiddleware} = (await import(
 					importPath
 				)) as any;
@@ -114,7 +113,6 @@ export class ApiServer {
 				console.error(
 					`Failed to import SvelteKit adapter-node middlewares: ${importPath} -- ${err}`,
 				);
-				// throw Error(`Failed to import SvelteKit adapter-node middlewares: ${importPath} -- ${err}`);
 			}
 		}
 
