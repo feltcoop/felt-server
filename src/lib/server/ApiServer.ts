@@ -101,7 +101,7 @@ export class ApiServer {
 
 		// SvelteKit Node adapter, adapted to our production API server
 		if (process.env.NODE_ENV === 'production') {
-			// TODO this is a hack to make Rollup not bundle this - maybe configure Rollup/esbuild to exclude it instead?
+			// TODO this is a hack to make Rollup not bundle this - maybe configure to exclude it instead?
 			// The SvelteKit Node adapter does this here:
 			// https://github.com/sveltejs/kit/blob/101ab08197a2d7bab7eb2a14515ec548f577a618/packages/adapter-node/index.js#L87
 			const importPath = '../../../svelte-kit/' + 'middlewares.js';
