@@ -8,12 +8,4 @@ exports.up = async (sql) => {
 			updated timestamp
 		)
 	`;
-
-	if (createAccountsTableResult.count) {
-		log.trace('createAccountsTableResult', createAccountsTableResult);
-	}
-};
-
-exports.down = async (client) => {
-	client`drop table accounts`;
 };

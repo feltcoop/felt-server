@@ -7,14 +7,4 @@ exports.up = async (sql) => {
 			updated timestamp
 		)	
 	`;
-
-	if (createCommunitiesTableResult.count) {
-		log.trace('createCommunitiesTableResult', createCommunitiesTableResult);
-	}
-};
-
-exports.down = async (sql) => {
-	sql`
-	drop table communities
-	`;
 };

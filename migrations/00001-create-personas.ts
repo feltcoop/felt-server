@@ -9,22 +9,8 @@ exports.up = async (sql) => {
 		)
 	`;
 
-	if (createPersonasTableResult.count) {
-		log.trace('createPersonasTableResult', createPersonasTableResult);
-	}
-
 	const createPersonasNameIndexResult = await sql`
 		CREATE
 		INDEX ON personas (LOWER(name));
-	`;
-
-	if (createPersonasNameIndexResult.count) {
-		log.trace('createPersonasNameIndexResult', createPersonasNameIndexResult);
-	}
-};
-
-exports.down = async (sql) => {
-	sql`
-	drop table personas
 	`;
 };

@@ -8,14 +8,4 @@ exports.up = async (sql) => {
 			CONSTRAINT membership_pkey PRIMARY KEY (persona_id,community_id)
 		)	
 	`;
-
-	if (createMembershipsResult.count) {
-		log.trace('createMembershipsResult', createMembershipsResult);
-	}
-};
-
-exports.down = async (sql) => {
-	sql`
-	drop table memberships
-	`;
 };

@@ -46,7 +46,7 @@ create database felt; # notice the semicolon
 Felt server uses [Ley](https://github.com/lukeed/ley) to manage its DB migrations.
 Migration files are located in the [migrations](./migrations) directory.
 To create a new migration file use the `ley new` command (see Ley's docs for more details)
-Use `ley up` to run migrations or `ley down` to rollback.
+Use `gro lib/db/migrate` to run migrations.
 
 ## database tasks
 

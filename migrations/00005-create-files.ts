@@ -9,14 +9,4 @@ exports.up = async (sql) => {
 			updated timestamp
 		)	
 	`;
-
-	if (createFilesTableResult.count) {
-		log.trace('createFilesTableResult', createFilesTableResult);
-	}
-};
-
-exports.down = async (sql) => {
-	sql`
-	drop table files
-	`;
 };

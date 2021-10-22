@@ -11,10 +11,6 @@ exports.up = async (sql) => {
 		)	
 	`;
 
-	if (createSpacesTableResult.count) {
-		log.trace('createSpacesTableResult', createSpacesTableResult);
-	}
-
 	const createCommunitySpacesTableResult = await sql`
 		create table if not exists community_spaces (
 			community_id int references communities (community_id) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -23,19 +19,5 @@ exports.up = async (sql) => {
 			updated timestamp,
 			CONSTRAINT community_spaces_pkey PRIMARY KEY (community_id,space_id)
 		)	
-	`;
-
-	if (createCommunitySpacesTableResult.count) {
-		log.trace('createCommunitySpacesTableResult', createCommunitySpacesTableResult);
-	}
-};
-
-exports.down = async (sql) => {
-	sql`
-	drop table community_spaces
-	`;
-
-	sql`
-	drop table spaces
 	`;
 };
