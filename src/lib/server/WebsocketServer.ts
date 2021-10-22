@@ -27,7 +27,6 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 
 	async init(): Promise<void> {
 		const {wss} = this;
-		console.log('wss.on', wss.on);
 		wss.on('connection', (socket, req: CookieSessionIncomingMessage) => {
 			console.log('[wss] connection req.url', req.url, wss.clients.size);
 			console.log('[wss] connection req.headers', req.headers);
