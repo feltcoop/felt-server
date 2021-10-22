@@ -20,7 +20,7 @@ export const task: Task = {
 		});
 		log.info('the following migrations were successful:', successes);
 		if (successes.length != status.length) {
-			log.error('not all pending migrations were applied, please double check');
+			throw Error('not all pending migrations were applied, please double check');
 		}
 	},
 };
