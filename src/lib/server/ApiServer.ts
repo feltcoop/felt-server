@@ -109,10 +109,7 @@ export class ApiServer {
 			try {
 				sveltekitMiddlewaresModule = await import(importPath);
 			} catch (err) {
-				// TODO this fails during build, but is that a problem?
-				console.error(
-					`Failed to import SvelteKit adapter-node middlewares: ${importPath} -- ${err}`,
-				);
+				throw Error(`Failed to import SvelteKit adapter-node middlewares: ${importPath} -- ${err}`);
 			}
 			if (sveltekitMiddlewaresModule) {
 				const {assetsMiddleware, prerenderedMiddleware, kitMiddleware} = sveltekitMiddlewaresModule;
