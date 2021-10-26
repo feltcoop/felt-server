@@ -13,7 +13,7 @@ export const toAuthenticationMiddleware = (_server: ApiServer): Middleware => {
 			// TODO centralize error message strings
 			return send(res, 500, {reason: 'invalid server configuration'});
 		}
-		if (req.session.account_id === undefined) {
+		if (!req.session.account_id) {
 			return next();
 		}
 		req.account_id = req.session.account_id;

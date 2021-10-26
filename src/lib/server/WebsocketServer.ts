@@ -32,8 +32,9 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 			console.log('[wss] connection req.headers', req.headers);
 			cookieSessionMiddleware(req, {}, () => {});
 			const account_id = req.session?.account_id;
-			if (account_id === undefined) {
+			if (!account_id) {
 				console.log('[wss] request to open connection was unauthenticated');
+				//TODO return message to socket (401)
 				socket.close();
 				return;
 			}

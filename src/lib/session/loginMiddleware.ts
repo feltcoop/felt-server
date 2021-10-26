@@ -44,7 +44,7 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 			}
 		} else {
 			// Failed to find the account.
-			return send(res, 400, {reason: findAccountResult.reason});
+			return send(res, 500, {reason: findAccountResult.reason});
 		}
 
 		console.log('[loginMiddleware] login', account.account_id); // TODO logging
