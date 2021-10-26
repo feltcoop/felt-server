@@ -37,6 +37,15 @@ export const task: Task = {
 			cd ../;
 			ln -sfn deploy_${artifactName}/ deploy_felt_server_current;`,
 		]);
+		//TEMP: move .env files into root
+		await spawn('scp', [
+			`src/infra/.env.default`,
+			`${deployLogin}:deploy_felt_server_current/.env`,
+		]);
+		await spawn('scp', [
+			`src/infra/.env.production.default`,
+			`${deployLogin}:deploy_felt_server_current/.env.production`,
+		]);
 	},
 };
 
