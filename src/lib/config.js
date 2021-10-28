@@ -7,12 +7,16 @@
 const dev = import.meta.env?.DEV ?? process.env.NODE_ENV !== 'production';
 
 export const SVELTEKIT_SERVER_HOST = 'localhost:3000';
-export const API_SERVER_PORT = dev ? 3001 : 3000; // TODO maybe use `process.env.PORT`?
-export const API_SERVER_HOST = `localhost:${API_SERVER_PORT}`;
-export const WEBSOCKET_URL = dev
-	? `ws://localhost:${API_SERVER_PORT}/ws`
-	: 'wss://staging.felt.dev/ws';
+export const API_SERVER_PORT_DEV = 3001;
+export const API_SERVER_PORT_PROD = 3000;
+export const API_SERVER_PORT = dev ? API_SERVER_PORT_DEV : API_SERVER_PORT_PROD; // TODO maybe use `process.env.PORT`?
+export const API_SERVER_HOST_DEV = `localhost:${API_SERVER_PORT_DEV}`;
+export const API_SERVER_HOST_PROD = `localhost:${API_SERVER_PORT_PROD}`;
+export const API_SERVER_HOST = dev ? API_SERVER_HOST_DEV : API_SERVER_HOST_PROD;
+export const WEBSOCKET_URL_DEV = `ws://localhost:${API_SERVER_PORT_DEV}/ws`;
+export const WEBSOCKET_URL_PROD = 'wss://staging.felt.dev/ws';
+export const WEBSOCKET_URL = dev ? WEBSOCKET_URL_DEV : WEBSOCKET_URL_PROD;
 
-export const DEPLOY_SERVER_HOST = 'felt.dev';
+export const DEPLOY_SERVER_HOST = 'felt.dev'; // TODO should this be `staging.felt.dev`, same as websocket URL?
 export const DEPLOY_IP = '96.126.116.174';
 export const DEPLOY_USER = 'root';
