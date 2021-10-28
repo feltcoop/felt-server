@@ -47,7 +47,7 @@
 <style>
 	.community-nav {
 		height: 100%;
-		border-right: var(--border);
+		background-color: var(--tint_dark_1);
 		display: flex;
 		flex-direction: column;
 		align-items: center;

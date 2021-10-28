@@ -98,8 +98,7 @@
 		flex-direction: column;
 		flex-shrink: 0;
 		transform-origin: top left;
-		/* TODO what var is this? */
-		background-color: hsl(var(--bg_hue), var(--bg_saturation), var(--bg_lightness));
+		background-color: var(--tint_dark_1);
 		transform: translate3d(-100%, 0, 0) scale3d(1, 1, 1);
 		transition: transform var(--transition_duration_xs) ease-out;
 	}
@@ -134,8 +133,7 @@
 		position: sticky;
 		top: 0;
 		display: flex;
-		height: calc(var(--navbar_size) + var(--border_width));
-		border-bottom: var(--border);
+		height: var(--navbar_size);
 		width: 100%;
 	}
 	.explorer {

@@ -57,8 +57,6 @@
 		height: 100%;
 		display: flex;
 		flex-direction: column;
-		border-left: var(--border);
-		border-right: var(--border);
 	}
 	/* TODO handle properly for mobile */
 	/* TODO better name? */
@@ -70,8 +68,7 @@
 		display: flex;
 		flex-direction: column;
 		flex-shrink: 0;
-		border-right: var(--border);
-		background-color: hsl(var(--bg_hue), var(--bg_saturation), var(--bg_lightness));
+		background-color: var(--tint_dark_1);
 	}
 	/* TODO abstract with `MainNav` at all? */
 	.marquee-bg {
@@ -94,13 +91,5 @@
 	:global(.mobile) .marquee-bg {
 		display: block;
 		animation: fade-in var(--transition_duration_xl) ease-out;
-	}
-	/* remove borders on things when not necessary, makes things look cleaner and crisper */
-	:global(.mobile) .column {
-		border-right: none;
-		border-left: none;
-	}
-	:global(.mobile) .marquee {
-		border-right: none;
 	}
 </style>
