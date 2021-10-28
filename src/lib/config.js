@@ -1,6 +1,8 @@
 // this is a JS file so it can be imported by `svelte.config.js`
 
-// TODO figure out how to allow user projects to override these vars
+// TODO This module is going to change significantly:
+// - figure out how to allow user projects to override these vars
+// - it should not be imported on the client, instead the values should be replaced at build time
 
 // TODO Replace this at buildtime with a constant so it can be optimized.
 // This probably means supporting `import.meta.env` or `$app/env` in Gro.
