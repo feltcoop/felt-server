@@ -1,5 +1,9 @@
 import polka from 'polka';
-import {createServer} from 'http';
+import type {Server as HttpServer} from 'http';
+import type {Server as HttpsServer} from 'https';
+import {createServer as create_http_server} from 'http';
+import {createServer as create_https_server} from 'https';
+import fs from 'fs';
 
 import {ApiServer} from '$lib/server/ApiServer.js';
 import {WebsocketServer} from '$lib/server/WebsocketServer.js';
@@ -7,7 +11,21 @@ import {services} from '$lib/server/services';
 import {db} from '$lib/db/db';
 import {API_SERVER_PORT} from '$lib/config';
 
-const server = createServer();
+const create_server = (): HttpServer | HttpsServer => {
+	if (process.env.NODE_ENV === 'production') {
+		return create_https_server({
+			//TODO double check this aligns with GRO standard (load_https_credentials)
+			cert: fs.readFileSync('/etc/letsencrypt/live/staging.felt.dev/fullchain.pem'),
+			key: fs.readFileSync('/etc/letsencrypt/live/staging.felt.dev/privkey.pem'),
+			//cert: fs.readFileSync('localhost.crt'),
+			//key: fs.readFileSync('localhost.key'),
+		});
+	} else {
+		return create_http_server();
+	}
+};
+
+const server = create_server();
 
 export const apiServer: ApiServer = new ApiServer({
 	server,
