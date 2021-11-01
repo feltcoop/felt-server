@@ -42,7 +42,15 @@
 	}
 
 	const devmode = setDevmode();
-	const socket = setSocket(toSocketStore((data) => websocketApiClient.handle(data)));
+	const socket = setSocket(
+		toSocketStore((data) =>
+			websocketApiClient.handle(data, (broadcastMessage) => {
+				(ui as any)[broadcastMessage.method]({
+					invoke: () => Promise.resolve(broadcastMessage.result),
+				});
+			}),
+		),
+	);
 	const ui = setUi(toUi(session, initialMobileValue));
 
 	const websocketApiClient = toWebsocketApiClient(findService, socket.send);
