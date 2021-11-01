@@ -98,7 +98,7 @@
 		flex-direction: column;
 		flex-shrink: 0;
 		transform-origin: top left;
-		background-color: var(--tint_dark_1);
+		background-color: var(--tint_light);
 		transform: translate3d(-100%, 0, 0) scale3d(1, 1, 1);
 		transition: transform var(--transition_duration_xs) ease-out;
 	}

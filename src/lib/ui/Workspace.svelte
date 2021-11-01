@@ -68,7 +68,7 @@
 		display: flex;
 		flex-direction: column;
 		flex-shrink: 0;
-		background-color: var(--tint_dark_1);
+		background-color: var(--tint_light);
 	}
 	/* TODO abstract with `MainNav` at all? */
 	.marquee-bg {
