@@ -1,5 +1,5 @@
 import {suite} from 'uvu';
-import * as t from 'uvu/assert';
+import * as assert from 'uvu/assert';
 import type {Result} from '@feltcoop/felt';
 import {unwrap} from '@feltcoop/felt';
 
@@ -49,7 +49,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 			`Failed to validate persona: ${toValidationErrorMessage(validatePersona().errors![0])}`,
 		);
 	}
-	t.ok(personaHomeCommunity);
+	assert.ok(personaHomeCommunity);
 	if (!validateCommunity()(personaHomeCommunity)) {
 		throw new Error(
 			`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
@@ -104,7 +104,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	//
 
 	const filterFilesValue = unwrap(await server.db.repos.file.filterBySpace(space.space_id));
-	t.is(filterFilesValue.length, 2);
+	assert.is(filterFilesValue.length, 2);
 	filterFilesValue.forEach((f) => {
 		if (!validateFile()(f)) {
 			throw new Error(
@@ -112,10 +112,10 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 			);
 		}
 	});
-	t.equal(filterFilesValue, [file1, file2]);
+	assert.equal(filterFilesValue, [file1, file2]);
 
 	const findSpaceValue = unwrap(await server.db.repos.space.findById(space.space_id));
-	t.equal(findSpaceValue, space);
+	assert.equal(findSpaceValue, space);
 	if (!validateSpace()(findSpaceValue)) {
 		throw new Error(
 			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
@@ -124,7 +124,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const filterSpacesValue = unwrap(
 		await server.db.repos.space.filterByCommunity(community.community_id),
 	);
-	t.equal(filterSpacesValue.length, spaceCount + defaultSpaceCount);
+	assert.equal(filterSpacesValue.length, spaceCount + defaultSpaceCount);
 	filterSpacesValue.forEach((s) => {
 		if (!validateSpace()(s)) {
 			throw new Error(
@@ -136,7 +136,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const findCommunityValue = unwrap(
 		await server.db.repos.community.findById(community.community_id),
 	);
-	t.is(findCommunityValue.name, community.name); // TODO do a better check
+	assert.is(findCommunityValue.name, community.name); // TODO do a better check
 	if (!validateCommunity()(findCommunityValue)) {
 		throw new Error(
 			`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
@@ -145,7 +145,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const filterCommunitiesValue = unwrap(
 		await server.db.repos.community.filterByAccount(account.account_id),
 	);
-	t.equal(filterCommunitiesValue.length, 2); // TODO do a better check
+	assert.equal(filterCommunitiesValue.length, 2); // TODO do a better check
 	filterCommunitiesValue.forEach((s) => {
 		if (!validateCommunity()(s)) {
 			throw new Error(
@@ -157,8 +157,8 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const filterPersonasValue = unwrap(
 		await server.db.repos.persona.filterByAccount(account.account_id),
 	);
-	t.is(filterPersonasValue.length, 1);
-	t.equal(filterPersonasValue, [persona]);
+	assert.is(filterPersonasValue.length, 1);
+	assert.equal(filterPersonasValue, [persona]);
 	filterPersonasValue.forEach((p) => {
 		if (!validatePersona()(p)) {
 			throw new Error(
@@ -168,14 +168,14 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	});
 
 	const findAccountByIdValue = unwrap(await server.db.repos.account.findById(account.account_id));
-	t.is(findAccountByIdValue.name, account.name); // TODO do a better check
+	assert.is(findAccountByIdValue.name, account.name); // TODO do a better check
 	if (!validateAccountModel()(findAccountByIdValue)) {
 		throw new Error(
 			`Failed to validate account: ${toValidationErrorMessage(validateAccountModel().errors![0])}`,
 		);
 	}
 	const findAccountByNameValue = unwrap(await server.db.repos.account.findByName(account.name));
-	t.is(findAccountByNameValue.name, account.name); // TODO do a better check
+	assert.is(findAccountByNameValue.name, account.name); // TODO do a better check
 	if (!validateAccount()(findAccountByNameValue)) {
 		throw new Error(
 			`Failed to validate account: ${toValidationErrorMessage(validateAccount().errors![0])}`,
@@ -198,7 +198,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	// 	space.space_id,
 	// 	content,
 	// );
-	// t.ok(deleteFileResult.ok);
+	// assert.ok(deleteFileResult.ok);
 
 	// TODO check to be sure the database has the same # rows in each table as when this test started --
 	// maybe do this with before/after hooks so it's easily reused?

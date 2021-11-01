@@ -1,5 +1,5 @@
 import {suite} from 'uvu';
-import * as t from 'uvu/assert';
+import * as assert from 'uvu/assert';
 import {red} from '@feltcoop/felt/util/terminal.js';
 
 import type {TestServerContext} from '$lib/util/testServerHelpers';
@@ -37,7 +37,7 @@ test__services('perform services', async ({server}) => {
 				)}`,
 			);
 		}
-		t.is(result.status, 200); // TODO generate invalid data and test those params+responses too
+		assert.is(result.status, 200); // TODO generate invalid data and test those params+responses too
 	}
 });
 
