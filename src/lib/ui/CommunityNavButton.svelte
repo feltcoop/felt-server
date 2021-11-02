@@ -45,11 +45,10 @@
 	a {
 		display: block;
 		/* TODO better way to have active state? this makes the community nav wider than the luggage button! */
-		border: 1px solid transparent;
+		padding: var(--spacing_xs);
 	}
 	/* TODO jucier selected state, maybe scaling up 10ish percent */
 	.selected {
-		border-color: var(--active_color);
 		background-color: var(--bg);
 	}
 	.persona {
@@ -57,8 +56,9 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: var(--icon_size_md);
-		height: var(--icon_size_md);
+		/* TODO do this layout without calculating */
+		width: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
+		height: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
 		--icon_size: var(--icon_size_sm);
 	}
 	.persona:first-child {

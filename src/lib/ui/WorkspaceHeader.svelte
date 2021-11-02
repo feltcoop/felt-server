@@ -30,7 +30,7 @@
 		align-items: center;
 		height: var(--navbar_size);
 		width: 100%;
-		border-bottom: var(--border);
+		background-color: var(--tint_dark_1);
 		font-size: var(--font_size_xl);
 	}
 	.luggage-placeholder {

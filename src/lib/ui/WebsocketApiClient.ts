@@ -8,6 +8,7 @@ import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
 import type {JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
+import type {BroadcastMessage} from '$lib/server/websocketHandler';
 
 const toId = toToClientId('', undefined, '');
 
@@ -18,7 +19,7 @@ export interface WebsocketApiClient<
 	TParamsMap extends Record<string, any>,
 	TResultMap extends Record<string, any>,
 > extends ApiClient<TParamsMap, TResultMap> {
-	handle: (rawMessage: any) => void;
+	handle: (rawMessage: any, handleBroadcastMessage: (message: BroadcastMessage) => void) => void;
 }
 
 interface WebsocketRequest<T = any> {
@@ -60,18 +61,22 @@ export const toWebsocketApiClient = <
 			send(request);
 			return websocketRequest.promise;
 		},
-		handle: (rawMessage) => {
+		handle: (rawMessage, handleBroadcastMessage) => {
 			const message = parseSocketMessage(rawMessage);
 			console.log('[websocket api client] handle incoming message', message);
 			if (!message) return;
-			const found = websocketRequests.get(message.id);
-			if (!found) {
-				console.error(`Unable to find message with id ${message.id}`);
-				return;
+			if ('jsonrpc' in message) {
+				const found = websocketRequests.get(message.id);
+				if (!found) {
+					console.error(`Unable to find message with id ${message.id}`);
+					return;
+				}
+				websocketRequests.delete(message.id);
+				// TODO upstream the `ok` instead of creating a new object? could return `message.result` directly
+				found.resolve({ok: message.result.status === 200, ...message.result});
+			} else {
+				handleBroadcastMessage(message);
 			}
-			websocketRequests.delete(message.id);
-			// TODO upstream the `ok` instead of creating a new object? could return `message.result` directly
-			found.resolve({ok: message.result.status === 200, ...message.result});
 		},
 		close: () => {
 			// ?
@@ -81,7 +86,7 @@ export const toWebsocketApiClient = <
 };
 
 // TODO do we need to support another type of message, the non-response kind?
-const parseSocketMessage = (rawMessage: any): JsonRpcResponse<any> | null => {
+const parseSocketMessage = (rawMessage: any): JsonRpcResponse<any> | BroadcastMessage | null => {
 	if (typeof rawMessage !== 'string') {
 		console.error(
 			'[parseSocketMessage] cannot parse websocket message; currently only supports strings',
@@ -95,10 +100,17 @@ const parseSocketMessage = (rawMessage: any): JsonRpcResponse<any> | null => {
 		console.error('[parseSocketMessage] message data is not valid JSON', rawMessage, err);
 		return null;
 	}
-	const response = parseJsonRpcResponse(message);
-	if (!response) {
-		console.error('[parseSocketMessage] message data is not valid JSON-RPC 2.0', message);
+	if ('jsonrpc' in message) {
+		const response = parseJsonRpcResponse(message);
+		if (!response) {
+			console.error('[parseSocketMessage] message data is not valid JSON-RPC 2.0', message);
+			return null;
+		}
+		return response;
+	} else if (message.type == 'broadcast') {
+		return message;
+	} else {
+		console.error('[parseSocketMessage] message data is unknown type', message);
 		return null;
 	}
-	return response;
 };

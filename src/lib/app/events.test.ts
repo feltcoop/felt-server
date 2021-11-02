@@ -1,5 +1,5 @@
 import {suite} from 'uvu';
-import * as t from 'uvu/assert';
+import * as assert from 'uvu/assert';
 
 import type {TestServerContext} from '$lib/util/testServerHelpers';
 import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
@@ -47,7 +47,7 @@ test__eventInfos('dispatch random events in a client app', async ({server, app})
 		if (eventInfo.type === 'ClientEvent') {
 			// TODO don't have schemas for `returns` yet, but eventually we'll want them and then validate here
 			if (eventInfo.returns !== 'void') {
-				t.ok(result !== undefined);
+				assert.ok(result !== undefined);
 			}
 		} else {
 			// TODO can't make remote calls yet -- need to use either `node-fetch` or mock
@@ -61,7 +61,7 @@ test__eventInfos('dispatch random events in a client app', async ({server, app})
 			// 		)}`,
 			// 	);
 			// }
-			// t.is(result.status, 200); // TODO generate invalid data and test those params+responses too
+			// assert.is(result.status, 200); // TODO generate invalid data and test those params+responses too
 		}
 	}
 });

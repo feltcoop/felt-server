@@ -1,5 +1,5 @@
 import {suite} from 'uvu';
-import * as t from 'uvu/assert';
+import * as assert from 'uvu/assert';
 
 import type {TestServerContext} from '$lib/util/testServerHelpers.js';
 import {setupServer, teardownServer} from '$lib/util/testServerHelpers.js';
@@ -15,7 +15,7 @@ test__ApiServer.before(setupServer);
 test__ApiServer.after(teardownServer);
 
 test__ApiServer('init and close', async ({server}) => {
-	t.is(server.port, 3003);
+	assert.is(server.port, 3003);
 	// TODO do stuff
 });
 

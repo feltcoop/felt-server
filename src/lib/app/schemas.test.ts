@@ -1,5 +1,5 @@
 import {suite} from 'uvu';
-import * as t from 'uvu/assert';
+import * as assert from 'uvu/assert';
 import type {AnySchema} from 'ajv';
 
 import {schemas} from '$lib/app/schemas';
@@ -17,9 +17,9 @@ const test__schemas = suite('schemas');
 
 for (const schema of schemas) {
 	test__schemas('validate entity schema: ' + printSchema(schema), async () => {
-		t.ok(typeof schema !== 'boolean'); // compared to using `t.type`, this makes TypeScript understand
-		t.ok(schema.$id);
-		t.ok(schema.$id.startsWith(ID_VOCAB_PREFIX));
+		assert.ok(typeof schema !== 'boolean'); // compared to using `t.type`, this makes TypeScript understand
+		assert.ok(schema.$id);
+		assert.ok(schema.$id.startsWith(ID_VOCAB_PREFIX));
 	});
 }
 

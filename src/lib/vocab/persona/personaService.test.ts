@@ -1,5 +1,5 @@
 import {suite} from 'uvu';
-import * as t from 'uvu/assert';
+import * as assert from 'uvu/assert';
 
 import type {TestServerContext} from '$lib/util/testServerHelpers';
 import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
@@ -32,7 +32,7 @@ test__personaService('create a persona & test collisions', async ({server}) => {
 		account_id: account.account_id,
 	});
 
-	t.equal(result.ok, true);
+	assert.equal(result.ok, true);
 
 	result = await createPersonaService.perform({
 		server,
@@ -40,7 +40,7 @@ test__personaService('create a persona & test collisions', async ({server}) => {
 		account_id: account.account_id,
 	});
 
-	t.equal(result.ok, false);
+	assert.equal(result.ok, false);
 
 	params = {name: personaName.toUpperCase()};
 	result = await createPersonaService.perform({
@@ -49,7 +49,7 @@ test__personaService('create a persona & test collisions', async ({server}) => {
 		account_id: account.account_id,
 	});
 
-	t.equal(result.ok, false);
+	assert.equal(result.ok, false);
 });
 
 test__personaService.run();

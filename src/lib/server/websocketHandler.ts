@@ -9,6 +9,13 @@ export interface WebsocketHandler {
 	(server: ApiServer, socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
 }
 
+//TODO clean this up
+export interface BroadcastMessage {
+	type: 'broadcast';
+	method: string;
+	result: any;
+}
+
 export const websocketHandler: WebsocketHandler = async (
 	server: ApiServer,
 	socket: ws,
@@ -82,8 +89,21 @@ export const websocketHandler: WebsocketHandler = async (
 	// A quick improvement would be to scope to the community.
 	// We probably also want 2 types of messages, `JsonRpcResponse` for this specific client
 	// and some generic broadcast message type for everyone else.
-	console.log('[websocketHandler] broadcasting', responseMessage);
-	for (const client of server.websocketServer.wss.clients) {
-		client.send(serializedResponse);
+	socket.send(serializedResponse);
+
+	if (method === 'create_file') {
+		console.log('[websocketHandler] broadcasting', responseMessage);
+		const broadcastMessage: BroadcastMessage = {
+			type: 'broadcast',
+			method,
+			result,
+		};
+		const serializedBroadcastMessage = JSON.stringify(broadcastMessage);
+
+		for (const client of server.websocketServer.wss.clients) {
+			if (client !== socket) {
+				client.send(serializedBroadcastMessage);
+			}
+		}
 	}
 };

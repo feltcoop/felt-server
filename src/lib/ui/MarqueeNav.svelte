@@ -39,7 +39,7 @@
 		display: flex;
 		justify-content: space-between;
 		height: var(--navbar_size);
-		border-bottom: var(--border);
+		background-color: var(--tint_dark_1);
 		padding-right: var(--navbar_size); /* placeholder for button, which is rendered elsewhere */
 	}
 	.avatars {
