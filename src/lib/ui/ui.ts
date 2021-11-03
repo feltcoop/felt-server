@@ -32,7 +32,7 @@ export interface Ui extends Partial<UiHandlers> {
 	// db state and caches
 	account: Readable<AccountModel | null>;
 	personas: Readable<Readable<Persona>[]>;
-	personasById: Readable<Map<number, Readable<Persona>>>;
+	personasById: Map<number, Readable<Persona>>;
 	sessionPersonas: Readable<Readable<Persona>[]>;
 	sessionPersonaIndices: Readable<Map<Readable<Persona>, number>>;
 	communities: Readable<Readable<Community>[]>;
@@ -75,17 +75,13 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 	const personas = writable<Writable<Persona>[]>(
 		initialSession.guest ? [] : toInitialPersonas(initialSession).map((p) => writable(p)),
 	);
-	// TODO do these maps more efficiently
-	const personasById: Readable<Map<number, Writable<Persona>>> = derived(
-		personas,
-		($personas) => new Map($personas.map((persona) => [get(persona).persona_id, persona])),
+	const personasById: Map<number, Writable<Persona>> = new Map(
+		get(personas).map((persona) => [get(persona).persona_id, persona]),
 	);
 	// not derived from session because the session has only the initial snapshot
 	// TODO these `Persona`s need additional data compared to every other `Persona`
 	const sessionPersonas = writable<Writable<Persona>[]>(
-		initialSession.guest
-			? []
-			: initialSession.personas.map((p) => get(personasById).get(p.persona_id)!),
+		initialSession.guest ? [] : initialSession.personas.map((p) => personasById.get(p.persona_id)!),
 	);
 	const communities = writable<Writable<Community>[]>(
 		initialSession.guest ? [] : initialSession.communities.map((p) => writable(p)),
@@ -124,9 +120,8 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 	// TODO remove it from `state`
 	const selectedPersonaId = writable<number | null>(null);
 	const selectedPersona = derived(
-		[selectedPersonaId, personasById],
-		([$selectedPersonaId, $personasById]) =>
-			($selectedPersonaId && $personasById.get($selectedPersonaId)) || null,
+		[selectedPersonaId],
+		([$selectedPersonaId]) => ($selectedPersonaId && personasById.get($selectedPersonaId)) || null,
 	);
 	const selectedPersonaIndex = derived(
 		[selectedPersona, sessionPersonas],
@@ -202,7 +197,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 	const mainNavView: Writable<MainNavView> = writable('explorer');
 
 	const addCommunity = (community: Community, persona_id: number): void => {
-		const persona = get(personasById).get(persona_id)!;
+		const persona = personasById.get(persona_id)!;
 		const $persona = get(persona);
 		if (!$persona.community_ids.includes(community.community_id)) {
 			persona.update(($persona) => ({
@@ -308,8 +303,10 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
 			account.set(session.guest ? null : session.account);
 			personas.set(session.guest ? [] : toInitialPersonas(session).map((p) => writable(p)));
+			personasById.clear();
+			get(personas).forEach((persona) => personasById.set(get(persona).persona_id, persona));
 			sessionPersonas.set(
-				session.guest ? [] : session.personas.map((p) => get(personasById).get(p.persona_id)!),
+				session.guest ? [] : session.personas.map((p) => personasById.get(p.persona_id)!),
 			);
 
 			// TODO improve this with the other code
@@ -360,6 +357,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			console.log('[ui.create_persona]', persona);
 			const personaStore = writable(persona);
 			personas.update(($personas) => $personas.concat(personaStore));
+			personasById.set(persona.persona_id, personaStore);
 			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
 			dispatch('select_persona', {persona_id: persona.persona_id});
 			addCommunity(community as Community, persona.persona_id); // TODO fix type mismatch
@@ -441,7 +439,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			return files;
 		},
 		findPersonaById: (persona_id: number): Readable<Persona> => {
-			const persona = get(personasById).get(persona_id);
+			const persona = personasById.get(persona_id);
 			if (!persona) throw Error(`Unknown persona ${persona_id}`);
 			return persona;
 		},
