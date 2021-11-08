@@ -24,7 +24,7 @@ export const task: Task = {
 			deployLogin,
 			`/root/.fnm/fnm install 16;
 			apt install npm;
-			sudo npm install pm2@latest -g`,
+			npm install pm2@latest -g`,
 		]);
 		//This chunk manages the NGINX & HTTPS config
 		await spawn('ssh', [
