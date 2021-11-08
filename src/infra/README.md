@@ -10,7 +10,7 @@ To start with clone a copy of the repo locally & make sure gro is installed glob
 Before building & deploying, a fresh instance of Linux needs to be configured.
 We currently use Ubuntu 20.04 (LTS) x64
 
-Update your [config](src/lib/config.js)
+Update your [config](src/lib/config.js) and replace the placeholder values with your target info.
 
 ```bash
 gro infra/setup
