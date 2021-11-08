@@ -7,9 +7,11 @@
 
 > **work in progress**: pre-pre-alpha
 
-For development docs, please see [Contributing](/src/lib/docs/contributing.md)
+For more in depth development docs, please see [Contributing](/src/lib/docs/contributing.md)
 
-## usage
+For build & deployment docs, please see the [Infra README](/src/infra/README.md)
+
+## getting started
 
 ```bash
 # node >=16.6
@@ -31,35 +33,6 @@ gro test
 
 > learn more [about Gro](https://github.com/feltcoop/gro) and
 > [setting up a dev environment](/src/lib/docs/contributing.md)
-
-## build
-
-Build the `dist/` directory for production:
-
-```bash
-npm run build
-# or
-gro build
-
-# run it
-npm start
-# or
-gro start
-# TODO support custom port, like:
-PORT=3003 gro start
-```
-
-## deploy
-
-> Deploy will execute a build on the local machine, package the output into a tar, and attempt to deploy it to a remote instance:
-
-```bash
-npm run deploy
-# or
-gro deploy
-
-# TODO support custom deployment URLs
-```
 
 ## credits 🐢<sub>🐢</sub><sub><sub>🐢</sub></sub>
 

@@ -11,6 +11,7 @@ export const task: Task = {
 	dev: false,
 	run: async ({invokeTask}) => {
 		await invokeTask('clean');
+		await spawn('rm', [`*.tar`]);
 		await invokeTask('build');
 		let timestamp = Date.now();
 		let artifactName = `felt_server_${timestamp}`;
