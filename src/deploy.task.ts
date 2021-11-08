@@ -50,6 +50,7 @@ export const task: Task = {
 			`src/infra/.env.production.default`,
 			`${deployLogin}:${currentDeploy}/.env.production`,
 		]);
+		//TODO: re/start the server via pm2
 	},
 };
 

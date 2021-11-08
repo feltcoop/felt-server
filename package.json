@@ -12,7 +12,8 @@
     "dev": "gro dev",
     "build": "gro build",
     "test": "gro test",
-    "deploy": "gro deploy"
+    "deploy": "gro deploy",
+    "start": "node dist/server/lib/server/server.js"
   },
   "type": "module",
   "engines": {
