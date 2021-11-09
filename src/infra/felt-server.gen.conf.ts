@@ -20,8 +20,8 @@ server {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Host $host;
     proxy_pass http://${API_SERVER_HOST_PROD};
-    proxy_read_timeout 86400s;
-    proxy_send_timeout 86400s;
+    proxy_read_timeout 360s;
+    proxy_send_timeout 360s;
   }
 
   location / {
