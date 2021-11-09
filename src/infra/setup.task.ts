@@ -1,8 +1,11 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
+import {fromEnv} from '$lib/server/env';
 
-//TODO chage these to task params; source from seperate infra files
-import {DEPLOY_IP, DEPLOY_USER, DEPLOY_SERVER_HOST, EMAIL_ADDRESS} from '$lib/config';
+const DEPLOY_IP = fromEnv('DEPLOY_IP');
+const DEPLOY_USER = fromEnv('DEPLOY_USER');
+const DEPLOY_SERVER_HOST = fromEnv('DEPLOY_SERVER_HOST');
+const EMAIL_ADDRESS = fromEnv('EMAIL_ADDRESS');
 
 const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
 

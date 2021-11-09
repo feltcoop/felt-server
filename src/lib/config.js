@@ -7,11 +7,7 @@
 // TODO Replace this at buildtime with a constant so it can be optimized.
 // This probably means supporting `import.meta.env` or `$app/env` in Gro.
 const dev = import.meta.env?.DEV ?? process.env.NODE_ENV !== 'production';
-
-export const DEPLOY_SERVER_HOST = '<DEPLOY_URL_GOES_HERE>';
-export const DEPLOY_IP = '<DEPLOY_IP_GOES_HERE>';
-export const DEPLOY_USER = '<DEPLOY_USER_GOES_HERE>';
-export const EMAIL_ADDRESS = '<DEPLOY_EMAIL_GOES_HERE>';
+export const DEPLOY_SERVER_HOST = process.env.DEPLOY_SERVER_HOST;
 
 export const SVELTEKIT_SERVER_HOST = 'localhost:3000';
 export const API_SERVER_PORT_DEV = 3001;

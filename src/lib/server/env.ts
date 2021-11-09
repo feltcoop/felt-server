@@ -5,6 +5,7 @@ import {copyFileSync, existsSync} from 'fs';
 // TODO how to configure this stuff in user projects? felt/gro config?
 
 const dev = import.meta?.env?.DEV ?? process.env.NODE_ENV !== 'production'; // TODO support in Gro and remove second half
+console.log('drawing env from dev', dev);
 
 const envs: {file: string; defaultFile: string}[] = [
 	{file: '.env', defaultFile: 'src/infra/.env.default'},
@@ -15,6 +16,10 @@ const envs: {file: string; defaultFile: string}[] = [
 
 interface Env {
 	COOKIE_KEYS: string; // TODO validate this somehow to avoid production security issues
+	DEPLOY_SERVER_HOST: string;
+	DEPLOY_IP: string;
+	DEPLOY_USER: string;
+	EMAIL_ADDRESS: string;
 }
 
 let loaded = false;
