@@ -1,15 +1,19 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
 import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
-import {fromEnv} from '$lib/server/env';
+//import {fromEnv} from '$lib/server/env';
 
 export const task: Task = {
 	summary: 'deploy felt server to prod',
 	dev: false,
-	run: async ({invokeTask}) => {
+	run: async ({dev, invokeTask}) => {
+		//TODO gro dev workaround
+		process.env.NODE_ENV = 'production';
+		const {fromEnv} = await import('$lib/server/env');
+
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
-
+		console.log(dev);
 		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
 		await invokeTask('clean');
 		await invokeTask('build');
