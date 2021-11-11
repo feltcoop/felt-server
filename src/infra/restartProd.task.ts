@@ -1,17 +1,18 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
 
-export const task: Task = {
+export interface TaskArgs {
+	user: string;
+	ip: string;
+}
+
+export const task: Task<TaskArgs> = {
 	summary: 'restart felt prod server',
 	dev: false,
-	run: async ({}) => {
-		//TODO gro dev workaround
-		process.env.NODE_ENV = 'production';
-		const {fromEnv} = await import('$lib/server/env');
+	run: async ({args}) => {
+		const {user, ip} = args;
+		const deployLogin = `${user}@${ip}`;
 
-		const DEPLOY_IP = fromEnv('DEPLOY_IP');
-		const DEPLOY_USER = fromEnv('DEPLOY_USER');
-		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
 		await spawn('ssh', [
 			deployLogin,
 			`kill $(ps aux | grep 'node' | awk '{print $2}');
