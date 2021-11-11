@@ -15,8 +15,8 @@ export const task: Task<TaskArgs> = {
 
 		await spawn('ssh', [
 			deployLogin,
-			`kill $(ps aux | grep 'node' | awk '{print $2}');
-      node deploy_felt_server_current/dist/server/lib/server/server.js &;`,
+			`cd current_felt_server_deploy;
+			export NODE_ENV=production && pm2 start npm -- run start`,
 		]);
 	},
 };
