@@ -9,6 +9,9 @@
 const dev = import.meta.env?.DEV ?? process.env.NODE_ENV !== 'production';
 export const DEPLOY_SERVER_HOST = dev ? 'localhost' : process.env.DEPLOY_SERVER_HOST;
 
+console.log(process.env);
+console.log(process.env.DEPLOY_SERVER_HOST);
+
 export const SVELTEKIT_SERVER_HOST = 'localhost:3000';
 export const API_SERVER_PORT_DEV = 3001;
 export const API_SERVER_PORT_PROD = 3000;
