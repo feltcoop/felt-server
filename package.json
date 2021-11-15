@@ -26,6 +26,7 @@
     "@types/body-parser": "^1.19.1",
     "@types/node": "^16.7.13",
     "@types/ws": "^7.4.7",
+    "json-schema-to-typescript": "^10.1.5",
     "ley": "^0.7.1",
     "prettier": "^2.3.2",
     "prettier-plugin-svelte": "^2.4.0",

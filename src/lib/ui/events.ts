@@ -49,85 +49,164 @@ export interface EventsResponse {
 	read_files: read_files_response_type;
 }
 
-export type log_in_params_type = {
+export type log_in_params_typeOLD = {
 	accountName: string;
 	password: string;
 };
+export interface LogInParamsType {
+	accountName: string;
+	password: string;
+	[k: string]: unknown;
+}
+
 export type log_in_response_type = ApiResult<{session: ClientAccountSession}>;
 
-export type log_out_params_type = void;
+export type log_out_params_typeOLD = void;
+export type LogOutParamsType = null;
+
 export type log_out_response_type = ApiResult<{message: string}>;
 
-export type create_community_params_type = {
+export type create_community_params_typeOLD = {
 	name: string;
 	persona_id: number;
 };
+export interface CreateCommunityParamsType {
+	name: string;
+	persona_id: number;
+}
+
 export type create_community_response_type = ApiResult<{
 	community: Community;
 }>;
 
-export type read_community_params_type = {
+export type read_community_params_typeOLD = {
 	community_id: number;
 };
+export interface ReadCommunityParamsType {
+	community_id: number;
+}
+
 export type read_community_response_type = ApiResult<{
 	community: Community;
 }>;
 
-export type read_communities_params_type = {};
+export type read_communities_params_typeOLD = {};
+export interface ReadCommunitiesParamsType {}
+
 export type read_communities_response_type = ApiResult<{
 	communities: Community[];
 }>;
 
-export type create_persona_params_type = {name: string};
+export type create_persona_params_typeOLD = {name: string};
+export interface CreatePersonaParamsType {
+	name: string;
+}
+
 export type create_persona_response_type = ApiResult<{persona: Persona; community: Community}>;
 
-export type create_membership_params_type = {persona_id: number; community_id: number};
+export type create_membership_params_typeOLD = {persona_id: number; community_id: number};
+export interface CreateMembershipParamsType {
+	persona_id: number;
+	community_id: number;
+}
+
 export type create_membership_response_type = ApiResult<{membership: Membership}>;
 
-export type create_space_params_type = {
+export type create_space_params_typeOLD = {
 	community_id: number;
 	name: string;
 	url: string;
 	media_type: string;
 	content: string;
 };
+export interface CreateSpaceParamsType {
+	community_id: number;
+	name: string;
+	url: string;
+	media_type: string;
+	content: string;
+}
+
 export type create_space_response_type = ApiResult<{space: Space}>;
 
-export type read_space_params_type = {
+export type read_space_params_typeOLD = {
 	space_id: number;
 };
+export interface ReadSpaceParamsType {
+	space_id: number;
+}
+
 export type read_space_response_type = ApiResult<{space: Space}>;
 
-export type read_spaces_params_type = {
+export type read_spaces_params_typeOLD = {
 	community_id: number;
 };
+export interface ReadSpacesParamsType {
+	community_id: number;
+}
+
 export type read_spaces_response_type = ApiResult<{spaces: Space[]}>;
 
-export type create_file_params_type = {
+export type create_file_params_typeOLD = {
 	actor_id: number;
 	space_id: number;
 	content: string;
 };
+export interface CreateFileParamsType {
+	actor_id: number;
+	space_id: number;
+	content: string;
+}
+
 export type create_file_response_type = ApiResult<{file: File}>;
 
-export type read_files_params_type = {space_id: number};
+export type read_files_params_typeOLD = {space_id: number};
+export interface ReadFilesParamsType {
+	space_id: number;
+}
+
 export type read_files_response_type = ApiResult<{files: File[]}>;
 
-export type query_files_params_type = {space_id: number};
+export type query_files_params_typeOLD = {space_id: number};
+export interface QueryFilesParamsType {
+	space_id: number;
+}
 
-export type toggle_main_nav_params_type = void;
+export type toggle_main_nav_params_typeOLD = void;
+export interface ToggleMainNavParamsType {
+	[k: string]: unknown;
+}
 
-export type toggle_secondary_nav_params_type = void;
+export type toggle_secondary_nav_params_typeOLD = void;
+export interface ToggleSecondaryNavParamsType {
+	[k: string]: unknown;
+}
 
-export type set_main_nav_view_params_type = MainNavView;
+export type set_main_nav_view_params_typeOLD = MainNavView;
+export interface SetMainNavViewParamsType {
+	[k: string]: unknown;
+}
 
-export type set_mobile_params_type = boolean;
+export type set_mobile_params_typeOLD = boolean;
+export interface SetMobileParamsType {
+	[k: string]: unknown;
+}
 
-export type select_persona_params_type = {persona_id: number};
+export type select_persona_params_typeOLD = {persona_id: number};
+export interface SelectPersonaParamsType {
+	persona_id: number;
+}
 
-export type select_community_params_type = {community_id: number | null};
+export type select_community_params_typeOLD = {community_id: number | null};
+export interface SelectCommunityParamsType {
+	community_id: number | null;
+}
 
-export type select_space_params_type = {community_id: number; space_id: number};
+export type select_space_params_typeOLD = {community_id: number; space_id: number};
+export interface SelectSpaceParamsType {
+	community_id: number;
+	space_id: number;
+}
 
 export interface Dispatch {
 	(

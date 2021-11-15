@@ -42,7 +42,15 @@ export const events: ClientEventInfo[] = [
 		name: 'select_persona',
 		params: {
 			type: '{persona_id: number}',
-			schema: null,
+			schema: {
+				$id: 'https://felt.social/vocab/select_persona_params.json',
+				type: 'object',
+				properties: {
+					persona_id: {type: 'number'},
+				},
+				required: ['persona_id'],
+				additionalProperties: false,
+			},
 		},
 		returns: 'void',
 	},
@@ -51,7 +59,15 @@ export const events: ClientEventInfo[] = [
 		name: 'select_community',
 		params: {
 			type: '{community_id: number | null}',
-			schema: null,
+			schema: {
+				$id: 'https://felt.social/vocab/select_community_params.json',
+				type: 'object',
+				properties: {
+					community_id: {anyOf: [{type: 'number'}, {type: 'null'}]},
+				},
+				required: ['community_id'],
+				additionalProperties: false,
+			},
 		},
 		returns: 'void',
 	},
@@ -60,7 +76,16 @@ export const events: ClientEventInfo[] = [
 		name: 'select_space',
 		params: {
 			type: '{community_id: number, space_id: number}',
-			schema: null,
+			schema: {
+				$id: 'https://felt.social/vocab/select_space_params.json',
+				type: 'object',
+				properties: {
+					community_id: {type: 'number'},
+					space_id: {type: 'number'},
+				},
+				required: ['community_id', 'space_id'],
+				additionalProperties: false,
+			},
 		},
 		returns: 'void',
 	},
