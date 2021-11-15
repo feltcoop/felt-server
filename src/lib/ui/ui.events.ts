@@ -1,6 +1,19 @@
-import type {ClientEventInfo} from '$lib/vocab/event/event';
+import type {EventInfo} from '$lib/vocab/event/event';
 
-export const events: ClientEventInfo[] = [
+export const events: EventInfo[] = [
+	{
+		type: 'RemoteEvent',
+		name: 'heartbeat',
+		params: {
+			type: 'void',
+			schema: false, // TODO inconsistent since this cannot be `null` like `ClientEvent`s, but is this even correct?
+		},
+		response: {
+			type: 'void',
+			schema: false, // TODO inconsistent since this cannot be `null` like `ClientEvent`s, but is this even correct?
+		},
+		returns: 'void',
+	},
 	{
 		type: 'ClientEvent',
 		name: 'toggle_main_nav',
