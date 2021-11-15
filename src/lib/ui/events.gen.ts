@@ -1,8 +1,8 @@
 import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
-import {compile as jsonSchemaToTypescript} from 'json-schema-to-typescript';
 
 import {eventInfos} from '$lib/app/events';
+import {jsonSchemaToTypescript} from '$lib/util/jsonSchemaToTypescript';
 
 // Outputs a file with services metadata that can be imported from the client.
 export const gen: Gen = async ({originId}) => {
@@ -56,9 +56,7 @@ ${await eventInfos.reduce(
 		(await str) +
 		`
 export type ${eventInfo.name}_params_typeOLD = ${eventInfo.params.type};
-${await jsonSchemaToTypescript(eventInfo.params.schema || {}, eventInfo.name + '_params_type', {
-	bannerComment: null,
-})}
+${await jsonSchemaToTypescript(eventInfo.params.schema || {}, eventInfo.name + '_params_type')}
 ${
 	eventInfo.type === 'ClientEvent'
 		? ''
