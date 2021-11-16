@@ -2,7 +2,6 @@ import type {EventInfo, RemoteEventInfo} from '$lib/vocab/event/event';
 
 // TODO should `session` be in `$lib/vocab` ?
 
-// TODO delete the `LoginRequest` type once this is used
 const log_in_response_type = `{session: ClientAccountSession}`;
 export const log_in: RemoteEventInfo = {
 	type: 'RemoteEvent',
