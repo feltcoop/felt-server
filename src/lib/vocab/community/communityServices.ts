@@ -1,10 +1,10 @@
 import type {Service} from '$lib/server/service';
 import type {
-	create_community_params_type,
+	CreateCommunityParamsType,
 	create_community_response_type,
-	read_community_params_type,
+	ReadCommunityParamsType,
 	read_community_response_type,
-	read_communities_params_type,
+	ReadCommunitiesParamsType,
 	read_communities_response_type,
 } from '$lib/ui/events';
 import {
@@ -12,12 +12,12 @@ import {
 	read_communities,
 	read_community,
 } from '$lib/vocab/community/community.events';
-import type {create_membership_params_type, create_membership_response_type} from '$lib/ui/events';
+import type {CreateMembershipParamsType, create_membership_response_type} from '$lib/ui/events';
 import {create_membership} from '$lib/vocab/membership/membership.events';
 
 // Returns a list of community objects
 export const readCommunitiesService: Service<
-	read_communities_params_type,
+	ReadCommunitiesParamsType,
 	read_communities_response_type
 > = {
 	event: read_communities,
@@ -34,34 +34,32 @@ export const readCommunitiesService: Service<
 };
 
 //Returns a single community object
-export const readCommunityService: Service<
-	read_community_params_type,
-	read_community_response_type
-> = {
-	event: read_community,
-	perform: async ({server, params, account_id}) => {
-		const {db} = server;
-		console.log('[read_community] account', account_id); // TODO logging
-		console.log('[read_community] community', params.community_id);
+export const readCommunityService: Service<ReadCommunityParamsType, read_community_response_type> =
+	{
+		event: read_community,
+		perform: async ({server, params, account_id}) => {
+			const {db} = server;
+			console.log('[read_community] account', account_id); // TODO logging
+			console.log('[read_community] community', params.community_id);
 
-		const findCommunityResult = await db.repos.community.findById(params.community_id);
-		if (findCommunityResult.ok) {
-			return {ok: true, status: 200, value: {community: findCommunityResult.value}};
-		} else {
-			return {
-				ok: false,
-				status: findCommunityResult.type === 'no_community_found' ? 404 : 500,
-				reason: findCommunityResult.reason,
-			};
-		}
-	},
-};
+			const findCommunityResult = await db.repos.community.findById(params.community_id);
+			if (findCommunityResult.ok) {
+				return {ok: true, status: 200, value: {community: findCommunityResult.value}};
+			} else {
+				return {
+					ok: false,
+					status: findCommunityResult.type === 'no_community_found' ? 404 : 500,
+					reason: findCommunityResult.reason,
+				};
+			}
+		},
+	};
 
 //Creates a new community for an instance
 // TODO think about extracting this to a `.services.` file
 // that imports a generated type and declares only `perform`
 export const createCommunityService: Service<
-	create_community_params_type,
+	CreateCommunityParamsType,
 	create_community_response_type
 > = {
 	event: create_community,
@@ -115,7 +113,7 @@ export const createCommunityService: Service<
 // TODO move to `$lib/vocab/member`
 //Creates a new member relation for a community
 export const createMembershipService: Service<
-	create_membership_params_type,
+	CreateMembershipParamsType,
 	create_membership_response_type
 > = {
 	event: create_membership,

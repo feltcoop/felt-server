@@ -10,29 +10,28 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import type {Space} from '$lib/vocab/space/space';
 import type {File} from '$lib/vocab/file/file';
 import type {DispatchContext} from '$lib/ui/api';
-import type {MainNavView} from '$lib/ui/ui';
 
 export interface EventsParams {
-	log_in: log_in_params_type;
-	log_out: log_out_params_type;
-	create_community: create_community_params_type;
-	read_community: read_community_params_type;
-	read_communities: read_communities_params_type;
-	create_persona: create_persona_params_type;
-	create_membership: create_membership_params_type;
-	create_space: create_space_params_type;
-	read_space: read_space_params_type;
-	read_spaces: read_spaces_params_type;
-	create_file: create_file_params_type;
-	read_files: read_files_params_type;
-	query_files: query_files_params_type;
-	toggle_main_nav: toggle_main_nav_params_type;
-	toggle_secondary_nav: toggle_secondary_nav_params_type;
-	set_main_nav_view: set_main_nav_view_params_type;
-	set_mobile: set_mobile_params_type;
-	select_persona: select_persona_params_type;
-	select_community: select_community_params_type;
-	select_space: select_space_params_type;
+	log_in: LogInParamsType;
+	log_out: LogOutParamsType;
+	create_community: CreateCommunityParamsType;
+	read_community: ReadCommunityParamsType;
+	read_communities: ReadCommunitiesParamsType;
+	create_persona: CreatePersonaParamsType;
+	create_membership: CreateMembershipParamsType;
+	create_space: CreateSpaceParamsType;
+	read_space: ReadSpaceParamsType;
+	read_spaces: ReadSpacesParamsType;
+	create_file: CreateFileParamsType;
+	read_files: ReadFilesParamsType;
+	query_files: QueryFilesParamsType;
+	toggle_main_nav: ToggleMainNavParamsType;
+	toggle_secondary_nav: ToggleSecondaryNavParamsType;
+	set_main_nav_view: SetMainNavViewParamsType;
+	set_mobile: SetMobileParamsType;
+	select_persona: SelectPersonaParamsType;
+	select_community: SelectCommunityParamsType;
+	select_space: SelectSpaceParamsType;
 }
 export interface EventsResponse {
 	log_in: log_in_response_type;
@@ -49,27 +48,16 @@ export interface EventsResponse {
 	read_files: read_files_response_type;
 }
 
-export type log_in_params_typeOLD = {
-	accountName: string;
-	password: string;
-};
 export interface LogInParamsType {
 	accountName: string;
 	password: string;
-	[k: string]: unknown;
 }
 
 export type log_in_response_type = ApiResult<{session: ClientAccountSession}>;
 
-export type log_out_params_typeOLD = void;
-export type LogOutParamsType = null;
-
+export type LogOutParamsType = void;
 export type log_out_response_type = ApiResult<{message: string}>;
 
-export type create_community_params_typeOLD = {
-	name: string;
-	persona_id: number;
-};
 export interface CreateCommunityParamsType {
 	name: string;
 	persona_id: number;
@@ -79,9 +67,6 @@ export type create_community_response_type = ApiResult<{
 	community: Community;
 }>;
 
-export type read_community_params_typeOLD = {
-	community_id: number;
-};
 export interface ReadCommunityParamsType {
 	community_id: number;
 }
@@ -90,21 +75,18 @@ export type read_community_response_type = ApiResult<{
 	community: Community;
 }>;
 
-export type read_communities_params_typeOLD = {};
 export interface ReadCommunitiesParamsType {}
 
 export type read_communities_response_type = ApiResult<{
 	communities: Community[];
 }>;
 
-export type create_persona_params_typeOLD = {name: string};
 export interface CreatePersonaParamsType {
 	name: string;
 }
 
 export type create_persona_response_type = ApiResult<{persona: Persona; community: Community}>;
 
-export type create_membership_params_typeOLD = {persona_id: number; community_id: number};
 export interface CreateMembershipParamsType {
 	persona_id: number;
 	community_id: number;
@@ -112,13 +94,6 @@ export interface CreateMembershipParamsType {
 
 export type create_membership_response_type = ApiResult<{membership: Membership}>;
 
-export type create_space_params_typeOLD = {
-	community_id: number;
-	name: string;
-	url: string;
-	media_type: string;
-	content: string;
-};
 export interface CreateSpaceParamsType {
 	community_id: number;
 	name: string;
@@ -129,29 +104,18 @@ export interface CreateSpaceParamsType {
 
 export type create_space_response_type = ApiResult<{space: Space}>;
 
-export type read_space_params_typeOLD = {
-	space_id: number;
-};
 export interface ReadSpaceParamsType {
 	space_id: number;
 }
 
 export type read_space_response_type = ApiResult<{space: Space}>;
 
-export type read_spaces_params_typeOLD = {
-	community_id: number;
-};
 export interface ReadSpacesParamsType {
 	community_id: number;
 }
 
 export type read_spaces_response_type = ApiResult<{spaces: Space[]}>;
 
-export type create_file_params_typeOLD = {
-	actor_id: number;
-	space_id: number;
-	content: string;
-};
 export interface CreateFileParamsType {
 	actor_id: number;
 	space_id: number;
@@ -160,147 +124,88 @@ export interface CreateFileParamsType {
 
 export type create_file_response_type = ApiResult<{file: File}>;
 
-export type read_files_params_typeOLD = {space_id: number};
 export interface ReadFilesParamsType {
 	space_id: number;
 }
 
 export type read_files_response_type = ApiResult<{files: File[]}>;
 
-export type query_files_params_typeOLD = {space_id: number};
 export interface QueryFilesParamsType {
 	space_id: number;
 }
 
-export type toggle_main_nav_params_typeOLD = void;
 export type ToggleMainNavParamsType = void;
 
-export type toggle_secondary_nav_params_typeOLD = void;
 export type ToggleSecondaryNavParamsType = void;
 
-export type set_main_nav_view_params_typeOLD = MainNavView;
-export type SetMainNavViewParamsType = void;
+export type SetMainNavViewParamsType = 'explorer' | 'account';
 
-export type set_mobile_params_typeOLD = boolean;
 export type SetMobileParamsType = boolean;
 
-export type select_persona_params_typeOLD = {persona_id: number};
 export interface SelectPersonaParamsType {
 	persona_id: number;
 }
 
-export type select_community_params_typeOLD = {community_id: number | null};
 export interface SelectCommunityParamsType {
 	community_id: number | null;
 }
 
-export type select_space_params_typeOLD = {community_id: number; space_id: number};
 export interface SelectSpaceParamsType {
 	community_id: number;
 	space_id: number;
 }
 
 export interface Dispatch {
-	(
-		eventName: 'log_in',
-		params: {
-			accountName: string;
-			password: string;
-		},
-	): Promise<ApiResult<{session: ClientAccountSession}>>;
-	(eventName: 'log_out', params: void): Promise<ApiResult<{message: string}>>;
-	(
-		eventName: 'create_community',
-		params: {
-			name: string;
-			persona_id: number;
-		},
-	): Promise<
+	(eventName: 'log_in', params: LogInParamsType): Promise<
+		ApiResult<{session: ClientAccountSession}>
+	>;
+	(eventName: 'log_out', params: LogOutParamsType): Promise<ApiResult<{message: string}>>;
+	(eventName: 'create_community', params: CreateCommunityParamsType): Promise<
 		ApiResult<{
 			community: Community;
 		}>
 	>;
-	(
-		eventName: 'read_community',
-		params: {
-			community_id: number;
-		},
-	): Promise<
+	(eventName: 'read_community', params: ReadCommunityParamsType): Promise<
 		ApiResult<{
 			community: Community;
 		}>
 	>;
-	(eventName: 'read_communities', params: {}): Promise<
+	(eventName: 'read_communities', params: ReadCommunitiesParamsType): Promise<
 		ApiResult<{
 			communities: Community[];
 		}>
 	>;
-	(eventName: 'create_persona', params: {name: string}): Promise<
+	(eventName: 'create_persona', params: CreatePersonaParamsType): Promise<
 		ApiResult<{persona: Persona; community: Community}>
 	>;
-	(eventName: 'create_membership', params: {persona_id: number; community_id: number}): Promise<
+	(eventName: 'create_membership', params: CreateMembershipParamsType): Promise<
 		ApiResult<{membership: Membership}>
 	>;
-	(
-		eventName: 'create_space',
-		params: {
-			community_id: number;
-			name: string;
-			url: string;
-			media_type: string;
-			content: string;
-		},
-	): Promise<ApiResult<{space: Space}>>;
-	(
-		eventName: 'read_space',
-		params: {
-			space_id: number;
-		},
-	): Promise<ApiResult<{space: Space}>>;
-	(
-		eventName: 'read_spaces',
-		params: {
-			community_id: number;
-		},
-	): Promise<ApiResult<{spaces: Space[]}>>;
-	(
-		eventName: 'create_file',
-		params: {
-			actor_id: number;
-			space_id: number;
-			content: string;
-		},
-	): Promise<ApiResult<{file: File}>>;
-	(eventName: 'read_files', params: {space_id: number}): Promise<ApiResult<{files: File[]}>>;
-	(eventName: 'query_files', params: {space_id: number}): Readable<Readable<File>[]>;
-	(eventName: 'toggle_main_nav', params: void): void;
-	(eventName: 'toggle_secondary_nav', params: void): void;
-	(eventName: 'set_main_nav_view', params: MainNavView): void;
-	(eventName: 'set_mobile', params: boolean): void;
-	(eventName: 'select_persona', params: {persona_id: number}): void;
-	(eventName: 'select_community', params: {community_id: number | null}): void;
-	(eventName: 'select_space', params: {community_id: number; space_id: number}): void;
+	(eventName: 'create_space', params: CreateSpaceParamsType): Promise<ApiResult<{space: Space}>>;
+	(eventName: 'read_space', params: ReadSpaceParamsType): Promise<ApiResult<{space: Space}>>;
+	(eventName: 'read_spaces', params: ReadSpacesParamsType): Promise<ApiResult<{spaces: Space[]}>>;
+	(eventName: 'create_file', params: CreateFileParamsType): Promise<ApiResult<{file: File}>>;
+	(eventName: 'read_files', params: ReadFilesParamsType): Promise<ApiResult<{files: File[]}>>;
+	(eventName: 'query_files', params: QueryFilesParamsType): Readable<Readable<File>[]>;
+	(eventName: 'toggle_main_nav', params: ToggleMainNavParamsType): void;
+	(eventName: 'toggle_secondary_nav', params: ToggleSecondaryNavParamsType): void;
+	(eventName: 'set_main_nav_view', params: SetMainNavViewParamsType): void;
+	(eventName: 'set_mobile', params: SetMobileParamsType): void;
+	(eventName: 'select_persona', params: SelectPersonaParamsType): void;
+	(eventName: 'select_community', params: SelectCommunityParamsType): void;
+	(eventName: 'select_space', params: SelectSpaceParamsType): void;
 }
 
 export interface UiHandlers {
 	log_in: (
-		ctx: DispatchContext<
-			{
-				accountName: string;
-				password: string;
-			},
-			ApiResult<{session: ClientAccountSession}>
-		>,
+		ctx: DispatchContext<LogInParamsType, ApiResult<{session: ClientAccountSession}>>,
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	log_out: (
-		ctx: DispatchContext<void, ApiResult<{message: string}>>,
+		ctx: DispatchContext<LogOutParamsType, ApiResult<{message: string}>>,
 	) => Promise<ApiResult<{message: string}>>;
 	create_community: (
 		ctx: DispatchContext<
-			{
-				name: string;
-				persona_id: number;
-			},
+			CreateCommunityParamsType,
 			ApiResult<{
 				community: Community;
 			}>
@@ -312,9 +217,7 @@ export interface UiHandlers {
 	>;
 	read_community: (
 		ctx: DispatchContext<
-			{
-				community_id: number;
-			},
+			ReadCommunityParamsType,
 			ApiResult<{
 				community: Community;
 			}>
@@ -326,7 +229,7 @@ export interface UiHandlers {
 	>;
 	read_communities: (
 		ctx: DispatchContext<
-			{},
+			ReadCommunitiesParamsType,
 			ApiResult<{
 				communities: Community[];
 			}>
@@ -337,63 +240,37 @@ export interface UiHandlers {
 		}>
 	>;
 	create_persona: (
-		ctx: DispatchContext<{name: string}, ApiResult<{persona: Persona; community: Community}>>,
+		ctx: DispatchContext<
+			CreatePersonaParamsType,
+			ApiResult<{persona: Persona; community: Community}>
+		>,
 	) => Promise<ApiResult<{persona: Persona; community: Community}>>;
 	create_membership: (
-		ctx: DispatchContext<
-			{persona_id: number; community_id: number},
-			ApiResult<{membership: Membership}>
-		>,
+		ctx: DispatchContext<CreateMembershipParamsType, ApiResult<{membership: Membership}>>,
 	) => Promise<ApiResult<{membership: Membership}>>;
 	create_space: (
-		ctx: DispatchContext<
-			{
-				community_id: number;
-				name: string;
-				url: string;
-				media_type: string;
-				content: string;
-			},
-			ApiResult<{space: Space}>
-		>,
+		ctx: DispatchContext<CreateSpaceParamsType, ApiResult<{space: Space}>>,
 	) => Promise<ApiResult<{space: Space}>>;
 	read_space: (
-		ctx: DispatchContext<
-			{
-				space_id: number;
-			},
-			ApiResult<{space: Space}>
-		>,
+		ctx: DispatchContext<ReadSpaceParamsType, ApiResult<{space: Space}>>,
 	) => Promise<ApiResult<{space: Space}>>;
 	read_spaces: (
-		ctx: DispatchContext<
-			{
-				community_id: number;
-			},
-			ApiResult<{spaces: Space[]}>
-		>,
+		ctx: DispatchContext<ReadSpacesParamsType, ApiResult<{spaces: Space[]}>>,
 	) => Promise<ApiResult<{spaces: Space[]}>>;
 	create_file: (
-		ctx: DispatchContext<
-			{
-				actor_id: number;
-				space_id: number;
-				content: string;
-			},
-			ApiResult<{file: File}>
-		>,
+		ctx: DispatchContext<CreateFileParamsType, ApiResult<{file: File}>>,
 	) => Promise<ApiResult<{file: File}>>;
 	read_files: (
-		ctx: DispatchContext<{space_id: number}, ApiResult<{files: File[]}>>,
+		ctx: DispatchContext<ReadFilesParamsType, ApiResult<{files: File[]}>>,
 	) => Promise<ApiResult<{files: File[]}>>;
-	query_files: (ctx: DispatchContext<{space_id: number}, void>) => Readable<Readable<File>[]>;
-	toggle_main_nav: (ctx: DispatchContext<void, void>) => void;
-	toggle_secondary_nav: (ctx: DispatchContext<void, void>) => void;
-	set_main_nav_view: (ctx: DispatchContext<MainNavView, void>) => void;
-	set_mobile: (ctx: DispatchContext<boolean, void>) => void;
-	select_persona: (ctx: DispatchContext<{persona_id: number}, void>) => void;
-	select_community: (ctx: DispatchContext<{community_id: number | null}, void>) => void;
-	select_space: (ctx: DispatchContext<{community_id: number; space_id: number}, void>) => void;
+	query_files: (ctx: DispatchContext<QueryFilesParamsType, void>) => Readable<Readable<File>[]>;
+	toggle_main_nav: (ctx: DispatchContext<ToggleMainNavParamsType, void>) => void;
+	toggle_secondary_nav: (ctx: DispatchContext<ToggleSecondaryNavParamsType, void>) => void;
+	set_main_nav_view: (ctx: DispatchContext<SetMainNavViewParamsType, void>) => void;
+	set_mobile: (ctx: DispatchContext<SetMobileParamsType, void>) => void;
+	select_persona: (ctx: DispatchContext<SelectPersonaParamsType, void>) => void;
+	select_community: (ctx: DispatchContext<SelectCommunityParamsType, void>) => void;
+	select_space: (ctx: DispatchContext<SelectSpaceParamsType, void>) => void;
 }
 
 // generated by src/lib/ui/events.gen.ts

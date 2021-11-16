@@ -2,7 +2,10 @@ import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
 
 import {eventInfos} from '$lib/app/events';
-import {jsonSchemaToTypescript} from '$lib/util/jsonSchemaToTypescript';
+import {jsonSchemaToTypescript, toTypeName} from '$lib/util/jsonSchemaToTypescript';
+
+const toParamsTypeName = (name: string): string => toTypeName(name + '_params_type');
+// const toResponseTypeName = (name: string): string => toTypeName(name + '_response_type');
 
 // Outputs a file with services metadata that can be imported from the client.
 export const gen: Gen = async ({originId}) => {
@@ -26,14 +29,13 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import type {Space} from '$lib/vocab/space/space';
 import type {File} from '$lib/vocab/file/file';
 import type {DispatchContext} from '$lib/ui/api';
-import type {MainNavView} from '$lib/ui/ui';
 
 export interface EventsParams {
 	${eventInfos.reduce(
 		(str, eventInfo) =>
 			str +
 			`
-${eventInfo.name}: ${eventInfo.name}_params_type;
+${eventInfo.name}: ${toParamsTypeName(eventInfo.name)};
 `.trim(),
 		'',
 	)}
@@ -55,8 +57,7 @@ ${await eventInfos.reduce(
 	async (str, eventInfo) =>
 		(await str) +
 		`
-export type ${eventInfo.name}_params_typeOLD = ${eventInfo.params.type};
-${await jsonSchemaToTypescript(eventInfo.params.schema, eventInfo.name + '_params_type')}
+${await jsonSchemaToTypescript(eventInfo.params.schema, toParamsTypeName(eventInfo.name))}
 ${
 	eventInfo.type === 'ClientEvent'
 		? ''
@@ -73,7 +74,7 @@ export interface Dispatch {
 			`
 		(
 			eventName: '${eventInfo.name}',
-			params: ${eventInfo.params.type},
+			params: ${toParamsTypeName(eventInfo.name)},
 		): ${eventInfo.returns};
 `.trim(),
 		'',
@@ -86,7 +87,7 @@ export interface UiHandlers {
 			str +
 			`
       ${eventInfo.name}: (
-        ctx: DispatchContext<${eventInfo.params.type}, ${
+        ctx: DispatchContext<${toParamsTypeName(eventInfo.name)}, ${
 				eventInfo.type === 'ClientEvent' ? 'void' : eventInfo.response.type
 			}>,
       ) => ${eventInfo.returns};

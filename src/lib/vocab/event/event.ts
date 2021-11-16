@@ -8,7 +8,6 @@ export interface ClientEventInfo {
 	type: 'ClientEvent';
 	name: string; // `snake_cased`
 	params: {
-		type: string;
 		// TODO we want to enforce schemas so we can generate params forms and automatic randomizers
 		schema: AnySchema | null;
 	};
@@ -21,7 +20,6 @@ export interface ServiceEventInfo {
 	type: 'ServiceEvent';
 	name: string; // `snake_cased`
 	params: {
-		type: string;
 		schema: AnySchema;
 	};
 	response: {
@@ -41,8 +39,7 @@ export interface RemoteEventInfo {
 	type: 'RemoteEvent';
 	name: string; // `snake_cased`
 	params: {
-		type: string;
-		schema: AnySchema;
+		schema: AnySchema | null;
 	};
 	response: {
 		type: string;

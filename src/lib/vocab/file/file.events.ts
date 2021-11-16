@@ -1,17 +1,10 @@
 import type {EventInfo, ClientEventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-// TODO generate the type from the schema with json-schema-to-typescript
-const create_file_params_type = `{
-	actor_id: number;
-	space_id: number;
-	content: string;
-}`;
 const create_file_response_type = '{file: File}';
 export const create_file: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'create_file',
 	params: {
-		type: create_file_params_type,
 		schema: {
 			$id: 'https://felt.social/vocab/create_file_params.json',
 			type: 'object',
@@ -43,13 +36,11 @@ export const create_file: ServiceEventInfo = {
 	},
 };
 
-const read_files_params_type = '{space_id: number}';
 const read_files_response_type = '{files: File[]}';
 export const read_files: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'read_files',
 	params: {
-		type: read_files_params_type,
 		schema: {
 			$id: 'https://felt.social/vocab/read_files_params.json',
 			type: 'object',

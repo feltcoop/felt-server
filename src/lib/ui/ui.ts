@@ -15,7 +15,9 @@ import type {UiHandlers} from '$lib/ui/events';
 const UNKNOWN_API_ERROR =
 	'Something went wrong. Maybe the server or your Internet connection is down. Please try again.';
 
-export type MainNavView = 'explorer' | 'account'; // TODO where should this live?
+// TODO this is defined a second time as `SetMainNavViewParamsType`,
+// but it should probably be defined separately as `MainNavView` and then referenced
+export type MainNavView = 'explorer' | 'account';
 
 const KEY = Symbol();
 

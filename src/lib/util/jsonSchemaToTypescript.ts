@@ -14,5 +14,8 @@ export const jsonSchemaToTypescript = (
 };
 
 // some_event_type => SomeEventType
-const toTypeName = (name: string): string =>
-	name.split('_').reduce((acc, part) => acc + part[0].toUpperCase() + part.substring(1), '');
+export const toTypeName = (name: string): string =>
+	name
+		.split('_')
+		.map((s) => s[0].toUpperCase() + s.substring(1))
+		.join('');

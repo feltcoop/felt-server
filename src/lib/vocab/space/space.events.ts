@@ -1,19 +1,10 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-// TODO generate the type from the schema with json-schema-to-typescript
-const create_space_params_type = `{
-	community_id: number;
-	name: string;
-	url: string;
-	media_type: string;
-	content: string;
-}`;
 const create_space_response_type = '{space: Space}';
 export const create_space: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'create_space',
 	params: {
-		type: create_space_params_type,
 		schema: {
 			$id: 'https://felt.social/vocab/create_space_params.json',
 			type: 'object',
@@ -47,15 +38,11 @@ export const create_space: ServiceEventInfo = {
 	},
 };
 
-const read_space_params_type = `{
-	space_id: number;
-}`;
 const read_space_response_type = '{space: Space}';
 export const read_space: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'read_space',
 	params: {
-		type: read_space_params_type,
 		schema: {
 			$id: 'https://felt.social/vocab/read_space_params.json',
 			type: 'object',
@@ -85,15 +72,11 @@ export const read_space: ServiceEventInfo = {
 	},
 };
 
-const read_spaces_params_type = `{
-	community_id: number;
-}`;
 const read_spaces_response_type = '{spaces: Space[]}';
 export const read_spaces: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'read_spaces',
 	params: {
-		type: read_spaces_params_type,
 		schema: {
 			$id: 'https://felt.social/vocab/read_spaces_params.json',
 			type: 'object',

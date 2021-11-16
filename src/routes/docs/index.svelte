@@ -40,7 +40,7 @@
 					<div class="property">
 						<span>params</span>
 						<pre>
-            {eventInfo.params.type}
+            {JSON.stringify(eventInfo.params.schema, null, 2)}
           </pre>
 					</div>
 					{#if eventInfo.type !== 'ClientEvent'}

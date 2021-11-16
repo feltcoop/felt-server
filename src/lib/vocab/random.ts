@@ -2,14 +2,14 @@ import {unwrap} from '@feltcoop/felt';
 
 import type {Space} from '$lib/vocab/space/space';
 import type {Community} from '$lib/vocab/community/community';
-import type {Account, create_account_params_type} from '$lib/vocab/account/account';
+import type {Account, CreateAccountParamsType} from '$lib/vocab/account/account';
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {
-	create_community_params_type,
-	create_persona_params_type,
-	create_file_params_type,
-	create_space_params_type,
-	create_membership_params_type,
+	CreateCommunityParamsType,
+	CreatePersonaParamsType,
+	CreateFileParamsType,
+	CreateSpaceParamsType,
+	CreateMembershipParamsType,
 } from '$lib/ui/events';
 import type {Database} from '$lib/db/Database';
 
@@ -22,32 +22,32 @@ export const randomCommunnityName = randomString;
 export const randomSpaceUrl = randomString;
 export const randomSpaceName = randomString;
 export const randomContent = randomString;
-export const randomAccountParams = (): create_account_params_type => ({
+export const randomAccountParams = (): CreateAccountParamsType => ({
 	name: randomAccountName(),
 	password: randomPassword(),
 });
-export const randomPersonaParams = (): create_persona_params_type => ({
+export const randomPersonaParams = (): CreatePersonaParamsType => ({
 	name: randomPersonaName(),
 });
 export const randomMembershipParams = (
 	persona_id: number,
 	community_id: number,
-): create_membership_params_type => ({
+): CreateMembershipParamsType => ({
 	persona_id,
 	community_id,
 });
-export const randomCommunityParams = (persona_id: number): create_community_params_type => ({
+export const randomCommunityParams = (persona_id: number): CreateCommunityParamsType => ({
 	name: randomCommunnityName(),
 	persona_id,
 });
-export const randomSpaceParams = (community_id: number): create_space_params_type => ({
+export const randomSpaceParams = (community_id: number): CreateSpaceParamsType => ({
 	community_id,
 	content: randomContent(),
 	media_type: 'text/plain',
 	name: randomSpaceName(),
 	url: randomSpaceUrl(),
 });
-export const randomFileParams = (actor_id: number, space_id: number): create_file_params_type => ({
+export const randomFileParams = (actor_id: number, space_id: number): CreateFileParamsType => ({
 	actor_id,
 	space_id,
 	content: randomContent(),
