@@ -39,6 +39,8 @@
 					</div>
 					<div class="property">
 						<span>params</span>
+						<!-- TODO display the generated type string instead of the schema,
+						probably by generating a sibling file to `events.ts` like `eventTypeStrings.ts` -->
 						<pre>
             {JSON.stringify(eventInfo.params.schema, null, 2)}
           </pre>
