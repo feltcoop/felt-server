@@ -33,7 +33,10 @@ export const events: ClientEventInfo[] = [
 		name: 'set_mobile',
 		params: {
 			type: 'boolean',
-			schema: null,
+			schema: {
+				$id: 'https://felt.social/vocab/set_mobile_params.json',
+				type: 'boolean',
+			},
 		},
 		returns: 'void',
 	},

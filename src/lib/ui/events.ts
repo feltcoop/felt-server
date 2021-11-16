@@ -173,24 +173,16 @@ export interface QueryFilesParamsType {
 }
 
 export type toggle_main_nav_params_typeOLD = void;
-export interface ToggleMainNavParamsType {
-	[k: string]: unknown;
-}
+export type ToggleMainNavParamsType = void;
 
 export type toggle_secondary_nav_params_typeOLD = void;
-export interface ToggleSecondaryNavParamsType {
-	[k: string]: unknown;
-}
+export type ToggleSecondaryNavParamsType = void;
 
 export type set_main_nav_view_params_typeOLD = MainNavView;
-export interface SetMainNavViewParamsType {
-	[k: string]: unknown;
-}
+export type SetMainNavViewParamsType = void;
 
 export type set_mobile_params_typeOLD = boolean;
-export interface SetMobileParamsType {
-	[k: string]: unknown;
-}
+export type SetMobileParamsType = boolean;
 
 export type select_persona_params_typeOLD = {persona_id: number};
 export interface SelectPersonaParamsType {

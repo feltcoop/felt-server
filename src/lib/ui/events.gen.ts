@@ -56,7 +56,7 @@ ${await eventInfos.reduce(
 		(await str) +
 		`
 export type ${eventInfo.name}_params_typeOLD = ${eventInfo.params.type};
-${await jsonSchemaToTypescript(eventInfo.params.schema || {}, eventInfo.name + '_params_type')}
+${await jsonSchemaToTypescript(eventInfo.params.schema, eventInfo.name + '_params_type')}
 ${
 	eventInfo.type === 'ClientEvent'
 		? ''
