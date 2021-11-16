@@ -4,8 +4,8 @@ import {toRootPath} from '@feltcoop/gro/dist/paths.js';
 import {eventInfos} from '$lib/app/events';
 import {jsonSchemaToTypescript, toTypeName} from '$lib/util/jsonSchemaToTypescript';
 
-const toParamsTypeName = (name: string): string => toTypeName(name + '_params_type');
-// const toResponseTypeName = (name: string): string => toTypeName(name + '_response_type');
+const toParamsTypeName = (name: string): string => toTypeName(name + 'ParamsType');
+const toResponseTypeName = (name: string): string => toTypeName(name + 'ResponseType');
 
 // Outputs a file with services metadata that can be imported from the client.
 export const gen: Gen = async ({originId}) => {
