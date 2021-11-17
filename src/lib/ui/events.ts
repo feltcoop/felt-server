@@ -62,7 +62,6 @@ export type LogOutParamsType = void;
 export type log_out_response_type = ApiResult<{message: string}>;
 export interface LogOutResponseType {
 	message: string;
-	[k: string]: unknown;
 }
 
 export interface CreateCommunityParamsType {

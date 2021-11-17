@@ -23,6 +23,7 @@ export const log_in: RemoteEventInfo = {
 		schema: {
 			$id: 'https://felt.dev/vocab/log_in_response.json',
 			type: 'null',
+			additionalProperties: false,
 		},
 	},
 	returns: `Promise<ApiResult<${log_in_response_type}>>`,
@@ -47,6 +48,7 @@ export const log_out: RemoteEventInfo = {
 				message: {type: 'string'},
 			},
 			required: ['message'],
+			additionalProperties: false,
 		},
 	},
 	returns: `Promise<ApiResult<${log_out_response_type}>>`,
