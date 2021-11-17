@@ -33,7 +33,10 @@ test__eventInfos('dispatch random events in a client app', async ({server, app})
 					}: ${toValidationErrorMessage(validateSchema(eventInfo.params.schema!).errors![0])}`,
 				);
 			}
-		} else if (eventInfo.type === 'ServiceEvent' || eventInfo.type === 'RemoteEvent') {
+		} else if (
+			(eventInfo.type === 'ServiceEvent' || eventInfo.type === 'RemoteEvent') &&
+			eventInfo.params.schema !== null // allow void params
+		) {
 			throw Error(`Expected eventInfo to have a schema: ${eventInfo.name}`);
 		}
 

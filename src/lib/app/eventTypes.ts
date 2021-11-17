@@ -60,8 +60,7 @@ export type LogInResponseType = null;
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type LogInResponseResult = ApiResult<LogInResponseType>;
 
-export type LogOutParamsType = null;
-
+export type LogOutParamsType = void;
 export interface LogOutResponseType {
 	message: string;
 }

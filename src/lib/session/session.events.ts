@@ -35,10 +35,7 @@ export const log_out: RemoteEventInfo = {
 	name: 'log_out',
 	params: {
 		// TODO refactor into a service
-		schema: {
-			$id: 'https://felt.dev/vocab/log_out_params.json',
-			type: 'null',
-		},
+		schema: null,
 	},
 	response: {
 		type: `ApiResult<${LogOutResponseResult}>`,
