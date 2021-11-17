@@ -3,7 +3,7 @@ import type {Result} from '@feltcoop/felt';
 import type {Community} from '$lib/vocab/community/community.js';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
-import type {CreateCommunityParamsType} from '$lib/ui/events';
+import type {CreateCommunityParamsType} from '$lib/app/eventTypes';
 
 export const communityRepo = (db: Database) => ({
 	create: async ({

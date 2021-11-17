@@ -3,7 +3,7 @@ import send from '@polka/send-type';
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Account} from '$lib/vocab/account/account.js';
 import {verifyPassword} from '$lib/util/password';
-import type {LogInParamsType} from '$lib/ui/events';
+import type {LogInParamsType} from '$lib/app/eventTypes';
 
 export const toLoginMiddleware = (server: ApiServer): Middleware => {
 	const {db} = server;

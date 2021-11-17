@@ -10,7 +10,7 @@ import type {
 	CreateFileParamsType,
 	CreateSpaceParamsType,
 	CreateMembershipParamsType,
-} from '$lib/ui/events';
+} from '$lib/app/eventTypes';
 import type {Database} from '$lib/db/Database';
 
 // TODO automate these from schemas, also use seeded rng

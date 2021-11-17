@@ -3,8 +3,8 @@ import {setContext, getContext} from 'svelte';
 import type {Ui} from '$lib/ui/ui';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
-import type {EventsParams, EventsResponse} from '$lib/ui/events';
-import type {Dispatch} from '$lib/ui/events';
+import type {EventsParams, EventsResponse} from '$lib/app/eventTypes';
+import type {Dispatch} from '$lib/app/eventTypes';
 
 // TODO this has evolved to the point where perhaps this module should be `dispatch.ts`
 // and removing the `Api` namespace wrapper.

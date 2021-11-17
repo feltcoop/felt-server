@@ -1,6 +1,6 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {CreateSpaceParamsType} from '$lib/ui/events';
+import type {CreateSpaceParamsType} from '$lib/app/eventTypes';
 import type {Space} from '$lib/vocab/space/space.js';
 import type {Database} from '$lib/db/Database';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';

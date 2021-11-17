@@ -6,13 +6,13 @@ import type {
 	ReadCommunityResponseResult,
 	ReadCommunitiesParamsType,
 	ReadCommunitiesResponseResult,
-} from '$lib/ui/events';
+} from '$lib/app/eventTypes';
 import {
 	create_community,
 	read_communities,
 	read_community,
 } from '$lib/vocab/community/community.events';
-import type {CreateMembershipParamsType, CreateMembershipResponseResult} from '$lib/ui/events';
+import type {CreateMembershipParamsType, CreateMembershipResponseResult} from '$lib/app/eventTypes';
 import {create_membership} from '$lib/vocab/membership/membership.events';
 
 // Returns a list of community objects

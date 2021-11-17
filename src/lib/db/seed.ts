@@ -6,7 +6,7 @@ import type {Database} from '$lib/db/Database.js';
 import type {Account, CreateAccountParamsType} from '$lib/vocab/account/account.js';
 import type {Space} from '$lib/vocab/space/space.js';
 import type {Community} from '$lib/vocab/community/community';
-import type {CreateCommunityParamsType} from '$lib/ui/events';
+import type {CreateCommunityParamsType} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
 
 // TODO extract seed helpers and db methods

@@ -2,7 +2,7 @@ import type {Result} from '@feltcoop/felt';
 
 import type {Membership} from '$lib/vocab/membership/membership.js';
 import type {Database} from '$lib/db/Database';
-import type {CreateMembershipParamsType} from '$lib/ui/events';
+import type {CreateMembershipParamsType} from '$lib/app/eventTypes';
 
 export const membershipRepo = (db: Database) => ({
 	create: async ({

@@ -4,7 +4,7 @@ import type {
 	CreateFileResponseResult,
 	ReadFilesParamsType,
 	ReadFilesResponseResult,
-} from '$lib/ui/events';
+} from '$lib/app/eventTypes';
 import {read_files, create_file} from '$lib/vocab/file/file.events';
 
 // TODO rename to `getFiles`? `loadFiles`?

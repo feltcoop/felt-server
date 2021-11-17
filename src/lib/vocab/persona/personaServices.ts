@@ -1,5 +1,5 @@
 import type {Service} from '$lib/server/service';
-import type {CreatePersonaParamsType, CreatePersonaResponseResult} from '$lib/ui/events';
+import type {CreatePersonaParamsType, CreatePersonaResponseResult} from '$lib/app/eventTypes';
 import {create_persona} from '$lib/vocab/persona/persona.events';
 
 //Creates a new persona

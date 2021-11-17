@@ -2,7 +2,7 @@ import type {Result} from '@feltcoop/felt';
 
 import type {File} from '$lib/vocab/file/file.js';
 import type {Database} from '$lib/db/Database';
-import type {CreateFileParamsType} from '$lib/ui/events';
+import type {CreateFileParamsType} from '$lib/app/eventTypes';
 
 export const fileRepo = (db: Database) => ({
 	create: async ({

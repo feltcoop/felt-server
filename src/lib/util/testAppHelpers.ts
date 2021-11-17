@@ -3,7 +3,7 @@ import {writable} from 'svelte/store';
 import type {AppStores} from '$lib/ui/app';
 import {toUi} from '$lib/ui/ui';
 import {toHttpApiClient} from '$lib/ui/HttpApiClient';
-import type {EventsParams, EventsResponse} from '$lib/ui/events';
+import type {EventsParams, EventsResponse} from '$lib/app/eventTypes';
 import {toApi} from '$lib/ui/api';
 import {findService} from '$lib/ui/services';
 import type {ClientSession} from '$lib/session/clientSession';

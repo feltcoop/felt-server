@@ -6,7 +6,7 @@ import type {
 	ReadSpaceResponseResult,
 	ReadSpacesParamsType,
 	ReadSpacesResponseResult,
-} from '$lib/ui/events';
+} from '$lib/app/eventTypes';
 import {create_space, read_space, read_spaces} from '$lib/vocab/space/space.events';
 
 //Returns a single space object

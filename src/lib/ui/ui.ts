@@ -10,7 +10,7 @@ import type {AccountModel} from '$lib/vocab/account/account';
 import type {File} from '$lib/vocab/file/file';
 import type {Membership} from '$lib/vocab/membership/membership';
 import type {DispatchContext} from '$lib/ui/api';
-import type {UiHandlers} from '$lib/ui/events';
+import type {UiHandlers} from '$lib/app/eventTypes';
 
 const UNKNOWN_API_ERROR =
 	'Something went wrong. Maybe the server or your Internet connection is down. Please try again.';
