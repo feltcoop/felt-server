@@ -22,6 +22,9 @@ export const randomEventParams = async (
 	{account, persona, community, space}: RandomVocab,
 ): Promise<any> => {
 	switch (event.name) {
+		case 'ping': {
+			return null;
+		}
 		case 'log_in': {
 			return {
 				accountName: randomString(),
