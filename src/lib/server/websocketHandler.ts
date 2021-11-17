@@ -3,7 +3,7 @@ import {red} from '@feltcoop/felt/util/terminal.js';
 
 import {JsonRpcResponse, parseJsonRpcRequest} from '$lib/util/jsonRpc';
 import type {ApiServer} from '$lib/server/ApiServer';
-import {validateSchema} from '$lib/util/ajv';
+import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
 
 export interface WebsocketHandler {
 	(server: ApiServer, socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
@@ -53,11 +53,11 @@ export const websocketHandler: WebsocketHandler = async (
 
 	const validateParams = validateSchema(service.event.params.schema);
 	if (!validateParams(params)) {
-		console.error(red('Failed to validate params'), validateParams.errors);
+		console.error('[websocketHandler] failed to validate params', validateParams.errors);
 		result = {
 			ok: false,
 			status: 400,
-			reason: 'invalid params', // TODO helper to stringify `validateParams.errors`
+			reason: 'invalid params: ' + toValidationErrorMessage(validateParams.errors![0]),
 		};
 	} else {
 		result = await service.perform({server, params, account_id});
