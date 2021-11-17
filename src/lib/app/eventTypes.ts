@@ -11,7 +11,7 @@ import type {Space} from '$lib/vocab/space/space';
 import type {File} from '$lib/vocab/file/file';
 import type {DispatchContext} from '$lib/ui/api';
 
-export interface EventsParams {
+export interface EventParams {
 	log_in: LogInParams;
 	log_out: LogOutParams;
 	create_community: CreateCommunityParams;
@@ -33,7 +33,7 @@ export interface EventsParams {
 	select_community: SelectCommunityParams;
 	select_space: SelectSpaceParams;
 }
-export interface EventsResponse {
+export interface EventResponse {
 	log_in: LogInResponse;
 	log_out: LogOutResponse;
 	create_community: CreateCommunityResponse;

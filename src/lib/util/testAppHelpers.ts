@@ -3,7 +3,7 @@ import {writable} from 'svelte/store';
 import type {AppStores} from '$lib/ui/app';
 import {toUi} from '$lib/ui/ui';
 import {toHttpApiClient} from '$lib/ui/HttpApiClient';
-import type {EventsParams, EventsResponse} from '$lib/app/eventTypes';
+import type {EventParams, EventResponse} from '$lib/app/eventTypes';
 import {toApi} from '$lib/ui/api';
 import {findService} from '$lib/ui/services';
 import type {ClientSession} from '$lib/session/clientSession';
@@ -20,7 +20,7 @@ export const setupApp =
 	async (context: TestAppContext): Promise<void> => {
 		const session = writable<ClientSession>({guest: true});
 		const ui = toUi(session, false);
-		const httpApiClient = toHttpApiClient<EventsParams, EventsResponse>(findService, fetch);
+		const httpApiClient = toHttpApiClient<EventParams, EventResponse>(findService, fetch);
 		context.app = {
 			ui,
 			api: toApi(ui, httpApiClient),
