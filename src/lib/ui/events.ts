@@ -118,7 +118,7 @@ export type read_files_response_type = ApiResult<{files: File[]}>;
 export type query_files_params_type = {space_id: number};
 
 export type ping_params_type = void;
-export type ping_response_type = ApiResult<void>;
+export type ping_response_type = ApiResult<null>;
 
 export type toggle_main_nav_params_type = void;
 
@@ -207,7 +207,7 @@ export interface Dispatch {
 	): Promise<ApiResult<{file: File}>>;
 	(eventName: 'read_files', params: {space_id: number}): Promise<ApiResult<{files: File[]}>>;
 	(eventName: 'query_files', params: {space_id: number}): Readable<Readable<File>[]>;
-	(eventName: 'ping', params: void): Promise<ApiResult<void>>;
+	(eventName: 'ping', params: void): Promise<ApiResult<null>>;
 	(eventName: 'toggle_main_nav', params: void): void;
 	(eventName: 'toggle_secondary_nav', params: void): void;
 	(eventName: 'set_main_nav_view', params: MainNavView): void;
@@ -322,7 +322,7 @@ export interface UiHandlers {
 		ctx: DispatchContext<{space_id: number}, ApiResult<{files: File[]}>>,
 	) => Promise<ApiResult<{files: File[]}>>;
 	query_files: (ctx: DispatchContext<{space_id: number}, void>) => Readable<Readable<File>[]>;
-	ping: (ctx: DispatchContext<void, ApiResult<void>>) => Promise<ApiResult<void>>;
+	ping: (ctx: DispatchContext<void, ApiResult<null>>) => Promise<ApiResult<null>>;
 	toggle_main_nav: (ctx: DispatchContext<void, void>) => void;
 	toggle_secondary_nav: (ctx: DispatchContext<void, void>) => void;
 	set_main_nav_view: (ctx: DispatchContext<MainNavView, void>) => void;

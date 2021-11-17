@@ -11,13 +11,13 @@ export const ping: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<void>`,
+		type: `ApiResult<null>`,
 		schema: {
 			$id: 'https://felt.social/vocab/ping_response.json',
 			type: 'null',
 		},
 	},
-	returns: `Promise<ApiResult<void>>`,
+	returns: `Promise<ApiResult<null>>`,
 	route: {
 		path: '/api/v1/ping',
 		method: 'GET',
