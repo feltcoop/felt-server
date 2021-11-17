@@ -53,23 +53,27 @@ export interface LogInParamsType {
 	password: string;
 }
 
+// TODO
+export type log_in_response_type = ApiResult<{session: ClientAccountSession}>;
 export type LogInResponseType = null;
 
-export type log_in_response_type = ApiResult<{session: ClientAccountSession}>;
-
 export type LogOutParamsType = void;
+// TODO
+export type log_out_response_type = ApiResult<{message: string}>;
 export interface LogOutResponseType {
 	message: string;
 	[k: string]: unknown;
 }
-
-export type log_out_response_type = ApiResult<{message: string}>;
 
 export interface CreateCommunityParamsType {
 	name: string;
 	persona_id: number;
 }
 
+// TODO
+export type create_community_response_type = ApiResult<{
+	community: Community;
+}>;
 export interface CreateCommunityResponseType {
 	community: {
 		community_id: number;
@@ -84,14 +88,14 @@ export interface CreateCommunityResponseType {
 	};
 }
 
-export type create_community_response_type = ApiResult<{
-	community: Community;
-}>;
-
 export interface ReadCommunityParamsType {
 	community_id: number;
 }
 
+// TODO
+export type read_community_response_type = ApiResult<{
+	community: Community;
+}>;
 export interface ReadCommunityResponseType {
 	community: {
 		community_id: number;
@@ -106,12 +110,12 @@ export interface ReadCommunityResponseType {
 	};
 }
 
-export type read_community_response_type = ApiResult<{
-	community: Community;
-}>;
-
 export interface ReadCommunitiesParamsType {}
 
+// TODO
+export type read_communities_response_type = ApiResult<{
+	communities: Community[];
+}>;
 export interface ReadCommunitiesResponseType {
 	communities: {
 		community_id: number;
@@ -126,14 +130,12 @@ export interface ReadCommunitiesResponseType {
 	}[];
 }
 
-export type read_communities_response_type = ApiResult<{
-	communities: Community[];
-}>;
-
 export interface CreatePersonaParamsType {
 	name: string;
 }
 
+// TODO
+export type create_persona_response_type = ApiResult<{persona: Persona; community: Community}>;
 export interface CreatePersonaResponseType {
 	persona: {
 		persona_id: number;
@@ -161,13 +163,13 @@ export interface CreatePersonaResponseType {
 	};
 }
 
-export type create_persona_response_type = ApiResult<{persona: Persona; community: Community}>;
-
 export interface CreateMembershipParamsType {
 	persona_id: number;
 	community_id: number;
 }
 
+// TODO
+export type create_membership_response_type = ApiResult<{membership: Membership}>;
 export interface CreateMembershipResponseType {
 	membership: {
 		persona_id: number;
@@ -181,8 +183,6 @@ export interface CreateMembershipResponseType {
 	};
 }
 
-export type create_membership_response_type = ApiResult<{membership: Membership}>;
-
 export interface CreateSpaceParamsType {
 	community_id: number;
 	name: string;
@@ -191,6 +191,8 @@ export interface CreateSpaceParamsType {
 	content: string;
 }
 
+// TODO
+export type create_space_response_type = ApiResult<{space: Space}>;
 export interface CreateSpaceResponseType {
 	space: {
 		space_id: number;
@@ -207,12 +209,12 @@ export interface CreateSpaceResponseType {
 	};
 }
 
-export type create_space_response_type = ApiResult<{space: Space}>;
-
 export interface ReadSpaceParamsType {
 	space_id: number;
 }
 
+// TODO
+export type read_space_response_type = ApiResult<{space: Space}>;
 export interface ReadSpaceResponseType {
 	space: {
 		space_id: number;
@@ -229,12 +231,12 @@ export interface ReadSpaceResponseType {
 	};
 }
 
-export type read_space_response_type = ApiResult<{space: Space}>;
-
 export interface ReadSpacesParamsType {
 	community_id: number;
 }
 
+// TODO
+export type read_spaces_response_type = ApiResult<{spaces: Space[]}>;
 export interface ReadSpacesResponseType {
 	spaces: {
 		space_id: number;
@@ -251,14 +253,14 @@ export interface ReadSpacesResponseType {
 	}[];
 }
 
-export type read_spaces_response_type = ApiResult<{spaces: Space[]}>;
-
 export interface CreateFileParamsType {
 	actor_id: number;
 	space_id: number;
 	content: string;
 }
 
+// TODO
+export type create_file_response_type = ApiResult<{file: File}>;
 export interface CreateFileResponseType {
 	file: {
 		file_id: number;
@@ -274,12 +276,12 @@ export interface CreateFileResponseType {
 	};
 }
 
-export type create_file_response_type = ApiResult<{file: File}>;
-
 export interface ReadFilesParamsType {
 	space_id: number;
 }
 
+// TODO
+export type read_files_response_type = ApiResult<{files: File[]}>;
 export interface ReadFilesResponseType {
 	files: {
 		file_id: number;
@@ -295,32 +297,44 @@ export interface ReadFilesResponseType {
 	}[];
 }
 
-export type read_files_response_type = ApiResult<{files: File[]}>;
-
 export interface QueryFilesParamsType {
 	space_id: number;
 }
 
+// TODO
+
 export type ToggleMainNavParamsType = void;
+// TODO
 
 export type ToggleSecondaryNavParamsType = void;
+// TODO
 
 export type SetMainNavViewParamsType = 'explorer' | 'account';
 
+// TODO
+
 export type SetMobileParamsType = boolean;
+
+// TODO
 
 export interface SelectPersonaParamsType {
 	persona_id: number;
 }
 
+// TODO
+
 export interface SelectCommunityParamsType {
 	community_id: number | null;
 }
+
+// TODO
 
 export interface SelectSpaceParamsType {
 	community_id: number;
 	space_id: number;
 }
+
+// TODO
 
 export interface Dispatch {
 	(eventName: 'log_in', params: LogInParamsType): Promise<

@@ -57,6 +57,12 @@ ${await eventInfos.reduce(
 		(await str) +
 		`
 ${await jsonSchemaToTypescript(eventInfo.params.schema, toParamsTypeName(eventInfo.name))}
+// TODO
+${
+	eventInfo.type === 'ClientEvent'
+		? ''
+		: `export type ${eventInfo.name}_response_type = ${eventInfo.response.type};`
+}
 ${
 	'response' in eventInfo
 		? await jsonSchemaToTypescript(eventInfo.response.schema, toResponseTypeName(eventInfo.name), {
@@ -75,11 +81,6 @@ ${
 				},
 		  })
 		: ''
-}
-${
-	eventInfo.type === 'ClientEvent'
-		? ''
-		: `export type ${eventInfo.name}_response_type = ${eventInfo.response.type};`
 }
 `,
 	Promise.resolve(''),
