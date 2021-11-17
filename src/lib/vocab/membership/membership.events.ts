@@ -1,6 +1,5 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-const CreateMembershipResponseResult = '{membership: Membership}';
 export const create_membership: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'create_membership',
@@ -17,18 +16,17 @@ export const create_membership: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${CreateMembershipResponseResult}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/create_membership_response.json',
 			type: 'object',
 			properties: {
-				membership: {$ref: 'Membership.json'},
+				membership: {$ref: 'Membership.json', tsType: 'Membership'},
 			},
 			required: ['membership'],
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${CreateMembershipResponseResult}>>`,
+	returns: 'Promise<CreateMembershipResponseResult>',
 	route: {
 		path: '/api/v1/memberships',
 		method: 'POST',

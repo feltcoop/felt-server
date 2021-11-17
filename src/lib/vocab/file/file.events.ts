@@ -1,6 +1,5 @@
 import type {EventInfo, ClientEventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-const CreateFileResponseResult = '{file: File}';
 export const create_file: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'create_file',
@@ -18,25 +17,23 @@ export const create_file: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${CreateFileResponseResult}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/create_file_response.json',
 			type: 'object',
 			properties: {
-				file: {$ref: 'File.json'},
+				file: {$ref: 'File.json', tsType: 'File'},
 			},
 			required: ['file'],
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${CreateFileResponseResult}>>`,
+	returns: 'Promise<CreateFileResponseResult>',
 	route: {
 		path: '/api/v1/spaces/:space_id/files',
 		method: 'POST',
 	},
 };
 
-const ReadFilesResponseResult = '{files: File[]}';
 export const read_files: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'read_files',
@@ -52,18 +49,17 @@ export const read_files: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${ReadFilesResponseResult}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/read_files_response.json',
 			type: 'object',
 			properties: {
-				files: {type: 'array', items: {$ref: 'File.json'}},
+				files: {type: 'array', items: {$ref: 'File.json', tsType: 'File'}},
 			},
 			required: ['files'],
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${ReadFilesResponseResult}>>`,
+	returns: 'Promise<ReadFilesResponseResult>',
 	route: {
 		path: '/api/v1/spaces/:space_id/files',
 		method: 'GET',

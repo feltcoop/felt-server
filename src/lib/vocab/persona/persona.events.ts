@@ -1,6 +1,5 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-const CreatePersonaResponseResult = '{persona: Persona; community: Community}';
 export const create_persona: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'create_persona',
@@ -16,19 +15,18 @@ export const create_persona: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${CreatePersonaResponseResult}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/create_persona_response.json',
 			type: 'object',
 			properties: {
-				persona: {$ref: 'Persona.json'},
-				community: {$ref: 'Community.json'},
+				persona: {$ref: 'Persona.json', tsType: 'Persona'},
+				community: {$ref: 'Community.json', tsType: 'Community'},
 			},
 			required: ['persona', 'community'],
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${CreatePersonaResponseResult}>>`,
+	returns: 'Promise<CreatePersonaResponseResult>',
 	route: {
 		path: '/api/v1/personas',
 		method: 'POST',

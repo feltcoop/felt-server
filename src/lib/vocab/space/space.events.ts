@@ -1,6 +1,5 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-const CreateSpaceResponseResult = '{space: Space}';
 export const create_space: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'create_space',
@@ -20,25 +19,23 @@ export const create_space: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${CreateSpaceResponseResult}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/create_space_response.json',
 			type: 'object',
 			properties: {
-				space: {$ref: 'Space.json'},
+				space: {$ref: 'Space.json', tsType: 'Space'},
 			},
 			required: ['space'],
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${CreateSpaceResponseResult}>>`,
+	returns: 'Promise<CreateSpaceResponseResult>',
 	route: {
 		path: '/api/v1/communities/:community_id/spaces',
 		method: 'POST',
 	},
 };
 
-const ReadSpaceResponseResult = '{space: Space}';
 export const read_space: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'read_space',
@@ -54,25 +51,23 @@ export const read_space: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${ReadSpaceResponseResult}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/read_space_response.json',
 			type: 'object',
 			properties: {
-				space: {$ref: 'Space.json'},
+				space: {$ref: 'Space.json', tsType: 'Space'},
 			},
 			required: ['space'],
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${ReadSpaceResponseResult}>>`,
+	returns: 'Promise<ReadSpaceResponseResult>',
 	route: {
 		path: '/api/v1/spaces/:space_id',
 		method: 'GET',
 	},
 };
 
-const ReadSpacesResponseResult = '{spaces: Space[]}';
 export const read_spaces: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'read_spaces',
@@ -88,18 +83,17 @@ export const read_spaces: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${ReadSpacesResponseResult}>`,
 		schema: {
 			$id: 'https://felt.social/vocab/read_spaces_response.json',
 			type: 'object',
 			properties: {
-				spaces: {type: 'array', items: {$ref: 'Space.json'}},
+				spaces: {type: 'array', items: {$ref: 'Space.json', tsType: 'Space'}},
 			},
 			required: ['spaces'],
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${ReadSpacesResponseResult}>>`,
+	returns: 'Promise<ReadSpacesResponseResult>',
 	route: {
 		path: '/api/v1/communities/:community_id/spaces',
 		method: 'GET',

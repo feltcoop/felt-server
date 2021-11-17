@@ -110,7 +110,7 @@ export interface UiHandlers {
 			`
       ${eventInfo.name}: (
         ctx: DispatchContext<${toParamsName(eventInfo.name)}, ${
-				eventInfo.type === 'ClientEvent' ? 'void' : eventInfo.response.type
+				eventInfo.type === 'ClientEvent' ? 'void' : toResponseResultName(eventInfo.name)
 			}>,
       ) => ${eventInfo.returns};
 `.trim(),

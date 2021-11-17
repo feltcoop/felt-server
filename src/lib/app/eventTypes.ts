@@ -76,13 +76,7 @@ export interface CreateCommunityParams {
 }
 
 export interface CreateCommunityResponse {
-	community: {
-		community_id: number;
-		name: string;
-		created: Date;
-		updated: Date | null;
-		[k: string]: unknown;
-	};
+	community: Community;
 }
 
 // TODO hacky, the ApiResult type should be represented in the schema
@@ -95,13 +89,7 @@ export interface ReadCommunityParams {
 }
 
 export interface ReadCommunityResponse {
-	community: {
-		community_id: number;
-		name: string;
-		created: Date;
-		updated: Date | null;
-		[k: string]: unknown;
-	};
+	community: Community;
 }
 
 // TODO hacky, the ApiResult type should be represented in the schema
@@ -112,13 +100,7 @@ export type ReadCommunityResponseResult = ApiResult<ReadCommunityResponse>;
 export interface ReadCommunitiesParams {}
 
 export interface ReadCommunitiesResponse {
-	communities: {
-		community_id: number;
-		name: string;
-		created: Date;
-		updated: Date | null;
-		[k: string]: unknown;
-	}[];
+	communities: Community[];
 }
 
 // TODO hacky, the ApiResult type should be represented in the schema
@@ -131,22 +113,8 @@ export interface CreatePersonaParams {
 }
 
 export interface CreatePersonaResponse {
-	persona: {
-		persona_id: number;
-		account_id: number;
-		name: string;
-		icon?: string;
-		community_ids: number[];
-		created: Date;
-		updated: Date | null;
-	};
-	community: {
-		community_id: number;
-		name: string;
-		created: Date;
-		updated: Date | null;
-		[k: string]: unknown;
-	};
+	persona: Persona;
+	community: Community;
 }
 
 // TODO hacky, the ApiResult type should be represented in the schema
@@ -160,12 +128,7 @@ export interface CreateMembershipParams {
 }
 
 export interface CreateMembershipResponse {
-	membership: {
-		persona_id: number;
-		community_id: number;
-		created: Date;
-		updated: Date | null;
-	};
+	membership: Membership;
 }
 
 // TODO hacky, the ApiResult type should be represented in the schema
@@ -182,15 +145,7 @@ export interface CreateSpaceParams {
 }
 
 export interface CreateSpaceResponse {
-	space: {
-		space_id: number;
-		name: string;
-		url: string;
-		media_type: string;
-		content: string;
-		created: Date;
-		updated: Date | null;
-	};
+	space: Space;
 }
 
 // TODO hacky, the ApiResult type should be represented in the schema
@@ -203,15 +158,7 @@ export interface ReadSpaceParams {
 }
 
 export interface ReadSpaceResponse {
-	space: {
-		space_id: number;
-		name: string;
-		url: string;
-		media_type: string;
-		content: string;
-		created: Date;
-		updated: Date | null;
-	};
+	space: Space;
 }
 
 // TODO hacky, the ApiResult type should be represented in the schema
@@ -224,15 +171,7 @@ export interface ReadSpacesParams {
 }
 
 export interface ReadSpacesResponse {
-	spaces: {
-		space_id: number;
-		name: string;
-		url: string;
-		media_type: string;
-		content: string;
-		created: Date;
-		updated: Date | null;
-	}[];
+	spaces: Space[];
 }
 
 // TODO hacky, the ApiResult type should be represented in the schema
@@ -247,14 +186,7 @@ export interface CreateFileParams {
 }
 
 export interface CreateFileResponse {
-	file: {
-		file_id: number;
-		actor_id: number;
-		space_id: number;
-		content: string;
-		created: Date;
-		updated: Date | null;
-	};
+	file: File;
 }
 
 // TODO hacky, the ApiResult type should be represented in the schema
@@ -267,14 +199,7 @@ export interface ReadFilesParams {
 }
 
 export interface ReadFilesResponse {
-	files: {
-		file_id: number;
-		actor_id: number;
-		space_id: number;
-		content: string;
-		created: Date;
-		updated: Date | null;
-	}[];
+	files: File[];
 }
 
 // TODO hacky, the ApiResult type should be represented in the schema
@@ -309,33 +234,26 @@ export interface SelectSpaceParams {
 
 export interface Dispatch {
 	(eventName: 'log_in', params: LogInParams): Promise<ApiResult<{session: ClientAccountSession}>>;
-	(eventName: 'log_out', params: LogOutParams): Promise<ApiResult<{message: string}>>;
-	(eventName: 'create_community', params: CreateCommunityParams): Promise<
-		ApiResult<{
-			community: Community;
-		}>
-	>;
-	(eventName: 'read_community', params: ReadCommunityParams): Promise<
-		ApiResult<{
-			community: Community;
-		}>
-	>;
-	(eventName: 'read_communities', params: ReadCommunitiesParams): Promise<
-		ApiResult<{
-			communities: Community[];
-		}>
-	>;
-	(eventName: 'create_persona', params: CreatePersonaParams): Promise<
-		ApiResult<{persona: Persona; community: Community}>
-	>;
-	(eventName: 'create_membership', params: CreateMembershipParams): Promise<
-		ApiResult<{membership: Membership}>
-	>;
-	(eventName: 'create_space', params: CreateSpaceParams): Promise<ApiResult<{space: Space}>>;
-	(eventName: 'read_space', params: ReadSpaceParams): Promise<ApiResult<{space: Space}>>;
-	(eventName: 'read_spaces', params: ReadSpacesParams): Promise<ApiResult<{spaces: Space[]}>>;
-	(eventName: 'create_file', params: CreateFileParams): Promise<ApiResult<{file: File}>>;
-	(eventName: 'read_files', params: ReadFilesParams): Promise<ApiResult<{files: File[]}>>;
+	(eventName: 'log_out', params: LogOutParams): Promise<LogOutResponseResult>;
+	(
+		eventName: 'create_community',
+		params: CreateCommunityParams,
+	): Promise<CreateCommunityResponseResult>;
+	(eventName: 'read_community', params: ReadCommunityParams): Promise<ReadCommunityResponseResult>;
+	(
+		eventName: 'read_communities',
+		params: ReadCommunitiesParams,
+	): Promise<ReadCommunitiesResponseResult>;
+	(eventName: 'create_persona', params: CreatePersonaParams): Promise<CreatePersonaResponseResult>;
+	(
+		eventName: 'create_membership',
+		params: CreateMembershipParams,
+	): Promise<CreateMembershipResponseResult>;
+	(eventName: 'create_space', params: CreateSpaceParams): Promise<CreateSpaceResponseResult>;
+	(eventName: 'read_space', params: ReadSpaceParams): Promise<ReadSpaceResponseResult>;
+	(eventName: 'read_spaces', params: ReadSpacesParams): Promise<ReadSpacesResponseResult>;
+	(eventName: 'create_file', params: CreateFileParams): Promise<CreateFileResponseResult>;
+	(eventName: 'read_files', params: ReadFilesParams): Promise<ReadFilesResponseResult>;
 	(eventName: 'query_files', params: QueryFilesParams): Readable<Readable<File>[]>;
 	(eventName: 'toggle_main_nav', params: ToggleMainNavParams): void;
 	(eventName: 'toggle_secondary_nav', params: ToggleSecondaryNavParams): void;
@@ -348,68 +266,41 @@ export interface Dispatch {
 
 export interface UiHandlers {
 	log_in: (
-		ctx: DispatchContext<LogInParams, ApiResult<{session: ClientAccountSession}>>,
+		ctx: DispatchContext<LogInParams, LogInResponseResult>,
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	log_out: (
-		ctx: DispatchContext<LogOutParams, ApiResult<{message: string}>>,
-	) => Promise<ApiResult<{message: string}>>;
+		ctx: DispatchContext<LogOutParams, LogOutResponseResult>,
+	) => Promise<LogOutResponseResult>;
 	create_community: (
-		ctx: DispatchContext<
-			CreateCommunityParams,
-			ApiResult<{
-				community: Community;
-			}>
-		>,
-	) => Promise<
-		ApiResult<{
-			community: Community;
-		}>
-	>;
+		ctx: DispatchContext<CreateCommunityParams, CreateCommunityResponseResult>,
+	) => Promise<CreateCommunityResponseResult>;
 	read_community: (
-		ctx: DispatchContext<
-			ReadCommunityParams,
-			ApiResult<{
-				community: Community;
-			}>
-		>,
-	) => Promise<
-		ApiResult<{
-			community: Community;
-		}>
-	>;
+		ctx: DispatchContext<ReadCommunityParams, ReadCommunityResponseResult>,
+	) => Promise<ReadCommunityResponseResult>;
 	read_communities: (
-		ctx: DispatchContext<
-			ReadCommunitiesParams,
-			ApiResult<{
-				communities: Community[];
-			}>
-		>,
-	) => Promise<
-		ApiResult<{
-			communities: Community[];
-		}>
-	>;
+		ctx: DispatchContext<ReadCommunitiesParams, ReadCommunitiesResponseResult>,
+	) => Promise<ReadCommunitiesResponseResult>;
 	create_persona: (
-		ctx: DispatchContext<CreatePersonaParams, ApiResult<{persona: Persona; community: Community}>>,
-	) => Promise<ApiResult<{persona: Persona; community: Community}>>;
+		ctx: DispatchContext<CreatePersonaParams, CreatePersonaResponseResult>,
+	) => Promise<CreatePersonaResponseResult>;
 	create_membership: (
-		ctx: DispatchContext<CreateMembershipParams, ApiResult<{membership: Membership}>>,
-	) => Promise<ApiResult<{membership: Membership}>>;
+		ctx: DispatchContext<CreateMembershipParams, CreateMembershipResponseResult>,
+	) => Promise<CreateMembershipResponseResult>;
 	create_space: (
-		ctx: DispatchContext<CreateSpaceParams, ApiResult<{space: Space}>>,
-	) => Promise<ApiResult<{space: Space}>>;
+		ctx: DispatchContext<CreateSpaceParams, CreateSpaceResponseResult>,
+	) => Promise<CreateSpaceResponseResult>;
 	read_space: (
-		ctx: DispatchContext<ReadSpaceParams, ApiResult<{space: Space}>>,
-	) => Promise<ApiResult<{space: Space}>>;
+		ctx: DispatchContext<ReadSpaceParams, ReadSpaceResponseResult>,
+	) => Promise<ReadSpaceResponseResult>;
 	read_spaces: (
-		ctx: DispatchContext<ReadSpacesParams, ApiResult<{spaces: Space[]}>>,
-	) => Promise<ApiResult<{spaces: Space[]}>>;
+		ctx: DispatchContext<ReadSpacesParams, ReadSpacesResponseResult>,
+	) => Promise<ReadSpacesResponseResult>;
 	create_file: (
-		ctx: DispatchContext<CreateFileParams, ApiResult<{file: File}>>,
-	) => Promise<ApiResult<{file: File}>>;
+		ctx: DispatchContext<CreateFileParams, CreateFileResponseResult>,
+	) => Promise<CreateFileResponseResult>;
 	read_files: (
-		ctx: DispatchContext<ReadFilesParams, ApiResult<{files: File[]}>>,
-	) => Promise<ApiResult<{files: File[]}>>;
+		ctx: DispatchContext<ReadFilesParams, ReadFilesResponseResult>,
+	) => Promise<ReadFilesResponseResult>;
 	query_files: (ctx: DispatchContext<QueryFilesParams, void>) => Readable<Readable<File>[]>;
 	toggle_main_nav: (ctx: DispatchContext<ToggleMainNavParams, void>) => void;
 	toggle_secondary_nav: (ctx: DispatchContext<ToggleSecondaryNavParams, void>) => void;

@@ -23,7 +23,6 @@ export interface ServiceEventInfo {
 		schema: SchemaObject;
 	};
 	response: {
-		type: string;
 		schema: SchemaObject;
 	};
 	returns: string;
@@ -42,7 +41,6 @@ export interface RemoteEventInfo {
 		schema: SchemaObject | null;
 	};
 	response: {
-		type: string;
 		schema: SchemaObject;
 	};
 	returns: string;
