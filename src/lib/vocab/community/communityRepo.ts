@@ -3,13 +3,13 @@ import type {Result} from '@feltcoop/felt';
 import type {Community} from '$lib/vocab/community/community.js';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
-import type {CreateCommunityParamsType} from '$lib/app/eventTypes';
+import type {CreateCommunityParams} from '$lib/app/eventTypes';
 
 export const communityRepo = (db: Database) => ({
 	create: async ({
 		name,
 		persona_id,
-	}: CreateCommunityParamsType): Promise<Result<{value: Community}>> => {
+	}: CreateCommunityParams): Promise<Result<{value: Community}>> => {
 		const data = await db.sql<Community[]>`
 			INSERT INTO communities (name) VALUES (
 				${name}

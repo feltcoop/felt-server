@@ -3,10 +3,10 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 import {cyan} from '@feltcoop/felt/util/terminal.js';
 
 import type {Database} from '$lib/db/Database.js';
-import type {Account, CreateAccountParamsType} from '$lib/vocab/account/account.js';
+import type {Account, CreateAccountParams} from '$lib/vocab/account/account.js';
 import type {Space} from '$lib/vocab/space/space.js';
 import type {Community} from '$lib/vocab/community/community';
-import type {CreateCommunityParamsType} from '$lib/app/eventTypes';
+import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
 
 // TODO extract seed helpers and db methods
@@ -26,7 +26,7 @@ export const seed = async (db: Database): Promise<void> => {
 	}
 
 	// example: insert literal values
-	const accountsParams: CreateAccountParamsType[] = [
+	const accountsParams: CreateAccountParams[] = [
 		{name: 'a', password: 'a'},
 		{name: 'b', password: 'b'},
 	];
@@ -52,7 +52,7 @@ export const seed = async (db: Database): Promise<void> => {
 	const mainPersonaCreator = personas[0];
 	const otherPersonas = personas.slice(1);
 
-	const communitiesParams: CreateCommunityParamsType[] = [
+	const communitiesParams: CreateCommunityParams[] = [
 		{name: 'felt', persona_id: mainPersonaCreator.persona_id},
 		{name: 'dev', persona_id: mainPersonaCreator.persona_id},
 		{name: 'backpackers-anonymous', persona_id: mainPersonaCreator.persona_id},

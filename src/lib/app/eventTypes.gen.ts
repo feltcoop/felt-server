@@ -7,8 +7,8 @@ import {jsonSchemaToTypescript, toTypeName} from '$lib/util/jsonSchemaToTypescri
 import {schemas} from '$lib/app/schemas';
 import {ID_VOCAB_PREFIX} from '$lib/vocab/util';
 
-const toParamsTypeName = (name: string): string => toTypeName(name + 'ParamsType');
-const toResponseTypeName = (name: string): string => toTypeName(name + 'ResponseType');
+const toParamsName = (name: string): string => toTypeName(name + 'Params');
+const toResponseName = (name: string): string => toTypeName(name + 'Response');
 const toResponseResultName = (name: string): string => toTypeName(name + 'ResponseResult');
 
 // Outputs a file with event types that can be imported from anywhere with no runtime cost.
@@ -35,7 +35,7 @@ export interface EventsParams {
 		(str, eventInfo) =>
 			str +
 			`
-${eventInfo.name}: ${toParamsTypeName(eventInfo.name)};
+${eventInfo.name}: ${toParamsName(eventInfo.name)};
 `.trim(),
 		'',
 	)}
@@ -47,7 +47,7 @@ export interface EventsResponse {
 			(eventInfo.type === 'ClientEvent'
 				? ''
 				: `
-${eventInfo.name}: ${toResponseTypeName(eventInfo.name)};
+${eventInfo.name}: ${toResponseName(eventInfo.name)};
 `.trim()),
 		'',
 	)}
@@ -57,10 +57,10 @@ ${await eventInfos.reduce(
 	async (str, eventInfo) =>
 		(await str) +
 		`
-${await jsonSchemaToTypescript(eventInfo.params.schema, toParamsTypeName(eventInfo.name))}
+${await jsonSchemaToTypescript(eventInfo.params.schema, toParamsName(eventInfo.name))}
 ${
 	'response' in eventInfo
-		? await jsonSchemaToTypescript(eventInfo.response.schema, toResponseTypeName(eventInfo.name), {
+		? await jsonSchemaToTypescript(eventInfo.response.schema, toResponseName(eventInfo.name), {
 				cwd: schemaDir,
 				$refOptions: {
 					resolve: {
@@ -82,9 +82,7 @@ ${
 		? `// TODO hacky, the ApiResult type should be represented in the schema
 		// but that requires generic type generation:
 		// https://github.com/bcherny/json-schema-to-typescript/issues/59
-		export type ${toResponseResultName(eventInfo.name)} = ApiResult<${toResponseTypeName(
-				eventInfo.name,
-		  )}>;`
+		export type ${toResponseResultName(eventInfo.name)} = ApiResult<${toResponseName(eventInfo.name)}>;`
 		: ''
 }
 `,
@@ -98,7 +96,7 @@ export interface Dispatch {
 			`
 		(
 			eventName: '${eventInfo.name}',
-			params: ${toParamsTypeName(eventInfo.name)},
+			params: ${toParamsName(eventInfo.name)},
 		): ${eventInfo.returns};
 `.trim(),
 		'',
@@ -111,7 +109,7 @@ export interface UiHandlers {
 			str +
 			`
       ${eventInfo.name}: (
-        ctx: DispatchContext<${toParamsTypeName(eventInfo.name)}, ${
+        ctx: DispatchContext<${toParamsName(eventInfo.name)}, ${
 				eventInfo.type === 'ClientEvent' ? 'void' : eventInfo.response.type
 			}>,
       ) => ${eventInfo.returns};

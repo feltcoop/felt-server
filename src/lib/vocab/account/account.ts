@@ -20,7 +20,7 @@ export const AccountSchema = {
 };
 
 // TODO make the `create_account` event in account.events.ts
-export interface CreateAccountParamsType {
+export interface CreateAccountParams {
 	name: string;
 	password: string;
 }

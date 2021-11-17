@@ -12,70 +12,70 @@ import type {File} from '$lib/vocab/file/file';
 import type {DispatchContext} from '$lib/ui/api';
 
 export interface EventsParams {
-	log_in: LogInParamsType;
-	log_out: LogOutParamsType;
-	create_community: CreateCommunityParamsType;
-	read_community: ReadCommunityParamsType;
-	read_communities: ReadCommunitiesParamsType;
-	create_persona: CreatePersonaParamsType;
-	create_membership: CreateMembershipParamsType;
-	create_space: CreateSpaceParamsType;
-	read_space: ReadSpaceParamsType;
-	read_spaces: ReadSpacesParamsType;
-	create_file: CreateFileParamsType;
-	read_files: ReadFilesParamsType;
-	query_files: QueryFilesParamsType;
-	toggle_main_nav: ToggleMainNavParamsType;
-	toggle_secondary_nav: ToggleSecondaryNavParamsType;
-	set_main_nav_view: SetMainNavViewParamsType;
-	set_mobile: SetMobileParamsType;
-	select_persona: SelectPersonaParamsType;
-	select_community: SelectCommunityParamsType;
-	select_space: SelectSpaceParamsType;
+	log_in: LogInParams;
+	log_out: LogOutParams;
+	create_community: CreateCommunityParams;
+	read_community: ReadCommunityParams;
+	read_communities: ReadCommunitiesParams;
+	create_persona: CreatePersonaParams;
+	create_membership: CreateMembershipParams;
+	create_space: CreateSpaceParams;
+	read_space: ReadSpaceParams;
+	read_spaces: ReadSpacesParams;
+	create_file: CreateFileParams;
+	read_files: ReadFilesParams;
+	query_files: QueryFilesParams;
+	toggle_main_nav: ToggleMainNavParams;
+	toggle_secondary_nav: ToggleSecondaryNavParams;
+	set_main_nav_view: SetMainNavViewParams;
+	set_mobile: SetMobileParams;
+	select_persona: SelectPersonaParams;
+	select_community: SelectCommunityParams;
+	select_space: SelectSpaceParams;
 }
 export interface EventsResponse {
-	log_in: LogInResponseType;
-	log_out: LogOutResponseType;
-	create_community: CreateCommunityResponseType;
-	read_community: ReadCommunityResponseType;
-	read_communities: ReadCommunitiesResponseType;
-	create_persona: CreatePersonaResponseType;
-	create_membership: CreateMembershipResponseType;
-	create_space: CreateSpaceResponseType;
-	read_space: ReadSpaceResponseType;
-	read_spaces: ReadSpacesResponseType;
-	create_file: CreateFileResponseType;
-	read_files: ReadFilesResponseType;
+	log_in: LogInResponse;
+	log_out: LogOutResponse;
+	create_community: CreateCommunityResponse;
+	read_community: ReadCommunityResponse;
+	read_communities: ReadCommunitiesResponse;
+	create_persona: CreatePersonaResponse;
+	create_membership: CreateMembershipResponse;
+	create_space: CreateSpaceResponse;
+	read_space: ReadSpaceResponse;
+	read_spaces: ReadSpacesResponse;
+	create_file: CreateFileResponse;
+	read_files: ReadFilesResponse;
 }
 
-export interface LogInParamsType {
+export interface LogInParams {
 	accountName: string;
 	password: string;
 }
 
-export type LogInResponseType = null;
+export type LogInResponse = null;
 
 // TODO hacky, the ApiResult type should be represented in the schema
 // but that requires generic type generation:
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
-export type LogInResponseResult = ApiResult<LogInResponseType>;
+export type LogInResponseResult = ApiResult<LogInResponse>;
 
-export type LogOutParamsType = void;
-export interface LogOutResponseType {
+export type LogOutParams = void;
+export interface LogOutResponse {
 	message: string;
 }
 
 // TODO hacky, the ApiResult type should be represented in the schema
 // but that requires generic type generation:
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
-export type LogOutResponseResult = ApiResult<LogOutResponseType>;
+export type LogOutResponseResult = ApiResult<LogOutResponse>;
 
-export interface CreateCommunityParamsType {
+export interface CreateCommunityParams {
 	name: string;
 	persona_id: number;
 }
 
-export interface CreateCommunityResponseType {
+export interface CreateCommunityResponse {
 	community: {
 		community_id: number;
 		name: string;
@@ -88,13 +88,13 @@ export interface CreateCommunityResponseType {
 // TODO hacky, the ApiResult type should be represented in the schema
 // but that requires generic type generation:
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
-export type CreateCommunityResponseResult = ApiResult<CreateCommunityResponseType>;
+export type CreateCommunityResponseResult = ApiResult<CreateCommunityResponse>;
 
-export interface ReadCommunityParamsType {
+export interface ReadCommunityParams {
 	community_id: number;
 }
 
-export interface ReadCommunityResponseType {
+export interface ReadCommunityResponse {
 	community: {
 		community_id: number;
 		name: string;
@@ -107,11 +107,11 @@ export interface ReadCommunityResponseType {
 // TODO hacky, the ApiResult type should be represented in the schema
 // but that requires generic type generation:
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
-export type ReadCommunityResponseResult = ApiResult<ReadCommunityResponseType>;
+export type ReadCommunityResponseResult = ApiResult<ReadCommunityResponse>;
 
-export interface ReadCommunitiesParamsType {}
+export interface ReadCommunitiesParams {}
 
-export interface ReadCommunitiesResponseType {
+export interface ReadCommunitiesResponse {
 	communities: {
 		community_id: number;
 		name: string;
@@ -124,13 +124,13 @@ export interface ReadCommunitiesResponseType {
 // TODO hacky, the ApiResult type should be represented in the schema
 // but that requires generic type generation:
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
-export type ReadCommunitiesResponseResult = ApiResult<ReadCommunitiesResponseType>;
+export type ReadCommunitiesResponseResult = ApiResult<ReadCommunitiesResponse>;
 
-export interface CreatePersonaParamsType {
+export interface CreatePersonaParams {
 	name: string;
 }
 
-export interface CreatePersonaResponseType {
+export interface CreatePersonaResponse {
 	persona: {
 		persona_id: number;
 		account_id: number;
@@ -152,14 +152,14 @@ export interface CreatePersonaResponseType {
 // TODO hacky, the ApiResult type should be represented in the schema
 // but that requires generic type generation:
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
-export type CreatePersonaResponseResult = ApiResult<CreatePersonaResponseType>;
+export type CreatePersonaResponseResult = ApiResult<CreatePersonaResponse>;
 
-export interface CreateMembershipParamsType {
+export interface CreateMembershipParams {
 	persona_id: number;
 	community_id: number;
 }
 
-export interface CreateMembershipResponseType {
+export interface CreateMembershipResponse {
 	membership: {
 		persona_id: number;
 		community_id: number;
@@ -171,9 +171,9 @@ export interface CreateMembershipResponseType {
 // TODO hacky, the ApiResult type should be represented in the schema
 // but that requires generic type generation:
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
-export type CreateMembershipResponseResult = ApiResult<CreateMembershipResponseType>;
+export type CreateMembershipResponseResult = ApiResult<CreateMembershipResponse>;
 
-export interface CreateSpaceParamsType {
+export interface CreateSpaceParams {
 	community_id: number;
 	name: string;
 	url: string;
@@ -181,7 +181,7 @@ export interface CreateSpaceParamsType {
 	content: string;
 }
 
-export interface CreateSpaceResponseType {
+export interface CreateSpaceResponse {
 	space: {
 		space_id: number;
 		name: string;
@@ -196,13 +196,13 @@ export interface CreateSpaceResponseType {
 // TODO hacky, the ApiResult type should be represented in the schema
 // but that requires generic type generation:
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
-export type CreateSpaceResponseResult = ApiResult<CreateSpaceResponseType>;
+export type CreateSpaceResponseResult = ApiResult<CreateSpaceResponse>;
 
-export interface ReadSpaceParamsType {
+export interface ReadSpaceParams {
 	space_id: number;
 }
 
-export interface ReadSpaceResponseType {
+export interface ReadSpaceResponse {
 	space: {
 		space_id: number;
 		name: string;
@@ -217,13 +217,13 @@ export interface ReadSpaceResponseType {
 // TODO hacky, the ApiResult type should be represented in the schema
 // but that requires generic type generation:
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
-export type ReadSpaceResponseResult = ApiResult<ReadSpaceResponseType>;
+export type ReadSpaceResponseResult = ApiResult<ReadSpaceResponse>;
 
-export interface ReadSpacesParamsType {
+export interface ReadSpacesParams {
 	community_id: number;
 }
 
-export interface ReadSpacesResponseType {
+export interface ReadSpacesResponse {
 	spaces: {
 		space_id: number;
 		name: string;
@@ -238,15 +238,15 @@ export interface ReadSpacesResponseType {
 // TODO hacky, the ApiResult type should be represented in the schema
 // but that requires generic type generation:
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
-export type ReadSpacesResponseResult = ApiResult<ReadSpacesResponseType>;
+export type ReadSpacesResponseResult = ApiResult<ReadSpacesResponse>;
 
-export interface CreateFileParamsType {
+export interface CreateFileParams {
 	actor_id: number;
 	space_id: number;
 	content: string;
 }
 
-export interface CreateFileResponseType {
+export interface CreateFileResponse {
 	file: {
 		file_id: number;
 		actor_id: number;
@@ -260,13 +260,13 @@ export interface CreateFileResponseType {
 // TODO hacky, the ApiResult type should be represented in the schema
 // but that requires generic type generation:
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
-export type CreateFileResponseResult = ApiResult<CreateFileResponseType>;
+export type CreateFileResponseResult = ApiResult<CreateFileResponse>;
 
-export interface ReadFilesParamsType {
+export interface ReadFilesParams {
 	space_id: number;
 }
 
-export interface ReadFilesResponseType {
+export interface ReadFilesResponse {
 	files: {
 		file_id: number;
 		actor_id: number;
@@ -280,84 +280,82 @@ export interface ReadFilesResponseType {
 // TODO hacky, the ApiResult type should be represented in the schema
 // but that requires generic type generation:
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
-export type ReadFilesResponseResult = ApiResult<ReadFilesResponseType>;
+export type ReadFilesResponseResult = ApiResult<ReadFilesResponse>;
 
-export interface QueryFilesParamsType {
+export interface QueryFilesParams {
 	space_id: number;
 }
 
-export type ToggleMainNavParamsType = void;
+export type ToggleMainNavParams = void;
 
-export type ToggleSecondaryNavParamsType = void;
+export type ToggleSecondaryNavParams = void;
 
-export type SetMainNavViewParamsType = 'explorer' | 'account';
+export type SetMainNavViewParams = 'explorer' | 'account';
 
-export type SetMobileParamsType = boolean;
+export type SetMobileParams = boolean;
 
-export interface SelectPersonaParamsType {
+export interface SelectPersonaParams {
 	persona_id: number;
 }
 
-export interface SelectCommunityParamsType {
+export interface SelectCommunityParams {
 	community_id: number | null;
 }
 
-export interface SelectSpaceParamsType {
+export interface SelectSpaceParams {
 	community_id: number;
 	space_id: number;
 }
 
 export interface Dispatch {
-	(eventName: 'log_in', params: LogInParamsType): Promise<
-		ApiResult<{session: ClientAccountSession}>
-	>;
-	(eventName: 'log_out', params: LogOutParamsType): Promise<ApiResult<{message: string}>>;
-	(eventName: 'create_community', params: CreateCommunityParamsType): Promise<
+	(eventName: 'log_in', params: LogInParams): Promise<ApiResult<{session: ClientAccountSession}>>;
+	(eventName: 'log_out', params: LogOutParams): Promise<ApiResult<{message: string}>>;
+	(eventName: 'create_community', params: CreateCommunityParams): Promise<
 		ApiResult<{
 			community: Community;
 		}>
 	>;
-	(eventName: 'read_community', params: ReadCommunityParamsType): Promise<
+	(eventName: 'read_community', params: ReadCommunityParams): Promise<
 		ApiResult<{
 			community: Community;
 		}>
 	>;
-	(eventName: 'read_communities', params: ReadCommunitiesParamsType): Promise<
+	(eventName: 'read_communities', params: ReadCommunitiesParams): Promise<
 		ApiResult<{
 			communities: Community[];
 		}>
 	>;
-	(eventName: 'create_persona', params: CreatePersonaParamsType): Promise<
+	(eventName: 'create_persona', params: CreatePersonaParams): Promise<
 		ApiResult<{persona: Persona; community: Community}>
 	>;
-	(eventName: 'create_membership', params: CreateMembershipParamsType): Promise<
+	(eventName: 'create_membership', params: CreateMembershipParams): Promise<
 		ApiResult<{membership: Membership}>
 	>;
-	(eventName: 'create_space', params: CreateSpaceParamsType): Promise<ApiResult<{space: Space}>>;
-	(eventName: 'read_space', params: ReadSpaceParamsType): Promise<ApiResult<{space: Space}>>;
-	(eventName: 'read_spaces', params: ReadSpacesParamsType): Promise<ApiResult<{spaces: Space[]}>>;
-	(eventName: 'create_file', params: CreateFileParamsType): Promise<ApiResult<{file: File}>>;
-	(eventName: 'read_files', params: ReadFilesParamsType): Promise<ApiResult<{files: File[]}>>;
-	(eventName: 'query_files', params: QueryFilesParamsType): Readable<Readable<File>[]>;
-	(eventName: 'toggle_main_nav', params: ToggleMainNavParamsType): void;
-	(eventName: 'toggle_secondary_nav', params: ToggleSecondaryNavParamsType): void;
-	(eventName: 'set_main_nav_view', params: SetMainNavViewParamsType): void;
-	(eventName: 'set_mobile', params: SetMobileParamsType): void;
-	(eventName: 'select_persona', params: SelectPersonaParamsType): void;
-	(eventName: 'select_community', params: SelectCommunityParamsType): void;
-	(eventName: 'select_space', params: SelectSpaceParamsType): void;
+	(eventName: 'create_space', params: CreateSpaceParams): Promise<ApiResult<{space: Space}>>;
+	(eventName: 'read_space', params: ReadSpaceParams): Promise<ApiResult<{space: Space}>>;
+	(eventName: 'read_spaces', params: ReadSpacesParams): Promise<ApiResult<{spaces: Space[]}>>;
+	(eventName: 'create_file', params: CreateFileParams): Promise<ApiResult<{file: File}>>;
+	(eventName: 'read_files', params: ReadFilesParams): Promise<ApiResult<{files: File[]}>>;
+	(eventName: 'query_files', params: QueryFilesParams): Readable<Readable<File>[]>;
+	(eventName: 'toggle_main_nav', params: ToggleMainNavParams): void;
+	(eventName: 'toggle_secondary_nav', params: ToggleSecondaryNavParams): void;
+	(eventName: 'set_main_nav_view', params: SetMainNavViewParams): void;
+	(eventName: 'set_mobile', params: SetMobileParams): void;
+	(eventName: 'select_persona', params: SelectPersonaParams): void;
+	(eventName: 'select_community', params: SelectCommunityParams): void;
+	(eventName: 'select_space', params: SelectSpaceParams): void;
 }
 
 export interface UiHandlers {
 	log_in: (
-		ctx: DispatchContext<LogInParamsType, ApiResult<{session: ClientAccountSession}>>,
+		ctx: DispatchContext<LogInParams, ApiResult<{session: ClientAccountSession}>>,
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
 	log_out: (
-		ctx: DispatchContext<LogOutParamsType, ApiResult<{message: string}>>,
+		ctx: DispatchContext<LogOutParams, ApiResult<{message: string}>>,
 	) => Promise<ApiResult<{message: string}>>;
 	create_community: (
 		ctx: DispatchContext<
-			CreateCommunityParamsType,
+			CreateCommunityParams,
 			ApiResult<{
 				community: Community;
 			}>
@@ -369,7 +367,7 @@ export interface UiHandlers {
 	>;
 	read_community: (
 		ctx: DispatchContext<
-			ReadCommunityParamsType,
+			ReadCommunityParams,
 			ApiResult<{
 				community: Community;
 			}>
@@ -381,7 +379,7 @@ export interface UiHandlers {
 	>;
 	read_communities: (
 		ctx: DispatchContext<
-			ReadCommunitiesParamsType,
+			ReadCommunitiesParams,
 			ApiResult<{
 				communities: Community[];
 			}>
@@ -392,37 +390,34 @@ export interface UiHandlers {
 		}>
 	>;
 	create_persona: (
-		ctx: DispatchContext<
-			CreatePersonaParamsType,
-			ApiResult<{persona: Persona; community: Community}>
-		>,
+		ctx: DispatchContext<CreatePersonaParams, ApiResult<{persona: Persona; community: Community}>>,
 	) => Promise<ApiResult<{persona: Persona; community: Community}>>;
 	create_membership: (
-		ctx: DispatchContext<CreateMembershipParamsType, ApiResult<{membership: Membership}>>,
+		ctx: DispatchContext<CreateMembershipParams, ApiResult<{membership: Membership}>>,
 	) => Promise<ApiResult<{membership: Membership}>>;
 	create_space: (
-		ctx: DispatchContext<CreateSpaceParamsType, ApiResult<{space: Space}>>,
+		ctx: DispatchContext<CreateSpaceParams, ApiResult<{space: Space}>>,
 	) => Promise<ApiResult<{space: Space}>>;
 	read_space: (
-		ctx: DispatchContext<ReadSpaceParamsType, ApiResult<{space: Space}>>,
+		ctx: DispatchContext<ReadSpaceParams, ApiResult<{space: Space}>>,
 	) => Promise<ApiResult<{space: Space}>>;
 	read_spaces: (
-		ctx: DispatchContext<ReadSpacesParamsType, ApiResult<{spaces: Space[]}>>,
+		ctx: DispatchContext<ReadSpacesParams, ApiResult<{spaces: Space[]}>>,
 	) => Promise<ApiResult<{spaces: Space[]}>>;
 	create_file: (
-		ctx: DispatchContext<CreateFileParamsType, ApiResult<{file: File}>>,
+		ctx: DispatchContext<CreateFileParams, ApiResult<{file: File}>>,
 	) => Promise<ApiResult<{file: File}>>;
 	read_files: (
-		ctx: DispatchContext<ReadFilesParamsType, ApiResult<{files: File[]}>>,
+		ctx: DispatchContext<ReadFilesParams, ApiResult<{files: File[]}>>,
 	) => Promise<ApiResult<{files: File[]}>>;
-	query_files: (ctx: DispatchContext<QueryFilesParamsType, void>) => Readable<Readable<File>[]>;
-	toggle_main_nav: (ctx: DispatchContext<ToggleMainNavParamsType, void>) => void;
-	toggle_secondary_nav: (ctx: DispatchContext<ToggleSecondaryNavParamsType, void>) => void;
-	set_main_nav_view: (ctx: DispatchContext<SetMainNavViewParamsType, void>) => void;
-	set_mobile: (ctx: DispatchContext<SetMobileParamsType, void>) => void;
-	select_persona: (ctx: DispatchContext<SelectPersonaParamsType, void>) => void;
-	select_community: (ctx: DispatchContext<SelectCommunityParamsType, void>) => void;
-	select_space: (ctx: DispatchContext<SelectSpaceParamsType, void>) => void;
+	query_files: (ctx: DispatchContext<QueryFilesParams, void>) => Readable<Readable<File>[]>;
+	toggle_main_nav: (ctx: DispatchContext<ToggleMainNavParams, void>) => void;
+	toggle_secondary_nav: (ctx: DispatchContext<ToggleSecondaryNavParams, void>) => void;
+	set_main_nav_view: (ctx: DispatchContext<SetMainNavViewParams, void>) => void;
+	set_mobile: (ctx: DispatchContext<SetMobileParams, void>) => void;
+	select_persona: (ctx: DispatchContext<SelectPersonaParams, void>) => void;
+	select_community: (ctx: DispatchContext<SelectCommunityParams, void>) => void;
+	select_space: (ctx: DispatchContext<SelectSpaceParams, void>) => void;
 }
 
 // generated by src/lib/app/eventTypes.gen.ts
