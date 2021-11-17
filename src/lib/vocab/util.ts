@@ -1,6 +1,6 @@
 import {stripEnd, stripStart} from '@feltcoop/felt/util/string.js';
 
-export const ID_PREFIX = 'https://felt.social';
+export const ID_PREFIX = 'https://felt.dev';
 export const ID_VOCAB_PREFIX = ID_PREFIX + '/vocab/';
 export const ID_SUFFIX = '.json';
 

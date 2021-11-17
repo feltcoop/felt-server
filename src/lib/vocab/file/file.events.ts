@@ -6,7 +6,7 @@ export const create_file: ServiceEventInfo = {
 	name: 'create_file',
 	params: {
 		schema: {
-			$id: 'https://felt.social/vocab/create_file_params.json',
+			$id: 'https://felt.dev/vocab/create_file_params.json',
 			type: 'object',
 			properties: {
 				actor_id: {type: 'number'},
@@ -20,7 +20,7 @@ export const create_file: ServiceEventInfo = {
 	response: {
 		type: `ApiResult<${create_file_response_type}>`,
 		schema: {
-			$id: 'https://felt.social/vocab/create_file_response.json',
+			$id: 'https://felt.dev/vocab/create_file_response.json',
 			type: 'object',
 			properties: {
 				file: {$ref: 'File.json'},
@@ -42,7 +42,7 @@ export const read_files: ServiceEventInfo = {
 	name: 'read_files',
 	params: {
 		schema: {
-			$id: 'https://felt.social/vocab/read_files_params.json',
+			$id: 'https://felt.dev/vocab/read_files_params.json',
 			type: 'object',
 			properties: {
 				space_id: {type: 'number'},
@@ -54,7 +54,7 @@ export const read_files: ServiceEventInfo = {
 	response: {
 		type: `ApiResult<${read_files_response_type}>`,
 		schema: {
-			$id: 'https://felt.social/vocab/read_files_response.json',
+			$id: 'https://felt.dev/vocab/read_files_response.json',
 			type: 'object',
 			properties: {
 				files: {type: 'array', items: {$ref: 'File.json'}},
@@ -79,13 +79,13 @@ export const query_files: ClientEventInfo = {
 	name: 'query_files',
 	// TODO this is saying "use `read_files`'s params but for this event"
 	// but it's verbose and awkward. If the pattern should stay, we could write a helper like:
-	// `renameSchema(read_files.params.schema, 'https://felt.social/vocab/query_files_response.json')`
+	// `renameSchema(read_files.params.schema, 'https://felt.dev/vocab/query_files_response.json')`
 	// but that only handles extending the $id, which may not be the common case.
 	params: {
 		...read_files.params,
 		schema: {
 			...(read_files.params.schema as object),
-			$id: 'https://felt.social/vocab/query_files_response.json',
+			$id: 'https://felt.dev/vocab/query_files_response.json',
 		},
 	},
 	// TODO Can/should this compose the `read_files` event info?

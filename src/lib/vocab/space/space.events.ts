@@ -6,7 +6,7 @@ export const create_space: ServiceEventInfo = {
 	name: 'create_space',
 	params: {
 		schema: {
-			$id: 'https://felt.social/vocab/create_space_params.json',
+			$id: 'https://felt.dev/vocab/create_space_params.json',
 			type: 'object',
 			properties: {
 				community_id: {type: 'number'},
@@ -22,7 +22,7 @@ export const create_space: ServiceEventInfo = {
 	response: {
 		type: `ApiResult<${create_space_response_type}>`,
 		schema: {
-			$id: 'https://felt.social/vocab/create_space_response.json',
+			$id: 'https://felt.dev/vocab/create_space_response.json',
 			type: 'object',
 			properties: {
 				space: {$ref: 'Space.json'},
@@ -44,7 +44,7 @@ export const read_space: ServiceEventInfo = {
 	name: 'read_space',
 	params: {
 		schema: {
-			$id: 'https://felt.social/vocab/read_space_params.json',
+			$id: 'https://felt.dev/vocab/read_space_params.json',
 			type: 'object',
 			properties: {
 				space_id: {type: 'number'},
@@ -56,7 +56,7 @@ export const read_space: ServiceEventInfo = {
 	response: {
 		type: `ApiResult<${read_space_response_type}>`,
 		schema: {
-			$id: 'https://felt.social/vocab/read_space_response.json',
+			$id: 'https://felt.dev/vocab/read_space_response.json',
 			type: 'object',
 			properties: {
 				space: {$ref: 'Space.json'},
@@ -78,7 +78,7 @@ export const read_spaces: ServiceEventInfo = {
 	name: 'read_spaces',
 	params: {
 		schema: {
-			$id: 'https://felt.social/vocab/read_spaces_params.json',
+			$id: 'https://felt.dev/vocab/read_spaces_params.json',
 			type: 'object',
 			properties: {
 				community_id: {type: 'number'},
@@ -90,7 +90,7 @@ export const read_spaces: ServiceEventInfo = {
 	response: {
 		type: `ApiResult<${read_spaces_response_type}>`,
 		schema: {
-			$id: 'https://felt.social/vocab/read_spaces_response.json',
+			$id: 'https://felt.dev/vocab/read_spaces_response.json',
 			type: 'object',
 			properties: {
 				spaces: {type: 'array', items: {$ref: 'Space.json'}},

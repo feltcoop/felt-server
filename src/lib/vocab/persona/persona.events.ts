@@ -6,7 +6,7 @@ export const create_persona: ServiceEventInfo = {
 	name: 'create_persona',
 	params: {
 		schema: {
-			$id: 'https://felt.social/vocab/create_persona_params.json',
+			$id: 'https://felt.dev/vocab/create_persona_params.json',
 			type: 'object',
 			properties: {
 				name: {type: 'string'},
@@ -18,7 +18,7 @@ export const create_persona: ServiceEventInfo = {
 	response: {
 		type: `ApiResult<${create_persona_response_type}>`,
 		schema: {
-			$id: 'https://felt.social/vocab/create_persona_response.json',
+			$id: 'https://felt.dev/vocab/create_persona_response.json',
 			type: 'object',
 			properties: {
 				persona: {$ref: 'Persona.json'},

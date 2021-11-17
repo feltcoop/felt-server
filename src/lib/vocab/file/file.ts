@@ -7,7 +7,7 @@ export interface File {
 	updated: Date | null;
 }
 export const FileSchema = {
-	$id: 'https://felt.social/vocab/File.json',
+	$id: 'https://felt.dev/vocab/File.json',
 	type: 'object',
 	properties: {
 		file_id: {type: 'number'},

@@ -53,14 +53,35 @@ export interface LogInParamsType {
 	password: string;
 }
 
+export type LogInParamsType = null;
+
 export type log_in_response_type = ApiResult<{session: ClientAccountSession}>;
 
 export type LogOutParamsType = void;
+export interface LogOutParamsType {
+	message: string;
+	[k: string]: unknown;
+}
+
 export type log_out_response_type = ApiResult<{message: string}>;
 
 export interface CreateCommunityParamsType {
 	name: string;
 	persona_id: number;
+}
+
+export interface CreateCommunityParamsType {
+	community: {
+		community_id: number;
+		name: string;
+		created: {
+			[k: string]: unknown;
+		};
+		updated: {
+			[k: string]: unknown;
+		} | null;
+		[k: string]: unknown;
+	};
 }
 
 export type create_community_response_type = ApiResult<{
@@ -71,11 +92,39 @@ export interface ReadCommunityParamsType {
 	community_id: number;
 }
 
+export interface ReadCommunityParamsType {
+	community: {
+		community_id: number;
+		name: string;
+		created: {
+			[k: string]: unknown;
+		};
+		updated: {
+			[k: string]: unknown;
+		} | null;
+		[k: string]: unknown;
+	};
+}
+
 export type read_community_response_type = ApiResult<{
 	community: Community;
 }>;
 
 export interface ReadCommunitiesParamsType {}
+
+export interface ReadCommunitiesParamsType {
+	communities: {
+		community_id: number;
+		name: string;
+		created: {
+			[k: string]: unknown;
+		};
+		updated: {
+			[k: string]: unknown;
+		} | null;
+		[k: string]: unknown;
+	}[];
+}
 
 export type read_communities_response_type = ApiResult<{
 	communities: Community[];
@@ -85,11 +134,51 @@ export interface CreatePersonaParamsType {
 	name: string;
 }
 
+export interface CreatePersonaParamsType {
+	persona: {
+		persona_id: number;
+		account_id: number;
+		name: string;
+		icon?: string;
+		community_ids: number[];
+		created: {
+			[k: string]: unknown;
+		};
+		updated: {
+			[k: string]: unknown;
+		} | null;
+	};
+	community: {
+		community_id: number;
+		name: string;
+		created: {
+			[k: string]: unknown;
+		};
+		updated: {
+			[k: string]: unknown;
+		} | null;
+		[k: string]: unknown;
+	};
+}
+
 export type create_persona_response_type = ApiResult<{persona: Persona; community: Community}>;
 
 export interface CreateMembershipParamsType {
 	persona_id: number;
 	community_id: number;
+}
+
+export interface CreateMembershipParamsType {
+	membership: {
+		persona_id: number;
+		community_id: number;
+		created: {
+			[k: string]: unknown;
+		};
+		updated: {
+			[k: string]: unknown;
+		} | null;
+	};
 }
 
 export type create_membership_response_type = ApiResult<{membership: Membership}>;
@@ -102,16 +191,64 @@ export interface CreateSpaceParamsType {
 	content: string;
 }
 
+export interface CreateSpaceParamsType {
+	space: {
+		space_id: number;
+		name: string;
+		url: string;
+		media_type: string;
+		content: string;
+		created: {
+			[k: string]: unknown;
+		};
+		updated: {
+			[k: string]: unknown;
+		} | null;
+	};
+}
+
 export type create_space_response_type = ApiResult<{space: Space}>;
 
 export interface ReadSpaceParamsType {
 	space_id: number;
 }
 
+export interface ReadSpaceParamsType {
+	space: {
+		space_id: number;
+		name: string;
+		url: string;
+		media_type: string;
+		content: string;
+		created: {
+			[k: string]: unknown;
+		};
+		updated: {
+			[k: string]: unknown;
+		} | null;
+	};
+}
+
 export type read_space_response_type = ApiResult<{space: Space}>;
 
 export interface ReadSpacesParamsType {
 	community_id: number;
+}
+
+export interface ReadSpacesParamsType {
+	spaces: {
+		space_id: number;
+		name: string;
+		url: string;
+		media_type: string;
+		content: string;
+		created: {
+			[k: string]: unknown;
+		};
+		updated: {
+			[k: string]: unknown;
+		} | null;
+	}[];
 }
 
 export type read_spaces_response_type = ApiResult<{spaces: Space[]}>;
@@ -122,10 +259,40 @@ export interface CreateFileParamsType {
 	content: string;
 }
 
+export interface CreateFileParamsType {
+	file: {
+		file_id: number;
+		actor_id: number;
+		space_id: number;
+		content: string;
+		created: {
+			[k: string]: unknown;
+		};
+		updated: {
+			[k: string]: unknown;
+		} | null;
+	};
+}
+
 export type create_file_response_type = ApiResult<{file: File}>;
 
 export interface ReadFilesParamsType {
 	space_id: number;
+}
+
+export interface ReadFilesParamsType {
+	files: {
+		file_id: number;
+		actor_id: number;
+		space_id: number;
+		content: string;
+		created: {
+			[k: string]: unknown;
+		};
+		updated: {
+			[k: string]: unknown;
+		} | null;
+	}[];
 }
 
 export type read_files_response_type = ApiResult<{files: File[]}>;

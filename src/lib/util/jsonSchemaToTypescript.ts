@@ -1,8 +1,8 @@
-import type {AnySchema} from 'ajv';
+import type {SchemaObject} from 'ajv';
 import {compile, Options} from 'json-schema-to-typescript';
 
 export const jsonSchemaToTypescript = (
-	schema: AnySchema | null,
+	schema: SchemaObject | null,
 	name: string,
 	options?: Partial<Options> | undefined,
 ) => {

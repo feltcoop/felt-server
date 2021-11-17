@@ -12,7 +12,7 @@ export interface Community {
 // TODO fix this type to infer `Community` like with the other schemas --
 // need to handle the various kinds of `Community` doc variations we return from the database
 export const CommunitySchema = {
-	$id: 'https://felt.social/vocab/Community.json',
+	$id: 'https://felt.dev/vocab/Community.json',
 	type: 'object',
 	properties: {
 		community_id: {type: 'number'},
@@ -20,8 +20,8 @@ export const CommunitySchema = {
 		created: {type: 'object', format: 'date-time'},
 		updated: {type: ['object', 'null'], format: 'date-time'},
 		// TODO this fails because Community circularly references itself via `Vocab`
-		// spaces: Type.Array(Type.Ref(Vocab, {...SpaceSchema, $id: 'https://felt.social/vocab/CommunitySpaceSchema.json'})),
-		// memberPersonas: Type.Array(Type.Ref(Vocab, {...PersonaSchema, $id: 'https://felt.social/vocab/CommunityPersonaSchema.json'})),
+		// spaces: Type.Array(Type.Ref(Vocab, {...SpaceSchema, $id: 'https://felt.dev/vocab/CommunitySpaceSchema.json'})),
+		// memberPersonas: Type.Array(Type.Ref(Vocab, {...PersonaSchema, $id: 'https://felt.dev/vocab/CommunityPersonaSchema.json'})),
 	},
 	required: ['community_id', 'name', 'created', 'updated'],
 	additionalProperties: true, // TODO `true` is a hack related to the above

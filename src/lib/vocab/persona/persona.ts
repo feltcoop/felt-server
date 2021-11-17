@@ -8,7 +8,7 @@ export interface Persona {
 	updated: Date | null;
 }
 export const PersonaSchema = {
-	$id: 'https://felt.social/vocab/Persona.json',
+	$id: 'https://felt.dev/vocab/Persona.json',
 	type: 'object',
 	properties: {
 		persona_id: {type: 'number'},
@@ -27,7 +27,7 @@ export interface PersonaParams {
 	name: string;
 }
 export const PersonaParamsSchema = {
-	$id: 'https://felt.social/vocab/PersonaParams.json',
+	$id: 'https://felt.dev/vocab/PersonaParams.json',
 	type: 'object',
 	properties: {
 		name: {type: 'string'},

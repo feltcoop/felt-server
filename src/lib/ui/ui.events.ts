@@ -33,7 +33,7 @@ export const events: ClientEventInfo[] = [
 		name: 'set_mobile',
 		params: {
 			schema: {
-				$id: 'https://felt.social/vocab/set_mobile_params.json',
+				$id: 'https://felt.dev/vocab/set_mobile_params.json',
 				type: 'boolean',
 			},
 		},
@@ -44,7 +44,7 @@ export const events: ClientEventInfo[] = [
 		name: 'select_persona',
 		params: {
 			schema: {
-				$id: 'https://felt.social/vocab/select_persona_params.json',
+				$id: 'https://felt.dev/vocab/select_persona_params.json',
 				type: 'object',
 				properties: {
 					persona_id: {type: 'number'},
@@ -60,7 +60,7 @@ export const events: ClientEventInfo[] = [
 		name: 'select_community',
 		params: {
 			schema: {
-				$id: 'https://felt.social/vocab/select_community_params.json',
+				$id: 'https://felt.dev/vocab/select_community_params.json',
 				type: 'object',
 				properties: {
 					community_id: {anyOf: [{type: 'number'}, {type: 'null'}]},
@@ -76,7 +76,7 @@ export const events: ClientEventInfo[] = [
 		name: 'select_space',
 		params: {
 			schema: {
-				$id: 'https://felt.social/vocab/select_space_params.json',
+				$id: 'https://felt.dev/vocab/select_space_params.json',
 				type: 'object',
 				properties: {
 					community_id: {type: 'number'},

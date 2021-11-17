@@ -1,16 +1,11 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
-import type {AnySchema} from 'ajv';
+import type {SchemaObject} from 'ajv';
 
 import {schemas} from '$lib/app/schemas';
 import {ID_VOCAB_PREFIX} from '$lib/vocab/util';
 
-const printSchema = (schema: AnySchema) =>
-	typeof schema === 'boolean'
-		? `AnonymousBooleanSchema`
-		: '$id' in schema
-		? schema.$id
-		: 'AnonymousSchema';
+const printSchema = (schema: SchemaObject) => ('$id' in schema ? schema.$id : 'AnonymousSchema');
 
 /* test__schemas */
 const test__schemas = suite('schemas');

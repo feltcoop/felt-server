@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type {AnySchema} from 'ajv';
+	import type {SchemaObject} from 'ajv';
 
 	import {toSchemaName} from '$lib/vocab/util';
 
-	export let schema: AnySchema;
+	export let schema: SchemaObject;
 
-	let properties: undefined | [string, AnySchema][];
+	let properties: undefined | [string, SchemaObject][];
 	$: properties =
 		typeof schema !== 'boolean' &&
 		schema.properties &&
