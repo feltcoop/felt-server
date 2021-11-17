@@ -3,7 +3,7 @@ import {setContext, getContext} from 'svelte';
 import type {Ui} from '$lib/ui/ui';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
-import type {EventParams, EventResponse} from '$lib/app/eventTypes';
+import type {EventParamsByName, EventResponseByName} from '$lib/app/eventTypes';
 import type {Dispatch} from '$lib/app/eventTypes';
 
 // TODO this has evolved to the point where perhaps this module should be `dispatch.ts`
@@ -27,7 +27,7 @@ export interface DispatchContext<
 	eventName: string;
 	params: TParams;
 	dispatch: Dispatch;
-	client: ApiClient<EventParams, EventResponse>;
+	client: ApiClient<EventParamsByName, EventResponseByName>;
 	invoke: TResult extends void ? null : (params?: TParams) => Promise<TResult>;
 }
 
@@ -35,7 +35,7 @@ export interface Api {
 	dispatch: Dispatch;
 }
 
-export const toApi = (ui: Ui, client: ApiClient<EventParams, EventResponse>): Api => {
+export const toApi = (ui: Ui, client: ApiClient<EventParamsByName, EventResponseByName>): Api => {
 	// TODO delete this and `client2` after adding tests for both the websocket and http clients
 	const api: Api = {
 		// TODO validate the params here to improve UX, but for now we're safe letting the server validate

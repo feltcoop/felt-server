@@ -30,7 +30,7 @@ import type {Space} from '$lib/vocab/space/space';
 import type {File} from '$lib/vocab/file/file';
 import type {DispatchContext} from '$lib/ui/api';
 
-export interface EventParams {
+export interface EventParamsByName {
 	${eventInfos.reduce(
 		(str, eventInfo) =>
 			str +
@@ -40,7 +40,7 @@ ${eventInfo.name}: ${toParamsName(eventInfo.name)};
 		'',
 	)}
 }
-export interface EventResponse {
+export interface EventResponseByName {
 	${eventInfos.reduce(
 		(str, eventInfo) =>
 			str +
