@@ -60,7 +60,8 @@ export type LogInResponseType = null;
 // https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type LogInResponseResult = ApiResult<LogInResponseType>;
 
-export type LogOutParamsType = void;
+export type LogOutParamsType = null;
+
 export interface LogOutResponseType {
 	message: string;
 }
@@ -79,12 +80,8 @@ export interface CreateCommunityResponseType {
 	community: {
 		community_id: number;
 		name: string;
-		created: {
-			[k: string]: unknown;
-		};
-		updated: {
-			[k: string]: unknown;
-		} | null;
+		created: Date;
+		updated: Date | null;
 		[k: string]: unknown;
 	};
 }
@@ -102,12 +99,8 @@ export interface ReadCommunityResponseType {
 	community: {
 		community_id: number;
 		name: string;
-		created: {
-			[k: string]: unknown;
-		};
-		updated: {
-			[k: string]: unknown;
-		} | null;
+		created: Date;
+		updated: Date | null;
 		[k: string]: unknown;
 	};
 }
@@ -123,12 +116,8 @@ export interface ReadCommunitiesResponseType {
 	communities: {
 		community_id: number;
 		name: string;
-		created: {
-			[k: string]: unknown;
-		};
-		updated: {
-			[k: string]: unknown;
-		} | null;
+		created: Date;
+		updated: Date | null;
 		[k: string]: unknown;
 	}[];
 }
@@ -149,22 +138,14 @@ export interface CreatePersonaResponseType {
 		name: string;
 		icon?: string;
 		community_ids: number[];
-		created: {
-			[k: string]: unknown;
-		};
-		updated: {
-			[k: string]: unknown;
-		} | null;
+		created: Date;
+		updated: Date | null;
 	};
 	community: {
 		community_id: number;
 		name: string;
-		created: {
-			[k: string]: unknown;
-		};
-		updated: {
-			[k: string]: unknown;
-		} | null;
+		created: Date;
+		updated: Date | null;
 		[k: string]: unknown;
 	};
 }
@@ -183,12 +164,8 @@ export interface CreateMembershipResponseType {
 	membership: {
 		persona_id: number;
 		community_id: number;
-		created: {
-			[k: string]: unknown;
-		};
-		updated: {
-			[k: string]: unknown;
-		} | null;
+		created: Date;
+		updated: Date | null;
 	};
 }
 
@@ -212,12 +189,8 @@ export interface CreateSpaceResponseType {
 		url: string;
 		media_type: string;
 		content: string;
-		created: {
-			[k: string]: unknown;
-		};
-		updated: {
-			[k: string]: unknown;
-		} | null;
+		created: Date;
+		updated: Date | null;
 	};
 }
 
@@ -237,12 +210,8 @@ export interface ReadSpaceResponseType {
 		url: string;
 		media_type: string;
 		content: string;
-		created: {
-			[k: string]: unknown;
-		};
-		updated: {
-			[k: string]: unknown;
-		} | null;
+		created: Date;
+		updated: Date | null;
 	};
 }
 
@@ -262,12 +231,8 @@ export interface ReadSpacesResponseType {
 		url: string;
 		media_type: string;
 		content: string;
-		created: {
-			[k: string]: unknown;
-		};
-		updated: {
-			[k: string]: unknown;
-		} | null;
+		created: Date;
+		updated: Date | null;
 	}[];
 }
 
@@ -288,12 +253,8 @@ export interface CreateFileResponseType {
 		actor_id: number;
 		space_id: number;
 		content: string;
-		created: {
-			[k: string]: unknown;
-		};
-		updated: {
-			[k: string]: unknown;
-		} | null;
+		created: Date;
+		updated: Date | null;
 	};
 }
 
@@ -312,12 +273,8 @@ export interface ReadFilesResponseType {
 		actor_id: number;
 		space_id: number;
 		content: string;
-		created: {
-			[k: string]: unknown;
-		};
-		updated: {
-			[k: string]: unknown;
-		} | null;
+		created: Date;
+		updated: Date | null;
 	}[];
 }
 

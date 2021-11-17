@@ -10,8 +10,8 @@ export const MembershipSchema = {
 	properties: {
 		persona_id: {type: 'number'},
 		community_id: {type: 'number'},
-		created: {type: 'object', format: 'date-time'},
-		updated: {type: ['object', 'null'], format: 'date-time'},
+		created: {type: 'object', format: 'date-time', tsType: 'Date'},
+		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 	},
 	required: ['persona_id', 'community_id', 'created', 'updated'],
 	additionalProperties: false,

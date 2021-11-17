@@ -23,6 +23,7 @@ export const events: ClientEventInfo[] = [
 		params: {
 			schema: {
 				// TODO this is the type `MainNavView` -- should that be represented in a schema?
+				$id: 'https://felt.dev/vocab/set_main_nav_view_params.json',
 				enum: ['explorer', 'account'],
 			},
 		},

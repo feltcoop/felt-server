@@ -23,7 +23,6 @@ export const log_in: RemoteEventInfo = {
 		schema: {
 			$id: 'https://felt.dev/vocab/log_in_response.json',
 			type: 'null',
-			additionalProperties: false,
 		},
 	},
 	returns: `Promise<ApiResult<${LogInResponseResult}>>`,
@@ -36,7 +35,10 @@ export const log_out: RemoteEventInfo = {
 	name: 'log_out',
 	params: {
 		// TODO refactor into a service
-		schema: null,
+		schema: {
+			$id: 'https://felt.dev/vocab/log_out_params.json',
+			type: 'null',
+		},
 	},
 	response: {
 		type: `ApiResult<${LogOutResponseResult}>`,

@@ -10,6 +10,7 @@ let ajvInstance: Ajv | null = null;
 export const ajv = (): Ajv => {
 	if (ajvInstance) return ajvInstance;
 	ajvInstance = new Ajv();
+	ajvInstance.addKeyword('tsType');
 	addFormats(ajvInstance);
 	for (const schema of schemas) {
 		ajvInstance.addSchema(schema);
