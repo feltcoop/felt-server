@@ -11,6 +11,12 @@
 The Felt server has a dependency on [PostgreSQL](https://www.postgresql.org) 13.2+.
 You can find [setup instructions](https://www.postgresql.org/download/) on their website.
 
+For Ubuntu you can usually just get away with
+
+```bash
+sudo apt-get -y install postgresql
+```
+
 Felt's database driver is [`postgres`](https://github.com/porsager/postgres).
 See its [README](https://github.com/porsager/postgres#readme) to learn more.
 
