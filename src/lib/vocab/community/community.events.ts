@@ -8,7 +8,7 @@ export const create_community: ServiceEventInfo = {
 	name: 'create_community',
 	params: {
 		schema: {
-			$id: 'https://felt.dev/vocab/create_community_params.json',
+			$id: 'https://felt.social/vocab/create_community_params.json',
 			type: 'object',
 			properties: {
 				name: {type: 'string'},
@@ -21,7 +21,7 @@ export const create_community: ServiceEventInfo = {
 	response: {
 		type: `ApiResult<${CreateCommunityResponseResult}>`,
 		schema: {
-			$id: 'https://felt.dev/vocab/create_community_response.json',
+			$id: 'https://felt.social/vocab/create_community_response.json',
 			type: 'object',
 			properties: {
 				community: {$ref: 'Community.json'},
@@ -45,7 +45,7 @@ export const read_community: ServiceEventInfo = {
 	name: 'read_community',
 	params: {
 		schema: {
-			$id: 'https://felt.dev/vocab/read_community_params.json',
+			$id: 'https://felt.social/vocab/read_community_params.json',
 			type: 'object',
 			properties: {
 				community_id: {type: 'number'},
@@ -57,7 +57,7 @@ export const read_community: ServiceEventInfo = {
 	response: {
 		type: `ApiResult<${ReadCommunityResponseResult}>`,
 		schema: {
-			$id: 'https://felt.dev/vocab/read_community_response.json',
+			$id: 'https://felt.social/vocab/read_community_response.json',
 			type: 'object',
 			properties: {
 				community: {$ref: 'Community.json'},
@@ -81,7 +81,7 @@ export const read_communities: ServiceEventInfo = {
 	name: 'read_communities',
 	params: {
 		schema: {
-			$id: 'https://felt.dev/vocab/read_communities_params.json',
+			$id: 'https://felt.social/vocab/read_communities_params.json',
 			type: 'object',
 			properties: {},
 			required: [],
@@ -91,7 +91,7 @@ export const read_communities: ServiceEventInfo = {
 	response: {
 		type: `ApiResult<${ReadCommunitiesResponseResult}>`,
 		schema: {
-			$id: 'https://felt.dev/vocab/read_communities_response.json',
+			$id: 'https://felt.social/vocab/read_communities_response.json',
 			type: 'object',
 			properties: {
 				communities: {type: 'array', items: {$ref: 'Community.json'}},

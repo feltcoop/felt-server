@@ -8,7 +8,7 @@ export interface Space {
 	updated: Date | null;
 }
 export const SpaceSchema = {
-	$id: 'https://felt.dev/vocab/Space.json',
+	$id: 'https://felt.social/vocab/Space.json',
 	type: 'object',
 	properties: {
 		space_id: {type: 'number'},

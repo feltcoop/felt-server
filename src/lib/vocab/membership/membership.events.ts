@@ -6,7 +6,7 @@ export const create_membership: ServiceEventInfo = {
 	name: 'create_membership',
 	params: {
 		schema: {
-			$id: 'https://felt.dev/vocab/create_membership_params.json',
+			$id: 'https://felt.social/vocab/create_membership_params.json',
 			type: 'object',
 			properties: {
 				persona_id: {type: 'number'},
@@ -19,7 +19,7 @@ export const create_membership: ServiceEventInfo = {
 	response: {
 		type: `ApiResult<${CreateMembershipResponseResult}>`,
 		schema: {
-			$id: 'https://felt.dev/vocab/create_membership_response.json',
+			$id: 'https://felt.social/vocab/create_membership_response.json',
 			type: 'object',
 			properties: {
 				membership: {$ref: 'Membership.json'},
