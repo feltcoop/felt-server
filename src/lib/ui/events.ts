@@ -53,12 +53,12 @@ export interface LogInParamsType {
 	password: string;
 }
 
-export type LogInParamsType = null;
+export type LogInResponseType = null;
 
 export type log_in_response_type = ApiResult<{session: ClientAccountSession}>;
 
 export type LogOutParamsType = void;
-export interface LogOutParamsType {
+export interface LogOutResponseType {
 	message: string;
 	[k: string]: unknown;
 }
@@ -70,7 +70,7 @@ export interface CreateCommunityParamsType {
 	persona_id: number;
 }
 
-export interface CreateCommunityParamsType {
+export interface CreateCommunityResponseType {
 	community: {
 		community_id: number;
 		name: string;
@@ -92,7 +92,7 @@ export interface ReadCommunityParamsType {
 	community_id: number;
 }
 
-export interface ReadCommunityParamsType {
+export interface ReadCommunityResponseType {
 	community: {
 		community_id: number;
 		name: string;
@@ -112,7 +112,7 @@ export type read_community_response_type = ApiResult<{
 
 export interface ReadCommunitiesParamsType {}
 
-export interface ReadCommunitiesParamsType {
+export interface ReadCommunitiesResponseType {
 	communities: {
 		community_id: number;
 		name: string;
@@ -134,7 +134,7 @@ export interface CreatePersonaParamsType {
 	name: string;
 }
 
-export interface CreatePersonaParamsType {
+export interface CreatePersonaResponseType {
 	persona: {
 		persona_id: number;
 		account_id: number;
@@ -168,7 +168,7 @@ export interface CreateMembershipParamsType {
 	community_id: number;
 }
 
-export interface CreateMembershipParamsType {
+export interface CreateMembershipResponseType {
 	membership: {
 		persona_id: number;
 		community_id: number;
@@ -191,7 +191,7 @@ export interface CreateSpaceParamsType {
 	content: string;
 }
 
-export interface CreateSpaceParamsType {
+export interface CreateSpaceResponseType {
 	space: {
 		space_id: number;
 		name: string;
@@ -213,7 +213,7 @@ export interface ReadSpaceParamsType {
 	space_id: number;
 }
 
-export interface ReadSpaceParamsType {
+export interface ReadSpaceResponseType {
 	space: {
 		space_id: number;
 		name: string;
@@ -235,7 +235,7 @@ export interface ReadSpacesParamsType {
 	community_id: number;
 }
 
-export interface ReadSpacesParamsType {
+export interface ReadSpacesResponseType {
 	spaces: {
 		space_id: number;
 		name: string;
@@ -259,7 +259,7 @@ export interface CreateFileParamsType {
 	content: string;
 }
 
-export interface CreateFileParamsType {
+export interface CreateFileResponseType {
 	file: {
 		file_id: number;
 		actor_id: number;
@@ -280,7 +280,7 @@ export interface ReadFilesParamsType {
 	space_id: number;
 }
 
-export interface ReadFilesParamsType {
+export interface ReadFilesResponseType {
 	files: {
 		file_id: number;
 		actor_id: number;
