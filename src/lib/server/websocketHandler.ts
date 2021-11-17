@@ -49,18 +49,19 @@ export const websocketHandler: WebsocketHandler = async (
 		return;
 	}
 
-	if (!service.event.params.schema || !service.event.response.schema) {
-		console.error('[websocketHandler] unimplemented service schema');
-		return;
-	}
+	let result;
 
 	const validateParams = validateSchema(service.event.params.schema);
 	if (!validateParams(params)) {
 		console.error(red('Failed to validate params'), validateParams.errors);
-		return;
+		result = {
+			ok: false,
+			status: 400,
+			reason: 'invalid params', // TODO helper to stringify `validateParams.errors`
+		};
+	} else {
+		result = await service.perform({server, params, account_id});
 	}
-
-	const result = await service.perform({server, params, account_id});
 
 	const responseMessage: JsonRpcResponse = {
 		jsonrpc: '2.0',

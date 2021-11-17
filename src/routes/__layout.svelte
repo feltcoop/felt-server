@@ -28,6 +28,7 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {goto} from '$app/navigation';
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
+	import {createPinger} from '$lib/ui/pinger';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -44,7 +45,7 @@
 	const devmode = setDevmode();
 	const socket = setSocket(
 		toSocketStore((data) =>
-			websocketApiClient.handle(data, (broadcastMessage) => {
+			apiClient.handle(data, (broadcastMessage) => {
 				(ui as any)[broadcastMessage.method]({
 					invoke: () => Promise.resolve(broadcastMessage.result),
 				});
@@ -53,10 +54,10 @@
 	);
 	const ui = setUi(toUi(session, initialMobileValue));
 
-	const websocketApiClient = toWebsocketApiClient(findService, socket.send);
+	const apiClient = toWebsocketApiClient(findService, socket.send);
 	// alternative http client:
-	// const httpApiClient = toHttpApiClient(findService);
-	const api = setApi(toApi(ui, websocketApiClient));
+	// const apiClient = toHttpApiClient(findService);
+	const api = setApi(toApi(ui, apiClient));
 	const app = setApp({ui, api, devmode, socket});
 	browser && console.log('app', app);
 	$: browser && console.log('$session', $session);
@@ -147,6 +148,7 @@
 	});
 
 	// TODO extract this logic to a websocket module or component
+	if (browser) createPinger(dispatch);
 	let connecting = false;
 	let connectCount = 0;
 	const RECONNECT_DELAY = 1000; // this matches the current Vite/SvelteKit retry rate; we could use the count to increase this

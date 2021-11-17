@@ -1,19 +1,31 @@
-import type {EventInfo} from '$lib/vocab/event/event';
+import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
+
+export const ping: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'ping',
+	params: {
+		type: 'void',
+		schema: {
+			$id: 'https://felt.social/vocab/ping_params.json',
+			type: 'null',
+		},
+	},
+	response: {
+		type: `ApiResult<void>`,
+		schema: {
+			$id: 'https://felt.social/vocab/ping_response.json',
+			type: 'null',
+		},
+	},
+	returns: `Promise<ApiResult<void>>`,
+	route: {
+		path: '/api/v1/ping',
+		method: 'GET',
+	},
+};
 
 export const events: EventInfo[] = [
-	{
-		type: 'RemoteEvent',
-		name: 'heartbeat',
-		params: {
-			type: 'void',
-			schema: false, // TODO inconsistent since this cannot be `null` like `ClientEvent`s, but is this even correct?
-		},
-		response: {
-			type: 'void',
-			schema: false, // TODO inconsistent since this cannot be `null` like `ClientEvent`s, but is this even correct?
-		},
-		returns: 'void',
-	},
+	ping,
 	{
 		type: 'ClientEvent',
 		name: 'toggle_main_nav',

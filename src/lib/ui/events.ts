@@ -26,7 +26,7 @@ export interface EventsParams {
 	create_file: create_file_params_type;
 	read_files: read_files_params_type;
 	query_files: query_files_params_type;
-	heartbeat: heartbeat_params_type;
+	ping: ping_params_type;
 	toggle_main_nav: toggle_main_nav_params_type;
 	toggle_secondary_nav: toggle_secondary_nav_params_type;
 	set_main_nav_view: set_main_nav_view_params_type;
@@ -48,7 +48,7 @@ export interface EventsResponse {
 	read_spaces: read_spaces_response_type;
 	create_file: create_file_response_type;
 	read_files: read_files_response_type;
-	heartbeat: heartbeat_response_type;
+	ping: ping_response_type;
 }
 
 export type log_in_params_type = {
@@ -117,8 +117,8 @@ export type read_files_response_type = ApiResult<{files: File[]}>;
 
 export type query_files_params_type = {space_id: number};
 
-export type heartbeat_params_type = void;
-export type heartbeat_response_type = void;
+export type ping_params_type = void;
+export type ping_response_type = ApiResult<void>;
 
 export type toggle_main_nav_params_type = void;
 
@@ -207,7 +207,7 @@ export interface Dispatch {
 	): Promise<ApiResult<{file: File}>>;
 	(eventName: 'read_files', params: {space_id: number}): Promise<ApiResult<{files: File[]}>>;
 	(eventName: 'query_files', params: {space_id: number}): Readable<Readable<File>[]>;
-	(eventName: 'heartbeat', params: void): void;
+	(eventName: 'ping', params: void): Promise<ApiResult<void>>;
 	(eventName: 'toggle_main_nav', params: void): void;
 	(eventName: 'toggle_secondary_nav', params: void): void;
 	(eventName: 'set_main_nav_view', params: MainNavView): void;
@@ -322,7 +322,7 @@ export interface UiHandlers {
 		ctx: DispatchContext<{space_id: number}, ApiResult<{files: File[]}>>,
 	) => Promise<ApiResult<{files: File[]}>>;
 	query_files: (ctx: DispatchContext<{space_id: number}, void>) => Readable<Readable<File>[]>;
-	heartbeat: (ctx: DispatchContext<void, void>) => void;
+	ping: (ctx: DispatchContext<void, ApiResult<void>>) => Promise<ApiResult<void>>;
 	toggle_main_nav: (ctx: DispatchContext<void, void>) => void;
 	toggle_secondary_nav: (ctx: DispatchContext<void, void>) => void;
 	set_main_nav_view: (ctx: DispatchContext<MainNavView, void>) => void;

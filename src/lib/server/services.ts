@@ -1,4 +1,5 @@
 import type {Service} from '$lib/server/service';
+import {pingService} from '$lib/server/serverServices';
 import {createPersonaService} from '$lib/vocab/persona/personaServices';
 import {
 	readCommunityService,
@@ -14,8 +15,8 @@ import {
 } from '$lib/vocab/space/spaceServices';
 
 export const services: Map<string, Service<any, any>> = new Map(
-	// TODO verify no duplicate names?
 	[
+		pingService,
 		createPersonaService,
 		createCommunityService,
 		createMembershipService,

@@ -250,6 +250,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 				console.warn('[ui] ignoring a dispatched event', ctx);
 			}
 		},
+		ping: async ({invoke}) => invoke(),
 		// TODO convert to a service (and use `invoke` instead of `fetch`)
 		log_in: async ({params}) => {
 			console.log('[log_in] logging in as', params.accountName); // TODO logging
