@@ -78,11 +78,13 @@ ${
 		: ''
 }
 ${
+	// TODO hacky, the ApiResult type should be represented in the schema
+	// but that requires generic type generation:
+	// https://github.com/bcherny/json-schema-to-typescript/issues/59
 	'response' in eventInfo
-		? `// TODO hacky, the ApiResult type should be represented in the schema
-		// but that requires generic type generation:
-		// https://github.com/bcherny/json-schema-to-typescript/issues/59
-		export type ${toResponseResultName(eventInfo.name)} = ApiResult<${toResponseName(eventInfo.name)}>;`
+		? `	export type ${toResponseResultName(eventInfo.name)} = ApiResult<${toResponseName(
+				eventInfo.name,
+		  )}>;`
 		: ''
 }
 `,

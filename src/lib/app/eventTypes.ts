@@ -55,9 +55,6 @@ export interface LogInParams {
 
 export type LogInResponse = null;
 
-// TODO hacky, the ApiResult type should be represented in the schema
-// but that requires generic type generation:
-// https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type LogInResponseResult = ApiResult<LogInResponse>;
 
 export type LogOutParams = void;
@@ -65,9 +62,6 @@ export interface LogOutResponse {
 	message: string;
 }
 
-// TODO hacky, the ApiResult type should be represented in the schema
-// but that requires generic type generation:
-// https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type LogOutResponseResult = ApiResult<LogOutResponse>;
 
 export interface CreateCommunityParams {
@@ -79,9 +73,6 @@ export interface CreateCommunityResponse {
 	community: Community;
 }
 
-// TODO hacky, the ApiResult type should be represented in the schema
-// but that requires generic type generation:
-// https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type CreateCommunityResponseResult = ApiResult<CreateCommunityResponse>;
 
 export interface ReadCommunityParams {
@@ -92,9 +83,6 @@ export interface ReadCommunityResponse {
 	community: Community;
 }
 
-// TODO hacky, the ApiResult type should be represented in the schema
-// but that requires generic type generation:
-// https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type ReadCommunityResponseResult = ApiResult<ReadCommunityResponse>;
 
 export interface ReadCommunitiesParams {}
@@ -103,9 +91,6 @@ export interface ReadCommunitiesResponse {
 	communities: Community[];
 }
 
-// TODO hacky, the ApiResult type should be represented in the schema
-// but that requires generic type generation:
-// https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type ReadCommunitiesResponseResult = ApiResult<ReadCommunitiesResponse>;
 
 export interface CreatePersonaParams {
@@ -117,9 +102,6 @@ export interface CreatePersonaResponse {
 	community: Community;
 }
 
-// TODO hacky, the ApiResult type should be represented in the schema
-// but that requires generic type generation:
-// https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type CreatePersonaResponseResult = ApiResult<CreatePersonaResponse>;
 
 export interface CreateMembershipParams {
@@ -131,9 +113,6 @@ export interface CreateMembershipResponse {
 	membership: Membership;
 }
 
-// TODO hacky, the ApiResult type should be represented in the schema
-// but that requires generic type generation:
-// https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type CreateMembershipResponseResult = ApiResult<CreateMembershipResponse>;
 
 export interface CreateSpaceParams {
@@ -148,9 +127,6 @@ export interface CreateSpaceResponse {
 	space: Space;
 }
 
-// TODO hacky, the ApiResult type should be represented in the schema
-// but that requires generic type generation:
-// https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type CreateSpaceResponseResult = ApiResult<CreateSpaceResponse>;
 
 export interface ReadSpaceParams {
@@ -161,9 +137,6 @@ export interface ReadSpaceResponse {
 	space: Space;
 }
 
-// TODO hacky, the ApiResult type should be represented in the schema
-// but that requires generic type generation:
-// https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type ReadSpaceResponseResult = ApiResult<ReadSpaceResponse>;
 
 export interface ReadSpacesParams {
@@ -174,9 +147,6 @@ export interface ReadSpacesResponse {
 	spaces: Space[];
 }
 
-// TODO hacky, the ApiResult type should be represented in the schema
-// but that requires generic type generation:
-// https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type ReadSpacesResponseResult = ApiResult<ReadSpacesResponse>;
 
 export interface CreateFileParams {
@@ -189,9 +159,6 @@ export interface CreateFileResponse {
 	file: File;
 }
 
-// TODO hacky, the ApiResult type should be represented in the schema
-// but that requires generic type generation:
-// https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type CreateFileResponseResult = ApiResult<CreateFileResponse>;
 
 export interface ReadFilesParams {
@@ -202,9 +169,6 @@ export interface ReadFilesResponse {
 	files: File[];
 }
 
-// TODO hacky, the ApiResult type should be represented in the schema
-// but that requires generic type generation:
-// https://github.com/bcherny/json-schema-to-typescript/issues/59
 export type ReadFilesResponseResult = ApiResult<ReadFilesResponse>;
 
 export interface QueryFilesParams {
