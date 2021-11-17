@@ -1,6 +1,6 @@
 import type {Dispatch} from '$lib/ui/events';
 
-export const PINGER_INTERVAL = 300000;
+export const PINGER_INTERVAL = 3000;
 
 export const createPinger = (dispatch: Dispatch) => {
 	const interval = setInterval(async () => {
