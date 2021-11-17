@@ -1,6 +1,6 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-const create_space_response_type = '{space: Space}';
+const CreateSpaceResponseResult = '{space: Space}';
 export const create_space: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'create_space',
@@ -20,7 +20,7 @@ export const create_space: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${create_space_response_type}>`,
+		type: `ApiResult<${CreateSpaceResponseResult}>`,
 		schema: {
 			$id: 'https://felt.dev/vocab/create_space_response.json',
 			type: 'object',
@@ -31,14 +31,14 @@ export const create_space: ServiceEventInfo = {
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${create_space_response_type}>>`,
+	returns: `Promise<ApiResult<${CreateSpaceResponseResult}>>`,
 	route: {
 		path: '/api/v1/communities/:community_id/spaces',
 		method: 'POST',
 	},
 };
 
-const read_space_response_type = '{space: Space}';
+const ReadSpaceResponseResult = '{space: Space}';
 export const read_space: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'read_space',
@@ -54,7 +54,7 @@ export const read_space: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${read_space_response_type}>`,
+		type: `ApiResult<${ReadSpaceResponseResult}>`,
 		schema: {
 			$id: 'https://felt.dev/vocab/read_space_response.json',
 			type: 'object',
@@ -65,14 +65,14 @@ export const read_space: ServiceEventInfo = {
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${read_space_response_type}>>`,
+	returns: `Promise<ApiResult<${ReadSpaceResponseResult}>>`,
 	route: {
 		path: '/api/v1/spaces/:space_id',
 		method: 'GET',
 	},
 };
 
-const read_spaces_response_type = '{spaces: Space[]}';
+const ReadSpacesResponseResult = '{spaces: Space[]}';
 export const read_spaces: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'read_spaces',
@@ -88,7 +88,7 @@ export const read_spaces: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${read_spaces_response_type}>`,
+		type: `ApiResult<${ReadSpacesResponseResult}>`,
 		schema: {
 			$id: 'https://felt.dev/vocab/read_spaces_response.json',
 			type: 'object',
@@ -99,7 +99,7 @@ export const read_spaces: ServiceEventInfo = {
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${read_spaces_response_type}>>`,
+	returns: `Promise<ApiResult<${ReadSpacesResponseResult}>>`,
 	route: {
 		path: '/api/v1/communities/:community_id/spaces',
 		method: 'GET',

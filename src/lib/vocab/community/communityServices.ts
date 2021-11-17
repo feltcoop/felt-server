@@ -1,24 +1,24 @@
 import type {Service} from '$lib/server/service';
 import type {
 	CreateCommunityParamsType,
-	create_community_response_type,
+	CreateCommunityResponseResult,
 	ReadCommunityParamsType,
-	read_community_response_type,
+	ReadCommunityResponseResult,
 	ReadCommunitiesParamsType,
-	read_communities_response_type,
+	ReadCommunitiesResponseResult,
 } from '$lib/ui/events';
 import {
 	create_community,
 	read_communities,
 	read_community,
 } from '$lib/vocab/community/community.events';
-import type {CreateMembershipParamsType, create_membership_response_type} from '$lib/ui/events';
+import type {CreateMembershipParamsType, CreateMembershipResponseResult} from '$lib/ui/events';
 import {create_membership} from '$lib/vocab/membership/membership.events';
 
 // Returns a list of community objects
 export const readCommunitiesService: Service<
 	ReadCommunitiesParamsType,
-	read_communities_response_type
+	ReadCommunitiesResponseResult
 > = {
 	event: read_communities,
 	perform: async ({server, account_id}) => {
@@ -34,33 +34,32 @@ export const readCommunitiesService: Service<
 };
 
 //Returns a single community object
-export const readCommunityService: Service<ReadCommunityParamsType, read_community_response_type> =
-	{
-		event: read_community,
-		perform: async ({server, params, account_id}) => {
-			const {db} = server;
-			console.log('[read_community] account', account_id); // TODO logging
-			console.log('[read_community] community', params.community_id);
+export const readCommunityService: Service<ReadCommunityParamsType, ReadCommunityResponseResult> = {
+	event: read_community,
+	perform: async ({server, params, account_id}) => {
+		const {db} = server;
+		console.log('[read_community] account', account_id); // TODO logging
+		console.log('[read_community] community', params.community_id);
 
-			const findCommunityResult = await db.repos.community.findById(params.community_id);
-			if (findCommunityResult.ok) {
-				return {ok: true, status: 200, value: {community: findCommunityResult.value}};
-			} else {
-				return {
-					ok: false,
-					status: findCommunityResult.type === 'no_community_found' ? 404 : 500,
-					reason: findCommunityResult.reason,
-				};
-			}
-		},
-	};
+		const findCommunityResult = await db.repos.community.findById(params.community_id);
+		if (findCommunityResult.ok) {
+			return {ok: true, status: 200, value: {community: findCommunityResult.value}};
+		} else {
+			return {
+				ok: false,
+				status: findCommunityResult.type === 'no_community_found' ? 404 : 500,
+				reason: findCommunityResult.reason,
+			};
+		}
+	},
+};
 
 //Creates a new community for an instance
 // TODO think about extracting this to a `.services.` file
 // that imports a generated type and declares only `perform`
 export const createCommunityService: Service<
 	CreateCommunityParamsType,
-	create_community_response_type
+	CreateCommunityResponseResult
 > = {
 	event: create_community,
 	perform: async ({server, params, account_id}) => {
@@ -114,7 +113,7 @@ export const createCommunityService: Service<
 //Creates a new member relation for a community
 export const createMembershipService: Service<
 	CreateMembershipParamsType,
-	create_membership_response_type
+	CreateMembershipResponseResult
 > = {
 	event: create_membership,
 	perform: async ({server, params}) => {

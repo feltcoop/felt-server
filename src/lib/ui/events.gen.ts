@@ -9,6 +9,7 @@ import {ID_VOCAB_PREFIX} from '$lib/vocab/util';
 
 const toParamsTypeName = (name: string): string => toTypeName(name + 'ParamsType');
 const toResponseTypeName = (name: string): string => toTypeName(name + 'ResponseType');
+const toResponseResultName = (name: string): string => toTypeName(name + 'ResponseResult');
 
 // Outputs a file with event types that can be imported from anywhere with no runtime cost.
 export const gen: Gen = async ({originId}) => {
@@ -46,7 +47,7 @@ export interface EventsResponse {
 			(eventInfo.type === 'ClientEvent'
 				? ''
 				: `
-${eventInfo.name}: ${eventInfo.name}_response_type;
+${eventInfo.name}: ${toResponseTypeName(eventInfo.name)};
 `.trim()),
 		'',
 	)}
@@ -57,12 +58,6 @@ ${await eventInfos.reduce(
 		(await str) +
 		`
 ${await jsonSchemaToTypescript(eventInfo.params.schema, toParamsTypeName(eventInfo.name))}
-// TODO
-${
-	eventInfo.type === 'ClientEvent'
-		? ''
-		: `export type ${eventInfo.name}_response_type = ${eventInfo.response.type};`
-}
 ${
 	'response' in eventInfo
 		? await jsonSchemaToTypescript(eventInfo.response.schema, toResponseTypeName(eventInfo.name), {
@@ -80,6 +75,16 @@ ${
 					},
 				},
 		  })
+		: ''
+}
+${
+	'response' in eventInfo
+		? `// TODO hacky, the ApiResult type should be represented in the schema
+		// but that requires generic type generation:
+		// https://github.com/bcherny/json-schema-to-typescript/issues/59
+		export type ${toResponseResultName(eventInfo.name)} = ApiResult<${toResponseTypeName(
+				eventInfo.name,
+		  )}>;`
 		: ''
 }
 `,

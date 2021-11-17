@@ -1,14 +1,14 @@
 import type {Service} from '$lib/server/service';
 import type {
 	CreateFileParamsType,
-	create_file_response_type,
+	CreateFileResponseResult,
 	ReadFilesParamsType,
-	read_files_response_type,
+	ReadFilesResponseResult,
 } from '$lib/ui/events';
 import {read_files, create_file} from '$lib/vocab/file/file.events';
 
 // TODO rename to `getFiles`? `loadFiles`?
-export const readFilesService: Service<ReadFilesParamsType, read_files_response_type> = {
+export const readFilesService: Service<ReadFilesParamsType, ReadFilesResponseResult> = {
 	event: read_files,
 	perform: async ({server, params}) => {
 		const {db} = server;
@@ -22,7 +22,7 @@ export const readFilesService: Service<ReadFilesParamsType, read_files_response_
 	},
 };
 
-export const createFileService: Service<CreateFileParamsType, create_file_response_type> = {
+export const createFileService: Service<CreateFileParamsType, CreateFileResponseResult> = {
 	event: create_file,
 	perform: async ({server, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?

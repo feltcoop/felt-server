@@ -34,18 +34,18 @@ export interface EventsParams {
 	select_space: SelectSpaceParamsType;
 }
 export interface EventsResponse {
-	log_in: log_in_response_type;
-	log_out: log_out_response_type;
-	create_community: create_community_response_type;
-	read_community: read_community_response_type;
-	read_communities: read_communities_response_type;
-	create_persona: create_persona_response_type;
-	create_membership: create_membership_response_type;
-	create_space: create_space_response_type;
-	read_space: read_space_response_type;
-	read_spaces: read_spaces_response_type;
-	create_file: create_file_response_type;
-	read_files: read_files_response_type;
+	log_in: LogInResponseType;
+	log_out: LogOutResponseType;
+	create_community: CreateCommunityResponseType;
+	read_community: ReadCommunityResponseType;
+	read_communities: ReadCommunitiesResponseType;
+	create_persona: CreatePersonaResponseType;
+	create_membership: CreateMembershipResponseType;
+	create_space: CreateSpaceResponseType;
+	read_space: ReadSpaceResponseType;
+	read_spaces: ReadSpacesResponseType;
+	create_file: CreateFileResponseType;
+	read_files: ReadFilesResponseType;
 }
 
 export interface LogInParamsType {
@@ -53,26 +53,28 @@ export interface LogInParamsType {
 	password: string;
 }
 
-// TODO
-export type log_in_response_type = ApiResult<{session: ClientAccountSession}>;
 export type LogInResponseType = null;
 
+// TODO hacky, the ApiResult type should be represented in the schema
+// but that requires generic type generation:
+// https://github.com/bcherny/json-schema-to-typescript/issues/59
+export type LogInResponseResult = ApiResult<LogInResponseType>;
+
 export type LogOutParamsType = void;
-// TODO
-export type log_out_response_type = ApiResult<{message: string}>;
 export interface LogOutResponseType {
 	message: string;
 }
+
+// TODO hacky, the ApiResult type should be represented in the schema
+// but that requires generic type generation:
+// https://github.com/bcherny/json-schema-to-typescript/issues/59
+export type LogOutResponseResult = ApiResult<LogOutResponseType>;
 
 export interface CreateCommunityParamsType {
 	name: string;
 	persona_id: number;
 }
 
-// TODO
-export type create_community_response_type = ApiResult<{
-	community: Community;
-}>;
 export interface CreateCommunityResponseType {
 	community: {
 		community_id: number;
@@ -87,14 +89,15 @@ export interface CreateCommunityResponseType {
 	};
 }
 
+// TODO hacky, the ApiResult type should be represented in the schema
+// but that requires generic type generation:
+// https://github.com/bcherny/json-schema-to-typescript/issues/59
+export type CreateCommunityResponseResult = ApiResult<CreateCommunityResponseType>;
+
 export interface ReadCommunityParamsType {
 	community_id: number;
 }
 
-// TODO
-export type read_community_response_type = ApiResult<{
-	community: Community;
-}>;
 export interface ReadCommunityResponseType {
 	community: {
 		community_id: number;
@@ -109,12 +112,13 @@ export interface ReadCommunityResponseType {
 	};
 }
 
+// TODO hacky, the ApiResult type should be represented in the schema
+// but that requires generic type generation:
+// https://github.com/bcherny/json-schema-to-typescript/issues/59
+export type ReadCommunityResponseResult = ApiResult<ReadCommunityResponseType>;
+
 export interface ReadCommunitiesParamsType {}
 
-// TODO
-export type read_communities_response_type = ApiResult<{
-	communities: Community[];
-}>;
 export interface ReadCommunitiesResponseType {
 	communities: {
 		community_id: number;
@@ -129,12 +133,15 @@ export interface ReadCommunitiesResponseType {
 	}[];
 }
 
+// TODO hacky, the ApiResult type should be represented in the schema
+// but that requires generic type generation:
+// https://github.com/bcherny/json-schema-to-typescript/issues/59
+export type ReadCommunitiesResponseResult = ApiResult<ReadCommunitiesResponseType>;
+
 export interface CreatePersonaParamsType {
 	name: string;
 }
 
-// TODO
-export type create_persona_response_type = ApiResult<{persona: Persona; community: Community}>;
 export interface CreatePersonaResponseType {
 	persona: {
 		persona_id: number;
@@ -162,13 +169,16 @@ export interface CreatePersonaResponseType {
 	};
 }
 
+// TODO hacky, the ApiResult type should be represented in the schema
+// but that requires generic type generation:
+// https://github.com/bcherny/json-schema-to-typescript/issues/59
+export type CreatePersonaResponseResult = ApiResult<CreatePersonaResponseType>;
+
 export interface CreateMembershipParamsType {
 	persona_id: number;
 	community_id: number;
 }
 
-// TODO
-export type create_membership_response_type = ApiResult<{membership: Membership}>;
 export interface CreateMembershipResponseType {
 	membership: {
 		persona_id: number;
@@ -182,6 +192,11 @@ export interface CreateMembershipResponseType {
 	};
 }
 
+// TODO hacky, the ApiResult type should be represented in the schema
+// but that requires generic type generation:
+// https://github.com/bcherny/json-schema-to-typescript/issues/59
+export type CreateMembershipResponseResult = ApiResult<CreateMembershipResponseType>;
+
 export interface CreateSpaceParamsType {
 	community_id: number;
 	name: string;
@@ -190,8 +205,6 @@ export interface CreateSpaceParamsType {
 	content: string;
 }
 
-// TODO
-export type create_space_response_type = ApiResult<{space: Space}>;
 export interface CreateSpaceResponseType {
 	space: {
 		space_id: number;
@@ -208,12 +221,15 @@ export interface CreateSpaceResponseType {
 	};
 }
 
+// TODO hacky, the ApiResult type should be represented in the schema
+// but that requires generic type generation:
+// https://github.com/bcherny/json-schema-to-typescript/issues/59
+export type CreateSpaceResponseResult = ApiResult<CreateSpaceResponseType>;
+
 export interface ReadSpaceParamsType {
 	space_id: number;
 }
 
-// TODO
-export type read_space_response_type = ApiResult<{space: Space}>;
 export interface ReadSpaceResponseType {
 	space: {
 		space_id: number;
@@ -230,12 +246,15 @@ export interface ReadSpaceResponseType {
 	};
 }
 
+// TODO hacky, the ApiResult type should be represented in the schema
+// but that requires generic type generation:
+// https://github.com/bcherny/json-schema-to-typescript/issues/59
+export type ReadSpaceResponseResult = ApiResult<ReadSpaceResponseType>;
+
 export interface ReadSpacesParamsType {
 	community_id: number;
 }
 
-// TODO
-export type read_spaces_response_type = ApiResult<{spaces: Space[]}>;
 export interface ReadSpacesResponseType {
 	spaces: {
 		space_id: number;
@@ -252,14 +271,17 @@ export interface ReadSpacesResponseType {
 	}[];
 }
 
+// TODO hacky, the ApiResult type should be represented in the schema
+// but that requires generic type generation:
+// https://github.com/bcherny/json-schema-to-typescript/issues/59
+export type ReadSpacesResponseResult = ApiResult<ReadSpacesResponseType>;
+
 export interface CreateFileParamsType {
 	actor_id: number;
 	space_id: number;
 	content: string;
 }
 
-// TODO
-export type create_file_response_type = ApiResult<{file: File}>;
 export interface CreateFileResponseType {
 	file: {
 		file_id: number;
@@ -275,12 +297,15 @@ export interface CreateFileResponseType {
 	};
 }
 
+// TODO hacky, the ApiResult type should be represented in the schema
+// but that requires generic type generation:
+// https://github.com/bcherny/json-schema-to-typescript/issues/59
+export type CreateFileResponseResult = ApiResult<CreateFileResponseType>;
+
 export interface ReadFilesParamsType {
 	space_id: number;
 }
 
-// TODO
-export type read_files_response_type = ApiResult<{files: File[]}>;
 export interface ReadFilesResponseType {
 	files: {
 		file_id: number;
@@ -296,44 +321,35 @@ export interface ReadFilesResponseType {
 	}[];
 }
 
+// TODO hacky, the ApiResult type should be represented in the schema
+// but that requires generic type generation:
+// https://github.com/bcherny/json-schema-to-typescript/issues/59
+export type ReadFilesResponseResult = ApiResult<ReadFilesResponseType>;
+
 export interface QueryFilesParamsType {
 	space_id: number;
 }
 
-// TODO
-
 export type ToggleMainNavParamsType = void;
-// TODO
 
 export type ToggleSecondaryNavParamsType = void;
-// TODO
 
 export type SetMainNavViewParamsType = 'explorer' | 'account';
 
-// TODO
-
 export type SetMobileParamsType = boolean;
-
-// TODO
 
 export interface SelectPersonaParamsType {
 	persona_id: number;
 }
 
-// TODO
-
 export interface SelectCommunityParamsType {
 	community_id: number | null;
 }
-
-// TODO
 
 export interface SelectSpaceParamsType {
 	community_id: number;
 	space_id: number;
 }
-
-// TODO
 
 export interface Dispatch {
 	(eventName: 'log_in', params: LogInParamsType): Promise<

@@ -1,6 +1,6 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-const create_membership_response_type = '{membership: Membership}';
+const CreateMembershipResponseResult = '{membership: Membership}';
 export const create_membership: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'create_membership',
@@ -17,7 +17,7 @@ export const create_membership: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${create_membership_response_type}>`,
+		type: `ApiResult<${CreateMembershipResponseResult}>`,
 		schema: {
 			$id: 'https://felt.dev/vocab/create_membership_response.json',
 			type: 'object',
@@ -28,7 +28,7 @@ export const create_membership: ServiceEventInfo = {
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${create_membership_response_type}>>`,
+	returns: `Promise<ApiResult<${CreateMembershipResponseResult}>>`,
 	route: {
 		path: '/api/v1/memberships',
 		method: 'POST',

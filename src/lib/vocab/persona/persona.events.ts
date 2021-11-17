@@ -1,6 +1,6 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-const create_persona_response_type = '{persona: Persona; community: Community}';
+const CreatePersonaResponseResult = '{persona: Persona; community: Community}';
 export const create_persona: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'create_persona',
@@ -16,7 +16,7 @@ export const create_persona: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${create_persona_response_type}>`,
+		type: `ApiResult<${CreatePersonaResponseResult}>`,
 		schema: {
 			$id: 'https://felt.dev/vocab/create_persona_response.json',
 			type: 'object',
@@ -28,7 +28,7 @@ export const create_persona: ServiceEventInfo = {
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${create_persona_response_type}>>`,
+	returns: `Promise<ApiResult<${CreatePersonaResponseResult}>>`,
 	route: {
 		path: '/api/v1/personas',
 		method: 'POST',

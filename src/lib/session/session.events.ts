@@ -2,7 +2,7 @@ import type {EventInfo, RemoteEventInfo} from '$lib/vocab/event/event';
 
 // TODO should `session` be in `$lib/vocab` ?
 
-const log_in_response_type = `{session: ClientAccountSession}`;
+const LogInResponseResult = `{session: ClientAccountSession}`;
 export const log_in: RemoteEventInfo = {
 	type: 'RemoteEvent',
 	name: 'log_in',
@@ -19,18 +19,18 @@ export const log_in: RemoteEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${log_in_response_type}>`,
+		type: `ApiResult<${LogInResponseResult}>`,
 		schema: {
 			$id: 'https://felt.dev/vocab/log_in_response.json',
 			type: 'null',
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${log_in_response_type}>>`,
+	returns: `Promise<ApiResult<${LogInResponseResult}>>`,
 	// TODO refactor into a service and add `route`
 };
 
-const log_out_response_type = '{message: string}';
+const LogOutResponseResult = '{message: string}';
 export const log_out: RemoteEventInfo = {
 	type: 'RemoteEvent',
 	name: 'log_out',
@@ -39,7 +39,7 @@ export const log_out: RemoteEventInfo = {
 		schema: null,
 	},
 	response: {
-		type: `ApiResult<${log_out_response_type}>`,
+		type: `ApiResult<${LogOutResponseResult}>`,
 		// TODO refactor into a service
 		schema: {
 			$id: 'https://felt.dev/vocab/log_out_response.json',
@@ -51,7 +51,7 @@ export const log_out: RemoteEventInfo = {
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${log_out_response_type}>>`,
+	returns: `Promise<ApiResult<${LogOutResponseResult}>>`,
 	// TODO refactor into a service and add `route`
 };
 

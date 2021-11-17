@@ -1,6 +1,6 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-const create_community_response_type = `{
+const CreateCommunityResponseResult = `{
 	community: Community;
 }`;
 export const create_community: ServiceEventInfo = {
@@ -19,7 +19,7 @@ export const create_community: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${create_community_response_type}>`,
+		type: `ApiResult<${CreateCommunityResponseResult}>`,
 		schema: {
 			$id: 'https://felt.dev/vocab/create_community_response.json',
 			type: 'object',
@@ -30,14 +30,14 @@ export const create_community: ServiceEventInfo = {
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${create_community_response_type}>>`,
+	returns: `Promise<ApiResult<${CreateCommunityResponseResult}>>`,
 	route: {
 		path: '/api/v1/communities',
 		method: 'POST',
 	},
 };
 
-const read_community_response_type = `{
+const ReadCommunityResponseResult = `{
 	community: Community;
 }`;
 export const read_community: ServiceEventInfo = {
@@ -55,7 +55,7 @@ export const read_community: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${read_community_response_type}>`,
+		type: `ApiResult<${ReadCommunityResponseResult}>`,
 		schema: {
 			$id: 'https://felt.dev/vocab/read_community_response.json',
 			type: 'object',
@@ -66,14 +66,14 @@ export const read_community: ServiceEventInfo = {
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${read_community_response_type}>>`,
+	returns: `Promise<ApiResult<${ReadCommunityResponseResult}>>`,
 	route: {
 		path: '/api/v1/communities/:community_id',
 		method: 'GET',
 	},
 };
 
-const read_communities_response_type = `{
+const ReadCommunitiesResponseResult = `{
 	communities: Community[];
 }`;
 export const read_communities: ServiceEventInfo = {
@@ -89,7 +89,7 @@ export const read_communities: ServiceEventInfo = {
 		},
 	},
 	response: {
-		type: `ApiResult<${read_communities_response_type}>`,
+		type: `ApiResult<${ReadCommunitiesResponseResult}>`,
 		schema: {
 			$id: 'https://felt.dev/vocab/read_communities_response.json',
 			type: 'object',
@@ -100,7 +100,7 @@ export const read_communities: ServiceEventInfo = {
 			additionalProperties: false,
 		},
 	},
-	returns: `Promise<ApiResult<${read_communities_response_type}>>`,
+	returns: `Promise<ApiResult<${ReadCommunitiesResponseResult}>>`,
 	route: {
 		path: '/api/v1/communities',
 		method: 'GET',

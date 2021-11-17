@@ -1,16 +1,16 @@
 import type {Service} from '$lib/server/service';
 import type {
 	CreateSpaceParamsType,
-	create_space_response_type,
+	CreateSpaceResponseResult,
 	ReadSpaceParamsType,
-	read_space_response_type,
+	ReadSpaceResponseResult,
 	ReadSpacesParamsType,
-	read_spaces_response_type,
+	ReadSpacesResponseResult,
 } from '$lib/ui/events';
 import {create_space, read_space, read_spaces} from '$lib/vocab/space/space.events';
 
 //Returns a single space object
-export const readSpaceService: Service<ReadSpaceParamsType, read_space_response_type> = {
+export const readSpaceService: Service<ReadSpaceParamsType, ReadSpaceResponseResult> = {
 	event: read_space,
 	perform: async ({server, params}) => {
 		const {db} = server;
@@ -32,7 +32,7 @@ export const readSpaceService: Service<ReadSpaceParamsType, read_space_response_
 };
 
 //Returns all spaces in a given community
-export const readSpacesService: Service<ReadSpacesParamsType, read_spaces_response_type> = {
+export const readSpacesService: Service<ReadSpacesParamsType, ReadSpacesResponseResult> = {
 	event: read_spaces,
 	perform: async ({server, params}) => {
 		const {db} = server;
@@ -50,7 +50,7 @@ export const readSpacesService: Service<ReadSpacesParamsType, read_spaces_respon
 };
 
 //Creates a new space for a given community
-export const createSpaceService: Service<CreateSpaceParamsType, create_space_response_type> = {
+export const createSpaceService: Service<CreateSpaceParamsType, CreateSpaceResponseResult> = {
 	event: create_space,
 	// TODO security: verify the `account_id` has permission to modify this space
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
