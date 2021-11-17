@@ -34,7 +34,7 @@ export const toHttpApiClient = <
 				const res = await fetch(path, {
 					method,
 					headers: {'content-type': 'application/json'},
-					body: method === 'GET' || method === 'HEAD' ? null : JSON.stringify(params || null),
+					body: method === 'GET' || method === 'HEAD' ? null : JSON.stringify(params),
 				});
 				let json;
 				try {
