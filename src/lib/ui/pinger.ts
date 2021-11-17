@@ -8,7 +8,7 @@ export const createPinger = (dispatch: Dispatch) => {
 	}, PINGER_INTERVAL);
 	return {
 		close: () => {
-			clearTimeout(interval);
+			clearInterval(interval);
 		},
 	};
 };
