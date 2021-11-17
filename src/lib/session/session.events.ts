@@ -26,9 +26,7 @@ export const log_in: RemoteEventInfo = {
 export const log_out: RemoteEventInfo = {
 	type: 'RemoteEvent',
 	name: 'log_out',
-	// TODO refactor into a service
 	params: null,
-	// TODO refactor into a service
 	response: {
 		$id: 'https://felt.social/vocab/log_out_response.json',
 		type: 'object',
