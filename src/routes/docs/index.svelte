@@ -42,7 +42,7 @@
 						<!-- TODO display the generated type string instead of the schema,
 						probably by generating a sibling file to `events.ts` like `eventTypeStrings.ts` -->
 						<pre>
-            {JSON.stringify(eventInfo.params.schema, null, 2)}
+            {JSON.stringify(eventInfo.params, null, 2)}
           </pre>
 					</div>
 					{#if eventInfo.type !== 'ClientEvent'}
@@ -52,7 +52,7 @@
 								<!-- TODO display the generated type string instead of the schema,
 								probably by generating a sibling file to `events.ts` like `eventTypeStrings.ts` -->
 								<pre>
-								{JSON.stringify(eventInfo.response.schema, null, 2)}
+								{JSON.stringify(eventInfo.response, null, 2)}
           </pre>
 						</pre>
 						</div>

@@ -4,27 +4,23 @@ export const create_persona: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'create_persona',
 	params: {
-		schema: {
-			$id: 'https://felt.social/vocab/create_persona_params.json',
-			type: 'object',
-			properties: {
-				name: {type: 'string'},
-			},
-			required: ['name'],
-			additionalProperties: false,
+		$id: 'https://felt.social/vocab/create_persona_params.json',
+		type: 'object',
+		properties: {
+			name: {type: 'string'},
 		},
+		required: ['name'],
+		additionalProperties: false,
 	},
 	response: {
-		schema: {
-			$id: 'https://felt.social/vocab/create_persona_response.json',
-			type: 'object',
-			properties: {
-				persona: {$ref: 'Persona.json', tsType: 'Persona'},
-				community: {$ref: 'Community.json', tsType: 'Community'},
-			},
-			required: ['persona', 'community'],
-			additionalProperties: false,
+		$id: 'https://felt.social/vocab/create_persona_response.json',
+		type: 'object',
+		properties: {
+			persona: {$ref: 'Persona.json', tsType: 'Persona'},
+			community: {$ref: 'Community.json', tsType: 'Community'},
 		},
+		required: ['persona', 'community'],
+		additionalProperties: false,
 	},
 	returns: 'Promise<CreatePersonaResponseResult>',
 	route: {

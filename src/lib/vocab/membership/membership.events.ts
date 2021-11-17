@@ -4,27 +4,23 @@ export const create_membership: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'create_membership',
 	params: {
-		schema: {
-			$id: 'https://felt.social/vocab/create_membership_params.json',
-			type: 'object',
-			properties: {
-				persona_id: {type: 'number'},
-				community_id: {type: 'number'},
-			},
-			required: ['persona_id', 'community_id'],
-			additionalProperties: false,
+		$id: 'https://felt.social/vocab/create_membership_params.json',
+		type: 'object',
+		properties: {
+			persona_id: {type: 'number'},
+			community_id: {type: 'number'},
 		},
+		required: ['persona_id', 'community_id'],
+		additionalProperties: false,
 	},
 	response: {
-		schema: {
-			$id: 'https://felt.social/vocab/create_membership_response.json',
-			type: 'object',
-			properties: {
-				membership: {$ref: 'Membership.json', tsType: 'Membership'},
-			},
-			required: ['membership'],
-			additionalProperties: false,
+		$id: 'https://felt.social/vocab/create_membership_response.json',
+		type: 'object',
+		properties: {
+			membership: {$ref: 'Membership.json', tsType: 'Membership'},
 		},
+		required: ['membership'],
+		additionalProperties: false,
 	},
 	returns: 'Promise<CreateMembershipResponseResult>',
 	route: {

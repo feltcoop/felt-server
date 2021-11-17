@@ -6,8 +6,8 @@ import {entities} from '$lib/app/entities';
 export const schemas: SchemaObject[] = entities.concat(
 	eventInfos
 		.flatMap((eventInfo) => [
-			eventInfo.params.schema,
-			'response' in eventInfo ? eventInfo.response.schema : (null as any),
+			eventInfo.params,
+			'response' in eventInfo ? eventInfo.response : (null as any),
 		])
 		.filter(Boolean),
 );

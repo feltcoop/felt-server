@@ -57,10 +57,10 @@ ${await eventInfos.reduce(
 	async (str, eventInfo) =>
 		(await str) +
 		`
-${await jsonSchemaToTypescript(eventInfo.params.schema, toParamsName(eventInfo.name))}
+${await jsonSchemaToTypescript(eventInfo.params, toParamsName(eventInfo.name))}
 ${
 	'response' in eventInfo
-		? await jsonSchemaToTypescript(eventInfo.response.schema, toResponseName(eventInfo.name), {
+		? await jsonSchemaToTypescript(eventInfo.response, toResponseName(eventInfo.name), {
 				cwd: schemaDir,
 				$refOptions: {
 					resolve: {

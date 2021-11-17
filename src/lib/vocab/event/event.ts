@@ -7,10 +7,8 @@ export type EventInfo = ClientEventInfo | ServiceEventInfo | RemoteEventInfo;
 export interface ClientEventInfo {
 	type: 'ClientEvent';
 	name: string; // `snake_cased`
-	params: {
-		// TODO we want to enforce schemas so we can generate params forms and automatic randomizers
-		schema: SchemaObject | null;
-	};
+	// TODO we want to enforce schemas so we can generate params forms and automatic randomizers
+	params: SchemaObject | null;
 	returns: string;
 }
 
@@ -19,12 +17,8 @@ export interface ClientEventInfo {
 export interface ServiceEventInfo {
 	type: 'ServiceEvent';
 	name: string; // `snake_cased`
-	params: {
-		schema: SchemaObject;
-	};
-	response: {
-		schema: SchemaObject;
-	};
+	params: SchemaObject;
+	response: SchemaObject;
 	returns: string;
 	// `ServiceEvent`s have a `route` for http clients; websocket clients only need the event `name`
 	route: {
@@ -37,12 +31,8 @@ export interface ServiceEventInfo {
 export interface RemoteEventInfo {
 	type: 'RemoteEvent';
 	name: string; // `snake_cased`
-	params: {
-		schema: SchemaObject | null;
-	};
-	response: {
-		schema: SchemaObject;
-	};
+	params: SchemaObject | null;
+	response: SchemaObject;
 	returns: string;
 	// unlike services, these have no `route`
 }

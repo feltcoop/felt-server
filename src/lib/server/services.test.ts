@@ -21,19 +21,19 @@ test__services('perform services', async ({server}) => {
 	for (const service of services.values()) {
 		const account = await random.account();
 		const params = await randomEventParams(service.event, random, {account});
-		if (!validateSchema(service.event.params.schema!)(params)) {
+		if (!validateSchema(service.event.params!)(params)) {
 			throw new Error(
 				`Failed to validate random params for service ${
 					service.event.name
-				}: ${toValidationErrorMessage(validateSchema(service.event.params.schema!).errors![0])}`,
+				}: ${toValidationErrorMessage(validateSchema(service.event.params!).errors![0])}`,
 			);
 		}
 		const result = await service.perform({server, params, account_id: account.account_id});
-		if (!result.ok || !validateSchema(service.event.response.schema!)(result.value)) {
+		if (!result.ok || !validateSchema(service.event.response!)(result.value)) {
 			console.error(red(`failed to validate service response: ${service.event.name}`), result);
 			throw new Error(
 				`Failed to validate response for service ${service.event.name}: ${toValidationErrorMessage(
-					validateSchema(service.event.response.schema!).errors![0],
+					validateSchema(service.event.response!).errors![0],
 				)}`,
 			);
 		}
