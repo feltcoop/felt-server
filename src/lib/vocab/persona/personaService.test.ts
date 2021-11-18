@@ -33,7 +33,6 @@ test__personaService('create a persona & test collisions', async ({server}) => {
 		account_id: account.account_id,
 	});
 
-	console.log('result', result);
 	assert.equal(result.ok, true);
 
 	result = await createPersonaService.perform({
