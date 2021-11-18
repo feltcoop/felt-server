@@ -2,19 +2,18 @@ import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
 import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
 
-export interface TaskArgs {
-	user: string;
-	ip: string;
-	env: string;
-}
-
-export const task: Task<TaskArgs> = {
+export const task: Task = {
 	summary: 'deploy felt server to prod',
 	dev: false,
-	run: async ({invokeTask, args}) => {
-		console.log(args);
-		const {user, ip, env = 'src/infra/.env.production.default'} = args;
-		const deployLogin = `${user}@${ip}`;
+	run: async ({invokeTask}) => {
+		//TODO gro dev workaround
+		process.env.NODE_ENV = 'production';
+		const {fromEnv} = await import('$lib/server/env');
+
+		const DEPLOY_IP = fromEnv('DEPLOY_IP');
+		const DEPLOY_USER = fromEnv('DEPLOY_USER');
+
+		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
 		await invokeTask('clean');
 		await invokeTask('build');
 		let timestamp = Date.now();
@@ -51,7 +50,7 @@ export const task: Task<TaskArgs> = {
 		]);
 		//TEMP: move .env files into root
 		await spawn('scp', [`src/infra/.env.default`, `${deployLogin}:${currentDeploy}/.env`]);
-		await spawn('scp', [`${env}`, `${deployLogin}:${currentDeploy}/.env.production`]);
+		await spawn('scp', [`.env.production`, `${deployLogin}:${currentDeploy}/.env.production`]);
 		//TODO: re/start the server via pm2
 	},
 };
