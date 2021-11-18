@@ -25,6 +25,7 @@ export interface EventParamsByName {
 	create_file: CreateFileParams;
 	read_files: ReadFilesParams;
 	query_files: QueryFilesParams;
+	ping: PingParams;
 	toggle_main_nav: ToggleMainNavParams;
 	toggle_secondary_nav: ToggleSecondaryNavParams;
 	set_main_nav_view: SetMainNavViewParams;
@@ -46,6 +47,7 @@ export interface EventResponseByName {
 	read_spaces: ReadSpacesResponse;
 	create_file: CreateFileResponse;
 	read_files: ReadFilesResponse;
+	ping: PingResponse;
 }
 
 export interface LogInParams {
@@ -175,6 +177,16 @@ export interface QueryFilesParams {
 	space_id: number;
 }
 
+export interface PingParams {
+	[k: string]: unknown;
+}
+
+export interface PingResponse {
+	[k: string]: unknown;
+}
+
+export type PingResponseResult = ApiResult<PingResponse>;
+
 export type ToggleMainNavParams = void;
 
 export type ToggleSecondaryNavParams = void;
@@ -219,6 +231,7 @@ export interface Dispatch {
 	(eventName: 'create_file', params: CreateFileParams): Promise<CreateFileResponseResult>;
 	(eventName: 'read_files', params: ReadFilesParams): Promise<ReadFilesResponseResult>;
 	(eventName: 'query_files', params: QueryFilesParams): Readable<Readable<File>[]>;
+	(eventName: 'ping', params: PingParams): Promise<ApiResult<null>>;
 	(eventName: 'toggle_main_nav', params: ToggleMainNavParams): void;
 	(eventName: 'toggle_secondary_nav', params: ToggleSecondaryNavParams): void;
 	(eventName: 'set_main_nav_view', params: SetMainNavViewParams): void;
@@ -266,6 +279,7 @@ export interface UiHandlers {
 		ctx: DispatchContext<ReadFilesParams, ReadFilesResponseResult>,
 	) => Promise<ReadFilesResponseResult>;
 	query_files: (ctx: DispatchContext<QueryFilesParams, void>) => Readable<Readable<File>[]>;
+	ping: (ctx: DispatchContext<PingParams, PingResponseResult>) => Promise<ApiResult<null>>;
 	toggle_main_nav: (ctx: DispatchContext<ToggleMainNavParams, void>) => void;
 	toggle_secondary_nav: (ctx: DispatchContext<ToggleSecondaryNavParams, void>) => void;
 	set_main_nav_view: (ctx: DispatchContext<SetMainNavViewParams, void>) => void;

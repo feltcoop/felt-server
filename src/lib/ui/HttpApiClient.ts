@@ -22,12 +22,13 @@ export const toHttpApiClient = <
 	const client: ApiClient<TParamsMap, TResultMap> = {
 		has: (name) => !!findService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
 		invoke: async (name, params) => {
+			params = params ?? null!;
 			console.log('[http api client] invoke', name, params);
 			const service = findService(name);
 			if (!service) {
 				return {ok: false, status: 400, reason: `Failed to invoke unknown service: ${name}`};
 			}
-			const path = inject(service.route.path, params);
+			const path = params ? inject(service.route.path, params) : service.route.path;
 			const {method} = service.route;
 			try {
 				const res = await fetch(path, {
