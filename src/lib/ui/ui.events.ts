@@ -4,18 +4,12 @@ export const ping: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'ping',
 	params: {
-		type: 'void',
-		schema: {
-			$id: 'https://felt.social/vocab/ping_params.json',
-			type: 'null',
-		},
+		$id: 'https://felt.social/vocab/PingParams.json',
+		type: 'null',
 	},
 	response: {
-		type: `ApiResult<null>`,
-		schema: {
-			$id: 'https://felt.social/vocab/ping_response.json',
-			type: 'null',
-		},
+		$id: 'https://felt.social/vocab/PingResponse.json',
+		type: 'null',
 	},
 	returns: `Promise<ApiResult<null>>`,
 	route: {
