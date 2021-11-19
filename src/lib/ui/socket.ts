@@ -5,6 +5,8 @@ import {setContext, getContext} from 'svelte';
 
 const KEY = Symbol();
 
+export const HEARTBEAT_INTERVAL = 300000;
+
 export const getSocket = (): SocketStore => getContext(KEY);
 
 export const setSocket = (store: SocketStore): SocketStore => {
@@ -67,6 +69,19 @@ export const toSocketStore = (
 		return ws;
 	};
 
+	// TODO heartbeat if either time exceeds the limit
+	let receiveInterval: any;
+	let sendInterval: any;
+	const resetReceiveTimer = () => {
+		clearInterval(receiveInterval);
+		receiveInterval = setInterval(async () => {
+			sendHeartbeat();
+		}, HEARTBEAT_INTERVAL);
+	};
+	const resetSendTimer = () => {
+		//
+	};
+
 	const store: SocketStore = {
 		subscribe,
 		disconnect: (code = 1000) => {
@@ -109,8 +124,8 @@ export const toSocketStore = (
 				console.error('[ws] cannot send because the websocket is not connected', data, $socket);
 				return false;
 			}
-			resetSendTimer();
 			$socket.ws.send(JSON.stringify(data));
+			resetSendTimer();
 			return true;
 		},
 	};

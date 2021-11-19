@@ -28,7 +28,6 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {goto} from '$app/navigation';
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
-	import {createPinger} from '$lib/ui/pinger';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -47,6 +46,10 @@
 		toSocketStore(
 			(data) =>
 				apiClient.handle(data, (broadcastMessage) => {
+					console.log('[handle] broadcastMessage', broadcastMessage);
+					console.log('[handle] data', data);
+					// TODO isn't the latter one incorrect? confused how things are working ....
+					// ui.dispatch()
 					(ui as any)[broadcastMessage.method]({
 						invoke: () => Promise.resolve(broadcastMessage.result),
 					});
@@ -150,7 +153,6 @@
 	});
 
 	// TODO extract this logic to a websocket module or component
-	if (browser) createPinger(dispatch);
 	let connecting = false;
 	let connectCount = 0;
 	const RECONNECT_DELAY = 1000; // this matches the current Vite/SvelteKit retry rate; we could use the count to increase this
