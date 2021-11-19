@@ -1,4 +1,4 @@
-import type {Dispatch} from '$lib/ui/events';
+import type {Dispatch} from '$lib/app/eventTypes';
 
 export const PINGER_INTERVAL = 300000;
 

@@ -177,13 +177,9 @@ export interface QueryFilesParams {
 	space_id: number;
 }
 
-export interface PingParams {
-	[k: string]: unknown;
-}
+export type PingParams = void;
 
-export interface PingResponse {
-	[k: string]: unknown;
-}
+export type PingResponse = null;
 
 export type PingResponseResult = ApiResult<PingResponse>;
 
