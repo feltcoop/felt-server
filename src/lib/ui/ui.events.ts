@@ -6,6 +6,7 @@ export const ping: ServiceEventInfo = {
 	params: {
 		$id: 'https://felt.social/vocab/PingParams.json',
 		type: 'null',
+		tsType: 'void', // makes it so we don't need to explicitly pass `null` -- is there a better way to do this?
 	},
 	response: {
 		$id: 'https://felt.social/vocab/PingResponse.json',

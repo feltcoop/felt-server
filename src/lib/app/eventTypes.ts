@@ -177,7 +177,7 @@ export interface QueryFilesParams {
 	space_id: number;
 }
 
-export type PingParams = null;
+export type PingParams = void;
 
 export type PingResponse = null;
 
