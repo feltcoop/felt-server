@@ -4,7 +4,7 @@ export const PINGER_INTERVAL = 300000;
 
 export const createPinger = (dispatch: Dispatch) => {
 	const interval = setInterval(async () => {
-		dispatch('ping', {});
+		await dispatch('ping');
 	}, PINGER_INTERVAL);
 	return {
 		close: () => {

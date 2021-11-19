@@ -1,21 +1,17 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
+// TODO probably belongs elsewhere
 export const ping: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'ping',
 	params: {
-		type: 'void',
-		schema: {
-			$id: 'https://felt.social/vocab/ping_params.json',
-			type: 'null',
-		},
+		$id: 'https://felt.social/vocab/PingParams.json',
+		type: 'null',
+		tsType: 'void', // makes it so we don't need to explicitly pass `null` -- is there a better way to do this?
 	},
 	response: {
-		type: `ApiResult<null>`,
-		schema: {
-			$id: 'https://felt.social/vocab/ping_response.json',
-			type: 'null',
-		},
+		$id: 'https://felt.social/vocab/PingResponse.json',
+		type: 'null',
 	},
 	returns: `Promise<ApiResult<null>>`,
 	route: {
