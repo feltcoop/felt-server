@@ -44,12 +44,14 @@
 
 	const devmode = setDevmode();
 	const socket = setSocket(
-		toSocketStore((data) =>
-			apiClient.handle(data, (broadcastMessage) => {
-				(ui as any)[broadcastMessage.method]({
-					invoke: () => Promise.resolve(broadcastMessage.result),
-				});
-			}),
+		toSocketStore(
+			(data) =>
+				apiClient.handle(data, (broadcastMessage) => {
+					(ui as any)[broadcastMessage.method]({
+						invoke: () => Promise.resolve(broadcastMessage.result),
+					});
+				}),
+			() => dispatch('ping'),
 		),
 	);
 	const ui = setUi(toUi(session, initialMobileValue));

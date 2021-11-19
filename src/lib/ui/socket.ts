@@ -36,7 +36,10 @@ export interface HandleSocketMessage {
 	(rawMessage: any): void;
 }
 
-export const toSocketStore = (handleMessage: HandleSocketMessage): SocketStore => {
+export const toSocketStore = (
+	handleMessage: HandleSocketMessage,
+	sendHeartbeat: () => void,
+): SocketStore => {
 	const {subscribe, update} = writable<SocketState>(toDefaultSocketState());
 
 	const createWebSocket = (url: string): WebSocket => {
@@ -52,6 +55,7 @@ export const toSocketStore = (handleMessage: HandleSocketMessage): SocketStore =
 		};
 		ws.onmessage = (e) => {
 			// console.log('[socket] on message');
+			resetReceiveTimer();
 			handleMessage(e.data); // TODO should this forward the entire event?
 		};
 		ws.onerror = (e) => {
@@ -105,6 +109,7 @@ export const toSocketStore = (handleMessage: HandleSocketMessage): SocketStore =
 				console.error('[ws] cannot send because the websocket is not connected', data, $socket);
 				return false;
 			}
+			resetSendTimer();
 			$socket.ws.send(JSON.stringify(data));
 			return true;
 		},
