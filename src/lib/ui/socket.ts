@@ -1,6 +1,6 @@
 import type {AsyncStatus} from '@feltcoop/felt';
 import {get, writable} from 'svelte/store';
-import type {Readable} from 'svelte/store';
+import type {Readable, Updater} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 const KEY = Symbol();
@@ -41,59 +41,9 @@ export interface HandleSocketMessage {
 export const toSocketStore = (
 	handleMessage: HandleSocketMessage,
 	sendHeartbeat: () => void,
+	heartbeatInterval = HEARTBEAT_INTERVAL,
 ): SocketStore => {
 	const {subscribe, update} = writable<SocketState>(toDefaultSocketState());
-
-	const createWebSocket = (url: string): WebSocket => {
-		const ws = new WebSocket(url);
-		const send = ws.send.bind(ws);
-		ws.send = (data) => {
-			resetSendTimer();
-			send(data);
-		};
-		ws.onopen = (e) => {
-			startHeartbeat();
-			console.log('[socket] open', e);
-			//send('hello world, this is client speaking');
-			update(($socket) => ({...$socket, status: 'success', connected: true}));
-		};
-		ws.onclose = (e) => {
-			stopHeartbeat();
-			console.log('[socket] close', e);
-			update(($socket) => ({...$socket, status: 'initial', connected: false, ws: null, url: null}));
-		};
-		ws.onmessage = (e) => {
-			// console.log('[socket] on message');
-			resetReceiveTimer();
-			handleMessage(e.data); // TODO should this forward the entire event?
-		};
-		ws.onerror = (e) => {
-			console.log('[socket] error', e);
-			update(($socket) => ({...$socket, status: 'failure', error: 'unknown websocket error'}));
-		};
-		console.log('[socket] ws', ws);
-
-		return ws;
-	};
-
-	// TODO heartbeat if either time exceeds the limit
-	let receiveInterval: any;
-	let sendInterval: any;
-	const resetReceiveTimer = () => {
-		clearInterval(receiveInterval);
-		receiveInterval = setInterval(async () => {
-			sendHeartbeat();
-		}, HEARTBEAT_INTERVAL);
-	};
-	const resetSendTimer = () => {
-		//
-	};
-	const startHeartbeat = () => {
-		//
-	};
-	const stopHeartbeat = () => {
-		//
-	};
 
 	const store: SocketStore = {
 		subscribe,
@@ -121,7 +71,7 @@ export const toSocketStore = (
 					url,
 					connected: false,
 					status: 'pending',
-					ws: createWebSocket(url),
+					ws: createWebSocket(url, update, handleMessage, sendHeartbeat, heartbeatInterval),
 					error: null,
 				};
 			});
@@ -152,3 +102,74 @@ const toDefaultSocketState = (): SocketState => ({
 	status: 'initial',
 	error: null,
 });
+
+// TODO instead of passing `update`
+// we may want to do this all with event listeners from the parent
+const createWebSocket = (
+	url: string,
+	update: (updater: Updater<SocketState>) => void,
+	handleMessage: HandleSocketMessage,
+	sendHeartbeat: () => void,
+	heartbeatInterval: number,
+): WebSocket => {
+	const ws = new WebSocket(url);
+	const send = ws.send.bind(ws);
+	ws.send = (data) => {
+		lastSendTime = Date.now();
+		send(data);
+	};
+	ws.onopen = (e) => {
+		console.log('[socket] open', e);
+		startHeartbeat();
+		//send('hello world, this is client speaking');
+		update(($socket) => ({...$socket, status: 'success', connected: true}));
+	};
+	ws.onclose = (e) => {
+		console.log('[socket] close', e);
+		stopHeartbeat();
+		update(($socket) => ({...$socket, status: 'initial', connected: false, ws: null, url: null}));
+	};
+	ws.onmessage = (e) => {
+		lastReceiveTime = Date.now();
+		// console.log('[socket] on message');
+		handleMessage(e.data); // TODO should this forward the entire event?
+	};
+	ws.onerror = (e) => {
+		console.log('[socket] error', e);
+		// stopHeartbeat(); // TODO is this right? or does `onclose` always get called?
+		update(($socket) => ({...$socket, status: 'failure', error: 'unknown websocket error'}));
+	};
+	console.log('[socket] ws', ws);
+
+	// Send a heartbeat every `heartbeatInterval`,
+	// resetting to the most recent time both a send and receive event were handled.
+	// This ensures the heartbeat is sent only when actually needed.
+	// Note that if the client is receiving events but not sending them, or vice versa,
+	// the heartbeat is sent to prevent the remote connection from timing out.
+	// (nginx tracks each timer separately and both need to be accounted for --
+	// see `proxy_read_timeout` and `proxy_send_timeout` for more)
+	let lastSendTime: number;
+	let lastReceiveTime: number;
+	let heartbeatTimeout: NodeJS.Timeout | null = null;
+	const startHeartbeat = () => {
+		lastSendTime = Date.now();
+		lastReceiveTime = Date.now();
+		if (heartbeatTimeout) throw Error('TODO removeme after testing');
+		const queueHeartbeat = () => {
+			const nextTimeoutTime = heartbeatInterval + Math.min(lastSendTime, lastReceiveTime);
+			heartbeatTimeout = setTimeout(async () => {
+				sendHeartbeat();
+				queueHeartbeat();
+			}, Date.now() - nextTimeoutTime);
+		};
+		queueHeartbeat();
+	};
+	const stopHeartbeat = () => {
+		if (heartbeatTimeout) {
+			clearTimeout(heartbeatTimeout);
+			heartbeatTimeout = null;
+		}
+	};
+
+	return ws;
+};
