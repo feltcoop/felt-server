@@ -46,12 +46,19 @@ export const toSocketStore = (
 
 	const createWebSocket = (url: string): WebSocket => {
 		const ws = new WebSocket(url);
+		const send = ws.send.bind(ws);
+		ws.send = (data) => {
+			resetSendTimer();
+			send(data);
+		};
 		ws.onopen = (e) => {
+			startHeartbeat();
 			console.log('[socket] open', e);
 			//send('hello world, this is client speaking');
 			update(($socket) => ({...$socket, status: 'success', connected: true}));
 		};
 		ws.onclose = (e) => {
+			stopHeartbeat();
 			console.log('[socket] close', e);
 			update(($socket) => ({...$socket, status: 'initial', connected: false, ws: null, url: null}));
 		};
@@ -79,6 +86,12 @@ export const toSocketStore = (
 		}, HEARTBEAT_INTERVAL);
 	};
 	const resetSendTimer = () => {
+		//
+	};
+	const startHeartbeat = () => {
+		//
+	};
+	const stopHeartbeat = () => {
 		//
 	};
 
@@ -125,7 +138,6 @@ export const toSocketStore = (
 				return false;
 			}
 			$socket.ws.send(JSON.stringify(data));
-			resetSendTimer();
 			return true;
 		},
 	};
