@@ -35,7 +35,7 @@ export interface SocketStore {
 }
 
 export interface HandleSocketMessage {
-	(rawMessage: any): void;
+	(event: MessageEvent<any>): void;
 }
 
 export const toSocketStore = (
@@ -121,7 +121,6 @@ const createWebSocket = (
 	ws.onopen = (e) => {
 		console.log('[socket] open', e);
 		startHeartbeat();
-		//send('hello world, this is client speaking');
 		update(($socket) => ({...$socket, status: 'success', connected: true}));
 	};
 	ws.onclose = (e) => {
@@ -131,8 +130,7 @@ const createWebSocket = (
 	};
 	ws.onmessage = (e) => {
 		lastReceiveTime = Date.now();
-		// console.log('[socket] on message');
-		handleMessage(e.data); // TODO should this forward the entire event?
+		handleMessage(e);
 	};
 	ws.onerror = (e) => {
 		console.log('[socket] error', e);

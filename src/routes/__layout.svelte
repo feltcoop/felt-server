@@ -44,10 +44,10 @@
 	const devmode = setDevmode();
 	const socket = setSocket(
 		toSocketStore(
-			(data) =>
-				apiClient.handle(data, (broadcastMessage) => {
+			(message) =>
+				apiClient.handle(message.data, (broadcastMessage) => {
 					console.log('[handle] broadcastMessage', broadcastMessage);
-					console.log('[handle] data', data);
+					console.log('[handle] data', message.data);
 					// TODO isn't the latter one incorrect? confused how things are working ....
 					// ui.dispatch()
 					(ui as any)[broadcastMessage.method]({
