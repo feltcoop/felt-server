@@ -1,5 +1,6 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
+// TODO probably belongs elsewhere
 export const ping: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'ping',
