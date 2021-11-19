@@ -3,16 +3,12 @@ import send from '@polka/send-type';
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Account} from '$lib/vocab/account/account.js';
 import {verifyPassword} from '$lib/util/password';
-
-export interface LoginRequest {
-	accountName: string;
-	password: string; // 🤫
-}
+import type {LogInParams} from '$lib/app/eventTypes';
 
 export const toLoginMiddleware = (server: ApiServer): Middleware => {
 	const {db} = server;
 	return async (req, res) => {
-		const loginRequest: LoginRequest = req.body as any; // TODO validate with JSON schema and generate `LoginRequest`
+		const loginRequest: LogInParams = req.body as any; // TODO validate with JSON schema (by making it a service, probably)
 		const {accountName, password} = loginRequest;
 		console.log('[loginMiddleware] req.body', accountName); // TODO logging
 		// TODO formalize and automate validation and normalization

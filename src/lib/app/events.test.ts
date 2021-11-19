@@ -25,15 +25,18 @@ test__eventInfos('dispatch random events in a client app', async ({server, app})
 		const account = await random.account();
 		const params = await randomEventParams(eventInfo, random, {account});
 
-		if (eventInfo.params.schema) {
-			if (!validateSchema(eventInfo.params.schema)(params)) {
+		if (eventInfo.params) {
+			if (!validateSchema(eventInfo.params)(params)) {
 				throw new Error(
 					`Failed to validate random params for service ${
 						eventInfo.name
-					}: ${toValidationErrorMessage(validateSchema(eventInfo.params.schema!).errors![0])}`,
+					}: ${toValidationErrorMessage(validateSchema(eventInfo.params!).errors![0])}`,
 				);
 			}
-		} else if (eventInfo.type === 'ServiceEvent' || eventInfo.type === 'RemoteEvent') {
+		} else if (
+			(eventInfo.type === 'ServiceEvent' || eventInfo.type === 'RemoteEvent') &&
+			eventInfo.params !== null // allow void params
+		) {
 			throw Error(`Expected eventInfo to have a schema: ${eventInfo.name}`);
 		}
 
@@ -53,11 +56,11 @@ test__eventInfos('dispatch random events in a client app', async ({server, app})
 			// TODO can't make remote calls yet -- need to use either `node-fetch` or mock
 			// if (!result.ok) {
 			// 	console.error(red(`dispatch failed: ${eventInfo.name}`), result);
-			// } else if (!validateSchema(eventInfo.response.schema!)(result.value)) {
+			// } else if (!validateSchema(eventInfo.response!)(result.value)) {
 			// 	console.error(red(`failed to validate service response: ${eventInfo.name}`), result);
 			// 	throw new Error(
 			// 		`Failed to validate response for service ${eventInfo.name}: ${toValidationErrorMessage(
-			// 			validateSchema(eventInfo.response.schema!).errors![0],
+			// 			validateSchema(eventInfo.response!).errors![0],
 			// 		)}`,
 			// 	);
 			// }

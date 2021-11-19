@@ -43,13 +43,13 @@ export const toServiceMiddleware =
 				}
 			}
 
-			if (!service.event.params.schema || !service.event.response.schema) {
+			if (!service.event.params || !service.event.response) {
 				return send(res, 500, {reason: 'unimplemented service schema'});
 			}
 
 			const params = {...reqBody, ...reqParams};
 
-			const validateParams = validateSchema(service.event.params.schema);
+			const validateParams = validateSchema(service.event.params);
 			if (!validateParams(params)) {
 				// TODO handle multiple errors instead of just the first
 				console.error('validation failed:', params, validateParams.errors);
@@ -70,7 +70,7 @@ export const toServiceMiddleware =
 				return;
 			}
 			if (process.env.NODE_ENV !== 'production') {
-				const validateResponse = validateSchema(service.event.response.schema);
+				const validateResponse = validateSchema(service.event.response);
 				if (!validateResponse(result.value)) {
 					console.error(red('validation failed:'), result, validateResponse.errors);
 				}

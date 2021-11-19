@@ -39,16 +39,22 @@
 					</div>
 					<div class="property">
 						<span>params</span>
+						<!-- TODO display the generated type string instead of the schema,
+						probably by generating a sibling file to `events.ts` like `eventTypeStrings.ts` -->
 						<pre>
-            {eventInfo.params.type}
+            {JSON.stringify(eventInfo.params, null, 2)}
           </pre>
 					</div>
 					{#if eventInfo.type !== 'ClientEvent'}
 						<div class="property">
 							<span>response</span>
 							<pre>
-            {eventInfo.response.type}
+								<!-- TODO display the generated type string instead of the schema,
+								probably by generating a sibling file to `events.ts` like `eventTypeStrings.ts` -->
+								<pre>
+								{JSON.stringify(eventInfo.response, null, 2)}
           </pre>
+						</pre>
 						</div>
 					{/if}
 					<div class="property">

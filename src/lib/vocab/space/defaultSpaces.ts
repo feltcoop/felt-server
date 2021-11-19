@@ -1,7 +1,7 @@
-import type {create_space_params_type} from '$lib/ui/events';
+import type {CreateSpaceParams} from '$lib/app/eventTypes';
 import {SpaceType} from '$lib/vocab/space/space';
 
-export const toDefaultSpaces = (community_id: number): create_space_params_type[] => [
+export const toDefaultSpaces = (community_id: number): CreateSpaceParams[] => [
 	{
 		community_id,
 		name: 'home',

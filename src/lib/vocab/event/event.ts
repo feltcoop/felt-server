@@ -1,4 +1,4 @@
-import type {AnySchema} from 'ajv';
+import type {SchemaObject} from 'ajv';
 
 import type {ServiceMethod} from '$lib/server/service';
 
@@ -7,11 +7,8 @@ export type EventInfo = ClientEventInfo | ServiceEventInfo | RemoteEventInfo;
 export interface ClientEventInfo {
 	type: 'ClientEvent';
 	name: string; // `snake_cased`
-	params: {
-		type: string;
-		// TODO we want to enforce schemas so we can generate params forms and automatic randomizers
-		schema: AnySchema | null;
-	};
+	// TODO we want to enforce schemas so we can generate params forms and automatic randomizers
+	params: SchemaObject | null;
 	returns: string;
 }
 
@@ -20,14 +17,8 @@ export interface ClientEventInfo {
 export interface ServiceEventInfo {
 	type: 'ServiceEvent';
 	name: string; // `snake_cased`
-	params: {
-		type: string;
-		schema: AnySchema;
-	};
-	response: {
-		type: string;
-		schema: AnySchema;
-	};
+	params: SchemaObject;
+	response: SchemaObject;
 	returns: string;
 	// `ServiceEvent`s have a `route` for http clients; websocket clients only need the event `name`
 	route: {
@@ -40,14 +31,8 @@ export interface ServiceEventInfo {
 export interface RemoteEventInfo {
 	type: 'RemoteEvent';
 	name: string; // `snake_cased`
-	params: {
-		type: string;
-		schema: AnySchema;
-	};
-	response: {
-		type: string;
-		schema: AnySchema;
-	};
+	params: SchemaObject | null;
+	response: SchemaObject;
 	returns: string;
 	// unlike services, these have no `route`
 }

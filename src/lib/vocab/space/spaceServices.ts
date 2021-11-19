@@ -1,16 +1,16 @@
 import type {Service} from '$lib/server/service';
 import type {
-	create_space_params_type,
-	create_space_response_type,
-	read_space_params_type,
-	read_space_response_type,
-	read_spaces_params_type,
-	read_spaces_response_type,
-} from '$lib/ui/events';
+	CreateSpaceParams,
+	CreateSpaceResponseResult,
+	ReadSpaceParams,
+	ReadSpaceResponseResult,
+	ReadSpacesParams,
+	ReadSpacesResponseResult,
+} from '$lib/app/eventTypes';
 import {create_space, read_space, read_spaces} from '$lib/vocab/space/space.events';
 
 //Returns a single space object
-export const readSpaceService: Service<read_space_params_type, read_space_response_type> = {
+export const readSpaceService: Service<ReadSpaceParams, ReadSpaceResponseResult> = {
 	event: read_space,
 	perform: async ({server, params}) => {
 		const {db} = server;
@@ -32,7 +32,7 @@ export const readSpaceService: Service<read_space_params_type, read_space_respon
 };
 
 //Returns all spaces in a given community
-export const readSpacesService: Service<read_spaces_params_type, read_spaces_response_type> = {
+export const readSpacesService: Service<ReadSpacesParams, ReadSpacesResponseResult> = {
 	event: read_spaces,
 	perform: async ({server, params}) => {
 		const {db} = server;
@@ -50,7 +50,7 @@ export const readSpacesService: Service<read_spaces_params_type, read_spaces_res
 };
 
 //Creates a new space for a given community
-export const createSpaceService: Service<create_space_params_type, create_space_response_type> = {
+export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseResult> = {
 	event: create_space,
 	// TODO security: verify the `account_id` has permission to modify this space
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas

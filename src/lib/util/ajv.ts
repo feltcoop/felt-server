@@ -1,6 +1,6 @@
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
-import type {ErrorObject, ValidateFunction, AnySchema} from 'ajv';
+import type {ErrorObject, ValidateFunction, SchemaObject} from 'ajv';
 
 import {schemas} from '$lib/app/schemas';
 
@@ -10,6 +10,7 @@ let ajvInstance: Ajv | null = null;
 export const ajv = (): Ajv => {
 	if (ajvInstance) return ajvInstance;
 	ajvInstance = new Ajv();
+	ajvInstance.addKeyword('tsType');
 	addFormats(ajvInstance);
 	for (const schema of schemas) {
 		ajvInstance.addSchema(schema);
@@ -21,17 +22,17 @@ export interface CreateValidate<T = unknown> {
 	(): ValidateFunction<T>;
 }
 
-const validators: Map<AnySchema, ValidateFunction> = new Map();
+const validators: Map<SchemaObject, ValidateFunction> = new Map();
 
 // Memoizes the returned schema validation function in the module-level lookup `validators`.
 // Does not support multiple instantiations with different options.
-export const validateSchema = <T>(schema: AnySchema): ValidateFunction<T> =>
+export const validateSchema = <T>(schema: SchemaObject): ValidateFunction<T> =>
 	toValidateSchema<T>(schema)();
 
 // Creates a lazily-compiled schema validation function to avoid wasteful compilation.
 // It's also faster than ajv's internal compiled schema cache
 // because we can assume a consistent environment.
-export const toValidateSchema = <T>(schema: AnySchema): CreateValidate<T> => {
+export const toValidateSchema = <T>(schema: SchemaObject): CreateValidate<T> => {
 	let validate = validators.get(schema) as ValidateFunction<T> | undefined;
 	return () => {
 		if (validate) return validate;

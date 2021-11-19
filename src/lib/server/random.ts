@@ -19,9 +19,12 @@ import {randomPersonaParams, randomCommunityParams, randomSpaceParams} from '$li
 export const randomEventParams = async (
 	event: EventInfo,
 	random: RandomVocabContext,
-	{account, persona, community, space}: RandomVocab,
+	{account, persona, community, space}: RandomVocab = {},
 ): Promise<any> => {
 	switch (event.name) {
+		case 'ping': {
+			return null;
+		}
 		case 'log_in': {
 			return {
 				accountName: randomString(),

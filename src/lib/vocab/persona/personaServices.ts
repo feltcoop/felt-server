@@ -1,12 +1,9 @@
 import type {Service} from '$lib/server/service';
-import type {create_persona_params_type, create_persona_response_type} from '$lib/ui/events';
+import type {CreatePersonaParams, CreatePersonaResponseResult} from '$lib/app/eventTypes';
 import {create_persona} from '$lib/vocab/persona/persona.events';
 
 //Creates a new persona
-export const createPersonaService: Service<
-	create_persona_params_type,
-	create_persona_response_type
-> = {
+export const createPersonaService: Service<CreatePersonaParams, CreatePersonaResponseResult> = {
 	event: create_persona,
 	// TODO verify the `account_id` has permission to modify this persona
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas

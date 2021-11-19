@@ -2,6 +2,7 @@ import type {Space} from '$lib/vocab/space/space.js';
 import type {Persona} from '$lib/vocab/persona/persona.js';
 
 export interface Community {
+	[key: string]: any; // TODO hack related to the below
 	community_id: number;
 	name: string;
 	spaces: Space[];
@@ -17,8 +18,8 @@ export const CommunitySchema = {
 	properties: {
 		community_id: {type: 'number'},
 		name: {type: 'string'},
-		created: {type: 'object', format: 'date-time'},
-		updated: {type: ['object', 'null'], format: 'date-time'},
+		created: {type: 'object', format: 'date-time', tsType: 'Date'},
+		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 		// TODO this fails because Community circularly references itself via `Vocab`
 		// spaces: Type.Array(Type.Ref(Vocab, {...SpaceSchema, $id: 'https://felt.social/vocab/CommunitySpaceSchema.json'})),
 		// memberPersonas: Type.Array(Type.Ref(Vocab, {...PersonaSchema, $id: 'https://felt.social/vocab/CommunityPersonaSchema.json'})),

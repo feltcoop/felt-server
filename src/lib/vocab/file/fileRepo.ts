@@ -2,14 +2,14 @@ import type {Result} from '@feltcoop/felt';
 
 import type {File} from '$lib/vocab/file/file.js';
 import type {Database} from '$lib/db/Database';
-import type {create_file_params_type} from '$lib/ui/events';
+import type {CreateFileParams} from '$lib/app/eventTypes';
 
 export const fileRepo = (db: Database) => ({
 	create: async ({
 		actor_id,
 		space_id,
 		content,
-	}: create_file_params_type): Promise<Result<{value: File}>> => {
+	}: CreateFileParams): Promise<Result<{value: File}>> => {
 		const data = await db.sql<File[]>`
       INSERT INTO files (actor_id, space_id, content) VALUES (
         ${actor_id},${space_id},${content}

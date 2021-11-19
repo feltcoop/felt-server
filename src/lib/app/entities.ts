@@ -1,4 +1,4 @@
-import type {AnySchema} from 'ajv';
+import type {SchemaObject} from 'ajv';
 
 import {AccountSchema} from '$lib/vocab/account/account';
 import {PersonaSchema} from '$lib/vocab/persona/persona';
@@ -9,7 +9,7 @@ import {FileSchema} from '$lib/vocab/file/file';
 
 // TODO generate this file?
 
-export const entities: AnySchema[] = [
+export const entities: SchemaObject[] = [
 	AccountSchema,
 	PersonaSchema,
 	CommunitySchema,
