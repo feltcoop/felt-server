@@ -78,7 +78,7 @@ export const toSocketStore = (
 		},
 		send: (data) => {
 			const $socket = get(store);
-			console.log('[ws] send', data, $socket);
+			// console.log('[ws] send', data, $socket);
 			if (!$socket.ws) {
 				console.error('[ws] cannot send without a socket', data, $socket);
 				return false;
@@ -139,7 +139,6 @@ const createWebSocket = (
 		// stopHeartbeat(); // TODO is this right? or does `onclose` always get called?
 		update(($socket) => ({...$socket, status: 'failure', error: 'unknown websocket error'}));
 	};
-	console.log('[socket] ws', ws);
 
 	// Send a heartbeat every `heartbeatInterval`,
 	// resetting to the most recent time both a send and receive event were handled.

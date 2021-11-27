@@ -41,7 +41,6 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 			//TODO where to store the authorized account for a given websocket connection
 			//to prevent actions on other actors resources?
 			socket.on('message', async (message) => {
-				console.log('account-id', account_id);
 				this.emit('message', socket, message, account_id);
 			});
 			socket.on('open', () => {
