@@ -103,6 +103,8 @@ const toDefaultSocketState = (): SocketState => ({
 	error: null,
 });
 
+const TIMEOUT_PADDING = 200; // margin of error around timeouts and `Date.now()`
+
 // TODO instead of passing `update`
 // we may want to do this all with event listeners from the parent
 const createWebSocket = (
@@ -153,15 +155,20 @@ const createWebSocket = (
 		lastSendTime = Date.now();
 		lastReceiveTime = Date.now();
 		if (heartbeatTimeout) throw Error('TODO removeme after testing');
-		const queueHeartbeat = () => {
-			const nextTimeoutTime = heartbeatInterval + Math.min(lastSendTime, lastReceiveTime);
-			heartbeatTimeout = setTimeout(async () => {
-				sendHeartbeat();
-				queueHeartbeat();
-			}, Date.now() - nextTimeoutTime);
-		};
 		queueHeartbeat();
 	};
+	const queueHeartbeat = () => {
+		heartbeatTimeout = setTimeout(() => {
+			// While the timeout was pending, the next timeout time may have changed
+			// due to new messages being sent and received,
+			// so send the heartbeat only if it's actually expired.
+			if (getNextTimeoutTime() < Date.now() + TIMEOUT_PADDING) {
+				sendHeartbeat();
+			}
+			queueHeartbeat();
+		}, getNextTimeoutTime() - Date.now());
+	};
+	const getNextTimeoutTime = () => heartbeatInterval + Math.min(lastSendTime, lastReceiveTime);
 	const stopHeartbeat = () => {
 		if (heartbeatTimeout) {
 			clearTimeout(heartbeatTimeout);
