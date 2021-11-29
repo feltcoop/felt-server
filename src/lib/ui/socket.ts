@@ -103,8 +103,6 @@ const toDefaultSocketState = (): SocketState => ({
 	error: null,
 });
 
-const TIMEOUT_PADDING = 200; // margin of error around timeouts and `Date.now()`
-
 // TODO instead of passing `update`
 // we may want to do this all with event listeners from the parent
 const createWebSocket = (
@@ -135,9 +133,7 @@ const createWebSocket = (
 		handleMessage(e);
 	};
 	ws.onerror = (e) => {
-		console.log('[socket] error', e);
-		// stopHeartbeat(); // TODO is this right? or does `onclose` always get called?
-		update(($socket) => ({...$socket, status: 'failure', error: 'unknown websocket error'}));
+		console.error('[socket] error', e);
 	};
 
 	// Send a heartbeat every `heartbeatInterval`,
@@ -151,29 +147,30 @@ const createWebSocket = (
 	let lastReceiveTime: number;
 	let heartbeatTimeout: NodeJS.Timeout | null = null;
 	const startHeartbeat = () => {
-		lastSendTime = Date.now();
-		lastReceiveTime = Date.now();
-		if (heartbeatTimeout) throw Error('TODO removeme after testing');
+		const now = Date.now();
+		lastSendTime = now;
+		lastReceiveTime = now;
 		queueHeartbeat();
+	};
+	const stopHeartbeat = () => {
+		clearTimeout(heartbeatTimeout!);
+		heartbeatTimeout = null;
 	};
 	const queueHeartbeat = () => {
 		heartbeatTimeout = setTimeout(() => {
 			// While the timeout was pending, the next timeout time may have changed
 			// due to new messages being sent and received,
 			// so send the heartbeat only if it's actually expired.
-			if (getNextTimeoutTime() < Date.now() + TIMEOUT_PADDING) {
+			const now = Date.now();
+			if (getNextTimeoutTime() <= now) {
+				lastSendTime = now;
+				lastReceiveTime = now;
 				sendHeartbeat();
 			}
 			queueHeartbeat();
 		}, getNextTimeoutTime() - Date.now());
 	};
 	const getNextTimeoutTime = () => heartbeatInterval + Math.min(lastSendTime, lastReceiveTime);
-	const stopHeartbeat = () => {
-		if (heartbeatTimeout) {
-			clearTimeout(heartbeatTimeout);
-			heartbeatTimeout = null;
-		}
-	};
 
 	return ws;
 };
