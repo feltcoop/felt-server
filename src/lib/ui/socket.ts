@@ -1,6 +1,6 @@
 import type {AsyncStatus} from '@feltcoop/felt';
 import {get, writable} from 'svelte/store';
-import type {Readable, Updater} from 'svelte/store';
+import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
 const KEY = Symbol();
@@ -45,6 +45,21 @@ export const toSocketStore = (
 ): SocketStore => {
 	const {subscribe, update} = writable<SocketState>(toDefaultSocketState());
 
+	const onWsOpen = () => {
+		console.log('[socket] open');
+		update(($socket) => ({...$socket, status: 'success', connected: true}));
+	};
+	const onWsClose = () => {
+		console.log('[socket] close');
+		update(($socket) => ({
+			...$socket,
+			status: 'initial',
+			connected: false,
+			ws: null,
+			url: null,
+		}));
+	};
+
 	const store: SocketStore = {
 		subscribe,
 		disconnect: (code = 1000) => {
@@ -66,12 +81,15 @@ export const toSocketStore = (
 					console.error('[ws] cannot connect because it is already connected'); // TODO return errors instead?
 					return $socket;
 				}
+				const ws = createWebSocket(url, handleMessage, sendHeartbeat, heartbeatInterval);
+				ws.addEventListener('open', onWsOpen);
+				ws.addEventListener('close', onWsClose);
 				return {
 					...$socket,
 					url,
 					connected: false,
 					status: 'pending',
-					ws: createWebSocket(url, update, handleMessage, sendHeartbeat, heartbeatInterval),
+					ws,
 					error: null,
 				};
 			});
@@ -107,33 +125,21 @@ const toDefaultSocketState = (): SocketState => ({
 // we may want to do this all with event listeners from the parent
 const createWebSocket = (
 	url: string,
-	update: (updater: Updater<SocketState>) => void,
 	handleMessage: HandleSocketMessage,
 	sendHeartbeat: () => void,
 	heartbeatInterval: number,
 ): WebSocket => {
 	const ws = new WebSocket(url);
 	const send = ws.send.bind(ws);
+	ws.addEventListener('open', () => startHeartbeat());
+	ws.addEventListener('close', () => stopHeartbeat());
+	ws.addEventListener('message', (e) => {
+		lastReceiveTime = Date.now();
+		handleMessage(e);
+	});
 	ws.send = (data) => {
 		lastSendTime = Date.now();
 		send(data);
-	};
-	ws.onopen = (e) => {
-		console.log('[socket] open', e);
-		startHeartbeat();
-		update(($socket) => ({...$socket, status: 'success', connected: true}));
-	};
-	ws.onclose = (e) => {
-		console.log('[socket] close', e);
-		stopHeartbeat();
-		update(($socket) => ({...$socket, status: 'initial', connected: false, ws: null, url: null}));
-	};
-	ws.onmessage = (e) => {
-		lastReceiveTime = Date.now();
-		handleMessage(e);
-	};
-	ws.onerror = (e) => {
-		console.error('[socket] error', e);
 	};
 
 	// Send a heartbeat every `heartbeatInterval`,
