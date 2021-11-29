@@ -46,13 +46,17 @@
 		toSocketStore(
 			(message) =>
 				apiClient.handle(message.data, (broadcastMessage) => {
-					console.log('[handle] broadcastMessage', broadcastMessage);
-					console.log('[handle] data', message.data);
-					// TODO isn't the latter one incorrect? confused how things are working ....
-					// ui.dispatch()
-					(ui as any)[broadcastMessage.method]({
-						invoke: () => Promise.resolve(broadcastMessage.result),
-					});
+					// TODO this is a hack to handle arbitrary messages from the server
+					// outside of the normal JSON RPC calls -- we'll want to rethink this
+					// so it's more structured and type safe
+					const handler = (ui as any)[broadcastMessage.method];
+					if (handler) {
+						handler({
+							invoke: () => Promise.resolve(broadcastMessage.result),
+						});
+					} else {
+						console.warn('unhandled broadcast message', broadcastMessage, message.data);
+					}
 				}),
 			() => dispatch('ping'),
 		),
