@@ -1,11 +1,11 @@
 import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
 
 import {DEPLOY_SERVER_HOST, API_SERVER_HOST_PROD, SVELTEKIT_SERVER_HOST} from '$lib/config';
-import {PINGER_INTERVAL} from '$lib/ui/pinger';
+import {HEARTBEAT_INTERVAL} from '$lib/ui/socket';
 
 // Outputs an nginx config with configured values.
 export const gen: Gen = async () => {
-	const websocketTimeout = `${PINGER_INTERVAL / 1000 + 60}s`; // 60 second padding
+	const websocketTimeout = `${HEARTBEAT_INTERVAL / 1000 + 60}s`; // 60 second padding
 	return `
 
 server {
