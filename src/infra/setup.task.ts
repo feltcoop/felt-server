@@ -4,14 +4,14 @@ import {spawn} from '@feltcoop/felt/util/process.js';
 export const task: Task = {
 	summary: 'setup a clean server to prepare for a felt-server deploy',
 	dev: false,
-	run: async ({}) => {
+	run: async () => {
 		//TODO gro dev workaround
 		process.env.NODE_ENV = 'production';
 		const {fromEnv} = await import('$lib/server/env');
 
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
-		const DEPLOY_SERVER_HOST = fromEnv('DEPLOY_SERVER_HOST');
+		const VITE_DEPLOY_SERVER_HOST = fromEnv('VITE_DEPLOY_SERVER_HOST');
 		const EMAIL_ADDRESS = fromEnv('EMAIL_ADDRESS');
 
 		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
@@ -40,6 +40,7 @@ export const task: Task = {
 			systemctl start nginx;
 			sudo unlink /etc/nginx/sites-enabled/default;`,
 		]);
+		await spawn('cat', [`src/infra/felt-server.conf`]);
 		await spawn('scp', [
 			`src/infra/felt-server.conf`,
 			`${deployLogin}:/etc/nginx/sites-available/felt-server.conf`,
@@ -49,7 +50,7 @@ export const task: Task = {
 		await spawn('ssh', [
 			deployLogin,
 			`ln -s /etc/nginx/sites-available/felt-server.conf /etc/nginx/sites-enabled/felt-server.conf;
-			certbot --nginx --non-interactive --agree-tos --email ${EMAIL_ADDRESS} -d ${DEPLOY_SERVER_HOST}
+			certbot --nginx --non-interactive --agree-tos --email ${EMAIL_ADDRESS} -d ${VITE_DEPLOY_SERVER_HOST}
 			systemctl restart nginx.service;
 			`,
 		]);
