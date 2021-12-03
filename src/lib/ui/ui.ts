@@ -400,14 +400,23 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 				// but we may want to make them readable stores in the meantime
 				spaces: $community.spaces.concat(space), // TODO should this check if it's already there? yes but for different data structures
 			}));
+
 			spaces.update(($spaces) => $spaces.concat(writable(space)));
 			return result;
 		},
 		delete_space: async ({params, invoke}) => {
-			console.log(params);
 			const result = await invoke();
 			if (!result.ok) return result;
 			//update state here
+			const {space_id, community_id} = params;
+			const community = get(communities).find((c) => get(c).community_id === community_id)!;
+			community.update(($community) => ({
+				...$community,
+				// TODO clean this up as part of the data normalization efforts
+				spaces: $community.spaces.filter((space) => space.space_id != space_id),
+			}));
+			spaces.update(($spaces) => $spaces.filter((space) => get(space).space_id != space_id));
+			select_space({community_id: community_id, space_id: get(community).spaces[0]});
 			return result;
 		},
 		create_file: async ({invoke}) => {

@@ -155,6 +155,7 @@ export type ReadSpacesResponseResult = ApiResult<ReadSpacesResponse>;
 
 export interface DeleteSpaceParams {
 	space_id: number;
+	community_id: number;
 }
 
 export interface DeleteSpaceResponse {
