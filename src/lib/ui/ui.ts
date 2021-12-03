@@ -403,6 +403,13 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			spaces.update(($spaces) => $spaces.concat(writable(space)));
 			return result;
 		},
+		delete_space: async ({params, invoke}) => {
+			console.log(params);
+			const result = await invoke();
+			if (!result.ok) return result;
+			//update state here
+			return result;
+		},
 		create_file: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
