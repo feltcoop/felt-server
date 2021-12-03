@@ -16,7 +16,7 @@ const envs: {file: string; defaultFile: string}[] = [
 
 interface Env {
 	COOKIE_KEYS: string; // TODO validate this somehow to avoid production security issues
-	DEPLOY_SERVER_HOST: string;
+	VITE_DEPLOY_SERVER_HOST: string;
 	DEPLOY_IP: string;
 	DEPLOY_USER: string;
 	EMAIL_ADDRESS: string;

@@ -1,6 +1,6 @@
 import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
 
-import {DEPLOY_SERVER_HOST, API_SERVER_HOST_PROD, SVELTEKIT_SERVER_HOST} from '$lib/config';
+import {VITE_DEPLOY_SERVER_HOST, API_SERVER_HOST_PROD, SVELTEKIT_SERVER_HOST} from '$lib/config';
 import {HEARTBEAT_INTERVAL} from '$lib/ui/socket';
 
 // Outputs an nginx config with configured values.
@@ -9,7 +9,7 @@ export const gen: Gen = async () => {
 	return `
 
 server {
-  server_name ${DEPLOY_SERVER_HOST};
+  server_name ${VITE_DEPLOY_SERVER_HOST};
 
   location /api {
     proxy_pass https://${API_SERVER_HOST_PROD};
