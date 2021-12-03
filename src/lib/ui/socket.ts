@@ -121,8 +121,6 @@ const toDefaultSocketState = (): SocketState => ({
 	error: null,
 });
 
-// TODO instead of passing `update`
-// we may want to do this all with event listeners from the parent
 const createWebSocket = (
 	url: string,
 	handleMessage: HandleSocketMessage,
