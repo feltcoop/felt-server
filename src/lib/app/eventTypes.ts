@@ -22,6 +22,7 @@ export interface EventParamsByName {
 	create_space: CreateSpaceParams;
 	read_space: ReadSpaceParams;
 	read_spaces: ReadSpacesParams;
+	delete_space: DeleteSpaceParams;
 	create_file: CreateFileParams;
 	read_files: ReadFilesParams;
 	query_files: QueryFilesParams;
@@ -45,6 +46,7 @@ export interface EventResponseByName {
 	create_space: CreateSpaceResponse;
 	read_space: ReadSpaceResponse;
 	read_spaces: ReadSpacesResponse;
+	delete_space: DeleteSpaceResponse;
 	create_file: CreateFileResponse;
 	read_files: ReadFilesResponse;
 	ping: PingResponse;
@@ -151,6 +153,16 @@ export interface ReadSpacesResponse {
 
 export type ReadSpacesResponseResult = ApiResult<ReadSpacesResponse>;
 
+export interface DeleteSpaceParams {
+	space_id: number;
+}
+
+export interface DeleteSpaceResponse {
+	space_id: number;
+}
+
+export type DeleteSpaceResponseResult = ApiResult<DeleteSpaceResponse>;
+
 export interface CreateFileParams {
 	actor_id: number;
 	space_id: number;
@@ -224,6 +236,7 @@ export interface Dispatch {
 	(eventName: 'create_space', params: CreateSpaceParams): Promise<CreateSpaceResponseResult>;
 	(eventName: 'read_space', params: ReadSpaceParams): Promise<ReadSpaceResponseResult>;
 	(eventName: 'read_spaces', params: ReadSpacesParams): Promise<ReadSpacesResponseResult>;
+	(eventName: 'delete_space', params: DeleteSpaceParams): Promise<DeleteSpaceResponseResult>;
 	(eventName: 'create_file', params: CreateFileParams): Promise<CreateFileResponseResult>;
 	(eventName: 'read_files', params: ReadFilesParams): Promise<ReadFilesResponseResult>;
 	(eventName: 'query_files', params: QueryFilesParams): Readable<Readable<File>[]>;
@@ -268,6 +281,9 @@ export interface UiHandlers {
 	read_spaces: (
 		ctx: DispatchContext<ReadSpacesParams, ReadSpacesResponseResult>,
 	) => Promise<ReadSpacesResponseResult>;
+	delete_space: (
+		ctx: DispatchContext<DeleteSpaceParams, DeleteSpaceResponseResult>,
+	) => Promise<DeleteSpaceResponseResult>;
 	create_file: (
 		ctx: DispatchContext<CreateFileParams, CreateFileResponseResult>,
 	) => Promise<CreateFileResponseResult>;

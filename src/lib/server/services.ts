@@ -12,6 +12,7 @@ import {
 	readSpaceService,
 	readSpacesService,
 	createSpaceService,
+	deleteSpaceService,
 } from '$lib/vocab/space/spaceServices';
 
 export const services: Map<string, Service<any, any>> = new Map(
@@ -27,5 +28,6 @@ export const services: Map<string, Service<any, any>> = new Map(
 		readSpaceService,
 		readSpacesService,
 		readFilesService,
+		deleteSpaceService,
 	].map((s) => [s.event.name, s]),
 );

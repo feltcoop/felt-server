@@ -80,4 +80,33 @@ export const spaceRepo = (db: Database) => ({
 		// console.log('[db] created default spaces', community_id, spaces);
 		return {ok: true, value: spaces};
 	},
+	deleteById: async (
+		space_id: number,
+	): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {
+		const data_cs = await db.sql<any[]>`
+      DELETE FROM community_spaces WHERE ${space_id}=space_id
+    `;
+
+		if (data_cs.count != 1) {
+			return {
+				ok: false,
+				type: 'deletion_error',
+				reason: `There was an issue deleting community_space: ${space_id}`,
+			};
+		}
+
+		const data = await db.sql<any[]>`
+      DELETE FROM spaces WHERE ${space_id}=space_id
+    `;
+
+		if (data.count != 1) {
+			return {
+				ok: false,
+				type: 'deletion_error',
+				reason: `There was an issue deleting community_space: ${space_id}`,
+			};
+		}
+
+		return {ok: true, value: data};
+	},
 });
