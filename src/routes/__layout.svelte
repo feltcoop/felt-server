@@ -143,44 +143,17 @@
 	let mounted = false;
 
 	onMount(() => {
-		// TODO create the API client here -- do we need a `$client.ready` state
-		// to abstract away `$socket.connected`? Probably so to support websocketless usage.
 		mounted = true;
 		return () => {
-			// due to how Svelte works, this component's reactive expression that calls `socket.disconnect`
-			// will not be called if `mounted = false` is assigned here while
-			// the component is being destroyed, so we duplicate `socket.disconnect()`
-			if ($socket.status === 'success') {
-				socket.disconnect();
-			}
+			socket.disconnect(); // TODO should this and the below stuff be abstracted
 		};
 	});
 
-	// TODO extract this logic to a websocket module or component
-	let connecting = false;
-	let connectCount = 0;
-	const RECONNECT_DELAY = 1000; // this matches the current Vite/SvelteKit retry rate; we could use the count to increase this
 	$: if (mounted) {
-		// this expression re-runs when `$socket.status` changes, so we can ignore the `pending` status
-		// and do the right thing after it finishes whatever is in progress
 		if (guest) {
-			if ($socket.status === 'success') {
-				socket.disconnect();
-			}
+			socket.disconnect();
 		} else {
-			if ($socket.status === 'initial' && !connecting) {
-				connectCount++;
-				connecting = true;
-				const connect = () => {
-					connecting = false;
-					socket.connect(WEBSOCKET_URL);
-				};
-				if (connectCount === 1) {
-					connect();
-				} else {
-					setTimeout(connect, RECONNECT_DELAY);
-				}
-			}
+			socket.connect(WEBSOCKET_URL);
 		}
 	}
 </script>

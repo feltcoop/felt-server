@@ -27,7 +27,7 @@
 	// TODO `shouldLoadFiles` should be managed inside the `api` layer
 	// then the code could simply be:
 	// $: files = api.getFilesBySpace(space.space_id);
-	$: shouldLoadFiles = browser && $socket.connected;
+	$: shouldLoadFiles = browser && $socket.open;
 	$: files = shouldLoadFiles ? dispatch('query_files', {space_id: $space.space_id}) : null;
 
 	const createFile = async () => {

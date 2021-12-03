@@ -5,12 +5,12 @@
 
 	let newUrl = $socket.url || '';
 	const resetUrl = () => (newUrl = $socket.url || '');
-	$: if ($socket.connected) resetUrl();
+	$: if ($socket.open) resetUrl();
 </script>
 
 {#if $devmode}
 	<div class="socket-connection">
-		{#if $socket.connected}
+		{#if $socket.open}
 			<form>
 				<input bind:value={newUrl} disabled />
 				<button

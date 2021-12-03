@@ -16,14 +16,17 @@ export const setSocket = (store: SocketStore): SocketStore => {
 
 // This store wraps a browser `WebSocket` connection with all of the Sveltey goodness.
 
-// TODO rename? Connection? SocketConnection?
+// TODO consider extracting a higher order store or component
+// to handle reconnection and heartbeat. Connection? SocketConnection?
+// A Svelte component could export the `socket` store.
+
 // TODO consider xstate, looks like a good usecase
 
 export interface SocketState {
 	url: string | null;
 	ws: WebSocket | null;
-	connected: boolean;
-	status: AsyncStatus; // rename? `connectionStatus`?
+	open: boolean;
+	status: AsyncStatus;
 	error: string | null;
 }
 
@@ -47,51 +50,68 @@ export const toSocketStore = (
 
 	const onWsOpen = () => {
 		console.log('[socket] open');
-		update(($socket) => ({...$socket, status: 'success', connected: true}));
+		update(($socket) => ({...$socket, status: 'success', open: true}));
 	};
 	const onWsClose = () => {
 		console.log('[socket] close');
-		update(($socket) => ({
-			...$socket,
-			status: 'initial',
-			connected: false,
-			ws: null,
-			url: null,
-		}));
+		update(($socket) => ({...$socket, open: false}));
+		queueReconnect();
 	};
+
+	// TODO extract this?
+	let reconnecting = false;
+	let reconnectCount = 0;
+	const RECONNECT_DELAY = 1000; // this matches the current Vite/SvelteKit retry rate; we could use the count to increase this
+	const RECONNECT_DELAY_MAX = 60000;
+	const RECONNECT_FAST_RETRY_COUNT = 3; // retry at the base delay this many times before increasing backoff
+	const queueReconnect = () => {
+		debugger;
+		if (!reconnecting && get(store).status === 'initial') {
+			reconnecting = true;
+			reconnectCount++;
+			const connect = () => {
+				reconnecting = false;
+				store.connect(get(store).url!);
+			};
+			if (reconnectCount === 1) {
+				connect();
+			} else {
+				setTimeout(
+					connect,
+					Math.min(
+						RECONNECT_DELAY_MAX,
+						RECONNECT_DELAY * Math.max(1, reconnectCount - RECONNECT_FAST_RETRY_COUNT + 1),
+					),
+				);
+			}
+		}
+	};
+
+	let lastConnect = Date.now();
 
 	const store: SocketStore = {
 		subscribe,
 		disconnect: (code = 1000) => {
+			if (!get(store).ws) return;
 			update(($socket) => {
-				// TODO this is buggy if `connect` is still pending
 				console.log('[socket] disconnect', code, $socket);
-				if (!$socket.connected || !$socket.ws || $socket.status !== 'success') {
-					console.error('[ws] cannot disconnect because it is not connected'); // TODO return errors instead?
-					return $socket;
-				}
-				$socket.ws.close(code);
-				return {...$socket, status: 'pending', connected: false, ws: null, url: null};
+				const ws = $socket.ws!;
+				ws.removeEventListener('open', onWsOpen);
+				ws.removeEventListener('close', onWsClose);
+				ws.close(code);
+				return {...$socket, status: 'initial', open: false, ws: null, url: null};
 			});
 		},
 		connect: (url) => {
+			console.log('connect gap', Date.now() - lastConnect);
+			lastConnect = Date.now();
+			if (get(store).ws) return;
 			update(($socket) => {
 				console.log('[socket] connect', $socket);
-				if ($socket.connected || $socket.ws || $socket.status !== 'initial') {
-					console.error('[ws] cannot connect because it is already connected'); // TODO return errors instead?
-					return $socket;
-				}
 				const ws = createWebSocket(url, handleMessage, sendHeartbeat, heartbeatInterval);
 				ws.addEventListener('open', onWsOpen);
 				ws.addEventListener('close', onWsClose);
-				return {
-					...$socket,
-					url,
-					connected: false,
-					status: 'pending',
-					ws,
-					error: null,
-				};
+				return {...$socket, url, connected: false, status: 'pending', ws, error: null};
 			});
 		},
 		send: (data) => {
@@ -101,8 +121,9 @@ export const toSocketStore = (
 				console.error('[ws] cannot send without a socket', data, $socket);
 				return false;
 			}
-			if (!$socket.connected) {
-				console.error('[ws] cannot send because the websocket is not connected', data, $socket);
+			if (!$socket.open) {
+				// TODO queue messages instead? return a promise?
+				console.error('[ws] cannot send because the websocket is not open', data, $socket);
 				return false;
 			}
 			$socket.ws.send(JSON.stringify(data));
@@ -116,7 +137,7 @@ export const toSocketStore = (
 const toDefaultSocketState = (): SocketState => ({
 	url: null,
 	ws: null,
-	connected: false,
+	open: false,
 	status: 'initial',
 	error: null,
 });
