@@ -70,7 +70,6 @@
 				{/if}
 			</div>
 		{:else if $mainNavView === 'account'}
-			<button on:click={() => dispatch('delete_space', {space_id: 5})}>🗑️</button>
 			<div class="markup">
 				<AccountForm guest={$session.guest} />
 				{#if $devmode}

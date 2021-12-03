@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {Space} from '$lib/vocab/space/space.js';
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
+	import SpaceDelete from '$lib/ui/SpaceDelete.svelte';
 	import type {Community} from '$lib/vocab/community/community.js';
 	import MembershipInput from '$lib/ui/MembershipInput.svelte';
 	import type {Readable} from 'svelte/store';
@@ -17,6 +18,7 @@
 	<div class="header">
 		<SpaceInput {community} />
 		<MembershipInput {community} />
+		<SpaceDelete {selectedSpace} />
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
