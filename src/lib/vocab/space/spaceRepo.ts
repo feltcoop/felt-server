@@ -103,7 +103,7 @@ export const spaceRepo = (db: Database) => ({
 			return {
 				ok: false,
 				type: 'deletion_error',
-				reason: `There was an issue deleting community_space: ${space_id}`,
+				reason: `There was an issue deleting space: ${space_id}`,
 			};
 		}
 
