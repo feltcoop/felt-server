@@ -10,7 +10,7 @@
 		api: {dispatch},
 	} = getApp();
 
-	export let selectedSpace: Readable<Space>;
+	export let space: Readable<Space>;
 	export let community: Readable<Community>;
 
 	let opened = false;
@@ -19,7 +19,7 @@
 	const deleteSpace = async () => {
 		errorMessage = '';
 		const result = await dispatch('delete_space', {
-			space_id: $selectedSpace.space_id,
+			space_id: $space.space_id,
 			community_id: $community.community_id,
 		});
 		if (result.ok) {
@@ -48,7 +48,7 @@
 {#if opened}
 	<Dialog on:close={() => (opened = false)}>
 		<div class="markup">
-			<h1>Delete {$selectedSpace.name} space?</h1>
+			<h1>Delete {$space.name} space?</h1>
 			<form>
 				<div class:error={!!errorMessage}>{errorMessage || ''}</div>
 				<button type="button" on:click={deleteSpace} on:keydown={onKeydown}> Delete space </button>

@@ -87,7 +87,7 @@ export const spaceRepo = (db: Database) => ({
       DELETE FROM community_spaces WHERE ${space_id}=space_id
     `;
 
-		if (data_cs.count != 1) {
+		if (data_cs.count !== 1) {
 			return {
 				ok: false,
 				type: 'deletion_error',
@@ -99,7 +99,7 @@ export const spaceRepo = (db: Database) => ({
       DELETE FROM spaces WHERE ${space_id}=space_id
     `;
 
-		if (data.count != 1) {
+		if (data.count !== 1) {
 			return {
 				ok: false,
 				type: 'deletion_error',
