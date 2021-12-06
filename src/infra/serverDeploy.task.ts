@@ -16,7 +16,7 @@ export const task: Task = {
 		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
 		const ENV_PROD = '.env.production';
 
-		//set git version in .env.production file
+		//set git version in the .env.production file
 		const branch = fs.readFileSync('.git/HEAD').toString().trim();
 		const gitVersion = fs
 			.readFileSync('.git/' + branch.substring(5))
