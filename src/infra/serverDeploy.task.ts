@@ -7,6 +7,7 @@ export const task: Task = {
 	summary: 'deploy felt server to prod',
 	dev: false,
 	run: async ({invokeTask}) => {
+		console.log('setting serverDeploy');
 		//TODO gro dev workaround
 		process.env.NODE_ENV = 'production';
 		const {fromEnv} = await import('$lib/server/env');
@@ -35,7 +36,7 @@ export const task: Task = {
 		});
 
 		//build the actual tar deployment artifact
-		await invokeTask('clean');
+		await invokeTask('clean', {_: ['--sveltekit']});
 		await invokeTask('build');
 
 		let timestamp = Date.now();
