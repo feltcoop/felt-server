@@ -1,5 +1,6 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
+import fs from 'fs';
 import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
 
 export const task: Task = {
@@ -12,10 +13,31 @@ export const task: Task = {
 
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
-
 		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
+		const ENV_PROD = '.env.production';
+
+		//set git version in .env.production file
+		const branch = fs.readFileSync('.git/HEAD').toString().trim();
+		const gitVersion = fs
+			.readFileSync('.git/' + branch.substring(5))
+			.toString()
+			.trim()
+			.substring(0, 7);
+
+		fs.readFile(ENV_PROD, 'utf8', function (err, data) {
+			if (err) {
+				return console.log(err);
+			}
+			var result = data.replace(/VITE_GIT_VERSION=.*/g, `VITE_GIT_VERSION=${gitVersion}`);
+			fs.writeFile(ENV_PROD, result, 'utf8', function (err) {
+				if (err) return console.log(err);
+			});
+		});
+
+		//build the actual tar deployment artifact
 		await invokeTask('clean');
 		await invokeTask('build');
+
 		let timestamp = Date.now();
 		let artifactName = `felt_server_${timestamp}`;
 		let currentDeploy = `current_felt_server_deploy`;
@@ -50,7 +72,7 @@ export const task: Task = {
 		]);
 		//TEMP: move .env files into root
 		await spawn('scp', [`src/infra/.env.default`, `${deployLogin}:${currentDeploy}/.env`]);
-		await spawn('scp', [`.env.production`, `${deployLogin}:${currentDeploy}/.env.production`]);
+		await spawn('scp', [`${ENV_PROD}`, `${deployLogin}:${currentDeploy}/.env.production`]);
 		//TODO: re/start the server via pm2
 	},
 };
