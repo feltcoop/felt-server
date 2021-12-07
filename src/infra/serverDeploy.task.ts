@@ -17,8 +17,8 @@ export const task: Task = {
 		const ENV_PROD = '.env.production';
 
 		//set git version in the .env.production file
-		const branch = (await fs.readFile('.git/HEAD'), 'utf8').trim().substring(5);
-		const gitVersion = (await fs.readFile('.git/' + branch), 'utf8').trim().substring(0, 7);
+		const branch = (await fs.readFile('.git/HEAD', 'utf8')).trim().substring(5);
+		const gitVersion = (await fs.readFile('.git/' + branch, 'utf8')).trim().substring(0, 7);
 
 		const data = await fs.readFile(ENV_PROD, 'utf8');
 		const result = data.replace(/VITE_GIT_VERSION=.*/g, `VITE_GIT_VERSION=${gitVersion}`);
