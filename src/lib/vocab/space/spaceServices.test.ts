@@ -41,8 +41,14 @@ test__spaceServices('delete a space in multiple communities', async ({server}) =
 	});
 	assert.ok(deleteResult.ok);
 
-	const findResult = await server.db.repos.space.findById(space.space_id);
-	assert.ok(!findResult.ok);
+	const findSpaceResult = await server.db.repos.space.findById(space.space_id);
+	assert.ok(!findSpaceResult.ok);
+
+	// TODO make an API for this, possibly a generic API ensuring the database is cleaned up
+	const findCommunitySpacesResult = await server.db.sql<any>`
+		SELECT space_id FROM community_spaces WHERE space_id=${space.space_id}
+	`;
+	assert.is(findCommunitySpacesResult.count, 0);
 });
 
 test__spaceServices.run();
