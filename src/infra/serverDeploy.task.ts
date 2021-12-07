@@ -73,7 +73,7 @@ export const task: Task = {
 		]);
 		//TEMP: move .env files into root
 		await spawn('scp', [`src/infra/.env.default`, `${deployLogin}:${currentDeploy}/.env`]);
-		await spawn('scp', [`${ENV_PROD}`, `${deployLogin}:${currentDeploy}/.env.production`]);
+		await spawn('scp', [ENV_PROD, `${deployLogin}:${currentDeploy}/${ENV_PROD}`]);
 		//TODO: re/start the server via pm2
 	},
 };
