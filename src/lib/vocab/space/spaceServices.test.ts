@@ -38,7 +38,7 @@ test__spaceServices('delete a space in multiple communities', async ({server}) =
 
 	const deleteResult = await deleteSpaceService.perform({
 		server,
-		params: {space_id: space.space_id, community_id: 'TODO remove this' as any},
+		params: {space_id: space.space_id},
 		account_id: account.account_id,
 	});
 	assert.ok(deleteResult.ok);
