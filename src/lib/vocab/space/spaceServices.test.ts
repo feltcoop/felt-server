@@ -26,13 +26,16 @@ test__spaceServices('delete a space in multiple communities', async ({server}) =
 	await server.db.sql<any>`
     INSERT INTO community_spaces (space_id, community_id) VALUES (
       ${space.space_id},${community2.community_id}
-    )
-  `;
+		)`;
 	await server.db.sql<any>`
     INSERT INTO community_spaces (space_id, community_id) VALUES (
       ${space.space_id},${community3.community_id}
     )
-  `;
+	`;
+	let findCommunitySpacesResult = await server.db.sql<any>`
+		SELECT space_id FROM community_spaces WHERE space_id=${space.space_id}
+	`;
+	assert.is(findCommunitySpacesResult.count, 3);
 
 	const deleteResult = await deleteSpaceService.perform({
 		server,
@@ -44,8 +47,7 @@ test__spaceServices('delete a space in multiple communities', async ({server}) =
 	const findSpaceResult = await server.db.repos.space.findById(space.space_id);
 	assert.ok(!findSpaceResult.ok);
 
-	// TODO make an API for this, possibly a generic API ensuring the database is cleaned up
-	const findCommunitySpacesResult = await server.db.sql<any>`
+	findCommunitySpacesResult = await server.db.sql<any>`
 		SELECT space_id FROM community_spaces WHERE space_id=${space.space_id}
 	`;
 	assert.is(findCommunitySpacesResult.count, 0);
