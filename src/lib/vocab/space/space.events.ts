@@ -103,12 +103,7 @@ export const delete_space: ServiceEventInfo = {
 	},
 	response: {
 		$id: 'https://felt.social/vocab/delete_space_response.json',
-		type: 'object',
-		properties: {
-			space_id: {type: 'number'},
-		},
-		required: ['space_id'],
-		additionalProperties: false,
+		type: 'null',
 	},
 	returns: 'Promise<DeleteSpaceResponseResult>',
 	route: {
