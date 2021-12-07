@@ -97,6 +97,6 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 			console.log('[delete_space] error removing space: ', params.space_id);
 			return {ok: false, status: 500, reason: result.reason};
 		}
-		return {ok: true, status: 200, value: {space_id: params.space_id}};
+		return {ok: true, status: 200, value: null};
 	},
 };

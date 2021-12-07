@@ -408,18 +408,23 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			const result = await invoke();
 			if (!result.ok) return result;
 			//update state here
-			const {space_id, community_id} = params;
-			const community = get(communities).find((c) => get(c).community_id === community_id)!;
-			community.update(($community) => ({
-				...$community,
-				// TODO clean this up as part of the data normalization efforts
-				spaces: $community.spaces.filter((space) => space.space_id !== space_id),
-			}));
-			spaces.update(($spaces) => $spaces.filter((space) => get(space).space_id !== space_id));
-			dispatch('select_space', {
-				community_id: community_id,
-				space_id: get(community).spaces[0].space_id,
+			const {space_id} = params;
+			get(communities).forEach((community) => {
+				community.update(($community) => ({
+					...$community,
+					// TODO clean this up as part of the data normalization efforts
+					spaces: $community.spaces.filter((space) => space.space_id !== space_id),
+				}));
+
+				if (space_id === get(selectedSpaceIdByCommunity)[get(community).community_id])
+					dispatch('select_space', {
+						community_id: get(community).community_id,
+						space_id: get(community).spaces[0].space_id,
+					});
 			});
+
+			spaces.update(($spaces) => $spaces.filter((space) => get(space).space_id !== space_id));
+
 			return result;
 		},
 		create_file: async ({invoke}) => {

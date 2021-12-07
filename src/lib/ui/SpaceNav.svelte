@@ -18,7 +18,7 @@
 	<div class="header">
 		<SpaceInput {community} />
 		<MembershipInput {community} />
-		<SpaceDelete space={selectedSpace} {community} />
+		<SpaceDelete space={selectedSpace} />
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
