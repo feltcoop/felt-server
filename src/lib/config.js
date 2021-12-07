@@ -11,9 +11,9 @@ export const VITE_DEPLOY_SERVER_HOST = import.meta.env
 	? import.meta.env.VITE_DEPLOY_SERVER_HOST
 	: process.env.VITE_DEPLOY_SERVER_HOST;
 
-export const VITE_GIT_VERSION = import.meta.env
-	? import.meta.env.VITE_GIT_VERSION
-	: process.env.VITE_GIT_VERSION;
+export const VITE_GIT_HASH = import.meta.env
+	? import.meta.env.VITE_GIT_HASH
+	: process.env.VITE_GIT_HASH;
 
 export const SVELTEKIT_SERVER_HOST = 'localhost:3000';
 export const API_SERVER_PORT_DEV = 3001;

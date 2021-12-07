@@ -11,7 +11,7 @@
 	import {randomHue} from '$lib/ui/color';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
-	import {VITE_GIT_VERSION} from '$lib/config';
+	import {VITE_GIT_HASH} from '$lib/config';
 
 	const {
 		api: {dispatch},
@@ -78,7 +78,7 @@
 				{/if}
 			</div>
 			<SocketConnection />
-			<div class="markup version">felt-server version: {VITE_GIT_VERSION}</div>
+			<div class="markup version">felt-server version: {VITE_GIT_HASH}</div>
 		{/if}
 	</div>
 </div>

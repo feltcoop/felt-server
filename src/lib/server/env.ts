@@ -15,7 +15,7 @@ const envs: {file: string; defaultFile: string}[] = [
 ];
 
 interface Env {
-	VITE_GIT_VERSION: string;
+	VITE_GIT_HASH: string;
 	COOKIE_KEYS: string; // TODO validate this somehow to avoid production security issues
 	VITE_DEPLOY_SERVER_HOST: string;
 	DEPLOY_IP: string;
