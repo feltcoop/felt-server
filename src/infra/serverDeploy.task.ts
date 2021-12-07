@@ -26,6 +26,7 @@ export const task: Task = {
 
 		//build the actual tar deployment artifact
 		await invokeTask('clean', {_: [], sveltekit: true});
+
 		await invokeTask('build');
 
 		let timestamp = Date.now();
