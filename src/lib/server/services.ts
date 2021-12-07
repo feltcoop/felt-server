@@ -5,8 +5,8 @@ import {
 	readCommunityService,
 	readCommunitiesService,
 	createCommunityService,
-	createMembershipService,
 } from '$lib/vocab/community/communityServices';
+import {createMembershipService} from '$lib/vocab/membership/membershipServices';
 import {readFilesService, createFileService} from '$lib/vocab/file/fileServices';
 import {
 	readSpaceService,
