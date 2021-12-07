@@ -26,12 +26,11 @@ test__spaceServices('delete a space in multiple communities', async ({server}) =
 	await server.db.sql<any>`
     INSERT INTO community_spaces (space_id, community_id) VALUES (
       ${space.space_id},${community2.community_id}
-		)`;
+	)`;
 	await server.db.sql<any>`
     INSERT INTO community_spaces (space_id, community_id) VALUES (
       ${space.space_id},${community3.community_id}
-    )
-	`;
+	)`;
 	let findCommunitySpacesResult = await server.db.sql<any>`
 		SELECT space_id FROM community_spaces WHERE space_id=${space.space_id}
 	`;
