@@ -14,7 +14,7 @@ import {create_persona} from './persona.events';
 // then change this module to setup and teardown only a `db` instance
 // instead of the whole server
 
-/* test__personaService */
+/* test__repos */
 const test__personaService = suite<TestServerContext & TestAppContext>('personaService');
 
 test__personaService.before(setupServer);
