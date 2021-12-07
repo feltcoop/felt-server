@@ -1,12 +1,11 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
-import fs from 'fs';
 import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
 
 export const task: Task = {
 	summary: 'deploy felt server to prod',
 	dev: false,
-	run: async ({invokeTask}) => {
+	run: async ({invokeTask, fs}) => {
 		console.log('setting serverDeploy');
 		//TODO gro dev workaround
 		process.env.NODE_ENV = 'production';
@@ -18,25 +17,14 @@ export const task: Task = {
 		const ENV_PROD = '.env.production';
 
 		//set git version in the .env.production file
-		const branch = fs.readFileSync('.git/HEAD').toString().trim();
-		const gitVersion = fs
-			.readFileSync('.git/' + branch.substring(5))
-			.toString()
-			.trim()
-			.substring(0, 7);
+		const branch = (await fs.readFile('.git/HEAD'), 'utf8').trim().substring(5);
+		const gitVersion = (await fs.readFile('.git/' + branch), 'utf8').trim().substring(0, 7);
 
-		fs.readFile(ENV_PROD, 'utf8', function (err, data) {
-			if (err) {
-				return console.log(err);
-			}
-			var result = data.replace(/VITE_GIT_VERSION=.*/g, `VITE_GIT_VERSION=${gitVersion}`);
-			fs.writeFile(ENV_PROD, result, 'utf8', function (err) {
-				if (err) return console.log(err);
-			});
-		});
+		const data = await fs.readFile(ENV_PROD, 'utf8');
+		const result = data.replace(/VITE_GIT_VERSION=.*/g, `VITE_GIT_VERSION=${gitVersion}`);
+		await fs.writeFile(ENV_PROD, result, 'utf8');
 
 		//build the actual tar deployment artifact
-		await invokeTask('clean', {_: ['--sveltekit']});
 		await invokeTask('build');
 
 		let timestamp = Date.now();
