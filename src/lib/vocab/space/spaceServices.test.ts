@@ -7,7 +7,7 @@ import {toRandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {deleteSpaceService} from '$lib/vocab/space/spaceServices';
 
-/* test__repos */
+/* test__spaceServices */
 const test__spaceServices = suite<TestServerContext & TestAppContext>('spaceServices');
 
 test__spaceServices.before(setupServer);
