@@ -96,9 +96,8 @@ export const delete_space: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			space_id: {type: 'number'},
-			community_id: {type: 'number'},
 		},
-		required: ['space_id', 'community_id'],
+		required: ['space_id'],
 		additionalProperties: false,
 	},
 	response: {

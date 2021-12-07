@@ -4,14 +4,12 @@
 
 	import {getApp} from '$lib/ui/app';
 	import type {Space} from '$lib/vocab/space/space';
-	import type {Community} from '$lib/vocab/community/community';
 
 	const {
 		api: {dispatch},
 	} = getApp();
 
 	export let space: Readable<Space>;
-	export let community: Readable<Community>;
 
 	let opened = false;
 	let errorMessage: string | undefined;
@@ -20,7 +18,6 @@
 		errorMessage = '';
 		const result = await dispatch('delete_space', {
 			space_id: $space.space_id,
-			community_id: $community.community_id,
 		});
 		if (result.ok) {
 			opened = false;
