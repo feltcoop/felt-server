@@ -24,6 +24,8 @@ export const task: Task = {
 		const result = data.replace(/VITE_GIT_HASH=.*/g, `VITE_GIT_HASH=${gitVersion}`);
 		await fs.writeFile(ENV_PROD, result, 'utf8');
 
+		process.env.VITE_GIT_HASH = gitVersion;
+
 		//build the actual tar deployment artifact
 		await invokeTask('build');
 
