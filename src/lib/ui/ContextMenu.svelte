@@ -11,7 +11,7 @@
 
 <style>
 	.context-menu {
-		/* TODO */
+		/* TODO use `.pane` class from Felt when published */
 		background: #fff;
 		border: 2px solid black;
 	}
