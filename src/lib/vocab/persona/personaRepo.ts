@@ -57,8 +57,8 @@ export const personaRepo = (db: Database) => ({
 	): Promise<Result<{value: Persona}, {type: 'no_persona_found'} & ErrorResponse>> => {
 		console.log('[personaRepo] loading persona', persona_id);
 		const data = await db.sql<Persona[]>`
-      select persona_id, name, created, updated from personas where persona_id = ${persona_id}
-    `;
+			select persona_id, name, created, updated from personas where persona_id = ${persona_id}
+		`;
 		if (data.length) {
 			console.log('[personaRepo] persona found, returning', persona_id);
 			return {ok: true, value: data[0]};
