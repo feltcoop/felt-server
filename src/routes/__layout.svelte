@@ -208,7 +208,13 @@
 		<div
 			use:popperRef
 			class="luggage-wrapper pane"
-			on:contextmenu|stopPropagation|preventDefault={() => (showContextMenu = !showContextMenu)}
+			on:contextmenu={(e) => {
+				if (!e.ctrlKey) {
+					e.stopPropagation();
+					e.preventDefault();
+					showContextMenu = !showContextMenu;
+				}
+			}}
 		>
 			<Luggage />
 		</div>
@@ -229,7 +235,11 @@
 	</main>
 	<Devmode {devmode} />
 	{#if showContextMenu}
-		<div class="context-menu-wrapper" use:popperContent={{placement: 'right-start'}}>
+		<div
+			class="context-menu-wrapper panel"
+			use:popperContent={{placement: 'right-start'}}
+			on:click|stopPropagation
+		>
 			<ContextMenu />
 		</div>
 	{/if}
