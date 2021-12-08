@@ -10,8 +10,6 @@ export const membershipRepo = (db: Database) => ({
 		persona_id,
 		community_id,
 	}: CreateMembershipParams): Promise<Result<{value: Membership}, ErrorResponse>> => {
-		// TODO disallow multiples of the same membership
-
 		// TODO use `unwrap` and propagate errors
 
 		// Persona home communities disallow memberships as a hard rule.

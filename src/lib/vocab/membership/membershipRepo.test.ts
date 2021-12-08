@@ -55,7 +55,6 @@ test__membershipRepo(
 			community_id: community.community_id,
 			persona_id: (await random.persona()).persona_id,
 		});
-		console.log('community', community);
 		assert.ok(!createMembershipResult.ok);
 	},
 );
