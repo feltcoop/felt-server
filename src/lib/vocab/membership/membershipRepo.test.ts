@@ -7,11 +7,6 @@ import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
 import {toRandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 
-// TODO this only depends on the database --
-// if we don't figure out a robust way to make a global reusable server,
-// then change this module to setup and teardown only a `db` instance
-// instead of the whole server
-
 /* test__repos */
 const test__membershipRepo = suite<TestServerContext & TestAppContext>('membershipService');
 
