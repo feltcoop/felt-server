@@ -21,7 +21,6 @@ test__membershipRepo.after(teardownServer);
 test__membershipRepo('disallow creating duplicate memberships', async ({server}) => {
 	const random = toRandomVocabContext(server.db);
 	const persona = await random.persona();
-	console.log('persona::::', persona);
 	const community = await random.community();
 
 	let createMembershipResult;
