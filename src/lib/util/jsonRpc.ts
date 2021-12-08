@@ -3,7 +3,7 @@ export interface JsonRpcRequest<
 	TParams extends Record<TMethod, object> = any, // TODO defaults?
 > {
 	jsonrpc: '2.0';
-	id: number;
+	id: string | number;
 	method: TMethod;
 	params: TParams[TMethod];
 }
@@ -12,7 +12,7 @@ export interface JsonRpcRequest<
 // or do we want to support multiple kinds of messages?
 export interface JsonRpcResponse<TResult = any> {
 	jsonrpc: '2.0';
-	id: number;
+	id: string | number;
 	result: TResult;
 }
 
