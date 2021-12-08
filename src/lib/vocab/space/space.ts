@@ -23,6 +23,7 @@ export const SpaceSchema = {
 	additionalProperties: false,
 };
 
+// TODO should this be `ViewType`? So if spaces are like tags, Views are a type of Space
 export enum SpaceType {
 	Home = 'Home',
 	Room = 'Room',

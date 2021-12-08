@@ -10,6 +10,7 @@
 	import {browser} from '$app/env';
 	import type {Readable} from 'svelte/store';
 	import {get} from 'svelte/store';
+	import {createPopperActions} from 'svelte-popperjs';
 
 	import {setSocket, toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
@@ -20,6 +21,7 @@
 	import {setApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
+	import ContextMenu from '$lib/ui/ContextMenu.svelte';
 	import {WEBSOCKET_URL} from '$lib/config';
 	import {toWebsocketApiClient} from '$lib/ui/WebsocketApiClient';
 	// import {toHttpApiClient} from '$lib/ui/HttpApiClient';
@@ -183,15 +185,33 @@
 			}
 		}
 	}
+
+	const [popperRef, popperContent] = createPopperActions();
+	let showContextMenu = false;
 </script>
 
 <svelte:head>
 	<link rel="shortcut icon" href="/favicon.png" />
 </svelte:head>
 
-<div class="layout" class:mobile={$mobile}>
+<div
+	class="layout"
+	class:mobile={$mobile}
+	on:click={() => {
+		// TODO clickOutside action?
+		if (showContextMenu) {
+			showContextMenu = false;
+		}
+	}}
+>
 	{#if !guest && !onboarding}
-		<Luggage />
+		<div
+			use:popperRef
+			class="luggage-wrapper pane"
+			on:contextmenu|stopPropagation|preventDefault={() => (showContextMenu = !showContextMenu)}
+		>
+			<Luggage />
+		</div>
 		<MainNav />
 	{/if}
 	<main>
@@ -208,6 +228,11 @@
 		{/if}
 	</main>
 	<Devmode {devmode} />
+	{#if showContextMenu}
+		<div class="context-menu-wrapper" use:popperContent={{placement: 'right-start'}}>
+			<ContextMenu />
+		</div>
+	{/if}
 </div>
 
 <FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
@@ -227,5 +252,20 @@
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
+	}
+
+	.luggage-wrapper {
+		position: absolute;
+		left: 0;
+		top: 0;
+		display: flex;
+		z-index: 3;
+		width: var(--navbar_size);
+		height: var(--navbar_size);
+		/* display: contents; */
+	}
+
+	.context-menu-wrapper {
+		z-index: 8;
 	}
 </style>
