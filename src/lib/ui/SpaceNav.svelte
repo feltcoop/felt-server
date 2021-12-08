@@ -5,7 +5,7 @@
 	import type {Community} from '$lib/vocab/community/community.js';
 	import MembershipInput from '$lib/ui/MembershipInput.svelte';
 	import type {Readable} from 'svelte/store';
-	import SpaceNavButton from '$lib/ui/SpaceNavButton.svelte';
+	import SpaceNavItem from '$lib/ui/SpaceNavItem.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 
 	export let selectedPersona: Readable<Persona>;
@@ -22,7 +22,7 @@
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
-		<SpaceNavButton
+		<SpaceNavItem
 			persona={selectedPersona}
 			{community}
 			{space}
