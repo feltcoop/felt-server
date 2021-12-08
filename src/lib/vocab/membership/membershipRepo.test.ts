@@ -21,6 +21,7 @@ test__membershipRepo.after(teardownServer);
 test__membershipRepo('disallow creating duplicate memberships', async ({server}) => {
 	const random = toRandomVocabContext(server.db);
 	const persona = await random.persona();
+	console.log('persona::::', persona);
 	const community = await random.community();
 
 	let createMembershipResult;
@@ -31,16 +32,16 @@ test__membershipRepo('disallow creating duplicate memberships', async ({server})
 	});
 	assert.ok(createMembershipResult.ok);
 
-	let failed = false;
+	let errorMessage;
 	try {
 		createMembershipResult = await server.db.repos.membership.create({
 			community_id: community.community_id,
 			persona_id: persona.persona_id,
 		});
-		failed = true;
+		errorMessage = createMembershipResult.ok ? 'failed' : createMembershipResult.reason;
 	} catch (_err) {
 	} finally {
-		if (failed) throw Error();
+		if (errorMessage) throw Error(errorMessage);
 	}
 });
 
@@ -55,6 +56,7 @@ test__membershipRepo(
 			community_id: community.community_id,
 			persona_id: (await random.persona()).persona_id,
 		});
+		console.log('community', community);
 		assert.ok(!createMembershipResult.ok);
 	},
 );
