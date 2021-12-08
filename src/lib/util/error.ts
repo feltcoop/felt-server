@@ -1,3 +1,3 @@
 export interface ErrorResponse {
-	reason: string;
+	reason: string; // TODO maybe rename this to `message`?
 }

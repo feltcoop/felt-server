@@ -12,6 +12,7 @@ export const personaRepo = (db: Database) => ({
 		// then we need a different abstraction? maybe `PersonaDoc` or something?
 		account_id: number,
 	): Promise<Result<{value: {persona: Persona; community: Community}}, ErrorResponse>> => {
+		// First ensure that the persona cannot be
 		const data = await db.sql<Persona[]>`
       insert into personas (name, account_id) values (
         ${name}, ${account_id}
@@ -23,9 +24,7 @@ export const personaRepo = (db: Database) => ({
 			name,
 			persona_id: persona.persona_id,
 		});
-		if (!createCommunityResult.ok) {
-			return {ok: false, reason: 'Failed to create initial persona community'};
-		}
+		if (!createCommunityResult.ok) return createCommunityResult;
 		// TODO this is a hack -- always adding/expecting `community_ids`
 		// like in `filterByAccount` below is probably not the best idea because of overfetching
 		const community = createCommunityResult.value;
@@ -51,6 +50,25 @@ export const personaRepo = (db: Database) => ({
       FROM personas p WHERE p.account_id = ${account_id}
 		`;
 		return {ok: true, value: data};
+	},
+	// TODO `findById` is very generic and could be refactored
+	// into a helper (or base class method, if we want to use classes)
+	findById: async (
+		persona_id: number,
+	): Promise<Result<{value: Persona}, {type: 'no_persona_found'} & ErrorResponse>> => {
+		console.log('[personaRepo] loading persona', persona_id);
+		const data = await db.sql<Persona[]>`
+      select persona_id, name, created, updated from personas where persona_id = ${persona_id}
+    `;
+		if (data.length) {
+			console.log('[personaRepo] persona found, returning', persona_id);
+			return {ok: true, value: data[0]};
+		}
+		return {
+			ok: false,
+			type: 'no_persona_found',
+			reason: `No persona found with persona_id: ${persona_id}`,
+		};
 	},
 	findByName: async (
 		name: string,

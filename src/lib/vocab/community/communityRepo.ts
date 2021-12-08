@@ -9,7 +9,7 @@ export const communityRepo = (db: Database) => ({
 	create: async ({
 		name,
 		persona_id,
-	}: CreateCommunityParams): Promise<Result<{value: Community}>> => {
+	}: CreateCommunityParams): Promise<Result<{value: Community}, ErrorResponse>> => {
 		const data = await db.sql<Community[]>`
 			INSERT INTO communities (name) VALUES (
 				${name}
@@ -42,6 +42,16 @@ export const communityRepo = (db: Database) => ({
 			type: 'no_community_found',
 			reason: `No community found with id: ${community_id}`,
 		};
+	},
+	findByName: async (
+		name: string,
+	): Promise<Result<{value: Community | undefined}, ErrorResponse>> => {
+		console.log('[communityRepo] filtering by name', name);
+		const data = await db.sql<Community[]>`
+      SELECT p.community_id, p.name, p.created, p.updated
+      FROM communities p WHERE LOWER(p.name) = LOWER(${name})
+		`;
+		return {ok: true, value: data[0]};
 	},
 	filterByAccount: async (
 		account_id: number,
