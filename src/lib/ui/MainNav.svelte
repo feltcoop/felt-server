@@ -1,6 +1,7 @@
 <script lang="ts">
-	import {icons} from '@feltcoop/felt';
 	import {session} from '$app/stores';
+	import {onMount} from 'svelte';
+	import {createPopperActions} from 'svelte-popperjs';
 
 	import CommunityNav from '$lib/ui/CommunityNav.svelte';
 	import SpaceNav from '$lib/ui/SpaceNav.svelte';
@@ -11,11 +12,11 @@
 	import {randomHue} from '$lib/ui/color';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
+	import ContextMenu from '$lib/ui/ContextMenu.svelte';
 
 	const {
 		api: {dispatch},
 		ui: {
-			mainNavView,
 			expandMainNav,
 			selectedSpace: selectedSpaceStore,
 			selectedPersona: selectedPersonaStore,
@@ -31,6 +32,22 @@
 	// TODO refactor to some client view-model for the account
 	$: selectedPersonaName = $selectedPersona?.name || GUEST_PERSONA_NAME;
 	$: hue = randomHue(selectedPersonaName);
+
+	const [popperRef, popperContent] = createPopperActions();
+	let showContextMenu = false;
+
+	onMount(() => {
+		document.body.addEventListener('click', onClickBody);
+		return () => {
+			document.body.removeEventListener('click', onClickBody);
+		};
+	});
+	const onClickBody = () => {
+		// TODO clickOutside action?
+		if (showContextMenu) {
+			showContextMenu = false;
+		}
+	};
 </script>
 
 {#if $expandMainNav}
@@ -42,34 +59,41 @@
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
 			<button
-				on:click={() => dispatch('set_main_nav_view', 'explorer')}
-				class:selected={$mainNavView === 'explorer'}
 				class="explorer-button"
+				use:popperRef
+				on:click|stopPropagation={() => (showContextMenu = !showContextMenu)}
+				on:contextmenu={(e) => {
+					if (!e.ctrlKey) {
+						e.stopPropagation();
+						e.preventDefault();
+						showContextMenu = !showContextMenu;
+					}
+				}}
 			>
 				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
 			</button>
-			<button
-				on:click={() => dispatch('set_main_nav_view', 'account')}
-				class:selected={$mainNavView === 'account'}
-				class="account-button"
-			>
-				<!-- TODO `icons.dotDotDot` -->
-				{icons.bulletPoint}{icons.bulletPoint}{icons.bulletPoint}
-			</button>
 		</div>
-		{#if $mainNavView === 'explorer'}
-			<div class="explorer">
-				<CommunityNav />
-				{#if selectedPersona && selectedCommunity && selectedSpace}
-					<SpaceNav
-						{selectedPersona}
-						community={selectedCommunity}
-						spaces={$selectedCommunity.spaces}
-						{selectedSpace}
-					/>
-				{/if}
-			</div>
-		{:else if $mainNavView === 'account'}
+		<div class="explorer">
+			<CommunityNav />
+			{#if selectedPersona && selectedCommunity && selectedSpace}
+				<SpaceNav
+					{selectedPersona}
+					community={selectedCommunity}
+					spaces={$selectedCommunity.spaces}
+					{selectedSpace}
+				/>
+			{/if}
+		</div>
+	</div>
+</div>
+
+{#if showContextMenu}
+	<div
+		class="context-menu-wrapper panel"
+		use:popperContent={{placement: 'right-start'}}
+		on:click|stopPropagation
+	>
+		<ContextMenu>
 			<div class="markup">
 				<AccountForm guest={$session.guest} />
 				{#if $devmode}
@@ -77,9 +101,9 @@
 				{/if}
 			</div>
 			<SocketConnection />
-		{/if}
+		</ContextMenu>
 	</div>
-</div>
+{/if}
 
 <style>
 	.main-nav-panel {
@@ -144,13 +168,12 @@
 		justify-content: flex-start;
 		height: var(--navbar_size);
 		flex: 1;
-		padding: var(--spacing_xs);
-	}
-	.account-button {
-		height: var(--navbar_size);
-		width: var(--navbar_size);
+		padding: 0;
 	}
 	.menu-link {
 		padding: var(--spacing_xs) var(--spacing_sm);
+	}
+	.context-menu-wrapper {
+		z-index: 8;
 	}
 </style>

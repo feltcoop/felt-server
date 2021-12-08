@@ -1,12 +1,8 @@
+<!-- TODO see usage -- what role does this component play? -->
+
 <div class="context-menu" role="menu" aria-modal tabindex="-1">
-	hello there positioned context menu
-	<ol>
-		<li>...</li>
-		<li>...</li>
-		<li>...</li>
-		<li>...</li>
-		<li>...</li>
-	</ol>
+	<!-- TODO automatically populate with entity commands -->
+	<slot />
 </div>
 
 <style>
