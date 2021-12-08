@@ -2,15 +2,14 @@
 // It implements a request/response pattern over websockets instead of fire-and-forget
 // using JSON-RPC 2.0: https://www.jsonrpc.org/specification
 
-import {toToClientId} from '@feltcoop/felt/util/id.js';
-
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
 import type {JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 import type {BroadcastMessage} from '$lib/server/websocketHandler';
 
-const toId = toToClientId('', undefined, '');
+let _id = 0;
+const toId = () => ++_id;
 
 // TODO doesn't handle the case where the client never hears back from the server,
 // might want a timeout on each request
