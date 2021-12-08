@@ -17,8 +17,10 @@
 <div class="space-nav">
 	<div class="header">
 		<SpaceInput {community} />
-		<MembershipInput {community} />
 		<SpaceDelete space={selectedSpace} />
+		{#if $community.name !== $selectedPersona.name}
+			<MembershipInput {community} />
+		{/if}
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
