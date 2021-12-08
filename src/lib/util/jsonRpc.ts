@@ -1,3 +1,8 @@
+// JSON-RPC 2.0: https://www.jsonrpc.org/specification
+
+// TODO the `id` is optional in the spec, and omitting it signals a "Notification",
+// to which the server does not reply
+
 export interface JsonRpcRequest<
 	TMethod extends string = string, // TODO defaults?
 	TParams extends Record<TMethod, object> = any, // TODO defaults?
