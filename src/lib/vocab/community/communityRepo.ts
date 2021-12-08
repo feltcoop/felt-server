@@ -48,8 +48,8 @@ export const communityRepo = (db: Database) => ({
 	): Promise<Result<{value: Community | undefined}, ErrorResponse>> => {
 		console.log('[communityRepo] filtering by name', name);
 		const data = await db.sql<Community[]>`
-      SELECT p.community_id, p.name, p.created, p.updated
-      FROM communities p WHERE LOWER(p.name) = LOWER(${name})
+			SELECT p.community_id, p.name, p.created, p.updated
+			FROM communities p WHERE LOWER(p.name) = LOWER(${name})
 		`;
 		return {ok: true, value: data[0]};
 	},
