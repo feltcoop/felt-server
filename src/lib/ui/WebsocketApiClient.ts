@@ -10,7 +10,7 @@ import type {JsonRpcId, JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 import type {BroadcastMessage} from '$lib/server/websocketHandler';
 
-const toId = toCounter(1); // start counting from 1 to enable falsy checks
+const toId = toCounter();
 
 // TODO doesn't handle the case where the client never hears back from the server,
 // might want a timeout on each request
