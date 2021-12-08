@@ -6,7 +6,7 @@ import {toCounter} from '@feltcoop/felt/util/counter.js';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
-import type {JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
+import type {JsonRpcId, JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 import type {BroadcastMessage} from '$lib/server/websocketHandler';
 
@@ -36,7 +36,7 @@ export const toWebsocketApiClient = <
 	send: (request: JsonRpcRequest) => void,
 ): WebsocketApiClient<TParamsMap, TResultMap> => {
 	// TODO maybe extract a `WebsocketRequests` interface, with `add`/`remove` functions (and `pending` items?)
-	const websocketRequests: Map<string, WebsocketRequest> = new Map();
+	const websocketRequests: Map<JsonRpcId, WebsocketRequest> = new Map();
 	const toWebsocketRequest = <T>(request: JsonRpcRequest): WebsocketRequest<T> => {
 		const websocketRequest: WebsocketRequest<T> = {request} as any;
 		websocketRequest.promise = new Promise((resolve) => {
