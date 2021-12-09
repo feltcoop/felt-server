@@ -1,12 +1,26 @@
 <script lang="ts">
 	// TODO upstream this component to Felt
 	export let hue: number;
+
+	let draggingMinimap = false;
+
+	const setHue = (
+		e: Event & {
+			currentTarget: EventTarget & HTMLElement;
+			clientX: number;
+		},
+	) => {
+		const rect = e.currentTarget.getBoundingClientRect();
+		const pct = (e.clientX - rect.x) / rect.width;
+		hue = Math.floor(360 * pct);
+	};
 </script>
 
+<!-- TODO scrub text to numerical values along some nice-feeling axes -->
 <div class="indicator" style="--hue: {hue};">
 	hue: {hue}
 </div>
-<!-- TODO make the minimap draggable -->
+<!-- TODO pointer events for dragging? -->
 <div
 	class="minimap"
 	on:click={(e) => {
@@ -14,9 +28,28 @@
 		const pct = (e.clientX - rect.x) / rect.width;
 		hue = Math.floor(360 * pct);
 	}}
+	on:mousedown={(e) => {
+		draggingMinimap = true;
+		setHue(e);
+	}}
+	on:mouseup={() => {
+		draggingMinimap = false;
+	}}
+	on:mouseleave={() => {
+		draggingMinimap = false;
+	}}
+	on:mousemove={(e) => {
+		if (draggingMinimap) setHue(e);
+	}}
 	role="button"
 />
-<input type="range" bind:value={hue} min="0" max="359" />
+<input
+	type="range"
+	value={hue}
+	on:input={(e) => (hue = Number(e.currentTarget.value))}
+	min="0"
+	max="359"
+/>
 
 <style>
 	.indicator {
