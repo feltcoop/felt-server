@@ -6,6 +6,7 @@ export const up = async (sql) => {
 			NOT NULL;
 	`;
 	// TODO can this be done in the `ADD COLUMN` statement?
+	// maybe omit `SET`
 	await sql`
 		ALTER TABLE communities
 			ALTER COLUMN hue
