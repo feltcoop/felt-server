@@ -19,7 +19,7 @@
 	}}
 	role="button"
 />
-<input type="range" bind:value={hue} min="0" max="360" />
+<input type="range" bind:value={hue} min="0" max="359" />
 
 <style>
 	.indicator {
