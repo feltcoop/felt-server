@@ -1,4 +1,5 @@
 <script lang="ts">
+	// TODO upstream to Felt
 	export let hue: number;
 </script>
 
