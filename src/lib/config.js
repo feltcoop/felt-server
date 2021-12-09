@@ -17,8 +17,6 @@ export const VITE_GIT_HASH = import.meta.env
 	? import.meta.env.VITE_GIT_HASH
 	: process.env.VITE_GIT_HASH;
 
-console.log('$$$$$', VITE_GIT_HASH);
-
 export const SVELTEKIT_SERVER_HOST = 'localhost:3000';
 export const API_SERVER_PORT_DEV = 3001;
 export const API_SERVER_PORT_PROD = 3000;
