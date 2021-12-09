@@ -18,9 +18,7 @@ test__membershipRepo('disallow creating duplicate memberships', async ({server})
 	const persona = await random.persona();
 	const community = await random.community();
 
-	let createMembershipResult;
-
-	createMembershipResult = await server.db.repos.membership.create({
+	let createMembershipResult = await server.db.repos.membership.create({
 		community_id: community.community_id,
 		persona_id: persona.persona_id,
 	});
@@ -34,6 +32,7 @@ test__membershipRepo('disallow creating duplicate memberships', async ({server})
 		});
 		errorMessage = createMembershipResult.ok ? 'failed' : createMembershipResult.reason;
 	} catch (_err) {
+		// expect this error because the repo method should throw
 	} finally {
 		if (errorMessage) throw Error(errorMessage);
 	}
