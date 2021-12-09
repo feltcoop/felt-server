@@ -62,6 +62,7 @@
 	</section>
 	<section>
 		<h2>settings</h2>
+		<!-- TODO maybe add a title or tooltip explaining `community.hue` -->
 		<HueInput bind:hue />
 		<div class="community-icon">
 			<EntityIcon name={$community.name} type="Community" --hue={$community.hue} />
