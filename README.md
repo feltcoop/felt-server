@@ -39,7 +39,6 @@ gro test
 [Polka](https://github.com/lukeed/polka) ∙
 [Svelte](https://github.com/sveltejs/svelte) ∙
 [SvelteKit](https://github.com/sveltejs/kit) ∙
-[Ley](https://github.com/lukeed/ley) ∙
 [Vite](https://github.com/vitejs/vite) ∙
 [Gro](https://github.com/feltcoop/gro) ∙
 [Rollup](https://github.com/rollup/rollup) ∙
@@ -47,6 +46,7 @@ gro test
 [esbuild](https://github.com/evanw/esbuild) ∙
 [esinstall](https://github.com/snowpackjs/snowpack/tree/main/esinstall) ∙
 [uvu](https://github.com/lukeed/uvu) ∙
+[Ley](https://github.com/lukeed/ley) ∙
 [Prettier](https://github.com/prettier/prettier) ∙
 [@lukeed\/\*](https://github.com/lukeed)
 & [more](package.json)
