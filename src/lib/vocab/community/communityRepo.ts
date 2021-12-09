@@ -74,9 +74,9 @@ export const communityRepo = (db: Database) => ({
 		const data = await db.sql<any[]>`
 			UPDATE communities SET hue=${hue} WHERE community_id=${community_id} 
 		`;
-		console.log('setHue data', data);
-		// if (data.count !== 1) {
-		// }
+		if (!data.count) {
+			return {ok: false, reason: 'no communities were modified'};
+		}
 		return {ok: true};
 	},
 });
