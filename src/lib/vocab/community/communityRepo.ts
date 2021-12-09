@@ -70,7 +70,7 @@ export const communityRepo = (db: Database) => ({
 		console.log('[db.filterByAccount]', data.length);
 		return {ok: true, value: data};
 	},
-	setHue: async (community_id: number, hue: string): Promise<Result<{}, ErrorResponse>> => {
+	setHue: async (community_id: number, hue: number): Promise<Result<{}, ErrorResponse>> => {
 		const data = await db.sql<any[]>`
 			UPDATE communities SET hue=${hue} WHERE community_id=${community_id} 
 		`;
