@@ -91,7 +91,7 @@
 	<div
 		class="context-menu-wrapper panel"
 		use:popperContent={{placement: 'right-start'}}
-		on:click|stopPropagation
+		on:click|stopPropagation={() => {}}
 	>
 		<ContextMenu>
 			<div class="markup">
