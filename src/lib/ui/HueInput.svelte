@@ -10,12 +10,9 @@
 <div
 	class="minimap"
 	on:click={(e) => {
-		console.log('e', e.currentTarget, e.clientX, e);
 		const rect = e.currentTarget.getBoundingClientRect();
-		console.log('rect', rect);
 		const pct = (e.clientX - rect.x) / rect.width;
 		hue = Math.floor(360 * pct);
-		console.log('hue', hue);
 	}}
 	role="button"
 />
