@@ -3,7 +3,7 @@
 
 	import type {Space} from '$lib/vocab/space/space.js';
 	import Avatar from '$lib/ui/Avatar.svelte';
-	import CommunityHueInput from '$lib/ui/CommunityHueInput.svelte';
+	import HueInput from '$lib/ui/HueInput.svelte';
 	import SpaceInfo from '$lib/ui/SpaceInfo.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
@@ -12,6 +12,7 @@
 
 	const {
 		ui: {selectedSpace, spacesByCommunityId},
+		api: {dispatch},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -21,6 +22,13 @@
 	space; // TODO we're ignoring the space, but should probably mount its `content` as markup
 
 	$: communitySpaces = $spacesByCommunityId.get($community.community_id)!;
+
+	let hue = $community.hue;
+	$: if (hue !== $community.hue) updateCommunityHue(hue);
+	const updateCommunityHue = async (hue: number): Promise<void> => {
+		console.log('$community.hue', $community.hue);
+		await dispatch('set_community_hue', {community_id: $community.community_id, hue});
+	};
 </script>
 
 <div class="markup">
@@ -51,7 +59,7 @@
 	</section>
 	<section>
 		<h2>settings</h2>
-		<CommunityHueInput {community} />
+		<HueInput bind:hue />
 	</section>
 </div>
 

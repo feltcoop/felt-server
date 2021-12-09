@@ -1,21 +1,5 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
-
-	import {getApp} from '$lib/ui/app';
-	import type {Community} from '$lib/vocab/community/community';
-
-	const {
-		api: {dispatch},
-	} = getApp();
-
-	export let community: Readable<Community>;
-
-	let hue = $community.hue;
-	$: if (hue !== $community.hue) updateCommunityHue(hue);
-	const updateCommunityHue = async (hue: number): Promise<void> => {
-		console.log('$community.hue', $community.hue);
-		await dispatch('set_community_hue', {community_id: $community.community_id, hue});
-	};
+	export let hue: number;
 </script>
 
 <div class="indicator" style="--hue: {hue};">
