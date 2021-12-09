@@ -1,7 +1,6 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
 import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
-import {ENV_PROD} from '$lib/server/env';
 
 export const task: Task = {
 	summary: 'deploy felt server to prod',
@@ -10,6 +9,8 @@ export const task: Task = {
 		console.log('setting serverDeploy');
 		//TODO gro dev workaround
 		process.env.NODE_ENV = 'production';
+
+		const {ENV_PROD} = await import('$lib/server/env');
 
 		//set git version in the .env.production file
 		const branch = (await fs.readFile('.git/HEAD', 'utf8')).trim().substring(5);
