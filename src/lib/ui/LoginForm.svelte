@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {tick} from 'svelte';
-	import {icons} from '@feltcoop/felt';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
@@ -76,7 +75,7 @@
 	<PendingButton pending={!!submitting} bind:el={buttonEl} type="button" on:click={doLogIn}>
 		log in
 	</PendingButton>
-	<div class:error={!!errorMessage}>{errorMessage || icons.felt}</div>
+	<div class:error={!!errorMessage}>{errorMessage || '💚'}</div>
 </form>
 <div class="centered-block">
 	<div>
