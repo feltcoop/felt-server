@@ -29,6 +29,8 @@
 		font-size: var(--font_size_lg);
 		font-weight: bold;
 		color: #fff;
+		border-top-left-radius: var(--border_radius);
+		border-top-right-radius: var(--border_radius);
 	}
 	.minimap {
 		background: linear-gradient(
