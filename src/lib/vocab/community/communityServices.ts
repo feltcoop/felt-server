@@ -6,11 +6,14 @@ import type {
 	ReadCommunityResponseResult,
 	ReadCommunitiesParams,
 	ReadCommunitiesResponseResult,
+	SetCommunityHueParams,
+	SetCommunityHueResponseResult,
 } from '$lib/app/eventTypes';
 import {
 	create_community,
 	read_communities,
 	read_community,
+	set_community_hue,
 } from '$lib/vocab/community/community.events';
 import type {CreateMembershipParams, CreateMembershipResponseResult} from '$lib/app/eventTypes';
 import {create_membership} from '$lib/vocab/membership/membership.events';
@@ -101,6 +104,22 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 					status: 500,
 					reason: 'error creating community',
 				};
+			}
+		},
+	};
+
+export const setCommunityHueService: Service<SetCommunityHueParams, SetCommunityHueResponseResult> =
+	{
+		event: set_community_hue,
+		perform: async ({server, params, account_id}) => {
+			// TODO authorize `account_id` declaratively
+			account_id;
+
+			const result = await server.db.repos.community.setHue(params.community_id, params.hue);
+			if (result.ok) {
+				return {ok: true, status: 200, value: null};
+			} else {
+				return {ok: false, status: 500, reason: result.reason || 'unknown error'};
 			}
 		},
 	};

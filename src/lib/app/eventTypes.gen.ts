@@ -57,36 +57,34 @@ ${await eventInfos.reduce(
 	async (str, eventInfo) =>
 		(await str) +
 		`
-${await jsonSchemaToTypescript(eventInfo.params, toParamsName(eventInfo.name))}
-${
-	'response' in eventInfo
-		? await jsonSchemaToTypescript(eventInfo.response, toResponseName(eventInfo.name), {
-				cwd: schemaDir,
-				$refOptions: {
-					resolve: {
-						file: {
-							canRead: schemaMatcher,
-							read: (file) => {
-								const schemaTitle = ID_VOCAB_PREFIX + basename(file.url);
-								const schema = schemas.find((s) => s.$id === schemaTitle);
-								return JSON.stringify(schema);
+${await jsonSchemaToTypescript(eventInfo.params, toParamsName(eventInfo.name))}${
+			'response' in eventInfo
+				? await jsonSchemaToTypescript(eventInfo.response, toResponseName(eventInfo.name), {
+						cwd: schemaDir,
+						$refOptions: {
+							resolve: {
+								file: {
+									canRead: schemaMatcher,
+									read: (file) => {
+										const schemaTitle = ID_VOCAB_PREFIX + basename(file.url);
+										const schema = schemas.find((s) => s.$id === schemaTitle);
+										return JSON.stringify(schema);
+									},
+								},
 							},
 						},
-					},
-				},
-		  })
-		: ''
-}
-${
-	// TODO hacky, the ApiResult type should be represented in the schema
-	// but that requires generic type generation:
-	// https://github.com/bcherny/json-schema-to-typescript/issues/59
-	'response' in eventInfo
-		? `	export type ${toResponseResultName(eventInfo.name)} = ApiResult<${toResponseName(
-				eventInfo.name,
-		  )}>;`
-		: ''
-}
+				  })
+				: ''
+		}${
+			// TODO hacky, the ApiResult type should be represented in the schema
+			// but that requires generic type generation:
+			// https://github.com/bcherny/json-schema-to-typescript/issues/59
+			'response' in eventInfo
+				? `	export type ${toResponseResultName(eventInfo.name)} = ApiResult<${toResponseName(
+						eventInfo.name,
+				  )}>;`
+				: ''
+		}
 `,
 	Promise.resolve(''),
 )}

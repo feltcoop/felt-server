@@ -3,6 +3,7 @@
 
 	import type {Space} from '$lib/vocab/space/space.js';
 	import Avatar from '$lib/ui/Avatar.svelte';
+	import CommunityColorInput from '$lib/ui/CommunityColorInput.svelte';
 	import SpaceInfo from '$lib/ui/SpaceInfo.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
@@ -47,6 +48,10 @@
 		<h2>activity</h2>
 		<div>This community was created at {$community.created}</div>
 		<code>TODO</code>
+	</section>
+	<section>
+		<h2>settings</h2>
+		<CommunityColorInput {community} />
 	</section>
 </div>
 

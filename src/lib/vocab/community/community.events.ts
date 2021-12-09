@@ -83,4 +83,33 @@ export const read_communities: ServiceEventInfo = {
 	},
 };
 
-export const events: EventInfo[] = [create_community, read_community, read_communities];
+export const set_community_hue: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'set_community_hue',
+	params: {
+		$id: 'https://felt.social/vocab/set_community_hue_params.json',
+		type: 'object',
+		properties: {
+			community_id: {type: 'number'},
+			hue: {type: 'number'},
+		},
+		required: ['community_id', 'hue'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: 'https://felt.social/vocab/set_community_hue_response.json',
+		type: 'null',
+	},
+	returns: 'Promise<SetCommunityHueResponseResult>',
+	route: {
+		path: '/api/v1/communities/:community_id/hue',
+		method: 'POST',
+	},
+};
+
+export const events: EventInfo[] = [
+	create_community,
+	read_community,
+	read_communities,
+	set_community_hue,
+];

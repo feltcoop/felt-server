@@ -4,6 +4,7 @@ import type {Community} from '$lib/vocab/community/community.js';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 import type {CreateCommunityParams} from '$lib/app/eventTypes';
+import {randomHue} from '$lib/ui/color';
 
 export const communityRepo = (db: Database) => ({
 	create: async ({
@@ -11,8 +12,8 @@ export const communityRepo = (db: Database) => ({
 		persona_id,
 	}: CreateCommunityParams): Promise<Result<{value: Community}>> => {
 		const data = await db.sql<Community[]>`
-			INSERT INTO communities (name) VALUES (
-				${name}
+			INSERT INTO communities (name, hue) VALUES (
+				${name}, ${randomHue(name)}
 			) RETURNING *
 		`;
 		console.log('[db] created community', data, {persona_id});
@@ -31,7 +32,7 @@ export const communityRepo = (db: Database) => ({
 	): Promise<Result<{value: Community}, {type: 'no_community_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for community id: ${community_id}`);
 		const data = await db.sql<Community[]>`
-      SELECT community_id, name, created, updated FROM communities where community_id = ${community_id}
+      SELECT community_id, name, hue, created, updated FROM communities where community_id = ${community_id}
     `;
 		// console.log('[db.findById]', data);
 		if (data.length) {
@@ -48,7 +49,7 @@ export const communityRepo = (db: Database) => ({
 	): Promise<Result<{value: Community[]}, ErrorResponse>> => {
 		console.log(`[db] preparing to query for communities & spaces persona: ${account_id}`);
 		const data = await db.sql<Community[]>`		
-			SELECT c.community_id, c.name, c.created, c.updated,
+			SELECT c.community_id, c.name, c.hue, c.created, c.updated,
 				(
 					SELECT array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
 					FROM (
@@ -68,5 +69,14 @@ export const communityRepo = (db: Database) => ({
     `;
 		console.log('[db.filterByAccount]', data.length);
 		return {ok: true, value: data};
+	},
+	setHue: async (community_id: number, hue: string): Promise<Result<{}, ErrorResponse>> => {
+		const data = await db.sql<any[]>`
+			UPDATE communities SET hue=${hue} WHERE community_id=${community_id} 
+		`;
+		console.log('setHue data', data);
+		// if (data.count !== 1) {
+		// }
+		return {ok: true};
 	},
 });
