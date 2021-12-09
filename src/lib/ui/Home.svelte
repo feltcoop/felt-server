@@ -26,7 +26,6 @@
 	let hue = $community.hue;
 	$: if (hue !== $community.hue) updateCommunityHue(hue);
 	const updateCommunityHue = async (hue: number): Promise<void> => {
-		console.log('$community.hue', $community.hue);
 		await dispatch('set_community_hue', {community_id: $community.community_id, hue});
 	};
 </script>
