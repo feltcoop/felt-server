@@ -9,6 +9,6 @@ export const up = async (sql) => {
 	await sql`
 		ALTER TABLE communities
 			ALTER COLUMN hue
-			SET DEFAULT floor(random() * 361)::int;
+			SET DEFAULT floor(random() * 360)::int;
 	`;
 };
