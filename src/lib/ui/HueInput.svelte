@@ -31,8 +31,6 @@
 		color: #fff;
 	}
 	.minimap {
-		content: '';
-		/* TODO this is imperfect */
 		background: linear-gradient(
 			90deg,
 			hsl(0, 50%, 50%) 0%,
