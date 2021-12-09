@@ -1,5 +1,7 @@
 /** @param {import('postgres').Sql<any>} sql */
 export const up = async (sql) => {
+	// TODO make this a json "properties" or "settings" field instead?
+	// what if every community had a `personal` attribute and `hue` attribute?
 	await sql`
 		ALTER TABLE communities
 			ADD COLUMN hue integer
