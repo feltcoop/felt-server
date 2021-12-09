@@ -1,12 +1,24 @@
 <script lang="ts">
-	// TODO upstream to Felt
+	// TODO upstream this component to Felt
 	export let hue: number;
 </script>
 
 <div class="indicator" style="--hue: {hue};">
 	hue: {hue}
 </div>
-<div class="minimap" />
+<!-- TODO make the minimap draggable -->
+<div
+	class="minimap"
+	on:click={(e) => {
+		console.log('e', e.currentTarget, e.clientX, e);
+		const rect = e.currentTarget.getBoundingClientRect();
+		console.log('rect', rect);
+		const pct = (e.clientX - rect.x) / rect.width;
+		hue = Math.floor(360 * pct);
+		console.log('hue', hue);
+	}}
+	role="button"
+/>
 <input type="range" bind:value={hue} min="0" max="360" />
 
 <style>
