@@ -48,4 +48,9 @@
 		height: var(--spacing_xl);
 		width: 100%;
 	}
+	/* TODO generic way to make this seamless? */
+	input {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+	}
 </style>
