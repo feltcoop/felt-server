@@ -1,8 +1,10 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
+	import {throttle} from 'throttle-debounce';
 
 	import type {Space} from '$lib/vocab/space/space.js';
 	import Avatar from '$lib/ui/Avatar.svelte';
+	import EntityIcon from '$lib/ui/EntityIcon.svelte';
 	import HueInput from '$lib/ui/HueInput.svelte';
 	import SpaceInfo from '$lib/ui/SpaceInfo.svelte';
 	import {getApp} from '$lib/ui/app';
@@ -25,9 +27,11 @@
 
 	let hue = $community.hue;
 	$: if (hue !== $community.hue) updateCommunityHue(hue);
-	const updateCommunityHue = async (hue: number): Promise<void> => {
+	const UPDATE_INTERVAL = 200; // TODO extract this to config
+	const updateCommunityHue = throttle(UPDATE_INTERVAL, async (hue: number): Promise<void> => {
 		await dispatch('set_community_hue', {community_id: $community.community_id, hue});
-	};
+		// updateCommunityHue.flush();
+	});
 </script>
 
 <div class="markup">
@@ -59,11 +63,19 @@
 	<section>
 		<h2>settings</h2>
 		<HueInput bind:hue />
+		<div class="community-icon">
+			<EntityIcon name={$community.name} type="Community" --hue={$community.hue} />
+		</div>
 	</section>
 </div>
 
 <style>
 	section {
 		margin: var(--spacing_xl4) 0;
+	}
+	.community-icon {
+		/* TODO instead of this, maybe have a "centered-box" or "box" or "flex-centered" or copy Tailwind */
+		display: flex;
+		justify-content: center;
 	}
 </style>
