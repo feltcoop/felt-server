@@ -9,11 +9,7 @@ export const task: Task = {
 		console.log('setting serverDeploy');
 		//TODO gro dev workaround
 		process.env.NODE_ENV = 'production';
-		const {fromEnv} = await import('$lib/server/env');
 
-		const DEPLOY_IP = fromEnv('DEPLOY_IP');
-		const DEPLOY_USER = fromEnv('DEPLOY_USER');
-		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
 		const ENV_PROD = '.env.production';
 
 		//set git version in the .env.production file
@@ -24,7 +20,11 @@ export const task: Task = {
 		const result = data.replace(/VITE_GIT_HASH=.*/g, `VITE_GIT_HASH=${gitVersion}`);
 		await fs.writeFile(ENV_PROD, result, 'utf8');
 
-		process.env.VITE_GIT_HASH = gitVersion;
+		const {fromEnv} = await import('$lib/server/env');
+
+		const DEPLOY_IP = fromEnv('DEPLOY_IP');
+		const DEPLOY_USER = fromEnv('DEPLOY_USER');
+		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
 
 		//build the actual tar deployment artifact
 		await invokeTask('build');
