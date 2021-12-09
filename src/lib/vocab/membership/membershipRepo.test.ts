@@ -7,8 +7,8 @@ import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
 import {toRandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 
-/* test__repos */
-const test__membershipRepo = suite<TestServerContext & TestAppContext>('membershipService');
+/* test__membershipRepo */
+const test__membershipRepo = suite<TestServerContext & TestAppContext>('membershipRepo');
 
 test__membershipRepo.before(setupServer);
 test__membershipRepo.after(teardownServer);

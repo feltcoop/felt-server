@@ -46,7 +46,7 @@ export const communityRepo = (db: Database) => ({
 	findByName: async (
 		name: string,
 	): Promise<Result<{value: Community | undefined}, ErrorResponse>> => {
-		console.log('[communityRepo] filtering by name', name);
+		console.log('[communityRepo] finding by name', name);
 		const data = await db.sql<Community[]>`
 			SELECT p.community_id, p.name, p.created, p.updated
 			FROM communities p WHERE LOWER(p.name) = LOWER(${name})
