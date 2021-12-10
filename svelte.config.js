@@ -22,6 +22,9 @@ export default {
 					'/api': `http://${API_SERVER_HOST}`,
 				},
 			},
+			ssr: {
+				noExternal: ['@feltcoop/felt'],
+			},
 			optimizeDeps: {
 				exclude: ['@feltcoop/felt'],
 			},
