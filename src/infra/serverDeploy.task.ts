@@ -6,21 +6,23 @@ import {ENV_PROD, fromEnv} from '$lib/server/env';
 export const task: Task = {
 	summary: 'deploy felt server to prod',
 	production: true,
-	run: async ({invokeTask, fs}) => {
+	run: async ({fs}) => {
 		//set git version in the .env.production file
 		const branch = (await fs.readFile('.git/HEAD', 'utf8')).trim().substring(5);
 		const gitVersion = (await fs.readFile('.git/' + branch, 'utf8')).trim().substring(0, 7);
+		const updatedEnvContents = (await fs.readFile(ENV_PROD, 'utf8')).replace(
+			/VITE_GIT_HASH=.*/g,
+			`VITE_GIT_HASH=${gitVersion}`,
+		);
+		await fs.writeFile(ENV_PROD, updatedEnvContents, 'utf8');
 
-		const data = await fs.readFile(ENV_PROD, 'utf8');
-		const result = data.replace(/VITE_GIT_HASH=.*/g, `VITE_GIT_HASH=${gitVersion}`);
-		await fs.writeFile(ENV_PROD, result, 'utf8');
+		//build the actual tar deployment artifact
+		const buildResult = await spawn('npx', ['gro', 'build']);
+		if (!buildResult.ok) throw Error('gro build failed');
 
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
 		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
-
-		//build the actual tar deployment artifact
-		await invokeTask('build');
 
 		let timestamp = Date.now();
 		let artifactName = `felt_server_${timestamp}`;
