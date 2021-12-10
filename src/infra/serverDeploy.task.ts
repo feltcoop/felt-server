@@ -1,33 +1,29 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
 import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
+import {ENV_PROD, fromEnv} from '$lib/server/env';
 
 export const task: Task = {
 	summary: 'deploy felt server to prod',
 	production: true,
-	run: async ({invokeTask, fs}) => {
-		console.log('setting serverDeploy');
-		//TODO gro dev workaround
-		process.env.NODE_ENV = 'production';
-
-		const {ENV_PROD} = await import('$lib/server/env');
-
+	run: async ({fs}) => {
 		//set git version in the .env.production file
 		const branch = (await fs.readFile('.git/HEAD', 'utf8')).trim().substring(5);
 		const gitVersion = (await fs.readFile('.git/' + branch, 'utf8')).trim().substring(0, 7);
+		const updatedEnvContents = (await fs.readFile(ENV_PROD, 'utf8')).replace(
+			/VITE_GIT_HASH=.*/g,
+			`VITE_GIT_HASH=${gitVersion}`,
+		);
+		await fs.writeFile(ENV_PROD, updatedEnvContents, 'utf8');
 
-		const data = await fs.readFile(ENV_PROD, 'utf8');
-		const result = data.replace(/VITE_GIT_HASH=.*/g, `VITE_GIT_HASH=${gitVersion}`);
-		await fs.writeFile(ENV_PROD, result, 'utf8');
-
-		const {fromEnv} = await import('$lib/server/env');
+		//build the actual tar deployment artifact,
+		//using `spawn` instead of `invokeTask` to ensure the environment modified above is updated
+		const buildResult = await spawn('npx', ['gro', 'build']);
+		if (!buildResult.ok) throw Error('gro build failed');
 
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
 		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
-
-		//build the actual tar deployment artifact
-		await invokeTask('build');
 
 		let timestamp = Date.now();
 		let artifactName = `felt_server_${timestamp}`;
