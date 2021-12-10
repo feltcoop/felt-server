@@ -52,7 +52,7 @@ export const communityRepo = (db: Database) => ({
 				(
 					SELECT array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
 					FROM (
-						SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.created, s.updated FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id=c.community_id
+						SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.created, s.updated FROM spaces s WHERE s.community_id = c.community_id
 					) d
 				) as spaces,
 				(
