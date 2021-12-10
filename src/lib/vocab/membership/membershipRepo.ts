@@ -23,7 +23,7 @@ export const membershipRepo = (db: Database) => ({
 			if (!personaResult.ok) return personaResult;
 			const persona = personaResult.value;
 			if (persona && persona.persona_id !== persona_id) {
-				return {ok: false, reason: 'home communities disallow memberships'};
+				return {ok: false, reason: 'personal communities disallow memberships'};
 			}
 		}
 
