@@ -11,4 +11,8 @@ export const up = async (sql) => {
 	FROM community_spaces CS 
 	WHERE S.space_id = CS.space_id;
 	`;
+
+	await sql`
+	DROP TABLE community_spaces;
+	`;
 };
