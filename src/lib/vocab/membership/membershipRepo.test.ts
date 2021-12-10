@@ -38,20 +38,17 @@ test__membershipRepo('disallow creating duplicate memberships', async ({server})
 	}
 });
 
-test__membershipRepo(
-	'disallow creating memberships for persona home communities',
-	async ({server}) => {
-		const random = toRandomVocabContext(server.db);
-		const persona = await random.persona();
-		const community = unwrap(await server.db.repos.community.findByName(persona.name))!;
+test__membershipRepo('disallow creating memberships for personal communities', async ({server}) => {
+	const random = toRandomVocabContext(server.db);
+	const persona = await random.persona();
+	const community = unwrap(await server.db.repos.community.findByName(persona.name))!;
 
-		const createMembershipResult = await server.db.repos.membership.create({
-			community_id: community.community_id,
-			persona_id: (await random.persona()).persona_id,
-		});
-		assert.ok(!createMembershipResult.ok);
-	},
-);
+	const createMembershipResult = await server.db.repos.membership.create({
+		community_id: community.community_id,
+		persona_id: (await random.persona()).persona_id,
+	});
+	assert.ok(!createMembershipResult.ok);
+});
 
 test__membershipRepo.run();
 /* test__membershipRepo */

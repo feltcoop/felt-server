@@ -12,7 +12,7 @@ export const membershipRepo = (db: Database) => ({
 	}: CreateMembershipParams): Promise<Result<{value: Membership}, ErrorResponse>> => {
 		// TODO use `unwrap` and propagate errors
 
-		// Persona home communities disallow memberships as a hard rule.
+		// Personal communities disallow memberships as a hard rule.
 		// They're currently linked by name; this could be changed,
 		// e.g. adding `persona.community_id` and `community.persona_id`
 		const existingCommunityResult = await db.repos.community.findById(community_id);
