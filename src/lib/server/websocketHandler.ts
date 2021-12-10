@@ -1,7 +1,7 @@
 import type ws from 'ws';
 import {red} from '@feltcoop/felt/util/terminal.js';
 
-import {JsonRpcResponse, parseJsonRpcRequest} from '$lib/util/jsonRpc';
+import {type JsonRpcResponse, parseJsonRpcRequest} from '$lib/util/jsonRpc';
 import type {ApiServer} from '$lib/server/ApiServer';
 import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
 

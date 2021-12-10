@@ -1,4 +1,4 @@
-import ws from 'ws';
+import {WebSocketServer, type WebSocket, type Data} from 'ws';
 import {promisify} from 'util';
 import type {Server as HttpServer} from 'http';
 import type {Server as HttpsServer} from 'https';
@@ -10,19 +10,19 @@ import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 
 type WebsocketServerEmitter = StrictEventEmitter<EventEmitter, WebsocketServerEvents>;
 interface WebsocketServerEvents {
-	message: (socket: ws, message: ws.Data, account_id: number) => void;
+	message: (socket: WebSocket, message: Data, account_id: number) => void;
 }
 
 const cookieSessionMiddleware = toCookieSessionMiddleware();
 
 export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEmitter}) {
-	readonly wss: ws.Server;
+	readonly wss: WebSocketServer;
 	readonly server: HttpServer | HttpsServer;
 
 	constructor(server: HttpServer | HttpsServer) {
 		super();
 		this.server = server;
-		this.wss = new ws.Server({server});
+		this.wss = new WebSocketServer({server});
 	}
 
 	async init(): Promise<void> {
@@ -40,13 +40,15 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 			}
 			//TODO where to store the authorized account for a given websocket connection
 			//to prevent actions on other actors resources?
-			socket.on('message', async (message) => {
+			socket.on('message', async (data, isBinary) => {
+				const message = isBinary ? data : data.toString();
 				this.emit('message', socket, message, account_id);
 			});
 			socket.on('open', () => {
 				console.log('[wss] open');
 			});
-			socket.on('close', (code, reason) => {
+			socket.on('close', (code, data) => {
+				const reason = data.toString();
 				console.log('[wss] close', code, reason);
 			});
 			socket.on('error', (err) => {
@@ -60,12 +62,15 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 			console.log('[wss] error', error);
 		});
 		wss.on('headers', (headers, req) => {
-			// TODO could parse cookies from these headers if we don't connect the `ws.Server` to the `server` above
+			// TODO could parse cookies from these headers if we don't connect the `WebSocketServer` to the `server` above
 			console.log('[wss] req.url headers', req.url, headers);
 		});
 	}
 
 	async close(): Promise<void> {
+		for (const socket of this.wss.clients) {
+			socket.terminate();
+		}
 		const close = promisify(this.wss.close.bind(this.wss));
 		await close();
 	}

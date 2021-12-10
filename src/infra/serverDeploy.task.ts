@@ -4,7 +4,7 @@ import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
 
 export const task: Task = {
 	summary: 'deploy felt server to prod',
-	dev: false,
+	production: true,
 	run: async ({invokeTask, fs}) => {
 		console.log('setting serverDeploy');
 		//TODO gro dev workaround

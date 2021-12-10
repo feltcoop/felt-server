@@ -5,8 +5,8 @@ import {
 	randomFileParams,
 	randomMembershipParams,
 	randomString,
-	RandomVocab,
-	RandomVocabContext,
+  type RandomVocab,
+  type RandomVocabContext,
 } from '$lib/vocab/random';
 import {randomPersonaParams, randomCommunityParams, randomSpaceParams} from '$lib/vocab/random';
 

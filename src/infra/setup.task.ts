@@ -3,7 +3,7 @@ import {spawn} from '@feltcoop/felt/util/process.js';
 
 export const task: Task = {
 	summary: 'setup a clean server to prepare for a felt-server deploy',
-	dev: false,
+	production: true,
 	run: async () => {
 		//TODO gro dev workaround
 		process.env.NODE_ENV = 'production';
