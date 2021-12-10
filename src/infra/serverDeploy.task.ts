@@ -16,7 +16,8 @@ export const task: Task = {
 		);
 		await fs.writeFile(ENV_PROD, updatedEnvContents, 'utf8');
 
-		//build the actual tar deployment artifact
+		//build the actual tar deployment artifact,
+		//using `spawn` instead of `invokeTask` to ensure the environment modified above is updated
 		const buildResult = await spawn('npx', ['gro', 'build']);
 		if (!buildResult.ok) throw Error('gro build failed');
 
