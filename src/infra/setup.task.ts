@@ -4,7 +4,7 @@ import {fromEnv} from '$lib/server/env';
 
 export const task: Task = {
 	summary: 'setup a clean server to prepare for a felt-server deploy',
-	dev: false,
+	production: true,
 	run: async () => {
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');

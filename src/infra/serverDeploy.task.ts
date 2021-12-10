@@ -5,7 +5,7 @@ import {ENV_PROD, fromEnv} from '$lib/server/env';
 
 export const task: Task = {
 	summary: 'deploy felt server to prod',
-	dev: false,
+	production: true,
 	run: async ({invokeTask, fs}) => {
 		//set git version in the .env.production file
 		const branch = (await fs.readFile('.git/HEAD', 'utf8')).trim().substring(5);

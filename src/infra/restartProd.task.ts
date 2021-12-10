@@ -4,7 +4,7 @@ import {fromEnv} from '$lib/server/env';
 
 export const task: Task = {
 	summary: 'restart felt prod server',
-	dev: false,
+	production: true,
 	run: async () => {
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
