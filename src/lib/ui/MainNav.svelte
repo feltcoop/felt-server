@@ -58,19 +58,27 @@
 	};
 
 	onMount(() => {
-		document.addEventListener('click', onClickBody);
 		return () => {
-			document.removeEventListener('click', onClickBody);
 			popperRefAction.destroy(); // TODO wrap with a helper function
 		};
 	});
-	const onClickBody = () => {
+</script>
+
+<svelte:body
+	on:click={() => {
 		// TODO clickOutside action?
 		if (showContextMenu) {
 			showContextMenu = false;
 		}
-	};
-</script>
+	}}
+	on:keydown={(e) => {
+		// TODO helper action?
+		if (showContextMenu && e.key === 'Escape') {
+			showContextMenu = false;
+			// TODO toggling back on seems like a promising UX,
+			// but the problem is it conflicts with the dialog if we just toggle it here
+		}
+	}} />
 
 {#if $expandMainNav}
 	<div class="main-nav-bg" on:click={() => ($expandMainNav ? dispatch('toggle_main_nav') : null)} />
