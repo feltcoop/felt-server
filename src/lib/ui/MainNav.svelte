@@ -34,13 +34,34 @@
 	$: selectedPersonaName = $selectedPersona?.name || GUEST_PERSONA_NAME;
 	$: hue = randomHue(selectedPersonaName);
 
-	const [popperRef, popperContent] = createPopperActions();
+	const [popperRef, popperContent, popperInstance] = createPopperActions();
 	let showContextMenu = false;
+	let mouseX = 100;
+	let mouseY = 110;
+	const mouseVirtualEl = {
+		getBoundingClientRect: () => ({
+			width: 0,
+			height: 0,
+			left: mouseX,
+			top: mouseY,
+			right: mouseX,
+			bottom: mouseY,
+		}),
+	};
+	popperRef(mouseVirtualEl as HTMLElement);
+	const CONTEXT_MENU_OFFSET_X = -2; // TODO tweak offsets -- currently the primary action is immediately hovered
+	const CONTEXT_MENU_OFFSET_Y = -2;
+	const toggleContextMenu = (x: number, y: number, show: boolean = !showContextMenu): void => {
+		showContextMenu = show;
+		mouseX = x + CONTEXT_MENU_OFFSET_X;
+		mouseY = y + CONTEXT_MENU_OFFSET_Y;
+		popperInstance()?.update();
+	};
 
 	onMount(() => {
-		document.body.addEventListener('click', onClickBody);
+		document.addEventListener('click', onClickBody);
 		return () => {
-			document.body.removeEventListener('click', onClickBody);
+			document.removeEventListener('click', onClickBody);
 		};
 	});
 	const onClickBody = () => {
@@ -61,13 +82,12 @@
 			<div class="icon-button button-placeholder" />
 			<button
 				class="explorer-button"
-				use:popperRef
-				on:click|stopPropagation={() => (showContextMenu = !showContextMenu)}
+				on:click|stopPropagation={(e) => toggleContextMenu(e.clientX, e.clientY)}
 				on:contextmenu={(e) => {
 					if (!e.ctrlKey) {
 						e.stopPropagation();
 						e.preventDefault();
-						showContextMenu = !showContextMenu;
+						toggleContextMenu(e.clientX, e.clientY);
 					}
 				}}
 			>
