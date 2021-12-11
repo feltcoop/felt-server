@@ -38,7 +38,7 @@
 	let showContextMenu = false;
 	let mouseX = 100;
 	let mouseY = 110;
-	const mouseVirtualEl = {
+	const popperRefAction = popperRef({
 		getBoundingClientRect: () => ({
 			width: 0,
 			height: 0,
@@ -47,8 +47,7 @@
 			right: mouseX,
 			bottom: mouseY,
 		}),
-	};
-	popperRef(mouseVirtualEl as HTMLElement);
+	} as HTMLElement);
 	const CONTEXT_MENU_OFFSET_X = -2; // TODO tweak offsets -- currently the primary action is immediately hovered
 	const CONTEXT_MENU_OFFSET_Y = -2;
 	const toggleContextMenu = (x: number, y: number, show: boolean = !showContextMenu): void => {
@@ -62,6 +61,7 @@
 		document.addEventListener('click', onClickBody);
 		return () => {
 			document.removeEventListener('click', onClickBody);
+			popperRefAction.destroy(); // TODO wrap with a helper function
 		};
 	});
 	const onClickBody = () => {
