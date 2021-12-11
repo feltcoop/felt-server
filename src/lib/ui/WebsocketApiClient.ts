@@ -2,15 +2,15 @@
 // It implements a request/response pattern over websockets instead of fire-and-forget
 // using JSON-RPC 2.0: https://www.jsonrpc.org/specification
 
-import {toToClientId} from '@feltcoop/felt/util/id.js';
+import {toCounter} from '@feltcoop/felt/util/counter.js';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
-import type {JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
+import type {JsonRpcId, JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 import type {BroadcastMessage} from '$lib/server/websocketHandler';
 
-const toId = toToClientId('', undefined, '');
+const toId = toCounter();
 
 // TODO doesn't handle the case where the client never hears back from the server,
 // might want a timeout on each request
@@ -36,7 +36,7 @@ export const toWebsocketApiClient = <
 	send: (request: JsonRpcRequest) => void,
 ): WebsocketApiClient<TParamsMap, TResultMap> => {
 	// TODO maybe extract a `WebsocketRequests` interface, with `add`/`remove` functions (and `pending` items?)
-	const websocketRequests: Map<string, WebsocketRequest> = new Map();
+	const websocketRequests: Map<JsonRpcId, WebsocketRequest> = new Map();
 	const toWebsocketRequest = <T>(request: JsonRpcRequest): WebsocketRequest<T> => {
 		const websocketRequest: WebsocketRequest<T> = {request} as any;
 		websocketRequest.promise = new Promise((resolve) => {

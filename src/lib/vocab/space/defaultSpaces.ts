@@ -1,10 +1,11 @@
 import type {CreateSpaceParams} from '$lib/app/eventTypes';
 import {SpaceType} from '$lib/vocab/space/space';
+import type {Community} from '$lib/vocab/community/community';
 
-export const toDefaultSpaces = (community_id: number): CreateSpaceParams[] => [
+export const toDefaultSpaces = ({community_id, name}: Community): CreateSpaceParams[] => [
 	{
 		community_id,
-		name: 'home',
+		name,
 		url: '/',
 		media_type: 'application/fuz+json',
 		content: `{"type": "${SpaceType.Home}", "props": {"data": "/home/files"}}`,

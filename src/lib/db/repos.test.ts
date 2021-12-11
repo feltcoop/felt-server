@@ -68,7 +68,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 		);
 	}
 	const spaceCount = 1;
-	const defaultSpaces = toDefaultSpaces(community.community_id);
+	const defaultSpaces = toDefaultSpaces(community);
 	const defaultSpaceCount = defaultSpaces.length;
 
 	const unwrapFile = async (promise: Promise<Result<{value: File}>>): Promise<File> => {

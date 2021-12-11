@@ -13,6 +13,7 @@
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 	import ContextMenu from '$lib/ui/ContextMenu.svelte';
+	import {VITE_GIT_HASH} from '$lib/config';
 
 	const {
 		api: {dispatch},
@@ -101,6 +102,7 @@
 				{/if}
 			</div>
 			<SocketConnection />
+			<div class="markup version">felt-server version: {VITE_GIT_HASH}</div>
 		</ContextMenu>
 	</div>
 {/if}
@@ -175,5 +177,9 @@
 	}
 	.context-menu-wrapper {
 		z-index: 8;
+	}
+	.version {
+		align-items: center;
+		margin-top: auto;
 	}
 </style>

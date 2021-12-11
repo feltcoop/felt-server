@@ -21,7 +21,7 @@ export const communityRepo = (db: Database) => ({
 		// TODO more robust error handling or condense into single query
 		const membershipResult = await db.repos.membership.create({persona_id, community_id});
 		if (!membershipResult.ok) return membershipResult;
-		const spacesResult = await db.repos.space.createDefaultSpaces(community_id);
+		const spacesResult = await db.repos.space.createDefaultSpaces(community);
 		if (!spacesResult.ok) return spacesResult;
 		community.spaces = spacesResult.value;
 		return {ok: true, value: community};

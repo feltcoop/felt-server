@@ -5,6 +5,7 @@ import type {Space} from '$lib/vocab/space/space.js';
 import type {Database} from '$lib/db/Database';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import type {ErrorResponse} from '$lib/util/error';
+import type {Community} from '$lib/vocab/community/community';
 
 export const spaceRepo = (db: Database) => ({
 	findById: async (
@@ -69,10 +70,10 @@ export const spaceRepo = (db: Database) => ({
 		return {ok: true, value: data[0]};
 	},
 	createDefaultSpaces: async (
-		community_id: number,
+		community: Community,
 	): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 		const spaces: Space[] = [];
-		for (const spaceParams of toDefaultSpaces(community_id)) {
+		for (const spaceParams of toDefaultSpaces(community)) {
 			const result = await db.repos.space.create(spaceParams);
 			if (!result.ok) return {ok: false, reason: 'Failed to create default spaces for community.'};
 			spaces.push(result.value);
