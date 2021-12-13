@@ -387,6 +387,14 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			memberships.update(($memberships) => $memberships.concat(membership));
 			return result;
 		},
+		delete_membership: async ({params, invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
+			console.log('[ui.delete_membership]', params);
+			// TODO also update `communities.personas`
+			//memberships.update(($memberships) => $memberships.concat(membership));
+			return result;
+		},
 		create_space: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;

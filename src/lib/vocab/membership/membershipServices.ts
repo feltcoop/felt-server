@@ -4,7 +4,10 @@ import {delete_membership} from '$lib/vocab/membership/membership.events';
 
 //deletes a membership of a given persona in a given community
 //TODO after front end data normalization make this use membership_id
-export const deleteSpaceService: Service<DeleteMembershipParams, DeleteMembershipResponseResult> = {
+export const deleteMembershipService: Service<
+	DeleteMembershipParams,
+	DeleteMembershipResponseResult
+> = {
 	event: delete_membership,
 	perform: async ({server, params}) => {
 		const {db} = server;
