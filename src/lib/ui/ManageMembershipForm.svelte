@@ -4,17 +4,14 @@
 	import type {Community} from '$lib/vocab/community/community';
 
 	import {getApp} from '$lib/ui/app';
+	import Avatar from './Avatar.svelte';
 
 	const {
 		api: {dispatch},
 		ui: {selectedPersona, communities},
 	} = getApp();
 
-	let persona = $selectedPersona!;
-
-	if (persona) {
-		$persona.community_ids;
-	}
+	$: persona = $selectedPersona!;
 
 	let opened = false;
 	let errorMessage: string | undefined;
@@ -29,7 +26,7 @@
 			community_id,
 		});
 		if (result.ok) {
-			opened = false;
+			//opened = false;
 		} else {
 			errorMessage = result.reason;
 		}
@@ -47,15 +44,18 @@
 {#if opened}
 	<Dialog on:close={() => (opened = false)}>
 		<div class="markup">
-			<h1>Manage community memberships</h1>
+			<h1>Manage memberships</h1>
+			<div class="avatar"><Avatar name={$persona.name} /></div>
 			<form>
 				<div class:error={!!errorMessage}>{errorMessage || ''}</div>
-				{#each $persona.community_ids as community_id (community_id)}
-					<div class="community-badge">
-						<button type="button" on:click={leaveCommunity(community_id)}> 👋 </button>
-						{getCommunity(community_id).name}
-					</div>
-				{/each}
+				<ul>
+					{#each $persona.community_ids as community_id (community_id)}
+						<li class="community-badge">
+							<button type="button" on:click={() => leaveCommunity(community_id)}>👋 </button>
+							{getCommunity(community_id).name}
+						</li>
+					{/each}
+				</ul>
 			</form>
 		</div>
 	</Dialog>
@@ -76,5 +76,10 @@
 	.community-badge {
 		display: flex;
 		font-size: xx-large;
+	}
+	.markup {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 </style>
