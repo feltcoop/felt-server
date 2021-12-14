@@ -11,9 +11,9 @@
 
 	let contextMenuEl;
 
-	const queryContextMenuEntityIds = (el: HTMLElement): string[] => {
+	const queryContextMenuEntityIds = (target: HTMLElement): string[] => {
 		const ids: string[] = [];
-		let el = e.target;
+		let el: HTMLElement | null = target;
 		while ((el = el && el.closest('[data-entity]'))) {
 			for (const id of el.dataset.thing.split(',')) {
 				if (!ids.includes(id)) {
