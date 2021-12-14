@@ -34,7 +34,7 @@ export const SpaceSchema = {
 	additionalProperties: false,
 };
 
-export enum SpaceType {
+export enum ViewType {
 	Home = 'Home',
 	Room = 'Room',
 	Board = 'Board',
@@ -43,11 +43,11 @@ export enum SpaceType {
 	Voice = 'Voice',
 	Iframe = 'Iframe',
 }
-export const spaceTypes: SpaceType[] = Object.keys(SpaceType) as SpaceType[];
+export const viewTypes: ViewType[] = Object.keys(ViewType) as ViewType[];
 
 // TODO refactor? rename? or how to define this?
 export interface SpaceViewData {
-	type: SpaceType;
+	type: ViewType;
 	props: SpaceProps;
 }
 export type SpaceProps = any; // TODO generic per type?

@@ -5,7 +5,7 @@
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
-	import {SpaceType, spaceTypes as allSpaceTypes} from '$lib/vocab/space/space';
+	import {ViewType, viewTypes as allViewTypes} from '$lib/vocab/space/space';
 
 	const {
 		api: {dispatch},
@@ -14,11 +14,11 @@
 	export let community: Readable<Community>;
 
 	// TODO instead of filtering here, this perhaps should be determined by metadata on space types
-	const spaceTypes = allSpaceTypes.filter((s) => s !== SpaceType.Home);
+	const ViewTypes = allViewTypes.filter((s) => s !== ViewType.Home);
 
 	let opened = false;
 	let newName = '';
-	let newType = spaceTypes[0];
+	let newType = ViewTypes[0];
 	let nameEl: HTMLInputElement;
 	let errorMessage: string | undefined;
 
@@ -41,7 +41,7 @@
 		});
 		if (result.ok) {
 			newName = '';
-			newType = spaceTypes[0];
+			newType = ViewTypes[0];
 			opened = false;
 		} else {
 			errorMessage = result.reason;
@@ -80,7 +80,7 @@
 				<label>
 					Select Type:
 					<select class="type-selector" bind:value={newType}>
-						{#each spaceTypes as type (type)}
+						{#each ViewTypes as type (type)}
 							<option value={type}>{type}</option>
 						{/each}
 					</select>
