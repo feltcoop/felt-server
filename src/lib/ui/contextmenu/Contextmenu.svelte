@@ -65,14 +65,12 @@
 
 <style>
 	.contextmenu {
+		/* contain: strict; */
 		position: fixed;
-		/* contain: content; // TODO should this be used? */
 		left: 0;
 		top: 0;
 		z-index: 9;
 		width: var(--column_width_min);
-		/* TODO styling */
-		/* box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.3); */
 		/* TODO should this be `pane-light` or something?
 		The `pane` shadow is too heavy because it's designed
 		for contrast against a fullscreen darkened background. */
