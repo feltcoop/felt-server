@@ -44,9 +44,6 @@ export const queryContextmenuEntityIds = (target: HTMLElement | SVGElement): str
 	const ids: string[] = [];
 	let el: HTMLElement | SVGElement | null = target;
 	while ((el = el && el.closest('[data-entity],a'))) {
-		if (el.tagName === 'A') {
-			ids.push((el as HTMLAnchorElement).href);
-		}
 		// TODO speed this up? count is low so `includes` seems better than a set
 		if (el.dataset.entity) {
 			for (const id of el.dataset.entity.split(',')) {
@@ -54,6 +51,9 @@ export const queryContextmenuEntityIds = (target: HTMLElement | SVGElement): str
 					ids.push(id);
 				}
 			}
+		}
+		if (el.tagName === 'A') {
+			ids.push((el as HTMLAnchorElement).href);
 		}
 		el = el.parentElement;
 	}

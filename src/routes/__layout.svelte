@@ -212,6 +212,12 @@
 			e.stopPropagation();
 		}
 	};
+
+	$: layoutEntities = ['app', personaSelection ? 'persona:' + $personaSelection.name : '']
+		.filter(Boolean)
+		.join(',');
+	// TODO refactor this: unfortunately need to set on #root because dialog is outside of `.layout`
+	$: browser && (document.getElementById('root')!.dataset.entity = layoutEntities);
 </script>
 
 <svelte:head>
@@ -255,7 +261,7 @@
 							<SocketConnection />
 						</section>
 					{/if}
-					<section class="markup">
+					<section class="markup panel-inset">
 						<p>
 							<a href="https://github.com/feltcoop/felt-server" target="_blank" rel="noreferrer"
 								>felt-server</a
@@ -270,7 +276,7 @@
 						</p>
 					</section>
 				{:else if entity === 'luggage' || entity === 'selectedPersona'}
-					<section class="markup">
+					<section class="markup panel-outset">
 						{#if personaSelection}
 							<Avatar name={toName($personaSelection)} icon={toIcon($personaSelection)} />
 						{/if}
@@ -278,8 +284,16 @@
 					</section>
 					<!-- TODO refactor -->
 				{:else if entity.startsWith('persona:')}
-					<section class="markup">
+					<section class="markup panel-outset">
 						<Avatar name={entity.substring('persona:'.length)} />
+					</section>
+				{:else if entity.startsWith('community:')}
+					<section class="markup panel-outset">
+						<Avatar name={entity.substring('community:'.length)} type="Community" />
+					</section>
+				{:else if entity.startsWith('space:')}
+					<section class="markup panel-inset">
+						<h3>{entity.substring('space:'.length)}</h3>
 					</section>
 				{:else}
 					<!-- TODO hack, treating as a link -->
@@ -291,9 +305,8 @@
 			{/each}
 		</div>
 	</Contextmenu>
+	<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 </div>
-
-<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 
 <style>
 	.layout {
@@ -329,6 +342,15 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+	}
+
+	.contextmenu-wrapper > section,
+	.contextmenu-wrapper > a {
+		border-bottom: var(--border);
+	}
+	.contextmenu-wrapper > section:last-child,
+	.contextmenu-wrapper > a:last-child {
+		border-bottom: none;
 	}
 
 	.contextmenu-wrapper > a {

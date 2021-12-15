@@ -36,8 +36,10 @@
 	class:selected
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {randomHue($community.name)}"
+	data-entity="community:{$community.name}"
 	on:click={() => dispatch('select_persona', {persona_id: $persona.persona_id})}
 >
+	<!-- TODO maybe use `Avatar`? does `hue` need to be on the link? -->
 	<EntityIcon name={$community.name} type="Community" />
 </a>
 
