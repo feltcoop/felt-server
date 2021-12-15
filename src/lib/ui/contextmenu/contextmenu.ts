@@ -39,7 +39,6 @@ export const createContextmenuStore = (
 	};
 };
 
-// TODO also search for `a` in this function
 export const queryContextmenuEntityIds = (target: HTMLElement | SVGElement): string[] => {
 	const ids: string[] = [];
 	let el: HTMLElement | SVGElement | null = target;

@@ -244,6 +244,7 @@
 	</main>
 	<Devmode {devmode} />
 	<Contextmenu {contextmenu}>
+		<!-- TODO refactor all of this -->
 		<!-- TODO implement this for arbitrary items -- blocks? -->
 		<div class="contextmenu-wrapper" on:click={onClickContextmenuWrapper}>
 			{#each $contextmenu.entities as entity}
@@ -294,6 +295,10 @@
 				{:else if entity.startsWith('space:')}
 					<section class="markup panel-inset">
 						<h3>{entity.substring('space:'.length)}</h3>
+					</section>
+				{:else if entity.startsWith('file:')}
+					<section class="markup panel-inset">
+						<p>TODO use file_id: {entity.substring('file:'.length)}</p>
 					</section>
 				{:else}
 					<!-- TODO hack, treating as a link -->

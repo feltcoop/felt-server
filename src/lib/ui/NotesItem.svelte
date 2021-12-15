@@ -13,7 +13,7 @@
 	$: persona = findPersonaById($file.actor_id);
 </script>
 
-<li data-entity="persona:{$persona.name}">
+<li data-entity="persona:{$persona.name},file:{$file.file_id}">
 	{$file.content}
 </li>
 
