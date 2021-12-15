@@ -236,6 +236,9 @@
 		<!-- TODO implement this for arbitrary items -- blocks? -->
 		{#each $contextmenu.entities as entity (entity)}
 			<div class="contextmenu-wrapper" on:click={onClickContextmenuWrapper}>
+				{#if $devmode}
+					<header class="panel-inset">{entity}</header>
+				{/if}
 				{#if entity === 'app'}
 					{#if $devmode}
 						<section>
@@ -286,6 +289,14 @@
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
+	}
+
+	.contextmenu-wrapper header {
+		text-align: center;
+		font-family: var(--font_family_mono);
+		font-size: var(--font_size_sm);
+		color: var(--text_color_light);
+		padding: var(--spacing_xs) 0;
 	}
 
 	.contextmenu-wrapper li a {
