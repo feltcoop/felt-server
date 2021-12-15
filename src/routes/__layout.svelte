@@ -301,12 +301,18 @@
 					<section class="markup panel-inset">
 						<p>TODO use file_id: {entity.substring('file:'.length)}</p>
 					</section>
-				{:else}
-					<!-- TODO hack, treating as a link -->
+				{:else if entity.startsWith('link:')}
 					<!-- TODO could do more if we had the original `target` element
-						(but it might go stale on $contextmenu?) -->
+							(but it might go stale on $contextmenu?) -->
 					<!-- TODO if it's an external link, add target="_blank" -->
-					<a href={entity}> <span class="icon">🔗</span> {entity} </a>
+					<a href={entity.substring('link:'.length)}>
+						<span class="icon">🔗</span>
+						{entity.substring('link:'.length)}
+					</a>
+				{:else}
+					<!-- <section class="markup">
+						<p>TODO default for entity: {entity}</p>
+					</section> -->
 				{/if}
 			{/each}
 		</div>
@@ -363,6 +369,7 @@
 		display: flex;
 		align-items: center;
 		width: 100%;
+		word-break: break-word;
 	}
 
 	.icon {

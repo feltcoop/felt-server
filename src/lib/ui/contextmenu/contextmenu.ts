@@ -42,19 +42,23 @@ export const createContextmenuStore = (
 export const queryContextmenuEntityIds = (target: HTMLElement | SVGElement): string[] => {
 	const ids: string[] = [];
 	let el: HTMLElement | SVGElement | null = target;
+	let stoppedPropagation = false;
 	while ((el = el && el.closest('[data-entity],a'))) {
-		// TODO speed this up? count is low so `includes` seems better than a set
-		if (el.dataset.entity) {
-			for (const id of el.dataset.entity.split(',')) {
-				// TODO probably the wrong fix -- commented out to support right-clicking
-				// on your selected persona's stuff and seeing the persona
-				// if (!ids.includes(id)) {
-				ids.push(id);
-				// }
+		let entity: any;
+		if (!stoppedPropagation && (entity = el.dataset.entity)) {
+			if (entity.includes(',')) {
+				for (const id of entity.split(',')) {
+					ids.push(id);
+				}
+			} else {
+				ids.push(entity);
+			}
+			if ('entityStopPropagation' in el.dataset) {
+				stoppedPropagation = true;
 			}
 		}
 		if (el.tagName === 'A') {
-			ids.push((el as HTMLAnchorElement).href);
+			ids.push('link:' + (el as HTMLAnchorElement).href);
 		}
 		el = el.parentElement;
 	}

@@ -26,6 +26,7 @@
 		tabindex="-1"
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
 		data-entity={$contextmenu.entities.join(',')}
+		data-entity-stop-propagation
 	>
 		<!-- TODO how much control should this component have over the contents? any? -->
 		<!-- {#each $contextmenu.entities as entity (entity.id)}
