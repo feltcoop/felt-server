@@ -73,7 +73,11 @@
 	const api = setApi(toApi(ui, apiClient));
 	const contextmenu = createContextmenuStore();
 	const app = setApp({ui, api, devmode, socket, contextmenu});
-	browser && console.log('app', app);
+	if (browser) {
+		(window as any).app = app;
+		Object.assign(window, app);
+		console.log('app', app);
+	}
 	$: browser && console.log('$session', $session);
 
 	const {dispatch} = api;
