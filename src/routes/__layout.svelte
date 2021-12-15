@@ -246,7 +246,7 @@
 	<Contextmenu {contextmenu}>
 		<!-- TODO implement this for arbitrary items -- blocks? -->
 		<div class="contextmenu-wrapper" on:click={onClickContextmenuWrapper}>
-			{#each $contextmenu.entities as entity (entity)}
+			{#each $contextmenu.entities as entity}
 				{#if $devmode}
 					<header class="panel-inset">{entity}</header>
 				{/if}

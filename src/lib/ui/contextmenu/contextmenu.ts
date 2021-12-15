@@ -47,9 +47,11 @@ export const queryContextmenuEntityIds = (target: HTMLElement | SVGElement): str
 		// TODO speed this up? count is low so `includes` seems better than a set
 		if (el.dataset.entity) {
 			for (const id of el.dataset.entity.split(',')) {
-				if (!ids.includes(id)) {
-					ids.push(id);
-				}
+				// TODO probably the wrong fix -- commented out to support right-clicking
+				// on your selected persona's stuff and seeing the persona
+				// if (!ids.includes(id)) {
+				ids.push(id);
+				// }
 			}
 		}
 		if (el.tagName === 'A') {
