@@ -11,8 +11,8 @@
 		ui: {selectedPersona},
 	} = getApp();
 
-	let account: AccountModel;
-	$: account = $session?.account;
+	let account: AccountModel | undefined;
+	$: account = $session.account;
 
 	let errorMessage: string | undefined;
 	let submitting: boolean | undefined;
@@ -33,7 +33,9 @@
 	};
 </script>
 
-<div>This account was created {account.created}</div>
+{#if account}
+	<div>This account was created {account.created}</div>
+{/if}
 {#if selectedPersonaValue}
 	<div>This persona was created {$selectedPersonaValue.created}</div>
 {/if}

@@ -49,3 +49,12 @@ export const queryContextmenuEntityIds = (target: HTMLElement | SVGElement): str
 	}
 	return ids;
 };
+
+export const onContextmenu = (contextmenu: ContextmenuStore) => (e: MouseEvent) => {
+	if (e.ctrlKey) return; // defer control!
+	const entities = queryContextmenuEntityIds(e.target as any);
+	if (!entities.length) return;
+	e.stopPropagation();
+	e.preventDefault();
+	contextmenu.open(entities, e.clientX + CONTEXT_MENU_OFFSET_X, e.clientY + CONTEXT_MENU_OFFSET_Y);
+};

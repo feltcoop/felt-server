@@ -1,27 +1,8 @@
 <script lang="ts">
 	import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-	import {
-		queryContextmenuEntityIds,
-		CONTEXT_MENU_OFFSET_X,
-		CONTEXT_MENU_OFFSET_Y,
-	} from '$lib/ui/contextmenu/contextmenu';
+	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
 	export let contextmenu: ContextmenuStore;
-
-	const onContextmenu = (e: MouseEvent) => {
-		if (e.ctrlKey) return; // defer control!
-		const entities = queryContextmenuEntityIds(e.target as any); // TODO improve type to avoid casting?
-		console.log('contextmenu entities', entities);
-		if (!entities.length) return; // TODO should we close if open?
-		e.preventDefault();
-		e.stopPropagation(); // TODO maybe don't swallow it?
-		// TODO dispatch event
-		contextmenu.open(
-			entities,
-			e.clientX + CONTEXT_MENU_OFFSET_X,
-			e.clientY + CONTEXT_MENU_OFFSET_Y,
-		);
-	};
 
 	const onClickWindow = () => {
 		if ($contextmenu.opened) {
@@ -30,7 +11,7 @@
 	};
 </script>
 
-<svelte:window on:contextmenu={onContextmenu} on:click={onClickWindow} />
+<svelte:window on:contextmenu={onContextmenu(contextmenu)} on:click={onClickWindow} />
 
 <!--
 	TODO This originally had an `in:scale` transition, `in:scale={{duration: 50}}`

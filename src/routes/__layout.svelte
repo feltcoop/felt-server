@@ -188,6 +188,21 @@
 			}
 		}
 	}
+
+	// TODO hacky, but if it sticks, upstream to Felt. maybe check things like `role="button"`?
+	export const isInteractive = (el: Element): boolean =>
+		el.tagName === 'A' || el.tagName === 'BUTTON' || !!el.closest('button,a');
+
+	const onClickContextmenuWrapper = (e: MouseEvent) => {
+		// this seems hacky, but improves the behavior to let us select content on the contextmenu,
+		// but automatically closes if e.g. a button is clicked, and the button can `stopPropagation`
+		// to keep the contextmenu open, because it'll stop it before this handler runs
+		if (isInteractive(e.target as any)) {
+			contextmenu.close();
+		} else {
+			e.stopPropagation();
+		}
+	};
 </script>
 
 <svelte:head>
@@ -216,7 +231,7 @@
 	<Contextmenu {contextmenu}>
 		<!-- TODO implement this for arbitrary items -- blocks? -->
 		{#each $contextmenu.entities as entity (entity)}
-			<div class="contextmenu-wrapper">
+			<div class="contextmenu-wrapper" on:click={onClickContextmenuWrapper}>
 				{#if entity === 'app'}
 					{#if $devmode}
 						<section>
