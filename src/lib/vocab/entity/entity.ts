@@ -8,3 +8,9 @@ export const toName = (entity: null | undefined | {name?: string}): string =>
 
 export const toIcon = (entity: null | undefined | {icon?: string}): string | null =>
 	(entity as any)?.icon ?? null;
+
+// TODO should be generated from a schema, maybe upstreamed
+export interface Entity {
+	id: string;
+	type: string;
+}

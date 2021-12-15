@@ -11,7 +11,7 @@
 	import {randomHue} from '$lib/ui/color';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
-	import ContextMenu from '$lib/ui/ContextMenu.svelte';
+	import Contextmenu from '$lib/ui/Contextmenu.svelte';
 	import {VITE_GIT_HASH} from '$lib/config';
 
 	const {
@@ -34,7 +34,7 @@
 	$: hue = randomHue(selectedPersonaName);
 
 	const [popperRef, popperContent, popperInstance] = createPopperActions();
-	let showContextMenu = false;
+	let showContextmenu = false;
 	let mouseX = 100;
 	let mouseY = 110;
 	const popperRefAction = popperRef({
@@ -49,8 +49,8 @@
 	} as HTMLElement);
 	const CONTEXT_MENU_OFFSET_X = -2; // TODO tweak offsets -- currently the primary action is immediately hovered
 	const CONTEXT_MENU_OFFSET_Y = -2;
-	const toggleContextMenu = (x: number, y: number, show: boolean = !showContextMenu): void => {
-		showContextMenu = show;
+	const toggleContextmenu = (x: number, y: number, show: boolean = !showContextmenu): void => {
+		showContextmenu = show;
 		mouseX = x + CONTEXT_MENU_OFFSET_X;
 		mouseY = y + CONTEXT_MENU_OFFSET_Y;
 		popperInstance()?.update();
@@ -66,14 +66,14 @@
 <svelte:body
 	on:click={() => {
 		// TODO clickOutside action?
-		if (showContextMenu) {
-			showContextMenu = false;
+		if (showContextmenu) {
+			showContextmenu = false;
 		}
 	}}
 	on:keydown={(e) => {
 		// TODO helper action?
-		if (showContextMenu && e.key === 'Escape') {
-			showContextMenu = false;
+		if (showContextmenu && e.key === 'Escape') {
+			showContextmenu = false;
 			// TODO toggling back on seems like a promising UX,
 			// but the problem is it conflicts with the dialog if we just toggle it here
 		}
@@ -89,12 +89,12 @@
 			<div class="icon-button button-placeholder" />
 			<button
 				class="explorer-button"
-				on:click|stopPropagation={(e) => toggleContextMenu(e.clientX, e.clientY)}
+				on:click|stopPropagation={(e) => toggleContextmenu(e.clientX, e.clientY)}
 				on:contextmenu={(e) => {
 					if (!e.ctrlKey) {
 						e.stopPropagation();
 						e.preventDefault();
-						toggleContextMenu(e.clientX, e.clientY);
+						toggleContextmenu(e.clientX, e.clientY);
 					}
 				}}
 			>
@@ -115,13 +115,13 @@
 	</div>
 </div>
 
-{#if showContextMenu}
+{#if showContextmenu}
 	<div
 		class="context-menu-wrapper panel"
 		use:popperContent={{placement: 'right-start'}}
 		on:click|stopPropagation={() => {}}
 	>
-		<ContextMenu>
+		<Contextmenu>
 			<div class="markup">
 				<AccountForm guest={$session.guest} />
 				{#if $devmode}
@@ -130,7 +130,7 @@
 			</div>
 			<SocketConnection />
 			<div class="markup version">felt-server version: {VITE_GIT_HASH}</div>
-		</ContextMenu>
+		</Contextmenu>
 	</div>
 {/if}
 

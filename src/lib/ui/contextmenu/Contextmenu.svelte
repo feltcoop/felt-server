@@ -1,21 +1,23 @@
 <script lang="ts">
-	import {getApp} from './app.js';
-	import ContextMenuSection from './ContextMenuSection.svelte';
+	import {getApp} from '$lib/ui/app';
+	import ContextmenuSection from '$lib/ui/contextmenu/ContextmenuSection.svelte';
+
+	// TODO see partial implementation here: https://github.com/feltcoop/felt-server/blob/2e7d9cc218eee68d290b60f65e135234afee906a/src/lib/ui/MainNav.svelte
 
 	const {
 		api: {dispatch},
 		entities,
 	} = getApp();
 
-	const {contextMenu} = entities;
+	const {contextmenu} = entities;
 
-	let contextMenuEl;
+	let contextmenuEl: HTMLElement;
 
-	const queryContextMenuEntityIds = (target: HTMLElement): string[] => {
+	const queryContextmenuEntityIds = (target: HTMLElement | SVGElement): string[] => {
 		const ids: string[] = [];
-		let el: HTMLElement | null = target;
+		let el: HTMLElement | SVGElement | null = target;
 		while ((el = el && el.closest('[data-entity]'))) {
-			for (const id of el.dataset.entity.split(',')) {
+			for (const id of el.dataset.entity!.split(',')) {
 				if (!ids.includes(id)) {
 					ids.push(id);
 				}
@@ -25,25 +27,25 @@
 		return ids;
 	};
 
-	const onContextMenu = (e) => {
+	const onContextmenu = (e: MouseEvent) => {
 		if (e.ctrlKey) return; // defer control!
-		const entities = queryContextMenuEntityIds(e.target);
+		const entities = queryContextmenuEntityIds(e.target as any); // TODO improve type to avoid casting?
 		if (!entities.length) return; // TODO should we close if open?
 		e.preventDefault();
 		e.stopPropagation();
-		dispatch({type: 'contextMenu.open', entities, positionLeft: e.clientX, positionTop: e.clientY});
+		dispatch({type: 'contextmenu.open', entities, positionLeft: e.clientX, positionTop: e.clientY});
 	};
 
 	const onWindowClickCapture = (e) => {
-		if ($contextMenu.isOpen && !contextMenuEl.contains(e.target)) {
-			dispatch({type: 'contextMenu.close'});
+		if ($contextmenu.isOpen && !contextmenuEl.contains(e.target)) {
+			dispatch({type: 'contextmenu.close'});
 			// allow the click to continue doing what it was going to do
 		}
 	};
 
 	const onWindowKeyDownCapture = (e) => {
-		if ($contextMenu.isOpen && e.key === 'Escape') {
-			dispatch({type: 'contextMenu.close'});
+		if ($contextmenu.isOpen && e.key === 'Escape') {
+			dispatch({type: 'contextmenu.close'});
 			e.stopImmediatePropagation();
 			e.preventDefault();
 		}
@@ -51,7 +53,7 @@
 </script>
 
 <svelte:window
-	on:contextmenu={onContextMenu}
+	on:contextmenu={onContextmenu}
 	on:click|capture={onWindowClickCapture}
 	on:keydown|capture={onWindowKeyDownCapture}
 />
@@ -61,17 +63,17 @@
 	but even a 50ms animation makes it feel slow.
 	Maybe a better solution is to show the content immediately, but animate the periphery.
 -->
-{#if $contextMenu.isOpen}
+{#if $contextmenu.isOpen}
 	<div
 		class="context-menu pane"
 		role="menu"
 		aria-modal
 		tabindex="-1"
-		bind:this={contextMenuEl}
-		style="transform: translate3d({$contextMenu.positionLeft}px, {$contextMenu.positionTop}px, 0);"
+		bind:this={contextmenuEl}
+		style="transform: translate3d({$contextmenu.positionLeft}px, {$contextmenu.positionTop}px, 0);"
 	>
-		{#each $contextMenu.entities as entity (entity.id)}
-			<ContextMenuSection {entity} />
+		{#each $contextmenu.entities as entity (entity.id)}
+			<ContextmenuSection {entity} />
 		{/each}
 	</div>
 {/if}

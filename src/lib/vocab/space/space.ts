@@ -23,7 +23,6 @@ export const SpaceSchema = {
 	additionalProperties: false,
 };
 
-// TODO should this be `ViewType`?
 export enum SpaceType {
 	Home = 'Home',
 	Room = 'Room',
