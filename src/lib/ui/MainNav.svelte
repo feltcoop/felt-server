@@ -6,7 +6,11 @@
 	import {randomHue} from '$lib/ui/color';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
-	import {CONTEXT_MENU_OFFSET_X, CONTEXT_MENU_OFFSET_Y} from '$lib/ui/contextmenu/contextmenu';
+	import {
+		CONTEXT_MENU_OFFSET_X,
+		CONTEXT_MENU_OFFSET_Y,
+		queryContextmenuEntityIds,
+	} from '$lib/ui/contextmenu/contextmenu';
 
 	const {
 		api: {dispatch},
@@ -26,6 +30,14 @@
 	// TODO refactor to some client view-model for the account
 	$: selectedPersonaName = $selectedPersona?.name || GUEST_PERSONA_NAME;
 	$: hue = randomHue(selectedPersonaName);
+
+	const onClickSelectedPersona = (e: MouseEvent) => {
+		contextmenu.open(
+			queryContextmenuEntityIds(e.target as any),
+			e.clientX + CONTEXT_MENU_OFFSET_X,
+			e.clientY + CONTEXT_MENU_OFFSET_Y,
+		);
+	};
 </script>
 
 {#if $expandMainNav}
@@ -40,12 +52,7 @@
 			<button
 				class="explorer-button"
 				data-entity="selectedPersona"
-				on:click|stopPropagation={(e) =>
-					contextmenu.open(
-						['selectedPersona'],
-						e.clientX + CONTEXT_MENU_OFFSET_X,
-						e.clientY + CONTEXT_MENU_OFFSET_Y,
-					)}
+				on:click|stopPropagation={onClickSelectedPersona}
 			>
 				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
 			</button>

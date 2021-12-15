@@ -194,7 +194,7 @@
 	<link rel="shortcut icon" href="/favicon.png" />
 </svelte:head>
 
-<div class="layout" class:mobile={$mobile}>
+<div class="layout" class:mobile={$mobile} data-entity="app">
 	{#if !guest && !onboarding}
 		<Luggage />
 		<MainNav />
@@ -213,42 +213,42 @@
 		{/if}
 	</main>
 	<Devmode {devmode} />
-</div>
-
-<Contextmenu {contextmenu}>
-	<!-- TODO implement this for arbitrary items -- blocks? -->
-	{#each $contextmenu.entities as entity (entity)}
-		<div class="contextmenu-wrapper">
-			{#if entity === 'selectedPersona'}
-				<section class="markup">
-					<AccountForm guest={$session.guest} />
-				</section>
-				{#if $devmode}
-					<section>
-						<ul>
-							<li><a href="/docs">/docs</a></li>
-						</ul>
+	<Contextmenu {contextmenu}>
+		<!-- TODO implement this for arbitrary items -- blocks? -->
+		{#each $contextmenu.entities as entity (entity)}
+			<div class="contextmenu-wrapper">
+				{#if entity === 'app'}
+					{#if $devmode}
+						<section>
+							<ul>
+								<li><a href="/docs">/docs</a></li>
+							</ul>
+						</section>
+						<section>
+							<SocketConnection />
+						</section>
+					{/if}
+					<section class="markup">
+						<p>
+							<a href="https://github.com/feltcoop/felt-server" target="_blank">felt-server</a>
+							version:
+							<a
+								href="https://github.com/feltcoop/felt-server/commit/{VITE_GIT_HASH}"
+								target="_blank"
+							>
+								{VITE_GIT_HASH}
+							</a>
+						</p>
 					</section>
-					<section>
-						<SocketConnection />
+				{:else if entity === 'selectedPersona'}
+					<section class="markup">
+						<AccountForm guest={$session.guest} />
 					</section>
 				{/if}
-				<section class="markup">
-					<p>
-						<a href="https://github.com/feltcoop/felt-server" target="_blank">felt-server</a>
-						version:
-						<a
-							href="https://github.com/feltcoop/felt-server/commit/{VITE_GIT_HASH}"
-							target="_blank"
-						>
-							{VITE_GIT_HASH}
-						</a>
-					</p>
-				</section>
-			{/if}
-		</div>
-	{/each}
-</Contextmenu>
+			</div>
+		{/each}
+	</Contextmenu>
+</div>
 
 <FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 

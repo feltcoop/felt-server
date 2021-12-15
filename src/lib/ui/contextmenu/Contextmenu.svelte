@@ -1,22 +1,12 @@
 <script lang="ts">
 	import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-	import {CONTEXT_MENU_OFFSET_X, CONTEXT_MENU_OFFSET_Y} from '$lib/ui/contextmenu/contextmenu';
+	import {
+		queryContextmenuEntityIds,
+		CONTEXT_MENU_OFFSET_X,
+		CONTEXT_MENU_OFFSET_Y,
+	} from '$lib/ui/contextmenu/contextmenu';
 
 	export let contextmenu: ContextmenuStore;
-
-	const queryContextmenuEntityIds = (target: HTMLElement | SVGElement): string[] => {
-		const ids: string[] = [];
-		let el: HTMLElement | SVGElement | null = target;
-		while ((el = el && el.closest('[data-entity]'))) {
-			for (const id of el.dataset.entity!.split(',')) {
-				if (!ids.includes(id)) {
-					ids.push(id);
-				}
-			}
-			el = el.parentElement;
-		}
-		return ids;
-	};
 
 	const onContextmenu = (e: MouseEvent) => {
 		if (e.ctrlKey) return; // defer control!
@@ -54,6 +44,7 @@
 		aria-modal
 		tabindex="-1"
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
+		data-entity={$contextmenu.entities.join(',')}
 	>
 		<!-- TODO how much control should this component have over the contents? any? -->
 		<!-- {#each $contextmenu.entities as entity (entity.id)}

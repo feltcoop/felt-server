@@ -34,3 +34,18 @@ export const createContextmenuStore = (
 		},
 	};
 };
+
+export const queryContextmenuEntityIds = (target: HTMLElement | SVGElement): string[] => {
+	const ids: string[] = [];
+	let el: HTMLElement | SVGElement | null = target;
+	while ((el = el && el.closest('[data-entity]'))) {
+		// TODO speed this up? count is low so `includes` seems better than a set
+		for (const id of el.dataset.entity!.split(',')) {
+			if (!ids.includes(id)) {
+				ids.push(id);
+			}
+		}
+		el = el.parentElement;
+	}
+	return ids;
+};
