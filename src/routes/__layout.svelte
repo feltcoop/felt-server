@@ -220,16 +220,35 @@
 <Contextmenu {contextmenu}>
 	<!-- TODO implement this for arbitrary items -- blocks? -->
 	{#each $contextmenu.entities as entity (entity)}
-		{#if entity === 'selectedPersona'}
-			<div class="markup">
-				<AccountForm guest={$session.guest} />
+		<div class="contextmenu-wrapper">
+			{#if entity === 'selectedPersona'}
+				<section class="markup">
+					<AccountForm guest={$session.guest} />
+				</section>
 				{#if $devmode}
-					<a class="menu-link" href="/docs">/docs</a>
+					<section>
+						<ul>
+							<li><a href="/docs">/docs</a></li>
+						</ul>
+					</section>
+					<section>
+						<SocketConnection />
+					</section>
 				{/if}
-			</div>
-			<SocketConnection />
-			<div class="markup version">felt-server version: {VITE_GIT_HASH}</div>
-		{/if}
+				<section class="markup">
+					<p>
+						<a href="https://github.com/feltcoop/felt-server" target="_blank">felt-server</a>
+						version:
+						<a
+							href="https://github.com/feltcoop/felt-server/commit/{VITE_GIT_HASH}"
+							target="_blank"
+						>
+							{VITE_GIT_HASH}
+						</a>
+					</p>
+				</section>
+			{/if}
+		</div>
 	{/each}
 </Contextmenu>
 
@@ -252,11 +271,14 @@
 		flex-direction: column;
 	}
 
-	.menu-link {
+	.contextmenu-wrapper li a {
 		padding: var(--spacing_xs) var(--spacing_sm);
+		width: 100%;
 	}
-	.version {
+
+	.contextmenu-wrapper .markup {
+		display: flex;
+		flex-direction: column;
 		align-items: center;
-		margin-top: auto;
 	}
 </style>

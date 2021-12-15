@@ -4,8 +4,6 @@
 
 	export let contextmenu: ContextmenuStore;
 
-	let contextmenuEl: HTMLElement;
-
 	const queryContextmenuEntityIds = (target: HTMLElement | SVGElement): string[] => {
 		const ids: string[] = [];
 		let el: HTMLElement | SVGElement | null = target;
@@ -54,9 +52,7 @@
 		class="contextmenu pane"
 		role="menu"
 		aria-modal
-		on:click|stopPropagation={() => {}}
 		tabindex="-1"
-		bind:this={contextmenuEl}
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
 	>
 		<!-- TODO how much control should this component have over the contents? any? -->
