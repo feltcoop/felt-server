@@ -32,19 +32,19 @@
 		const entities = queryContextmenuEntityIds(e.target as any); // TODO improve type to avoid casting?
 		if (!entities.length) return; // TODO should we close if open?
 		e.preventDefault();
-		e.stopPropagation();
-		dispatch({type: 'contextmenu.open', entities, positionLeft: e.clientX, positionTop: e.clientY});
+		e.stopPropagation(); // TODO maybe don't swallow it?
+		dispatch({type: 'contextmenu.open', entities, x: e.clientX, y: e.clientY});
 	};
 
 	const onWindowClickCapture = (e) => {
-		if ($contextmenu.isOpen && !contextmenuEl.contains(e.target)) {
+		if ($contextmenu.opened && !contextmenuEl.contains(e.target)) {
 			dispatch({type: 'contextmenu.close'});
 			// allow the click to continue doing what it was going to do
 		}
 	};
 
 	const onWindowKeyDownCapture = (e) => {
-		if ($contextmenu.isOpen && e.key === 'Escape') {
+		if ($contextmenu.opened && e.key === 'Escape') {
 			dispatch({type: 'contextmenu.close'});
 			e.stopImmediatePropagation();
 			e.preventDefault();
@@ -63,14 +63,14 @@
 	but even a 50ms animation makes it feel slow.
 	Maybe a better solution is to show the content immediately, but animate the periphery.
 -->
-{#if $contextmenu.isOpen}
+{#if $contextmenu.opened}
 	<div
 		class="context-menu pane"
 		role="menu"
 		aria-modal
 		tabindex="-1"
 		bind:this={contextmenuEl}
-		style="transform: translate3d({$contextmenu.positionLeft}px, {$contextmenu.positionTop}px, 0);"
+		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
 	>
 		{#each $contextmenu.entities as entity (entity.id)}
 			<ContextmenuSection {entity} />
@@ -84,7 +84,7 @@
 		/* contain: content; // TODO should this be used? */
 		left: 0;
 		top: 0;
-		z-index: 20;
+		z-index: 9;
 		/* TODO styling */
 		background-color: var(--color_bg_content);
 		/* box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.3); */
