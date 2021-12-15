@@ -32,6 +32,8 @@
 	import SocketConnection from '$lib/ui/SocketConnection.svelte';
 	import {VITE_GIT_HASH} from '$lib/config';
 	import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+	import Avatar from '$lib/ui/Avatar.svelte';
+	import {toIcon, toName} from '$lib/vocab/entity/entity';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -89,6 +91,7 @@
 		selectedPersonaIndex,
 		selectedCommunityId,
 		selectedSpaceIdByCommunity,
+		selectedPersona,
 		setSession,
 	} = ui;
 
@@ -96,6 +99,8 @@
 
 	$: guest = $session.guest;
 	$: onboarding = !guest && !$sessionPersonas.length;
+
+	$: personaSelection = $selectedPersona; // TODO should these names be reversed?
 
 	// TODO instead of dispatching `select` events on startup, try to initialize with correct values
 	// TODO refactor -- where should this logic go?
@@ -213,7 +218,7 @@
 	<link rel="shortcut icon" href="/favicon.png" />
 </svelte:head>
 
-<div class="layout" class:mobile={$mobile} data-entity="app">
+<div class="layout" class:mobile={$mobile}>
 	{#if !guest && !onboarding}
 		<Luggage />
 		<MainNav />
@@ -234,8 +239,8 @@
 	<Devmode {devmode} />
 	<Contextmenu {contextmenu}>
 		<!-- TODO implement this for arbitrary items -- blocks? -->
-		{#each $contextmenu.entities as entity (entity)}
-			<div class="contextmenu-wrapper" on:click={onClickContextmenuWrapper}>
+		<div class="contextmenu-wrapper" on:click={onClickContextmenuWrapper}>
+			{#each $contextmenu.entities as entity (entity)}
 				{#if $devmode}
 					<header class="panel-inset">{entity}</header>
 				{/if}
@@ -252,7 +257,9 @@
 					{/if}
 					<section class="markup">
 						<p>
-							<a href="https://github.com/feltcoop/felt-server" target="_blank">felt-server</a>
+							<a href="https://github.com/feltcoop/felt-server" target="_blank" rel="noreferrer"
+								>felt-server</a
+							>
 							version 💚
 							<a
 								href="https://github.com/feltcoop/felt-server/commit/{VITE_GIT_HASH}"
@@ -264,11 +271,25 @@
 					</section>
 				{:else if entity === 'luggage' || entity === 'selectedPersona'}
 					<section class="markup">
+						{#if personaSelection}
+							<Avatar name={toName($personaSelection)} icon={toIcon($personaSelection)} />
+						{/if}
 						<AccountForm guest={$session.guest} />
 					</section>
+					<!-- TODO refactor -->
+				{:else if entity.startsWith('persona:')}
+					<section class="markup">
+						<Avatar name={entity.substring('persona:'.length)} />
+					</section>
+				{:else}
+					<!-- TODO hack, treating as a link -->
+					<!-- TODO could do more if we had the original `target` element
+						(but it might go stale on $contextmenu?) -->
+					<!-- TODO if it's an external link, add target="_blank" -->
+					<a href={entity}> <span class="icon">🔗</span> {entity} </a>
 				{/if}
-			</div>
-		{/each}
+			{/each}
+		</div>
 	</Contextmenu>
 </div>
 
@@ -308,5 +329,17 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+	}
+
+	.contextmenu-wrapper > a {
+		display: flex;
+		align-items: center;
+		width: 100%;
+	}
+
+	.icon {
+		display: flex;
+		font-size: var(--icon_size_sm);
+		padding: var(--spacing_sm);
 	}
 </style>

@@ -1,5 +1,6 @@
 import {writable} from 'svelte/store';
 import type {Readable, StartStopNotifier} from 'svelte/store';
+import {isEditable} from '@feltcoop/felt/util/dom.js';
 
 // TODO tweak offsets -- currently the primary action is immediately hovered
 // where should these constants live?
@@ -42,11 +43,16 @@ export const createContextmenuStore = (
 export const queryContextmenuEntityIds = (target: HTMLElement | SVGElement): string[] => {
 	const ids: string[] = [];
 	let el: HTMLElement | SVGElement | null = target;
-	while ((el = el && el.closest('[data-entity]'))) {
+	while ((el = el && el.closest('[data-entity],a'))) {
+		if (el.tagName === 'A') {
+			ids.push((el as HTMLAnchorElement).href);
+		}
 		// TODO speed this up? count is low so `includes` seems better than a set
-		for (const id of el.dataset.entity!.split(',')) {
-			if (!ids.includes(id)) {
-				ids.push(id);
+		if (el.dataset.entity) {
+			for (const id of el.dataset.entity.split(',')) {
+				if (!ids.includes(id)) {
+					ids.push(id);
+				}
 			}
 		}
 		el = el.parentElement;
@@ -56,7 +62,9 @@ export const queryContextmenuEntityIds = (target: HTMLElement | SVGElement): str
 
 export const onContextmenu = (contextmenu: ContextmenuStore) => (e: MouseEvent) => {
 	if (e.ctrlKey) return; // defer control!
-	const entities = queryContextmenuEntityIds(e.target as any);
+	const target = e.target as HTMLElement;
+	if (isEditable(target)) return;
+	const entities = queryContextmenuEntityIds(target);
 	if (!entities.length) return;
 	e.stopPropagation();
 	e.preventDefault();
