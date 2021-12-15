@@ -6,7 +6,7 @@
 	} = getApp();
 </script>
 
-<div class="luggage">
+<div class="luggage" data-entity="luggage">
 	<button
 		class="icon-button"
 		aria-label="toggle luggage"

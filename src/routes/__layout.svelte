@@ -262,7 +262,7 @@
 							</a>
 						</p>
 					</section>
-				{:else if entity === 'selectedPersona'}
+				{:else if entity === 'luggage' || entity === 'selectedPersona'}
 					<section class="markup">
 						<AccountForm guest={$session.guest} />
 					</section>
