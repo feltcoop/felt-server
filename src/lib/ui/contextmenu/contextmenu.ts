@@ -8,7 +8,10 @@ export const CONTEXT_MENU_OFFSET_Y = -2;
 
 export interface Contextmenu {
 	opened: boolean;
-	entities: string[]; // TODO not sure about this -- maybe should be blocks? or ids for blocks?
+	// TODO not sure about this, currently they're magic keys, maybe keys on `ui`?
+	// so could they be addressed by `name || id`? e.g. `'selectedPersona'`
+	// maybe they should be blocks and block ids? or both?
+	entities: string[];
 	x: number;
 	y: number;
 }
