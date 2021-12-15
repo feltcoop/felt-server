@@ -1,8 +1,6 @@
 <script lang="ts">
 	import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {CONTEXT_MENU_OFFSET_X, CONTEXT_MENU_OFFSET_Y} from '$lib/ui/contextmenu/contextmenu';
-	// import ContextmenuSection from '$lib/ui/contextmenu/ContextmenuSection.svelte';
-	// TODO see partial implementation here: https://github.com/feltcoop/felt-server/blob/2e7d9cc218eee68d290b60f65e135234afee906a/src/lib/ui/MainNav.svelte
 
 	export let contextmenu: ContextmenuStore;
 
@@ -29,7 +27,7 @@
 		if (!entities.length) return; // TODO should we close if open?
 		e.preventDefault();
 		e.stopPropagation(); // TODO maybe don't swallow it?
-		// TODO dispatch event, probably
+		// TODO dispatch event
 		contextmenu.open(
 			entities,
 			e.clientX + CONTEXT_MENU_OFFSET_X,
@@ -37,32 +35,14 @@
 		);
 	};
 
-	const onClickWindow = (e: MouseEvent) => {
-		// TODO or e.target.closest(contextmenuEl) ?
-		if ($contextmenu.opened && !contextmenuEl.contains(e.target as any)) {
+	const onClickWindow = () => {
+		if ($contextmenu.opened) {
 			contextmenu.close();
-			// allow the click to continue doing what it was going to do
 		}
 	};
 </script>
 
-<svelte:window on:contextmenu={onContextmenu} on:click|capture={onClickWindow} />
-
-<!-- <svelte:body
-	on:click={() => {
-		// TODO clickOutside action?
-		if (showContextmenu) {
-			showContextmenu = false;
-		}
-	}}
-	on:keydown={(e) => {
-		// TODO helper action?
-		if (showContextmenu && e.key === 'Escape') {
-			showContextmenu = false;
-			// TODO toggling back on seems like a promising UX,
-			// but the problem is it conflicts with the dialog if we just toggle it here
-		}
-	}} /> -->
+<svelte:window on:contextmenu={onContextmenu} on:click={onClickWindow} />
 
 <!--
 	TODO This originally had an `in:scale` transition, `in:scale={{duration: 50}}`

@@ -40,7 +40,7 @@
 			<button
 				class="explorer-button"
 				data-entity="selectedPersona"
-				on:click={(e) =>
+				on:click|stopPropagation={(e) =>
 					contextmenu.open(
 						['selectedPersona'],
 						e.clientX + CONTEXT_MENU_OFFSET_X,
