@@ -52,15 +52,9 @@ const loadEnvs = () => {
 // Adds or updates an env var value for the key `name`.
 export const updateEnv = (contents: string, name: string, value: string): string => {
 	const matcher = new RegExp(`^${name}=(.*)$`, 'm');
-	console.log('contents', contents);
 	const matched = contents.match(matcher);
-	console.log('matched', matched);
-	console.log('matcher.test(contents)', matcher.test(contents));
 	if (matched) {
-		if (matched[1] === value) {
-			console.log('NO-OP');
-			return contents;
-		}
+		if (matched[1] === value) return contents;
 		return contents.replace(matcher, `${name}=${value}`);
 	} else {
 		return contents + (contents.endsWith('\n') ? '' : '\n') + `${name}=${value}`;
