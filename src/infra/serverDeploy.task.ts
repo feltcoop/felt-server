@@ -7,7 +7,7 @@ export const task: Task = {
 	summary: 'deploy felt server to prod',
 	production: true,
 	run: async ({invokeTask}) => {
-		await invokeTask('infra/updateGitHash');
+		await invokeTask('infra/updateEnv');
 
 		//build the actual tar deployment artifact,
 		//using `spawn` instead of `invokeTask` to ensure the environment modified above is updated
