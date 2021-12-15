@@ -65,7 +65,6 @@
 
 <style>
 	.contextmenu {
-		/* contain: strict; */
 		position: fixed;
 		left: 0;
 		top: 0;
@@ -76,9 +75,5 @@
 		for contrast against a fullscreen darkened background. */
 		--pane_box_shadow: 0px 2px 10px hsla(0, 100%, 0%, 0.2);
 		border: var(--border);
-		/* outline: 2px solid rgba(0, 0, 0, 0.3); */
-		/* transform-origin: left top; */
-		/* Like scaling above, making translate animate around the screen just doesn't feel great.  */
-		/* transition: transform 0.05s ease-out; */
 	}
 </style>
