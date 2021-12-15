@@ -27,6 +27,7 @@
 	class:selected
 	class="space-info"
 	style="--hue: {hue}"
+	data-entity="space:{$space.name}"
 >
 	<div class="name">{$space.name}</div>
 	<div>

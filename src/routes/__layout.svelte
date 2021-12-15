@@ -33,7 +33,6 @@
 	import {VITE_GIT_HASH} from '$lib/config';
 	import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import Avatar from '$lib/ui/Avatar.svelte';
-	import {toIcon, toName} from '$lib/vocab/entity/entity';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -279,9 +278,6 @@
 					</section>
 				{:else if entity === 'luggage' || entity === 'selectedPersona'}
 					<section class="markup panel-outset">
-						{#if personaSelection}
-							<Avatar name={toName($personaSelection)} icon={toIcon($personaSelection)} />
-						{/if}
 						<AccountForm guest={$session.guest} />
 					</section>
 					<!-- TODO refactor -->
