@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {session} from '$app/stores';
 	import {onMount} from 'svelte';
-	import {createPopperActions} from 'svelte-popperjs';
 
 	import CommunityNav from '$lib/ui/CommunityNav.svelte';
 	import SpaceNav from '$lib/ui/SpaceNav.svelte';
