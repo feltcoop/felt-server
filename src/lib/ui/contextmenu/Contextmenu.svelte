@@ -1,13 +1,8 @@
 <script lang="ts">
-	import {getApp} from '$lib/ui/app';
 	import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	// import ContextmenuSection from '$lib/ui/contextmenu/ContextmenuSection.svelte';
 
 	// TODO see partial implementation here: https://github.com/feltcoop/felt-server/blob/2e7d9cc218eee68d290b60f65e135234afee906a/src/lib/ui/MainNav.svelte
-
-	const {
-		api: {dispatch},
-	} = getApp();
 
 	export let contextmenu: ContextmenuStore;
 
@@ -27,36 +22,50 @@
 		return ids;
 	};
 
+	const CONTEXT_MENU_OFFSET_X = -2; // TODO tweak offsets -- currently the primary action is immediately hovered
+	const CONTEXT_MENU_OFFSET_Y = -2;
+
 	const onContextmenu = (e: MouseEvent) => {
 		if (e.ctrlKey) return; // defer control!
 		const entities = queryContextmenuEntityIds(e.target as any); // TODO improve type to avoid casting?
+		console.log('contextmenu entities', entities);
 		if (!entities.length) return; // TODO should we close if open?
 		e.preventDefault();
 		e.stopPropagation(); // TODO maybe don't swallow it?
-		dispatch({type: 'contextmenu.open', entities, x: e.clientX, y: e.clientY});
+		// TODO dispatch event, probably
+		contextmenu.open(
+			entities,
+			e.clientX + CONTEXT_MENU_OFFSET_X,
+			e.clientY + CONTEXT_MENU_OFFSET_Y,
+		);
 	};
 
-	const onWindowClickCapture = (e: MouseEvent) => {
-		if ($contextmenu.opened && !contextmenuEl.contains(e.target)) {
-			dispatch({type: 'contextmenu.close'});
+	const onClickWindow = (e: MouseEvent) => {
+		// TODO or e.target.closest(contextmenuEl) ?
+		if ($contextmenu.opened && !contextmenuEl.contains(e.target as any)) {
+			contextmenu.close();
 			// allow the click to continue doing what it was going to do
-		}
-	};
-
-	const onWindowKeyDownCapture = (e: KeyboardEvent) => {
-		if ($contextmenu.opened && e.key === 'Escape') {
-			dispatch({type: 'contextmenu.close'});
-			e.stopImmediatePropagation();
-			e.preventDefault();
 		}
 	};
 </script>
 
-<svelte:window
-	on:contextmenu={onContextmenu}
-	on:click|capture={onWindowClickCapture}
-	on:keydown|capture={onWindowKeyDownCapture}
-/>
+<svelte:window on:contextmenu={onContextmenu} on:click|capture={onClickWindow} />
+
+<!-- <svelte:body
+	on:click={() => {
+		// TODO clickOutside action?
+		if (showContextmenu) {
+			showContextmenu = false;
+		}
+	}}
+	on:keydown={(e) => {
+		// TODO helper action?
+		if (showContextmenu && e.key === 'Escape') {
+			showContextmenu = false;
+			// TODO toggling back on seems like a promising UX,
+			// but the problem is it conflicts with the dialog if we just toggle it here
+		}
+	}} /> -->
 
 <!--
 	TODO This originally had an `in:scale` transition, `in:scale={{duration: 50}}`
@@ -68,6 +77,7 @@
 		class="contextmenu pane"
 		role="menu"
 		aria-modal
+		on:click|stopPropagation={() => {}}
 		tabindex="-1"
 		bind:this={contextmenuEl}
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
@@ -87,8 +97,8 @@
 		left: 0;
 		top: 0;
 		z-index: 9;
+		width: var(--column_width_min);
 		/* TODO styling */
-		background-color: var(--color_bg_content);
 		/* box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.3); */
 		/* TODO should this be `pane-light` or something?
 		The `pane` shadow is too heavy because it's designed

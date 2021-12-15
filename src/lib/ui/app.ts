@@ -4,6 +4,7 @@ import type {Writable} from 'svelte/store';
 import type {Ui} from '$lib/ui/ui';
 import type {Api} from '$lib/ui/api';
 import type {SocketStore} from '$lib/ui/socket';
+import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
 // TODO refactor/rethink
 
@@ -12,6 +13,7 @@ export interface AppStores {
 	ui: Ui;
 	socket: SocketStore;
 	devmode: Writable<boolean>;
+	contextmenu: ContextmenuStore;
 }
 
 const KEY = Symbol();

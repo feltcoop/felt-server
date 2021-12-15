@@ -29,6 +29,9 @@
 	import {goto} from '$app/navigation';
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
+	import SocketConnection from '$lib/ui/SocketConnection.svelte';
+	import {VITE_GIT_HASH} from '$lib/config';
+	import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -64,11 +67,14 @@
 	);
 	const ui = setUi(toUi(session, initialMobileValue));
 
+	// TODO refactor -- should it be on the app?
+	const contextmenu = createContextmenuStore();
+
 	const apiClient = toWebsocketApiClient(findService, socket.send);
 	// alternative http client:
 	// const apiClient = toHttpApiClient(findService);
 	const api = setApi(toApi(ui, apiClient));
-	const app = setApp({ui, api, devmode, socket});
+	const app = setApp({ui, api, devmode, socket, contextmenu});
 	browser && console.log('app', app);
 	$: browser && console.log('$session', $session);
 
@@ -211,7 +217,21 @@
 	<Devmode {devmode} />
 </div>
 
-<Contextmenu />
+<Contextmenu {contextmenu}>
+	<!-- TODO implement this for arbitrary items -- blocks? -->
+	{#each $contextmenu.entities as entity (entity)}
+		{#if entity === 'selectedPersona'}
+			<div class="markup">
+				<AccountForm guest={$session.guest} />
+				{#if $devmode}
+					<a class="menu-link" href="/docs">/docs</a>
+				{/if}
+			</div>
+			<SocketConnection />
+			<div class="markup version">felt-server version: {VITE_GIT_HASH}</div>
+		{/if}
+	{/each}
+</Contextmenu>
 
 <FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 
@@ -230,5 +250,13 @@
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
+	}
+
+	.menu-link {
+		padding: var(--spacing_xs) var(--spacing_sm);
+	}
+	.version {
+		align-items: center;
+		margin-top: auto;
 	}
 </style>

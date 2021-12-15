@@ -1,18 +1,11 @@
 <script lang="ts">
-	import {session} from '$app/stores';
-	import {onMount} from 'svelte';
-
 	import CommunityNav from '$lib/ui/CommunityNav.svelte';
 	import SpaceNav from '$lib/ui/SpaceNav.svelte';
-	import SocketConnection from '$lib/ui/SocketConnection.svelte';
 	import Avatar from '$lib/ui/Avatar.svelte';
-	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
-	import Contextmenu from '$lib/ui/Contextmenu.svelte';
-	import {VITE_GIT_HASH} from '$lib/config';
 
 	const {
 		api: {dispatch},
@@ -22,7 +15,7 @@
 			selectedPersona: selectedPersonaStore,
 			selectedCommunity: selectedCommunityStore,
 		},
-		devmode,
+		contextmenu,
 	} = getApp();
 
 	$: selectedPersona = $selectedPersonaStore!; // TODO type?
@@ -32,52 +25,7 @@
 	// TODO refactor to some client view-model for the account
 	$: selectedPersonaName = $selectedPersona?.name || GUEST_PERSONA_NAME;
 	$: hue = randomHue(selectedPersonaName);
-
-	const [popperRef, popperContent, popperInstance] = createPopperActions();
-	let showContextmenu = false;
-	let mouseX = 100;
-	let mouseY = 110;
-	const popperRefAction = popperRef({
-		getBoundingClientRect: () => ({
-			width: 0,
-			height: 0,
-			left: mouseX,
-			top: mouseY,
-			right: mouseX,
-			bottom: mouseY,
-		}),
-	} as HTMLElement);
-	const CONTEXT_MENU_OFFSET_X = -2; // TODO tweak offsets -- currently the primary action is immediately hovered
-	const CONTEXT_MENU_OFFSET_Y = -2;
-	const toggleContextmenu = (x: number, y: number, show: boolean = !showContextmenu): void => {
-		showContextmenu = show;
-		mouseX = x + CONTEXT_MENU_OFFSET_X;
-		mouseY = y + CONTEXT_MENU_OFFSET_Y;
-		popperInstance()?.update();
-	};
-
-	onMount(() => {
-		return () => {
-			popperRefAction.destroy(); // TODO wrap with a helper function
-		};
-	});
 </script>
-
-<svelte:body
-	on:click={() => {
-		// TODO clickOutside action?
-		if (showContextmenu) {
-			showContextmenu = false;
-		}
-	}}
-	on:keydown={(e) => {
-		// TODO helper action?
-		if (showContextmenu && e.key === 'Escape') {
-			showContextmenu = false;
-			// TODO toggling back on seems like a promising UX,
-			// but the problem is it conflicts with the dialog if we just toggle it here
-		}
-	}} />
 
 {#if $expandMainNav}
 	<div class="main-nav-bg" on:click={() => ($expandMainNav ? dispatch('toggle_main_nav') : null)} />
@@ -87,16 +35,16 @@
 		<div class="header">
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
+			<!-- TODO or maybe `selectedPersona.id` ? can't be `$selectedPersona.persona_id` as a serial value -->
 			<button
 				class="explorer-button"
-				on:click|stopPropagation={(e) => toggleContextmenu(e.clientX, e.clientY)}
-				on:contextmenu={(e) => {
-					if (!e.ctrlKey) {
-						e.stopPropagation();
-						e.preventDefault();
-						toggleContextmenu(e.clientX, e.clientY);
-					}
-				}}
+				data-entity="selectedPersona"
+				on:click={(e) =>
+					contextmenu.open(
+						['selectedPersona'],
+						e.clientX - 2, // CONTEXT_MENU_OFFSET_X,
+						e.clientY - 2, // CONTEXT_MENU_OFFSET_Y,
+					)}
 			>
 				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
 			</button>
@@ -114,25 +62,6 @@
 		</div>
 	</div>
 </div>
-
-{#if showContextmenu}
-	<div
-		class="contextmenu-wrapper panel"
-		use:popperContent={{placement: 'right-start'}}
-		on:click|stopPropagation={() => {}}
-	>
-		<Contextmenu>
-			<div class="markup">
-				<AccountForm guest={$session.guest} />
-				{#if $devmode}
-					<a class="menu-link" href="/docs">/docs</a>
-				{/if}
-			</div>
-			<SocketConnection />
-			<div class="markup version">felt-server version: {VITE_GIT_HASH}</div>
-		</Contextmenu>
-	</div>
-{/if}
 
 <style>
 	.main-nav-panel {
@@ -198,15 +127,5 @@
 		height: var(--navbar_size);
 		flex: 1;
 		padding: 0;
-	}
-	.menu-link {
-		padding: var(--spacing_xs) var(--spacing_sm);
-	}
-	.contextmenu-wrapper {
-		z-index: 8;
-	}
-	.version {
-		align-items: center;
-		margin-top: auto;
 	}
 </style>
