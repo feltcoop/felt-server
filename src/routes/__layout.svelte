@@ -28,7 +28,7 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {goto} from '$app/navigation';
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
-	import Contextmenu from '$lib/ui/Contextmenu.svelte';
+	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
