@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+	import {CONTEXT_MENU_OFFSET_X, CONTEXT_MENU_OFFSET_Y} from '$lib/ui/contextmenu/contextmenu';
 	// import ContextmenuSection from '$lib/ui/contextmenu/ContextmenuSection.svelte';
-
 	// TODO see partial implementation here: https://github.com/feltcoop/felt-server/blob/2e7d9cc218eee68d290b60f65e135234afee906a/src/lib/ui/MainNav.svelte
 
 	export let contextmenu: ContextmenuStore;
@@ -21,9 +21,6 @@
 		}
 		return ids;
 	};
-
-	const CONTEXT_MENU_OFFSET_X = -2; // TODO tweak offsets -- currently the primary action is immediately hovered
-	const CONTEXT_MENU_OFFSET_Y = -2;
 
 	const onContextmenu = (e: MouseEvent) => {
 		if (e.ctrlKey) return; // defer control!

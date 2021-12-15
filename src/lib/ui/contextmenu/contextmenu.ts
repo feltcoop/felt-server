@@ -1,6 +1,11 @@
 import {writable} from 'svelte/store';
 import type {Readable, StartStopNotifier} from 'svelte/store';
 
+// TODO tweak offsets -- currently the primary action is immediately hovered
+// where should these constants live?
+export const CONTEXT_MENU_OFFSET_X = -2;
+export const CONTEXT_MENU_OFFSET_Y = -2;
+
 export interface Contextmenu {
 	opened: boolean;
 	entities: string[]; // TODO not sure about this -- maybe should be blocks? or ids for blocks?

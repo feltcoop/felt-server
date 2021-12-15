@@ -6,6 +6,7 @@
 	import {randomHue} from '$lib/ui/color';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
+	import {CONTEXT_MENU_OFFSET_X, CONTEXT_MENU_OFFSET_Y} from '$lib/ui/contextmenu/contextmenu';
 
 	const {
 		api: {dispatch},
@@ -42,8 +43,8 @@
 				on:click={(e) =>
 					contextmenu.open(
 						['selectedPersona'],
-						e.clientX - 2, // CONTEXT_MENU_OFFSET_X,
-						e.clientY - 2, // CONTEXT_MENU_OFFSET_Y,
+						e.clientX + CONTEXT_MENU_OFFSET_X,
+						e.clientY + CONTEXT_MENU_OFFSET_Y,
 					)}
 			>
 				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
