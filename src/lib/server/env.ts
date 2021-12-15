@@ -5,6 +5,7 @@ import {copyFileSync, existsSync} from 'fs';
 // TODO how to configure this stuff in user projects? felt/gro config?
 
 export const ENV_PROD = '.env.production';
+export const ENV_DEV = '.env.development';
 
 const dev = import.meta?.env?.DEV ?? process.env.NODE_ENV !== 'production'; // TODO support in Gro and remove second half
 console.log('drawing env from dev', dev);
@@ -12,7 +13,7 @@ console.log('drawing env from dev', dev);
 const envs: {file: string; defaultFile: string}[] = [
 	{file: '.env', defaultFile: 'src/infra/.env.default'},
 	dev
-		? {file: '.env.development', defaultFile: 'src/infra/.env.development.default'}
+		? {file: ENV_DEV, defaultFile: `src/infra/${ENV_DEV}.default`}
 		: {file: ENV_PROD, defaultFile: `src/infra/${ENV_PROD}.default`},
 ];
 
@@ -45,5 +46,23 @@ const loadEnvs = () => {
 			copyFileSync(env.defaultFile, env.file);
 		}
 		dotenv.config({path: env.file});
+	}
+};
+
+// Adds or updates an env var value for the key `name`.
+export const updateEnv = (contents: string, name: string, value: string): string => {
+	const matcher = new RegExp(`^${name}=(.*)$`, 'm');
+	console.log('contents', contents);
+	const matched = contents.match(matcher);
+	console.log('matched', matched);
+	console.log('matcher.test(contents)', matcher.test(contents));
+	if (matched) {
+		if (matched[1] === value) {
+			console.log('NO-OP');
+			return contents;
+		}
+		return contents.replace(matcher, `${name}=${value}`);
+	} else {
+		return contents + (contents.endsWith('\n') ? '' : '\n') + `${name}=${value}`;
 	}
 };
