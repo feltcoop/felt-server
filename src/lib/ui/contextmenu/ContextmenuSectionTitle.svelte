@@ -1,9 +1,9 @@
-<div class="context-menu-section-title">
+<div class="contextmenu-section-title">
 	<slot />
 </div>
 
 <style>
-	.context-menu-section-title {
+	.contextmenu-section-title {
 		font-size: var(--font_size_sm);
 		text-transform: uppercase;
 		padding: var(--spacing_md) 0;

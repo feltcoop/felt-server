@@ -1,15 +1,15 @@
 <script lang="ts">
 	import {getApp} from '$lib/ui/app';
-	import ContextmenuSection from '$lib/ui/contextmenu/ContextmenuSection.svelte';
+	import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+	// import ContextmenuSection from '$lib/ui/contextmenu/ContextmenuSection.svelte';
 
 	// TODO see partial implementation here: https://github.com/feltcoop/felt-server/blob/2e7d9cc218eee68d290b60f65e135234afee906a/src/lib/ui/MainNav.svelte
 
 	const {
 		api: {dispatch},
-		entities,
 	} = getApp();
 
-	const {contextmenu} = entities;
+	export let contextmenu: ContextmenuStore;
 
 	let contextmenuEl: HTMLElement;
 
@@ -36,14 +36,14 @@
 		dispatch({type: 'contextmenu.open', entities, x: e.clientX, y: e.clientY});
 	};
 
-	const onWindowClickCapture = (e) => {
+	const onWindowClickCapture = (e: MouseEvent) => {
 		if ($contextmenu.opened && !contextmenuEl.contains(e.target)) {
 			dispatch({type: 'contextmenu.close'});
 			// allow the click to continue doing what it was going to do
 		}
 	};
 
-	const onWindowKeyDownCapture = (e) => {
+	const onWindowKeyDownCapture = (e: KeyboardEvent) => {
 		if ($contextmenu.opened && e.key === 'Escape') {
 			dispatch({type: 'contextmenu.close'});
 			e.stopImmediatePropagation();
@@ -65,21 +65,23 @@
 -->
 {#if $contextmenu.opened}
 	<div
-		class="context-menu pane"
+		class="contextmenu pane"
 		role="menu"
 		aria-modal
 		tabindex="-1"
 		bind:this={contextmenuEl}
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
 	>
-		{#each $contextmenu.entities as entity (entity.id)}
+		<!-- TODO how much control should this component have over the contents? any? -->
+		<!-- {#each $contextmenu.entities as entity (entity.id)}
 			<ContextmenuSection {entity} />
-		{/each}
+		{/each} -->
+		<slot />
 	</div>
 {/if}
 
 <style>
-	.context-menu {
+	.contextmenu {
 		position: fixed;
 		/* contain: content; // TODO should this be used? */
 		left: 0;

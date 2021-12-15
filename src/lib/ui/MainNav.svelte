@@ -117,7 +117,7 @@
 
 {#if showContextmenu}
 	<div
-		class="context-menu-wrapper panel"
+		class="contextmenu-wrapper panel"
 		use:popperContent={{placement: 'right-start'}}
 		on:click|stopPropagation={() => {}}
 	>
@@ -202,7 +202,7 @@
 	.menu-link {
 		padding: var(--spacing_xs) var(--spacing_sm);
 	}
-	.context-menu-wrapper {
+	.contextmenu-wrapper {
 		z-index: 8;
 	}
 	.version {
