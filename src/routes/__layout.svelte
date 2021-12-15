@@ -67,13 +67,11 @@
 	);
 	const ui = setUi(toUi(session, initialMobileValue));
 
-	// TODO refactor -- should it be on the app?
-	const contextmenu = createContextmenuStore();
-
 	const apiClient = toWebsocketApiClient(findService, socket.send);
 	// alternative http client:
 	// const apiClient = toHttpApiClient(findService);
 	const api = setApi(toApi(ui, apiClient));
+	const contextmenu = createContextmenuStore();
 	const app = setApp({ui, api, devmode, socket, contextmenu});
 	browser && console.log('app', app);
 	$: browser && console.log('$session', $session);
