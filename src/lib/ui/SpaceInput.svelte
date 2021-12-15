@@ -7,9 +7,7 @@
 	import {getApp} from '$lib/ui/app';
 	import {SpaceType, spaceTypes as allSpaceTypes} from '$lib/vocab/space/space';
 
-	const {
-		api: {dispatch},
-	} = getApp();
+	const {dispatch} = getApp();
 
 	export let community: Readable<Community>;
 

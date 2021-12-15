@@ -9,7 +9,7 @@
 	import {toSpaceUrl} from '$lib/ui/url';
 
 	const {
-		api: {dispatch},
+		dispatch,
 		ui: {selectedSpaceIdByCommunity, findSpaceById, sessionPersonaIndices},
 	} = getApp();
 

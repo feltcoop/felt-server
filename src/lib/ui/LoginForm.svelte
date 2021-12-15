@@ -7,9 +7,7 @@
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
 
-	const {
-		api: {dispatch},
-	} = getApp();
+	const {dispatch} = getApp();
 
 	let accountName = '';
 	let password = '';

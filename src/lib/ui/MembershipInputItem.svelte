@@ -5,9 +5,7 @@
 	import {getApp} from '$lib/ui/app';
 	import type {Persona} from '$lib/vocab/persona/persona';
 
-	const {
-		api: {dispatch},
-	} = getApp();
+	const {dispatch} = getApp();
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;

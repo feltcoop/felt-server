@@ -14,7 +14,7 @@
 	import {VITE_GIT_HASH} from '$lib/config';
 
 	const {
-		api: {dispatch},
+		dispatch,
 		ui: {
 			mainNavView,
 			expandMainNav,
