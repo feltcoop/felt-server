@@ -35,7 +35,6 @@ export const toDispatch = (
 	ui: Ui,
 	client: ApiClient<EventParamsByName, EventResponseByName>,
 ): Dispatch => {
-	// TODO delete this and `client2` after adding tests for both the websocket and http clients
 	// TODO validate the params here to improve UX, but for now we're safe letting the server validate
 	const dispatch: Dispatch = (eventName, params) => {
 		console.log(
