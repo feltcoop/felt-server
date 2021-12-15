@@ -245,6 +245,7 @@
 	<Devmode {devmode} />
 	<Contextmenu {contextmenu}>
 		<!-- TODO refactor all of this -->
+		<!-- TODO maybe ignore Community if there's a Space? So it could combine into one view instead of 2 -->
 		<!-- TODO implement this for arbitrary items -- blocks? -->
 		<div class="contextmenu-wrapper" on:click={onClickContextmenuWrapper}>
 			{#each $contextmenu.entities as entity}
