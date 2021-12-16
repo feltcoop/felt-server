@@ -21,7 +21,7 @@
 </script>
 
 <!-- TODO maybe add a title or tooltip explaining `community.settings.hue` -->
-<HueInput hue={$community.settings.hue} on:update={(e) => updateCommunityHue(e.detail)} />
+<HueInput hue={$community.settings.hue} on:input={(e) => updateCommunityHue(e.detail)} />
 <div class="community-icon">
 	<EntityIcon name={$community.name} type="Community" --hue={$community.settings.hue} />
 </div>

@@ -2,32 +2,29 @@
 	import {createEventDispatcher} from 'svelte';
 
 	// TODO upstream this component to Felt
-	export let hue: number;
+	export let hue: number = 180;
 	export let title: string = 'hue';
 
 	let draggingMinimap = false;
 
-	// TODO event name? input/change?
-	const dispatch = createEventDispatcher<{update: number}>();
+	// Binding to `hue` externally works for simple things,
+	// but the `input` event makes reacting to actual changes easier.
+	const dispatch = createEventDispatcher<{input: number}>();
 	const updateHue = (value: number) => {
 		hue = value;
-		dispatch('update', hue);
+		dispatch('input', hue);
 	};
 
-	const setHue = (
-		e: Event & {
-			currentTarget: EventTarget & HTMLElement;
-			clientX: number;
-		},
+	const onInput = (e: Event & {currentTarget: EventTarget & HTMLInputElement}) => {
+		updateHue(Number(e.currentTarget.value));
+	};
+
+	const setHueFromMinimap = (
+		e: Event & {currentTarget: EventTarget & HTMLElement; clientX: number},
 	) => {
 		const rect = e.currentTarget.getBoundingClientRect();
 		const pct = (e.clientX - rect.x) / rect.width;
 		updateHue(Math.floor(360 * pct));
-	};
-
-	// TODO event type?
-	const onInput = (e: any) => {
-		updateHue(Number(e.target.value));
 	};
 </script>
 
@@ -35,17 +32,15 @@
 <div class="indicator" style="--hue: {hue};">
 	{title}: {hue}
 </div>
-<!-- TODO pointer events for dragging? -->
+<!-- TODO handle dragging leaving the minimap without losing focus, or
+perhaps remove the dragging functionality -->
 <div
 	class="minimap"
-	on:click={(e) => {
-		const rect = e.currentTarget.getBoundingClientRect();
-		const pct = (e.clientX - rect.x) / rect.width;
-		updateHue(Math.floor(360 * pct));
-	}}
+	role="button"
+	on:click={setHueFromMinimap}
 	on:mousedown={(e) => {
 		draggingMinimap = true;
-		setHue(e);
+		setHueFromMinimap(e);
 	}}
 	on:mouseup={() => {
 		draggingMinimap = false;
@@ -54,9 +49,8 @@
 		draggingMinimap = false;
 	}}
 	on:mousemove={(e) => {
-		if (draggingMinimap) setHue(e);
+		if (draggingMinimap) setHueFromMinimap(e);
 	}}
-	role="button"
 />
 <input type="range" value={hue} on:input={onInput} on:change={onInput} min="0" max="359" />
 
