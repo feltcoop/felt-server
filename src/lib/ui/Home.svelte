@@ -26,7 +26,17 @@
 	$: communitySpaces = $spacesByCommunityId.get($community.community_id)!;
 
 	let hue = $community.settings.hue;
-	$: if (hue !== $community.settings.hue) updateCommunityHue(hue);
+	let lastHue = hue;
+	let lastCommunity = community;
+	// TODO better way to do this? updates when switching communities
+	$: if (lastCommunity !== community) {
+		lastCommunity = community;
+		hue = $community.settings.hue;
+	}
+	$: if (hue !== lastHue) {
+		lastHue = hue;
+		updateCommunityHue(hue);
+	}
 	const UPDATE_INTERVAL = 500; // TODO extract this to config
 	const updateCommunityHue = throttle(UPDATE_INTERVAL, async (hue: number): Promise<void> => {
 		await dispatch('update_community_settings', {
