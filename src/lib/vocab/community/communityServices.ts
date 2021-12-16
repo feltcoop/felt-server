@@ -113,7 +113,7 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 		},
 	};
 
-export const setCommunityHueService: Service<
+export const updateCommunitySettingsService: Service<
 	UpdateCommunitySettingsParams,
 	UpdateCommunitySettingsResponseResult
 > = {
