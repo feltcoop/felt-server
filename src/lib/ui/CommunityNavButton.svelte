@@ -34,7 +34,7 @@
 	href={toSpaceUrl(personaIndex, $community, selectedCommunitySpace && $selectedCommunitySpace)}
 	class:selected
 	class:persona={isPersonaHomeCommunity}
-	style="--hue: {$community.hue}"
+	style="--hue: {$community.settings.hue}"
 	on:click={() => dispatch('select_persona', {persona_id: $persona.persona_id})}
 >
 	<EntityIcon name={$community.name} type="Community" />

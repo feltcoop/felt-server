@@ -379,15 +379,18 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			dispatch('select_community', {community_id: community.community_id});
 			return result;
 		},
-		set_community_hue: async ({params, invoke}) => {
+		update_community_settings: async ({params, invoke}) => {
 			// optimistic update
 			// TODO lookup with `communitiesById`
 			const community = get(communities).find((c) => get(c).community_id === params.community_id)!;
-			const originalHue = get(community).hue;
-			community.update(($community) => ({...$community, hue: params.hue}));
+			const originalSettings = get(community).settings;
+			community.update(($community) => ({
+				...$community,
+				settings: {...$community.settings, ...params.settings},
+			}));
 			const result = await invoke();
 			if (!result.ok) {
-				community.update(($community) => ({...$community, hue: originalHue}));
+				community.update(($community) => ({...$community, settings: originalSettings}));
 			}
 			return result;
 		},

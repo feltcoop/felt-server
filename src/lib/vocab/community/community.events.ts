@@ -83,26 +83,34 @@ export const read_communities: ServiceEventInfo = {
 	},
 };
 
-export const set_community_hue: ServiceEventInfo = {
+export const update_community_settings: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'set_community_hue',
+	name: 'update_community_settings',
 	params: {
-		$id: 'https://felt.social/vocab/set_community_hue_params.json',
+		$id: 'https://felt.social/vocab/update_community_settings_params.json',
 		type: 'object',
 		properties: {
 			community_id: {type: 'number'},
-			hue: {type: 'number'},
+			// TODO change this to a partial, maybe using `Community.settings` as the source of truth?
+			settings: {
+				type: 'object',
+				properties: {
+					hue: {type: 'number'},
+				},
+				required: ['hue'],
+				additionalProperties: false,
+			},
 		},
-		required: ['community_id', 'hue'],
+		required: ['community_id', 'settings'],
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/set_community_hue_response.json',
+		$id: 'https://felt.social/vocab/update_community_settings_response.json',
 		type: 'null',
 	},
-	returns: 'Promise<SetCommunityHueResponseResult>',
+	returns: 'Promise<UpdateCommunitySettingsResponseResult>',
 	route: {
-		path: '/api/v1/communities/:community_id/hue',
+		path: '/api/v1/communities/:community_id/settings',
 		method: 'POST',
 	},
 };
@@ -111,5 +119,5 @@ export const events: EventInfo[] = [
 	create_community,
 	read_community,
 	read_communities,
-	set_community_hue,
+	update_community_settings,
 ];

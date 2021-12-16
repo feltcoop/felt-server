@@ -17,7 +17,7 @@ export interface EventParamsByName {
 	create_community: CreateCommunityParams;
 	read_community: ReadCommunityParams;
 	read_communities: ReadCommunitiesParams;
-	set_community_hue: SetCommunityHueParams;
+	update_community_settings: UpdateCommunitySettingsParams;
 	create_persona: CreatePersonaParams;
 	create_membership: CreateMembershipParams;
 	create_space: CreateSpaceParams;
@@ -42,7 +42,7 @@ export interface EventResponseByName {
 	create_community: CreateCommunityResponse;
 	read_community: ReadCommunityResponse;
 	read_communities: ReadCommunitiesResponse;
-	set_community_hue: SetCommunityHueResponse;
+	update_community_settings: UpdateCommunitySettingsResponse;
 	create_persona: CreatePersonaResponse;
 	create_membership: CreateMembershipResponse;
 	create_space: CreateSpaceResponse;
@@ -90,12 +90,14 @@ export interface ReadCommunitiesResponse {
 }
 export type ReadCommunitiesResponseResult = ApiResult<ReadCommunitiesResponse>;
 
-export interface SetCommunityHueParams {
+export interface UpdateCommunitySettingsParams {
 	community_id: number;
-	hue: number;
+	settings: {
+		hue: number;
+	};
 }
-export type SetCommunityHueResponse = null;
-export type SetCommunityHueResponseResult = ApiResult<SetCommunityHueResponse>;
+export type UpdateCommunitySettingsResponse = null;
+export type UpdateCommunitySettingsResponseResult = ApiResult<UpdateCommunitySettingsResponse>;
 
 export interface CreatePersonaParams {
 	name: string;
@@ -209,9 +211,9 @@ export interface Dispatch {
 		params: ReadCommunitiesParams,
 	): Promise<ReadCommunitiesResponseResult>;
 	(
-		eventName: 'set_community_hue',
-		params: SetCommunityHueParams,
-	): Promise<SetCommunityHueResponseResult>;
+		eventName: 'update_community_settings',
+		params: UpdateCommunitySettingsParams,
+	): Promise<UpdateCommunitySettingsResponseResult>;
 	(eventName: 'create_persona', params: CreatePersonaParams): Promise<CreatePersonaResponseResult>;
 	(
 		eventName: 'create_membership',
@@ -250,9 +252,9 @@ export interface UiHandlers {
 	read_communities: (
 		ctx: DispatchContext<ReadCommunitiesParams, ReadCommunitiesResponseResult>,
 	) => Promise<ReadCommunitiesResponseResult>;
-	set_community_hue: (
-		ctx: DispatchContext<SetCommunityHueParams, SetCommunityHueResponseResult>,
-	) => Promise<SetCommunityHueResponseResult>;
+	update_community_settings: (
+		ctx: DispatchContext<UpdateCommunitySettingsParams, UpdateCommunitySettingsResponseResult>,
+	) => Promise<UpdateCommunitySettingsResponseResult>;
 	create_persona: (
 		ctx: DispatchContext<CreatePersonaParams, CreatePersonaResponseResult>,
 	) => Promise<CreatePersonaResponseResult>;

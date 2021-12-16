@@ -5,7 +5,7 @@ export interface Community {
 	[key: string]: any; // TODO hack related to the below
 	community_id: number;
 	name: string;
-	hue: number;
+	settings: {hue: number};
 	spaces: Space[];
 	memberPersonas: Persona[]; // TODO if we normalize all data, this should be an array of ids or stores
 	created: Date;
@@ -19,7 +19,14 @@ export const CommunitySchema = {
 	properties: {
 		community_id: {type: 'number'},
 		name: {type: 'string'},
-		hue: {type: 'number'},
+		settings: {
+			type: 'object',
+			properties: {
+				hue: {type: 'number'},
+			},
+			required: ['hue'],
+			additionalProperties: false,
+		},
 		created: {type: 'object', format: 'date-time', tsType: 'Date'},
 		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 		// TODO this fails because Community circularly references itself via `Vocab`

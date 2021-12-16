@@ -39,10 +39,10 @@ export const randomEventParams = async (
 			if (!persona) persona = await random.persona(account);
 			return randomCommunityParams(persona.persona_id);
 		}
-		case 'set_community_hue': {
+		case 'update_community_settings': {
 			if (!persona) persona = await random.persona(account);
 			if (!community) community = await random.community(persona);
-			return {community_id: community.community_id, hue: randomHue()};
+			return {community_id: community.community_id, settings: {hue: randomHue()}};
 		}
 		case 'read_community': {
 			if (!community) {

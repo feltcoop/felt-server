@@ -25,12 +25,14 @@
 
 	$: communitySpaces = $spacesByCommunityId.get($community.community_id)!;
 
-	let hue = $community.hue;
-	$: if (hue !== $community.hue) updateCommunityHue(hue);
+	let hue = $community.settings.hue;
+	$: if (hue !== $community.settings.hue) updateCommunityHue(hue);
 	const UPDATE_INTERVAL = 200; // TODO extract this to config
 	const updateCommunityHue = throttle(UPDATE_INTERVAL, async (hue: number): Promise<void> => {
-		await dispatch('set_community_hue', {community_id: $community.community_id, hue});
-		// updateCommunityHue.flush();
+		await dispatch('update_community_settings', {
+			community_id: $community.community_id,
+			settings: {hue},
+		});
 	});
 </script>
 
@@ -62,10 +64,10 @@
 	</section>
 	<section>
 		<h2>settings</h2>
-		<!-- TODO maybe add a title or tooltip explaining `community.hue` -->
+		<!-- TODO maybe add a title or tooltip explaining `community.settings.hue` -->
 		<HueInput bind:hue />
 		<div class="community-icon">
-			<EntityIcon name={$community.name} type="Community" --hue={$community.hue} />
+			<EntityIcon name={$community.name} type="Community" --hue={$community.settings.hue} />
 		</div>
 	</section>
 </div>
