@@ -14,7 +14,7 @@
 
 	const {
 		ui: {selectedSpace, spacesByCommunityId},
-		api: {dispatch},
+		dispatch,
 	} = getApp();
 
 	export let persona: Readable<Persona>;
