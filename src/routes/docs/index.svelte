@@ -85,8 +85,6 @@
 	.wrapper {
 		width: 100%;
 		height: 100%;
-	}
-	.column {
 		overflow: auto;
 	}
 	li {

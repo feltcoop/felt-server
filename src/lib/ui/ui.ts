@@ -9,15 +9,13 @@ import type {ClientSession} from '$lib/session/clientSession';
 import type {AccountModel} from '$lib/vocab/account/account';
 import type {File} from '$lib/vocab/file/file';
 import type {Membership} from '$lib/vocab/membership/membership';
-import type {DispatchContext} from '$lib/ui/api';
+import type {DispatchContext} from '$lib/app/dispatch';
 import type {UiHandlers} from '$lib/app/eventTypes';
+import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
 const UNKNOWN_API_ERROR =
 	'Something went wrong. Maybe the server or your Internet connection is down. Please try again.';
-
-// TODO this is defined a second time as `SetMainNavViewParams`,
-// but it should probably be defined separately as `MainNavView` and then referenced
-export type MainNavView = 'explorer' | 'account';
 
 const KEY = Symbol();
 
@@ -49,7 +47,6 @@ export interface Ui extends Partial<UiHandlers> {
 	// view state
 	expandMainNav: Readable<boolean>;
 	expandMarquee: Readable<boolean>; // TODO name?
-	mainNavView: Readable<MainNavView>;
 	// derived state
 	selectedPersonaId: Readable<number | null>;
 	selectedPersona: Readable<Readable<Persona> | null>;
@@ -62,6 +59,7 @@ export interface Ui extends Partial<UiHandlers> {
 	selectedSpace: Readable<Readable<Space> | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	mobile: Readable<boolean>;
+	contextmenu: ContextmenuStore;
 }
 
 export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): Ui => {
@@ -116,6 +114,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 	const memberships = writable<Membership[]>([]); // TODO should be on the session:  initialSession.guest ? [] : [],
 
 	const mobile = writable(initialMobile);
+	const contextmenu = createContextmenuStore();
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -196,7 +195,6 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
-	const mainNavView: Writable<MainNavView> = writable('explorer');
 
 	const addCommunity = (community: Community, persona_id: number): void => {
 		const persona = personasById.get(persona_id)!;
@@ -351,7 +349,6 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 							]),
 					  ),
 			);
-			mainNavView.set('explorer');
 		},
 		create_persona: async ({invoke, dispatch}) => {
 			const result = await invoke();
@@ -518,7 +515,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		mobile,
 		expandMainNav,
 		expandMarquee,
-		mainNavView,
+		contextmenu,
 		// derived state
 		selectedPersonaId,
 		selectedPersona,
@@ -561,9 +558,6 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		},
 		toggle_secondary_nav: () => {
 			expandMarquee.update(($expandMarquee) => !$expandMarquee);
-		},
-		set_main_nav_view: ({params}) => {
-			mainNavView.set(params);
 		},
 	};
 	return ui;

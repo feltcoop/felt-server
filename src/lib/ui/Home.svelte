@@ -26,9 +26,13 @@
 	<section>
 		<h2>members</h2>
 		<!-- TODO display other meta info about the community -->
-		{#each $community.memberPersonas as persona (persona.persona_id)}
-			<Avatar name={toName(persona)} icon={toIcon(persona)} />
-		{/each}
+		<ul>
+			{#each $community.memberPersonas as persona (persona.persona_id)}
+				<li data-entity="persona:{persona.name}">
+					<Avatar name={toName(persona)} icon={toIcon(persona)} />
+				</li>
+			{/each}
+		</ul>
 	</section>
 	<section>
 		<!-- TODO this is just a stubbed out idea -->

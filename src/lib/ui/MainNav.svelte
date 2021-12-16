@@ -1,28 +1,22 @@
 <script lang="ts">
-	import {icons} from '@feltcoop/felt';
-	import {session} from '$app/stores';
-
 	import CommunityNav from '$lib/ui/CommunityNav.svelte';
 	import SpaceNav from '$lib/ui/SpaceNav.svelte';
-	import SocketConnection from '$lib/ui/SocketConnection.svelte';
 	import Avatar from '$lib/ui/Avatar.svelte';
-	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
-	import {VITE_GIT_HASH} from '$lib/config';
+	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
 	const {
-		api: {dispatch},
+		dispatch,
 		ui: {
-			mainNavView,
 			expandMainNav,
+			contextmenu,
 			selectedSpace: selectedSpaceStore,
 			selectedPersona: selectedPersonaStore,
 			selectedCommunity: selectedCommunityStore,
 		},
-		devmode,
 	} = getApp();
 
 	$: selectedPersona = $selectedPersonaStore!; // TODO type?
@@ -42,44 +36,26 @@
 		<div class="header">
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
+			<!-- TODO or maybe `selectedPersona.id` ? can't be `$selectedPersona.persona_id` as a serial value -->
 			<button
-				on:click={() => dispatch('set_main_nav_view', 'explorer')}
-				class:selected={$mainNavView === 'explorer'}
 				class="explorer-button"
+				data-entity="selectedPersona"
+				on:click={onContextmenu(contextmenu)}
 			>
 				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
 			</button>
-			<button
-				on:click={() => dispatch('set_main_nav_view', 'account')}
-				class:selected={$mainNavView === 'account'}
-				class="account-button"
-			>
-				<!-- TODO `icons.dotDotDot` -->
-				{icons.bulletPoint}{icons.bulletPoint}{icons.bulletPoint}
-			</button>
 		</div>
-		{#if $mainNavView === 'explorer'}
-			<div class="explorer">
-				<CommunityNav />
-				{#if selectedPersona && selectedCommunity && selectedSpace}
-					<SpaceNav
-						{selectedPersona}
-						community={selectedCommunity}
-						spaces={$selectedCommunity.spaces}
-						{selectedSpace}
-					/>
-				{/if}
-			</div>
-		{:else if $mainNavView === 'account'}
-			<div class="markup">
-				<AccountForm guest={$session.guest} />
-				{#if $devmode}
-					<a class="menu-link" href="/docs">/docs</a>
-				{/if}
-			</div>
-			<SocketConnection />
-			<div class="markup version">felt-server version: {VITE_GIT_HASH}</div>
-		{/if}
+		<div class="explorer">
+			<CommunityNav />
+			{#if selectedPersona && selectedCommunity && selectedSpace}
+				<SpaceNav
+					{selectedPersona}
+					community={selectedCommunity}
+					spaces={$selectedCommunity.spaces}
+					{selectedSpace}
+				/>
+			{/if}
+		</div>
 	</div>
 </div>
 
@@ -146,17 +122,6 @@
 		justify-content: flex-start;
 		height: var(--navbar_size);
 		flex: 1;
-		padding: var(--spacing_xs);
-	}
-	.account-button {
-		height: var(--navbar_size);
-		width: var(--navbar_size);
-	}
-	.menu-link {
-		padding: var(--spacing_xs) var(--spacing_sm);
-	}
-	.version {
-		align-items: center;
-		margin-top: auto;
+		padding: 0;
 	}
 </style>

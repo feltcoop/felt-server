@@ -14,7 +14,7 @@
 	export let selectedSpace: Readable<Space>;
 </script>
 
-<div class="space-nav">
+<div class="space-nav" data-entity="community:{$community.name}">
 	<div class="header">
 		<SpaceInput {community} />
 		<MembershipInput {community} />
