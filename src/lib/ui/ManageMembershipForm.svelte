@@ -7,7 +7,7 @@
 	import Avatar from './Avatar.svelte';
 
 	const {
-		api: {dispatch},
+		dispatch,
 		ui: {selectedPersona, communities},
 	} = getApp();
 
