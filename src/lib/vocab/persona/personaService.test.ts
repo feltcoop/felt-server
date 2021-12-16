@@ -7,7 +7,7 @@ import {toRandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {createPersonaService} from '$lib/vocab/persona/personaServices';
 import {randomEventParams} from '$lib/server/random';
-import {create_persona} from './persona.events';
+import {create_persona} from '$lib/vocab/persona/persona.events';
 
 // TODO this only depends on the database --
 // if we don't figure out a robust way to make a global reusable server,

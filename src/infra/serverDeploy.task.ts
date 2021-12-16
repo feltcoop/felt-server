@@ -6,15 +6,8 @@ import {ENV_PROD, fromEnv} from '$lib/server/env';
 export const task: Task = {
 	summary: 'deploy felt server to prod',
 	production: true,
-	run: async ({fs}) => {
-		//set git version in the .env.production file
-		const branch = (await fs.readFile('.git/HEAD', 'utf8')).trim().substring(5);
-		const gitVersion = (await fs.readFile('.git/' + branch, 'utf8')).trim().substring(0, 7);
-		const updatedEnvContents = (await fs.readFile(ENV_PROD, 'utf8')).replace(
-			/VITE_GIT_HASH=.*/g,
-			`VITE_GIT_HASH=${gitVersion}`,
-		);
-		await fs.writeFile(ENV_PROD, updatedEnvContents, 'utf8');
+	run: async ({invokeTask}) => {
+		await invokeTask('infra/updateEnv');
 
 		//build the actual tar deployment artifact,
 		//using `spawn` instead of `invokeTask` to ensure the environment modified above is updated

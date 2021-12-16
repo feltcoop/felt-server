@@ -16,7 +16,7 @@
 	import MainNav from '$lib/ui/MainNav.svelte';
 	import Onboard from '$lib/ui/Onboard.svelte';
 	import {setUi, toUi} from '$lib/ui/ui';
-	import {setApi, toApi} from '$lib/ui/api';
+	import {toDispatch} from '$lib/app/dispatch';
 	import {setApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
@@ -65,11 +65,11 @@
 	);
 	const ui = setUi(toUi(session, initialMobileValue));
 
-	const apiClient = toWebsocketApiClient(findService, socket.send);
+	const apiClient = toWebsocketApiClient(findService, socket.send); // TODO expose on `app`?
 	// alternative http client:
 	// const apiClient = toHttpApiClient(findService);
-	const api = setApi(toApi(ui, apiClient));
-	const app = setApp({ui, api, devmode, socket});
+	const dispatch = toDispatch(ui, apiClient);
+	const app = setApp({ui, dispatch, devmode, socket});
 	if (browser) {
 		(window as any).app = app;
 		Object.assign(window, app);
@@ -77,7 +77,6 @@
 	}
 	$: browser && console.log('$session', $session);
 
-	const {dispatch} = api;
 	const {
 		mobile,
 		contextmenu,

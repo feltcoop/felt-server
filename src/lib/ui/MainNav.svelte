@@ -9,7 +9,7 @@
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
 	const {
-		api: {dispatch},
+		dispatch,
 		ui: {
 			expandMainNav,
 			contextmenu,

@@ -8,7 +8,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		api: {dispatch},
+		dispatch,
 		ui: {mobile, expandMainNav, sessionPersonaIndices},
 	} = getApp();
 
