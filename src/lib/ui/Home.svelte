@@ -25,10 +25,12 @@
 
 	$: communitySpaces = $spacesByCommunityId.get($community.community_id)!;
 
+	// TODO better way to do this? updates when switching communities,
+	// and updates only when actually changing the input --
+	// can this be simplfied drastically by not using `bind:value` on the hue?
 	let hue = $community.settings.hue;
 	let lastHue = hue;
 	let lastCommunity = community;
-	// TODO better way to do this? updates when switching communities
 	$: if (lastCommunity !== community) {
 		lastCommunity = community;
 		hue = $community.settings.hue;
