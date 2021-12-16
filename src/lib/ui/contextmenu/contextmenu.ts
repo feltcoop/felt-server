@@ -2,11 +2,6 @@ import {writable} from 'svelte/store';
 import type {Readable, StartStopNotifier} from 'svelte/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
 
-// TODO tweak offsets -- currently the primary action is immediately hovered
-// where should these constants live?
-export const CONTEXT_MENU_OFFSET_X = -2;
-export const CONTEXT_MENU_OFFSET_Y = -2;
-
 export interface Contextmenu {
 	opened: boolean;
 	// TODO not sure about this, currently they're magic keys, maybe keys on `ui`?
@@ -73,5 +68,6 @@ export const onContextmenu = (contextmenu: ContextmenuStore) => (e: MouseEvent) 
 	if (!entities.length) return;
 	e.stopPropagation();
 	e.preventDefault();
-	contextmenu.open(entities, e.clientX + CONTEXT_MENU_OFFSET_X, e.clientY + CONTEXT_MENU_OFFSET_Y);
+	// TODO dispatch a UI event, like open_contextmenu
+	contextmenu.open(entities, e.clientX, e.clientY);
 };

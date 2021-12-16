@@ -15,7 +15,7 @@
 	const isInteractive = (el: Element): boolean =>
 		el.tagName === 'A' || el.tagName === 'BUTTON' || !!el.closest('button,a');
 
-	const onClickContextmenuWrapper = (e: MouseEvent) => {
+	const onClickContextmenuSlot = (e: MouseEvent) => {
 		// TODO this is hacky, but improves the behavior to let us select content on the contextmenu,
 		// but automatically closes if e.g. a button is clicked, and the button can `stopPropagation`
 		// to keep the contextmenu open, because it'll stop it before this handler runs
@@ -30,7 +30,7 @@
 <!-- TODO refactor all of this -->
 <!-- TODO maybe ignore Community if there's a Space? So it could combine into one view instead of 2 -->
 <!-- TODO implement this for arbitrary items? blocks? -->
-<div class="contextmenu-wrapper" on:click={onClickContextmenuWrapper}>
+<div class="contextmenu-slot" on:click={onClickContextmenuSlot}>
 	{#each $contextmenu.entities as entity}
 		{#if $devmode}
 			<header class="panel-inset">{entity}</header>
@@ -95,7 +95,7 @@
 </div>
 
 <style>
-	.contextmenu-wrapper header {
+	.contextmenu-slot header {
 		text-align: center;
 		font-family: var(--font_family_mono);
 		font-size: var(--font_size_sm);
@@ -103,27 +103,27 @@
 		padding: var(--spacing_xs) 0;
 	}
 
-	.contextmenu-wrapper li a {
+	.contextmenu-slot li a {
 		padding: var(--spacing_xs) var(--spacing_sm);
 		width: 100%;
 	}
 
-	.contextmenu-wrapper .markup {
+	.contextmenu-slot .markup {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 	}
 
-	.contextmenu-wrapper > section,
-	.contextmenu-wrapper > a {
+	.contextmenu-slot > section,
+	.contextmenu-slot > a {
 		border-bottom: var(--border);
 	}
-	.contextmenu-wrapper > section:last-child,
-	.contextmenu-wrapper > a:last-child {
+	.contextmenu-slot > section:last-child,
+	.contextmenu-slot > a:last-child {
 		border-bottom: none;
 	}
 
-	.contextmenu-wrapper > a {
+	.contextmenu-slot > a {
 		display: flex;
 		align-items: center;
 		width: 100%;

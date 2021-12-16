@@ -11,6 +11,7 @@
 	};
 </script>
 
+<!-- TODO need long-press detection for contextmenu on iOS -->
 <svelte:window on:contextmenu={onContextmenu(contextmenu)} on:click={onClickWindow} />
 
 <!--
@@ -28,10 +29,6 @@
 		data-entity={$contextmenu.entities.join(',')}
 		data-entity-stop-propagation
 	>
-		<!-- TODO how much control should this component have over the contents? any? -->
-		<!-- {#each $contextmenu.entities as entity (entity.id)}
-			<ContextmenuSection {entity} />
-		{/each} -->
 		<slot />
 	</div>
 {/if}

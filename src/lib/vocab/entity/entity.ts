@@ -1,11 +1,5 @@
 import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 
-// TODO should be generated from a schema, maybe upstreamed
-export interface Entity {
-	id: string;
-	type: string;
-}
-
 // TODO expand to the entire vocabulary? generate if so
 export type EntityType = 'Persona' | 'Community';
 
