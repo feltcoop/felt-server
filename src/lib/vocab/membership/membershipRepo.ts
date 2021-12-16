@@ -18,6 +18,24 @@ export const membershipRepo = (db: Database) => ({
 		console.log('[db] created membership', data);
 		return {ok: true, value: data[0]};
 	},
+	findById: async (
+		persona_id: number,
+		community_id: number,
+	): Promise<Result<{value: Membership}, {type: 'query_error'} & ErrorResponse>> => {
+		const data = await db.sql<Membership[]>`
+			SELECT persona_id, community_id, created, updated
+			FROM memberships
+			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
+		`;
+		if (data.length) {
+			return {ok: true, value: data[0]};
+		}
+		return {
+			ok: false,
+			type: 'query_error',
+			reason: `No membership found for person_id: ${persona_id},community_id:${community_id}`,
+		};
+	},
 	deleteById: async (
 		persona_id: number,
 		community_id: number,

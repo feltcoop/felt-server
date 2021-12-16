@@ -55,6 +55,11 @@ export const randomEventParams = async (
 			if (!community) community = await random.community(); // don't forward `persona`/`account` bc that's the service's job
 			return randomMembershipParams(persona.persona_id, community.community_id);
 		}
+		case 'delete_membership': {
+			if (!persona) persona = await random.persona(account);
+			if (!community) community = await random.community(persona); // don't forward `persona`/`account` bc that's the service's job
+			return {persona_id: persona.persona_id, community_id: community.community_id};
+		}
 		case 'create_space': {
 			if (!community) community = await random.community(persona, account);
 			return randomSpaceParams(community.community_id);
