@@ -4,15 +4,19 @@
 
 	export let contextmenu: ContextmenuStore;
 
-	const onClickWindow = () => {
-		if ($contextmenu.opened) {
+	let contextmenuEl: HTMLElement;
+
+	// This handler runs during the event's `capture` phase
+	// so that things like the Dialog don't eat the events and prevent the contextmenu from closing.
+	const onClickWindow = (e: MouseEvent) => {
+		if ($contextmenu.opened && !contextmenuEl.contains(e.target as any)) {
 			contextmenu.close();
 		}
 	};
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
-<svelte:window on:contextmenu={onContextmenu(contextmenu)} on:click={onClickWindow} />
+<svelte:window on:contextmenu={onContextmenu(contextmenu)} on:click|capture={onClickWindow} />
 
 <!--
 	TODO This originally had an `in:scale` transition, `in:scale={{duration: 50}}`
@@ -25,6 +29,7 @@
 		role="menu"
 		aria-modal
 		tabindex="-1"
+		bind:this={contextmenuEl}
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
 		data-entity={$contextmenu.entities.join(',')}
 		data-entity-stop-propagation
