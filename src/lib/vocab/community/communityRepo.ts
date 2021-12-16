@@ -21,7 +21,7 @@ export const communityRepo = (db: Database) => ({
 		// TODO more robust error handling or condense into single query
 		const membershipResult = await db.repos.membership.create({persona_id, community_id});
 		if (!membershipResult.ok) return membershipResult;
-		const spacesResult = await db.repos.space.createDefaultSpaces(community_id);
+		const spacesResult = await db.repos.space.createDefaultSpaces(community);
 		if (!spacesResult.ok) return spacesResult;
 		community.spaces = spacesResult.value;
 		return {ok: true, value: community};
@@ -52,7 +52,7 @@ export const communityRepo = (db: Database) => ({
 				(
 					SELECT array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
 					FROM (
-						SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.created, s.updated FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id=c.community_id
+						SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.created, s.updated FROM spaces s WHERE s.community_id = c.community_id
 					) d
 				) as spaces,
 				(

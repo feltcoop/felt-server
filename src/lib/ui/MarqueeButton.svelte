@@ -2,7 +2,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		api: {dispatch},
+		dispatch,
 		ui: {expandMarquee},
 	} = getApp();
 

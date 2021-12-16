@@ -106,9 +106,6 @@ export const randomEventParams = async (
 		case 'toggle_secondary_nav': {
 			return undefined;
 		}
-		case 'set_main_nav_view': {
-			return randomItem(['explorer', 'account']);
-		}
 		case 'set_mobile': {
 			return randomBool();
 		}

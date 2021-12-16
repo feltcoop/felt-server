@@ -9,7 +9,7 @@ import type {Persona} from '$lib/vocab/persona/persona';
 import type {Membership} from '$lib/vocab/membership/membership';
 import type {Space} from '$lib/vocab/space/space';
 import type {File} from '$lib/vocab/file/file';
-import type {DispatchContext} from '$lib/ui/api';
+import type {DispatchContext} from '$lib/app/dispatch';
 
 export interface EventParamsByName {
 	log_in: LogInParams;
@@ -30,7 +30,6 @@ export interface EventParamsByName {
 	ping: PingParams;
 	toggle_main_nav: ToggleMainNavParams;
 	toggle_secondary_nav: ToggleSecondaryNavParams;
-	set_main_nav_view: SetMainNavViewParams;
 	set_mobile: SetMobileParams;
 	select_persona: SelectPersonaParams;
 	select_community: SelectCommunityParams;
@@ -184,8 +183,6 @@ export type ToggleMainNavParams = void;
 
 export type ToggleSecondaryNavParams = void;
 
-export type SetMainNavViewParams = 'explorer' | 'account';
-
 export type SetMobileParams = boolean;
 
 export interface SelectPersonaParams {
@@ -232,7 +229,6 @@ export interface Dispatch {
 	(eventName: 'ping', params: PingParams): Promise<ApiResult<null>>;
 	(eventName: 'toggle_main_nav', params: ToggleMainNavParams): void;
 	(eventName: 'toggle_secondary_nav', params: ToggleSecondaryNavParams): void;
-	(eventName: 'set_main_nav_view', params: SetMainNavViewParams): void;
 	(eventName: 'set_mobile', params: SetMobileParams): void;
 	(eventName: 'select_persona', params: SelectPersonaParams): void;
 	(eventName: 'select_community', params: SelectCommunityParams): void;
@@ -286,7 +282,6 @@ export interface UiHandlers {
 	ping: (ctx: DispatchContext<PingParams, PingResponseResult>) => Promise<ApiResult<null>>;
 	toggle_main_nav: (ctx: DispatchContext<ToggleMainNavParams, void>) => void;
 	toggle_secondary_nav: (ctx: DispatchContext<ToggleSecondaryNavParams, void>) => void;
-	set_main_nav_view: (ctx: DispatchContext<SetMainNavViewParams, void>) => void;
 	set_mobile: (ctx: DispatchContext<SetMobileParams, void>) => void;
 	select_persona: (ctx: DispatchContext<SelectPersonaParams, void>) => void;
 	select_community: (ctx: DispatchContext<SelectCommunityParams, void>) => void;

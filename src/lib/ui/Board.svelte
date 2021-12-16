@@ -10,7 +10,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		api: {dispatch},
+		dispatch,
 		ui: {selectedPersonaId},
 		socket,
 	} = getApp();
@@ -24,9 +24,7 @@
 
 	let text = '';
 
-	// TODO `shouldLoadFiles` should be managed inside the `api` layer
-	// then the code could simply be:
-	// $: files = api.getFilesBySpace(space.space_id);
+	// TODO needs refactoring
 	$: shouldLoadFiles = browser && $socket.connected;
 	$: files = shouldLoadFiles ? dispatch('query_files', {space_id: $space.space_id}) : null;
 

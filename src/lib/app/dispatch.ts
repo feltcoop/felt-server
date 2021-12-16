@@ -13,9 +13,9 @@ import type {Dispatch} from '$lib/app/eventTypes';
 
 const KEY = Symbol();
 
-export const getApi = (): Api => getContext(KEY);
+export const getDispatch = (): Dispatch => getContext(KEY);
 
-export const setApi = (store: Api): Api => {
+export const setDispatch = (store: Dispatch): Dispatch => {
 	setContext(KEY, store);
 	return store;
 };
@@ -31,31 +31,27 @@ export interface DispatchContext<
 	invoke: TResult extends void ? null : (params?: TParams) => Promise<TResult>;
 }
 
-export interface Api {
-	dispatch: Dispatch;
-}
-
-export const toApi = (ui: Ui, client: ApiClient<EventParamsByName, EventResponseByName>): Api => {
-	// TODO delete this and `client2` after adding tests for both the websocket and http clients
-	const api: Api = {
-		// TODO validate the params here to improve UX, but for now we're safe letting the server validate
-		dispatch: (eventName, params) => {
-			console.log(
-				'%c[dispatch.%c' + eventName + '%c]',
-				'color: gray',
-				'color: blue',
-				'color: gray',
-				params === undefined ? '' : params, // print null but not undefined
-			);
-			const ctx: DispatchContext = {
-				eventName,
-				params,
-				dispatch: api.dispatch,
-				client,
-				invoke: client.has(eventName) ? (p = params) => client.invoke(eventName, p) : (null as any), // TODO fix typecast?
-			};
-			return ui.dispatch(ctx);
-		},
+export const toDispatch = (
+	ui: Ui,
+	client: ApiClient<EventParamsByName, EventResponseByName>,
+): Dispatch => {
+	// TODO validate the params here to improve UX, but for now we're safe letting the server validate
+	const dispatch: Dispatch = (eventName, params) => {
+		console.log(
+			'%c[dispatch.%c' + eventName + '%c]',
+			'color: gray',
+			'color: blue',
+			'color: gray',
+			params === undefined ? '' : params, // print null but not undefined
+		);
+		const ctx: DispatchContext = {
+			eventName,
+			params,
+			dispatch,
+			client,
+			invoke: client.has(eventName) ? (p = params) => client.invoke(eventName, p) : (null as any), // TODO fix typecast?
+		};
+		return ui.dispatch(ctx);
 	};
-	return api;
+	return dispatch;
 };

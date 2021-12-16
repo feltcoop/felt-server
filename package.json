@@ -20,7 +20,7 @@
     "node": ">=16.6.0"
   },
   "devDependencies": {
-    "@feltcoop/gro": "^0.45.1",
+    "@feltcoop/gro": "^0.46.0",
     "@sveltejs/adapter-node": "^1.0.0-next.55",
     "@sveltejs/kit": "^1.0.0-next.186",
     "@types/body-parser": "^1.19.1",
@@ -39,7 +39,7 @@
     "typescript": "^4.4.2"
   },
   "dependencies": {
-    "@feltcoop/felt": "^0.14.0",
+    "@feltcoop/felt": "^0.15.1",
     "@polka/send-type": "^0.5.2",
     "@ryanatkn/json-schema-to-typescript": "^11.1.2",
     "ajv": "^8.6.2",

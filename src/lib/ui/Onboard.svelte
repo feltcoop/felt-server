@@ -1,11 +1,9 @@
 <script lang="ts">
-	import {icons} from '@feltcoop/felt';
-
 	import PersonaInput from '$lib/ui/PersonaInput.svelte';
 </script>
 
 <div class="markup">
-	<div class="welcome">{icons.waving}</div>
+	<div class="welcome">👋</div>
 	<PersonaInput />
 </div>
 
