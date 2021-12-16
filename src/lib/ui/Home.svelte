@@ -27,7 +27,7 @@
 
 	let hue = $community.settings.hue;
 	$: if (hue !== $community.settings.hue) updateCommunityHue(hue);
-	const UPDATE_INTERVAL = 200; // TODO extract this to config
+	const UPDATE_INTERVAL = 500; // TODO extract this to config
 	const updateCommunityHue = throttle(UPDATE_INTERVAL, async (hue: number): Promise<void> => {
 		await dispatch('update_community_settings', {
 			community_id: $community.community_id,

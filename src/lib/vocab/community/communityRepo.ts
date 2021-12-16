@@ -3,17 +3,16 @@ import type {Result} from '@feltcoop/felt';
 import type {Community} from '$lib/vocab/community/community.js';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
-import type {CreateCommunityParams} from '$lib/app/eventTypes';
-import {randomHue} from '$lib/ui/color';
 
 export const communityRepo = (db: Database) => ({
-	create: async ({
-		name,
-		persona_id,
-	}: CreateCommunityParams): Promise<Result<{value: Community}>> => {
+	create: async (
+		name: string,
+		persona_id: number,
+		settings: Community['settings'],
+	): Promise<Result<{value: Community}>> => {
 		const data = await db.sql<Community[]>`
 			INSERT INTO communities (name, settings) VALUES (
-				${name}, ${db.sql.json({hue: randomHue(name)})}
+				${name}, ${db.sql.json(settings)}
 			) RETURNING *
 		`;
 		console.log('[db] created community', data, {persona_id});

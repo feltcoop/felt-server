@@ -4,6 +4,7 @@ import type {Persona} from '$lib/vocab/persona/persona.js';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 import type {Community} from '$lib/vocab/community/community.js';
+import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 
 export const personaRepo = (db: Database) => ({
 	create: async (
@@ -19,10 +20,11 @@ export const personaRepo = (db: Database) => ({
 		`;
 		const persona = data[0];
 		console.log('[db] created persona', persona);
-		const createCommunityResult = await db.repos.community.create({
+		const createCommunityResult = await db.repos.community.create(
 			name,
-			persona_id: persona.persona_id,
-		});
+			persona.persona_id,
+			toDefaultCommunitySettings(name),
+		);
 		if (!createCommunityResult.ok) {
 			return {ok: false, reason: 'Failed to create initial persona community'};
 		}

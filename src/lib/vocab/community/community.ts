@@ -1,5 +1,20 @@
 import type {Space} from '$lib/vocab/space/space.js';
+import {randomHue} from '$lib/ui/color';
 import type {Persona} from '$lib/vocab/persona/persona.js';
+
+// TODO export interface CommunitySettings
+export const CommunitySettingsSchema = {
+	type: 'object',
+	properties: {
+		hue: {type: 'number'},
+	},
+	required: ['hue'],
+	additionalProperties: false,
+};
+
+export const toDefaultCommunitySettings = (name: string): Community['settings'] => ({
+	hue: randomHue(name),
+});
 
 export interface Community {
 	[key: string]: any; // TODO hack related to the below
@@ -19,14 +34,7 @@ export const CommunitySchema = {
 	properties: {
 		community_id: {type: 'number'},
 		name: {type: 'string'},
-		settings: {
-			type: 'object',
-			properties: {
-				hue: {type: 'number'},
-			},
-			required: ['hue'],
-			additionalProperties: false,
-		},
+		settings: CommunitySettingsSchema,
 		created: {type: 'object', format: 'date-time', tsType: 'Date'},
 		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 		// TODO this fails because Community circularly references itself via `Vocab`

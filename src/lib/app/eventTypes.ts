@@ -70,6 +70,9 @@ export type LogOutResponseResult = ApiResult<LogOutResponse>;
 export interface CreateCommunityParams {
 	name: string;
 	persona_id: number;
+	settings?: {
+		hue: number;
+	};
 }
 export interface CreateCommunityResponse {
 	community: Community;

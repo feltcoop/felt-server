@@ -2,6 +2,7 @@ import {unwrap} from '@feltcoop/felt';
 
 import type {Space} from '$lib/vocab/space/space';
 import type {Community} from '$lib/vocab/community/community';
+import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 import type {Account, CreateAccountParams} from '$lib/vocab/account/account';
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {
@@ -36,10 +37,14 @@ export const randomMembershipParams = (
 	persona_id,
 	community_id,
 });
-export const randomCommunityParams = (persona_id: number): CreateCommunityParams => ({
-	name: randomCommunnityName(),
-	persona_id,
-});
+export const randomCommunityParams = (persona_id: number): CreateCommunityParams => {
+	const name = randomCommunnityName();
+	return {
+		name,
+		persona_id,
+		settings: toDefaultCommunitySettings(name),
+	};
+};
 export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 	community_id,
 	content: randomContent(),
@@ -96,8 +101,9 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 		},
 		community: async (persona, account) => {
 			if (!persona) persona = await random.persona(account);
+			const params = randomCommunityParams(persona.persona_id);
 			const community = unwrap(
-				await db.repos.community.create(randomCommunityParams(persona.persona_id)),
+				await db.repos.community.create(params.name, params.persona_id, params.settings!),
 			);
 			random.communities.push(community);
 			return community;
