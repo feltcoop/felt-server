@@ -11,6 +11,8 @@ import type {File} from '$lib/vocab/file/file';
 import type {Membership} from '$lib/vocab/membership/membership';
 import type {DispatchContext} from '$lib/ui/api';
 import type {UiHandlers} from '$lib/app/eventTypes';
+import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
 const UNKNOWN_API_ERROR =
 	'Something went wrong. Maybe the server or your Internet connection is down. Please try again.';
@@ -57,6 +59,7 @@ export interface Ui extends Partial<UiHandlers> {
 	selectedSpace: Readable<Readable<Space> | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	mobile: Readable<boolean>;
+	contextmenu: ContextmenuStore;
 }
 
 export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): Ui => {
@@ -111,6 +114,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 	const memberships = writable<Membership[]>([]); // TODO should be on the session:  initialSession.guest ? [] : [],
 
 	const mobile = writable(initialMobile);
+	const contextmenu = createContextmenuStore();
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -472,6 +476,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		mobile,
 		expandMainNav,
 		expandMarquee,
+		contextmenu,
 		// derived state
 		selectedPersonaId,
 		selectedPersona,

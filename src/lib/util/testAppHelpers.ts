@@ -31,7 +31,6 @@ export const setupApp =
 			// TODO refactor this so the socket isn't an app dependency,
 			// instead the socket should only exist for the websocket client
 			socket: null as any,
-			contextmenu: null as any,
 		};
 	};
 

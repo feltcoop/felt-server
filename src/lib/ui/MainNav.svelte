@@ -12,11 +12,11 @@
 		api: {dispatch},
 		ui: {
 			expandMainNav,
+			contextmenu,
 			selectedSpace: selectedSpaceStore,
 			selectedPersona: selectedPersonaStore,
 			selectedCommunity: selectedCommunityStore,
 		},
-		contextmenu,
 	} = getApp();
 
 	$: selectedPersona = $selectedPersonaStore!; // TODO type?

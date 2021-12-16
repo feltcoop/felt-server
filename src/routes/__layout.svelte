@@ -30,7 +30,6 @@
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
 	import ContextmenuSlot from '$lib/app/ContextmenuSlot.svelte';
-	import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -70,8 +69,7 @@
 	// alternative http client:
 	// const apiClient = toHttpApiClient(findService);
 	const api = setApi(toApi(ui, apiClient));
-	const contextmenu = createContextmenuStore();
-	const app = setApp({ui, api, devmode, socket, contextmenu});
+	const app = setApp({ui, api, devmode, socket});
 	if (browser) {
 		(window as any).app = app;
 		Object.assign(window, app);
@@ -82,6 +80,7 @@
 	const {dispatch} = api;
 	const {
 		mobile,
+		contextmenu,
 		account,
 		sessionPersonas,
 		communities,
