@@ -2,7 +2,7 @@ import type {Space} from '$lib/vocab/space/space.js';
 import {randomHue} from '$lib/ui/color';
 import type {Persona} from '$lib/vocab/persona/persona.js';
 
-// TODO export interface CommunitySettings
+// TODO generate types: export interface CommunitySettings
 export const CommunitySettingsSchema = {
 	type: 'object',
 	properties: {

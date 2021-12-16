@@ -1,6 +1,7 @@
 <script lang="ts">
 	// TODO upstream this component to Felt
 	export let hue: number;
+	export let title: string = 'hue';
 
 	let draggingMinimap = false;
 
@@ -18,7 +19,7 @@
 
 <!-- TODO scrub text to numerical values along some nice-feeling axes -->
 <div class="indicator" style="--hue: {hue};">
-	hue: {hue}
+	{title}: {hue}
 </div>
 <!-- TODO pointer events for dragging? -->
 <div

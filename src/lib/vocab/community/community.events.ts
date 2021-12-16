@@ -93,15 +93,7 @@ export const update_community_settings: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			community_id: {type: 'number'},
-			// TODO change this to a partial, maybe using `Community.settings` as the source of truth?
-			settings: {
-				type: 'object',
-				properties: {
-					hue: {type: 'number'},
-				},
-				required: ['hue'],
-				additionalProperties: false,
-			},
+			settings: CommunitySettingsSchema,
 		},
 		required: ['community_id', 'settings'],
 		additionalProperties: false,
