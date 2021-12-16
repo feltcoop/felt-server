@@ -11,20 +11,6 @@
 
 	export let community: Readable<Community>;
 
-	// TODO better way to do this? updates when switching communities,
-	// and updates only when actually changing the input --
-	// can this be simplfied drastically by not using `bind:value` on the hue?
-	let hue = $community.settings.hue;
-	let lastHue = hue;
-	let lastCommunity = community;
-	$: if (lastCommunity !== community) {
-		lastCommunity = community;
-		hue = $community.settings.hue;
-	}
-	$: if (hue !== lastHue) {
-		lastHue = hue;
-		updateCommunityHue(hue);
-	}
 	const UPDATE_INTERVAL = 500; // TODO extract this to config
 	const updateCommunityHue = throttle(UPDATE_INTERVAL, async (hue: number): Promise<void> => {
 		await dispatch('update_community_settings', {
@@ -35,7 +21,7 @@
 </script>
 
 <!-- TODO maybe add a title or tooltip explaining `community.settings.hue` -->
-<HueInput bind:hue />
+<HueInput hue={$community.settings.hue} on:update={(e) => updateCommunityHue(e.detail)} />
 <div class="community-icon">
 	<EntityIcon name={$community.name} type="Community" --hue={$community.settings.hue} />
 </div>

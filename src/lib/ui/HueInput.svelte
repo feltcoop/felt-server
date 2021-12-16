@@ -1,9 +1,18 @@
 <script lang="ts">
+	import {createEventDispatcher} from 'svelte';
+
 	// TODO upstream this component to Felt
 	export let hue: number;
 	export let title: string = 'hue';
 
 	let draggingMinimap = false;
+
+	// TODO event name? input/change?
+	const dispatch = createEventDispatcher<{update: number}>();
+	const updateHue = (value: number) => {
+		hue = value;
+		dispatch('update', hue);
+	};
 
 	const setHue = (
 		e: Event & {
@@ -13,7 +22,12 @@
 	) => {
 		const rect = e.currentTarget.getBoundingClientRect();
 		const pct = (e.clientX - rect.x) / rect.width;
-		hue = Math.floor(360 * pct);
+		updateHue(Math.floor(360 * pct));
+	};
+
+	// TODO event type?
+	const onInput = (e: any) => {
+		updateHue(Number(e.target.value));
 	};
 </script>
 
@@ -27,7 +41,7 @@
 	on:click={(e) => {
 		const rect = e.currentTarget.getBoundingClientRect();
 		const pct = (e.clientX - rect.x) / rect.width;
-		hue = Math.floor(360 * pct);
+		updateHue(Math.floor(360 * pct));
 	}}
 	on:mousedown={(e) => {
 		draggingMinimap = true;
@@ -44,13 +58,7 @@
 	}}
 	role="button"
 />
-<input
-	type="range"
-	value={hue}
-	on:input={(e) => (hue = Number(e.currentTarget.value))}
-	min="0"
-	max="359"
-/>
+<input type="range" value={hue} on:input={onInput} on:change={onInput} min="0" max="359" />
 
 <style>
 	.indicator {
