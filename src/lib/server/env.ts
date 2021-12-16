@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import {copyFileSync, existsSync} from 'fs';
-import {escapeRegexp} from '@feltcoop/felt/util/regexp.js';
 
 // TODO does this stuff belong in `src/server/env.ts`?
 // TODO how to configure this stuff in user projects? felt/gro config?
@@ -52,7 +51,7 @@ const loadEnvs = () => {
 
 // Adds or updates an env var `value` for `key`.
 export const updateEnv = (contents: string, key: string, value: string): string => {
-	const matcher = new RegExp(`^${escapeRegexp(key)}=(.*)$`, 'm');
+	const matcher = new RegExp(`^${key}=(.*)$`, 'm');
 	const matched = contents.match(matcher);
 	if (matched) {
 		if (matched[1] === value) return contents;
