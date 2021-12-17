@@ -125,9 +125,7 @@ export interface DeleteMembershipParams {
 	persona_id: number;
 	community_id: number;
 }
-
 export type DeleteMembershipResponse = null;
-
 export type DeleteMembershipResponseResult = ApiResult<DeleteMembershipResponse>;
 
 export interface CreateSpaceParams {
