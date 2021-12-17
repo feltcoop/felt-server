@@ -1,6 +1,7 @@
 import type {Readable, Writable} from 'svelte/store';
 import {writable, derived, get} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
+import {goto} from '$app/navigation';
 
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
@@ -468,10 +469,11 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 					spaces: $community.spaces.filter((space) => space.space_id !== space_id),
 				}));
 
-				if (space_id === get(selectedSpaceIdByCommunity)[get(community).community_id])
-					dispatch('select_space', {
-						community_id: get(community).community_id,
-						space_id: get(community).spaces[0].space_id,
+				// TODO maybe make a nav helper or event?
+				const $community = get(community);
+				if (space_id === get(selectedSpaceIdByCommunity)[$community.community_id])
+					goto('/' + $community.name + $community.spaces[0].url + location.search, {
+						replaceState: true,
 					});
 			});
 
