@@ -3,7 +3,7 @@
 
 	import type {Space} from '$lib/vocab/space/space.js';
 	import Avatar from '$lib/ui/Avatar.svelte';
-	import CommunityHue from '$lib/ui/CommunityHue.svelte';
+	import CommunitySettingsHue from '$lib/ui/CommunitySettingsHue.svelte';
 	import SpaceInfo from '$lib/ui/SpaceInfo.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
@@ -55,7 +55,7 @@
 	</section>
 	<section>
 		<h2>settings</h2>
-		<CommunityHue {community} />
+		<CommunitySettingsHue {community} />
 	</section>
 </div>
 
