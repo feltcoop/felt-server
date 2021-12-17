@@ -457,7 +457,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			spaces.update(($spaces) => $spaces.concat(writable(space)));
 			return result;
 		},
-		delete_space: async ({params, invoke, dispatch}) => {
+		delete_space: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			//update state here
