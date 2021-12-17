@@ -2,13 +2,13 @@ import {setContext, getContext} from 'svelte';
 import type {Writable} from 'svelte/store';
 
 import type {Ui} from '$lib/ui/ui';
-import type {Api} from '$lib/ui/api';
+import type {Dispatch} from '$lib/app/eventTypes';
 import type {SocketStore} from '$lib/ui/socket';
 
 // TODO refactor/rethink
 
 export interface AppStores {
-	api: Api;
+	dispatch: Dispatch;
 	ui: Ui;
 	socket: SocketStore;
 	devmode: Writable<boolean>;

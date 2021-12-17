@@ -21,10 +21,14 @@
 <!-- TODO display other meta info about the community -->
 {#if $expandMarquee}
 	<section>
-		<!-- TODO probably want these to be sorted so the selected persona is always first -->
-		{#each $community.memberPersonas as persona (persona.persona_id)}
-			<!-- TODO this is probably going to change to a store, maybe `Avatar` can optionally take one -->
-			<Avatar name={toName(persona)} icon={toIcon(persona)} />
-		{/each}
+		<ul>
+			<!-- TODO probably want these to be sorted so the selected persona is always first -->
+			{#each $community.memberPersonas as persona (persona.persona_id)}
+				<!-- TODO this is probably going to change to a store, maybe `Avatar` can optionally take one -->
+				<li data-entity="persona:{persona.name}">
+					<Avatar name={toName(persona)} icon={toIcon(persona)} />
+				</li>
+			{/each}
+		</ul>
 	</section>
 {/if}

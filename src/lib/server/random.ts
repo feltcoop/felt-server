@@ -5,10 +5,11 @@ import {
 	randomFileParams,
 	randomMembershipParams,
 	randomString,
-	RandomVocab,
-	RandomVocabContext,
+	type RandomVocab,
+	type RandomVocabContext,
 } from '$lib/vocab/random';
 import {randomPersonaParams, randomCommunityParams, randomSpaceParams} from '$lib/vocab/random';
+import {randomHue} from '$lib/ui/color';
 
 // TODO consider the pattern below where every `create` event creates all dependencies from scratch.
 // We may want to instead test things for both new and existing objects.
@@ -38,6 +39,11 @@ export const randomEventParams = async (
 			if (!persona) persona = await random.persona(account);
 			return randomCommunityParams(persona.persona_id);
 		}
+		case 'update_community_settings': {
+			if (!persona) persona = await random.persona(account);
+			if (!community) community = await random.community(persona);
+			return {community_id: community.community_id, settings: {hue: randomHue()}};
+		}
 		case 'read_community': {
 			if (!community) {
 				community = randomItem(random.communities) || (await random.community(persona, account));
@@ -54,6 +60,11 @@ export const randomEventParams = async (
 			if (!persona) persona = await random.persona(account);
 			if (!community) community = await random.community(); // don't forward `persona`/`account` bc that's the service's job
 			return randomMembershipParams(persona.persona_id, community.community_id);
+		}
+		case 'delete_membership': {
+			if (!persona) persona = await random.persona(account);
+			if (!community) community = await random.community(persona); // don't forward `persona`/`account` bc that's the service's job
+			return {persona_id: persona.persona_id, community_id: community.community_id};
 		}
 		case 'create_space': {
 			if (!community) community = await random.community(persona, account);
@@ -99,9 +110,6 @@ export const randomEventParams = async (
 		}
 		case 'toggle_secondary_nav': {
 			return undefined;
-		}
-		case 'set_main_nav_view': {
-			return randomItem(['explorer', 'account']);
 		}
 		case 'set_mobile': {
 			return randomBool();

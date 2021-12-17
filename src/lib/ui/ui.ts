@@ -9,15 +9,13 @@ import type {ClientSession} from '$lib/session/clientSession';
 import type {AccountModel} from '$lib/vocab/account/account';
 import type {File} from '$lib/vocab/file/file';
 import type {Membership} from '$lib/vocab/membership/membership';
-import type {DispatchContext} from '$lib/ui/api';
+import type {DispatchContext} from '$lib/app/dispatch';
 import type {UiHandlers} from '$lib/app/eventTypes';
+import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
 const UNKNOWN_API_ERROR =
 	'Something went wrong. Maybe the server or your Internet connection is down. Please try again.';
-
-// TODO this is defined a second time as `SetMainNavViewParams`,
-// but it should probably be defined separately as `MainNavView` and then referenced
-export type MainNavView = 'explorer' | 'account';
 
 const KEY = Symbol();
 
@@ -49,7 +47,6 @@ export interface Ui extends Partial<UiHandlers> {
 	// view state
 	expandMainNav: Readable<boolean>;
 	expandMarquee: Readable<boolean>; // TODO name?
-	mainNavView: Readable<MainNavView>;
 	// derived state
 	selectedPersonaId: Readable<number | null>;
 	selectedPersona: Readable<Readable<Persona> | null>;
@@ -62,6 +59,7 @@ export interface Ui extends Partial<UiHandlers> {
 	selectedSpace: Readable<Readable<Space> | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	mobile: Readable<boolean>;
+	contextmenu: ContextmenuStore;
 }
 
 export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): Ui => {
@@ -88,6 +86,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 	const communities = writable<Writable<Community>[]>(
 		initialSession.guest ? [] : initialSession.communities.map((p) => writable(p)),
 	);
+	// TODO communitiesById
 	const spaces = writable<Writable<Space>[]>(
 		initialSession.guest
 			? []
@@ -116,6 +115,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 	const memberships = writable<Membership[]>([]); // TODO should be on the session:  initialSession.guest ? [] : [],
 
 	const mobile = writable(initialMobile);
+	const contextmenu = createContextmenuStore();
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -196,7 +196,6 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
-	const mainNavView: Writable<MainNavView> = writable('explorer');
 
 	const addCommunity = (community: Community, persona_id: number): void => {
 		const persona = personasById.get(persona_id)!;
@@ -351,7 +350,6 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 							]),
 					  ),
 			);
-			mainNavView.set('explorer');
 		},
 		create_persona: async ({invoke, dispatch}) => {
 			const result = await invoke();
@@ -378,6 +376,21 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			dispatch('select_community', {community_id: community.community_id});
 			return result;
 		},
+		update_community_settings: async ({params, invoke}) => {
+			// optimistic update
+			// TODO lookup with `communitiesById`
+			const community = get(communities).find((c) => get(c).community_id === params.community_id)!;
+			const originalSettings = get(community).settings;
+			community.update(($community) => ({
+				...$community,
+				settings: {...$community.settings, ...params.settings},
+			}));
+			const result = await invoke();
+			if (!result.ok) {
+				community.update(($community) => ({...$community, settings: originalSettings}));
+			}
+			return result;
+		},
 		create_membership: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
@@ -385,6 +398,45 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			console.log('[ui.create_membership]', membership);
 			// TODO also update `communities.personas`
 			memberships.update(($memberships) => $memberships.concat(membership));
+			return result;
+		},
+		delete_membership: async ({params, invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
+			console.log('[ui.delete_membership]', params);
+			// TODO also update `communities.personas`
+			memberships.update(($memberships) =>
+				$memberships.filter(
+					(membership) =>
+						membership.persona_id !== params.persona_id ||
+						membership.community_id !== params.community_id,
+				),
+			);
+
+			const persona = personasById.get(params.persona_id)!;
+			persona.update(($persona) => ({
+				...$persona,
+				community_ids: $persona.community_ids.filter((c) => c !== params.community_id),
+			}));
+
+			communities.update(($communities) => {
+				const community = $communities.find(
+					(community) => get(community).community_id === params.community_id,
+				)!;
+				community.update(($community) => ({
+					...$community,
+					memberPersonas: $community.memberPersonas.filter(
+						(p) => p.persona_id !== params.persona_id,
+					),
+				}));
+				const empty = !get(community).memberPersonas.length;
+				if (empty) {
+					return $communities.filter((c) => get(c).community_id !== params.community_id);
+				} else {
+					return $communities;
+				}
+			});
+
 			return result;
 		},
 		create_space: async ({params, invoke}) => {
@@ -479,7 +531,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		mobile,
 		expandMainNav,
 		expandMarquee,
-		mainNavView,
+		contextmenu,
 		// derived state
 		selectedPersonaId,
 		selectedPersona,
@@ -522,9 +574,6 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		},
 		toggle_secondary_nav: () => {
 			expandMarquee.update(($expandMarquee) => !$expandMarquee);
-		},
-		set_main_nav_view: ({params}) => {
-			mainNavView.set(params);
 		},
 	};
 	return ui;

@@ -3,16 +3,16 @@ import type {Result} from '@feltcoop/felt';
 import type {Community} from '$lib/vocab/community/community.js';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
-import type {CreateCommunityParams} from '$lib/app/eventTypes';
 
 export const communityRepo = (db: Database) => ({
-	create: async ({
-		name,
-		persona_id,
-	}: CreateCommunityParams): Promise<Result<{value: Community}, ErrorResponse>> => {
+	create: async (
+		name: string,
+		persona_id: number,
+		settings: Community['settings'],
+	): Promise<Result<{value: Community}, ErrorResponse>> => {
 		const data = await db.sql<Community[]>`
-			INSERT INTO communities (name) VALUES (
-				${name}
+			INSERT INTO communities (name, settings) VALUES (
+				${name}, ${db.sql.json(settings)}
 			) RETURNING *
 		`;
 		console.log('[db] created community', data, {persona_id});
@@ -21,7 +21,7 @@ export const communityRepo = (db: Database) => ({
 		// TODO more robust error handling or condense into single query
 		const membershipResult = await db.repos.membership.create({persona_id, community_id});
 		if (!membershipResult.ok) return membershipResult;
-		const spacesResult = await db.repos.space.createDefaultSpaces(community_id);
+		const spacesResult = await db.repos.space.createDefaultSpaces(community);
 		if (!spacesResult.ok) return spacesResult;
 		community.spaces = spacesResult.value;
 		return {ok: true, value: community};
@@ -31,7 +31,7 @@ export const communityRepo = (db: Database) => ({
 	): Promise<Result<{value: Community}, {type: 'no_community_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for community id: ${community_id}`);
 		const data = await db.sql<Community[]>`
-      SELECT community_id, name, created, updated FROM communities where community_id = ${community_id}
+      SELECT community_id, name, settings, created, updated FROM communities where community_id = ${community_id}
     `;
 		// console.log('[db.findById]', data);
 		if (data.length) {
@@ -58,11 +58,11 @@ export const communityRepo = (db: Database) => ({
 	): Promise<Result<{value: Community[]}, ErrorResponse>> => {
 		console.log(`[db] preparing to query for communities & spaces persona: ${account_id}`);
 		const data = await db.sql<Community[]>`		
-			SELECT c.community_id, c.name, c.created, c.updated,
+			SELECT c.community_id, c.name, c.settings, c.created, c.updated,
 				(
 					SELECT array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
 					FROM (
-						SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.created, s.updated FROM spaces s JOIN community_spaces cs ON s.space_id=cs.space_id AND cs.community_id=c.community_id
+						SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.created, s.updated FROM spaces s WHERE s.community_id = c.community_id
 					) d
 				) as spaces,
 				(
@@ -78,5 +78,17 @@ export const communityRepo = (db: Database) => ({
     `;
 		console.log('[db.filterByAccount]', data.length);
 		return {ok: true, value: data};
+	},
+	updateSettings: async (
+		community_id: number,
+		settings: Community['settings'],
+	): Promise<Result<{}, ErrorResponse>> => {
+		const data = await db.sql<any[]>`
+			UPDATE communities SET settings=${db.sql.json(settings)} WHERE community_id=${community_id} 
+		`;
+		if (!data.count) {
+			return {ok: false, reason: 'no communities were modified'};
+		}
+		return {ok: true};
 	},
 });

@@ -1,15 +1,12 @@
 <script lang="ts">
 	import {tick} from 'svelte';
-	import {icons} from '@feltcoop/felt';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
 
-	const {
-		api: {dispatch},
-	} = getApp();
+	const {dispatch} = getApp();
 
 	let accountName = '';
 	let password = '';
@@ -76,7 +73,7 @@
 	<PendingButton pending={!!submitting} bind:el={buttonEl} type="button" on:click={doLogIn}>
 		log in
 	</PendingButton>
-	<div class:error={!!errorMessage}>{errorMessage || icons.felt}</div>
+	<div class:error={!!errorMessage}>{errorMessage || '💚'}</div>
 </form>
 <div class="centered-block">
 	<div>

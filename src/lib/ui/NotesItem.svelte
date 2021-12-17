@@ -2,11 +2,18 @@
 	import type {Readable} from 'svelte/store';
 
 	import type {File} from '$lib/vocab/file/file.js';
+	import {getApp} from '$lib/ui/app';
+
+	const {
+		ui: {findPersonaById},
+	} = getApp();
 
 	export let file: Readable<File>;
+
+	$: persona = findPersonaById($file.actor_id);
 </script>
 
-<li>
+<li data-entity="persona:{$persona.name},file:{$file.file_id}">
 	{$file.content}
 </li>
 

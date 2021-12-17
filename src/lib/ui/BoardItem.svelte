@@ -19,7 +19,7 @@
 	$: hue = randomHue($persona.name);
 </script>
 
-<li style="--hue: {hue}">
+<li style="--hue: {hue}" data-entity="persona:{$persona.name},file:{$file.file_id}">
 	<div class="markup">
 		<p>
 			{$file.content}
