@@ -86,18 +86,18 @@ export const randomEventParams = async (
 			}
 			return {community_id: community.community_id};
 		}
-		case 'CreateFile': {
+		case 'CreateEntity': {
 			if (!persona) persona = await random.persona(account);
 			if (!space) space = await random.space(persona, account, community);
 			return randomFileParams(persona.persona_id, space.space_id);
 		}
-		case 'ReadFiles': {
+		case 'ReadEntities': {
 			if (!space) {
 				space = randomItem(random.spaces) || (await random.space(persona, account, community));
 			}
 			return {space_id: space.space_id};
 		}
-		case 'QueryFiles': {
+		case 'QueryEntities': {
 			return {
 				space_id: (randomItem(random.spaces) || (await random.space(persona, account, community)))
 					.space_id,

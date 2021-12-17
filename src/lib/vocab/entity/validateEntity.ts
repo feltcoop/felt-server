@@ -1,5 +1,5 @@
 import {toValidateSchema} from '$lib/util/ajv';
-import {FileSchema} from '$lib/vocab/entity/entity';
-import type {File} from '$lib/vocab/entity/entity';
+import {EntitySchema} from '$lib/vocab/entity/entity';
+import type {Entity} from '$lib/vocab/entity/entity';
 
-export const validateFile = toValidateSchema<File>(FileSchema);
+export const validateEntity = toValidateSchema<Entity>(EntitySchema);

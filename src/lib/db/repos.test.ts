@@ -5,13 +5,13 @@ import {unwrap} from '@feltcoop/felt';
 
 import type {TestServerContext} from '$lib/util/testServerHelpers';
 import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
-import {validateFile} from '$lib/vocab/entity/validateEntity';
+import {validateEntity} from '$lib/vocab/entity/validateEntity';
 import {validateSpace} from '$lib/vocab/space/validateSpace';
 import {toValidationErrorMessage} from '$lib/util/ajv';
 import {validateAccount, validateAccountModel} from '$lib/vocab/account/validateAccount';
 import {validateCommunity} from '$lib/vocab/community/validateCommunity';
 import {validatePersona} from '$lib/vocab/persona/validatePersona';
-import type {File} from '$lib/vocab/entity/entity';
+import type {Entity} from '$lib/vocab/entity/entity';
 import {
 	randomAccountParams,
 	randomCommunityParams,
@@ -77,11 +77,11 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const defaultSpaces = toDefaultSpaces(community);
 	const defaultSpaceCount = defaultSpaces.length;
 
-	const unwrapEntity = async (promise: Promise<Result<{value: File}>>): Promise<File> => {
+	const unwrapEntity = async (promise: Promise<Result<{value: Entity}>>): Promise<Entity> => {
 		const entity = unwrap(await promise);
-		if (!validateFile()(entity)) {
+		if (!validateEntity()(entity)) {
 			throw new Error(
-				`Failed to validate entity: ${toValidationErrorMessage(validateFile().errors![0])}`,
+				`Failed to validate entity: ${toValidationErrorMessage(validateEntity().errors![0])}`,
 			);
 		}
 		return entity;
@@ -112,9 +112,9 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const filterFilesValue = unwrap(await server.db.repos.entity.filterBySpace(space.space_id));
 	assert.is(filterFilesValue.length, 2);
 	filterFilesValue.forEach((f) => {
-		if (!validateFile()(f)) {
+		if (!validateEntity()(f)) {
 			throw new Error(
-				`Failed to validate entity: ${toValidationErrorMessage(validateFile().errors![0])}`,
+				`Failed to validate entity: ${toValidationErrorMessage(validateEntity().errors![0])}`,
 			);
 		}
 	});

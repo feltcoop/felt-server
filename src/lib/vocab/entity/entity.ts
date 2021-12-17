@@ -1,6 +1,6 @@
 import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 
-export interface File {
+export interface Entity {
 	entity_id: number;
 	actor_id: number;
 	space_id: number;
@@ -8,8 +8,8 @@ export interface File {
 	created: Date;
 	updated: Date | null;
 }
-export const FileSchema = {
-	$id: 'https://felt.social/vocab/File.json',
+export const EntitySchema = {
+	$id: 'https://felt.social/vocab/Entity.json',
 	type: 'object',
 	properties: {
 		entity_id: {type: 'number'},

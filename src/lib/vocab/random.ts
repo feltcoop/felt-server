@@ -8,7 +8,7 @@ import type {Persona} from '$lib/vocab/persona/persona';
 import type {
 	CreateCommunityParams,
 	CreatePersonaParams,
-	CreateFileParams,
+	CreateEntityParams,
 	CreateSpaceParams,
 	CreateMembershipParams,
 } from '$lib/app/eventTypes';
@@ -52,7 +52,7 @@ export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 	name: randomSpaceName(),
 	url: randomSpaceUrl(),
 });
-export const randomFileParams = (actor_id: number, space_id: number): CreateFileParams => ({
+export const randomFileParams = (actor_id: number, space_id: number): CreateEntityParams => ({
 	actor_id,
 	space_id,
 	content: randomContent(),

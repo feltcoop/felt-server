@@ -92,7 +92,7 @@ export const websocketHandler: WebsocketHandler = async (
 	// and some generic broadcast message type for everyone else.
 	socket.send(serializedResponse);
 
-	if (method === 'CreateFile') {
+	if (method === 'CreateEntity') {
 		console.log('[websocketHandler] broadcasting', responseMessage);
 		const broadcastMessage: BroadcastMessage = {
 			type: 'broadcast',

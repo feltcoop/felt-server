@@ -1,10 +1,10 @@
 import type {EventInfo, ClientEventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-export const CreateFile: ServiceEventInfo = {
+export const CreateEntity: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'CreateFile',
+	name: 'CreateEntity',
 	params: {
-		$id: 'https://felt.social/vocab/CreateFileParams.json',
+		$id: 'https://felt.social/vocab/CreateEntityParams.json',
 		type: 'object',
 		properties: {
 			actor_id: {type: 'number'},
@@ -15,26 +15,26 @@ export const CreateFile: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/CreateFileResponse.json',
+		$id: 'https://felt.social/vocab/CreateEntityResponse.json',
 		type: 'object',
 		properties: {
-			file: {$ref: 'File.json', tsType: 'File'},
+			entity: {$ref: 'Entity.json', tsType: 'Entity'},
 		},
-		required: ['file'],
+		required: ['entity'],
 		additionalProperties: false,
 	},
-	returns: 'Promise<CreateFileResponseResult>',
+	returns: 'Promise<CreateEntityResponseResult>',
 	route: {
-		path: '/api/v1/spaces/:space_id/files',
+		path: '/api/v1/spaces/:space_id/entities',
 		method: 'POST',
 	},
 };
 
-export const ReadFiles: ServiceEventInfo = {
+export const ReadEntities: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'ReadFiles',
+	name: 'ReadEntities',
 	params: {
-		$id: 'https://felt.social/vocab/ReadFilesParams.json',
+		$id: 'https://felt.social/vocab/ReadEntitiesParams.json',
 		type: 'object',
 		properties: {
 			space_id: {type: 'number'},
@@ -43,39 +43,39 @@ export const ReadFiles: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/ReadFilesResponse.json',
+		$id: 'https://felt.social/vocab/ReadEntitiesResponse.json',
 		type: 'object',
 		properties: {
-			files: {type: 'array', items: {$ref: 'File.json', tsType: 'File'}},
+			entities: {type: 'array', items: {$ref: 'Entity.json', tsType: 'Entity'}},
 		},
-		required: ['files'],
+		required: ['entities'],
 		additionalProperties: false,
 	},
-	returns: 'Promise<ReadFilesResponseResult>',
+	returns: 'Promise<ReadEntitiesResponseResult>',
 	route: {
-		path: '/api/v1/spaces/:space_id/files',
+		path: '/api/v1/spaces/:space_id/entities',
 		method: 'GET',
 	},
 };
 
-// `QueryFiles` differs from `ReadFiles` in that
-// it returns a reactive store containing the requested files.
+// `QueryEntities` differs from `ReadEntities` in that
+// it returns a reactive store containing the requested entities.
 // Its API could be expanded to give callers access to its async status or promise,
 // maybe via a third `options` arg with callbacks.
-export const QueryFiles: ClientEventInfo = {
+export const QueryEntities: ClientEventInfo = {
 	type: 'ClientEvent',
-	name: 'QueryFiles',
-	// TODO this is saying "use `ReadFiles`'s params but for this event"
+	name: 'QueryEntities',
+	// TODO this is saying "use `ReadEntities`'s params but for this event"
 	// but it's verbose and awkward. If the pattern should stay, we could write a helper like:
-	// `renameSchema(ReadFiles.params, 'https://felt.social/vocab/QueryFilesResponse.json')`
+	// `renameSchema(ReadEntities.params, 'https://felt.social/vocab/QueryEntitiesResponse.json')`
 	// but that only handles extending the $id, which may not be the common case.
 	params: {
-		...ReadFiles.params,
-		$id: 'https://felt.social/vocab/QueryFilesResponse.json',
+		...ReadEntities.params,
+		$id: 'https://felt.social/vocab/QueryEntitiesResponse.json',
 	},
-	// TODO Can/should this compose the `ReadFiles` event info?
+	// TODO Can/should this compose the `ReadEntities` event info?
 	// Could make the `response` available.
-	returns: 'Readable<Readable<File>[]>',
+	returns: 'Readable<Readable<Entity>[]>',
 };
 
-export const events: EventInfo[] = [CreateFile, ReadFiles, QueryFiles];
+export const events: EventInfo[] = [CreateEntity, ReadEntities, QueryEntities];

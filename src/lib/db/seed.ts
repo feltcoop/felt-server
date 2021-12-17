@@ -108,7 +108,7 @@ const createDefaultFiles = async (db: Database, spaces: Space[], personas: Perso
 		}
 		const fileContents = filesContents[spaceContent.type];
 		for (const fileContent of fileContents) {
-			await db.repos.file.create({
+			await db.repos.entity.create({
 				actor_id: nextPersona().persona_id,
 				space_id: space.space_id,
 				content: fileContent,
