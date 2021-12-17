@@ -20,7 +20,7 @@
 		if (pending) return;
 		errorMessage = null;
 		pending = true;
-		const result = await dispatch('create_community', {name, persona_id: $selectedPersonaId!});
+		const result = await dispatch('CreateCommunity', {name, persona_id: $selectedPersonaId!});
 		pending = false;
 		errorMessage = result.ok ? null : result.reason;
 	};

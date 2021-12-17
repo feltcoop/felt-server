@@ -1,7 +1,7 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
 // TODO probably belongs elsewhere
-export const ping: ServiceEventInfo = {
+export const Ping: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'ping',
 	params: {
@@ -21,33 +21,33 @@ export const ping: ServiceEventInfo = {
 };
 
 export const events: EventInfo[] = [
-	ping,
+	Ping,
 	{
 		type: 'ClientEvent',
-		name: 'toggle_main_nav',
+		name: 'ToggleMainNav',
 		params: null,
 		returns: 'void',
 	},
 	{
 		type: 'ClientEvent',
-		name: 'toggle_secondary_nav',
+		name: 'ToggleSecondaryNav',
 		params: null,
 		returns: 'void',
 	},
 	{
 		type: 'ClientEvent',
-		name: 'set_mobile',
+		name: 'SetMobile',
 		params: {
-			$id: 'https://felt.social/vocab/set_mobile_params.json',
+			$id: 'https://felt.social/vocab/SetMobileParams.json',
 			type: 'boolean',
 		},
 		returns: 'void',
 	},
 	{
 		type: 'ClientEvent',
-		name: 'select_persona',
+		name: 'SelectPersona',
 		params: {
-			$id: 'https://felt.social/vocab/select_persona_params.json',
+			$id: 'https://felt.social/vocab/SelectPersonaParams.json',
 			type: 'object',
 			properties: {
 				persona_id: {type: 'number'},
@@ -59,9 +59,9 @@ export const events: EventInfo[] = [
 	},
 	{
 		type: 'ClientEvent',
-		name: 'select_community',
+		name: 'SelectCommunity',
 		params: {
-			$id: 'https://felt.social/vocab/select_community_params.json',
+			$id: 'https://felt.social/vocab/SelectCommunityParams.json',
 			type: 'object',
 			properties: {
 				community_id: {anyOf: [{type: 'number'}, {type: 'null'}]},
@@ -73,9 +73,9 @@ export const events: EventInfo[] = [
 	},
 	{
 		type: 'ClientEvent',
-		name: 'select_space',
+		name: 'SelectSpace',
 		params: {
-			$id: 'https://felt.social/vocab/select_space_params.json',
+			$id: 'https://felt.social/vocab/SelectSpaceParams.json',
 			type: 'object',
 			properties: {
 				community_id: {type: 'number'},

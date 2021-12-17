@@ -1,10 +1,10 @@
 import type {EventInfo, ClientEventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-export const create_file: ServiceEventInfo = {
+export const CreateFile: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'create_file',
+	name: 'CreateFile',
 	params: {
-		$id: 'https://felt.social/vocab/create_file_params.json',
+		$id: 'https://felt.social/vocab/CreateFileParams.json',
 		type: 'object',
 		properties: {
 			actor_id: {type: 'number'},
@@ -15,7 +15,7 @@ export const create_file: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/create_file_response.json',
+		$id: 'https://felt.social/vocab/CreateFileResponse.json',
 		type: 'object',
 		properties: {
 			file: {$ref: 'File.json', tsType: 'File'},
@@ -30,11 +30,11 @@ export const create_file: ServiceEventInfo = {
 	},
 };
 
-export const read_files: ServiceEventInfo = {
+export const ReadFiles: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'read_files',
+	name: 'ReadFiles',
 	params: {
-		$id: 'https://felt.social/vocab/read_files_params.json',
+		$id: 'https://felt.social/vocab/ReadFilesParams.json',
 		type: 'object',
 		properties: {
 			space_id: {type: 'number'},
@@ -43,7 +43,7 @@ export const read_files: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/read_files_response.json',
+		$id: 'https://felt.social/vocab/ReadFilesResponse.json',
 		type: 'object',
 		properties: {
 			files: {type: 'array', items: {$ref: 'File.json', tsType: 'File'}},
@@ -58,24 +58,24 @@ export const read_files: ServiceEventInfo = {
 	},
 };
 
-// `query_files` differs from `read_files` in that
+// `QueryFiles` differs from `ReadFiles` in that
 // it returns a reactive store containing the requested files.
 // Its API could be expanded to give callers access to its async status or promise,
 // maybe via a third `options` arg with callbacks.
-export const query_files: ClientEventInfo = {
+export const QueryFiles: ClientEventInfo = {
 	type: 'ClientEvent',
-	name: 'query_files',
-	// TODO this is saying "use `read_files`'s params but for this event"
+	name: 'QueryFiles',
+	// TODO this is saying "use `ReadFiles`'s params but for this event"
 	// but it's verbose and awkward. If the pattern should stay, we could write a helper like:
-	// `renameSchema(read_files.params, 'https://felt.social/vocab/query_files_response.json')`
+	// `renameSchema(ReadFiles.params, 'https://felt.social/vocab/QueryFilesResponse.json')`
 	// but that only handles extending the $id, which may not be the common case.
 	params: {
-		...read_files.params,
-		$id: 'https://felt.social/vocab/query_files_response.json',
+		...ReadFiles.params,
+		$id: 'https://felt.social/vocab/QueryFilesResponse.json',
 	},
-	// TODO Can/should this compose the `read_files` event info?
+	// TODO Can/should this compose the `ReadFiles` event info?
 	// Could make the `response` available.
 	returns: 'Readable<Readable<File>[]>',
 };
 
-export const events: EventInfo[] = [create_file, read_files, query_files];
+export const events: EventInfo[] = [CreateFile, ReadFiles, QueryFiles];

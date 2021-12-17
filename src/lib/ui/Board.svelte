@@ -26,12 +26,12 @@
 
 	// TODO needs refactoring
 	$: shouldLoadFiles = browser && $socket.connected;
-	$: files = shouldLoadFiles ? dispatch('query_files', {space_id: $space.space_id}) : null;
+	$: files = shouldLoadFiles ? dispatch('QueryFiles', {space_id: $space.space_id}) : null;
 
 	const createFile = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
 		if (!content) return;
-		await dispatch('create_file', {
+		await dispatch('CreateFile', {
 			space_id: $space.space_id,
 			content,
 			actor_id: $selectedPersonaId!, // TODO generic erorr check for no selected persona?

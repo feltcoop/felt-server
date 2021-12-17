@@ -10,26 +10,26 @@ import type {
 	UpdateCommunitySettingsResponseResult,
 } from '$lib/app/eventTypes';
 import {
-	create_community,
-	read_communities,
-	read_community,
-	update_community_settings,
+	CreateCommunity,
+	ReadCommunities,
+	ReadCommunity,
+	UpdateCommunitySettings,
 } from '$lib/vocab/community/community.events';
 import type {CreateMembershipParams, CreateMembershipResponseResult} from '$lib/app/eventTypes';
-import {create_membership} from '$lib/vocab/membership/membership.events';
+import {CreateMembership} from '$lib/vocab/membership/membership.events';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 
 // Returns a list of community objects
 export const readCommunitiesService: Service<ReadCommunitiesParams, ReadCommunitiesResponseResult> =
 	{
-		event: read_communities,
+		event: ReadCommunities,
 		perform: async ({server, account_id}) => {
 			const {db} = server;
 			const findCommunitiesResult = await db.repos.community.filterByAccount(account_id);
 			if (findCommunitiesResult.ok) {
 				return {ok: true, status: 200, value: {communities: findCommunitiesResult.value}};
 			} else {
-				console.log('[read_communities] error searching for communities');
+				console.log('[ReadCommunities] error searching for communities');
 				return {ok: false, status: 500, reason: 'error searching for communities'};
 			}
 		},
@@ -37,11 +37,11 @@ export const readCommunitiesService: Service<ReadCommunitiesParams, ReadCommunit
 
 //Returns a single community object
 export const readCommunityService: Service<ReadCommunityParams, ReadCommunityResponseResult> = {
-	event: read_community,
+	event: ReadCommunity,
 	perform: async ({server, params, account_id}) => {
 		const {db} = server;
-		console.log('[read_community] account', account_id); // TODO logging
-		console.log('[read_community] community', params.community_id);
+		console.log('[ReadCommunity] account', account_id); // TODO logging
+		console.log('[ReadCommunity] community', params.community_id);
 
 		const findCommunityResult = await db.repos.community.findById(params.community_id);
 		if (findCommunityResult.ok) {
@@ -61,7 +61,7 @@ export const readCommunityService: Service<ReadCommunityParams, ReadCommunityRes
 // that imports a generated type and declares only `perform`
 export const createCommunityService: Service<CreateCommunityParams, CreateCommunityResponseResult> =
 	{
-		event: create_community,
+		event: CreateCommunity,
 		perform: async ({server, params, account_id}) => {
 			if (!params.name) {
 				// TODO declarative validation
@@ -95,7 +95,7 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 						},
 					}; // TODO API types
 				} else {
-					console.log('[create_community] error retrieving community data');
+					console.log('[CreateCommunity] error retrieving community data');
 					return {
 						ok: false,
 						status: 500,
@@ -103,7 +103,7 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 					};
 				}
 			} else {
-				console.log('[create_community] error creating community');
+				console.log('[CreateCommunity] error creating community');
 				return {
 					ok: false,
 					status: 500,
@@ -117,7 +117,7 @@ export const updateCommunitySettingsService: Service<
 	UpdateCommunitySettingsParams,
 	UpdateCommunitySettingsResponseResult
 > = {
-	event: update_community_settings,
+	event: UpdateCommunitySettings,
 	perform: async ({server, params, account_id}) => {
 		// TODO authorize `account_id` declaratively
 		account_id;
@@ -140,15 +140,15 @@ export const createMembershipService: Service<
 	CreateMembershipParams,
 	CreateMembershipResponseResult
 > = {
-	event: create_membership,
+	event: CreateMembership,
 	perform: async ({server, params}) => {
-		console.log('[create_membership] creating membership', params.persona_id, params.community_id);
+		console.log('[CreateMembership] creating membership', params.persona_id, params.community_id);
 
 		const createMembershipResult = await server.db.repos.membership.create(params);
 		if (createMembershipResult.ok) {
 			return {ok: true, status: 200, value: {membership: createMembershipResult.value}};
 		} else {
-			console.log('[create_membership] error creating membership');
+			console.log('[CreateMembership] error creating membership');
 			return {ok: false, status: 500, reason: 'error creating membership'};
 		}
 	},

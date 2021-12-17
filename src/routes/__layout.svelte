@@ -40,7 +40,7 @@
 		// that only reads this default value when the user has no override.
 		const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_WIDTH})`);
 		initialMobileValue = mediaQuery.matches;
-		mediaQuery.onchange = (e) => dispatch('set_mobile', e.matches);
+		mediaQuery.onchange = (e) => dispatch('SetMobile', e.matches);
 	}
 
 	const devmode = setDevmode();
@@ -125,7 +125,7 @@
 				return; // exit early; this function re-runs from the `goto` call with the updated `$page`
 			}
 		} else if (personaIndex !== $selectedPersonaIndex) {
-			dispatch('select_persona', {persona_id: get(persona).persona_id});
+			dispatch('SelectPersona', {persona_id: get(persona).persona_id});
 		} // else already selected
 
 		// TODO speed this up with a map of communities by name
@@ -134,7 +134,7 @@
 		const community = get(communityStore);
 		const {community_id} = community;
 		if (community_id !== $selectedCommunityId) {
-			dispatch('select_community', {community_id});
+			dispatch('SelectCommunity', {community_id});
 		}
 		if (community_id) {
 			const spaceUrl = '/' + (params.space || '');
@@ -142,7 +142,7 @@
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = space;
 			if (space_id !== $selectedSpaceIdByCommunity[community_id]) {
-				dispatch('select_space', {community_id, space_id});
+				dispatch('SelectSpace', {community_id, space_id});
 			}
 		} else {
 			// TODO what is this condition?

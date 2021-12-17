@@ -12,46 +12,46 @@ import type {File} from '$lib/vocab/file/file';
 import type {DispatchContext} from '$lib/app/dispatch';
 
 export interface EventParamsByName {
-	log_in: LogInParams;
-	log_out: LogOutParams;
-	create_community: CreateCommunityParams;
-	read_community: ReadCommunityParams;
-	read_communities: ReadCommunitiesParams;
-	update_community_settings: UpdateCommunitySettingsParams;
-	create_persona: CreatePersonaParams;
-	create_membership: CreateMembershipParams;
-	delete_membership: DeleteMembershipParams;
-	create_space: CreateSpaceParams;
-	read_space: ReadSpaceParams;
-	read_spaces: ReadSpacesParams;
-	delete_space: DeleteSpaceParams;
-	create_file: CreateFileParams;
-	read_files: ReadFilesParams;
-	query_files: QueryFilesParams;
+	LogIn: LogInParams;
+	LogOut: LogOutParams;
+	CreateCommunity: CreateCommunityParams;
+	ReadCommunity: ReadCommunityParams;
+	ReadCommunities: ReadCommunitiesParams;
+	UpdateCommunitySettings: UpdateCommunitySettingsParams;
+	CreatePersona: CreatePersonaParams;
+	CreateMembership: CreateMembershipParams;
+	DeleteMembership: DeleteMembershipParams;
+	CreateSpace: CreateSpaceParams;
+	ReadSpace: ReadSpaceParams;
+	ReadSpaces: ReadSpacesParams;
+	DeleteSpace: DeleteSpaceParams;
+	CreateFile: CreateFileParams;
+	ReadFiles: ReadFilesParams;
+	QueryFiles: QueryFilesParams;
 	ping: PingParams;
-	toggle_main_nav: ToggleMainNavParams;
-	toggle_secondary_nav: ToggleSecondaryNavParams;
-	set_mobile: SetMobileParams;
-	select_persona: SelectPersonaParams;
-	select_community: SelectCommunityParams;
-	select_space: SelectSpaceParams;
+	ToggleMainNav: ToggleMainNavParams;
+	ToggleSecondaryNav: ToggleSecondaryNavParams;
+	SetMobile: SetMobileParams;
+	SelectPersona: SelectPersonaParams;
+	SelectCommunity: SelectCommunityParams;
+	SelectSpace: SelectSpaceParams;
 }
 export interface EventResponseByName {
-	log_in: LogInResponse;
-	log_out: LogOutResponse;
-	create_community: CreateCommunityResponse;
-	read_community: ReadCommunityResponse;
-	read_communities: ReadCommunitiesResponse;
-	update_community_settings: UpdateCommunitySettingsResponse;
-	create_persona: CreatePersonaResponse;
-	create_membership: CreateMembershipResponse;
-	delete_membership: DeleteMembershipResponse;
-	create_space: CreateSpaceResponse;
-	read_space: ReadSpaceResponse;
-	read_spaces: ReadSpacesResponse;
-	delete_space: DeleteSpaceResponse;
-	create_file: CreateFileResponse;
-	read_files: ReadFilesResponse;
+	LogIn: LogInResponse;
+	LogOut: LogOutResponse;
+	CreateCommunity: CreateCommunityResponse;
+	ReadCommunity: ReadCommunityResponse;
+	ReadCommunities: ReadCommunitiesResponse;
+	UpdateCommunitySettings: UpdateCommunitySettingsResponse;
+	CreatePersona: CreatePersonaResponse;
+	CreateMembership: CreateMembershipResponse;
+	DeleteMembership: DeleteMembershipResponse;
+	CreateSpace: CreateSpaceResponse;
+	ReadSpace: ReadSpaceResponse;
+	ReadSpaces: ReadSpacesResponse;
+	DeleteSpace: DeleteSpaceResponse;
+	CreateFile: CreateFileResponse;
+	ReadFiles: ReadFilesResponse;
 	ping: PingResponse;
 }
 
@@ -208,100 +208,100 @@ export interface SelectSpaceParams {
 }
 
 export interface Dispatch {
-	(eventName: 'log_in', params: LogInParams): Promise<ApiResult<{session: ClientAccountSession}>>;
-	(eventName: 'log_out', params: LogOutParams): Promise<LogOutResponseResult>;
+	(eventName: 'LogIn', params: LogInParams): Promise<ApiResult<{session: ClientAccountSession}>>;
+	(eventName: 'LogOut', params: LogOutParams): Promise<LogOutResponseResult>;
 	(
-		eventName: 'create_community',
+		eventName: 'CreateCommunity',
 		params: CreateCommunityParams,
 	): Promise<CreateCommunityResponseResult>;
-	(eventName: 'read_community', params: ReadCommunityParams): Promise<ReadCommunityResponseResult>;
+	(eventName: 'ReadCommunity', params: ReadCommunityParams): Promise<ReadCommunityResponseResult>;
 	(
-		eventName: 'read_communities',
+		eventName: 'ReadCommunities',
 		params: ReadCommunitiesParams,
 	): Promise<ReadCommunitiesResponseResult>;
 	(
-		eventName: 'update_community_settings',
+		eventName: 'UpdateCommunitySettings',
 		params: UpdateCommunitySettingsParams,
 	): Promise<UpdateCommunitySettingsResponseResult>;
-	(eventName: 'create_persona', params: CreatePersonaParams): Promise<CreatePersonaResponseResult>;
+	(eventName: 'CreatePersona', params: CreatePersonaParams): Promise<CreatePersonaResponseResult>;
 	(
-		eventName: 'create_membership',
+		eventName: 'CreateMembership',
 		params: CreateMembershipParams,
 	): Promise<CreateMembershipResponseResult>;
 	(
-		eventName: 'delete_membership',
+		eventName: 'DeleteMembership',
 		params: DeleteMembershipParams,
 	): Promise<DeleteMembershipResponseResult>;
-	(eventName: 'create_space', params: CreateSpaceParams): Promise<CreateSpaceResponseResult>;
-	(eventName: 'read_space', params: ReadSpaceParams): Promise<ReadSpaceResponseResult>;
-	(eventName: 'read_spaces', params: ReadSpacesParams): Promise<ReadSpacesResponseResult>;
-	(eventName: 'delete_space', params: DeleteSpaceParams): Promise<DeleteSpaceResponseResult>;
-	(eventName: 'create_file', params: CreateFileParams): Promise<CreateFileResponseResult>;
-	(eventName: 'read_files', params: ReadFilesParams): Promise<ReadFilesResponseResult>;
-	(eventName: 'query_files', params: QueryFilesParams): Readable<Readable<File>[]>;
+	(eventName: 'CreateSpace', params: CreateSpaceParams): Promise<CreateSpaceResponseResult>;
+	(eventName: 'ReadSpace', params: ReadSpaceParams): Promise<ReadSpaceResponseResult>;
+	(eventName: 'ReadSpaces', params: ReadSpacesParams): Promise<ReadSpacesResponseResult>;
+	(eventName: 'DeleteSpace', params: DeleteSpaceParams): Promise<DeleteSpaceResponseResult>;
+	(eventName: 'CreateFile', params: CreateFileParams): Promise<CreateFileResponseResult>;
+	(eventName: 'ReadFiles', params: ReadFilesParams): Promise<ReadFilesResponseResult>;
+	(eventName: 'QueryFiles', params: QueryFilesParams): Readable<Readable<File>[]>;
 	(eventName: 'ping', params: PingParams): Promise<ApiResult<null>>;
-	(eventName: 'toggle_main_nav', params: ToggleMainNavParams): void;
-	(eventName: 'toggle_secondary_nav', params: ToggleSecondaryNavParams): void;
-	(eventName: 'set_mobile', params: SetMobileParams): void;
-	(eventName: 'select_persona', params: SelectPersonaParams): void;
-	(eventName: 'select_community', params: SelectCommunityParams): void;
-	(eventName: 'select_space', params: SelectSpaceParams): void;
+	(eventName: 'ToggleMainNav', params: ToggleMainNavParams): void;
+	(eventName: 'ToggleSecondaryNav', params: ToggleSecondaryNavParams): void;
+	(eventName: 'SetMobile', params: SetMobileParams): void;
+	(eventName: 'SelectPersona', params: SelectPersonaParams): void;
+	(eventName: 'SelectCommunity', params: SelectCommunityParams): void;
+	(eventName: 'SelectSpace', params: SelectSpaceParams): void;
 }
 
 export interface UiHandlers {
-	log_in: (
+	LogIn: (
 		ctx: DispatchContext<LogInParams, LogInResponseResult>,
 	) => Promise<ApiResult<{session: ClientAccountSession}>>;
-	log_out: (
+	LogOut: (
 		ctx: DispatchContext<LogOutParams, LogOutResponseResult>,
 	) => Promise<LogOutResponseResult>;
-	create_community: (
+	CreateCommunity: (
 		ctx: DispatchContext<CreateCommunityParams, CreateCommunityResponseResult>,
 	) => Promise<CreateCommunityResponseResult>;
-	read_community: (
+	ReadCommunity: (
 		ctx: DispatchContext<ReadCommunityParams, ReadCommunityResponseResult>,
 	) => Promise<ReadCommunityResponseResult>;
-	read_communities: (
+	ReadCommunities: (
 		ctx: DispatchContext<ReadCommunitiesParams, ReadCommunitiesResponseResult>,
 	) => Promise<ReadCommunitiesResponseResult>;
-	update_community_settings: (
+	UpdateCommunitySettings: (
 		ctx: DispatchContext<UpdateCommunitySettingsParams, UpdateCommunitySettingsResponseResult>,
 	) => Promise<UpdateCommunitySettingsResponseResult>;
-	create_persona: (
+	CreatePersona: (
 		ctx: DispatchContext<CreatePersonaParams, CreatePersonaResponseResult>,
 	) => Promise<CreatePersonaResponseResult>;
-	create_membership: (
+	CreateMembership: (
 		ctx: DispatchContext<CreateMembershipParams, CreateMembershipResponseResult>,
 	) => Promise<CreateMembershipResponseResult>;
-	delete_membership: (
+	DeleteMembership: (
 		ctx: DispatchContext<DeleteMembershipParams, DeleteMembershipResponseResult>,
 	) => Promise<DeleteMembershipResponseResult>;
-	create_space: (
+	CreateSpace: (
 		ctx: DispatchContext<CreateSpaceParams, CreateSpaceResponseResult>,
 	) => Promise<CreateSpaceResponseResult>;
-	read_space: (
+	ReadSpace: (
 		ctx: DispatchContext<ReadSpaceParams, ReadSpaceResponseResult>,
 	) => Promise<ReadSpaceResponseResult>;
-	read_spaces: (
+	ReadSpaces: (
 		ctx: DispatchContext<ReadSpacesParams, ReadSpacesResponseResult>,
 	) => Promise<ReadSpacesResponseResult>;
-	delete_space: (
+	DeleteSpace: (
 		ctx: DispatchContext<DeleteSpaceParams, DeleteSpaceResponseResult>,
 	) => Promise<DeleteSpaceResponseResult>;
-	create_file: (
+	CreateFile: (
 		ctx: DispatchContext<CreateFileParams, CreateFileResponseResult>,
 	) => Promise<CreateFileResponseResult>;
-	read_files: (
+	ReadFiles: (
 		ctx: DispatchContext<ReadFilesParams, ReadFilesResponseResult>,
 	) => Promise<ReadFilesResponseResult>;
-	query_files: (ctx: DispatchContext<QueryFilesParams, void>) => Readable<Readable<File>[]>;
+	QueryFiles: (ctx: DispatchContext<QueryFilesParams, void>) => Readable<Readable<File>[]>;
 	ping: (ctx: DispatchContext<PingParams, PingResponseResult>) => Promise<ApiResult<null>>;
-	toggle_main_nav: (ctx: DispatchContext<ToggleMainNavParams, void>) => void;
-	toggle_secondary_nav: (ctx: DispatchContext<ToggleSecondaryNavParams, void>) => void;
-	set_mobile: (ctx: DispatchContext<SetMobileParams, void>) => void;
-	select_persona: (ctx: DispatchContext<SelectPersonaParams, void>) => void;
-	select_community: (ctx: DispatchContext<SelectCommunityParams, void>) => void;
-	select_space: (ctx: DispatchContext<SelectSpaceParams, void>) => void;
+	ToggleMainNav: (ctx: DispatchContext<ToggleMainNavParams, void>) => void;
+	ToggleSecondaryNav: (ctx: DispatchContext<ToggleSecondaryNavParams, void>) => void;
+	SetMobile: (ctx: DispatchContext<SetMobileParams, void>) => void;
+	SelectPersona: (ctx: DispatchContext<SelectPersonaParams, void>) => void;
+	SelectCommunity: (ctx: DispatchContext<SelectCommunityParams, void>) => void;
+	SelectSpace: (ctx: DispatchContext<SelectSpaceParams, void>) => void;
 }
 
 // generated by src/lib/app/eventTypes.gen.ts

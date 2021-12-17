@@ -248,8 +248,8 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		},
 		ping: async ({invoke}) => invoke(),
 		// TODO convert to a service (and use `invoke` instead of `fetch`)
-		log_in: async ({params}) => {
-			console.log('[log_in] logging in as', params.accountName); // TODO logging
+		LogIn: async ({params}) => {
+			console.log('[LogIn] logging in as', params.accountName); // TODO logging
 			try {
 				const response = await fetch('/api/v1/login', {
 					method: 'POST',
@@ -258,15 +258,15 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 				});
 				const responseData = await response.json();
 				if (response.ok) {
-					console.log('[log_in] responseData', responseData); // TODO logging
+					console.log('[LogIn] responseData', responseData); // TODO logging
 					session.set(responseData.session);
 					return {ok: true, status: response.status, value: responseData}; // TODO doesn't this have other status codes?
 				} else {
-					console.error('[log_in] response not ok', responseData, response); // TODO logging
+					console.error('[LogIn] response not ok', responseData, response); // TODO logging
 					return {ok: false, status: response.status, reason: responseData.reason};
 				}
 			} catch (err) {
-				console.error('[log_in] error', err); // TODO logging
+				console.error('[LogIn] error', err); // TODO logging
 				return {
 					ok: false,
 					status: 500,
@@ -275,24 +275,24 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			}
 		},
 		// TODO convert to a service (and use `invoke` instead of `fetch`)
-		log_out: async () => {
+		LogOut: async () => {
 			try {
-				console.log('[log_out] logging out'); // TODO logging
+				console.log('[LogOut] logging out'); // TODO logging
 				const response = await fetch('/api/v1/logout', {
 					method: 'POST',
 					headers: {'content-type': 'application/json'},
 				});
 				const responseData = await response.json();
-				console.log('[log_out] response', responseData); // TODO logging
+				console.log('[LogOut] response', responseData); // TODO logging
 				if (response.ok) {
 					session.set({guest: true});
 					return {ok: true, status: response.status, value: responseData};
 				} else {
-					console.error('[log_out] response not ok', response); // TODO logging
+					console.error('[LogOut] response not ok', response); // TODO logging
 					return {ok: false, status: response.status, reason: responseData.reason};
 				}
 			} catch (err) {
-				console.error('[log_out] err', err); // TODO logging
+				console.error('[LogOut] err', err); // TODO logging
 				return {
 					ok: false,
 					status: 500,
@@ -351,32 +351,32 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 					  ),
 			);
 		},
-		create_persona: async ({invoke, dispatch}) => {
+		CreatePersona: async ({invoke, dispatch}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {persona, community} = result.value;
-			console.log('[ui.create_persona]', persona);
+			console.log('[ui.CreatePersona]', persona);
 			const personaStore = writable(persona);
 			personas.update(($personas) => $personas.concat(personaStore));
 			personasById.set(persona.persona_id, personaStore);
 			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
-			dispatch('select_persona', {persona_id: persona.persona_id});
+			dispatch('SelectPersona', {persona_id: persona.persona_id});
 			addCommunity(community as Community, persona.persona_id); // TODO fix type mismatch
-			dispatch('select_community', {community_id: community.community_id});
+			dispatch('SelectCommunity', {community_id: community.community_id});
 			return result;
 		},
-		create_community: async ({params, invoke, dispatch}) => {
+		CreateCommunity: async ({params, invoke, dispatch}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {persona_id} = params;
 			const community = result.value.community as Community; // TODO fix type mismatch
-			console.log('[ui.create_community]', community, persona_id);
+			console.log('[ui.CreateCommunity]', community, persona_id);
 			// TODO how should `persona.community_ids` be modeled and kept up to date?
 			addCommunity(community, persona_id);
-			dispatch('select_community', {community_id: community.community_id});
+			dispatch('SelectCommunity', {community_id: community.community_id});
 			return result;
 		},
-		update_community_settings: async ({params, invoke}) => {
+		UpdateCommunitySettings: async ({params, invoke}) => {
 			// optimistic update
 			// TODO lookup with `communitiesById`
 			const community = get(communities).find((c) => get(c).community_id === params.community_id)!;
@@ -391,19 +391,19 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			}
 			return result;
 		},
-		create_membership: async ({invoke}) => {
+		CreateMembership: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {membership} = result.value;
-			console.log('[ui.create_membership]', membership);
+			console.log('[ui.CreateMembership]', membership);
 			// TODO also update `communities.personas`
 			memberships.update(($memberships) => $memberships.concat(membership));
 			return result;
 		},
-		delete_membership: async ({params, invoke}) => {
+		DeleteMembership: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
-			console.log('[ui.delete_membership]', params);
+			console.log('[ui.DeleteMembership]', params);
 			// TODO also update `communities.personas`
 			memberships.update(($memberships) =>
 				$memberships.filter(
@@ -439,12 +439,12 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 
 			return result;
 		},
-		create_space: async ({params, invoke}) => {
+		CreateSpace: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {space} = result.value;
 			const {community_id} = params;
-			console.log('[ui.create_space]', space);
+			console.log('[ui.CreateSpace]', space);
 			const community = get(communities).find((c) => get(c).community_id === community_id)!;
 			community.update(($community) => ({
 				...$community,
@@ -456,7 +456,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			spaces.update(($spaces) => $spaces.concat(writable(space)));
 			return result;
 		},
-		delete_space: async ({params, invoke, dispatch}) => {
+		DeleteSpace: async ({params, invoke, dispatch}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			//update state here
@@ -469,7 +469,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 				}));
 
 				if (space_id === get(selectedSpaceIdByCommunity)[get(community).community_id])
-					dispatch('select_space', {
+					dispatch('SelectSpace', {
 						community_id: get(community).community_id,
 						space_id: get(community).spaces[0].space_id,
 					});
@@ -479,11 +479,11 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 
 			return result;
 		},
-		create_file: async ({invoke}) => {
+		CreateFile: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {file} = result.value;
-			console.log('[ui.create_file]', file);
+			console.log('[ui.CreateFile]', file);
 			const fileStore = writable(file);
 			const files = filesBySpace.get(file.space_id);
 			if (files) {
@@ -494,14 +494,14 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			}
 			return result;
 		},
-		read_files: async ({params, invoke}) => {
+		ReadFiles: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {space_id} = params;
 			const existingFiles = filesBySpace.get(space_id);
 			// TODO probably check to make sure they don't already exist
 			const newFiles = result ? result.value.files.map((f) => writable(f)) : [];
-			console.log('[ui.read_files]', newFiles);
+			console.log('[ui.ReadFiles]', newFiles);
 			if (existingFiles) {
 				existingFiles.set(newFiles);
 			} else {
@@ -509,11 +509,11 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			}
 			return result;
 		},
-		query_files: ({params, dispatch}) => {
+		QueryFiles: ({params, dispatch}) => {
 			let files = filesBySpace.get(params.space_id);
 			if (!files) {
 				filesBySpace.set(params.space_id, (files = writable([])));
-				dispatch('read_files', params);
+				dispatch('ReadFiles', params);
 			}
 			return files;
 		},
@@ -543,15 +543,15 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		selectedSpace,
 		communitiesByPersonaId,
 		// methods
-		set_mobile: ({params}) => {
+		SetMobile: ({params}) => {
 			mobile.set(params);
 		},
-		select_persona: ({params}) => {
-			console.log('[ui.select_persona] persona_id', params.persona_id);
+		SelectPersona: ({params}) => {
+			console.log('[ui.SelectPersona] persona_id', params.persona_id);
 			selectedPersonaId.set(params.persona_id);
 		},
-		select_community: ({params}) => {
-			console.log('[ui.select_community] community_id', params.community_id);
+		SelectCommunity: ({params}) => {
+			console.log('[ui.SelectCommunity] community_id', params.community_id);
 			const $selectedPersonaId = get(selectedPersonaId); // TODO how to remove the `!`?
 			const {community_id} = params;
 			if (community_id && $selectedPersonaId) {
@@ -561,18 +561,18 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 				}));
 			}
 		},
-		select_space: ({params}) => {
-			console.log('[ui.select_space] community_id, space_id', params);
+		SelectSpace: ({params}) => {
+			console.log('[ui.SelectSpace] community_id, space_id', params);
 			const {community_id, space_id} = params;
 			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => ({
 				...$selectedSpaceIdByCommunity,
 				[community_id]: space_id,
 			}));
 		},
-		toggle_main_nav: () => {
+		ToggleMainNav: () => {
 			expandMainNav.update(($expandMainNav) => !$expandMainNav);
 		},
-		toggle_secondary_nav: () => {
+		ToggleSecondaryNav: () => {
 			expandMarquee.update(($expandMarquee) => !$expandMarquee);
 		},
 	};

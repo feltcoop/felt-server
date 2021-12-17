@@ -26,78 +26,78 @@ export const randomEventParams = async (
 		case 'ping': {
 			return null;
 		}
-		case 'log_in': {
+		case 'LogIn': {
 			return {
 				accountName: randomString(),
 				password: randomString(),
 			};
 		}
-		case 'log_out': {
+		case 'LogOut': {
 			return null;
 		}
-		case 'create_community': {
+		case 'CreateCommunity': {
 			if (!persona) persona = await random.persona(account);
 			return randomCommunityParams(persona.persona_id);
 		}
-		case 'update_community_settings': {
+		case 'UpdateCommunitySettings': {
 			if (!persona) persona = await random.persona(account);
 			if (!community) community = await random.community(persona);
 			return {community_id: community.community_id, settings: {hue: randomHue()}};
 		}
-		case 'read_community': {
+		case 'ReadCommunity': {
 			if (!community) {
 				community = randomItem(random.communities) || (await random.community(persona, account));
 			}
 			return {community_id: community.community_id};
 		}
-		case 'read_communities': {
+		case 'ReadCommunities': {
 			return {};
 		}
-		case 'create_persona': {
+		case 'CreatePersona': {
 			return randomPersonaParams();
 		}
-		case 'create_membership': {
+		case 'CreateMembership': {
 			if (!persona) persona = await random.persona(account);
 			if (!community) community = await random.community(); // don't forward `persona`/`account` bc that's the service's job
 			return randomMembershipParams(persona.persona_id, community.community_id);
 		}
-		case 'delete_membership': {
+		case 'DeleteMembership': {
 			if (!persona) persona = await random.persona(account);
 			if (!community) community = await random.community(persona); // don't forward `persona`/`account` bc that's the service's job
 			return {persona_id: persona.persona_id, community_id: community.community_id};
 		}
-		case 'create_space': {
+		case 'CreateSpace': {
 			if (!community) community = await random.community(persona, account);
 			return randomSpaceParams(community.community_id);
 		}
-		case 'delete_space': {
+		case 'DeleteSpace': {
 			if (!space) space = await random.space(persona, account, community);
 			return {space_id: space.space_id};
 		}
-		case 'read_space': {
+		case 'ReadSpace': {
 			if (!space) {
 				space = randomItem(random.spaces) || (await random.space(persona, account, community));
 			}
 			return {space_id: space.space_id};
 		}
-		case 'read_spaces': {
+		case 'ReadSpaces': {
 			if (!community) {
 				community = randomItem(random.communities) || (await random.community(persona, account));
 			}
 			return {community_id: community.community_id};
 		}
-		case 'create_file': {
+		case 'CreateFile': {
 			if (!persona) persona = await random.persona(account);
 			if (!space) space = await random.space(persona, account, community);
 			return randomFileParams(persona.persona_id, space.space_id);
 		}
-		case 'read_files': {
+		case 'ReadFiles': {
 			if (!space) {
 				space = randomItem(random.spaces) || (await random.space(persona, account, community));
 			}
 			return {space_id: space.space_id};
 		}
-		case 'query_files': {
+		case 'QueryFiles': {
 			return {
 				space_id: (randomItem(random.spaces) || (await random.space(persona, account, community)))
 					.space_id,
@@ -105,21 +105,21 @@ export const randomEventParams = async (
 		}
 		// TODO instead of randomizing, use existing ones from the arrays?
 		// what's the best way to do that?
-		case 'toggle_main_nav': {
+		case 'ToggleMainNav': {
 			return undefined;
 		}
-		case 'toggle_secondary_nav': {
+		case 'ToggleSecondaryNav': {
 			return undefined;
 		}
-		case 'set_mobile': {
+		case 'SetMobile': {
 			return randomBool();
 		}
-		case 'select_persona': {
+		case 'SelectPersona': {
 			return {
 				persona_id: (randomItem(random.personas) || (await random.persona(account))).persona_id,
 			};
 		}
-		case 'select_community': {
+		case 'SelectCommunity': {
 			return {
 				// TODO refactor
 				community_id: await randomItem([
@@ -130,7 +130,7 @@ export const randomEventParams = async (
 				])(),
 			};
 		}
-		case 'select_space': {
+		case 'SelectSpace': {
 			return {
 				community_id: (randomItem(random.communities) || (await random.community(persona, account)))
 					.community_id,
