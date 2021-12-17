@@ -7,32 +7,32 @@ import type {
 } from '$lib/app/eventTypes';
 import {ReadEntities, CreateEntity} from '$lib/vocab/entity/entity.events';
 
-// TODO rename to `getFiles`? `loadFiles`?
-export const readFilesService: Service<ReadEntitiesParams, ReadEntitiesResponseResult> = {
+// TODO rename to `getEntities`? `loadEntities`?
+export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesResponseResult> = {
 	event: ReadEntities,
 	perform: async ({server, params}) => {
 		const {db} = server;
-		const findFilesResult = await db.repos.entity.filterBySpace(params.space_id);
-		if (findFilesResult.ok) {
-			return {ok: true, status: 200, value: {files: findFilesResult.value}}; // TODO API types
+		const findEntitiesResult = await db.repos.entity.filterBySpace(params.space_id);
+		if (findEntitiesResult.ok) {
+			return {ok: true, status: 200, value: {entities: findEntitiesResult.value}}; // TODO API types
 		} else {
-			console.log('[ReadEntities] error searching for files');
-			return {ok: false, status: 500, reason: 'error searching for files'};
+			console.log('[ReadEntities] error searching for entities');
+			return {ok: false, status: 500, reason: 'error searching for entities'};
 		}
 	},
 };
 
-export const createFileService: Service<CreateEntityParams, CreateEntityResponseResult> = {
+export const createEntityService: Service<CreateEntityParams, CreateEntityResponseResult> = {
 	event: CreateEntity,
 	perform: async ({server, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
 		// server.db.repos.account.validatePersona(account_id, actor_id);
-		const insertFilesResult = await server.db.repos.entity.create(params);
-		if (insertFilesResult.ok) {
-			return {ok: true, status: 200, value: {file: insertFilesResult.value}}; // TODO API types
+		const insertEntitiesResult = await server.db.repos.entity.create(params);
+		if (insertEntitiesResult.ok) {
+			return {ok: true, status: 200, value: {entity: insertEntitiesResult.value}}; // TODO API types
 		} else {
-			console.log('[CreateEntity] error searching for files');
-			return {ok: false, status: 500, reason: 'error searching for files'};
+			console.log('[CreateEntity] error searching for entities');
+			return {ok: false, status: 500, reason: 'error searching for entities'};
 		}
 	},
 };

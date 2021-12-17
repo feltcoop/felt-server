@@ -40,7 +40,7 @@ export interface Ui extends Partial<UiHandlers> {
 	spacesById: Readable<Map<number, Readable<Space>>>;
 	spacesByCommunityId: Readable<Map<number, Readable<Space>[]>>;
 	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
-	filesBySpace: Map<number, Readable<Readable<Entity>[]>>;
+	entitiesBySpace: Map<number, Readable<Readable<Entity>[]>>;
 	setSession: (session: ClientSession) => void;
 	findPersonaById: (persona_id: number) => Readable<Persona>;
 	findSpaceById: (space_id: number) => Readable<Space>;
@@ -192,7 +192,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			}, {} as {[persona_id: number]: Readable<Community>[]}),
 	);
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
-	const filesBySpace: Map<number, Writable<Writable<Entity>[]>> = new Map();
+	const entitiesBySpace: Map<number, Writable<Writable<Entity>[]>> = new Map();
 
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
@@ -236,7 +236,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		personasById,
 		spacesById,
 		spacesByCommunityId,
-		filesBySpace,
+		entitiesBySpace,
 		dispatch: (ctx) => {
 			const handler = (ui as any)[ctx.eventName];
 			// const handler = handlers.get(eventName); // TODO ? would make it easy to do external registration
@@ -482,15 +482,15 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		CreateEntity: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
-			const {file} = result.value;
-			console.log('[ui.CreateEntity]', file);
-			const fileStore = writable(file);
-			const files = filesBySpace.get(file.space_id);
-			if (files) {
+			const {entity} = result.value;
+			console.log('[ui.CreateEntity]', entity);
+			const entityStore = writable(entity);
+			const entities = entitiesBySpace.get(entity.space_id);
+			if (entities) {
 				// TODO check if it already exists -- maybe by getting `fileStore` from a `fileById` map
-				files.update(($files) => $files.concat(fileStore));
+				entities.update(($entities) => $entities.concat(entityStore));
 			} else {
-				filesBySpace.set(file.space_id, writable([fileStore]));
+				entitiesBySpace.set(entity.space_id, writable([entityStore]));
 			}
 			return result;
 		},
@@ -498,24 +498,24 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {space_id} = params;
-			const existingFiles = filesBySpace.get(space_id);
+			const existingEntities = entitiesBySpace.get(space_id);
 			// TODO probably check to make sure they don't already exist
-			const newFiles = result ? result.value.files.map((f) => writable(f)) : [];
+			const newFiles = result ? result.value.entities.map((f) => writable(f)) : [];
 			console.log('[ui.ReadEntities]', newFiles);
-			if (existingFiles) {
-				existingFiles.set(newFiles);
+			if (existingEntities) {
+				existingEntities.set(newFiles);
 			} else {
-				filesBySpace.set(space_id, writable(newFiles));
+				entitiesBySpace.set(space_id, writable(newFiles));
 			}
 			return result;
 		},
 		QueryEntities: ({params, dispatch}) => {
-			let files = filesBySpace.get(params.space_id);
-			if (!files) {
-				filesBySpace.set(params.space_id, (files = writable([])));
+			let entities = entitiesBySpace.get(params.space_id);
+			if (!entities) {
+				entitiesBySpace.set(params.space_id, (entities = writable([])));
 				dispatch('ReadEntities', params);
 			}
-			return files;
+			return entities;
 		},
 		findPersonaById: (persona_id: number): Readable<Persona> => {
 			const persona = personasById.get(persona_id);
