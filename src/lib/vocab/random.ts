@@ -52,7 +52,7 @@ export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 	name: randomSpaceName(),
 	url: randomSpaceUrl(),
 });
-export const randomFileParams = (actor_id: number, space_id: number): CreateEntityParams => ({
+export const randomEntityParams = (actor_id: number, space_id: number): CreateEntityParams => ({
 	actor_id,
 	space_id,
 	content: randomContent(),

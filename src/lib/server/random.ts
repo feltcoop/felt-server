@@ -2,7 +2,7 @@ import {randomBool, randomItem} from '@feltcoop/felt/util/random.js';
 
 import type {EventInfo} from '$lib/vocab/event/event';
 import {
-	randomFileParams,
+	randomEntityParams,
 	randomMembershipParams,
 	randomString,
 	type RandomVocab,
@@ -23,7 +23,7 @@ export const randomEventParams = async (
 	{account, persona, community, space}: RandomVocab = {},
 ): Promise<any> => {
 	switch (event.name) {
-		case 'ping': {
+		case 'Ping': {
 			return null;
 		}
 		case 'LogIn': {
@@ -89,7 +89,7 @@ export const randomEventParams = async (
 		case 'CreateEntity': {
 			if (!persona) persona = await random.persona(account);
 			if (!space) space = await random.space(persona, account, community);
-			return randomFileParams(persona.persona_id, space.space_id);
+			return randomEntityParams(persona.persona_id, space.space_id);
 		}
 		case 'ReadEntities': {
 			if (!space) {

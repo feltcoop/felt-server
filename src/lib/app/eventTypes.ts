@@ -28,7 +28,7 @@ export interface EventParamsByName {
 	CreateEntity: CreateEntityParams;
 	ReadEntities: ReadEntitiesParams;
 	QueryEntities: QueryEntitiesParams;
-	ping: PingParams;
+	Ping: PingParams;
 	ToggleMainNav: ToggleMainNavParams;
 	ToggleSecondaryNav: ToggleSecondaryNavParams;
 	SetMobile: SetMobileParams;
@@ -52,7 +52,7 @@ export interface EventResponseByName {
 	DeleteSpace: DeleteSpaceResponse;
 	CreateEntity: CreateEntityResponse;
 	ReadEntities: ReadEntitiesResponse;
-	ping: PingResponse;
+	Ping: PingResponse;
 }
 
 export interface LogInParams {
@@ -239,7 +239,7 @@ export interface Dispatch {
 	(eventName: 'CreateEntity', params: CreateEntityParams): Promise<CreateEntityResponseResult>;
 	(eventName: 'ReadEntities', params: ReadEntitiesParams): Promise<ReadEntitiesResponseResult>;
 	(eventName: 'QueryEntities', params: QueryEntitiesParams): Readable<Readable<Entity>[]>;
-	(eventName: 'ping', params: PingParams): Promise<ApiResult<null>>;
+	(eventName: 'Ping', params: PingParams): Promise<ApiResult<null>>;
 	(eventName: 'ToggleMainNav', params: ToggleMainNavParams): void;
 	(eventName: 'ToggleSecondaryNav', params: ToggleSecondaryNavParams): void;
 	(eventName: 'SetMobile', params: SetMobileParams): void;
@@ -295,7 +295,7 @@ export interface UiHandlers {
 		ctx: DispatchContext<ReadEntitiesParams, ReadEntitiesResponseResult>,
 	) => Promise<ReadEntitiesResponseResult>;
 	QueryEntities: (ctx: DispatchContext<QueryEntitiesParams, void>) => Readable<Readable<Entity>[]>;
-	ping: (ctx: DispatchContext<PingParams, PingResponseResult>) => Promise<ApiResult<null>>;
+	Ping: (ctx: DispatchContext<PingParams, PingResponseResult>) => Promise<ApiResult<null>>;
 	ToggleMainNav: (ctx: DispatchContext<ToggleMainNavParams, void>) => void;
 	ToggleSecondaryNav: (ctx: DispatchContext<ToggleSecondaryNavParams, void>) => void;
 	SetMobile: (ctx: DispatchContext<SetMobileParams, void>) => void;

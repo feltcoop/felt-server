@@ -3,7 +3,7 @@ import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 // TODO probably belongs elsewhere
 export const Ping: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'ping',
+	name: 'Ping',
 	params: {
 		$id: 'https://felt.social/vocab/PingParams.json',
 		type: 'null',

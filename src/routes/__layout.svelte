@@ -60,7 +60,7 @@
 						console.warn('unhandled broadcast message', broadcastMessage, message.data);
 					}
 				}),
-			() => dispatch('ping'),
+			() => dispatch('Ping'),
 		),
 	);
 	const ui = setUi(toUi(session, initialMobileValue));
