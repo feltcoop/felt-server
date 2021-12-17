@@ -35,7 +35,7 @@
 			url,
 			//TODO : add space type picker
 			media_type: 'application/fuz+json',
-			content: `{"type": "${newType}", "props": {"data": "${url}/files"}}`,
+			content: `{"type": "${newType}", "props": {"data": "/entities"}}`,
 		});
 		if (result.ok) {
 			newName = '';
