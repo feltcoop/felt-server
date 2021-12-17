@@ -11,7 +11,7 @@
 
 	const {
 		dispatch,
-		ui: {selectedPersonaId},
+		ui: {personaIdSelection},
 		socket,
 	} = getApp();
 
@@ -33,7 +33,7 @@
 		await dispatch('create_file', {
 			space_id: $space.space_id,
 			content,
-			actor_id: $selectedPersonaId!, // TODO generic erorr check for no selected persona?
+			actor_id: $personaIdSelection!, // TODO generic erorr check for no selected persona?
 		});
 		text = '';
 	};

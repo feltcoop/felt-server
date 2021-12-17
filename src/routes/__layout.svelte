@@ -83,10 +83,10 @@
 		account,
 		sessionPersonas,
 		communities,
-		selectedPersonaIndex,
-		selectedCommunityId,
-		selectedSpaceIdByCommunity,
-		selectedPersona,
+		personaIndexSelection,
+		communityIdSelection,
+		spaceIdByCommunitySelection,
+		personaSelection,
 		setSession,
 	} = ui;
 
@@ -95,7 +95,7 @@
 	$: guest = $session.guest;
 	$: onboarding = !guest && !$sessionPersonas.length;
 
-	$: personaSelection = $selectedPersona; // TODO should these names be reversed?
+	$: selectedPersona = $personaSelection; // TODO should these names be reversed?
 
 	// TODO instead of dispatching `select` events on startup, try to initialize with correct values
 	// TODO refactor -- where should this logic go?
@@ -124,7 +124,7 @@
 				);
 				return; // exit early; this function re-runs from the `goto` call with the updated `$page`
 			}
-		} else if (personaIndex !== $selectedPersonaIndex) {
+		} else if (personaIndex !== $personaIndexSelection) {
 			dispatch('select_persona', {persona_id: get(persona).persona_id});
 		} // else already selected
 
@@ -133,7 +133,7 @@
 		if (!communityStore) return; // occurs when a session routes to a community they can't access
 		const community = get(communityStore);
 		const {community_id} = community;
-		if (community_id !== $selectedCommunityId) {
+		if (community_id !== $communityIdSelection) {
 			dispatch('select_community', {community_id});
 		}
 		if (community_id) {
@@ -141,7 +141,7 @@
 			const space = community.spaces.find((s) => s.url === spaceUrl);
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = space;
-			if (space_id !== $selectedSpaceIdByCommunity[community_id]) {
+			if (space_id !== $spaceIdByCommunitySelection[community_id]) {
 				dispatch('select_space', {community_id, space_id});
 			}
 		} else {
@@ -193,7 +193,7 @@
 		}
 	}
 
-	$: layoutEntities = ['app', personaSelection ? 'persona:' + $personaSelection.name : '']
+	$: layoutEntities = ['app', selectedPersona ? 'persona:' + $selectedPersona.name : '']
 		.filter(Boolean)
 		.join(',');
 	// TODO refactor this: unfortunately need to set on #root because dialog is outside of `.layout`

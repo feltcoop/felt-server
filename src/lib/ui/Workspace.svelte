@@ -8,17 +8,12 @@
 
 	const {
 		dispatch,
-		ui: {
-			expandMarquee,
-			selectedSpace: selectedSpaceStore,
-			selectedPersona: selectedPersonaStore,
-			selectedCommunity: selectedCommunityStore,
-		},
+		ui: {expandMarquee, spaceSelection, personaSelection, communitySelection},
 	} = getApp();
 
-	$: selectedPersona = $selectedPersonaStore;
-	$: selectedCommunity = $selectedCommunityStore;
-	$: selectedSpace = $selectedSpaceStore;
+	$: selectedPersona = $personaSelection;
+	$: selectedCommunity = $communitySelection;
+	$: selectedSpace = $spaceSelection;
 
 	$: layoutEntities = [
 		selectedSpace ? 'space:' + $selectedSpace.name : '',

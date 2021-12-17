@@ -8,10 +8,10 @@
 
 	const {
 		dispatch,
-		ui: {selectedPersona, communities},
+		ui: {personaSelection, communities},
 	} = getApp();
 
-	$: persona = $selectedPersona!;
+	$: persona = $personaSelection!;
 
 	let opened = false;
 	let errorMessage: string | undefined;

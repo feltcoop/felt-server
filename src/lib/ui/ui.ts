@@ -48,15 +48,14 @@ export interface Ui extends Partial<UiHandlers> {
 	expandMainNav: Readable<boolean>;
 	expandMarquee: Readable<boolean>; // TODO name?
 	// derived state
-	selectedPersonaId: Readable<number | null>;
-	selectedPersona: Readable<Readable<Persona> | null>;
-	selectedPersonaIndex: Readable<number | null>;
-	selectedCommunityIdByPersona: Readable<{[key: number]: number}>;
-	selectedCommunityId: Readable<number | null>;
-	selectedCommunity: Readable<Readable<Community> | null>;
-	selectedSpaceIdByCommunity: Readable<{[key: number]: number | null}>;
-	// TODO selectedSpace: Readable<Readable<Space> | null>;
-	selectedSpace: Readable<Readable<Space> | null>;
+	personaIdSelection: Readable<number | null>;
+	personaSelection: Readable<Readable<Persona> | null>;
+	personaIndexSelection: Readable<number | null>;
+	communityIdByPersonaSelection: Readable<{[key: number]: number}>;
+	communityIdSelection: Readable<number | null>;
+	communitySelection: Readable<Readable<Community> | null>;
+	spaceIdByCommunitySelection: Readable<{[key: number]: number | null}>;
+	spaceSelection: Readable<Readable<Space> | null>;
 	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	mobile: Readable<boolean>;
 	contextmenu: ContextmenuStore;
@@ -120,15 +119,16 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 	// derived state
 	// TODO speed up these lookups with id maps
 	// TODO remove it from `state`
-	const selectedPersonaId = writable<number | null>(null);
-	const selectedPersona = derived(
-		[selectedPersonaId],
-		([$selectedPersonaId]) => ($selectedPersonaId && personasById.get($selectedPersonaId)) || null,
+	const personaIdSelection = writable<number | null>(null);
+	const personaSelection = derived(
+		[personaIdSelection],
+		([$personaIdSelection]) =>
+			($personaIdSelection && personasById.get($personaIdSelection)) || null,
 	);
-	const selectedPersonaIndex = derived(
-		[selectedPersona, sessionPersonas],
-		([$selectedPersona, $sessionPersonas]) =>
-			$selectedPersona === null ? null : $sessionPersonas.indexOf($selectedPersona),
+	const personaIndexSelection = derived(
+		[personaSelection, sessionPersonas],
+		([$personaSelection, $sessionPersonas]) =>
+			$personaSelection === null ? null : $sessionPersonas.indexOf($personaSelection),
 	);
 	const sessionPersonaIndices = derived(
 		[sessionPersonas],
@@ -137,7 +137,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 
 	// TODO should these be store references instead of ids?
 	// TODO maybe make this a lazy map, not a derived store?
-	const selectedCommunityIdByPersona = writable<{[key: number]: number}>(
+	const communityIdByPersonaSelection = writable<{[key: number]: number}>(
 		Object.fromEntries(
 			get(sessionPersonas).map((persona) => {
 				// TODO needs to be rethought, the `get` isn't reactive
@@ -146,20 +146,20 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			}),
 		),
 	);
-	const selectedCommunityId = derived(
-		[selectedPersonaId, selectedCommunityIdByPersona],
-		([$selectedPersonaId, $selectedCommunityIdByPersona]) =>
-			$selectedPersonaId && $selectedCommunityIdByPersona[$selectedPersonaId],
+	const communityIdSelection = derived(
+		[personaIdSelection, communityIdByPersonaSelection],
+		([$personaIdSelection, $communityIdByPersonaSelection]) =>
+			$personaIdSelection && $communityIdByPersonaSelection[$personaIdSelection],
 	);
-	const selectedCommunity = derived(
-		[communities, selectedCommunityId],
+	const communitySelection = derived(
+		[communities, communityIdSelection],
 		// TODO lookup from `communitiesById` map instead
-		([$communities, $selectedCommunityId]) =>
-			$communities.find((c) => get(c).community_id === $selectedCommunityId) || null,
+		([$communities, $communityIdSelection]) =>
+			$communities.find((c) => get(c).community_id === $communityIdSelection) || null,
 	);
 	// TODO this should store the selected space by community+persona,
 	// possibly alongside additional UI state, maybe in a store or namespace of stores
-	const selectedSpaceIdByCommunity = writable<{[key: number]: number | null}>(
+	const spaceIdByCommunitySelection = writable<{[key: number]: number | null}>(
 		initialSession.guest
 			? {}
 			: Object.fromEntries(
@@ -169,11 +169,13 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 					]),
 			  ),
 	);
-	const selectedSpace = derived(
-		[selectedCommunity, selectedSpaceIdByCommunity],
-		([$selectedCommunity, $selectedSpaceIdByCommunity]) =>
-			($selectedCommunity &&
-				get(spacesById).get($selectedSpaceIdByCommunity[get($selectedCommunity)!.community_id]!)) ||
+	const spaceSelection = derived(
+		[communitySelection, spaceIdByCommunitySelection],
+		([$communitySelection, $spaceIdByCommunitySelection]) =>
+			($communitySelection &&
+				get(spacesById).get(
+					$spaceIdByCommunitySelection[get($communitySelection)!.community_id]!,
+				)) ||
 			null,
 	);
 	const communitiesByPersonaId = derived(
@@ -217,9 +219,9 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		if (spacesToAdd) {
 			spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
 		}
-		selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => {
-			$selectedSpaceIdByCommunity[community.community_id] = community.spaces[0].space_id;
-			return $selectedSpaceIdByCommunity;
+		spaceIdByCommunitySelection.update(($spaceIdByCommunitySelection) => {
+			$spaceIdByCommunitySelection[community.community_id] = community.spaces[0].space_id;
+			return $spaceIdByCommunitySelection;
 		});
 		const communityStore = writable(community);
 		communities.update(($communities) => $communities.concat(communityStore));
@@ -314,9 +316,9 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			// TODO improve this with the other code
 			const initialSessionPersona = session.guest ? null : get(sessionPersonas)[0];
 			if (initialSessionPersona) {
-				selectedPersonaId.set(get(initialSessionPersona).persona_id);
+				personaIdSelection.set(get(initialSessionPersona).persona_id);
 			} else {
-				selectedPersonaId.set(null);
+				personaIdSelection.set(null);
 			}
 
 			communities.set(session.guest ? [] : session.communities.map((p) => writable(p)));
@@ -326,7 +328,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 					? []
 					: session.communities.flatMap((community) => community.spaces).map((s) => writable(s)),
 			);
-			selectedCommunityIdByPersona.set(
+			communityIdByPersonaSelection.set(
 				// TODO copypasta from above
 				Object.fromEntries(
 					get(sessionPersonas).map((persona) => {
@@ -339,7 +341,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 					}),
 				),
 			);
-			selectedSpaceIdByCommunity.set(
+			spaceIdByCommunitySelection.set(
 				// TODO copypasta from above
 				session.guest
 					? {}
@@ -468,7 +470,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 					spaces: $community.spaces.filter((space) => space.space_id !== space_id),
 				}));
 
-				if (space_id === get(selectedSpaceIdByCommunity)[get(community).community_id])
+				if (space_id === get(spaceIdByCommunitySelection)[get(community).community_id])
 					dispatch('select_space', {
 						community_id: get(community).community_id,
 						space_id: get(community).spaces[0].space_id,
@@ -533,14 +535,14 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		expandMarquee,
 		contextmenu,
 		// derived state
-		selectedPersonaId,
-		selectedPersona,
-		selectedPersonaIndex,
-		selectedCommunityIdByPersona,
-		selectedCommunityId,
-		selectedCommunity,
-		selectedSpaceIdByCommunity,
-		selectedSpace,
+		personaIdSelection,
+		personaSelection,
+		personaIndexSelection,
+		communityIdByPersonaSelection,
+		communityIdSelection,
+		communitySelection,
+		spaceIdByCommunitySelection,
+		spaceSelection,
 		communitiesByPersonaId,
 		// methods
 		set_mobile: ({params}) => {
@@ -548,24 +550,24 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		},
 		select_persona: ({params}) => {
 			console.log('[ui.select_persona] persona_id', params.persona_id);
-			selectedPersonaId.set(params.persona_id);
+			personaIdSelection.set(params.persona_id);
 		},
 		select_community: ({params}) => {
 			console.log('[ui.select_community] community_id', params.community_id);
-			const $selectedPersonaId = get(selectedPersonaId); // TODO how to remove the `!`?
+			const $personaIdSelection = get(personaIdSelection); // TODO how to remove the `!`?
 			const {community_id} = params;
-			if (community_id && $selectedPersonaId) {
-				selectedCommunityIdByPersona.update(($selectedCommunityIdByPersona) => ({
-					...$selectedCommunityIdByPersona,
-					[$selectedPersonaId]: community_id,
+			if (community_id && $personaIdSelection) {
+				communityIdByPersonaSelection.update(($communityIdByPersonaSelection) => ({
+					...$communityIdByPersonaSelection,
+					[$personaIdSelection]: community_id,
 				}));
 			}
 		},
 		select_space: ({params}) => {
 			console.log('[ui.select_space] community_id, space_id', params);
 			const {community_id, space_id} = params;
-			selectedSpaceIdByCommunity.update(($selectedSpaceIdByCommunity) => ({
-				...$selectedSpaceIdByCommunity,
+			spaceIdByCommunitySelection.update(($spaceIdByCommunitySelection) => ({
+				...$spaceIdByCommunitySelection,
 				[community_id]: space_id,
 			}));
 		},

@@ -8,7 +8,7 @@
 
 	const {
 		dispatch,
-		ui: {selectedPersonaId},
+		ui: {personaIdSelection},
 	} = getApp();
 
 	let opened = false;
@@ -20,7 +20,7 @@
 		if (pending) return;
 		errorMessage = null;
 		pending = true;
-		const result = await dispatch('create_community', {name, persona_id: $selectedPersonaId!});
+		const result = await dispatch('create_community', {name, persona_id: $personaIdSelection!});
 		pending = false;
 		errorMessage = result.ok ? null : result.reason;
 	};
