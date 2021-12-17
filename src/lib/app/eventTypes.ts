@@ -20,6 +20,7 @@ export interface EventParamsByName {
 	update_community_settings: UpdateCommunitySettingsParams;
 	create_persona: CreatePersonaParams;
 	create_membership: CreateMembershipParams;
+	delete_membership: DeleteMembershipParams;
 	create_space: CreateSpaceParams;
 	read_space: ReadSpaceParams;
 	read_spaces: ReadSpacesParams;
@@ -44,6 +45,7 @@ export interface EventResponseByName {
 	update_community_settings: UpdateCommunitySettingsResponse;
 	create_persona: CreatePersonaResponse;
 	create_membership: CreateMembershipResponse;
+	delete_membership: DeleteMembershipResponse;
 	create_space: CreateSpaceResponse;
 	read_space: ReadSpaceResponse;
 	read_spaces: ReadSpacesResponse;
@@ -118,6 +120,15 @@ export interface CreateMembershipResponse {
 	membership: Membership;
 }
 export type CreateMembershipResponseResult = ApiResult<CreateMembershipResponse>;
+
+export interface DeleteMembershipParams {
+	persona_id: number;
+	community_id: number;
+}
+
+export type DeleteMembershipResponse = null;
+
+export type DeleteMembershipResponseResult = ApiResult<DeleteMembershipResponse>;
 
 export interface CreateSpaceParams {
 	community_id: number;
@@ -219,6 +230,10 @@ export interface Dispatch {
 		eventName: 'create_membership',
 		params: CreateMembershipParams,
 	): Promise<CreateMembershipResponseResult>;
+	(
+		eventName: 'delete_membership',
+		params: DeleteMembershipParams,
+	): Promise<DeleteMembershipResponseResult>;
 	(eventName: 'create_space', params: CreateSpaceParams): Promise<CreateSpaceResponseResult>;
 	(eventName: 'read_space', params: ReadSpaceParams): Promise<ReadSpaceResponseResult>;
 	(eventName: 'read_spaces', params: ReadSpacesParams): Promise<ReadSpacesResponseResult>;
@@ -260,6 +275,9 @@ export interface UiHandlers {
 	create_membership: (
 		ctx: DispatchContext<CreateMembershipParams, CreateMembershipResponseResult>,
 	) => Promise<CreateMembershipResponseResult>;
+	delete_membership: (
+		ctx: DispatchContext<DeleteMembershipParams, DeleteMembershipResponseResult>,
+	) => Promise<DeleteMembershipResponseResult>;
 	create_space: (
 		ctx: DispatchContext<CreateSpaceParams, CreateSpaceResponseResult>,
 	) => Promise<CreateSpaceResponseResult>;

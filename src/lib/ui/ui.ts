@@ -400,6 +400,45 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			memberships.update(($memberships) => $memberships.concat(membership));
 			return result;
 		},
+		delete_membership: async ({params, invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
+			console.log('[ui.delete_membership]', params);
+			// TODO also update `communities.personas`
+			memberships.update(($memberships) =>
+				$memberships.filter(
+					(membership) =>
+						membership.persona_id !== params.persona_id ||
+						membership.community_id !== params.community_id,
+				),
+			);
+
+			const persona = personasById.get(params.persona_id)!;
+			persona.update(($persona) => ({
+				...$persona,
+				community_ids: $persona.community_ids.filter((c) => c !== params.community_id),
+			}));
+
+			communities.update(($communities) => {
+				const community = $communities.find(
+					(community) => get(community).community_id === params.community_id,
+				)!;
+				community.update(($community) => ({
+					...$community,
+					memberPersonas: $community.memberPersonas.filter(
+						(p) => p.persona_id !== params.persona_id,
+					),
+				}));
+				const empty = !get(community).memberPersonas.length;
+				if (empty) {
+					return $communities.filter((c) => get(c).community_id !== params.community_id);
+				} else {
+					return $communities;
+				}
+			});
+
+			return result;
+		},
 		create_space: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
