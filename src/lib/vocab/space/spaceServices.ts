@@ -6,8 +6,10 @@ import type {
 	ReadSpaceResponseResult,
 	ReadSpacesParams,
 	ReadSpacesResponseResult,
+	DeleteSpaceParams,
+	DeleteSpaceResponseResult,
 } from '$lib/app/eventTypes';
-import {create_space, read_space, read_spaces} from '$lib/vocab/space/space.events';
+import {create_space, read_space, read_spaces, delete_space} from '$lib/vocab/space/space.events';
 
 //Returns a single space object
 export const readSpaceService: Service<ReadSpaceParams, ReadSpaceResponseResult> = {
@@ -80,5 +82,21 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 			console.log('[create_space] error searching for community spaces');
 			return {ok: false, status: 500, reason: 'error searching for community spaces'};
 		}
+	},
+};
+
+//deletes a single space and returns the id of the deleted spaces
+export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseResult> = {
+	event: delete_space,
+	perform: async ({server, params}) => {
+		const {db} = server;
+		console.log('[delete_space] deleting space with id:', params.space_id);
+		const result = await db.repos.space.deleteById(params.space_id);
+		console.log(result);
+		if (!result.ok) {
+			console.log('[delete_space] error removing space: ', params.space_id);
+			return {ok: false, status: 500, reason: result.reason};
+		}
+		return {ok: true, status: 200, value: null};
 	},
 };

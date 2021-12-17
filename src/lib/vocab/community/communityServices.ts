@@ -6,14 +6,18 @@ import type {
 	ReadCommunityResponseResult,
 	ReadCommunitiesParams,
 	ReadCommunitiesResponseResult,
+	UpdateCommunitySettingsParams,
+	UpdateCommunitySettingsResponseResult,
 } from '$lib/app/eventTypes';
 import {
 	create_community,
 	read_communities,
 	read_community,
+	update_community_settings,
 } from '$lib/vocab/community/community.events';
 import type {CreateMembershipParams, CreateMembershipResponseResult} from '$lib/app/eventTypes';
 import {create_membership} from '$lib/vocab/membership/membership.events';
+import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 
 // Returns a list of community objects
 export const readCommunitiesService: Service<ReadCommunitiesParams, ReadCommunitiesResponseResult> =
@@ -69,7 +73,11 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 			}
 			console.log('created community account_id', account_id);
 			// TODO validate that `account_id` is `persona_id`
-			const createCommunityResult = await server.db.repos.community.create(params);
+			const createCommunityResult = await server.db.repos.community.create(
+				params.name,
+				params.persona_id,
+				params.settings || toDefaultCommunitySettings(params.name),
+			);
 			console.log('createCommunityResult', createCommunityResult);
 			if (createCommunityResult.ok) {
 				// TODO optimize this to return `createCommunityResult.value` instead of making another db call,
@@ -104,6 +112,27 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 			}
 		},
 	};
+
+export const updateCommunitySettingsService: Service<
+	UpdateCommunitySettingsParams,
+	UpdateCommunitySettingsResponseResult
+> = {
+	event: update_community_settings,
+	perform: async ({server, params, account_id}) => {
+		// TODO authorize `account_id` declaratively
+		account_id;
+
+		const result = await server.db.repos.community.updateSettings(
+			params.community_id,
+			params.settings,
+		);
+		if (result.ok) {
+			return {ok: true, status: 200, value: null};
+		} else {
+			return {ok: false, status: 500, reason: result.reason || 'unknown error'};
+		}
+	},
+};
 
 // TODO move to `$lib/vocab/member`
 //Creates a new member relation for a community

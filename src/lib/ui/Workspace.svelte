@@ -7,7 +7,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		api: {dispatch},
+		dispatch,
 		ui: {
 			expandMarquee,
 			selectedSpace: selectedSpaceStore,
@@ -19,9 +19,16 @@
 	$: selectedPersona = $selectedPersonaStore;
 	$: selectedCommunity = $selectedCommunityStore;
 	$: selectedSpace = $selectedSpaceStore;
+
+	$: layoutEntities = [
+		selectedSpace ? 'space:' + $selectedSpace.name : '',
+		selectedCommunity ? 'community:' + $selectedCommunity.name : '',
+	]
+		.filter(Boolean)
+		.join(',');
 </script>
 
-<div class="workspace">
+<div class="workspace" data-entity={layoutEntities}>
 	{#if $expandMarquee}
 		<div
 			class="marquee-bg"

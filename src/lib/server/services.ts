@@ -5,13 +5,16 @@ import {
 	readCommunityService,
 	readCommunitiesService,
 	createCommunityService,
+	updateCommunitySettingsService,
 	createMembershipService,
 } from '$lib/vocab/community/communityServices';
+import {deleteMembershipService} from '$lib/vocab/membership/membershipServices';
 import {readFilesService, createFileService} from '$lib/vocab/file/fileServices';
 import {
 	readSpaceService,
 	readSpacesService,
 	createSpaceService,
+	deleteSpaceService,
 } from '$lib/vocab/space/spaceServices';
 
 export const services: Map<string, Service<any, any>> = new Map(
@@ -20,12 +23,15 @@ export const services: Map<string, Service<any, any>> = new Map(
 		createPersonaService,
 		createCommunityService,
 		createMembershipService,
+		deleteMembershipService,
 		createSpaceService,
 		createFileService,
 		readCommunityService,
 		readCommunitiesService,
+		updateCommunitySettingsService,
 		readSpaceService,
 		readSpacesService,
 		readFilesService,
+		deleteSpaceService,
 	].map((s) => [s.event.name, s]),
 );

@@ -88,4 +88,27 @@ export const read_spaces: ServiceEventInfo = {
 	},
 };
 
-export const events: EventInfo[] = [create_space, read_space, read_spaces];
+export const delete_space: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'delete_space',
+	params: {
+		$id: 'https://felt.social/vocab/delete_space_params.json',
+		type: 'object',
+		properties: {
+			space_id: {type: 'number'},
+		},
+		required: ['space_id'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: 'https://felt.social/vocab/delete_space_response.json',
+		type: 'null',
+	},
+	returns: 'Promise<DeleteSpaceResponseResult>',
+	route: {
+		path: '/api/v1/spaces/:space_id',
+		method: 'DELETE',
+	},
+};
+
+export const events: EventInfo[] = [create_space, read_space, read_spaces, delete_space];

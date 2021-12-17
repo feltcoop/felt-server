@@ -9,7 +9,7 @@ import type {Persona} from '$lib/vocab/persona/persona';
 import type {Membership} from '$lib/vocab/membership/membership';
 import type {Space} from '$lib/vocab/space/space';
 import type {File} from '$lib/vocab/file/file';
-import type {DispatchContext} from '$lib/ui/api';
+import type {DispatchContext} from '$lib/app/dispatch';
 
 export interface EventParamsByName {
 	log_in: LogInParams;
@@ -17,18 +17,20 @@ export interface EventParamsByName {
 	create_community: CreateCommunityParams;
 	read_community: ReadCommunityParams;
 	read_communities: ReadCommunitiesParams;
+	update_community_settings: UpdateCommunitySettingsParams;
 	create_persona: CreatePersonaParams;
 	create_membership: CreateMembershipParams;
+	delete_membership: DeleteMembershipParams;
 	create_space: CreateSpaceParams;
 	read_space: ReadSpaceParams;
 	read_spaces: ReadSpacesParams;
+	delete_space: DeleteSpaceParams;
 	create_file: CreateFileParams;
 	read_files: ReadFilesParams;
 	query_files: QueryFilesParams;
 	ping: PingParams;
 	toggle_main_nav: ToggleMainNavParams;
 	toggle_secondary_nav: ToggleSecondaryNavParams;
-	set_main_nav_view: SetMainNavViewParams;
 	set_mobile: SetMobileParams;
 	select_persona: SelectPersonaParams;
 	select_community: SelectCommunityParams;
@@ -40,11 +42,14 @@ export interface EventResponseByName {
 	create_community: CreateCommunityResponse;
 	read_community: ReadCommunityResponse;
 	read_communities: ReadCommunitiesResponse;
+	update_community_settings: UpdateCommunitySettingsResponse;
 	create_persona: CreatePersonaResponse;
 	create_membership: CreateMembershipResponse;
+	delete_membership: DeleteMembershipResponse;
 	create_space: CreateSpaceResponse;
 	read_space: ReadSpaceResponse;
 	read_spaces: ReadSpacesResponse;
+	delete_space: DeleteSpaceResponse;
 	create_file: CreateFileResponse;
 	read_files: ReadFilesResponse;
 	ping: PingResponse;
@@ -54,68 +59,74 @@ export interface LogInParams {
 	accountName: string;
 	password: string;
 }
-
 export type LogInResponse = null;
-
 export type LogInResponseResult = ApiResult<LogInResponse>;
 
 export type LogOutParams = void;
 export interface LogOutResponse {
 	message: string;
 }
-
 export type LogOutResponseResult = ApiResult<LogOutResponse>;
 
 export interface CreateCommunityParams {
 	name: string;
 	persona_id: number;
+	settings?: {
+		hue: number;
+	};
 }
-
 export interface CreateCommunityResponse {
 	community: Community;
 }
-
 export type CreateCommunityResponseResult = ApiResult<CreateCommunityResponse>;
 
 export interface ReadCommunityParams {
 	community_id: number;
 }
-
 export interface ReadCommunityResponse {
 	community: Community;
 }
-
 export type ReadCommunityResponseResult = ApiResult<ReadCommunityResponse>;
 
 export interface ReadCommunitiesParams {}
-
 export interface ReadCommunitiesResponse {
 	communities: Community[];
 }
-
 export type ReadCommunitiesResponseResult = ApiResult<ReadCommunitiesResponse>;
+
+export interface UpdateCommunitySettingsParams {
+	community_id: number;
+	settings: {
+		hue: number;
+	};
+}
+export type UpdateCommunitySettingsResponse = null;
+export type UpdateCommunitySettingsResponseResult = ApiResult<UpdateCommunitySettingsResponse>;
 
 export interface CreatePersonaParams {
 	name: string;
 }
-
 export interface CreatePersonaResponse {
 	persona: Persona;
 	community: Community;
 }
-
 export type CreatePersonaResponseResult = ApiResult<CreatePersonaResponse>;
 
 export interface CreateMembershipParams {
 	persona_id: number;
 	community_id: number;
 }
-
 export interface CreateMembershipResponse {
 	membership: Membership;
 }
-
 export type CreateMembershipResponseResult = ApiResult<CreateMembershipResponse>;
+
+export interface DeleteMembershipParams {
+	persona_id: number;
+	community_id: number;
+}
+export type DeleteMembershipResponse = null;
+export type DeleteMembershipResponseResult = ApiResult<DeleteMembershipResponse>;
 
 export interface CreateSpaceParams {
 	community_id: number;
@@ -124,53 +135,49 @@ export interface CreateSpaceParams {
 	media_type: string;
 	content: string;
 }
-
 export interface CreateSpaceResponse {
 	space: Space;
 }
-
 export type CreateSpaceResponseResult = ApiResult<CreateSpaceResponse>;
 
 export interface ReadSpaceParams {
 	space_id: number;
 }
-
 export interface ReadSpaceResponse {
 	space: Space;
 }
-
 export type ReadSpaceResponseResult = ApiResult<ReadSpaceResponse>;
 
 export interface ReadSpacesParams {
 	community_id: number;
 }
-
 export interface ReadSpacesResponse {
 	spaces: Space[];
 }
-
 export type ReadSpacesResponseResult = ApiResult<ReadSpacesResponse>;
+
+export interface DeleteSpaceParams {
+	space_id: number;
+}
+export type DeleteSpaceResponse = null;
+export type DeleteSpaceResponseResult = ApiResult<DeleteSpaceResponse>;
 
 export interface CreateFileParams {
 	actor_id: number;
 	space_id: number;
 	content: string;
 }
-
 export interface CreateFileResponse {
 	file: File;
 }
-
 export type CreateFileResponseResult = ApiResult<CreateFileResponse>;
 
 export interface ReadFilesParams {
 	space_id: number;
 }
-
 export interface ReadFilesResponse {
 	files: File[];
 }
-
 export type ReadFilesResponseResult = ApiResult<ReadFilesResponse>;
 
 export interface QueryFilesParams {
@@ -178,16 +185,12 @@ export interface QueryFilesParams {
 }
 
 export type PingParams = void;
-
 export type PingResponse = null;
-
 export type PingResponseResult = ApiResult<PingResponse>;
 
 export type ToggleMainNavParams = void;
 
 export type ToggleSecondaryNavParams = void;
-
-export type SetMainNavViewParams = 'explorer' | 'account';
 
 export type SetMobileParams = boolean;
 
@@ -216,21 +219,29 @@ export interface Dispatch {
 		eventName: 'read_communities',
 		params: ReadCommunitiesParams,
 	): Promise<ReadCommunitiesResponseResult>;
+	(
+		eventName: 'update_community_settings',
+		params: UpdateCommunitySettingsParams,
+	): Promise<UpdateCommunitySettingsResponseResult>;
 	(eventName: 'create_persona', params: CreatePersonaParams): Promise<CreatePersonaResponseResult>;
 	(
 		eventName: 'create_membership',
 		params: CreateMembershipParams,
 	): Promise<CreateMembershipResponseResult>;
+	(
+		eventName: 'delete_membership',
+		params: DeleteMembershipParams,
+	): Promise<DeleteMembershipResponseResult>;
 	(eventName: 'create_space', params: CreateSpaceParams): Promise<CreateSpaceResponseResult>;
 	(eventName: 'read_space', params: ReadSpaceParams): Promise<ReadSpaceResponseResult>;
 	(eventName: 'read_spaces', params: ReadSpacesParams): Promise<ReadSpacesResponseResult>;
+	(eventName: 'delete_space', params: DeleteSpaceParams): Promise<DeleteSpaceResponseResult>;
 	(eventName: 'create_file', params: CreateFileParams): Promise<CreateFileResponseResult>;
 	(eventName: 'read_files', params: ReadFilesParams): Promise<ReadFilesResponseResult>;
 	(eventName: 'query_files', params: QueryFilesParams): Readable<Readable<File>[]>;
 	(eventName: 'ping', params: PingParams): Promise<ApiResult<null>>;
 	(eventName: 'toggle_main_nav', params: ToggleMainNavParams): void;
 	(eventName: 'toggle_secondary_nav', params: ToggleSecondaryNavParams): void;
-	(eventName: 'set_main_nav_view', params: SetMainNavViewParams): void;
 	(eventName: 'set_mobile', params: SetMobileParams): void;
 	(eventName: 'select_persona', params: SelectPersonaParams): void;
 	(eventName: 'select_community', params: SelectCommunityParams): void;
@@ -253,12 +264,18 @@ export interface UiHandlers {
 	read_communities: (
 		ctx: DispatchContext<ReadCommunitiesParams, ReadCommunitiesResponseResult>,
 	) => Promise<ReadCommunitiesResponseResult>;
+	update_community_settings: (
+		ctx: DispatchContext<UpdateCommunitySettingsParams, UpdateCommunitySettingsResponseResult>,
+	) => Promise<UpdateCommunitySettingsResponseResult>;
 	create_persona: (
 		ctx: DispatchContext<CreatePersonaParams, CreatePersonaResponseResult>,
 	) => Promise<CreatePersonaResponseResult>;
 	create_membership: (
 		ctx: DispatchContext<CreateMembershipParams, CreateMembershipResponseResult>,
 	) => Promise<CreateMembershipResponseResult>;
+	delete_membership: (
+		ctx: DispatchContext<DeleteMembershipParams, DeleteMembershipResponseResult>,
+	) => Promise<DeleteMembershipResponseResult>;
 	create_space: (
 		ctx: DispatchContext<CreateSpaceParams, CreateSpaceResponseResult>,
 	) => Promise<CreateSpaceResponseResult>;
@@ -268,6 +285,9 @@ export interface UiHandlers {
 	read_spaces: (
 		ctx: DispatchContext<ReadSpacesParams, ReadSpacesResponseResult>,
 	) => Promise<ReadSpacesResponseResult>;
+	delete_space: (
+		ctx: DispatchContext<DeleteSpaceParams, DeleteSpaceResponseResult>,
+	) => Promise<DeleteSpaceResponseResult>;
 	create_file: (
 		ctx: DispatchContext<CreateFileParams, CreateFileResponseResult>,
 	) => Promise<CreateFileResponseResult>;
@@ -278,7 +298,6 @@ export interface UiHandlers {
 	ping: (ctx: DispatchContext<PingParams, PingResponseResult>) => Promise<ApiResult<null>>;
 	toggle_main_nav: (ctx: DispatchContext<ToggleMainNavParams, void>) => void;
 	toggle_secondary_nav: (ctx: DispatchContext<ToggleSecondaryNavParams, void>) => void;
-	set_main_nav_view: (ctx: DispatchContext<SetMainNavViewParams, void>) => void;
 	set_mobile: (ctx: DispatchContext<SetMobileParams, void>) => void;
 	select_persona: (ctx: DispatchContext<SelectPersonaParams, void>) => void;
 	select_community: (ctx: DispatchContext<SelectCommunityParams, void>) => void;

@@ -1,6 +1,6 @@
 import {toValidateSchema} from '$lib/util/ajv';
-import {PersonaParamsSchema, PersonaSchema} from './persona';
-import type {Persona, PersonaParams} from './persona';
+import {PersonaParamsSchema, PersonaSchema} from '$lib/vocab/persona/persona';
+import type {Persona, PersonaParams} from '$lib/vocab/persona/persona';
 
 export const validatePersona = toValidateSchema<Persona>(PersonaSchema);
 

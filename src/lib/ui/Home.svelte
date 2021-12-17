@@ -3,6 +3,7 @@
 
 	import type {Space} from '$lib/vocab/space/space.js';
 	import Avatar from '$lib/ui/Avatar.svelte';
+	import CommunitySettingsHue from '$lib/ui/CommunitySettingsHue.svelte';
 	import SpaceInfo from '$lib/ui/SpaceInfo.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
@@ -26,9 +27,13 @@
 	<section>
 		<h2>members</h2>
 		<!-- TODO display other meta info about the community -->
-		{#each $community.memberPersonas as persona (persona.persona_id)}
-			<Avatar name={toName(persona)} icon={toIcon(persona)} />
-		{/each}
+		<ul>
+			{#each $community.memberPersonas as persona (persona.persona_id)}
+				<li data-entity="persona:{persona.name}">
+					<Avatar name={toName(persona)} icon={toIcon(persona)} />
+				</li>
+			{/each}
+		</ul>
 	</section>
 	<section>
 		<!-- TODO this is just a stubbed out idea -->
@@ -47,6 +52,10 @@
 		<h2>activity</h2>
 		<div>This community was created at {$community.created}</div>
 		<code>TODO</code>
+	</section>
+	<section>
+		<h2>settings</h2>
+		<CommunitySettingsHue {community} />
 	</section>
 </div>
 

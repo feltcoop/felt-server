@@ -1,21 +1,23 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
 import {DIST_DIRNAME} from '@feltcoop/gro/dist/paths.js';
+import {ENV_PROD, fromEnv} from '$lib/server/env';
 
 export const task: Task = {
 	summary: 'deploy felt server to prod',
-	dev: false,
+	production: true,
 	run: async ({invokeTask}) => {
-		//TODO gro dev workaround
-		process.env.NODE_ENV = 'production';
-		const {fromEnv} = await import('$lib/server/env');
+		await invokeTask('infra/updateEnv');
+
+		//build the actual tar deployment artifact,
+		//using `spawn` instead of `invokeTask` to ensure the environment modified above is updated
+		const buildResult = await spawn('npx', ['gro', 'build']);
+		if (!buildResult.ok) throw Error('gro build failed');
 
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
-
 		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
-		await invokeTask('clean');
-		await invokeTask('build');
+
 		let timestamp = Date.now();
 		let artifactName = `felt_server_${timestamp}`;
 		let currentDeploy = `current_felt_server_deploy`;
@@ -50,7 +52,7 @@ export const task: Task = {
 		]);
 		//TEMP: move .env files into root
 		await spawn('scp', [`src/infra/.env.default`, `${deployLogin}:${currentDeploy}/.env`]);
-		await spawn('scp', [`.env.production`, `${deployLogin}:${currentDeploy}/.env.production`]);
+		await spawn('scp', [ENV_PROD, `${deployLogin}:${currentDeploy}/${ENV_PROD}`]);
 		//TODO: re/start the server via pm2
 	},
 };

@@ -4,17 +4,21 @@ import {copyFileSync, existsSync} from 'fs';
 // TODO does this stuff belong in `src/server/env.ts`?
 // TODO how to configure this stuff in user projects? felt/gro config?
 
+export const ENV_PROD = '.env.production';
+export const ENV_DEV = '.env.development';
+
 const dev = import.meta?.env?.DEV ?? process.env.NODE_ENV !== 'production'; // TODO support in Gro and remove second half
 console.log('drawing env from dev', dev);
 
 const envs: {file: string; defaultFile: string}[] = [
 	{file: '.env', defaultFile: 'src/infra/.env.default'},
 	dev
-		? {file: '.env.development', defaultFile: 'src/infra/.env.development.default'}
-		: {file: '.env.production', defaultFile: 'src/infra/.env.production.default'},
+		? {file: ENV_DEV, defaultFile: `src/infra/${ENV_DEV}.default`}
+		: {file: ENV_PROD, defaultFile: `src/infra/${ENV_PROD}.default`},
 ];
 
 interface Env {
+	VITE_GIT_HASH: string;
 	COOKIE_KEYS: string; // TODO validate this somehow to avoid production security issues
 	VITE_DEPLOY_SERVER_HOST: string;
 	DEPLOY_IP: string;
@@ -42,5 +46,17 @@ const loadEnvs = () => {
 			copyFileSync(env.defaultFile, env.file);
 		}
 		dotenv.config({path: env.file});
+	}
+};
+
+// Adds or updates an env var `value` for `key`.
+export const updateEnv = (contents: string, key: string, value: string): string => {
+	const matcher = new RegExp(`^${key}=(.*)$`, 'm');
+	const matched = contents.match(matcher);
+	if (matched) {
+		if (matched[1] === value) return contents;
+		return contents.replace(matcher, `${key}=${value}`);
+	} else {
+		return contents + (contents.endsWith('\n') ? '' : '\n') + `${key}=${value}`;
 	}
 };

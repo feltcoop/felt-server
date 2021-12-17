@@ -36,16 +36,6 @@ export const events: EventInfo[] = [
 	},
 	{
 		type: 'ClientEvent',
-		name: 'set_main_nav_view',
-		params: {
-			// TODO this is the type `MainNavView` -- should that be represented in a schema?
-			$id: 'https://felt.social/vocab/set_main_nav_view_params.json',
-			enum: ['explorer', 'account'],
-		},
-		returns: 'void',
-	},
-	{
-		type: 'ClientEvent',
 		name: 'set_mobile',
 		params: {
 			$id: 'https://felt.social/vocab/set_mobile_params.json',
