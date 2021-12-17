@@ -487,7 +487,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			const entityStore = writable(entity);
 			const entities = entitiesBySpace.get(entity.space_id);
 			if (entities) {
-				// TODO check if it already exists -- maybe by getting `fileStore` from a `fileById` map
+				// TODO check if it already exists -- maybe by getting `entityStore` from a `entityById` map
 				entities.update(($entities) => $entities.concat(entityStore));
 			} else {
 				entitiesBySpace.set(entity.space_id, writable([entityStore]));

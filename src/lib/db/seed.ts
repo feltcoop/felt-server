@@ -106,12 +106,12 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 		if (!(spaceContent.type in entitiesContents)) {
 			continue;
 		}
-		const fileContents = entitiesContents[spaceContent.type];
-		for (const fileContent of fileContents) {
+		const entityContents = entitiesContents[spaceContent.type];
+		for (const entityContent of entityContents) {
 			await db.repos.entity.create({
 				actor_id: nextPersona().persona_id,
 				space_id: space.space_id,
-				content: fileContent,
+				content: entityContent,
 			});
 		}
 	}
