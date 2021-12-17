@@ -1,6 +1,5 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {CreateSpaceParams} from '$lib/app/eventTypes';
 import type {Space} from '$lib/vocab/space/space.js';
 import type {Database} from '$lib/db/Database';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
@@ -46,13 +45,13 @@ export const spaceRepo = (db: Database) => ({
 		console.log('[spaceRepo] space data', data);
 		return {ok: true, value: data[0]};
 	},
-	create: async ({
-		name,
-		content,
-		media_type,
-		url,
-		community_id,
-	}: CreateSpaceParams): Promise<Result<{value: Space}>> => {
+	create: async (
+		name: string,
+		content: string,
+		media_type: string,
+		url: string,
+		community_id: number,
+	): Promise<Result<{value: Space}>> => {
 		const data = await db.sql<Space[]>`
       INSERT INTO spaces (name, url, media_type, content, community_id) VALUES (
         ${name},${url},${media_type},${content},${community_id}
@@ -65,8 +64,14 @@ export const spaceRepo = (db: Database) => ({
 		community: Community,
 	): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 		const spaces: Space[] = [];
-		for (const spaceParams of toDefaultSpaces(community)) {
-			const result = await db.repos.space.create(spaceParams);
+		for (const params of toDefaultSpaces(community)) {
+			const result = await db.repos.space.create(
+				params.name,
+				params.content,
+				params.media_type,
+				params.url,
+				params.community_id,
+			);
 			if (!result.ok) return {ok: false, reason: 'Failed to create default spaces for community.'};
 			spaces.push(result.value);
 		}

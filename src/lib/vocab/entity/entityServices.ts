@@ -27,7 +27,11 @@ export const createEntityService: Service<CreateEntityParams, CreateEntityRespon
 	perform: async ({server, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
 		// server.db.repos.account.validatePersona(account_id, actor_id);
-		const insertEntitiesResult = await server.db.repos.entity.create(params);
+		const insertEntitiesResult = await server.db.repos.entity.create(
+			params.actor_id,
+			params.space_id,
+			params.content,
+		);
 		if (insertEntitiesResult.ok) {
 			return {ok: true, status: 200, value: {entity: insertEntitiesResult.value}}; // TODO API types
 		} else {

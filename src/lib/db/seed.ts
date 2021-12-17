@@ -37,7 +37,9 @@ export const seed = async (db: Database): Promise<void> => {
 	};
 	const personas: Persona[] = [];
 	for (const accountParams of accountsParams) {
-		const account = unwrap(await db.repos.account.create(accountParams));
+		const account = unwrap(
+			await db.repos.account.create(accountParams.name, accountParams.password),
+		);
 		log.trace('created account', account);
 		for (const personaName of personasParams[account.name]) {
 			const {persona, community} = unwrap(
@@ -70,10 +72,7 @@ export const seed = async (db: Database): Promise<void> => {
 		);
 		communities.push(community);
 		for (const persona of otherPersonas) {
-			await db.repos.membership.create({
-				persona_id: persona.persona_id,
-				community_id: community.community_id,
-			});
+			await db.repos.membership.create(persona.persona_id, community.community_id);
 		}
 		await createDefaultEntities(db, community.spaces, personas);
 	}
@@ -108,11 +107,7 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 		}
 		const entityContents = entitiesContents[spaceContent.type];
 		for (const entityContent of entityContents) {
-			await db.repos.entity.create({
-				actor_id: nextPersona().persona_id,
-				space_id: space.space_id,
-				content: entityContent,
-			});
+			await db.repos.entity.create(nextPersona().persona_id, space.space_id, entityContent);
 		}
 	}
 };

@@ -37,7 +37,9 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	//
 	//
 	const accountParams = randomAccountParams();
-	const account = unwrap(await server.db.repos.account.create(accountParams));
+	const account = unwrap(
+		await server.db.repos.account.create(accountParams.name, accountParams.password),
+	);
 
 	// TODO create 2 personas
 	const personaParams = randomPersonaParams();
@@ -67,7 +69,15 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	persona.community_ids.push(community.community_id); // TODO hacky
 
 	const spaceParams = randomSpaceParams(community.community_id);
-	const space = unwrap(await server.db.repos.space.create(spaceParams));
+	const space = unwrap(
+		await server.db.repos.space.create(
+			spaceParams.name,
+			spaceParams.content,
+			spaceParams.media_type,
+			spaceParams.url,
+			spaceParams.community_id,
+		),
+	);
 	if (!validateSpace()(space)) {
 		throw new Error(
 			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
@@ -90,18 +100,10 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const entityContent1 = 'this is entity 1';
 	const entityContent2 = 'entity: 2';
 	const entity1 = await unwrapEntity(
-		server.db.repos.entity.create({
-			actor_id: persona.persona_id,
-			space_id: space.space_id,
-			content: entityContent1,
-		}),
+		server.db.repos.entity.create(persona.persona_id, space.space_id, entityContent1),
 	);
 	const entity2 = await unwrapEntity(
-		server.db.repos.entity.create({
-			actor_id: persona.persona_id,
-			space_id: space.space_id,
-			content: entityContent2,
-		}),
+		server.db.repos.entity.create(persona.persona_id, space.space_id, entityContent2),
 	);
 
 	// do queries

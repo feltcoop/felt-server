@@ -144,7 +144,10 @@ export const createMembershipService: Service<
 	perform: async ({server, params}) => {
 		console.log('[CreateMembership] creating membership', params.persona_id, params.community_id);
 
-		const createMembershipResult = await server.db.repos.membership.create(params);
+		const createMembershipResult = await server.db.repos.membership.create(
+			params.persona_id,
+			params.community_id,
+		);
 		if (createMembershipResult.ok) {
 			return {ok: true, status: 200, value: {membership: createMembershipResult.value}};
 		} else {

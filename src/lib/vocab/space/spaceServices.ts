@@ -75,7 +75,13 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 		}
 
 		console.log('[CreateSpace] creating space for community', params.community_id);
-		const createSpaceResult = await db.repos.space.create(params);
+		const createSpaceResult = await db.repos.space.create(
+			params.name,
+			params.content,
+			params.media_type,
+			params.url,
+			params.community_id,
+		);
 		if (createSpaceResult.ok) {
 			return {ok: true, status: 200, value: {space: createSpaceResult.value}};
 		} else {
