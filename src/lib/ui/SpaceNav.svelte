@@ -8,7 +8,7 @@
 	import SpaceNavItem from '$lib/ui/SpaceNavItem.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 
-	export let selectedPersona: Readable<Persona>;
+	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
 	export let spaces: Space[]; // TODO array of stores?
 	export let selectedSpace: Readable<Space>;
@@ -16,18 +16,13 @@
 
 <div class="space-nav" data-entity="community:{$community.name}">
 	<div class="header">
-		<SpaceInput {community} />
+		<SpaceInput {persona} {community} />
 		<MembershipInput {community} />
 		<SpaceDelete space={selectedSpace} />
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
-		<SpaceNavItem
-			persona={selectedPersona}
-			{community}
-			{space}
-			selected={space === $selectedSpace}
-		/>
+		<SpaceNavItem {persona} {community} {space} selected={space === $selectedSpace} />
 	{/each}
 </div>
 

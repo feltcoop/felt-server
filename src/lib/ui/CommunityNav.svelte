@@ -9,8 +9,15 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {sessionPersonas, selectedPersona, selectedCommunity, communitiesByPersonaId},
+		ui: {
+			sessionPersonas,
+			selectedPersona: personaSelection,
+			selectedCommunity,
+			communitiesByPersonaId,
+		},
 	} = getApp();
+
+	$: selectedPersona = $personaSelection!;
 
 	// TODO improve the efficiency of this with better data structures and caching
 	const toPersonaCommunity = (persona: Persona): Readable<Community> =>
@@ -19,7 +26,7 @@
 
 <div class="community-nav">
 	<div class="header">
-		<CommunityInput />
+		<CommunityInput persona={selectedPersona} />
 	</div>
 	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
 	<div>
@@ -28,7 +35,7 @@
 			<CommunityNavButton
 				community={toPersonaCommunity(get(persona))}
 				{persona}
-				selected={persona === $selectedPersona &&
+				selected={persona === $personaSelection &&
 					toPersonaCommunity(get(persona)) === $selectedCommunity}
 			/>
 			{#each $communitiesByPersonaId[get(persona).persona_id] as community (community)}
@@ -36,7 +43,7 @@
 					<CommunityNavButton
 						{community}
 						{persona}
-						selected={persona === $selectedPersona && community === $selectedCommunity}
+						selected={persona === $personaSelection && community === $selectedCommunity}
 					/>
 				{/if}
 			{/each}

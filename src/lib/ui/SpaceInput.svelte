@@ -6,9 +6,13 @@
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
 	import {ViewType, viewTypes as allViewTypes} from '$lib/vocab/space/space';
+	import {toName, toIcon} from '$lib/vocab/entity/entity';
+	import Avatar from '$lib/ui/Avatar.svelte';
+	import type {Persona} from '$lib/vocab/persona/persona';
 
 	const {dispatch} = getApp();
 
+	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
 
 	// TODO instead of filtering here, this perhaps should be determined by metadata on space types
@@ -66,6 +70,11 @@
 	<Dialog on:close={() => (opened = false)}>
 		<div class="markup">
 			<h1>Create a new space</h1>
+			<section>
+				<!-- TODO likely make these a `select` or picker -->
+				<Avatar name={toName($persona)} icon={toIcon($persona)} />
+				<Avatar name={$community.name} type="Community" />
+			</section>
 			<form>
 				<div class:error={!!errorMessage}>{errorMessage || ''}</div>
 				<input
@@ -103,5 +112,10 @@
 	}
 	.type-selector {
 		margin-left: var(--spacing_xs);
+	}
+	section {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 </style>

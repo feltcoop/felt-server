@@ -49,7 +49,7 @@
 			<CommunityNav />
 			{#if selectedPersona && selectedCommunity && selectedSpace}
 				<SpaceNav
-					{selectedPersona}
+					persona={selectedPersona}
 					community={selectedCommunity}
 					spaces={$selectedCommunity.spaces}
 					{selectedSpace}
