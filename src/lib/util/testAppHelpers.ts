@@ -4,7 +4,7 @@ import type {AppStores} from '$lib/ui/app';
 import {toUi} from '$lib/ui/ui';
 import {toHttpApiClient} from '$lib/ui/HttpApiClient';
 import type {EventParamsByName, EventResponseByName} from '$lib/app/eventTypes';
-import {toApi} from '$lib/ui/api';
+import {toDispatch} from '$lib/app/dispatch';
 import {findService} from '$lib/ui/services';
 import type {ClientSession} from '$lib/session/clientSession';
 import {installSourceMaps} from '$lib/util/testHelpers';
@@ -26,7 +26,7 @@ export const setupApp =
 		);
 		context.app = {
 			ui,
-			api: toApi(ui, httpApiClient),
+			dispatch: toDispatch(ui, httpApiClient),
 			devmode: writable(false),
 			// TODO refactor this so the socket isn't an app dependency,
 			// instead the socket should only exist for the websocket client

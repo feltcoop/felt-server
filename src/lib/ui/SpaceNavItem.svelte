@@ -8,7 +8,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		api: {dispatch},
+		dispatch,
 		ui: {mobile, expandMainNav, sessionPersonaIndices},
 	} = getApp();
 
@@ -23,6 +23,7 @@
 <a
 	href={toSpaceUrl(personaIndex, $community, space)}
 	class:selected
+	data-entity="space:{space.name}"
 	on:click={() => {
 		// TODO Should this be a click handler or react to UI system events/changes?
 		// Might make more UX sense to make it react to any state changes,

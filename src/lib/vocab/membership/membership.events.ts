@@ -29,4 +29,28 @@ export const create_membership: ServiceEventInfo = {
 	},
 };
 
-export const events: EventInfo[] = [create_membership];
+export const delete_membership: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'delete_membership',
+	params: {
+		$id: 'https://felt.social/vocab/delete_membership_params.json',
+		type: 'object',
+		properties: {
+			persona_id: {type: 'number'},
+			community_id: {type: 'number'},
+		},
+		required: ['persona_id', 'community_id'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: 'https://felt.social/vocab/delete_membership_response.json',
+		type: 'null',
+	},
+	returns: 'Promise<DeleteMembershipResponseResult>',
+	route: {
+		path: '/api/v1/memberships',
+		method: 'DELETE',
+	},
+};
+
+export const events: EventInfo[] = [create_membership, delete_membership];

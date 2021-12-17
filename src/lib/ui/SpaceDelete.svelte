@@ -5,9 +5,7 @@
 	import {getApp} from '$lib/ui/app';
 	import type {Space} from '$lib/vocab/space/space';
 
-	const {
-		api: {dispatch},
-	} = getApp();
+	const {dispatch} = getApp();
 
 	export let space: Readable<Space>;
 

@@ -1,4 +1,5 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
+import {CommunitySettingsSchema} from '$lib/vocab/community/community';
 
 export const create_community: ServiceEventInfo = {
 	type: 'ServiceEvent',
@@ -9,6 +10,7 @@ export const create_community: ServiceEventInfo = {
 		properties: {
 			name: {type: 'string'},
 			persona_id: {type: 'number'},
+			settings: CommunitySettingsSchema,
 		},
 		required: ['name', 'persona_id'],
 		additionalProperties: false,
@@ -83,4 +85,33 @@ export const read_communities: ServiceEventInfo = {
 	},
 };
 
-export const events: EventInfo[] = [create_community, read_community, read_communities];
+export const update_community_settings: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'update_community_settings',
+	params: {
+		$id: 'https://felt.social/vocab/update_community_settings_params.json',
+		type: 'object',
+		properties: {
+			community_id: {type: 'number'},
+			settings: CommunitySettingsSchema,
+		},
+		required: ['community_id', 'settings'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: 'https://felt.social/vocab/update_community_settings_response.json',
+		type: 'null',
+	},
+	returns: 'Promise<UpdateCommunitySettingsResponseResult>',
+	route: {
+		path: '/api/v1/communities/:community_id/settings',
+		method: 'POST',
+	},
+};
+
+export const events: EventInfo[] = [
+	create_community,
+	read_community,
+	read_communities,
+	update_community_settings,
+];
