@@ -4,7 +4,7 @@ import {events as community_events} from '$lib/vocab/community/community.events'
 import {events as persona_events} from '$lib/vocab/persona/persona.events';
 import {events as membership_events} from '$lib/vocab/membership/membership.events';
 import {events as space_events} from '$lib/vocab/space/space.events';
-import {events as file_events} from '$lib/vocab/file/file.events';
+import {events as file_events} from '$lib/vocab/entity/entity.events';
 import type {EventInfo} from '$lib/vocab/event/event';
 
 export const eventInfos: EventInfo[] = session_events.concat(

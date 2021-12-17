@@ -7,7 +7,7 @@ import type {Space} from '$lib/vocab/space/space';
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {ClientSession} from '$lib/session/clientSession';
 import type {AccountModel} from '$lib/vocab/account/account';
-import type {File} from '$lib/vocab/file/file';
+import type {File} from '$lib/vocab/entity/entity';
 import type {Membership} from '$lib/vocab/membership/membership';
 import type {DispatchContext} from '$lib/app/dispatch';
 import type {UiHandlers} from '$lib/app/eventTypes';

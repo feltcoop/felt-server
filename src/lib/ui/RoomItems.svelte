@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
 
-	import type {File} from '$lib/vocab/file/file.js';
+	import type {File} from '$lib/vocab/entity/entity';
 	import RoomItem from '$lib/ui/RoomItem.svelte';
 
 	export let files: Readable<Readable<File>[]>;

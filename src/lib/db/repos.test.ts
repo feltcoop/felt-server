@@ -5,13 +5,13 @@ import {unwrap} from '@feltcoop/felt';
 
 import type {TestServerContext} from '$lib/util/testServerHelpers';
 import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
-import {validateFile} from '$lib/vocab/file/validateFile';
+import {validateFile} from '$lib/vocab/entity/validateFile';
 import {validateSpace} from '$lib/vocab/space/validateSpace';
 import {toValidationErrorMessage} from '$lib/util/ajv';
 import {validateAccount, validateAccountModel} from '$lib/vocab/account/validateAccount';
 import {validateCommunity} from '$lib/vocab/community/validateCommunity';
 import {validatePersona} from '$lib/vocab/persona/validatePersona';
-import type {File} from '$lib/vocab/file/file';
+import type {File} from '$lib/vocab/entity/entity';
 import {
 	randomAccountParams,
 	randomCommunityParams,
@@ -77,30 +77,30 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const defaultSpaces = toDefaultSpaces(community);
 	const defaultSpaceCount = defaultSpaces.length;
 
-	const unwrapFile = async (promise: Promise<Result<{value: File}>>): Promise<File> => {
-		const file = unwrap(await promise);
-		if (!validateFile()(file)) {
+	const unwrapEntity = async (promise: Promise<Result<{value: File}>>): Promise<File> => {
+		const entity = unwrap(await promise);
+		if (!validateFile()(entity)) {
 			throw new Error(
-				`Failed to validate file: ${toValidationErrorMessage(validateFile().errors![0])}`,
+				`Failed to validate entity: ${toValidationErrorMessage(validateFile().errors![0])}`,
 			);
 		}
-		return file;
+		return entity;
 	};
 
-	const fileContent1 = 'this is file 1';
-	const fileContent2 = 'file: 2';
-	const file1 = await unwrapFile(
-		server.db.repos.file.create({
+	const entityContent1 = 'this is entity 1';
+	const entityContent2 = 'entity: 2';
+	const entity1 = await unwrapEntity(
+		server.db.repos.entity.create({
 			actor_id: persona.persona_id,
 			space_id: space.space_id,
-			content: fileContent1,
+			content: entityContent1,
 		}),
 	);
-	const file2 = await unwrapFile(
-		server.db.repos.file.create({
+	const entity2 = await unwrapEntity(
+		server.db.repos.entity.create({
 			actor_id: persona.persona_id,
 			space_id: space.space_id,
-			content: fileContent2,
+			content: entityContent2,
 		}),
 	);
 
@@ -109,16 +109,16 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	//
 	//
 
-	const filterFilesValue = unwrap(await server.db.repos.file.filterBySpace(space.space_id));
+	const filterFilesValue = unwrap(await server.db.repos.entity.filterBySpace(space.space_id));
 	assert.is(filterFilesValue.length, 2);
 	filterFilesValue.forEach((f) => {
 		if (!validateFile()(f)) {
 			throw new Error(
-				`Failed to validate file: ${toValidationErrorMessage(validateFile().errors![0])}`,
+				`Failed to validate entity: ${toValidationErrorMessage(validateFile().errors![0])}`,
 			);
 		}
 	});
-	assert.equal(filterFilesValue, [file1, file2]);
+	assert.equal(filterFilesValue, [entity1, entity2]);
 
 	const findSpaceValue = unwrap(await server.db.repos.space.findById(space.space_id));
 	assert.equal(findSpaceValue, space);
@@ -199,7 +199,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	//
 
 	// TODO implement
-	// const deleteFileResult = await server.db.repos.file.delete(
+	// const deleteFileResult = await server.db.repos.entity.delete(
 	// 	account.account_id,
 	// 	space.space_id,
 	// 	content,

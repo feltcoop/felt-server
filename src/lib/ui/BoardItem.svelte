@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
 
-	import type {File} from '$lib/vocab/file/file.js';
+	import type {File} from '$lib/vocab/entity/entity';
 	import {randomHue} from '$lib/ui/color';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
@@ -19,7 +19,7 @@
 	$: hue = randomHue($persona.name);
 </script>
 
-<li style="--hue: {hue}" data-entity="persona:{$persona.name},file:{$file.file_id}">
+<li style="--hue: {hue}" data-entity="persona:{$persona.name},file:{$file.entity_id}">
 	<div class="markup">
 		<p>
 			{$file.content}

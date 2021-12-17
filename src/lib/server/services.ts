@@ -9,7 +9,7 @@ import {
 	createMembershipService,
 } from '$lib/vocab/community/communityServices';
 import {deleteMembershipService} from '$lib/vocab/membership/membershipServices';
-import {readFilesService, createFileService} from '$lib/vocab/file/fileServices';
+import {readFilesService, createFileService} from '$lib/vocab/entity/entityServices';
 import {
 	readSpaceService,
 	readSpacesService,

@@ -5,7 +5,7 @@ import type {
 	ReadFilesParams,
 	ReadFilesResponseResult,
 } from '$lib/app/eventTypes';
-import {ReadFiles, CreateFile} from '$lib/vocab/file/file.events';
+import {ReadFiles, CreateFile} from '$lib/vocab/entity/entity.events';
 
 // TODO rename to `getFiles`? `loadFiles`?
 export const readFilesService: Service<ReadFilesParams, ReadFilesResponseResult> = {

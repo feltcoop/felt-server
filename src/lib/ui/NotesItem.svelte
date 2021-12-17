@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
 
-	import type {File} from '$lib/vocab/file/file.js';
+	import type {File} from '$lib/vocab/entity/entity';
 	import {getApp} from '$lib/ui/app';
 
 	const {
@@ -13,7 +13,7 @@
 	$: persona = findPersonaById($file.actor_id);
 </script>
 
-<li data-entity="persona:{$persona.name},file:{$file.file_id}">
+<li data-entity="persona:{$persona.name},file:{$file.entity_id}">
 	{$file.content}
 </li>
 

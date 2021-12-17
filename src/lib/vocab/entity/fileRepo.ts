@@ -1,6 +1,6 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {File} from '$lib/vocab/file/file.js';
+import type {File} from '$lib/vocab/entity/entity';
 import type {Database} from '$lib/db/Database';
 import type {CreateFileParams} from '$lib/app/eventTypes';
 
@@ -22,7 +22,7 @@ export const fileRepo = (db: Database) => ({
 	filterBySpace: async (space_id: number): Promise<Result<{value: File[]}>> => {
 		console.log(`[db] preparing to query for space files: ${space_id}`);
 		const data = await db.sql<File[]>`
-      SELECT f.file_id, f.content, f.actor_id, f.space_id, f.created, f.updated 
+      SELECT f.entity_id, f.content, f.actor_id, f.space_id, f.created, f.updated 
 			FROM files f WHERE f.space_id= ${space_id}
     `;
 		console.log('[db] space files', data);
