@@ -12,6 +12,8 @@
 		ui: {sessionPersonas, personaSelection, communitySelection, communitiesByPersonaId},
 	} = getApp();
 
+	$: selectedPersona = $personaSelection!;
+
 	// TODO improve the efficiency of this with better data structures and caching
 	const toPersonaCommunity = (persona: Persona): Readable<Community> =>
 		$communitiesByPersonaId[persona.persona_id].find((c) => get(c).name === persona.name)!;
@@ -19,7 +21,7 @@
 
 <div class="community-nav">
 	<div class="header">
-		<CommunityInput />
+		<CommunityInput persona={selectedPersona} />
 	</div>
 	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
 	<div>

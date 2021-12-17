@@ -9,11 +9,7 @@
 	import NoteItems from '$lib/ui/NotesItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {
-		dispatch,
-		ui: {personaIdSelection},
-		socket,
-	} = getApp();
+	const {dispatch, socket} = getApp();
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
@@ -33,7 +29,7 @@
 		await dispatch('create_file', {
 			space_id: $space.space_id,
 			content,
-			actor_id: $personaIdSelection!, // TODO generic erorr check for no selected persona?
+			actor_id: $persona.persona_id,
 		});
 		text = '';
 	};

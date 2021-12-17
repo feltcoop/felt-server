@@ -2,14 +2,15 @@
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
+	import type {Readable} from 'svelte/store';
 
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
+	import type {Persona} from '$lib/vocab/persona/persona';
 
-	const {
-		dispatch,
-		ui: {personaIdSelection},
-	} = getApp();
+	const {dispatch} = getApp();
+
+	export let persona: Readable<Persona>;
 
 	let opened = false;
 	let name = '';
@@ -20,7 +21,7 @@
 		if (pending) return;
 		errorMessage = null;
 		pending = true;
-		const result = await dispatch('create_community', {name, persona_id: $personaIdSelection!});
+		const result = await dispatch('create_community', {name, persona_id: $persona.persona_id});
 		pending = false;
 		errorMessage = result.ok ? null : result.reason;
 	};
