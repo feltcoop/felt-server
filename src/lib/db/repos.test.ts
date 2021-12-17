@@ -5,7 +5,7 @@ import {unwrap} from '@feltcoop/felt';
 
 import type {TestServerContext} from '$lib/util/testServerHelpers';
 import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
-import {validateFile} from '$lib/vocab/entity/validateFile';
+import {validateFile} from '$lib/vocab/entity/validateEntity';
 import {validateSpace} from '$lib/vocab/space/validateSpace';
 import {toValidationErrorMessage} from '$lib/util/ajv';
 import {validateAccount, validateAccountModel} from '$lib/vocab/account/validateAccount';
