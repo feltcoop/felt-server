@@ -471,10 +471,11 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 
 				// TODO maybe make a nav helper or event?
 				const $community = get(community);
-				if (space_id === get(selectedSpaceIdByCommunity)[$community.community_id])
+				if (space_id === get(selectedSpaceIdByCommunity)[$community.community_id]) {
 					goto('/' + $community.name + $community.spaces[0].url + location.search, {
 						replaceState: true,
 					});
+				}
 			});
 
 			spaces.update(($spaces) => $spaces.filter((space) => get(space).space_id !== space_id));
