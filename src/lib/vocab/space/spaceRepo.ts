@@ -12,7 +12,8 @@ export const spaceRepo = (db: Database) => ({
 	): Promise<Result<{value: Space}, {type: 'no_space_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for space id: ${space_id}`);
 		const data = await db.sql<Space[]>`
-      select space_id, name, url, media_type, content, updated, created, community_id from spaces where space_id = ${space_id}
+			SELECT space_id, name, url, media_type, content, updated, created, community_id
+			FROM spaces WHERE space_id = ${space_id}
     `;
 		console.log('[db] space data', data);
 		if (data.length) {
@@ -27,8 +28,9 @@ export const spaceRepo = (db: Database) => ({
 	filterByCommunity: async (community_id: number): Promise<Result<{value: Space[]}>> => {
 		console.log(`[spaceRepo] preparing to query for community spaces: ${community_id}`);
 		const data = await db.sql<Space[]>`
-      SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.updated, s.created, s.community_id FROM spaces s WHERE s.community_id= ${community_id}
-    `;
+			SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.updated, s.created, s.community_id
+			FROM spaces s WHERE s.community_id=${community_id}
+		`;
 		// console.log('[db] spaces data', data);
 		return {ok: true, value: data};
 	},
@@ -40,7 +42,8 @@ export const spaceRepo = (db: Database) => ({
 			`[spaceRepo] preparing to query for community space by url: ${community_id} ${url}`,
 		);
 		const data = await db.sql<Space[]>`
-			SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.updated, s.created, s.community_id FROM spaces s WHERE s.community_id= ${community_id} AND s.url = ${url}
+			SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.updated, s.created, s.community_id
+			FROM spaces s WHERE s.community_id=${community_id} AND s.url=${url}
 		`;
 		console.log('[spaceRepo] space data', data);
 		return {ok: true, value: data[0]};
@@ -53,10 +56,10 @@ export const spaceRepo = (db: Database) => ({
 		community_id: number,
 	): Promise<Result<{value: Space}>> => {
 		const data = await db.sql<Space[]>`
-      INSERT INTO spaces (name, url, media_type, content, community_id) VALUES (
-        ${name},${url},${media_type},${content},${community_id}
-      ) RETURNING *
-    `;
+			INSERT INTO spaces (name, url, media_type, content, community_id) VALUES (
+				${name},${url},${media_type},${content},${community_id}
+			) RETURNING *
+		`;
 		// console.log('[db] created communitySpace', communitySpace);
 		return {ok: true, value: data[0]};
 	},
@@ -82,8 +85,8 @@ export const spaceRepo = (db: Database) => ({
 		space_id: number,
 	): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {
 		const data = await db.sql<any[]>`
-      DELETE FROM spaces WHERE ${space_id}=space_id
-    `;
+			DELETE FROM spaces WHERE ${space_id}=space_id
+		`;
 
 		if (data.count !== 1) {
 			return {

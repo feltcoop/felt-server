@@ -10,10 +10,10 @@ export const membershipRepo = (db: Database) => ({
 		community_id: number,
 	): Promise<Result<{value: Membership}>> => {
 		const data = await db.sql<Membership[]>`
-      INSERT INTO memberships (persona_id, community_id) VALUES (
-        ${persona_id},${community_id}
-      ) RETURNING *
-    `;
+			INSERT INTO memberships (persona_id, community_id) VALUES (
+				${persona_id},${community_id}
+			) RETURNING *
+		`;
 		console.log('[db] created membership', data);
 		return {ok: true, value: data[0]};
 	},
@@ -40,9 +40,9 @@ export const membershipRepo = (db: Database) => ({
 		community_id: number,
 	): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {
 		const data = await db.sql<any[]>`
-      DELETE FROM memberships 
+			DELETE FROM memberships 
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
-    `;
+		`;
 
 		if (data.count !== 1) {
 			return {

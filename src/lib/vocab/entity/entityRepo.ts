@@ -10,10 +10,10 @@ export const entityRepo = (db: Database) => ({
 		content: string,
 	): Promise<Result<{value: Entity}>> => {
 		const data = await db.sql<Entity[]>`
-      INSERT INTO entities (actor_id, space_id, content) VALUES (
-        ${actor_id},${space_id},${content}
-      ) RETURNING *
-    `;
+			INSERT INTO entities (actor_id, space_id, content) VALUES (
+				${actor_id},${space_id},${content}
+			) RETURNING *
+		`;
 		// console.log('[db] create entity', data);
 		return {ok: true, value: data[0]};
 	},
@@ -21,15 +21,10 @@ export const entityRepo = (db: Database) => ({
 	filterBySpace: async (space_id: number): Promise<Result<{value: Entity[]}>> => {
 		console.log(`[db] preparing to query for space entities: ${space_id}`);
 		const data = await db.sql<Entity[]>`
-      SELECT f.entity_id, f.content, f.actor_id, f.space_id, f.created, f.updated 
-			FROM entities f WHERE f.space_id= ${space_id}
-    `;
+			SELECT entity_id, content, actor_id, space_id, created, updated 
+			FROM entities WHERE space_id= ${space_id}
+		`;
 		console.log('[db] space entities', data);
 		return {ok: true, value: data};
 	},
 });
-
-// TODO to associate schemas with repo methods,
-// what about something like this?
-// or use decorators? on classes? hmm. something else?
-// repoSchemas.set(entityRepo.filterBySpace, EntityFilterBySpaceResponseSchema);
