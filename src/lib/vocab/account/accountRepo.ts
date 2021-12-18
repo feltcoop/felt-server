@@ -34,7 +34,7 @@ export const accountRepo = (db: Database) => ({
 		return {
 			ok: false,
 			type: 'no_account_found',
-			reason: `No account found with account_id: ${account_id}`,
+			message: 'no account found',
 		};
 	},
 	findByName: async (
@@ -46,6 +46,6 @@ export const accountRepo = (db: Database) => ({
 		if (data.length) {
 			return {ok: true, value: data[0]};
 		}
-		return {ok: false, type: 'no_account_found', reason: `No account found with name: ${name}`};
+		return {ok: false, type: 'no_account_found', message: 'no account found'};
 	},
 });

@@ -18,12 +18,12 @@ export const createPersonaService: Service<CreatePersonaParams, CreatePersonaRes
 
 		if (!findByNameResult.ok) {
 			console.log('[CreatePersona] error validating unique name for new persona');
-			return {ok: false, status: 500, reason: 'error validating unique name for new persona'};
+			return {ok: false, status: 500, message: 'error validating unique name for new persona'};
 		}
 
 		if (findByNameResult.value) {
 			console.log('[CreatePersona] provided name for persona already exists');
-			return {ok: false, status: 409, reason: 'a persona with that name already exists'};
+			return {ok: false, status: 409, message: 'a persona with that name already exists'};
 		}
 
 		console.log('[CreatePersona] creating persona', name);
@@ -32,7 +32,7 @@ export const createPersonaService: Service<CreatePersonaParams, CreatePersonaRes
 			return {ok: true, status: 200, value: createPersonaResult.value};
 		} else {
 			console.log('[CreatePersona] error searching for community personas');
-			return {ok: false, status: 500, reason: 'error searching for community personas'};
+			return {ok: false, status: 500, message: 'error searching for community personas'};
 		}
 	},
 };

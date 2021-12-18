@@ -20,7 +20,7 @@
 		if (result.ok) {
 			opened = false;
 		} else {
-			errorMessage = result.reason;
+			errorMessage = result.message;
 		}
 	};
 

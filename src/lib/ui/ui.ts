@@ -14,9 +14,6 @@ import type {UiHandlers} from '$lib/app/eventTypes';
 import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
-const UNKNOWN_API_ERROR =
-	'Something went wrong. Maybe the server or your Internet connection is down. Please try again.';
-
 const KEY = Symbol();
 
 export const getUi = (): Ui => getContext(KEY);
@@ -263,14 +260,14 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 					return {ok: true, status: response.status, value: responseData}; // TODO doesn't this have other status codes?
 				} else {
 					console.error('[LogIn] response not ok', responseData, response); // TODO logging
-					return {ok: false, status: response.status, reason: responseData.reason};
+					return {ok: false, status: response.status, message: responseData.message};
 				}
 			} catch (err) {
 				console.error('[LogIn] error', err); // TODO logging
 				return {
 					ok: false,
 					status: 500,
-					reason: UNKNOWN_API_ERROR,
+					message: 'unknown error',
 				};
 			}
 		},
@@ -289,14 +286,14 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 					return {ok: true, status: response.status, value: responseData};
 				} else {
 					console.error('[LogOut] response not ok', response); // TODO logging
-					return {ok: false, status: response.status, reason: responseData.reason};
+					return {ok: false, status: response.status, message: responseData.message};
 				}
 			} catch (err) {
 				console.error('[LogOut] err', err); // TODO logging
 				return {
 					ok: false,
 					status: 500,
-					reason: UNKNOWN_API_ERROR,
+					message: 'unknown error',
 				};
 			}
 		},

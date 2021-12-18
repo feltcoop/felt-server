@@ -42,7 +42,7 @@
 			newType = ViewTypes[0];
 			opened = false;
 		} else {
-			errorMessage = result.reason;
+			errorMessage = result.message;
 		}
 	};
 

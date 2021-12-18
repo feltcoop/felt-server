@@ -24,7 +24,7 @@ export const personaRepo = (db: Database) => ({
 			toDefaultCommunitySettings(name),
 		);
 		if (!createCommunityResult.ok) {
-			return {ok: false, reason: 'Failed to create initial persona community'};
+			return {ok: false, message: 'failed to create initial persona community'};
 		}
 		// TODO this is a hack -- always adding/expecting `community_ids`
 		// like in `filterByAccount` below is probably not the best idea because of overfetching

@@ -41,7 +41,7 @@ export const communityRepo = (db: Database) => ({
 		return {
 			ok: false,
 			type: 'no_community_found',
-			reason: `No community found with id: ${community_id}`,
+			message: 'no community found',
 		};
 	},
 	filterByAccount: async (
@@ -78,7 +78,7 @@ export const communityRepo = (db: Database) => ({
 			UPDATE communities SET settings=${db.sql.json(settings)} WHERE community_id=${community_id}
 		`;
 		if (!data.count) {
-			return {ok: false, reason: 'no communities were modified'};
+			return {ok: false, message: 'failed to update settings'};
 		}
 		return {ok: true};
 	},

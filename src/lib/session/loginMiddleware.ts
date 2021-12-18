@@ -12,10 +12,10 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 		const {accountName, password} = loginRequest;
 		console.log('[loginMiddleware] req.body', accountName); // TODO logging
 		// TODO formalize and automate validation and normalization
-		if (!accountName) return send(res, 400, {reason: 'invalid accountName'});
-		if (!password) return send(res, 400, {reason: 'invalid password'});
+		if (!accountName) return send(res, 400, {message: 'invalid account name'});
+		if (!password) return send(res, 400, {message: 'invalid password'});
 		if (req.account_id) {
-			return send(res, 400, {reason: 'already logged in'});
+			return send(res, 400, {message: 'already logged in'});
 		}
 
 		// First see if the account already exists.
@@ -26,7 +26,7 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 			// There's already an account, so proceed to log in after validating the password.
 			account = findAccountResult.value;
 			if (!(await verifyPassword(password, account.password))) {
-				return send(res, 400, {reason: 'invalid account name or password'});
+				return send(res, 400, {message: 'invalid account name or password'});
 			}
 		} else if (findAccountResult.type === 'no_account_found') {
 			// There's no account, so create one.
@@ -36,11 +36,11 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 				account = createAccountResult.value;
 			} else {
 				// Failed to create the account.
-				return send(res, 500, {reason: createAccountResult.reason});
+				return send(res, 500, {message: createAccountResult.message});
 			}
 		} else {
 			// Failed to find the account.
-			return send(res, 500, {reason: findAccountResult.reason});
+			return send(res, 500, {message: findAccountResult.message});
 		}
 
 		console.log('[loginMiddleware] login', account.account_id); // TODO logging
@@ -54,7 +54,7 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 			return send(res, 200, {session: clientSessionResult.value}); // TODO API types
 		} else {
 			req.session = null!;
-			return send(res, 500, {reason: 'problem loading client session'});
+			return send(res, 500, {message: 'failed to load client session'});
 		}
 	};
 };

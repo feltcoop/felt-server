@@ -22,7 +22,7 @@ export const spaceRepo = (db: Database) => ({
 		return {
 			ok: false,
 			type: 'no_space_found',
-			reason: `No space found with id: ${space_id}`,
+			message: 'no space found',
 		};
 	},
 	filterByCommunity: async (community_id: number): Promise<Result<{value: Space[]}>> => {
@@ -75,7 +75,7 @@ export const spaceRepo = (db: Database) => ({
 				params.url,
 				params.community_id,
 			);
-			if (!result.ok) return {ok: false, reason: 'Failed to create default spaces for community.'};
+			if (!result.ok) return {ok: false, message: 'failed to create default spaces'};
 			spaces.push(result.value);
 		}
 		// console.log('[db] created default spaces', community_id, spaces);
@@ -92,7 +92,7 @@ export const spaceRepo = (db: Database) => ({
 			return {
 				ok: false,
 				type: 'deletion_error',
-				reason: `There was an issue deleting space: ${space_id}`,
+				message: 'failed to delete space',
 			};
 		}
 

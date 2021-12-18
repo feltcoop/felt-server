@@ -22,7 +22,7 @@
 		pending = true;
 		const result = await dispatch('CreateCommunity', {name, persona_id: $selectedPersonaId!});
 		pending = false;
-		errorMessage = result.ok ? null : result.reason;
+		errorMessage = result.ok ? null : result.message;
 	};
 
 	const onKeydown = async (e: KeyboardEvent) => {

@@ -21,7 +21,7 @@ export const deleteMembershipService: Service<
 		console.log(result);
 		if (!result.ok) {
 			console.log('[DeleteSpace] error removing membership: ', persona_id, community_id);
-			return {ok: false, status: 500, reason: result.reason};
+			return {ok: false, status: 500, message: result.message};
 		}
 		return {ok: true, status: 200, value: null};
 	},
