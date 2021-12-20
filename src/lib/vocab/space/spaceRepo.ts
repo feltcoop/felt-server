@@ -28,8 +28,8 @@ export const spaceRepo = (db: Database) => ({
 	filterByCommunity: async (community_id: number): Promise<Result<{value: Space[]}>> => {
 		console.log(`[spaceRepo] preparing to query for community spaces: ${community_id}`);
 		const data = await db.sql<Space[]>`
-			SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.updated, s.created, s.community_id
-			FROM spaces s WHERE s.community_id=${community_id}
+			SELECT space_id, name, url, media_type, content, updated, created, community_id
+			FROM spaces WHERE community_id=${community_id}
 		`;
 		// console.log('[db] spaces data', data);
 		return {ok: true, value: data};
@@ -42,8 +42,8 @@ export const spaceRepo = (db: Database) => ({
 			`[spaceRepo] preparing to query for community space by url: ${community_id} ${url}`,
 		);
 		const data = await db.sql<Space[]>`
-			SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.updated, s.created, s.community_id
-			FROM spaces s WHERE s.community_id=${community_id} AND s.url=${url}
+			SELECT space_id, name, url, media_type, content, updated, created, community_id
+			FROM spaces WHERE community_id=${community_id} AND url=${url}
 		`;
 		console.log('[spaceRepo] space data', data);
 		return {ok: true, value: data[0]};
