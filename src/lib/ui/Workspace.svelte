@@ -41,9 +41,8 @@
 		{#if selectedPersona && selectedCommunity && selectedSpace}
 			<SpaceView persona={selectedPersona} community={selectedCommunity} space={selectedSpace} />
 		{:else if selectedPersona && selectedCommunity}
-			<SpaceInput persona={selectedPersona} community={selectedCommunity}>
-				Create a new space
-			</SpaceInput>
+			<!-- TODO this should be the form, not dialog trigger -- fix after refactoring dialogs -->
+			<SpaceInput persona={selectedPersona} community={selectedCommunity} />
 		{/if}
 		<MarqueeButton />
 	</div>
