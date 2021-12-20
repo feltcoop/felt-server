@@ -24,7 +24,7 @@ export const membershipRepo = (db: Database) => ({
 		const data = await db.sql<Membership[]>`
 			SELECT persona_id, community_id, created, updated
 			FROM memberships
-			WHERE ${persona_id} = persona_id AND ${community_id} = community_id
+			WHERE ${persona_id} = persona_id AND ${community_id}=community_id
 		`;
 		if (data.length) {
 			return {ok: true, value: data[0]};
