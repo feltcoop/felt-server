@@ -35,7 +35,7 @@
 			<CommunityNavButton
 				community={toPersonaCommunity(get(persona))}
 				{persona}
-				selected={persona === $personaSelection &&
+				selected={persona === selectedPersona &&
 					toPersonaCommunity(get(persona)) === $selectedCommunity}
 			/>
 			{#each $communitiesByPersonaId[get(persona).persona_id] as community (community)}
@@ -43,7 +43,7 @@
 					<CommunityNavButton
 						{community}
 						{persona}
-						selected={persona === $personaSelection && community === $selectedCommunity}
+						selected={persona === selectedPersona && community === $selectedCommunity}
 					/>
 				{/if}
 			{/each}
