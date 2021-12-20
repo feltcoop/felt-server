@@ -20,13 +20,13 @@
 
 	let text = '';
 
-	$: shouldLoadFiles = browser && $socket.connected;
-	$: files = shouldLoadFiles ? dispatch('query_files', {space_id: $space.space_id}) : null;
+	$: shouldLoadEntities = browser && $socket.connected;
+	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
 
-	const createFile = async () => {
+	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
 		if (!content) return;
-		await dispatch('create_file', {
+		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
 			content,
 			actor_id: $persona.persona_id,
@@ -36,16 +36,16 @@
 
 	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await createFile();
+			await createEntity();
 		}
 	};
 </script>
 
 <div class="notes">
 	<textarea placeholder="> note" on:keydown={onKeydown} bind:value={text} />
-	<div class="files">
-		{#if files}
-			<NoteItems {files} />
+	<div class="entities">
+		{#if entities}
+			<NoteItems {entities} />
 		{:else}
 			<PendingAnimation />
 		{/if}
@@ -65,7 +65,7 @@
 		border-top: none;
 		border-radius: 0;
 	}
-	.files {
+	.entities {
 		flex: 1;
 		display: flex;
 		flex-direction: column;

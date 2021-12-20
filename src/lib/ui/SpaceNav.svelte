@@ -16,7 +16,7 @@
 
 <div class="space-nav" data-entity="community:{$community.name}">
 	<div class="header">
-		<SpaceInput {community} />
+		<SpaceInput {persona} {community} />
 		<MembershipInput {community} />
 		<SpaceDelete space={selectedSpace} />
 	</div>

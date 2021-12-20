@@ -16,7 +16,7 @@
 		type="button"
 		class="button-join"
 		on:click={() =>
-			dispatch('create_membership', {
+			dispatch('CreateMembership', {
 				community_id: $community.community_id,
 				persona_id: $persona.persona_id,
 			})}

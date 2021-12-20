@@ -1,10 +1,10 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-export const create_persona: ServiceEventInfo = {
+export const CreatePersona: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'create_persona',
+	name: 'CreatePersona',
 	params: {
-		$id: 'https://felt.social/vocab/create_persona_params.json',
+		$id: 'https://felt.social/vocab/CreatePersonaParams.json',
 		type: 'object',
 		properties: {
 			name: {type: 'string'},
@@ -13,7 +13,7 @@ export const create_persona: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/create_persona_response.json',
+		$id: 'https://felt.social/vocab/CreatePersonaResponse.json',
 		type: 'object',
 		properties: {
 			persona: {$ref: 'Persona.json', tsType: 'Persona'},
@@ -29,4 +29,4 @@ export const create_persona: ServiceEventInfo = {
 	},
 };
 
-export const events: EventInfo[] = [create_persona];
+export const events: EventInfo[] = [CreatePersona];

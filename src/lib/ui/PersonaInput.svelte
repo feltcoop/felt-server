@@ -19,7 +19,7 @@
 			return;
 		}
 		status = 'pending';
-		await dispatch('create_persona', {name});
+		await dispatch('CreatePersona', {name});
 		status = 'success'; // TODO handle failure (also refactor to be generic)
 		name = '';
 	};

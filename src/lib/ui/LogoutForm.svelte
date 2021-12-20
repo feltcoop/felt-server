@@ -24,8 +24,8 @@
 	const doLogOut = async () => {
 		submitting = true;
 		errorMessage = '';
-		const result = await dispatch('log_out');
-		console.log('<LogoutForm> log_out result', result);
+		const result = await dispatch('LogOut');
+		console.log('<LogoutForm> LogOut result', result);
 		if (!result.ok) {
 			errorMessage = result.reason;
 		}
