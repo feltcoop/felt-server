@@ -30,7 +30,7 @@ export const toLoginMiddleware = (server: ApiServer): Middleware => {
 			}
 		} else if (findAccountResult.type === 'no_account_found') {
 			// There's no account, so create one.
-			const createAccountResult = await db.repos.account.create({name: accountName, password});
+			const createAccountResult = await db.repos.account.create(accountName, password);
 			console.log('[loginMiddleware] createAccountResult', createAccountResult);
 			if (createAccountResult.ok) {
 				account = createAccountResult.value;

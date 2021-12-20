@@ -14,7 +14,7 @@
 
 	const deleteSpace = async () => {
 		errorMessage = '';
-		const result = await dispatch('delete_space', {
+		const result = await dispatch('DeleteSpace', {
 			space_id: $space.space_id,
 		});
 		if (result.ok) {

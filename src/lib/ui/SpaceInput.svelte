@@ -33,13 +33,13 @@
 		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
 		errorMessage = '';
 		const url = `/${newName}`;
-		const result = await dispatch('create_space', {
+		const result = await dispatch('CreateSpace', {
 			community_id: $community.community_id,
 			name: newName,
 			url,
 			//TODO : add space type picker
 			media_type: 'application/fuz+json',
-			content: `{"type": "${newType}", "props": {"data": "${url}/files"}}`,
+			content: `{"type": "${newType}", "props": {"data": "/entities"}}`,
 		});
 		if (result.ok) {
 			newName = '';

@@ -24,13 +24,13 @@
 
 	let text = '';
 
-	$: shouldLoadFiles = browser && $socket.connected;
-	$: files = shouldLoadFiles ? dispatch('query_files', {space_id: $space.space_id}) : null;
+	$: shouldLoadEntities = browser && $socket.connected;
+	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
 
-	const createFile = async () => {
+	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
 		if (!content) return;
-		await dispatch('create_file', {
+		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
 			content,
 			actor_id: $selectedPersonaId!, // TODO generic erorr check for no selected persona?
@@ -40,16 +40,16 @@
 
 	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await createFile();
+			await createEntity();
 		}
 	};
 </script>
 
 <div class="forum">
 	<textarea placeholder="> new topic" on:keydown={onKeydown} bind:value={text} />
-	<div class="files">
-		{#if files}
-			<ForumItems {files} />
+	<div class="entities">
+		{#if entities}
+			<ForumItems {entities} />
 		{:else}
 			<PendingAnimation />
 		{/if}
@@ -63,7 +63,7 @@
 		flex: 1;
 		overflow: hidden; /* make the content scroll */
 	}
-	.files {
+	.entities {
 		max-width: var(--column_width);
 		overflow: auto;
 		flex: 1;
