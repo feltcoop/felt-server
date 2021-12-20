@@ -41,7 +41,9 @@
 		{#if selectedPersona && selectedCommunity && selectedSpace}
 			<SpaceView persona={selectedPersona} community={selectedCommunity} space={selectedSpace} />
 		{:else if selectedPersona && selectedCommunity}
-			<SpaceInput community={selectedCommunity}>Create a new space</SpaceInput>
+			<SpaceInput persona={selectedPersona} community={selectedCommunity}>
+				Create a new space
+			</SpaceInput>
 		{/if}
 		<MarqueeButton />
 	</div>
