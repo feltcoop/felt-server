@@ -1,5 +1,6 @@
 <script lang="ts">
 	import SpaceView from '$lib/ui/SpaceView.svelte';
+	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import Marquee from '$lib/ui/Marquee.svelte';
 	import WorkspaceHeader from '$lib/ui/WorkspaceHeader.svelte';
 	import MarqueeButton from '$lib/ui/MarqueeButton.svelte';
@@ -39,6 +40,8 @@
 		<WorkspaceHeader space={selectedSpace} community={selectedCommunity} />
 		{#if selectedPersona && selectedCommunity && selectedSpace}
 			<SpaceView persona={selectedPersona} community={selectedCommunity} space={selectedSpace} />
+		{:else if selectedPersona && selectedCommunity}
+			<SpaceInput community={selectedCommunity}>Create a new space</SpaceInput>
 		{/if}
 		<MarqueeButton />
 	</div>
