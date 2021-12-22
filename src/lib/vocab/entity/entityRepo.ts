@@ -21,10 +21,24 @@ export const entityRepo = (db: Database) => ({
 	filterBySpace: async (space_id: number): Promise<Result<{value: Entity[]}>> => {
 		console.log(`[db] preparing to query for space entities: ${space_id}`);
 		const data = await db.sql<Entity[]>`
-			SELECT entity_id, content, actor_id, space_id, created, updated 
+			SELECT entity_id, content, type, actor_id, space_id, created, updated 
 			FROM entities WHERE space_id= ${space_id}
 		`;
 		console.log('[db] space entities', data);
+		return {ok: true, value: data};
+	},
+	entityQuery: async (
+		space_id: number,
+		entity_ids: number[],
+		type: string,
+	): Promise<Result<{value: Entity[]}>> => {
+		//TODO probably dynamically build query string here based on inputs.
+		const data = await db.sql<Entity[]>`
+		SELECT entity_id, content, type, actor_id, space_id, created, updated 
+		FROM entities WHERE space_id= ${space_id} AND entity_id IN (${entity_ids}) AND type=${type};
+		`;
+
+		console.log('[db] queried entities', data);
 		return {ok: true, value: data};
 	},
 });

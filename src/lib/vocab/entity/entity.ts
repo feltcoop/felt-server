@@ -5,6 +5,7 @@ export interface Entity {
 	actor_id: number;
 	space_id: number;
 	content: string;
+	type: string;
 	created: Date;
 	updated: Date | null;
 }
@@ -16,10 +17,11 @@ export const EntitySchema = {
 		actor_id: {type: 'number'},
 		space_id: {type: 'number'},
 		content: {type: 'string'},
+		type: {type: 'string'},
 		created: {type: 'object', format: 'date-time', tsType: 'Date'},
 		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 	},
-	required: ['entity_id', 'actor_id', 'space_id', 'content', 'created', 'updated'],
+	required: ['entity_id', 'actor_id', 'space_id', 'content', 'type', 'created', 'updated'],
 	additionalProperties: false,
 };
 

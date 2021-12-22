@@ -12,6 +12,11 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 	event: ReadEntities,
 	perform: async ({server, params}) => {
 		const {db} = server;
+		const findThreadResult = await db.repos.entity.entityQuery(
+			params.space_id,
+			[72, 73],
+			['Thread'],
+		);
 		const findEntitiesResult = await db.repos.entity.filterBySpace(params.space_id);
 		if (findEntitiesResult.ok) {
 			return {ok: true, status: 200, value: {entities: findEntitiesResult.value}}; // TODO API types
