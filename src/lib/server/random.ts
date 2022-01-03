@@ -95,12 +95,14 @@ export const randomEventParams = async (
 			if (!space) {
 				space = randomItem(random.spaces) || (await random.space(persona, account, community));
 			}
-			return {space_id: space.space_id};
+			return {space_id: space.space_id, entity_ids: [], types: []};
 		}
 		case 'QueryEntities': {
 			return {
 				space_id: (randomItem(random.spaces) || (await random.space(persona, account, community)))
 					.space_id,
+				entity_ids: [],
+				types: [],
 			};
 		}
 		// TODO instead of randomizing, use existing ones from the arrays?

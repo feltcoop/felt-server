@@ -21,7 +21,9 @@
 	let text = '';
 
 	$: shouldLoadEntities = browser && $socket.connected;
-	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
+	$: entities = shouldLoadEntities
+		? dispatch('QueryEntities', {space_id: $space.space_id, entity_ids: [], types: ['Thread']})
+		: null;
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?

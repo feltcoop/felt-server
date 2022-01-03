@@ -38,8 +38,10 @@ export const ReadEntities: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			space_id: {type: 'number'},
+			entity_ids: {type: 'array', items: {type: 'number'}},
+			types: {type: 'array', items: {type: 'string'}},
 		},
-		required: ['space_id'],
+		required: ['space_id', 'entity_ids', 'types'],
 		additionalProperties: false,
 	},
 	response: {

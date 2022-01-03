@@ -1,4 +1,6 @@
 import type {Service} from '$lib/server/service';
+import type {Entity} from '$lib/vocab/entity/entity';
+import type {Result} from '@feltcoop/felt';
 import type {
 	CreateEntityParams,
 	CreateEntityResponseResult,
@@ -12,12 +14,19 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 	event: ReadEntities,
 	perform: async ({server, params}) => {
 		const {db} = server;
-		const findThreadResult = await db.repos.entity.entityQuery(
-			params.space_id,
-			[72, 73],
-			['Thread'],
-		);
-		const findEntitiesResult = await db.repos.entity.filterBySpace(params.space_id);
+		let findEntitiesResult: Result<{value: Entity[]}>;
+		if (!params.entity_ids.length && !params.types.length) {
+			findEntitiesResult = await db.repos.entity.filterBySpace(params.space_id);
+		} else if (!params.entity_ids.length) {
+			findEntitiesResult = await db.repos.entity.filterBySpaceType(params.space_id, params.types);
+		} else {
+			findEntitiesResult = await db.repos.entity.entityQuery(
+				params.space_id,
+				params.entity_ids,
+				params.types,
+			);
+		}
+
 		if (findEntitiesResult.ok) {
 			return {ok: true, status: 200, value: {entities: findEntitiesResult.value}}; // TODO API types
 		} else {

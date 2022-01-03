@@ -174,6 +174,8 @@ export type CreateEntityResponseResult = ApiResult<CreateEntityResponse>;
 
 export interface ReadEntitiesParams {
 	space_id: number;
+	entity_ids: number[];
+	types: string[];
 }
 export interface ReadEntitiesResponse {
 	entities: Entity[];
@@ -182,6 +184,8 @@ export type ReadEntitiesResponseResult = ApiResult<ReadEntitiesResponse>;
 
 export interface QueryEntitiesParams {
 	space_id: number;
+	entity_ids: number[];
+	types: string[];
 }
 
 export type PingParams = void;
