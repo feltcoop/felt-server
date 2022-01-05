@@ -7,6 +7,9 @@ const KEY = Symbol();
 
 export const HEARTBEAT_INTERVAL = 300000;
 
+const RECONNECT_DELAY = 1000; // matches the current Vite/SvelteKit retry rate, but we use a counter to back off
+const RECONNECT_DELAY_MAX = 60000;
+
 export const getSocket = (): SocketStore => getContext(KEY);
 
 export const setSocket = (store: SocketStore): SocketStore => {
@@ -66,8 +69,6 @@ export const toSocketStore = (
 	// TODO extract this?
 	let reconnectCount = 0;
 	let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
-	const RECONNECT_DELAY = 1000; // matches the current Vite/SvelteKit retry rate, but we use a counter to back off
-	const RECONNECT_DELAY_MAX = 60000;
 	const queueReconnect = () => {
 		reconnectCount++;
 		reconnectTimeout = setTimeout(() => {
