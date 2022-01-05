@@ -11,27 +11,27 @@
 		ui: {findPersonaById},
 	} = getApp();
 
-	export let entity: Readable<Entity>;
+	export let entity: Entity;
 	export let selectedThread: Readable<Entity> | null;
 	export let selectThread: (thread: Readable<Entity>) => void;
 
-	$: persona = findPersonaById($entity.actor_id); // TODO should this be `Actor` and `actor`?
+	$: persona = findPersonaById(entity.actor_id); // TODO should this be `Actor` and `actor`?
 
 	// TODO refactor to some client view-model for the actor
 	$: hue = randomHue($persona.name);
 
 	const selectThreadLocal = async () => {
-		selectThread(entity);
+		console.log('hello');
 	};
 </script>
 
 <li
 	on:click={selectThreadLocal}
 	style="--hue: {hue}"
-	data-entity="persona:{$persona.name},entity:{$entity.entity_id}"
+	data-entity="persona:{$persona.name},entity:{entity.entity_id}"
 >
 	<div class="content">
-		{$entity.content}
+		{entity.content}
 	</div>
 	<Avatar name={toName($persona)} icon={toIcon($persona)} />
 </li>

@@ -47,7 +47,7 @@ export const entityRepo = (db: Database) => ({
 		//TODO probably dynamically build query string here based on inputs.
 		const data = await db.sql<Entity[]>`
 		SELECT entity_id, content, type, actor_id, space_id, created, updated 
-		FROM entities WHERE space_id= ${space_id} AND entity_id IN (${entity_ids}) AND types IN (${types});
+		FROM entities WHERE space_id= ${space_id} AND entity_id IN (${entity_ids}) AND type IN (${types});
 		`;
 
 		console.log('[db] queried entities', data);
