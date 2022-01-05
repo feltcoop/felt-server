@@ -1,4 +1,4 @@
 export interface DialogState {
 	name: string;
-	// TODO attributes/props
+	props?: {[key: string]: any};
 }

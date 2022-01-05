@@ -552,6 +552,9 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		OpenDialog: ({params}) => {
 			dialogs.update(($dialogs) => $dialogs.concat(params));
 		},
+		CloseDialog: () => {
+			dialogs.update(($dialogs) => $dialogs.slice(0, $dialogs.length - 1));
+		},
 		SelectPersona: ({params}) => {
 			console.log('[ui.SelectPersona] persona_id', params.persona_id);
 			personaIdSelection.set(params.persona_id);

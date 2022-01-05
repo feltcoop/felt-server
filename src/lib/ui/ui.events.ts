@@ -51,11 +51,17 @@ export const events: EventInfo[] = [
 			type: 'object',
 			properties: {
 				name: {type: 'string'},
-				// TODO props/attributes
+				props: {type: 'object'},
 			},
 			required: ['name'],
 			additionalProperties: false,
 		},
+		returns: 'void',
+	},
+	{
+		type: 'ClientEvent',
+		name: 'CloseDialog',
+		params: null,
 		returns: 'void',
 	},
 	{
