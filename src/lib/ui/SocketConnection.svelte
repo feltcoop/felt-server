@@ -15,9 +15,6 @@
 		</button>
 	</form>
 	<div>status: <code>'{$socket.status}'</code></div>
-	{#if $socket.error}
-		<div class="error">error: <code>'{$socket.error}'</code></div>
-	{/if}
 </div>
 
 <style>
@@ -30,12 +27,5 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-	}
-	.error {
-		/* TODO maybe `color: var(--error_text_color);` */
-		color: red;
-	}
-	h2 {
-		margin: 0;
 	}
 </style>

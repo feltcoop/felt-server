@@ -27,7 +27,6 @@ export interface SocketState {
 	ws: WebSocket | null;
 	open: boolean;
 	status: AsyncStatus;
-	error: string | null;
 }
 
 export interface SocketStore {
@@ -86,8 +85,6 @@ export const toSocketStore = (
 		}
 	};
 
-	let lastConnect = Date.now();
-
 	// Returns a bool indicating if it disconnected.
 	const tryToDisconnect = (): boolean => {
 		if (get(store).ws) {
@@ -114,13 +111,12 @@ export const toSocketStore = (
 		},
 		connect: (url) => {
 			tryToDisconnect();
-			lastConnect = Date.now();
 			update(($socket) => {
 				console.log('[socket] connect', $socket);
 				const ws = createWebSocket(url, handleMessage, sendHeartbeat, heartbeatInterval);
 				ws.addEventListener('open', onWsOpen);
 				ws.addEventListener('close', onWsCloseUnexpectedly);
-				return {...$socket, url, status: 'pending', ws, error: null};
+				return {...$socket, url, status: 'pending', ws};
 			});
 		},
 		updateUrl: (url) => {
@@ -155,7 +151,6 @@ const toDefaultSocketState = (): SocketState => ({
 	ws: null,
 	open: false,
 	status: 'initial',
-	error: null,
 });
 
 const createWebSocket = (
