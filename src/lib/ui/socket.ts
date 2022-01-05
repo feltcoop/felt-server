@@ -51,8 +51,11 @@ export const toSocketStore = (
 
 	const onWsOpen = () => {
 		console.log('[socket] open');
+		reconnectCount = 0;
 		update(($socket) => ({...$socket, status: 'success', open: true}));
 	};
+	// This handler gets called when the websocket closes unexpectedly or when it fails to connect.
+	// It's not called when the websocket closes due to a `disconnect` call.
 	const onWsClose = () => {
 		console.log('[socket] close');
 		update(($socket) => ({...$socket, open: false}));
@@ -60,18 +63,14 @@ export const toSocketStore = (
 	};
 
 	// TODO extract this?
-	let reconnecting = false;
-	let reconnectCount = 0; // TODO needs to be reset, but when?
-	const RECONNECT_DELAY = 1000; // this matches the current Vite/SvelteKit retry rate; we could use the count to increase this
+	let reconnectCount = 0;
+	const RECONNECT_DELAY = 1000; // matches the current Vite/SvelteKit retry rate, but we use a counter to back off
 	const RECONNECT_DELAY_MAX = 60000;
 	const queueReconnect = () => {
 		console.log('queue reconnect?');
-		if (reconnecting) return;
-		reconnecting = true;
 		reconnectCount++;
 		console.log('reconnecting: reconnectCount', reconnectCount);
 		const reconnect = () => {
-			reconnecting = false;
 			store.connect(get(store).url!);
 		};
 		if (reconnectCount === 1) {
@@ -105,7 +104,7 @@ export const toSocketStore = (
 				const ws = $socket.ws!;
 				ws.removeEventListener('open', onWsOpen);
 				ws.removeEventListener('close', onWsClose);
-				ws.close(code);
+				ws.close(code); // close *after* removing the 'close' listener
 				return {...$socket, status: 'initial', open: false, ws: null};
 			});
 		},
@@ -122,6 +121,7 @@ export const toSocketStore = (
 			});
 		},
 		updateUrl: (url) => {
+			if (get(store).url === url) return;
 			if (tryToDisconnect()) {
 				store.connect(url);
 			} else {
