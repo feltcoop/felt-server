@@ -13,6 +13,7 @@ import type {DispatchContext} from '$lib/app/dispatch';
 import type {UiHandlers} from '$lib/app/eventTypes';
 import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+import type {DialogState} from '$lib/ui/dialog/dialog';
 
 const KEY = Symbol();
 
@@ -56,6 +57,7 @@ export interface Ui extends Partial<UiHandlers> {
 	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	mobile: Readable<boolean>;
 	contextmenu: ContextmenuStore;
+	dialogs: Writable<DialogState[]>;
 }
 
 export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): Ui => {
@@ -112,6 +114,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 
 	const mobile = writable(initialMobile);
 	const contextmenu = createContextmenuStore();
+	const dialogs = writable<DialogState[]>([]);
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -242,7 +245,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			if (handler) {
 				return handler(ctx);
 			} else {
-				console.warn('[ui] ignoring a dispatched event', ctx);
+				console.warn('[ui] ignoring unhandled event', ctx);
 			}
 		},
 		Ping: async ({invoke}) => invoke(),
@@ -531,6 +534,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		expandMainNav,
 		expandMarquee,
 		contextmenu,
+		dialogs,
 		// derived state
 		personaIdSelection,
 		personaSelection,
@@ -544,6 +548,9 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		// methods
 		SetMobile: ({params}) => {
 			mobile.set(params);
+		},
+		OpenDialog: ({params}) => {
+			dialogs.update(($dialogs) => $dialogs.concat(params));
 		},
 		SelectPersona: ({params}) => {
 			console.log('[ui.SelectPersona] persona_id', params.persona_id);
