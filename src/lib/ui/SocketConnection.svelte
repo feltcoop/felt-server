@@ -11,23 +11,17 @@
 </script>
 
 <div class="socket-connection">
-	{#if $socket.open}
+	{#if $socket.ws}
 		<form>
-			<input value={$socket.url} on:input={onInput} disabled />
-			<button
-				type="button"
-				on:click={() => socket.disconnect()}
-				disabled={$socket.status === 'pending'}
-			>
+			<input value={$socket.url} on:input={onInput} disabled={false} />
+			<button type="button" on:click={() => socket.disconnect()} disabled={false}>
 				disconnect
 			</button>
 		</form>
 	{:else}
 		<form>
-			<input value={$socket.url} on:input={onInput} disabled={$socket.status === 'pending'} />
-			<button type="button" on:click={connect} disabled={$socket.status === 'pending'}>
-				connect
-			</button>
+			<input value={$socket.url} on:input={onInput} disabled={false} />
+			<button type="button" on:click={connect} disabled={false}> connect </button>
 		</form>
 	{/if}
 	<h2>status: <code>'{$socket.status}'</code></h2>

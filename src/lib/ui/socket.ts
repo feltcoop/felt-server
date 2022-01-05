@@ -61,10 +61,9 @@ export const toSocketStore = (
 
 	// TODO extract this?
 	let reconnecting = false;
-	let reconnectCount = 0;
+	let reconnectCount = 0; // TODO needs to be reset, but when?
 	const RECONNECT_DELAY = 1000; // this matches the current Vite/SvelteKit retry rate; we could use the count to increase this
 	const RECONNECT_DELAY_MAX = 60000;
-	const RECONNECT_FAST_RETRY_COUNT = 3; // retry at the base delay this many times before increasing backoff
 	const queueReconnect = () => {
 		console.log('queue reconnect?');
 		if (reconnecting) return;
@@ -80,15 +79,22 @@ export const toSocketStore = (
 		} else {
 			setTimeout(
 				reconnect,
-				Math.min(
-					RECONNECT_DELAY_MAX,
-					RECONNECT_DELAY * Math.max(1, reconnectCount - RECONNECT_FAST_RETRY_COUNT + 1),
-				),
+				Math.min(RECONNECT_DELAY_MAX, RECONNECT_DELAY * Math.max(1, reconnectCount)),
 			);
 		}
 	};
 
 	let lastConnect = Date.now();
+
+	// Returns a bool indicating if it disconnected.
+	const tryToDisconnect = (): boolean => {
+		if (get(store).ws) {
+			store.disconnect();
+			return true;
+		} else {
+			return false;
+		}
+	};
 
 	const store: SocketStore = {
 		subscribe,
@@ -106,18 +112,21 @@ export const toSocketStore = (
 		connect: (url) => {
 			console.log('connect gap', Date.now() - lastConnect);
 			lastConnect = Date.now();
-			if (get(store).ws) return; // already connected
+			tryToDisconnect();
 			update(($socket) => {
 				console.log('[socket] connect', $socket);
 				const ws = createWebSocket(url, handleMessage, sendHeartbeat, heartbeatInterval);
 				ws.addEventListener('open', onWsOpen);
 				ws.addEventListener('close', onWsClose);
-				return {...$socket, url, connected: false, status: 'pending', ws, error: null};
+				return {...$socket, url, status: 'pending', ws, error: null};
 			});
 		},
 		updateUrl: (url) => {
-			if (get(store).ws) return; // silently ignoring for now
-			update(($socket) => ({...$socket, url}));
+			if (tryToDisconnect()) {
+				store.connect(url);
+			} else {
+				update(($socket) => ({...$socket, url}));
+			}
 		},
 		send: (data) => {
 			const $socket = get(store);
