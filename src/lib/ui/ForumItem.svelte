@@ -12,14 +12,24 @@
 	} = getApp();
 
 	export let entity: Readable<Entity>;
+	export let selectedThread: Readable<Entity> | null;
 
 	$: persona = findPersonaById($entity.actor_id); // TODO should this be `Actor` and `actor`?
 
 	// TODO refactor to some client view-model for the actor
 	$: hue = randomHue($persona.name);
+
+	const selectThread = async () => {
+		console.log($entity.content);
+		selectedThread = entity;
+	};
 </script>
 
-<li style="--hue: {hue}" data-entity="persona:{$persona.name},entity:{$entity.entity_id}">
+<li
+	on:click={selectThread}
+	style="--hue: {hue}"
+	data-entity="persona:{$persona.name},entity:{$entity.entity_id}"
+>
 	<div class="content">
 		{$entity.content}
 	</div>

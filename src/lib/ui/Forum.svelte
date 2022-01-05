@@ -2,10 +2,12 @@
 	import {browser} from '$app/env';
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 	import type {Readable} from 'svelte/store';
+	import {get} from 'svelte/store';
 
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
+	import type {Entity} from '$lib/vocab/entity/entity.js';
 	import ForumItems from '$lib/ui/ForumItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
@@ -19,10 +21,23 @@
 	community; // silence unused prop warning
 
 	let text = '';
+	let selectedThread: Readable<Entity> | null;
 
 	$: shouldLoadEntities = browser && $socket.connected;
-	$: entities = shouldLoadEntities
+	$: threadEntities = shouldLoadEntities
 		? dispatch('QueryEntities', {space_id: $space.space_id, entity_ids: [], types: ['Thread']})
+		: null;
+
+	//PASS FUNCTION THAT REF THIS, NOT THIS
+	$: selectedThread = null;
+
+	$: content = selectedThread ? JSON.parse($selectedThread.content) : null;
+	$: postEntities = selectedThread
+		? dispatch('QueryEntities', {
+				space_id: $space.space_id,
+				entity_ids: content.messages,
+				types: ['Message'],
+		  })
 		: null;
 
 	const createEntity = async () => {
@@ -41,13 +56,17 @@
 			await createEntity();
 		}
 	};
+
+	$: console.log('test', selectedThread);
 </script>
 
 <div class="forum">
 	<textarea placeholder="> new topic" on:keydown={onKeydown} bind:value={text} />
 	<div class="entities">
-		{#if entities}
-			<ForumItems {entities} />
+		{#if postEntities}
+			<ForumItems entities={postEntities} {selectedThread} />
+		{:else if threadEntities}
+			<ForumItems entities={threadEntities} {selectedThread} />
 		{:else}
 			<PendingAnimation />
 		{/if}
