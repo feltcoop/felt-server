@@ -8,10 +8,10 @@
 
 	const {
 		dispatch,
-		ui: {selectedPersona, communities},
+		ui: {personaSelection, communities},
 	} = getApp();
 
-	$: persona = $selectedPersona!;
+	$: persona = $personaSelection!;
 
 	let opened = false;
 	let errorMessage: string | undefined;
@@ -21,7 +21,7 @@
 
 	const leaveCommunity = async (community_id: number) => {
 		errorMessage = '';
-		const result = await dispatch('delete_membership', {
+		const result = await dispatch('DeleteMembership', {
 			persona_id: $persona.persona_id,
 			community_id,
 		});

@@ -1,5 +1,5 @@
 import type {SchemaObject} from 'ajv';
-import {compile, Options} from '@ryanatkn/json-schema-to-typescript';
+import {compile, type Options} from '@ryanatkn/json-schema-to-typescript';
 
 export const jsonSchemaToTypescript = (
 	schema: SchemaObject | null,

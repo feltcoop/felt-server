@@ -27,7 +27,7 @@ import type {Community} from '$lib/vocab/community/community';
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {Membership} from '$lib/vocab/membership/membership';
 import type {Space} from '$lib/vocab/space/space';
-import type {File} from '$lib/vocab/file/file';
+import type {Entity} from '$lib/vocab/entity/entity';
 import type {DispatchContext} from '$lib/app/dispatch';
 
 export interface EventParamsByName {

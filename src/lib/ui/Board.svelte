@@ -9,11 +9,7 @@
 	import BoardItems from '$lib/ui/BoardItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
-	const {
-		dispatch,
-		ui: {selectedPersonaId},
-		socket,
-	} = getApp();
+	const {dispatch, socket} = getApp();
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
@@ -27,32 +23,32 @@
 	// TODO `shouldLoadFiles` should be managed inside the `api` layer
 	// then the code could simply be:
 	// $: files = api.getFilesBySpace(space.space_id);
-	$: shouldLoadFiles = browser && $socket.open;
-	$: files = shouldLoadFiles ? dispatch('query_files', {space_id: $space.space_id}) : null;
+	$: shouldLoadEntities = browser && $socket.open;
+	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
 
-	const createFile = async () => {
+	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
 		if (!content) return;
-		await dispatch('create_file', {
+		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
 			content,
-			actor_id: $selectedPersonaId!, // TODO generic erorr check for no selected persona?
+			actor_id: $persona.persona_id,
 		});
 		text = '';
 	};
 
 	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			await createFile();
+			await createEntity();
 		}
 	};
 </script>
 
 <div class="board">
-	<textarea placeholder="> file" on:keydown={onKeydown} bind:value={text} />
-	<div class="files">
-		{#if files}
-			<BoardItems {files} />
+	<textarea placeholder="> post" on:keydown={onKeydown} bind:value={text} />
+	<div class="entities">
+		{#if entities}
+			<BoardItems {entities} />
 		{:else}
 			<PendingAnimation />
 		{/if}
@@ -66,7 +62,7 @@
 		flex: 1;
 		overflow: hidden; /* make the content scroll */
 	}
-	.files {
+	.entities {
 		max-width: var(--column_width);
 		overflow: auto;
 		flex: 1;

@@ -3,6 +3,6 @@ export const up = async (sql) => {
 	await sql`
 		ALTER TABLE communities
 			ADD COLUMN settings jsonb
-			NOT NULL;
+			NOT NULL DEFAULT '{}';
 	`;
 };

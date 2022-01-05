@@ -4,32 +4,24 @@
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
-	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
 	const {
 		dispatch,
-		ui: {
-			expandMainNav,
-			contextmenu,
-			selectedSpace: selectedSpaceStore,
-			selectedPersona: selectedPersonaStore,
-			selectedCommunity: selectedCommunityStore,
-		},
+		ui: {expandMainNav, contextmenu, spaceSelection, personaSelection, communitySelection},
 	} = getApp();
 
-	$: selectedPersona = $selectedPersonaStore!; // TODO type?
-	$: selectedCommunity = $selectedCommunityStore;
-	$: selectedSpace = $selectedSpaceStore;
+	$: selectedPersona = $personaSelection!;
+	$: selectedCommunity = $communitySelection;
+	$: selectedSpace = $spaceSelection;
 
 	// TODO refactor to some client view-model for the account
-	$: selectedPersonaName = $selectedPersona?.name || GUEST_PERSONA_NAME;
-	$: hue = randomHue(selectedPersonaName);
+	$: hue = randomHue(toName($selectedPersona));
 </script>
 
 {#if $expandMainNav}
-	<div class="main-nav-bg" on:click={() => ($expandMainNav ? dispatch('toggle_main_nav') : null)} />
+	<div class="main-nav-bg" on:click={() => ($expandMainNav ? dispatch('ToggleMainNav') : null)} />
 {/if}
 <div class="main-nav-panel" class:expanded={$expandMainNav} style="--hue: {hue}">
 	<div class="main-nav">
@@ -49,7 +41,7 @@
 			<CommunityNav />
 			{#if selectedPersona && selectedCommunity && selectedSpace}
 				<SpaceNav
-					{selectedPersona}
+					persona={selectedPersona}
 					community={selectedCommunity}
 					spaces={$selectedCommunity.spaces}
 					{selectedSpace}

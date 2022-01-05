@@ -1,18 +1,18 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
 
-	import type {File} from '$lib/vocab/file/file.js';
+	import type {Entity} from '$lib/vocab/entity/entity';
 	import BoardItem from '$lib/ui/BoardItem.svelte';
 
 	// TODO this should possibly be a generic component instead of this named one
 
-	export let files: Readable<Readable<File>[]>;
+	export let entities: Readable<Readable<Entity>[]>;
 </script>
 
 <!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->
 <ul>
-	{#each $files as file (file)}
-		<BoardItem {file} />
+	{#each $entities as entity (entity)}
+		<BoardItem {entity} />
 	{/each}
 </ul>
 

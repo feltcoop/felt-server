@@ -5,7 +5,7 @@ import {isEditable} from '@feltcoop/felt/util/dom.js';
 export interface Contextmenu {
 	opened: boolean;
 	// TODO not sure about this, currently they're magic keys, maybe keys on `ui`?
-	// so could they be addressed by `name || id`? e.g. `'selectedPersona'`
+	// so could they be addressed by `name || id`? e.g. `'personaSelection'`
 	// maybe they should be blocks and block ids? or both?
 	entities: string[];
 	x: number;

@@ -37,7 +37,9 @@ export const seed = async (db: Database): Promise<void> => {
 	};
 	const personas: Persona[] = [];
 	for (const accountParams of accountsParams) {
-		const account = unwrap(await db.repos.account.create(accountParams));
+		const account = unwrap(
+			await db.repos.account.create(accountParams.name, accountParams.password),
+		);
 		log.trace('created account', account);
 		for (const personaName of personasParams[account.name]) {
 			const {persona, community} = unwrap(
@@ -46,7 +48,7 @@ export const seed = async (db: Database): Promise<void> => {
 			log.trace('created persona', persona);
 			personas.push(persona);
 			const spaces = unwrap(await db.repos.space.filterByCommunity(community.community_id));
-			await createDefaultFiles(db, spaces, [persona]);
+			await createDefaultEntities(db, spaces, [persona]);
 		}
 	}
 
@@ -70,17 +72,14 @@ export const seed = async (db: Database): Promise<void> => {
 		);
 		communities.push(community);
 		for (const persona of otherPersonas) {
-			await db.repos.membership.create({
-				persona_id: persona.persona_id,
-				community_id: community.community_id,
-			});
+			await db.repos.membership.create(persona.persona_id, community.community_id);
 		}
-		await createDefaultFiles(db, community.spaces, personas);
+		await createDefaultEntities(db, community.spaces, personas);
 	}
 };
 
-const createDefaultFiles = async (db: Database, spaces: Space[], personas: Persona[]) => {
-	const filesContents: {[key: string]: string[]} = {
+const createDefaultEntities = async (db: Database, spaces: Space[], personas: Persona[]) => {
+	const entitiesContents: {[key: string]: string[]} = {
 		Room: ['Those who know do not speak.', 'Those who speak do not know.'],
 		Board: ["All the world's a stage.", 'And all the men and women merely players.'],
 		Forum: [
@@ -103,16 +102,12 @@ const createDefaultFiles = async (db: Database, spaces: Space[], personas: Perso
 
 	for (const space of spaces) {
 		const spaceContent = JSON.parse(space.content);
-		if (!(spaceContent.type in filesContents)) {
+		if (!(spaceContent.type in entitiesContents)) {
 			continue;
 		}
-		const fileContents = filesContents[spaceContent.type];
-		for (const fileContent of fileContents) {
-			await db.repos.file.create({
-				actor_id: nextPersona().persona_id,
-				space_id: space.space_id,
-				content: fileContent,
-			});
+		const entityContents = entitiesContents[spaceContent.type];
+		for (const entityContent of entityContents) {
+			await db.repos.entity.create(nextPersona().persona_id, space.space_id, entityContent);
 		}
 	}
 };

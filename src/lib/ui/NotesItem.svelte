@@ -1,20 +1,20 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
 
-	import type {File} from '$lib/vocab/file/file.js';
+	import type {Entity} from '$lib/vocab/entity/entity';
 	import {getApp} from '$lib/ui/app';
 
 	const {
 		ui: {findPersonaById},
 	} = getApp();
 
-	export let file: Readable<File>;
+	export let entity: Readable<Entity>;
 
-	$: persona = findPersonaById($file.actor_id);
+	$: persona = findPersonaById($entity.actor_id);
 </script>
 
-<li data-entity="persona:{$persona.name},file:{$file.file_id}">
-	{$file.content}
+<li data-entity="persona:{$persona.name},entity:{$entity.entity_id}">
+	{$entity.content}
 </li>
 
 <style>

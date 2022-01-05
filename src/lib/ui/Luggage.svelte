@@ -8,7 +8,7 @@
 	<button
 		class="icon-button"
 		aria-label="toggle luggage"
-		on:click={() => dispatch('toggle_main_nav')}
+		on:click={() => dispatch('ToggleMainNav')}
 	>
 		☰
 	</button>

@@ -9,14 +9,12 @@ import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 export const personaRepo = (db: Database) => ({
 	create: async (
 		name: string,
-		// TODO should `account_id` be part of the params object?
-		// then we need a different abstraction? maybe `PersonaDoc` or something?
 		account_id: number,
 	): Promise<Result<{value: {persona: Persona; community: Community}}, ErrorResponse>> => {
 		const data = await db.sql<Persona[]>`
-      insert into personas (name, account_id) values (
-        ${name}, ${account_id}
-      ) RETURNING *
+			INSERT INTO personas (name, account_id) VALUES (
+				${name}, ${account_id}
+			) RETURNING *
 		`;
 		const persona = data[0];
 		console.log('[db] created persona', persona);
@@ -41,16 +39,16 @@ export const personaRepo = (db: Database) => ({
 	): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 		console.log('[personaRepo] filtering by account', account_id);
 		const data = await db.sql<Persona[]>`
-      SELECT p.persona_id, p.account_id, p.name, p.created, p.updated,
+			SELECT p.persona_id, p.account_id, p.name, p.created, p.updated,
 
-      (
-        SELECT array_to_json(coalesce(array_agg(d.community_id)))
-        FROM (
-          SELECT m.community_id FROM memberships m WHERE m.persona_id = p.persona_id
-        ) d
-      ) AS community_ids
-      
-      FROM personas p WHERE p.account_id = ${account_id}
+			(
+				SELECT array_to_json(coalesce(array_agg(d.community_id)))
+				FROM (
+					SELECT m.community_id FROM memberships m WHERE m.persona_id = p.persona_id
+				) d
+			) AS community_ids
+
+			FROM personas p WHERE p.account_id = ${account_id}
 		`;
 		return {ok: true, value: data};
 	},
@@ -59,15 +57,15 @@ export const personaRepo = (db: Database) => ({
 	): Promise<Result<{value: Persona | undefined}, ErrorResponse>> => {
 		console.log('[personaRepo] filtering by name', name);
 		const data = await db.sql<Persona[]>`
-      SELECT p.persona_id, p.account_id, p.name, p.created, p.updated
-      FROM personas p WHERE LOWER(p.name) = LOWER(${name})
+			SELECT persona_id, account_id, name, created, updated
+			FROM personas WHERE LOWER(name) = LOWER(${name})
 		`;
 		return {ok: true, value: data[0]};
 	},
 	getAll: async (): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 		const data = await db.sql<Persona[]>`
-      select persona_id, name from personas
-    `;
+			SELECT persona_id, name FROM personas
+		`;
 		return {ok: true, value: data};
 	},
 });

@@ -74,9 +74,9 @@
 			<section class="markup panel-inset">
 				<h3>{entity.substring('space:'.length)}</h3>
 			</section>
-		{:else if entity.startsWith('file:')}
+		{:else if entity.startsWith('entity:')}
 			<section class="markup panel-inset">
-				<p>TODO use file_id: {entity.substring('file:'.length)}</p>
+				<p>TODO use entity_id: {entity.substring('entity:'.length)}</p>
 			</section>
 		{:else if entity.startsWith('link:')}
 			<!-- TODO could do more if we had the original `target` element
