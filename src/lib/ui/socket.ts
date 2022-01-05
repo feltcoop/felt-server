@@ -51,7 +51,7 @@ export const toSocketStore = (
 
 	const onWsOpen = () => {
 		console.log('[socket] open');
-		reconnectCount = 0;
+		cancelReconnect(); // resets the count but is not expected to be needed to clear the timeout
 		update(($socket) => ({...$socket, status: 'success', open: true}));
 	};
 	// This handler gets called when the websocket closes unexpectedly or when it fails to connect.
@@ -70,16 +70,16 @@ export const toSocketStore = (
 	const RECONNECT_DELAY = 1000; // matches the current Vite/SvelteKit retry rate, but we use a counter to back off
 	const RECONNECT_DELAY_MAX = 60000;
 	const queueReconnect = () => {
-		console.log('queue reconnect?');
 		reconnectCount++;
-		console.log('reconnecting: reconnectCount', reconnectCount);
 		reconnectTimeout = setTimeout(() => {
-			// TODO ensure we're still connected!  track the timeout?
 			reconnectTimeout = null;
+			const currentReconnectCount = reconnectCount; // TODO is this right? preserve count because `connect` calls `disconnect`
 			store.connect(get(store).url!);
+			reconnectCount = currentReconnectCount;
 		}, Math.min(RECONNECT_DELAY_MAX, RECONNECT_DELAY * reconnectCount));
 	};
 	const cancelReconnect = () => {
+		reconnectCount = 0;
 		if (reconnectTimeout !== null) {
 			clearTimeout(reconnectTimeout);
 			reconnectTimeout = null;
@@ -113,9 +113,8 @@ export const toSocketStore = (
 			});
 		},
 		connect: (url) => {
-			console.log('connect gap', Date.now() - lastConnect);
-			lastConnect = Date.now();
 			tryToDisconnect();
+			lastConnect = Date.now();
 			update(($socket) => {
 				console.log('[socket] connect', $socket);
 				const ws = createWebSocket(url, handleMessage, sendHeartbeat, heartbeatInterval);
@@ -136,11 +135,10 @@ export const toSocketStore = (
 			const $socket = get(store);
 			// console.log('[ws] send', data, $socket);
 			if (!$socket.ws) {
-				console.error('[ws] cannot send without a socket', data, $socket);
+				console.error('[ws] cannot send because the socket is disconnected', data, $socket);
 				return false;
 			}
 			if (!$socket.open) {
-				// TODO queue messages instead? return a promise?
 				console.error('[ws] cannot send because the websocket is not open', data, $socket);
 				return false;
 			}

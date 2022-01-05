@@ -3,30 +3,20 @@
 
 	export let socket: SocketStore;
 
-	const onInput = (e: Event & {currentTarget: EventTarget & HTMLInputElement}) => {
-		socket.updateUrl(e.currentTarget.value);
-	};
-
 	const connect = () => socket.connect($socket.url!); // TODO maybe make the socket state a union type for connected/disconnected states?
+	const disconnect = () => socket.disconnect();
 </script>
 
 <div class="socket-connection">
-	{#if $socket.ws}
-		<form>
-			<input value={$socket.url} on:input={onInput} disabled={false} />
-			<button type="button" on:click={() => socket.disconnect()} disabled={false}>
-				disconnect
-			</button>
-		</form>
-	{:else}
-		<form>
-			<input value={$socket.url} on:input={onInput} disabled={false} />
-			<button type="button" on:click={connect} disabled={false}> connect </button>
-		</form>
-	{/if}
-	<h2>status: <code>'{$socket.status}'</code></h2>
+	<form>
+		<input value={$socket.url} on:input={(e) => socket.updateUrl(e.currentTarget.value)} />
+		<button type="button" on:click={$socket.ws ? disconnect : connect}>
+			{#if $socket.ws}disconnect{:else}connect{/if}
+		</button>
+	</form>
+	<div>status: <code>'{$socket.status}'</code></div>
 	{#if $socket.error}
-		<h2 class="error">error: <code>'{$socket.error}'</code></h2>
+		<div class="error">error: <code>'{$socket.error}'</code></div>
 	{/if}
 </div>
 
