@@ -37,7 +37,6 @@
 		{#if entity === 'app'}
 			<section class="markup panel-inset">
 				<p>
-					`
 					<a href="https://github.com/feltcoop/felt-server" target="_blank" rel="noreferrer"
 						>felt-server</a
 					>
