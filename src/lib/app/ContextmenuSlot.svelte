@@ -38,10 +38,8 @@
 			<section class="markup panel-inset">
 				<p>
 					`
-					<a
-						href="https://github.com/feltcoop/felt-server"
-						target="_blank"
-						rel="noreferrer noopener">felt-server</a
+					<a href="https://github.com/feltcoop/felt-server" target="_blank" rel="noreferrer"
+						>felt-server</a
 					>
 					version 💚
 					<a href="https://github.com/feltcoop/felt-server/commit/{VITE_GIT_HASH}" target="_blank">
