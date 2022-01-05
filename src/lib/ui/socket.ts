@@ -73,7 +73,7 @@ export const toSocketStore = (
 		reconnectCount++;
 		reconnectTimeout = setTimeout(() => {
 			reconnectTimeout = null;
-			const currentReconnectCount = reconnectCount; // TODO is this right? preserve count because `connect` calls `disconnect`
+			const currentReconnectCount = reconnectCount; // preserve count because `connect` calls `disconnect`
 			store.connect(get(store).url!);
 			reconnectCount = currentReconnectCount;
 		}, Math.min(RECONNECT_DELAY_MAX, RECONNECT_DELAY * reconnectCount));
