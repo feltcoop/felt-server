@@ -56,30 +56,33 @@ export const toSocketStore = (
 	};
 	// This handler gets called when the websocket closes unexpectedly or when it fails to connect.
 	// It's not called when the websocket closes due to a `disconnect` call.
-	const onWsClose = () => {
+	const onWsCloseUnexpectedly = () => {
 		console.log('[socket] close');
-		update(($socket) => ({...$socket, open: false}));
+		if (get(store).open) {
+			update(($socket) => ({...$socket, open: false}));
+		}
 		queueReconnect();
 	};
 
 	// TODO extract this?
 	let reconnectCount = 0;
+	let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 	const RECONNECT_DELAY = 1000; // matches the current Vite/SvelteKit retry rate, but we use a counter to back off
 	const RECONNECT_DELAY_MAX = 60000;
 	const queueReconnect = () => {
 		console.log('queue reconnect?');
 		reconnectCount++;
 		console.log('reconnecting: reconnectCount', reconnectCount);
-		const reconnect = () => {
+		reconnectTimeout = setTimeout(() => {
+			// TODO ensure we're still connected!  track the timeout?
+			reconnectTimeout = null;
 			store.connect(get(store).url!);
-		};
-		if (reconnectCount === 1) {
-			reconnect();
-		} else {
-			setTimeout(
-				reconnect,
-				Math.min(RECONNECT_DELAY_MAX, RECONNECT_DELAY * Math.max(1, reconnectCount)),
-			);
+		}, Math.min(RECONNECT_DELAY_MAX, RECONNECT_DELAY * reconnectCount));
+	};
+	const cancelReconnect = () => {
+		if (reconnectTimeout !== null) {
+			clearTimeout(reconnectTimeout);
+			reconnectTimeout = null;
 		}
 	};
 
@@ -99,11 +102,12 @@ export const toSocketStore = (
 		subscribe,
 		disconnect: (code = 1000) => {
 			if (!get(store).ws) return;
+			cancelReconnect();
 			update(($socket) => {
 				console.log('[socket] disconnect', code, $socket);
 				const ws = $socket.ws!;
 				ws.removeEventListener('open', onWsOpen);
-				ws.removeEventListener('close', onWsClose);
+				ws.removeEventListener('close', onWsCloseUnexpectedly);
 				ws.close(code); // close *after* removing the 'close' listener
 				return {...$socket, status: 'initial', open: false, ws: null};
 			});
@@ -116,7 +120,7 @@ export const toSocketStore = (
 				console.log('[socket] connect', $socket);
 				const ws = createWebSocket(url, handleMessage, sendHeartbeat, heartbeatInterval);
 				ws.addEventListener('open', onWsOpen);
-				ws.addEventListener('close', onWsClose);
+				ws.addEventListener('close', onWsCloseUnexpectedly);
 				return {...$socket, url, status: 'pending', ws, error: null};
 			});
 		},
@@ -184,7 +188,7 @@ const createWebSocket = (
 	// see `proxy_read_timeout` and `proxy_send_timeout` for more)
 	let lastSendTime: number;
 	let lastReceiveTime: number;
-	let heartbeatTimeout: NodeJS.Timeout | null = null;
+	let heartbeatTimeout: ReturnType<typeof setTimeout> | null = null;
 	const startHeartbeat = () => {
 		const now = Date.now();
 		lastSendTime = now;
@@ -192,8 +196,10 @@ const createWebSocket = (
 		queueHeartbeat();
 	};
 	const stopHeartbeat = () => {
-		clearTimeout(heartbeatTimeout!);
-		heartbeatTimeout = null;
+		if (heartbeatTimeout !== null) {
+			clearTimeout(heartbeatTimeout);
+			heartbeatTimeout = null;
+		}
 	};
 	const queueHeartbeat = () => {
 		heartbeatTimeout = setTimeout(() => {
