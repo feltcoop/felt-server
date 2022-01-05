@@ -154,10 +154,11 @@
 	onMount(() => {
 		mounted = true;
 		return () => {
-			socket.disconnect(); // TODO should this and the below stuff be abstracted
+			socket.disconnect();
 		};
 	});
 
+	// Keep the socket connected when logged in, and disconnect when logged out.
 	$: if (mounted) {
 		if (guest) {
 			socket.disconnect();

@@ -14,7 +14,7 @@ export const setSocket = (store: SocketStore): SocketStore => {
 	return store;
 };
 
-// This store wraps a browser `WebSocket` connection with all of the Sveltey goodness.
+// This store wraps a browser `WebSocket` connection with reconnection and heartbeat behaviors.
 
 // TODO consider extracting a higher order store or component
 // to handle reconnection and heartbeat. Connection? SocketConnection?
@@ -35,6 +35,7 @@ export interface SocketStore {
 	disconnect: (code?: number) => void;
 	connect: (url: string) => void;
 	send: (data: object) => boolean; // returns `true` if sent, `false` if not for some reason
+	updateUrl: (url: string) => void;
 }
 
 export interface HandleSocketMessage {
@@ -65,25 +66,25 @@ export const toSocketStore = (
 	const RECONNECT_DELAY_MAX = 60000;
 	const RECONNECT_FAST_RETRY_COUNT = 3; // retry at the base delay this many times before increasing backoff
 	const queueReconnect = () => {
-		debugger;
-		if (!reconnecting && get(store).status === 'initial') {
-			reconnecting = true;
-			reconnectCount++;
-			const connect = () => {
-				reconnecting = false;
-				store.connect(get(store).url!);
-			};
-			if (reconnectCount === 1) {
-				connect();
-			} else {
-				setTimeout(
-					connect,
-					Math.min(
-						RECONNECT_DELAY_MAX,
-						RECONNECT_DELAY * Math.max(1, reconnectCount - RECONNECT_FAST_RETRY_COUNT + 1),
-					),
-				);
-			}
+		console.log('queue reconnect?');
+		if (reconnecting) return;
+		reconnecting = true;
+		reconnectCount++;
+		console.log('reconnecting: reconnectCount', reconnectCount);
+		const reconnect = () => {
+			reconnecting = false;
+			store.connect(get(store).url!);
+		};
+		if (reconnectCount === 1) {
+			reconnect();
+		} else {
+			setTimeout(
+				reconnect,
+				Math.min(
+					RECONNECT_DELAY_MAX,
+					RECONNECT_DELAY * Math.max(1, reconnectCount - RECONNECT_FAST_RETRY_COUNT + 1),
+				),
+			);
 		}
 	};
 
@@ -99,13 +100,13 @@ export const toSocketStore = (
 				ws.removeEventListener('open', onWsOpen);
 				ws.removeEventListener('close', onWsClose);
 				ws.close(code);
-				return {...$socket, status: 'initial', open: false, ws: null, url: null};
+				return {...$socket, status: 'initial', open: false, ws: null};
 			});
 		},
 		connect: (url) => {
 			console.log('connect gap', Date.now() - lastConnect);
 			lastConnect = Date.now();
-			if (get(store).ws) return;
+			if (get(store).ws) return; // already connected
 			update(($socket) => {
 				console.log('[socket] connect', $socket);
 				const ws = createWebSocket(url, handleMessage, sendHeartbeat, heartbeatInterval);
@@ -113,6 +114,10 @@ export const toSocketStore = (
 				ws.addEventListener('close', onWsClose);
 				return {...$socket, url, connected: false, status: 'pending', ws, error: null};
 			});
+		},
+		updateUrl: (url) => {
+			if (get(store).ws) return; // silently ignoring for now
+			update(($socket) => ({...$socket, url}));
 		},
 		send: (data) => {
 			const $socket = get(store);

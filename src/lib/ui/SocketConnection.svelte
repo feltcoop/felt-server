@@ -1,44 +1,40 @@
 <script lang="ts">
-	import {getApp} from '$lib/ui/app';
+	import {type SocketStore} from '$lib/ui/socket';
 
-	const {socket, devmode} = getApp();
+	export let socket: SocketStore;
 
-	let newUrl = $socket.url || '';
-	const resetUrl = () => (newUrl = $socket.url || '');
-	$: if ($socket.open) resetUrl();
+	const onInput = (e: Event & {currentTarget: EventTarget & HTMLInputElement}) => {
+		socket.updateUrl(e.currentTarget.value);
+	};
+
+	const connect = () => socket.connect($socket.url!); // TODO maybe make the socket state a union type for connected/disconnected states?
 </script>
 
-{#if $devmode}
-	<div class="socket-connection">
-		{#if $socket.open}
-			<form>
-				<input bind:value={newUrl} disabled />
-				<button
-					type="button"
-					on:click={() => socket.disconnect()}
-					disabled={$socket.status === 'pending'}
-				>
-					disconnect
-				</button>
-			</form>
-		{:else}
-			<form>
-				<input bind:value={newUrl} disabled={$socket.status === 'pending'} />
-				<button
-					type="button"
-					on:click={() => socket.connect(newUrl)}
-					disabled={$socket.status === 'pending'}
-				>
-					connect
-				</button>
-			</form>
-		{/if}
-		<h2>status: <code>'{$socket.status}'</code></h2>
-		{#if $socket.error}
-			<h2 class="error">error: <code>'{$socket.error}'</code></h2>
-		{/if}
-	</div>
-{/if}
+<div class="socket-connection">
+	{#if $socket.open}
+		<form>
+			<input value={$socket.url} on:input={onInput} disabled />
+			<button
+				type="button"
+				on:click={() => socket.disconnect()}
+				disabled={$socket.status === 'pending'}
+			>
+				disconnect
+			</button>
+		</form>
+	{:else}
+		<form>
+			<input value={$socket.url} on:input={onInput} disabled={$socket.status === 'pending'} />
+			<button type="button" on:click={connect} disabled={$socket.status === 'pending'}>
+				connect
+			</button>
+		</form>
+	{/if}
+	<h2>status: <code>'{$socket.status}'</code></h2>
+	{#if $socket.error}
+		<h2 class="error">error: <code>'{$socket.error}'</code></h2>
+	{/if}
+</div>
 
 <style>
 	.socket-connection {

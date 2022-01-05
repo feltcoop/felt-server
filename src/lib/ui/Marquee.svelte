@@ -7,9 +7,12 @@
 	import MarqueeNav from '$lib/ui/MarqueeNav.svelte';
 	import {toIcon, toName} from '$lib/vocab/entity/entity';
 	import {getApp} from '$lib/ui/app';
+	import SocketConnection from '$lib/ui/SocketConnection.svelte';
 
 	const {
 		ui: {expandMarquee},
+		socket,
+		devmode,
 	} = getApp();
 
 	export let community: Readable<Community>;
@@ -31,4 +34,14 @@
 			{/each}
 		</ul>
 	</section>
+	{#if $devmode}
+		<section>
+			<ul>
+				<li><a href="/docs">/docs</a></li>
+			</ul>
+		</section>
+		<section>
+			<SocketConnection {socket} />
+		</section>
+	{/if}
 {/if}
