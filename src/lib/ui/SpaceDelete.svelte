@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import type {Readable} from 'svelte/store';
 
 	import {getApp} from '$lib/ui/app';
@@ -9,7 +8,6 @@
 
 	export let space: Readable<Space>;
 
-	let opened = false;
 	let errorMessage: string | undefined;
 
 	const deleteSpace = async () => {
@@ -32,36 +30,17 @@
 	};
 </script>
 
-<button
-	aria-label="Delete Space"
-	type="button"
-	class="button-emoji"
-	on:click={() => (opened = true)}
->
-	🗑️
-</button>
-{#if opened}
-	<Dialog on:close={() => (opened = false)}>
-		<div class="markup">
-			<h1>Delete {$space.name} space?</h1>
-			<form>
-				<div class:error={!!errorMessage}>{errorMessage || ''}</div>
-				<button type="button" on:click={deleteSpace} on:keydown={onKeydown}> Delete space </button>
-			</form>
-		</div>
-	</Dialog>
-{/if}
+<div class="markup">
+	<h1>Delete {$space.name} space?</h1>
+	<form>
+		<div class:error={!!errorMessage}>{errorMessage || ''}</div>
+		<button type="button" on:click={deleteSpace} on:keydown={onKeydown}> Delete space </button>
+	</form>
+</div>
 
 <style>
 	.error {
 		font-weight: bold;
 		color: rgb(73, 84, 153);
-	}
-	.button-emoji {
-		background: none;
-		border: none;
-		cursor: pointer;
-		margin: 0;
-		word-wrap: break-word;
 	}
 </style>

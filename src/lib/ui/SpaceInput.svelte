@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import type {Readable} from 'svelte/store';
 
 	import type {Community} from '$lib/vocab/community/community.js';
@@ -18,7 +17,6 @@
 	// TODO instead of filtering here, this perhaps should be determined by metadata on space types
 	const ViewTypes = allViewTypes.filter((s) => s !== ViewType.Home);
 
-	let opened = false;
 	let newName = '';
 	let newType = ViewTypes[0];
 	let nameEl: HTMLInputElement;
@@ -58,57 +56,38 @@
 	};
 </script>
 
-<button
-	aria-label="Create Space"
-	type="button"
-	class="button-emoji"
-	on:click={() => (opened = true)}
->
-	➕
-</button>
-{#if opened}
-	<Dialog on:close={() => (opened = false)}>
-		<div class="markup">
-			<h1>Create a new space</h1>
-			<section>
-				<!-- TODO likely make these a `select` or picker -->
-				<Avatar name={toName($persona)} icon={toIcon($persona)} />
-				<Avatar name={$community.name} type="Community" />
-			</section>
-			<form>
-				<div class:error={!!errorMessage}>{errorMessage || ''}</div>
-				<input
-					placeholder="> name"
-					bind:value={newName}
-					use:autofocus
-					bind:this={nameEl}
-					on:keydown={onKeydown}
-				/>
-				<label>
-					Select Type:
-					<select class="type-selector" bind:value={newType}>
-						{#each ViewTypes as type (type)}
-							<option value={type}>{type}</option>
-						{/each}
-					</select>
-				</label>
-				<button type="button" on:click={create}> Create space </button>
-			</form>
-		</div>
-	</Dialog>
-{/if}
+<div class="markup">
+	<h1>Create a new space</h1>
+	<section>
+		<!-- TODO likely make these a `select` or picker -->
+		<Avatar name={toName($persona)} icon={toIcon($persona)} />
+		<Avatar name={$community.name} type="Community" />
+	</section>
+	<form>
+		<div class:error={!!errorMessage}>{errorMessage || ''}</div>
+		<input
+			placeholder="> name"
+			bind:value={newName}
+			use:autofocus
+			bind:this={nameEl}
+			on:keydown={onKeydown}
+		/>
+		<label>
+			Select Type:
+			<select class="type-selector" bind:value={newType}>
+				{#each ViewTypes as type (type)}
+					<option value={type}>{type}</option>
+				{/each}
+			</select>
+		</label>
+		<button type="button" on:click={create}> Create space </button>
+	</form>
+</div>
 
 <style>
 	.error {
 		font-weight: bold;
 		color: rgb(73, 84, 153);
-	}
-	.button-emoji {
-		background: none;
-		border: none;
-		cursor: pointer;
-		margin: 0;
-		word-wrap: break-word;
 	}
 	.type-selector {
 		margin-left: var(--spacing_xs);

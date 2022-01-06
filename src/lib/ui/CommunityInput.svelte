@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import type {Readable} from 'svelte/store';
@@ -14,7 +13,6 @@
 
 	export let persona: Readable<Persona>;
 
-	let opened = false;
 	let name = '';
 	let pending = false;
 	let errorMessage: string | null = null;
@@ -38,44 +36,24 @@
 	};
 </script>
 
-<!--TODO: Make an IconButton component in felt and use it here-->
-<button
-	aria-label="Create Community"
-	type="button"
-	class="button-emoji"
-	on:click={() => (opened = true)}
->
-	➕
-</button>
-{#if opened}
-	<Dialog on:close={() => (opened = false)}>
-		<div class="markup">
-			<h1>Create a new community</h1>
-			<section>
-				<!-- TODO likely make this a `select` or picker -->
-				<Avatar name={toName($persona)} icon={toIcon($persona)} />
-			</section>
-			<form>
-				<input placeholder="> name" on:keydown={onKeydown} bind:value={name} use:autofocus />
-				<PendingButton type="button" on:click={() => create()} {pending}>
-					Create community
-				</PendingButton>
-			</form>
-			{#if errorMessage}
-				<Message status="error">{errorMessage}</Message>
-			{/if}
-		</div>
-	</Dialog>
-{/if}
+<div class="markup">
+	<h1>Create a new community</h1>
+	<section>
+		<!-- TODO likely make this a `select` or picker -->
+		<Avatar name={toName($persona)} icon={toIcon($persona)} />
+	</section>
+	<form>
+		<input placeholder="> name" on:keydown={onKeydown} bind:value={name} use:autofocus />
+		<PendingButton type="button" on:click={() => create()} {pending}>
+			Create community
+		</PendingButton>
+	</form>
+	{#if errorMessage}
+		<Message status="error">{errorMessage}</Message>
+	{/if}
+</div>
 
 <style>
-	.button-emoji {
-		background: none;
-		border: none;
-		cursor: pointer;
-		margin: 0;
-		word-wrap: break-word;
-	}
 	section {
 		display: flex;
 		flex-direction: column;
