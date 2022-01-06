@@ -26,7 +26,7 @@ export const toHttpApiClient = <
 			console.log('[http api client] invoke', name, params);
 			const service = findService(name);
 			if (!service) {
-				return {ok: false, status: 400, reason: `Failed to invoke unknown service: ${name}`};
+				return {ok: false, status: 400, message: 'failed to invoke unknown service'};
 			}
 			const path = params ? inject(service.route.path, params) : service.route.path;
 			const {method} = service.route;
@@ -44,7 +44,7 @@ export const toHttpApiClient = <
 					return {
 						ok: false,
 						status: null, // discard `res.status` because something else went wrong
-						reason: 'Server response is not valid JSON',
+						message: 'failed to parse server response',
 					};
 				}
 				console.log('[http api client] result', res.ok, res.status, json);
@@ -54,7 +54,7 @@ export const toHttpApiClient = <
 					return {
 						ok: false,
 						status: res.status,
-						reason: json.reason || res.statusText || 'Unknown error',
+						message: json.message || res.statusText || 'unknown error',
 					};
 				}
 			} catch (err) {
@@ -62,7 +62,7 @@ export const toHttpApiClient = <
 				return {
 					ok: false,
 					status: null,
-					reason: 'Something went wrong. Is your Internet ok?',
+					message: 'unknown error',
 				};
 			}
 		},

@@ -13,9 +13,7 @@ import type {DispatchContext} from '$lib/app/dispatch';
 import type {UiHandlers} from '$lib/app/eventTypes';
 import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-
-const UNKNOWN_API_ERROR =
-	'Something went wrong. Maybe the server or your Internet connection is down. Please try again.';
+import type {DialogState} from '$lib/ui/dialog/dialog';
 
 const KEY = Symbol();
 
@@ -59,6 +57,7 @@ export interface Ui extends Partial<UiHandlers> {
 	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	mobile: Readable<boolean>;
 	contextmenu: ContextmenuStore;
+	dialogs: Writable<DialogState[]>;
 }
 
 export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): Ui => {
@@ -115,6 +114,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 
 	const mobile = writable(initialMobile);
 	const contextmenu = createContextmenuStore();
+	const dialogs = writable<DialogState[]>([]);
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -245,7 +245,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 			if (handler) {
 				return handler(ctx);
 			} else {
-				console.warn('[ui] ignoring a dispatched event', ctx);
+				console.warn('[ui] ignoring unhandled event', ctx);
 			}
 		},
 		Ping: async ({invoke}) => invoke(),
@@ -265,14 +265,14 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 					return {ok: true, status: response.status, value: responseData}; // TODO doesn't this have other status codes?
 				} else {
 					console.error('[LogIn] response not ok', responseData, response); // TODO logging
-					return {ok: false, status: response.status, reason: responseData.reason};
+					return {ok: false, status: response.status, message: responseData.message};
 				}
 			} catch (err) {
 				console.error('[LogIn] error', err); // TODO logging
 				return {
 					ok: false,
 					status: 500,
-					reason: UNKNOWN_API_ERROR,
+					message: 'unknown error',
 				};
 			}
 		},
@@ -291,14 +291,14 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 					return {ok: true, status: response.status, value: responseData};
 				} else {
 					console.error('[LogOut] response not ok', response); // TODO logging
-					return {ok: false, status: response.status, reason: responseData.reason};
+					return {ok: false, status: response.status, message: responseData.message};
 				}
 			} catch (err) {
 				console.error('[LogOut] err', err); // TODO logging
 				return {
 					ok: false,
 					status: 500,
-					reason: UNKNOWN_API_ERROR,
+					message: 'unknown error',
 				};
 			}
 		},
@@ -534,6 +534,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		expandMainNav,
 		expandMarquee,
 		contextmenu,
+		dialogs,
 		// derived state
 		personaIdSelection,
 		personaSelection,
@@ -547,6 +548,12 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		// methods
 		SetMobile: ({params}) => {
 			mobile.set(params);
+		},
+		OpenDialog: ({params}) => {
+			dialogs.update(($dialogs) => $dialogs.concat(params));
+		},
+		CloseDialog: () => {
+			dialogs.update(($dialogs) => $dialogs.slice(0, $dialogs.length - 1));
 		},
 		SelectPersona: ({params}) => {
 			console.log('[ui.SelectPersona] persona_id', params.persona_id);

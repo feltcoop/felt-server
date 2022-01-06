@@ -30,7 +30,7 @@ export const readCommunitiesService: Service<ReadCommunitiesParams, ReadCommunit
 				return {ok: true, status: 200, value: {communities: findCommunitiesResult.value}};
 			} else {
 				console.log('[ReadCommunities] error searching for communities');
-				return {ok: false, status: 500, reason: 'error searching for communities'};
+				return {ok: false, status: 500, message: 'error searching for communities'};
 			}
 		},
 	};
@@ -50,7 +50,7 @@ export const readCommunityService: Service<ReadCommunityParams, ReadCommunityRes
 			return {
 				ok: false,
 				status: findCommunityResult.type === 'no_community_found' ? 404 : 500,
-				reason: findCommunityResult.reason,
+				message: findCommunityResult.message,
 			};
 		}
 	},
@@ -63,14 +63,6 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 	{
 		event: CreateCommunity,
 		perform: async ({server, params, account_id}) => {
-			if (!params.name) {
-				// TODO declarative validation
-				return {
-					ok: false,
-					status: 400,
-					reason: 'invalid name',
-				};
-			}
 			console.log('created community account_id', account_id);
 			// TODO validate that `account_id` is `persona_id`
 			const createCommunityResult = await server.db.repos.community.create(
@@ -99,7 +91,7 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 					return {
 						ok: false,
 						status: 500,
-						reason: 'error retrieving community data',
+						message: 'error retrieving community data',
 					};
 				}
 			} else {
@@ -107,7 +99,7 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 				return {
 					ok: false,
 					status: 500,
-					reason: 'error creating community',
+					message: 'error creating community',
 				};
 			}
 		},
@@ -129,7 +121,7 @@ export const updateCommunitySettingsService: Service<
 		if (result.ok) {
 			return {ok: true, status: 200, value: null};
 		} else {
-			return {ok: false, status: 500, reason: result.reason || 'unknown error'};
+			return {ok: false, status: 500, message: result.message || 'unknown error'};
 		}
 	},
 };
@@ -152,7 +144,7 @@ export const createMembershipService: Service<
 			return {ok: true, status: 200, value: {membership: createMembershipResult.value}};
 		} else {
 			console.log('[CreateMembership] error creating membership');
-			return {ok: false, status: 500, reason: 'error creating membership'};
+			return {ok: false, status: 500, message: 'error creating membership'};
 		}
 	},
 };

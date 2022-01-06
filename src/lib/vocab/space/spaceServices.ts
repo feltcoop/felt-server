@@ -27,7 +27,7 @@ export const readSpaceService: Service<ReadSpaceParams, ReadSpaceResponseResult>
 			return {
 				ok: false,
 				status: findSpaceResult.type === 'no_space_found' ? 404 : 500,
-				reason: findSpaceResult.reason,
+				message: findSpaceResult.message,
 			};
 		}
 	},
@@ -46,7 +46,7 @@ export const readSpacesService: Service<ReadSpacesParams, ReadSpacesResponseResu
 			return {ok: true, status: 200, value: {spaces: findSpacesResult.value}};
 		} else {
 			console.log('[ReadSpaces] error searching for community spaces');
-			return {ok: false, status: 500, reason: 'error searching for community spaces'};
+			return {ok: false, status: 500, message: 'error searching for community spaces'};
 		}
 	},
 };
@@ -66,12 +66,12 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 
 		if (!findByCommunityUrlResult.ok) {
 			console.log('[CreateSpace] error validating unique url for new space');
-			return {ok: false, status: 500, reason: 'error validating unique url for new space'};
+			return {ok: false, status: 500, message: 'error validating unique url for new space'};
 		}
 
 		if (findByCommunityUrlResult.value) {
 			console.log('[CreateSpace] provided url for space already exists');
-			return {ok: false, status: 409, reason: 'a space with that url already exists'};
+			return {ok: false, status: 409, message: 'a space with that url already exists'};
 		}
 
 		console.log('[CreateSpace] creating space for community', params.community_id);
@@ -86,7 +86,7 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 			return {ok: true, status: 200, value: {space: createSpaceResult.value}};
 		} else {
 			console.log('[CreateSpace] error searching for community spaces');
-			return {ok: false, status: 500, reason: 'error searching for community spaces'};
+			return {ok: false, status: 500, message: 'error searching for community spaces'};
 		}
 	},
 };
@@ -101,7 +101,7 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 		console.log(result);
 		if (!result.ok) {
 			console.log('[DeleteSpace] error removing space: ', params.space_id);
-			return {ok: false, status: 500, reason: result.reason};
+			return {ok: false, status: 500, message: result.message};
 		}
 		return {ok: true, status: 200, value: null};
 	},

@@ -27,7 +27,7 @@
 		const result = await dispatch('LogOut');
 		console.log('<LogoutForm> LogOut result', result);
 		if (!result.ok) {
-			errorMessage = result.reason;
+			errorMessage = result.message;
 		}
 		submitting = false;
 	};

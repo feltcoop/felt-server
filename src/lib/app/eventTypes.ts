@@ -32,6 +32,8 @@ export interface EventParamsByName {
 	ToggleMainNav: ToggleMainNavParams;
 	ToggleSecondaryNav: ToggleSecondaryNavParams;
 	SetMobile: SetMobileParams;
+	OpenDialog: OpenDialogParams;
+	CloseDialog: CloseDialogParams;
 	SelectPersona: SelectPersonaParams;
 	SelectCommunity: SelectCommunityParams;
 	SelectSpace: SelectSpaceParams;
@@ -194,6 +196,15 @@ export type ToggleSecondaryNavParams = void;
 
 export type SetMobileParams = boolean;
 
+export interface OpenDialogParams {
+	name: string;
+	props?: {
+		[k: string]: unknown;
+	};
+}
+
+export type CloseDialogParams = void;
+
 export interface SelectPersonaParams {
 	persona_id: number;
 }
@@ -243,6 +254,8 @@ export interface Dispatch {
 	(eventName: 'ToggleMainNav', params: ToggleMainNavParams): void;
 	(eventName: 'ToggleSecondaryNav', params: ToggleSecondaryNavParams): void;
 	(eventName: 'SetMobile', params: SetMobileParams): void;
+	(eventName: 'OpenDialog', params: OpenDialogParams): void;
+	(eventName: 'CloseDialog', params: CloseDialogParams): void;
 	(eventName: 'SelectPersona', params: SelectPersonaParams): void;
 	(eventName: 'SelectCommunity', params: SelectCommunityParams): void;
 	(eventName: 'SelectSpace', params: SelectSpaceParams): void;
@@ -299,6 +312,8 @@ export interface UiHandlers {
 	ToggleMainNav: (ctx: DispatchContext<ToggleMainNavParams, void>) => void;
 	ToggleSecondaryNav: (ctx: DispatchContext<ToggleSecondaryNavParams, void>) => void;
 	SetMobile: (ctx: DispatchContext<SetMobileParams, void>) => void;
+	OpenDialog: (ctx: DispatchContext<OpenDialogParams, void>) => void;
+	CloseDialog: (ctx: DispatchContext<CloseDialogParams, void>) => void;
 	SelectPersona: (ctx: DispatchContext<SelectPersonaParams, void>) => void;
 	SelectCommunity: (ctx: DispatchContext<SelectCommunityParams, void>) => void;
 	SelectSpace: (ctx: DispatchContext<SelectSpaceParams, void>) => void;

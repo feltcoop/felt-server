@@ -32,7 +32,7 @@ export const membershipRepo = (db: Database) => ({
 		return {
 			ok: false,
 			type: 'query_error',
-			reason: `No membership found for person_id: ${persona_id},community_id:${community_id}`,
+			message: 'no membership found',
 		};
 	},
 	deleteById: async (
@@ -48,7 +48,7 @@ export const membershipRepo = (db: Database) => ({
 			return {
 				ok: false,
 				type: 'deletion_error',
-				reason: `There was an issue deleting membership for persona: ${persona_id} in community: ${community_id}`,
+				message: 'failed to delete membership',
 			};
 		}
 

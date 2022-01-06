@@ -17,7 +17,7 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 			return {ok: true, status: 200, value: {entities: findEntitiesResult.value}}; // TODO API types
 		} else {
 			console.log('[ReadEntities] error searching for entities');
-			return {ok: false, status: 500, reason: 'error searching for entities'};
+			return {ok: false, status: 500, message: 'error searching for entities'};
 		}
 	},
 };
@@ -36,7 +36,7 @@ export const createEntityService: Service<CreateEntityParams, CreateEntityRespon
 			return {ok: true, status: 200, value: {entity: insertEntitiesResult.value}}; // TODO API types
 		} else {
 			console.log('[CreateEntity] error searching for entities');
-			return {ok: false, status: 500, reason: 'error searching for entities'};
+			return {ok: false, status: 500, message: 'failed to create entity'};
 		}
 	},
 };

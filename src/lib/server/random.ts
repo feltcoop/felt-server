@@ -114,6 +114,12 @@ export const randomEventParams = async (
 		case 'SetMobile': {
 			return randomBool();
 		}
+		case 'OpenDialog': {
+			return {name: 'ManageMembershipForm'};
+		}
+		case 'CloseDialog': {
+			return undefined;
+		}
 		case 'SelectPersona': {
 			return {
 				persona_id: (randomItem(random.personas) || (await random.persona(account))).persona_id,

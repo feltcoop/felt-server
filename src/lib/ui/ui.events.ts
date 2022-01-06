@@ -45,6 +45,27 @@ export const events: EventInfo[] = [
 	},
 	{
 		type: 'ClientEvent',
+		name: 'OpenDialog',
+		params: {
+			$id: 'https://felt.social/vocab/OpenDialogParams.json',
+			type: 'object',
+			properties: {
+				name: {type: 'string'},
+				props: {type: 'object'},
+			},
+			required: ['name'],
+			additionalProperties: false,
+		},
+		returns: 'void',
+	},
+	{
+		type: 'ClientEvent',
+		name: 'CloseDialog',
+		params: null,
+		returns: 'void',
+	},
+	{
+		type: 'ClientEvent',
 		name: 'SelectPersona',
 		params: {
 			$id: 'https://felt.social/vocab/SelectPersonaParams.json',
