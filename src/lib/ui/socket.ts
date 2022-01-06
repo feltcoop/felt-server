@@ -18,6 +18,7 @@ export const setSocket = (store: SocketStore): SocketStore => {
 };
 
 // This store wraps a browser `WebSocket` connection with reconnection and heartbeat behaviors.
+// TODO explain connect/disconnect from the external
 
 // TODO consider extracting a higher order store or component
 // to handle reconnection and heartbeat. Connection? SocketConnection?
