@@ -108,12 +108,6 @@
 		width: 100%;
 	}
 
-	.contextmenu-slot .markup {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
-
 	.contextmenu-slot > section,
 	.contextmenu-slot > a {
 		border-bottom: var(--border);
