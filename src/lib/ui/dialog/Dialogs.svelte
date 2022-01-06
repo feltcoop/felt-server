@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
+	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import type {Readable} from 'svelte/store';
 
 	import {components} from '$lib/app/components';
@@ -18,6 +19,12 @@
 {#if activeDialog}
 	<!-- TODO should 'CloseDialog' take the dialog object or an id? -->
 	<Dialog on:close={() => dispatch('CloseDialog')}>
-		<svelte:component this={Component} {...activeDialog.props} />
+		{#if Component}
+			<svelte:component this={Component} {...activeDialog.props} />
+		{:else}
+			<div class="markup">
+				<Message status="error">unknown component "{activeDialog.name}"</Message>
+			</div>
+		{/if}
 	</Dialog>
 {/if}
