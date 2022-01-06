@@ -17,9 +17,6 @@ export const setSocket = (store: SocketStore): SocketStore => {
 	return store;
 };
 
-// This store wraps a browser `WebSocket` connection with reconnection and heartbeat behaviors.
-// TODO explain connect/disconnect from the external
-
 // TODO consider extracting a higher order store or component
 // to handle reconnection and heartbeat. Connection? SocketConnection?
 // A Svelte component could export the `socket` store.
@@ -35,8 +32,8 @@ export interface SocketState {
 
 export interface SocketStore {
 	subscribe: Readable<SocketState>['subscribe'];
-	disconnect: (code?: number) => void;
 	connect: (url: string) => void;
+	disconnect: (code?: number) => void;
 	send: (data: object) => boolean; // returns `true` if sent, `false` if not for some reason
 	updateUrl: (url: string) => void;
 }
@@ -45,10 +42,19 @@ export interface HandleSocketMessage {
 	(event: MessageEvent<any>): void;
 }
 
+/**
+ * Wraps a browser `WebSocket` connection with autoreconnect and heartbeat behaviors.
+ * The methods `connect`, `disconnect`, and `updateUrl` may be called in any state
+ * to synchronously update the `status`.
+ * The `open` property indicates the status of the internal `WebSocket` instance `ws`.
+ * @param handleMessage Callback to handle incoming messages.
+ * @param sendHeartbeat Callback to perform a heartbeat.
+ * @param heartbeatInterval Milliseconds between keepalive heartbeat.
+ */
 export const toSocketStore = (
 	handleMessage: HandleSocketMessage,
 	sendHeartbeat: () => void,
-	heartbeatInterval = HEARTBEAT_INTERVAL,
+	heartbeatInterval: number = HEARTBEAT_INTERVAL,
 ): SocketStore => {
 	const {subscribe, update} = writable<SocketState>(toDefaultSocketState());
 
@@ -99,6 +105,16 @@ export const toSocketStore = (
 
 	const store: SocketStore = {
 		subscribe,
+		connect: (url) => {
+			tryToDisconnect();
+			update(($socket) => {
+				console.log('[socket] connect', $socket);
+				const ws = createWebSocket(url, handleMessage, sendHeartbeat, heartbeatInterval);
+				ws.addEventListener('open', onWsOpen);
+				ws.addEventListener('close', onWsCloseUnexpectedly);
+				return {...$socket, url, status: 'pending', ws};
+			});
+		},
 		disconnect: (code = 1000) => {
 			if (!get(store).ws) return;
 			cancelReconnect();
@@ -109,16 +125,6 @@ export const toSocketStore = (
 				ws.removeEventListener('close', onWsCloseUnexpectedly);
 				ws.close(code); // close *after* removing the 'close' listener
 				return {...$socket, status: 'initial', open: false, ws: null};
-			});
-		},
-		connect: (url) => {
-			tryToDisconnect();
-			update(($socket) => {
-				console.log('[socket] connect', $socket);
-				const ws = createWebSocket(url, handleMessage, sendHeartbeat, heartbeatInterval);
-				ws.addEventListener('open', onWsOpen);
-				ws.addEventListener('close', onWsCloseUnexpectedly);
-				return {...$socket, url, status: 'pending', ws};
 			});
 		},
 		updateUrl: (url) => {
