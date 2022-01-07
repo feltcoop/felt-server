@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type {Space} from '$lib/vocab/space/space.js';
-	import SpaceInput from '$lib/ui/SpaceInput.svelte';
-	import SpaceDelete from '$lib/ui/SpaceDelete.svelte';
 	import type {Community} from '$lib/vocab/community/community.js';
-	import MembershipInput from '$lib/ui/MembershipInput.svelte';
 	import type {Readable} from 'svelte/store';
 	import SpaceNavItem from '$lib/ui/SpaceNavItem.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona.js';
+	import {getApp} from '$lib/ui/app';
+
+	const {dispatch} = getApp();
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
@@ -16,9 +16,39 @@
 
 <div class="space-nav" data-entity="community:{$community.name}">
 	<div class="header">
-		<SpaceInput {persona} {community} />
-		<MembershipInput {community} />
-		<SpaceDelete space={selectedSpace} />
+		<button
+			aria-label="Create Space"
+			type="button"
+			on:click={() =>
+				dispatch('OpenDialog', {
+					name: 'SpaceInput',
+					props: {persona, community, done: () => dispatch('CloseDialog')},
+				})}
+		>
+			➕
+		</button>
+		<button
+			aria-label="Invite users to {$community.name}"
+			type="button"
+			on:click={() =>
+				dispatch('OpenDialog', {
+					name: 'MembershipInput',
+					props: {community},
+				})}
+		>
+			✉️
+		</button>
+		<button
+			aria-label="Delete Space"
+			type="button"
+			on:click={() =>
+				dispatch('OpenDialog', {
+					name: 'SpaceDelete',
+					props: {space: selectedSpace, done: () => dispatch('CloseDialog')},
+				})}
+		>
+			🗑️
+		</button>
 	</div>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}

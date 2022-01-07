@@ -20,9 +20,9 @@
     "node": ">=16.6.0"
   },
   "devDependencies": {
-    "@feltcoop/gro": "^0.47.1",
+    "@feltcoop/gro": "^0.47.5",
     "@sveltejs/adapter-node": "^1.0.0-next.55",
-    "@sveltejs/kit": "^1.0.0-next.201",
+    "@sveltejs/kit": "^1.0.0-next.203",
     "@types/body-parser": "^1.19.1",
     "@types/node": "^16.11.12",
     "@types/throttle-debounce": "^2.1.0",

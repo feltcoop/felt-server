@@ -3,12 +3,12 @@
 	import type {Readable} from 'svelte/store';
 
 	import type {Community} from '$lib/vocab/community/community.js';
-	import CommunityInput from '$lib/ui/CommunityInput.svelte';
 	import CommunityNavButton from '$lib/ui/CommunityNavButton.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 
 	const {
+		dispatch,
 		ui: {sessionPersonas, personaSelection, communitySelection, communitiesByPersonaId},
 	} = getApp();
 
@@ -22,7 +22,17 @@
 
 <div class="community-nav">
 	<div class="header">
-		<CommunityInput persona={selectedPersona} />
+		<button
+			aria-label="Create Community"
+			type="button"
+			on:click={() =>
+				dispatch('OpenDialog', {
+					name: 'CommunityInput',
+					props: {persona: selectedPersona, done: () => dispatch('CloseDialog')},
+				})}
+		>
+			➕
+		</button>
 	</div>
 	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
 	<div>
