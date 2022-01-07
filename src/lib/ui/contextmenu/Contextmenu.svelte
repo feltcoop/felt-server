@@ -16,7 +16,10 @@
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
-<svelte:window on:contextmenu={onContextmenu(contextmenu)} on:click|capture={onClickWindow} />
+<svelte:window
+	on:contextmenu|capture={onContextmenu(contextmenu)}
+	on:click|capture={onClickWindow}
+/>
 
 <!--
 	TODO This originally had an `in:scale` transition, `in:scale={{duration: 50}}`
