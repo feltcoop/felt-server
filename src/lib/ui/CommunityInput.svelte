@@ -12,6 +12,7 @@
 	const {dispatch} = getApp();
 
 	export let persona: Readable<Persona>;
+	export let done: (() => void) | undefined = undefined;
 
 	let name = '';
 	let pending = false;
@@ -31,7 +32,7 @@
 			e.preventDefault();
 			await create();
 			name = '';
-			opened = false;
+			done?.();
 		}
 	};
 </script>

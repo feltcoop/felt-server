@@ -7,6 +7,7 @@
 	const {dispatch} = getApp();
 
 	export let space: Readable<Space>;
+	export let done: (() => void) | undefined = undefined;
 
 	let errorMessage: string | undefined;
 
@@ -16,7 +17,7 @@
 			space_id: $space.space_id,
 		});
 		if (result.ok) {
-			opened = false;
+			done?.();
 		} else {
 			errorMessage = result.message;
 		}

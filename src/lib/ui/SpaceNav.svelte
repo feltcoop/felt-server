@@ -19,21 +19,33 @@
 		<button
 			aria-label="Create Space"
 			type="button"
-			on:click={() => dispatch('OpenDialog', {name: 'SpaceInput', props: {persona, community}})}
+			on:click={() =>
+				dispatch('OpenDialog', {
+					name: 'SpaceInput',
+					props: {persona, community, done: () => dispatch('CloseDialog')},
+				})}
 		>
 			➕
 		</button>
 		<button
 			aria-label="Invite users to {$community.name}"
 			type="button"
-			on:click={() => dispatch('OpenDialog', {name: 'MembershipInput', props: {community}})}
+			on:click={() =>
+				dispatch('OpenDialog', {
+					name: 'MembershipInput',
+					props: {community},
+				})}
 		>
 			✉️
 		</button>
 		<button
 			aria-label="Delete Space"
 			type="button"
-			on:click={() => dispatch('OpenDialog', {name: 'SpaceDelete', props: {space: selectedSpace}})}
+			on:click={() =>
+				dispatch('OpenDialog', {
+					name: 'SpaceDelete',
+					props: {space: selectedSpace, done: () => dispatch('CloseDialog')},
+				})}
 		>
 			🗑️
 		</button>

@@ -26,7 +26,10 @@
 			aria-label="Create Community"
 			type="button"
 			on:click={() =>
-				dispatch('OpenDialog', {name: 'CommunityInput', props: {persona: selectedPersona}})}
+				dispatch('OpenDialog', {
+					name: 'CommunityInput',
+					props: {persona: selectedPersona, done: () => dispatch('CloseDialog')},
+				})}
 		>
 			➕
 		</button>

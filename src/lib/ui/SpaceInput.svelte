@@ -13,6 +13,7 @@
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
+	export let done: (() => void) | undefined = undefined;
 
 	// TODO instead of filtering here, this perhaps should be determined by metadata on space types
 	const ViewTypes = allViewTypes.filter((s) => s !== ViewType.Home);
@@ -42,7 +43,7 @@
 		if (result.ok) {
 			newName = '';
 			newType = ViewTypes[0];
-			opened = false;
+			done?.();
 		} else {
 			errorMessage = result.message;
 		}
