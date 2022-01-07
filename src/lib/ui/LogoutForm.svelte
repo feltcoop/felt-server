@@ -8,7 +8,7 @@
 
 	const {
 		dispatch,
-		ui: {selectedPersona},
+		ui: {personaSelection},
 	} = getApp();
 
 	let account: AccountModel | undefined;
@@ -19,15 +19,15 @@
 
 	$: disabled = !account;
 
-	$: selectedPersonaValue = $selectedPersona;
+	$: selectedPersona = $personaSelection;
 
 	const doLogOut = async () => {
 		submitting = true;
 		errorMessage = '';
-		const result = await dispatch('log_out');
-		console.log('<LogoutForm> log_out result', result);
+		const result = await dispatch('LogOut');
+		console.log('<LogoutForm> LogOut result', result);
 		if (!result.ok) {
-			errorMessage = result.reason;
+			errorMessage = result.message;
 		}
 		submitting = false;
 	};
@@ -36,8 +36,8 @@
 {#if account}
 	<div>This account was created {account.created}</div>
 {/if}
-{#if selectedPersonaValue}
-	<div>This persona was created {$selectedPersonaValue.created}</div>
+{#if selectedPersona}
+	<div>This persona was created {$selectedPersona.created}</div>
 {/if}
 <form>
 	<PendingButton pending={!!submitting} type="button" on:click={doLogOut} {disabled}>

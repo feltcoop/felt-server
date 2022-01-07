@@ -8,7 +8,7 @@ import type {Persona} from '$lib/vocab/persona/persona';
 import type {
 	CreateCommunityParams,
 	CreatePersonaParams,
-	CreateFileParams,
+	CreateEntityParams,
 	CreateSpaceParams,
 	CreateMembershipParams,
 } from '$lib/app/eventTypes';
@@ -52,7 +52,7 @@ export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 	name: randomSpaceName(),
 	url: randomSpaceUrl(),
 });
-export const randomFileParams = (actor_id: number, space_id: number): CreateFileParams => ({
+export const randomEntityParams = (actor_id: number, space_id: number): CreateEntityParams => ({
 	actor_id,
 	space_id,
 	content: randomContent(),
@@ -86,7 +86,8 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 		communities: [],
 		spaces: [],
 		account: async () => {
-			const account = unwrap(await db.repos.account.create(randomAccountParams()));
+			const params = randomAccountParams();
+			const account = unwrap(await db.repos.account.create(params.name, params.password));
 			random.accounts.push(account);
 			return account;
 		},
@@ -112,7 +113,16 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 			if (!account) account = await random.account();
 			if (!persona) persona = await random.persona(account);
 			if (!community) community = await random.community(persona, account);
-			const space = unwrap(await db.repos.space.create(randomSpaceParams(community.community_id)));
+			const params = randomSpaceParams(community.community_id);
+			const space = unwrap(
+				await db.repos.space.create(
+					params.name,
+					params.content,
+					params.media_type,
+					params.url,
+					params.community_id,
+				),
+			);
 			random.spaces.push(space);
 			return space;
 		},

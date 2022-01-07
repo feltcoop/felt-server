@@ -3,7 +3,6 @@
 	import type {Writable} from 'svelte/store';
 
 	import AccountForm from '$lib/ui/AccountForm.svelte';
-	import SocketConnection from '$lib/ui/SocketConnection.svelte';
 	import {VITE_GIT_HASH} from '$lib/config';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
@@ -51,16 +50,6 @@
 			<section class="markup panel-outset">
 				<AccountForm guest={$session.guest} />
 			</section>
-			{#if $devmode}
-				<section>
-					<ul>
-						<li><a href="/docs">/docs</a></li>
-					</ul>
-				</section>
-				<section>
-					<SocketConnection />
-				</section>
-			{/if}
 			<!-- TODO refactor -->
 		{:else if entity.startsWith('persona:')}
 			<section class="markup panel-outset">
@@ -74,9 +63,9 @@
 			<section class="markup panel-inset">
 				<h3>{entity.substring('space:'.length)}</h3>
 			</section>
-		{:else if entity.startsWith('file:')}
+		{:else if entity.startsWith('entity:')}
 			<section class="markup panel-inset">
-				<p>TODO use file_id: {entity.substring('file:'.length)}</p>
+				<p>TODO use entity_id: {entity.substring('entity:'.length)}</p>
 			</section>
 		{:else if entity.startsWith('link:')}
 			<!-- TODO could do more if we had the original `target` element
@@ -106,12 +95,6 @@
 	.contextmenu-slot li a {
 		padding: var(--spacing_xs) var(--spacing_sm);
 		width: 100%;
-	}
-
-	.contextmenu-slot .markup {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
 	}
 
 	.contextmenu-slot > section,

@@ -11,7 +11,7 @@
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
 	const {
-		ui: {selectedSpace, spacesByCommunityId},
+		ui: {spaceSelection, spacesByCommunityId},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -43,7 +43,7 @@
 				{persona}
 				space={communitySpace}
 				{community}
-				selected={selectedSpace && communitySpace === $selectedSpace}
+				selected={spaceSelection && communitySpace === $spaceSelection}
 			/>
 		{/each}
 	</section>

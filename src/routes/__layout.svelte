@@ -30,6 +30,7 @@
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
 	import ContextmenuSlot from '$lib/app/ContextmenuSlot.svelte';
+	import Dialogs from '$lib/ui/dialog/Dialogs.svelte';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -40,7 +41,7 @@
 		// that only reads this default value when the user has no override.
 		const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_WIDTH})`);
 		initialMobileValue = mediaQuery.matches;
-		mediaQuery.onchange = (e) => dispatch('set_mobile', e.matches);
+		mediaQuery.onchange = (e) => dispatch('SetMobile', e.matches);
 	}
 
 	const devmode = setDevmode();
@@ -60,7 +61,7 @@
 						console.warn('unhandled broadcast message', broadcastMessage, message.data);
 					}
 				}),
-			() => dispatch('ping'),
+			() => dispatch('Ping'),
 		),
 	);
 	const ui = setUi(toUi(session, initialMobileValue));
@@ -80,13 +81,14 @@
 	const {
 		mobile,
 		contextmenu,
+		dialogs,
 		account,
 		sessionPersonas,
 		communities,
-		selectedPersonaIndex,
-		selectedCommunityId,
-		selectedSpaceIdByCommunity,
-		selectedPersona,
+		personaIndexSelection,
+		communityIdSelection,
+		spaceIdByCommunitySelection,
+		personaSelection,
 		setSession,
 	} = ui;
 
@@ -95,7 +97,7 @@
 	$: guest = $session.guest;
 	$: onboarding = !guest && !$sessionPersonas.length;
 
-	$: personaSelection = $selectedPersona; // TODO should these names be reversed?
+	$: selectedPersona = $personaSelection; // TODO should these names be reversed?
 
 	// TODO instead of dispatching `select` events on startup, try to initialize with correct values
 	// TODO refactor -- where should this logic go?
@@ -124,8 +126,8 @@
 				);
 				return; // exit early; this function re-runs from the `goto` call with the updated `$page`
 			}
-		} else if (personaIndex !== $selectedPersonaIndex) {
-			dispatch('select_persona', {persona_id: get(persona).persona_id});
+		} else if (personaIndex !== $personaIndexSelection) {
+			dispatch('SelectPersona', {persona_id: get(persona).persona_id});
 		} // else already selected
 
 		// TODO speed this up with a map of communities by name
@@ -133,16 +135,16 @@
 		if (!communityStore) return; // occurs when a session routes to a community they can't access
 		const community = get(communityStore);
 		const {community_id} = community;
-		if (community_id !== $selectedCommunityId) {
-			dispatch('select_community', {community_id});
+		if (community_id !== $communityIdSelection) {
+			dispatch('SelectCommunity', {community_id});
 		}
 		if (community_id) {
 			const spaceUrl = '/' + (params.space || '');
 			const space = community.spaces.find((s) => s.url === spaceUrl);
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = space;
-			if (space_id !== $selectedSpaceIdByCommunity[community_id]) {
-				dispatch('select_space', {community_id, space_id});
+			if (space_id !== $spaceIdByCommunitySelection[community_id]) {
+				dispatch('SelectSpace', {community_id, space_id});
 			}
 		} else {
 			// TODO what is this condition?
@@ -152,48 +154,22 @@
 	let mounted = false;
 
 	onMount(() => {
-		// TODO create the API client here -- do we need a `$client.ready` state
-		// to abstract away `$socket.connected`? Probably so to support websocketless usage.
 		mounted = true;
 		return () => {
-			// due to how Svelte works, this component's reactive expression that calls `socket.disconnect`
-			// will not be called if `mounted = false` is assigned here while
-			// the component is being destroyed, so we duplicate `socket.disconnect()`
-			if ($socket.status === 'success') {
-				socket.disconnect();
-			}
+			socket.disconnect();
 		};
 	});
 
-	// TODO extract this logic to a websocket module or component
-	let connecting = false;
-	let connectCount = 0;
-	const RECONNECT_DELAY = 1000; // this matches the current Vite/SvelteKit retry rate; we could use the count to increase this
+	// Keep the socket connected when logged in, and disconnect when logged out.
 	$: if (mounted) {
-		// this expression re-runs when `$socket.status` changes, so we can ignore the `pending` status
-		// and do the right thing after it finishes whatever is in progress
 		if (guest) {
-			if ($socket.status === 'success') {
-				socket.disconnect();
-			}
+			socket.disconnect();
 		} else {
-			if ($socket.status === 'initial' && !connecting) {
-				connectCount++;
-				connecting = true;
-				const connect = () => {
-					connecting = false;
-					socket.connect(WEBSOCKET_URL);
-				};
-				if (connectCount === 1) {
-					connect();
-				} else {
-					setTimeout(connect, RECONNECT_DELAY);
-				}
-			}
+			socket.connect(WEBSOCKET_URL);
 		}
 	}
 
-	$: layoutEntities = ['app', personaSelection ? 'persona:' + $personaSelection.name : '']
+	$: layoutEntities = ['app', selectedPersona ? 'persona:' + $selectedPersona.name : '']
 		.filter(Boolean)
 		.join(',');
 	// TODO refactor this: unfortunately need to set on #root because dialog is outside of `.layout`
@@ -223,6 +199,7 @@
 		{/if}
 	</main>
 	<Devmode {devmode} />
+	<Dialogs {dialogs} />
 	<Contextmenu {contextmenu}>
 		<ContextmenuSlot {contextmenu} {devmode} />
 	</Contextmenu>

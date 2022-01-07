@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
 
-	import type {File} from '$lib/vocab/file/file.js';
+	import type {Entity} from '$lib/vocab/entity/entity';
 	import {randomHue} from '$lib/ui/color';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
@@ -11,17 +11,17 @@
 		ui: {findPersonaById},
 	} = getApp();
 
-	export let file: Readable<File>;
+	export let entity: Readable<Entity>;
 
-	$: persona = findPersonaById($file.actor_id); // TODO should this be `Actor` and `actor`?
+	$: persona = findPersonaById($entity.actor_id); // TODO should this be `Actor` and `actor`?
 
 	// TODO refactor to some client view-model for the actor
 	$: hue = randomHue($persona.name);
 </script>
 
-<li style="--hue: {hue}" data-entity="persona:{$persona.name},file:{$file.file_id}">
+<li style="--hue: {hue}" data-entity="persona:{$persona.name},entity:{$entity.entity_id}">
 	<div class="content">
-		{$file.content}
+		{$entity.content}
 	</div>
 	<Avatar name={toName($persona)} icon={toIcon($persona)} />
 </li>

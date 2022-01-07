@@ -1,10 +1,10 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-export const create_space: ServiceEventInfo = {
+export const CreateSpace: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'create_space',
+	name: 'CreateSpace',
 	params: {
-		$id: 'https://felt.social/vocab/create_space_params.json',
+		$id: 'https://felt.social/vocab/CreateSpaceParams.json',
 		type: 'object',
 		properties: {
 			community_id: {type: 'number'},
@@ -17,7 +17,7 @@ export const create_space: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/create_space_response.json',
+		$id: 'https://felt.social/vocab/CreateSpaceResponse.json',
 		type: 'object',
 		properties: {
 			space: {$ref: 'Space.json', tsType: 'Space'},
@@ -32,11 +32,11 @@ export const create_space: ServiceEventInfo = {
 	},
 };
 
-export const read_space: ServiceEventInfo = {
+export const ReadSpace: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'read_space',
+	name: 'ReadSpace',
 	params: {
-		$id: 'https://felt.social/vocab/read_space_params.json',
+		$id: 'https://felt.social/vocab/ReadSpaceParams.json',
 		type: 'object',
 		properties: {
 			space_id: {type: 'number'},
@@ -45,7 +45,7 @@ export const read_space: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/read_space_response.json',
+		$id: 'https://felt.social/vocab/ReadSpaceResponse.json',
 		type: 'object',
 		properties: {
 			space: {$ref: 'Space.json', tsType: 'Space'},
@@ -60,11 +60,11 @@ export const read_space: ServiceEventInfo = {
 	},
 };
 
-export const read_spaces: ServiceEventInfo = {
+export const ReadSpaces: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'read_spaces',
+	name: 'ReadSpaces',
 	params: {
-		$id: 'https://felt.social/vocab/read_spaces_params.json',
+		$id: 'https://felt.social/vocab/ReadSpacesParams.json',
 		type: 'object',
 		properties: {
 			community_id: {type: 'number'},
@@ -73,7 +73,7 @@ export const read_spaces: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/read_spaces_response.json',
+		$id: 'https://felt.social/vocab/ReadSpacesResponse.json',
 		type: 'object',
 		properties: {
 			spaces: {type: 'array', items: {$ref: 'Space.json', tsType: 'Space'}},
@@ -88,11 +88,11 @@ export const read_spaces: ServiceEventInfo = {
 	},
 };
 
-export const delete_space: ServiceEventInfo = {
+export const DeleteSpace: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'delete_space',
+	name: 'DeleteSpace',
 	params: {
-		$id: 'https://felt.social/vocab/delete_space_params.json',
+		$id: 'https://felt.social/vocab/DeleteSpaceParams.json',
 		type: 'object',
 		properties: {
 			space_id: {type: 'number'},
@@ -101,7 +101,7 @@ export const delete_space: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/delete_space_response.json',
+		$id: 'https://felt.social/vocab/DeleteSpaceResponse.json',
 		type: 'null',
 	},
 	returns: 'Promise<DeleteSpaceResponseResult>',
@@ -111,4 +111,4 @@ export const delete_space: ServiceEventInfo = {
 	},
 };
 
-export const events: EventInfo[] = [create_space, read_space, read_spaces, delete_space];
+export const events: EventInfo[] = [CreateSpace, ReadSpace, ReadSpaces, DeleteSpace];
