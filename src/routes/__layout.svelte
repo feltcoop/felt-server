@@ -101,7 +101,7 @@
 
 	// TODO instead of dispatching `select` events on startup, try to initialize with correct values
 	// TODO refactor -- where should this logic go?
-	$: updateStateFromPageParams($page.params, $page.url.searchParams);
+	$: updateStateFromPageParams($page.params, $page.query);
 	const updateStateFromPageParams = (
 		params: {community?: string; space?: string},
 		query: URLSearchParams,
