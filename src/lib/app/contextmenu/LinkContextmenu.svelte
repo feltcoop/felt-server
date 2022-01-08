@@ -10,7 +10,7 @@
 <!-- TODO could do more if we had the original `target` element
 							(but it might go stale on $contextmenu?) -->
 <!-- TODO if it's an external link, add target="_blank" -->
-<a href={value}>
+<a href={value} data-contextmenu-stop-propagation>
 	<span class="icon">🔗</span>
 	{value}
 </a>

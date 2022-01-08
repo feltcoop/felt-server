@@ -51,11 +51,11 @@ export const queryContextmenuItems = (
 				if (!(key in items)) items[key] = value[key]; // preserve bubbling order
 			}
 		}
+		if ('contextmenuStopPropagation' in el.dataset) break;
 		if (el.tagName === 'A') {
 			if (!items) items = {};
 			items.LinkContextmenu = (el as HTMLAnchorElement).href;
 		}
-		if ('contextmenuStopPropagation' in el.dataset) break;
 		el = el.parentElement;
 	}
 	return items;
