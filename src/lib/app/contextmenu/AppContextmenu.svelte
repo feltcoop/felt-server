@@ -5,7 +5,7 @@
 	export const contextmenu: ContextmenuStore = undefined as any;
 </script>
 
-<section class="markup panel-inset">
+<div class="markup">
 	<p>
 		<a href="https://github.com/feltcoop/felt-server" target="_blank" rel="noreferrer"
 			>felt-server</a
@@ -15,4 +15,4 @@
 			{VITE_GIT_HASH}
 		</a>
 	</p>
-</section>
+</div>

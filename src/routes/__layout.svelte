@@ -199,7 +199,7 @@
 	<Devmode {devmode} />
 	<Dialogs {dialogs} />
 	<Contextmenu {contextmenu}>
-		<ContextmenuSlot {contextmenu} {devmode} />
+		<ContextmenuSlot {contextmenu} />
 	</Contextmenu>
 	<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 </div>

@@ -14,3 +14,17 @@
 	<span class="icon">🔗</span>
 	{value}
 </a>
+
+<style>
+	a {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		word-break: break-word;
+	}
+	.icon {
+		display: flex;
+		font-size: var(--icon_size_sm);
+		padding: var(--spacing_sm);
+	}
+</style>

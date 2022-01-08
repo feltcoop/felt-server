@@ -6,6 +6,4 @@
 	$: value = $contextmenu.entities!.entity;
 </script>
 
-<section class="markup panel-inset">
-	<p>TODO use entity_id: {value}</p>
-</section>
+<p>TODO use entity_id: {value}</p>

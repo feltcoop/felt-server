@@ -1,11 +1,8 @@
 <script lang="ts">
-	import {type Writable} from 'svelte/store';
-
 	import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {contextmenuComponents} from '$lib/app/contextmenu/contextmenuComponents';
 
 	export let contextmenu: ContextmenuStore;
-	export let devmode: Writable<boolean>;
 
 	// TODO hacky, but if it sticks, upstream to Felt. maybe check things like `role="button"`?
 	const isInteractive = (el: Element): boolean =>
@@ -31,11 +28,10 @@
 {#if entities}
 	<div class="contextmenu-slot" on:click={onClickContextmenuSlot}>
 		{#each entities as [key]}
-			{#if $devmode}
-				<header class="panel-inset">{key}</header>
-			{/if}
 			{#if key in contextmenuComponents}
-				<svelte:component this={contextmenuComponents[key]} {contextmenu} {entities} />
+				<section class="panel-inset">
+					<svelte:component this={contextmenuComponents[key]} {contextmenu} />
+				</section>
 			{:else}
 				<!-- TODO ? -->
 			{/if}
@@ -44,38 +40,10 @@
 {/if}
 
 <style>
-	.contextmenu-slot header {
-		text-align: center;
-		font-family: var(--font_family_mono);
-		font-size: var(--font_size_sm);
-		color: var(--text_color_light);
-		padding: var(--spacing_xs) 0;
-	}
-
-	.contextmenu-slot li a {
-		padding: var(--spacing_xs) var(--spacing_sm);
-		width: 100%;
-	}
-
-	.contextmenu-slot > section,
-	.contextmenu-slot > a {
+	section {
 		border-bottom: var(--border);
 	}
-	.contextmenu-slot > section:last-child,
-	.contextmenu-slot > a:last-child {
+	section:last-child {
 		border-bottom: none;
-	}
-
-	.contextmenu-slot > a {
-		display: flex;
-		align-items: center;
-		width: 100%;
-		word-break: break-word;
-	}
-
-	.icon {
-		display: flex;
-		font-size: var(--icon_size_sm);
-		padding: var(--spacing_sm);
 	}
 </style>

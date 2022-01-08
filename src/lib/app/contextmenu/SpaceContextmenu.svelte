@@ -6,6 +6,4 @@
 	$: value = $contextmenu.entities!.space;
 </script>
 
-<section class="markup panel-inset">
-	<h3>{value}</h3>
-</section>
+<h3>{value}</h3>

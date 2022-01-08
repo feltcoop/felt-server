@@ -15,20 +15,18 @@
 	$: value = $contextmenu.entities!.persona;
 </script>
 
-<section class="markup panel-outset">
-	<Avatar name={value} />
-	<button
-		aria-label="Create Community"
-		type="button"
-		on:click={() =>
-			dispatch('OpenDialog', {
-				name: 'CommunityInput',
-				props: {persona: selectedPersona, done: () => dispatch('CloseDialog')},
-			})}
-	>
-		➕ Create Community
-	</button>
-	<button type="button" on:click={() => dispatch('OpenDialog', {name: 'ManageMembershipForm'})}>
-		Manage Memberships
-	</button>
-</section>
+<Avatar name={value} />
+<button
+	aria-label="Create Community"
+	type="button"
+	on:click={() =>
+		dispatch('OpenDialog', {
+			name: 'CommunityInput',
+			props: {persona: selectedPersona, done: () => dispatch('CloseDialog')},
+		})}
+>
+	➕ Create Community
+</button>
+<button type="button" on:click={() => dispatch('OpenDialog', {name: 'ManageMembershipForm'})}>
+	Manage Memberships
+</button>

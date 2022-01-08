@@ -6,6 +6,4 @@
 	export const contextmenu: ContextmenuStore = undefined as any;
 </script>
 
-<section class="markup panel-outset">
-	<AccountForm guest={$session.guest} />
-</section>
+<AccountForm guest={$session.guest} />
