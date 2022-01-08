@@ -61,9 +61,28 @@ const contextmenuAction = (el: HTMLElement | SVGElement, params: any): any => {
 	};
 };
 
-export const queryContextmenuItems = (
-	target: HTMLElement | SVGElement,
-): null | ContextmenuItems => {
+/**
+ * Creates an event handler callback that opens the contextmenu, if appropriate,
+ * querying the menu items from the DOM starting at the event target.
+ * @param contextmenu
+ * @returns An event handler that opens the contextmenu, unless the target is inside `excludeEl`.
+ */
+export const onContextmenu =
+	(contextmenu: ContextmenuStore) =>
+	(e: MouseEvent, excludeEl?: HTMLElement): void | false => {
+		if (e.ctrlKey) return; // defer control!
+		const target = e.target as HTMLElement;
+		if (isEditable(target) || excludeEl?.contains(target)) return;
+		const items = queryContextmenuItems(target);
+		if (!items) return;
+		e.stopPropagation();
+		e.preventDefault();
+		// TODO dispatch a UI event, like OpenContextmenu
+		contextmenu.open(items, e.clientX, e.clientY);
+		return false; // TODO remove this if it doesn't fix FF mobile (and update the `false` return value)
+	};
+
+const queryContextmenuItems = (target: HTMLElement | SVGElement): null | ContextmenuItems => {
 	let items: null | ContextmenuItems = null;
 	let el: HTMLElement | SVGElement | null = target;
 	let cacheKey: any, cached: any, c: any;
@@ -79,8 +98,6 @@ export const queryContextmenuItems = (
 				}
 			}
 		}
-		// TODO refactor this
-		if ('contextmenuStopPropagation' in el.dataset) break;
 		if (el.tagName === 'A') {
 			if (!items) items = {};
 			items.LinkContextmenu = (el as HTMLAnchorElement).href;
@@ -88,16 +105,4 @@ export const queryContextmenuItems = (
 		el = el.parentElement;
 	}
 	return items;
-};
-
-export const onContextmenu = (contextmenu: ContextmenuStore) => (e: MouseEvent) => {
-	if (e.ctrlKey) return; // defer control!
-	const target = e.target as HTMLElement;
-	if (isEditable(target)) return;
-	const items = queryContextmenuItems(target);
-	if (!items) return;
-	e.stopPropagation();
-	e.preventDefault();
-	// TODO dispatch a UI event, like OpenContextmenu
-	contextmenu.open(items, e.clientX, e.clientY);
 };

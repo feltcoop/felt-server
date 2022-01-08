@@ -15,19 +15,15 @@
 
 	// This handler runs during the event's `capture` phase
 	// so that things like the Dialog don't eat the events and prevent the contextmenu from closing.
-	const onClickWindow = (e: MouseEvent) => {
-		if ($contextmenu.open && !contextmenuEl.contains(e.target as any)) {
+	const onWindowMousedown = (e: MouseEvent) => {
+		if (!contextmenuEl.contains(e.target as any)) {
 			contextmenu.close();
 		}
 	};
 
 	// TODO hook into a ui input system
 	const onWindowKeydown = (e: KeyboardEvent) => {
-		if (
-			$contextmenu.open &&
-			e.key === 'Escape' &&
-			!(e.target instanceof HTMLElement && isEditable(e.target))
-		) {
+		if (e.key === 'Escape' && !(e.target instanceof HTMLElement && isEditable(e.target))) {
 			contextmenu.close();
 			e.stopPropagation();
 			e.preventDefault();
@@ -53,14 +49,17 @@
 	};
 
 	$: keys = Object.keys($contextmenu.items);
+
+	const doContextmenu = onContextmenu(contextmenu);
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
+<!-- TODO ensure `mousedown` works everywhere; might want to add `touchstart` or substitute `pointerdown` -->
 <!-- Capture keydown so it can handle the event before any dialogs. -->
 <svelte:window
-	on:contextmenu|capture={onContextmenu(contextmenu)}
-	on:click|capture={onClickWindow}
-	on:keydown|capture={onWindowKeydown}
+	on:contextmenu|capture={(e) => doContextmenu(e, contextmenuEl)}
+	on:mousedown|capture={$contextmenu.open ? onWindowMousedown : undefined}
+	on:keydown|capture={$contextmenu.open ? onWindowKeydown : undefined}
 />
 
 <!--
@@ -76,8 +75,6 @@
 		tabindex="-1"
 		bind:this={contextmenuEl}
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
-		use:contextmenu.action={$contextmenu.items}
-		data-contextmenu-stop-propagation
 	>
 		<div on:click={onClickContent}>
 			{#each keys as key (key)}
