@@ -3,7 +3,7 @@
 
 	export let contextmenu: ContextmenuStore;
 
-	$: value = $contextmenu.entities!.entity;
+	$: value = $contextmenu.items!.EntityContextmenu;
 </script>
 
 <p>TODO use entity_id: {value}</p>

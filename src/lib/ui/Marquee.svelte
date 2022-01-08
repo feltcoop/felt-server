@@ -28,7 +28,7 @@
 			<!-- TODO probably want these to be sorted so the selected persona is always first -->
 			{#each $community.memberPersonas as persona (persona.persona_id)}
 				<!-- TODO this is probably going to change to a store, maybe `Avatar` can optionally take one -->
-				<li data-entity={JSON.stringify({persona: persona.name})}>
+				<li data-contextmenu={JSON.stringify({PersonaContextmenu: persona.name})}>
 					<Avatar name={toName(persona)} icon={toIcon(persona)} />
 				</li>
 			{/each}

@@ -27,7 +27,7 @@
 	class:selected
 	class="space-info"
 	style="--hue: {hue}"
-	data-entity={JSON.stringify({space: $space.name})}
+	data-contextmenu={JSON.stringify({SpaceContextmenu: $space.name})}
 >
 	<div class="name">{$space.name}</div>
 	<div>

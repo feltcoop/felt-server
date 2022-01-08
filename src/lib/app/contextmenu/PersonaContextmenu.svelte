@@ -12,7 +12,7 @@
 
 	$: selectedPersona = $personaSelection; // TODO use the value not the selection
 
-	$: value = $contextmenu.entities!.persona;
+	$: value = $contextmenu.items!.PersonaContextmenu;
 </script>
 
 <Avatar name={value} />

@@ -3,7 +3,7 @@
 
 	export let contextmenu: ContextmenuStore;
 
-	$: value = $contextmenu.entities!.space;
+	$: value = $contextmenu.items!.SpaceContextmenu;
 </script>
 
 <h3>{value}</h3>

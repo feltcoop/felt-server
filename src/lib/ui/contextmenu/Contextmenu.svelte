@@ -34,8 +34,8 @@
 		tabindex="-1"
 		bind:this={contextmenuEl}
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
-		data-entity={JSON.stringify($contextmenu.entities)}
-		data-entity-stop-propagation
+		data-contextmenu={JSON.stringify($contextmenu.items)}
+		data-contextmenu-stop-propagation
 	>
 		<slot />
 	</div>

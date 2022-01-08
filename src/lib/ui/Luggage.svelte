@@ -4,7 +4,7 @@
 	const {dispatch} = getApp();
 </script>
 
-<div class="luggage" data-entity={JSON.stringify({luggage: null})}>
+<div class="luggage" data-contextmenu={JSON.stringify({LuggageContextmenu: null})}>
 	<button
 		class="icon-button"
 		aria-label="toggle luggage"

@@ -15,13 +15,13 @@
 	$: selectedCommunity = $communitySelection;
 	$: selectedSpace = $spaceSelection;
 
-	$: layoutEntities = {
-		space: selectedSpace ? $selectedSpace.name : undefined,
-		community: selectedCommunity ? $selectedCommunity.name : undefined,
+	$: contextmenuItems = {
+		SpaceContextmenu: selectedSpace ? $selectedSpace.name : undefined,
+		CommunityContextmenu: selectedCommunity ? $selectedCommunity.name : undefined,
 	};
 </script>
 
-<div class="workspace" data-entity={JSON.stringify(layoutEntities)}>
+<div class="workspace" data-contextmenu={JSON.stringify(contextmenuItems)}>
 	{#if $expandMarquee}
 		<div
 			class="marquee-bg"

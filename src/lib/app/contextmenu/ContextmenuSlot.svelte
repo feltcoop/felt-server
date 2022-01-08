@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {contextmenuComponents} from '$lib/app/contextmenu/contextmenuComponents';
+	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	export let contextmenu: ContextmenuStore;
 
@@ -19,21 +20,18 @@
 		}
 	};
 
-	$: entities = $contextmenu.entities && Object.entries($contextmenu.entities);
+	$: keys = $contextmenu.items && Object.keys($contextmenu.items);
 </script>
 
-<!-- TODO refactor all of this -->
-<!-- TODO maybe ignore Community if there's a Space? So it could combine into one view instead of 2 -->
-<!-- TODO implement this for arbitrary entities? blocks? -->
-{#if entities}
+{#if keys}
 	<div class="contextmenu-slot" on:click={onClickContextmenuSlot}>
-		{#each entities as [key]}
+		{#each keys as key (key)}
 			{#if key in contextmenuComponents}
 				<section class="panel-inset">
 					<svelte:component this={contextmenuComponents[key]} {contextmenu} />
 				</section>
 			{:else}
-				<!-- TODO ? -->
+				<Message status="error">unknown contextmenu "{key}"</Message>
 			{/if}
 		{/each}
 	</div>

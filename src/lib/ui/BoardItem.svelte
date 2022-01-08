@@ -21,7 +21,10 @@
 
 <li
 	style="--hue: {hue}"
-	data-entity={JSON.stringify({persona: $persona.name, entity: $entity.entity_id})}
+	data-contextmenu={JSON.stringify({
+		PersonaContextmenu: $persona.name,
+		EntityContextmenu: $entity.entity_id,
+	})}
 >
 	<div class="markup">
 		<p>

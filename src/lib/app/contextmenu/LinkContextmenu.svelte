@@ -4,7 +4,7 @@
 	export let contextmenu: ContextmenuStore;
 
 	// TODO strip any local url prefix
-	$: value = $contextmenu.entities!.link;
+	$: value = $contextmenu.items!.LinkContextmenu;
 </script>
 
 <!-- TODO could do more if we had the original `target` element

@@ -1,7 +1,7 @@
 import {writable, type Readable, type StartStopNotifier} from 'svelte/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
 
-interface ContextmenuEntities {
+interface ContextmenuItems {
 	[key: string]: any; // TODO types
 }
 
@@ -10,26 +10,26 @@ export interface Contextmenu {
 	// TODO not sure about this, currently they're magic keys, maybe keys on `ui`?
 	// so could they be addressed by `name || id`? e.g. `'personaSelection'`
 	// maybe they should be blocks and block ids? or both?
-	entities: null | ContextmenuEntities; // TODO maybe not nullable?
+	items: null | ContextmenuItems; // TODO maybe not nullable?
 	x: number;
 	y: number;
 }
 
 export interface ContextmenuStore extends Readable<Contextmenu> {
-	open(entities: ContextmenuEntities, x: number, y: number): void;
+	open(items: ContextmenuItems, x: number, y: number): void;
 	close(): void;
 }
 
 export const createContextmenuStore = (
-	initialValue: Contextmenu = {opened: false, entities: null, x: 0, y: 0},
+	initialValue: Contextmenu = {opened: false, items: null, x: 0, y: 0},
 	start?: StartStopNotifier<Contextmenu>,
 ): ContextmenuStore => {
 	const {subscribe, update} = writable(initialValue, start);
 
 	return {
 		subscribe,
-		open: (entities, x, y) => {
-			update(($state) => ({...$state, opened: true, entities, x, y}));
+		open: (items, x, y) => {
+			update(($state) => ({...$state, opened: true, items, x, y}));
 		},
 		close: () => {
 			update(($state) => ({...$state, opened: false}));
@@ -37,38 +37,38 @@ export const createContextmenuStore = (
 	};
 };
 
-export const queryContextmenuEntities = (
+export const queryContextmenuItems = (
 	target: HTMLElement | SVGElement,
-): null | ContextmenuEntities => {
-	let entities: null | ContextmenuEntities = null;
+): null | ContextmenuItems => {
+	let items: null | ContextmenuItems = null;
 	let el: HTMLElement | SVGElement | null = target;
-	while ((el = el && el.closest('[data-entity],a'))) {
+	while ((el = el && el.closest('[data-contextmenu],a'))) {
 		let value: any;
-		if ((value = el.dataset.entity)) {
-			if (!entities) entities = {};
+		if ((value = el.dataset.contextmenu)) {
+			if (!items) items = {};
 			value = JSON.parse(value);
 			for (const key in value) {
-				if (!(key in entities)) entities[key] = value[key]; // preserve bubbling order
+				if (!(key in items)) items[key] = value[key]; // preserve bubbling order
 			}
 		}
 		if (el.tagName === 'A') {
-			if (!entities) entities = {};
-			entities.link = (el as HTMLAnchorElement).href;
+			if (!items) items = {};
+			items.LinkContextmenu = (el as HTMLAnchorElement).href;
 		}
-		if ('entityStopPropagation' in el.dataset) break;
+		if ('contextmenuStopPropagation' in el.dataset) break;
 		el = el.parentElement;
 	}
-	return entities;
+	return items;
 };
 
 export const onContextmenu = (contextmenu: ContextmenuStore) => (e: MouseEvent) => {
 	if (e.ctrlKey) return; // defer control!
 	const target = e.target as HTMLElement;
 	if (isEditable(target)) return;
-	const entities = queryContextmenuEntities(target);
-	if (!entities) return;
+	const items = queryContextmenuItems(target);
+	if (!items) return;
 	e.stopPropagation();
 	e.preventDefault();
 	// TODO dispatch a UI event, like OpenContextmenu
-	contextmenu.open(entities, e.clientX, e.clientY);
+	contextmenu.open(items, e.clientX, e.clientY);
 };

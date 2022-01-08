@@ -15,7 +15,7 @@
 	$: community = $communitySelection;
 	$: persona = $personaSelection;
 
-	$: value = $contextmenu.entities!.community;
+	$: value = $contextmenu.items!.CommunityContextmenu;
 </script>
 
 <Avatar name={value} type="Community" />

@@ -169,9 +169,13 @@
 		}
 	}
 
-	$: layoutEntities = {app: null, persona: selectedPersona ? $selectedPersona.name : undefined};
+	$: contextmenuItems = {
+		AppContextmenu: null,
+		PersonaContextmenu: selectedPersona ? $selectedPersona.name : undefined,
+	};
 	// TODO refactor this: unfortunately need to set on #root because dialog is outside of `.layout`
-	$: browser && (document.getElementById('root')!.dataset.entity = JSON.stringify(layoutEntities));
+	$: browser &&
+		(document.getElementById('root')!.dataset.contextmenu = JSON.stringify(contextmenuItems));
 </script>
 
 <svelte:head>
