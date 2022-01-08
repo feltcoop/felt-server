@@ -1,10 +1,15 @@
 <script lang="ts">
 	import {isEditable} from '@feltcoop/felt/util/dom.js';
+	import {type SvelteComponent} from 'svelte';
+	import Message from '@feltcoop/felt/ui/Message.svelte';
 
-	import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
+	// TODO upstream to Felt
+
 	export let contextmenu: ContextmenuStore;
+	export let components: {[key: string]: typeof SvelteComponent};
 
 	let contextmenuEl: HTMLElement;
 
@@ -28,6 +33,26 @@
 			e.preventDefault();
 		}
 	};
+
+	// TODO hacky -- maybe check things like `role="button"`? also, upstream to Felt utils
+	const isInteractive = (el: Element): boolean =>
+		el.tagName === 'A' ||
+		el.tagName === 'BUTTON' ||
+		el.tagName === 'AREA' ||
+		!!el.closest('button,a');
+
+	const onClickContent = (e: MouseEvent) => {
+		// TODO this is hacky, but improves the behavior to let us select content on the contextmenu,
+		// but automatically closes if e.g. a button is clicked, and the button can `stopPropagation`
+		// to keep the contextmenu open, because it'll stop it before this handler runs
+		if (isInteractive(e.target as any)) {
+			contextmenu.close();
+		} else {
+			e.stopPropagation();
+		}
+	};
+
+	$: keys = Object.keys($contextmenu.items);
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
@@ -54,7 +79,18 @@
 		use:contextmenu.action={$contextmenu.items}
 		data-contextmenu-stop-propagation
 	>
-		<slot />
+		<div on:click={onClickContent}>
+			{#each keys as key (key)}
+				{#if key in components}
+					<section class="panel-inset">
+						<!-- TODO maybe pass through the key/value generically? -->
+						<svelte:component this={components[key]} {contextmenu} />
+					</section>
+				{:else}
+					<Message status="error">unknown contextmenu "{key}"</Message>
+				{/if}
+			{/each}
+		</div>
 	</div>
 {/if}
 
@@ -70,5 +106,11 @@
 		for contrast against a fullscreen darkened background. */
 		--pane_box_shadow: 0px 2px 10px hsla(0, 100%, 0%, 0.2);
 		border: var(--border);
+	}
+	section {
+		border-bottom: var(--border);
+	}
+	section:last-child {
+		border-bottom: none;
 	}
 </style>
