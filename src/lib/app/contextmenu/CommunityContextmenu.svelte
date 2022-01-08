@@ -1,19 +1,19 @@
 <script lang="ts">
+	import {type Readable} from 'svelte/store';
+
 	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {getApp} from '$lib/ui/app';
+	import {type Community} from '$lib/vocab/community/community';
+	import {type Persona} from '$lib/vocab/persona/persona';
 
-	const {
-		dispatch,
-		ui: {personaSelection},
-	} = getApp();
+	const {dispatch} = getApp();
 
 	export let contextmenu: ContextmenuStore;
 
-	// TODO don't use selections
-	$: persona = $personaSelection;
-
-	$: community = $contextmenu.items.CommunityContextmenu;
+	let community: Readable<Community>;
+	let persona: Readable<Persona>;
+	$: ({community, persona} = $contextmenu.items.CommunityContextmenu);
 </script>
 
 <Avatar name={$community.name} type="Community" />

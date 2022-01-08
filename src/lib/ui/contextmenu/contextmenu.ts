@@ -52,8 +52,8 @@ const contextmenuAction = (el: HTMLElement | SVGElement, params: any): any => {
 	el.dataset[CONTEXTMENU_DATASET_KEY] = key;
 	contextmenuCache.set(key, params);
 	return {
-		update: (params: any) => {
-			contextmenuCache.set(key, params);
+		update: (p: any) => {
+			contextmenuCache.set(key, p);
 		},
 		destroy: () => {
 			contextmenuCache.delete(key);

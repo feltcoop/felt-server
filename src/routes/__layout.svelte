@@ -97,7 +97,7 @@
 	$: guest = $session.guest;
 	$: onboarding = !guest && !$sessionPersonas.length;
 
-	$: selectedPersona = $personaSelection; // TODO should these names be reversed?
+	$: selectedPersona = $personaSelection;
 
 	// TODO instead of dispatching `select` events on startup, try to initialize with correct values
 	// TODO refactor -- where should this logic go?
