@@ -16,17 +16,17 @@
 	export let selectedSpace: Readable<Space>;
 </script>
 
-<div class="space-nav" use:contextmenu.action={{CommunityContextmenu: {community, persona}}}>
+<nav class="space-nav" use:contextmenu.action={{CommunityContextmenu: {community, persona}}}>
 	{#each spaces as space (space)}
 		<SpaceNavItem {persona} {community} {space} selected={space === selectedSpace} />
 	{/each}
-</div>
+</nav>
 
 <style>
 	.space-nav {
-		height: 100%;
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+		justify-content: flex-start;
 	}
 </style>

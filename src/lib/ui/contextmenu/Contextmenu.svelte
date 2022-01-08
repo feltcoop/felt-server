@@ -97,7 +97,7 @@
 		left: 0;
 		top: 0;
 		z-index: 9;
-		width: var(--column_width_min);
+		width: var(--contextmenu_width);
 		/* TODO should this be `pane-light` or something?
 		The `pane` shadow is too heavy because it's designed
 		for contrast against a fullscreen darkened background. */

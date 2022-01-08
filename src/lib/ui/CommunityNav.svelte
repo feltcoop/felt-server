@@ -8,21 +8,28 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {sessionPersonas, personaSelection, communitySelection, communitiesByPersonaId},
+		ui: {
+			sessionPersonas,
+			personaSelection,
+			communitySelection,
+			communitiesByPersonaId,
+			contextmenu,
+		},
 	} = getApp();
 
 	$: selectedPersona = $personaSelection!;
 	$: selectedCommunity = $communitySelection;
 
-	// TODO improve the efficiency of this with better data structures and caching
+	// TODO improve the efficiency of this with better data structures and caching --
+	// probably `communitiesByPersona` (where the keys are the persona stores)
 	const toPersonaCommunity = (persona: Persona): Readable<Community> =>
 		$communitiesByPersonaId[persona.persona_id].find((c) => get(c).name === persona.name)!;
 </script>
 
-<div class="community-nav">
+<nav class="community-nav">
 	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
-	<div>
-		{#each $sessionPersonas as persona (persona)}
+	{#each $sessionPersonas as persona (persona)}
+		<div class="persona-group" use:contextmenu.action={{SelectedPersonaContextmenu: persona}}>
 			<!-- TODO refactor this hacky usage of `get` -->
 			<CommunityNavButton
 				community={toPersonaCommunity(get(persona))}
@@ -39,16 +46,24 @@
 					/>
 				{/if}
 			{/each}
-		{/each}
-	</div>
-</div>
+		</div>
+	{/each}
+</nav>
 
 <style>
 	.community-nav {
-		height: 100%;
+		/* height: 100%; */
+		width: auto;
 		background-color: var(--tint_dark_1);
 		display: flex;
 		flex-direction: column;
+		justify-content: flex-start;
 		align-items: center;
+	}
+	.persona-group {
+		margin-bottom: var(--spacing_xl5);
+	}
+	.persona-group:last-child {
+		margin-bottom: 0;
 	}
 </style>

@@ -53,7 +53,6 @@
 		background-color: var(--bg);
 	}
 	.persona {
-		margin-top: var(--spacing_xl5);
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -61,8 +60,5 @@
 		width: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
 		height: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
 		--icon_size: var(--icon_size_sm);
-	}
-	.persona:first-child {
-		margin-top: 0;
 	}
 </style>
