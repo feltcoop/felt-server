@@ -19,7 +19,7 @@
 <div
 	class="workspace"
 	use:contextmenu.action={{
-		SpaceContextmenu: selectedSpace ? $selectedSpace.space_id : undefined,
+		SpaceContextmenu: selectedSpace || undefined,
 		CommunityContextmenu: selectedCommunity || undefined,
 	}}
 >

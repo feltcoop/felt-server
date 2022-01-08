@@ -27,7 +27,7 @@
 	class:selected
 	class="space-info"
 	style="--hue: {hue}"
-	use:contextmenu.action={{SpaceContextmenu: $space.space_id}}
+	use:contextmenu.action={{SpaceContextmenu: space}}
 >
 	<div class="name">{$space.name}</div>
 	<div>

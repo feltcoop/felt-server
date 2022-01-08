@@ -9,12 +9,23 @@
 
 	const {
 		dispatch,
-		ui: {expandMainNav, contextmenu, spaceSelection, personaSelection, communitySelection},
+		ui: {
+			expandMainNav,
+			contextmenu,
+			spaceSelection,
+			personaSelection,
+			communitySelection,
+			spacesById,
+		},
 	} = getApp();
 
 	$: selectedPersona = $personaSelection!;
 	$: selectedCommunity = $communitySelection;
 	$: selectedSpace = $spaceSelection;
+
+	// TODO refactor once community data is normalized
+	$: selectedCommunitySpaces =
+		selectedCommunity && $selectedCommunity.spaces.map((s) => $spacesById.get(s.space_id)!);
 
 	// TODO refactor to some client view-model for the account
 	$: hue = randomHue(toName($selectedPersona));
@@ -39,11 +50,11 @@
 		</div>
 		<div class="explorer">
 			<CommunityNav />
-			{#if selectedPersona && selectedCommunity && selectedSpace}
+			{#if selectedPersona && selectedCommunity && selectedCommunitySpaces && selectedSpace}
 				<SpaceNav
 					persona={selectedPersona}
 					community={selectedCommunity}
-					spaces={$selectedCommunity.spaces}
+					spaces={selectedCommunitySpaces}
 					{selectedSpace}
 				/>
 			{/if}

@@ -2,15 +2,11 @@
 	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {getApp} from '$lib/ui/app';
 
-	const {
-		dispatch,
-		ui: {spacesById},
-	} = getApp();
+	const {dispatch} = getApp();
 
 	export let contextmenu: ContextmenuStore;
 
-	$: space_id = $contextmenu.items.SpaceContextmenu;
-	$: space = $spacesById.get(space_id)!;
+	$: space = $contextmenu.items.SpaceContextmenu;
 </script>
 
 <div class="markup">

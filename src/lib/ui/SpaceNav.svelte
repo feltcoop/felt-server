@@ -12,14 +12,13 @@
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
-	export let spaces: Space[]; // TODO array of stores?
+	export let spaces: Readable<Space>[];
 	export let selectedSpace: Readable<Space>;
 </script>
 
 <div class="space-nav" use:contextmenu.action={{CommunityContextmenu: community}}>
-	<!-- TODO the community url -->
-	{#each spaces as space (space.space_id)}
-		<SpaceNavItem {persona} {community} {space} selected={space === $selectedSpace} />
+	{#each spaces as space (space)}
+		<SpaceNavItem {persona} {community} {space} selected={space === selectedSpace} />
 	{/each}
 </div>
 
