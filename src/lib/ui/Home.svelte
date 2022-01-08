@@ -29,7 +29,7 @@
 		<!-- TODO display other meta info about the community -->
 		<ul>
 			{#each $community.memberPersonas as persona (persona.persona_id)}
-				<li data-contextmenu={JSON.stringify({PersonaContextmenu: persona.name})}>
+				<li data-contextmenu={JSON.stringify({PersonaContextmenu: persona.persona_id})}>
 					<Avatar name={toName(persona)} icon={toIcon(persona)} />
 				</li>
 			{/each}

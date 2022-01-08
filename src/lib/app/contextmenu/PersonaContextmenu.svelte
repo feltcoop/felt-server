@@ -5,24 +5,23 @@
 
 	const {
 		dispatch,
-		ui: {personaSelection},
+		ui: {personasById},
 	} = getApp();
 
 	export let contextmenu: ContextmenuStore;
 
-	$: selectedPersona = $personaSelection; // TODO use the value not the selection
-
-	$: value = $contextmenu.items.PersonaContextmenu;
+	$: persona_id = $contextmenu.items.PersonaContextmenu;
+	$: persona = personasById.get(persona_id)!;
 </script>
 
-<Avatar name={value} />
+<Avatar name={$persona.name} />
 <button
 	aria-label="Create Community"
 	type="button"
 	on:click={() =>
 		dispatch('OpenDialog', {
 			name: 'CommunityInput',
-			props: {persona: selectedPersona, done: () => dispatch('CloseDialog')},
+			props: {persona, done: () => dispatch('CloseDialog')},
 		})}
 >
 	➕ Create Community

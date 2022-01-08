@@ -35,7 +35,7 @@
 	class:selected
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {$community.settings.hue}"
-	data-contextmenu={JSON.stringify({CommunityContextmenu: $community.name})}
+	data-contextmenu={JSON.stringify({CommunityContextmenu: $community.community_id})}
 	on:click={() => dispatch('SelectPersona', {persona_id: $persona.persona_id})}
 >
 	<!-- TODO maybe use `Avatar`? does `hue` need to be on the link? -->

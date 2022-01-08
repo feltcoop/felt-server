@@ -171,7 +171,7 @@
 
 	$: contextmenuItems = {
 		AppContextmenu: null,
-		PersonaContextmenu: selectedPersona ? $selectedPersona.name : undefined,
+		PersonaContextmenu: selectedPersona ? $selectedPersona.persona_id : undefined,
 	};
 	// TODO refactor this: unfortunately need to set on #root because dialog is outside of `.layout`
 	$: browser &&

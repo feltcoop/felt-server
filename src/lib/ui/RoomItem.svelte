@@ -24,7 +24,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 <li
 	style="--hue: {hue}"
 	data-contextmenu={JSON.stringify({
-		PersonaContextmenu: $persona.name,
+		PersonaContextmenu: $persona.persona_id,
 		EntityContextmenu: $entity.entity_id,
 	})}
 >

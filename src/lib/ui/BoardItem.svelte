@@ -22,7 +22,7 @@
 <li
 	style="--hue: {hue}"
 	data-contextmenu={JSON.stringify({
-		PersonaContextmenu: $persona.name,
+		PersonaContextmenu: $persona.persona_id,
 		EntityContextmenu: $entity.entity_id,
 	})}
 >

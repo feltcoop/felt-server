@@ -1,24 +1,27 @@
 <script lang="ts">
+	import {get} from 'svelte/store';
+
 	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {getApp} from '$lib/ui/app';
 
 	const {
 		dispatch,
-		ui: {spaceSelection, communitySelection, personaSelection},
+		ui: {personaSelection, communities},
 	} = getApp();
 
 	export let contextmenu: ContextmenuStore;
 
 	// TODO don't use selections
-	$: selectedSpace = $spaceSelection;
-	$: community = $communitySelection;
 	$: persona = $personaSelection;
 
-	$: value = $contextmenu.items.CommunityContextmenu;
+	// TODO lookup from `communitiesById` map instead
+	$: community = $communities.find(
+		(c) => get(c).community_id === $contextmenu.items.CommunityContextmenu,
+	)!;
 </script>
 
-<Avatar name={value} type="Community" />
+<Avatar name={$community.name} type="Community" />
 <button
 	type="button"
 	on:click={() =>
@@ -38,14 +41,4 @@
 		})}
 >
 	✉️ Invite Members
-</button>
-<button
-	type="button"
-	on:click={() =>
-		dispatch('OpenDialog', {
-			name: 'SpaceDelete',
-			props: {space: selectedSpace, done: () => dispatch('CloseDialog')},
-		})}
->
-	🗑️ Delete Space
 </button>

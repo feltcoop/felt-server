@@ -9,7 +9,7 @@
 	// This handler runs during the event's `capture` phase
 	// so that things like the Dialog don't eat the events and prevent the contextmenu from closing.
 	const onClickWindow = (e: MouseEvent) => {
-		if ($contextmenu.opened && !contextmenuEl.contains(e.target as any)) {
+		if ($contextmenu.open && !contextmenuEl.contains(e.target as any)) {
 			contextmenu.close();
 		}
 	};
@@ -26,7 +26,7 @@
 	but even a 50ms animation makes it feel slow.
 	Maybe a better solution is to show the content immediately, but animate the periphery.
 -->
-{#if $contextmenu.opened}
+{#if $contextmenu.open}
 	<div
 		class="contextmenu pane"
 		role="menu"

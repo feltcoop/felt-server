@@ -11,7 +11,10 @@
 	export let selectedSpace: Readable<Space>;
 </script>
 
-<div class="space-nav" data-contextmenu={JSON.stringify({CommunityContextmenu: $community.name})}>
+<div
+	class="space-nav"
+	data-contextmenu={JSON.stringify({CommunityContextmenu: $community.community_id})}
+>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
 		<SpaceNavItem {persona} {community} {space} selected={space === $selectedSpace} />

@@ -14,6 +14,7 @@
 
 	let errorMessage: string | undefined;
 
+	// TODO lookup from `communitiesById` map instead
 	const getCommunity = (community_id: number): Community =>
 		get($communities.find((c) => get(c).community_id === community_id)!);
 

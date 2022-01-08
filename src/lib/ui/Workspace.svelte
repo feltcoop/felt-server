@@ -16,8 +16,8 @@
 	$: selectedSpace = $spaceSelection;
 
 	$: contextmenuItems = {
-		SpaceContextmenu: selectedSpace ? $selectedSpace.name : undefined,
-		CommunityContextmenu: selectedCommunity ? $selectedCommunity.name : undefined,
+		SpaceContextmenu: selectedSpace ? $selectedSpace.space_id : undefined,
+		CommunityContextmenu: selectedCommunity ? $selectedCommunity.community_id : undefined,
 	};
 </script>
 

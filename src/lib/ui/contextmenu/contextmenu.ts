@@ -6,7 +6,7 @@ interface ContextmenuItems {
 }
 
 export interface Contextmenu {
-	opened: boolean;
+	open: boolean;
 	// TODO not sure about this, currently they're magic keys, maybe keys on `ui`?
 	// so could they be addressed by `name || id`? e.g. `'personaSelection'`
 	// maybe they should be blocks and block ids? or both?
@@ -21,7 +21,7 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 }
 
 export const createContextmenuStore = (
-	initialValue: Contextmenu = {opened: false, items: {}, x: 0, y: 0},
+	initialValue: Contextmenu = {open: false, items: {}, x: 0, y: 0},
 	start?: StartStopNotifier<Contextmenu>,
 ): ContextmenuStore => {
 	const {subscribe, update} = writable(initialValue, start);
@@ -29,10 +29,10 @@ export const createContextmenuStore = (
 	return {
 		subscribe,
 		open: (items, x, y) => {
-			update(($state) => ({...$state, opened: true, items, x, y}));
+			update(($state) => ({...$state, open: true, items, x, y}));
 		},
 		close: () => {
-			update(($state) => ({...$state, opened: false}));
+			update(($state) => ({...$state, open: false}));
 		},
 	};
 };
@@ -42,8 +42,8 @@ export const queryContextmenuItems = (
 ): null | ContextmenuItems => {
 	let items: null | ContextmenuItems = null;
 	let el: HTMLElement | SVGElement | null = target;
+	let value: any;
 	while ((el = el && el.closest('[data-contextmenu],a'))) {
-		let value: any;
 		if ((value = el.dataset.contextmenu)) {
 			if (!items) items = {};
 			value = JSON.parse(value);
