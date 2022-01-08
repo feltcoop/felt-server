@@ -18,6 +18,7 @@ export interface Contextmenu {
 export interface ContextmenuStore extends Readable<Contextmenu> {
 	open(items: ContextmenuItems, x: number, y: number): void;
 	close(): void;
+	action: typeof contextmenuAction;
 }
 
 export const createContextmenuStore = (
@@ -34,6 +35,29 @@ export const createContextmenuStore = (
 		close: () => {
 			update(($state) => ({...$state, open: false}));
 		},
+		action: contextmenuAction,
+	};
+};
+
+// The dataset key must not have capital letters or dashes or it'll differ between JS and DOM:
+// https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
+const CONTEXTMENU_DATASET_KEY = 'contextmenu';
+const CONTEXTMENU_DOM_QUERY = `[data-${CONTEXTMENU_DATASET_KEY}],a`;
+// TODO consider a `WeakMap` instead; doesn't seem to improve things much
+const contextmenuCache = new Map<string, any>();
+let cacheKeyCounter = 0;
+
+const contextmenuAction = (el: HTMLElement | SVGElement, params: any): any => {
+	const key = cacheKeyCounter++ + '';
+	el.dataset[CONTEXTMENU_DATASET_KEY] = key;
+	contextmenuCache.set(key, params);
+	return {
+		update: (params: any) => {
+			contextmenuCache.set(key, params);
+		},
+		destroy: () => {
+			contextmenuCache.delete(key);
+		},
 	};
 };
 
@@ -42,15 +66,20 @@ export const queryContextmenuItems = (
 ): null | ContextmenuItems => {
 	let items: null | ContextmenuItems = null;
 	let el: HTMLElement | SVGElement | null = target;
-	let value: any;
-	while ((el = el && el.closest('[data-contextmenu],a'))) {
-		if ((value = el.dataset.contextmenu)) {
+	let cacheKey: any, cached: any, c: any;
+	while ((el = el && el.closest(CONTEXTMENU_DOM_QUERY))) {
+		if ((cacheKey = el.dataset[CONTEXTMENU_DATASET_KEY])) {
 			if (!items) items = {};
-			value = JSON.parse(value);
-			for (const key in value) {
-				if (!(key in items)) items[key] = value[key]; // preserve bubbling order
+			cached = contextmenuCache.get(cacheKey);
+			for (const key in cached) {
+				// preserve bubbling order and ignore `undefined` values
+				if (!(key in items)) {
+					c = cached[key];
+					if (c !== undefined) items[key] = c;
+				}
 			}
 		}
+		// TODO refactor this
 		if ('contextmenuStopPropagation' in el.dataset) break;
 		if (el.tagName === 'A') {
 			if (!items) items = {};

@@ -4,6 +4,11 @@
 	import type {Readable} from 'svelte/store';
 	import SpaceNavItem from '$lib/ui/SpaceNavItem.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona.js';
+	import {getApp} from '$lib/ui/app';
+
+	const {
+		ui: {contextmenu},
+	} = getApp();
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
@@ -11,10 +16,7 @@
 	export let selectedSpace: Readable<Space>;
 </script>
 
-<div
-	class="space-nav"
-	data-contextmenu={JSON.stringify({CommunityContextmenu: $community.community_id})}
->
+<div class="space-nav" use:contextmenu.action={{CommunityContextmenu: $community.community_id}}>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
 		<SpaceNavItem {persona} {community} {space} selected={space === $selectedSpace} />

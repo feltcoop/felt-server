@@ -168,15 +168,13 @@
 			socket.connect(WEBSOCKET_URL);
 		}
 	}
+</script>
 
-	$: contextmenuItems = {
+<svelte:body
+	use:contextmenu.action={{
 		AppContextmenu: null,
 		PersonaContextmenu: selectedPersona ? $selectedPersona.persona_id : undefined,
-	};
-	// TODO refactor this: unfortunately need to set on #root because dialog is outside of `.layout`
-	$: browser &&
-		(document.getElementById('root')!.dataset.contextmenu = JSON.stringify(contextmenuItems));
-</script>
+	}} />
 
 <svelte:head>
 	<link rel="shortcut icon" href="/favicon.png" />

@@ -8,7 +8,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {findPersonaById},
+		ui: {contextmenu, findPersonaById},
 	} = getApp();
 
 	export let entity: Readable<Entity>;
@@ -21,10 +21,10 @@
 
 <li
 	style="--hue: {hue}"
-	data-contextmenu={JSON.stringify({
+	use:contextmenu.action={{
 		PersonaContextmenu: $persona.persona_id,
 		EntityContextmenu: $entity.entity_id,
-	})}
+	}}
 >
 	<div class="markup">
 		<p>

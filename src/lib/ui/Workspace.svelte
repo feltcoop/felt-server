@@ -8,20 +8,21 @@
 
 	const {
 		dispatch,
-		ui: {expandMarquee, spaceSelection, personaSelection, communitySelection},
+		ui: {contextmenu, expandMarquee, spaceSelection, personaSelection, communitySelection},
 	} = getApp();
 
 	$: selectedPersona = $personaSelection;
 	$: selectedCommunity = $communitySelection;
 	$: selectedSpace = $spaceSelection;
-
-	$: contextmenuItems = {
-		SpaceContextmenu: selectedSpace ? $selectedSpace.space_id : undefined,
-		CommunityContextmenu: selectedCommunity ? $selectedCommunity.community_id : undefined,
-	};
 </script>
 
-<div class="workspace" data-contextmenu={JSON.stringify(contextmenuItems)}>
+<div
+	class="workspace"
+	use:contextmenu.action={{
+		SpaceContextmenu: selectedSpace ? $selectedSpace.space_id : undefined,
+		CommunityContextmenu: selectedCommunity ? $selectedCommunity.community_id : undefined,
+	}}
+>
 	{#if $expandMarquee}
 		<div
 			class="marquee-bg"

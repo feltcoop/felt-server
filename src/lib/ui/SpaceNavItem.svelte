@@ -9,7 +9,7 @@
 
 	const {
 		dispatch,
-		ui: {mobile, expandMainNav, sessionPersonaIndices},
+		ui: {contextmenu, mobile, expandMainNav, sessionPersonaIndices},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -23,7 +23,7 @@
 <a
 	href={toSpaceUrl(personaIndex, $community, space)}
 	class:selected
-	data-contextmenu={JSON.stringify({SpaceContextmenu: space.space_id})}
+	use:contextmenu.action={{SpaceContextmenu: space.space_id}}
 	on:click={() => {
 		// TODO Should this be a click handler or react to UI system events/changes?
 		// Might make more UX sense to make it react to any state changes,

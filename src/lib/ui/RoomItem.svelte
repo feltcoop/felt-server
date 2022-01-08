@@ -8,7 +8,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {findPersonaById},
+		ui: {contextmenu, findPersonaById},
 	} = getApp();
 
 	export let entity: Readable<Entity>;
@@ -23,10 +23,10 @@
 And then PersonaContextmenu would be only for *session* personas? `SessionPersonaContextmenu` -->
 <li
 	style="--hue: {hue}"
-	data-contextmenu={JSON.stringify({
+	use:contextmenu.action={{
 		PersonaContextmenu: $persona.persona_id,
 		EntityContextmenu: $entity.entity_id,
-	})}
+	}}
 >
 	<div class="content">
 		<div class="timestamp">

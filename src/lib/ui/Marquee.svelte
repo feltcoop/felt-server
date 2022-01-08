@@ -10,7 +10,7 @@
 	import SocketConnection from '$lib/ui/SocketConnection.svelte';
 
 	const {
-		ui: {expandMarquee},
+		ui: {contextmenu, expandMarquee},
 		socket,
 		devmode,
 	} = getApp();
@@ -28,7 +28,7 @@
 			<!-- TODO probably want these to be sorted so the selected persona is always first -->
 			{#each $community.memberPersonas as persona (persona.persona_id)}
 				<!-- TODO this is probably going to change to a store, maybe `Avatar` can optionally take one -->
-				<li data-contextmenu={JSON.stringify({PersonaContextmenu: persona.persona_id})}>
+				<li use:contextmenu.action={{PersonaContextmenu: persona.persona_id}}>
 					<Avatar name={toName(persona)} icon={toIcon(persona)} />
 				</li>
 			{/each}

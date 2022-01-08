@@ -34,7 +34,7 @@
 		tabindex="-1"
 		bind:this={contextmenuEl}
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
-		data-contextmenu={JSON.stringify($contextmenu.items)}
+		use:contextmenu.action={$contextmenu.items}
 		data-contextmenu-stop-propagation
 	>
 		<slot />

@@ -9,7 +9,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {sessionPersonaIndices},
+		ui: {contextmenu, sessionPersonaIndices},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -27,7 +27,7 @@
 	class:selected
 	class="space-info"
 	style="--hue: {hue}"
-	data-contextmenu={JSON.stringify({SpaceContextmenu: $space.space_id})}
+	use:contextmenu.action={{SpaceContextmenu: $space.space_id}}
 >
 	<div class="name">{$space.name}</div>
 	<div>
