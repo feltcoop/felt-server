@@ -10,7 +10,7 @@ export interface Contextmenu {
 	// TODO not sure about this, currently they're magic keys, maybe keys on `ui`?
 	// so could they be addressed by `name || id`? e.g. `'personaSelection'`
 	// maybe they should be blocks and block ids? or both?
-	entities: null | ContextmenuEntities;
+	entities: null | ContextmenuEntities; // TODO maybe not nullable?
 	x: number;
 	y: number;
 }
@@ -46,7 +46,6 @@ export const queryContextmenuEntities = (
 		let value: any;
 		if ((value = el.dataset.entity)) {
 			if (!entities) entities = {};
-			console.log('value', value);
 			value = JSON.parse(value);
 			for (const key in value) {
 				if (!(key in entities)) entities[key] = value[key]; // preserve bubbling order
