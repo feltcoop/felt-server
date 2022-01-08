@@ -20,22 +20,21 @@
 		}
 	};
 
-	$: keys = $contextmenu.items && Object.keys($contextmenu.items);
+	$: keys = Object.keys($contextmenu.items);
 </script>
 
-{#if keys}
-	<div class="contextmenu-slot" on:click={onClickContextmenuSlot}>
-		{#each keys as key (key)}
-			{#if key in contextmenuComponents}
-				<section class="panel-inset">
-					<svelte:component this={contextmenuComponents[key]} {contextmenu} />
-				</section>
-			{:else}
-				<Message status="error">unknown contextmenu "{key}"</Message>
-			{/if}
-		{/each}
-	</div>
-{/if}
+<div class="contextmenu-slot" on:click={onClickContextmenuSlot}>
+	{#each keys as key (key)}
+		{#if key in contextmenuComponents}
+			<section class="panel-inset">
+				<!-- TODO maybe pass through the key/value generically? -->
+				<svelte:component this={contextmenuComponents[key]} {contextmenu} />
+			</section>
+		{:else}
+			<Message status="error">unknown contextmenu "{key}"</Message>
+		{/if}
+	{/each}
+</div>
 
 <style>
 	section {

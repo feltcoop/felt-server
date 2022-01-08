@@ -19,6 +19,8 @@
 	$: hue = randomHue($persona.name);
 </script>
 
+<!-- TODO delete `PersonaContextmenu` ? should that be handled by the entity contextmenu?
+And then PersonaContextmenu would be only for *session* personas? `SessionPersonaContextmenu` -->
 <li
 	style="--hue: {hue}"
 	data-contextmenu={JSON.stringify({

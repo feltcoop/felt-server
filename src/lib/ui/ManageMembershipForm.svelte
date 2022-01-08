@@ -23,9 +23,7 @@
 			persona_id: $persona.persona_id,
 			community_id,
 		});
-		if (result.ok) {
-			//opened = false;
-		} else {
+		if (!result.ok) {
 			errorMessage = result.message;
 		}
 	};

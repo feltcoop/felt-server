@@ -10,7 +10,7 @@ export interface Contextmenu {
 	// TODO not sure about this, currently they're magic keys, maybe keys on `ui`?
 	// so could they be addressed by `name || id`? e.g. `'personaSelection'`
 	// maybe they should be blocks and block ids? or both?
-	items: null | ContextmenuItems; // TODO maybe not nullable?
+	items: ContextmenuItems;
 	x: number;
 	y: number;
 }
@@ -21,7 +21,7 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 }
 
 export const createContextmenuStore = (
-	initialValue: Contextmenu = {opened: false, items: null, x: 0, y: 0},
+	initialValue: Contextmenu = {opened: false, items: {}, x: 0, y: 0},
 	start?: StartStopNotifier<Contextmenu>,
 ): ContextmenuStore => {
 	const {subscribe, update} = writable(initialValue, start);
