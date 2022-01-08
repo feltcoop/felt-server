@@ -31,7 +31,7 @@
 			<!-- TODO or maybe `selectedPersona.id` ? can't be `$selectedPersona.persona_id` as a serial value -->
 			<button
 				class="explorer-button"
-				data-entity="selectedPersona"
+				data-entity={JSON.stringify({selectedPersona: null})}
 				on:click={onContextmenu(contextmenu)}
 			>
 				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />

@@ -8,7 +8,6 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		dispatch,
 		ui: {sessionPersonas, personaSelection, communitySelection, communitiesByPersonaId},
 	} = getApp();
 
@@ -21,19 +20,6 @@
 </script>
 
 <div class="community-nav">
-	<div class="header">
-		<button
-			aria-label="Create Community"
-			type="button"
-			on:click={() =>
-				dispatch('OpenDialog', {
-					name: 'CommunityInput',
-					props: {persona: selectedPersona, done: () => dispatch('CloseDialog')},
-				})}
-		>
-			➕
-		</button>
-	</div>
 	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
 	<div>
 		{#each $sessionPersonas as persona (persona)}
@@ -64,15 +50,5 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-	}
-
-	.header {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		width: 100%;
-	}
-	.header :global(button) {
-		width: 100%;
 	}
 </style>

@@ -13,7 +13,7 @@
 	$: persona = findPersonaById($entity.actor_id);
 </script>
 
-<li data-entity="persona:{$persona.name},entity:{$entity.entity_id}">
+<li data-entity={JSON.stringify({persona: $persona.name, entity: $entity.entity_id})}>
 	{$entity.content}
 </li>
 

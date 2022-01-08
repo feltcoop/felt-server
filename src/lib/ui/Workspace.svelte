@@ -15,15 +15,13 @@
 	$: selectedCommunity = $communitySelection;
 	$: selectedSpace = $spaceSelection;
 
-	$: layoutEntities = [
-		selectedSpace ? 'space:' + $selectedSpace.name : '',
-		selectedCommunity ? 'community:' + $selectedCommunity.name : '',
-	]
-		.filter(Boolean)
-		.join(',');
+	$: layoutEntities = {
+		space: selectedSpace ? $selectedSpace.name : undefined,
+		community: selectedCommunity ? $selectedCommunity.name : undefined,
+	};
 </script>
 
-<div class="workspace" data-entity={layoutEntities}>
+<div class="workspace" data-entity={JSON.stringify(layoutEntities)}>
 	{#if $expandMarquee}
 		<div
 			class="marquee-bg"

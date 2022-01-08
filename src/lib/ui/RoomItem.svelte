@@ -19,7 +19,10 @@
 	$: hue = randomHue($persona.name);
 </script>
 
-<li style="--hue: {hue}" data-entity="persona:{$persona.name},entity:{$entity.entity_id}">
+<li
+	style="--hue: {hue}"
+	data-entity={JSON.stringify({persona: $persona.name, entity: $entity.entity_id})}
+>
 	<div class="content">
 		<div class="timestamp">
 			<Avatar name={toName($persona)} icon={toIcon($persona)} />

@@ -29,7 +29,7 @@
 	import {goto} from '$app/navigation';
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
-	import ContextmenuSlot from '$lib/app/ContextmenuSlot.svelte';
+	import ContextmenuSlot from '$lib/app/contextmenu/ContextmenuSlot.svelte';
 	import Dialogs from '$lib/ui/dialog/Dialogs.svelte';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
@@ -169,11 +169,9 @@
 		}
 	}
 
-	$: layoutEntities = ['app', selectedPersona ? 'persona:' + $selectedPersona.name : '']
-		.filter(Boolean)
-		.join(',');
+	$: layoutEntities = {app: null, persona: selectedPersona ? $selectedPersona.name : undefined};
 	// TODO refactor this: unfortunately need to set on #root because dialog is outside of `.layout`
-	$: browser && (document.getElementById('root')!.dataset.entity = layoutEntities);
+	$: browser && (document.getElementById('root')!.dataset.entity = JSON.stringify(layoutEntities));
 </script>
 
 <svelte:head>
