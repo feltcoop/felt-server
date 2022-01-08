@@ -173,7 +173,7 @@
 <svelte:body
 	use:contextmenu.action={{
 		AppContextmenu: null,
-		PersonaContextmenu: selectedPersona ? $selectedPersona.persona_id : undefined,
+		PersonaContextmenu: selectedPersona || undefined,
 	}} />
 
 <svelte:head>

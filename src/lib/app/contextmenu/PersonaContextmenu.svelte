@@ -1,17 +1,17 @@
 <script lang="ts">
+	import {type Writable} from 'svelte/store';
+
 	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {getApp} from '$lib/ui/app';
+	import {type Persona} from '$lib/vocab/persona/persona';
 
-	const {
-		dispatch,
-		ui: {personasById},
-	} = getApp();
+	const {dispatch} = getApp();
 
 	export let contextmenu: ContextmenuStore;
 
-	$: persona_id = $contextmenu.items.PersonaContextmenu;
-	$: persona = personasById.get(persona_id)!;
+	let persona: Writable<Persona>;
+	$: persona = $contextmenu.items.PersonaContextmenu;
 </script>
 
 <Avatar name={$persona.name} />

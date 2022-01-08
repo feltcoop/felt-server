@@ -24,7 +24,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 <li
 	style="--hue: {hue}"
 	use:contextmenu.action={{
-		PersonaContextmenu: $persona.persona_id,
+		PersonaContextmenu: persona,
 		EntityContextmenu: $entity.entity_id,
 	}}
 >
