@@ -16,7 +16,7 @@
 	export let selectedSpace: Readable<Space>;
 </script>
 
-<div class="space-nav" use:contextmenu.action={{CommunityContextmenu: $community.community_id}}>
+<div class="space-nav" use:contextmenu.action={{CommunityContextmenu: community}}>
 	<!-- TODO the community url -->
 	{#each spaces as space (space.space_id)}
 		<SpaceNavItem {persona} {community} {space} selected={space === $selectedSpace} />

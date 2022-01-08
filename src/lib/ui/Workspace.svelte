@@ -20,7 +20,7 @@
 	class="workspace"
 	use:contextmenu.action={{
 		SpaceContextmenu: selectedSpace ? $selectedSpace.space_id : undefined,
-		CommunityContextmenu: selectedCommunity ? $selectedCommunity.community_id : undefined,
+		CommunityContextmenu: selectedCommunity || undefined,
 	}}
 >
 	{#if $expandMarquee}

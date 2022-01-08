@@ -10,7 +10,7 @@
 		<a href="https://github.com/feltcoop/felt-server" target="_blank" rel="noreferrer"
 			>felt-server</a
 		>
-		version 💚
+		💚 version
 		<a href="https://github.com/feltcoop/felt-server/commit/{VITE_GIT_HASH}" target="_blank">
 			{VITE_GIT_HASH}
 		</a>

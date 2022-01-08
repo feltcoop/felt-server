@@ -6,4 +6,6 @@
 	$: value = $contextmenu.items.EntityContextmenu;
 </script>
 
-<p>TODO use entity_id: {value}</p>
+<div class="markup">
+	<p>TODO use entity_id: {value}</p>
+</div>

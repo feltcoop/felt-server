@@ -20,6 +20,7 @@
 </div>
 <button
 	type="button"
+	class="menu-button"
 	on:click={() =>
 		dispatch('OpenDialog', {
 			name: 'SpaceDelete',

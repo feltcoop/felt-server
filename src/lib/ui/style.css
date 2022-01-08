@@ -36,6 +36,11 @@ main {
 	width: var(--navbar_size);
 	height: var(--navbar_size);
 }
+/* TODO refactor or upstream */
+.menu-button {
+	width: 100%;
+	justify-content: flex-start;
+}
 
 /* TODO upstream to Felt */
 @keyframes fade-in {
