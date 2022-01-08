@@ -69,7 +69,7 @@
 -->
 {#if $contextmenu.open}
 	<div
-		class="contextmenu pane"
+		class="contextmenu"
 		role="menu"
 		aria-modal
 		tabindex="-1"
@@ -93,15 +93,13 @@
 
 <style>
 	.contextmenu {
+		background-color: var(--bg);
 		position: fixed;
 		left: 0;
 		top: 0;
 		z-index: 9;
 		width: var(--contextmenu_width);
-		/* TODO should this be `pane-light` or something?
-		The `pane` shadow is too heavy because it's designed
-		for contrast against a fullscreen darkened background. */
-		--pane_box_shadow: 0px 2px 10px hsla(0, 100%, 0%, 0.2);
+		filter: drop-shadow(2px 4px 9px hsla(0, 100%, 0%, 0.24));
 		border: var(--border);
 	}
 	section {
