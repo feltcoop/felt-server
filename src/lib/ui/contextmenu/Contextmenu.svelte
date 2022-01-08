@@ -1,4 +1,6 @@
 <script lang="ts">
+	import {isEditable} from '@feltcoop/felt/util/dom.js';
+
 	import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
@@ -13,12 +15,27 @@
 			contextmenu.close();
 		}
 	};
+
+	// TODO hook into a ui input system
+	const onWindowKeydown = (e: KeyboardEvent) => {
+		if (
+			$contextmenu.open &&
+			e.key === 'Escape' &&
+			!(e.target instanceof HTMLElement && isEditable(e.target))
+		) {
+			contextmenu.close();
+			e.stopPropagation();
+			e.preventDefault();
+		}
+	};
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
+<!-- Capture keydown so it can handle the event before any dialogs. -->
 <svelte:window
 	on:contextmenu|capture={onContextmenu(contextmenu)}
 	on:click|capture={onClickWindow}
+	on:keydown|capture={onWindowKeydown}
 />
 
 <!--
