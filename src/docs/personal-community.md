@@ -17,3 +17,5 @@ with some important differences:
   - publishing usecase: e.g. a blog or a public poll
   - what about spaces?
   - what is the UX like? do personas get a list of all of the resources they can access?
+- what should the default spaces be?
+- how else are they distinct?
