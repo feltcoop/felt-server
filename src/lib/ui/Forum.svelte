@@ -2,10 +2,12 @@
 	import {browser} from '$app/env';
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 	import type {Readable} from 'svelte/store';
+	import {get} from 'svelte/store';
 
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
+	import type {Entity} from '$lib/vocab/entity/entity.js';
 	import ForumItems from '$lib/ui/ForumItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
@@ -19,9 +21,30 @@
 	community; // silence unused prop warning
 
 	let text = '';
+	let selectedThread: Readable<Entity> | null;
+	const selectThread = (thread: Readable<Entity>) => {
+		console.log(get(thread).entity_id);
+		selectedThread = thread;
+	};
 
 	$: shouldLoadEntities = browser && $socket.open;
 	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
+	$: threads = entities ? get(entities).filter((e) => get(e).type === 'Thread') : null;
+	$: messages = entities ? get(entities).filter((e) => get(e).type === 'Messages') : null;
+
+	$: selectedThread = null;
+	$: threadMessages = selectedThread
+		? filterMessages(JSON.parse($selectedThread.content).messages)
+		: null;
+
+	const filterMessages = (message_ids: number[]) => {
+		return messages ? messages.filter((m) => message_ids.includes(get(m).entity_id)) : null;
+	};
+
+	$: console.log('entities', entities);
+	$: entities ? console.log('read entities', get(entities)) : null;
+	$: console.log('threads', threads);
+	$: console.log('threadMessages', threadMessages);
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
@@ -30,6 +53,7 @@
 			space_id: $space.space_id,
 			content,
 			actor_id: $persona.persona_id,
+			type: 'Message',
 		});
 		text = '';
 	};
@@ -44,8 +68,10 @@
 <div class="forum">
 	<textarea placeholder="> new topic" on:keydown={onKeydown} bind:value={text} />
 	<div class="entities">
-		{#if entities}
-			<ForumItems {entities} />
+		{#if threadMessages}
+			<ForumItems entities={threadMessages} {selectThread} />
+		{:else if threads}
+			<ForumItems entities={threads} {selectThread} />
 		{:else}
 			<PendingAnimation />
 		{/if}

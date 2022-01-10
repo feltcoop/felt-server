@@ -6,12 +6,13 @@
 
 	// TODO this should possibly be a generic component instead of this named one
 
-	export let entities: Readable<Readable<Entity>[]>;
+	export let entities: Readable<Entity>[];
+	export let selectThread: (thread: Readable<Entity>) => void;
 </script>
 
 <!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->
 <ul>
-	{#each $entities as entity (entity)}
-		<ForumItem {entity} />
+	{#each entities as entity (entity)}
+		<ForumItem {entity} {selectThread} />
 	{/each}
 </ul>

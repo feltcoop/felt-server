@@ -30,6 +30,7 @@
 			space_id: $space.space_id,
 			content,
 			actor_id: $persona.persona_id,
+			type: 'Message',
 		});
 		text = '';
 	};

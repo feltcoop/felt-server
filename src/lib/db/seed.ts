@@ -79,17 +79,26 @@ export const seed = async (db: Database): Promise<void> => {
 };
 
 const createDefaultEntities = async (db: Database, spaces: Space[], personas: Persona[]) => {
-	const entitiesContents: {[key: string]: string[]} = {
-		Room: ['Those who know do not speak.', 'Those who speak do not know.'],
-		Board: ["All the world's a stage.", 'And all the men and women merely players.'],
+	const entities: {[key: string]: any[]} = {
+		Room: [
+			{content: 'Those who know do not speak.', type: 'Message'},
+			{content: 'Those who speak do not know.', type: 'Message'},
+		],
+		Board: [
+			{content: "All the world's a stage.", type: 'Message'},
+			{content: 'And all the men and women merely players.', type: 'Message'},
+		],
 		Forum: [
-			'If the evidence says you’re wrong, you don’t have the right theory.',
-			'You change the theory, not the evidence.',
+			{
+				content: 'If the evidence says you’re wrong, you don’t have the right theory.',
+				type: 'Message',
+			},
+			{content: 'You change the theory, not the evidence.', type: 'Message'},
 		],
 		Notes: [
-			'We have no guarantee about the future',
-			'but we exist in the hope of something better.',
-			'The 14th Dalai Lama',
+			{content: 'We have no guarantee about the future', type: 'Message'},
+			{content: 'but we exist in the hope of something better.', type: 'Message'},
+			{content: 'The 14th Dalai Lama', type: 'Message'},
 		],
 	};
 
@@ -102,12 +111,29 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 
 	for (const space of spaces) {
 		const spaceContent = JSON.parse(space.content);
-		if (!(spaceContent.type in entitiesContents)) {
+		if (!(spaceContent.type in entities)) {
 			continue;
 		}
-		const entityContents = entitiesContents[spaceContent.type];
-		for (const entityContent of entityContents) {
-			await db.repos.entity.create(nextPersona().persona_id, space.space_id, entityContent);
+		const entityContents = entities[spaceContent.type];
+		let messageList: number[] = [];
+		for (const entity of entityContents) {
+			let result = await db.repos.entity.create(
+				nextPersona().persona_id,
+				space.space_id,
+				entity.content,
+				entity.type,
+			);
+			if (spaceContent.type === 'Forum' && result.ok) {
+				messageList.push(result.value.entity_id);
+			}
+		}
+		if (spaceContent.type === 'Forum') {
+			await db.repos.entity.create(
+				nextPersona().persona_id,
+				space.space_id,
+				'{"topic":"Grad students in the sciences","icon":"🐀","messages":[72,73]}',
+				'Thread',
+			);
 		}
 	}
 };

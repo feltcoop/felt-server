@@ -12,14 +12,20 @@
 	} = getApp();
 
 	export let entity: Readable<Entity>;
+	export let selectThread: (thread: Readable<Entity>) => void;
 
 	$: persona = findPersonaById($entity.actor_id); // TODO should this be `Actor` and `actor`?
 
 	// TODO refactor to some client view-model for the actor
 	$: hue = randomHue($persona.name);
+
+	const selectThreadLocal = async () => {
+		selectThread(entity);
+	};
 </script>
 
 <li
+	on:click={selectThreadLocal}
 	style="--hue: {hue}"
 	use:contextmenu.action={{
 		PersonaContextmenu: persona,

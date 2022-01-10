@@ -56,6 +56,7 @@ export const randomEntityParams = (actor_id: number, space_id: number): CreateEn
 	actor_id,
 	space_id,
 	content: randomContent(),
+	type: 'Message',
 });
 
 // TODO maybe compute in relation to `RandomVocabContext`

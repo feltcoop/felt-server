@@ -8,10 +8,11 @@ export const entityRepo = (db: Database) => ({
 		actor_id: number,
 		space_id: number,
 		content: string,
+		type: string,
 	): Promise<Result<{value: Entity}>> => {
 		const data = await db.sql<Entity[]>`
-			INSERT INTO entities (actor_id, space_id, content) VALUES (
-				${actor_id},${space_id},${content}
+			INSERT INTO entities (actor_id, space_id, content, type) VALUES (
+				${actor_id},${space_id},${content},${type}
 			) RETURNING *
 		`;
 		// console.log('[db] create entity', data);
