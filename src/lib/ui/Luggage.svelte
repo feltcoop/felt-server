@@ -1,10 +1,13 @@
 <script lang="ts">
 	import {getApp} from '$lib/ui/app';
 
-	const {dispatch} = getApp();
+	const {
+		dispatch,
+		ui: {contextmenu},
+	} = getApp();
 </script>
 
-<div class="luggage" data-entity="luggage">
+<div class="luggage" use:contextmenu.action={{LuggageContextmenu: null}}>
 	<button
 		class="icon-button"
 		aria-label="toggle luggage"

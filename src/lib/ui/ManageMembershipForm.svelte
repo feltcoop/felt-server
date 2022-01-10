@@ -14,6 +14,7 @@
 
 	let errorMessage: string | undefined;
 
+	// TODO lookup from `communitiesById` map instead
 	const getCommunity = (community_id: number): Community =>
 		get($communities.find((c) => get(c).community_id === community_id)!);
 
@@ -23,9 +24,7 @@
 			persona_id: $persona.persona_id,
 			community_id,
 		});
-		if (result.ok) {
-			//opened = false;
-		} else {
+		if (!result.ok) {
 			errorMessage = result.message;
 		}
 	};
@@ -39,7 +38,7 @@
 		<ul>
 			{#each $persona.community_ids as community_id (community_id)}
 				<li class="community-badge">
-					<button type="button" on:click={() => leaveCommunity(community_id)}>👋 </button>
+					<button type="button" on:click={() => leaveCommunity(community_id)}> 👋 </button>
 					{getCommunity(community_id).name}
 				</li>
 			{/each}

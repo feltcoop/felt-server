@@ -2,12 +2,13 @@
 	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import type {Readable} from 'svelte/store';
+	import {type SvelteComponent} from 'svelte';
 
-	import {components} from '$lib/app/components';
 	import type {DialogState} from '$lib/ui/dialog/dialog';
 	import {getApp} from '$lib/ui/app';
 
 	export let dialogs: Readable<DialogState[]>;
+	export let components: {[key: string]: typeof SvelteComponent};
 
 	const {dispatch} = getApp();
 

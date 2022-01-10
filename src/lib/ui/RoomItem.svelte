@@ -8,7 +8,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {findPersonaById},
+		ui: {contextmenu, findPersonaById},
 	} = getApp();
 
 	export let entity: Readable<Entity>;
@@ -19,7 +19,15 @@
 	$: hue = randomHue($persona.name);
 </script>
 
-<li style="--hue: {hue}" data-entity="persona:{$persona.name},entity:{$entity.entity_id}">
+<!-- TODO delete `PersonaContextmenu` ? should that be handled by the entity contextmenu?
+And then PersonaContextmenu would be only for *session* personas? `SessionPersonaContextmenu` -->
+<li
+	style="--hue: {hue}"
+	use:contextmenu.action={{
+		PersonaContextmenu: persona,
+		EntityContextmenu: $entity.entity_id,
+	}}
+>
 	<div class="content">
 		<div class="timestamp">
 			<Avatar name={toName($persona)} icon={toIcon($persona)} />

@@ -8,22 +8,24 @@
 
 	const {
 		dispatch,
-		ui: {expandMarquee, spaceSelection, personaSelection, communitySelection},
+		ui: {contextmenu, expandMarquee, spaceSelection, personaSelection, communitySelection},
 	} = getApp();
 
 	$: selectedPersona = $personaSelection;
 	$: selectedCommunity = $communitySelection;
 	$: selectedSpace = $spaceSelection;
-
-	$: layoutEntities = [
-		selectedSpace ? 'space:' + $selectedSpace.name : '',
-		selectedCommunity ? 'community:' + $selectedCommunity.name : '',
-	]
-		.filter(Boolean)
-		.join(',');
 </script>
 
-<div class="workspace" data-entity={layoutEntities}>
+<div
+	class="workspace"
+	use:contextmenu.action={{
+		SpaceContextmenu: selectedSpace || undefined,
+		CommunityContextmenu:
+			selectedCommunity && selectedPersona
+				? {community: selectedCommunity, persona: selectedPersona}
+				: undefined,
+	}}
+>
 	{#if $expandMarquee}
 		<div
 			class="marquee-bg"

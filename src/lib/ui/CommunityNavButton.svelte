@@ -9,7 +9,7 @@
 
 	const {
 		dispatch,
-		ui: {spaceIdByCommunitySelection, findSpaceById, sessionPersonaIndices},
+		ui: {contextmenu, spaceIdByCommunitySelection, findSpaceById, sessionPersonaIndices},
 	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
@@ -35,7 +35,7 @@
 	class:selected
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {$community.settings.hue}"
-	data-entity="community:{$community.name}"
+	use:contextmenu.action={{CommunityContextmenu: {community, persona}}}
 	on:click={() => dispatch('SelectPersona', {persona_id: $persona.persona_id})}
 >
 	<!-- TODO maybe use `Avatar`? does `hue` need to be on the link? -->
@@ -53,7 +53,6 @@
 		background-color: var(--bg);
 	}
 	.persona {
-		margin-top: var(--spacing_xl5);
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -61,8 +60,5 @@
 		width: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
 		height: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
 		--icon_size: var(--icon_size_sm);
-	}
-	.persona:first-child {
-		margin-top: 0;
 	}
 </style>

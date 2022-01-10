@@ -29,8 +29,8 @@
 	import {goto} from '$app/navigation';
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
-	import ContextmenuSlot from '$lib/app/ContextmenuSlot.svelte';
 	import Dialogs from '$lib/ui/dialog/Dialogs.svelte';
+	import {components} from '$lib/app/components';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -93,15 +93,13 @@
 	} = ui;
 
 	$: setSession($session);
-
 	$: guest = $session.guest;
 	$: onboarding = !guest && !$sessionPersonas.length;
-
-	$: selectedPersona = $personaSelection; // TODO should these names be reversed?
 
 	// TODO instead of dispatching `select` events on startup, try to initialize with correct values
 	// TODO refactor -- where should this logic go?
 	$: updateStateFromPageParams($page.params, $page.query);
+	$: selectedPersona = $personaSelection; // must be after `updateStateFromPageParams`
 	const updateStateFromPageParams = (
 		params: {community?: string; space?: string},
 		query: URLSearchParams,
@@ -168,13 +166,13 @@
 			socket.connect(WEBSOCKET_URL);
 		}
 	}
-
-	$: layoutEntities = ['app', selectedPersona ? 'persona:' + $selectedPersona.name : '']
-		.filter(Boolean)
-		.join(',');
-	// TODO refactor this: unfortunately need to set on #root because dialog is outside of `.layout`
-	$: browser && (document.getElementById('root')!.dataset.entity = layoutEntities);
 </script>
+
+<svelte:body
+	use:contextmenu.action={{
+		ActingPersonaContextmenu: selectedPersona || undefined,
+		AppContextmenu: null,
+	}} />
 
 <svelte:head>
 	<link rel="shortcut icon" href="/favicon.png" />
@@ -199,10 +197,8 @@
 		{/if}
 	</main>
 	<Devmode {devmode} />
-	<Dialogs {dialogs} />
-	<Contextmenu {contextmenu}>
-		<ContextmenuSlot {contextmenu} {devmode} />
-	</Contextmenu>
+	<Dialogs {dialogs} {components} />
+	<Contextmenu {contextmenu} {components} />
 	<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 </div>
 

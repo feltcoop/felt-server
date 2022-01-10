@@ -5,7 +5,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {findPersonaById},
+		ui: {contextmenu, findPersonaById},
 	} = getApp();
 
 	export let entity: Readable<Entity>;
@@ -13,7 +13,12 @@
 	$: persona = findPersonaById($entity.actor_id);
 </script>
 
-<li data-entity="persona:{$persona.name},entity:{$entity.entity_id}">
+<li
+	use:contextmenu.action={{
+		PersonaContextmenu: persona,
+		EntityContextmenu: $entity.entity_id,
+	}}
+>
 	{$entity.content}
 </li>
 

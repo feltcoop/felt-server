@@ -9,21 +9,21 @@
 
 	const {
 		dispatch,
-		ui: {mobile, expandMainNav, sessionPersonaIndices},
+		ui: {contextmenu, mobile, expandMainNav, sessionPersonaIndices},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
-	export let space: Space;
+	export let space: Readable<Space>;
 	export let selected: boolean;
 
 	$: personaIndex = $sessionPersonaIndices.get(persona)!;
 </script>
 
 <a
-	href={toSpaceUrl(personaIndex, $community, space)}
+	href={toSpaceUrl(personaIndex, $community, $space)}
 	class:selected
-	data-entity="space:{space.name}"
+	use:contextmenu.action={{SpaceContextmenu: space}}
 	on:click={() => {
 		// TODO Should this be a click handler or react to UI system events/changes?
 		// Might make more UX sense to make it react to any state changes,
@@ -34,7 +34,7 @@
 		if ($mobile && $expandMainNav) dispatch('ToggleMainNav');
 	}}
 >
-	{space.name}
+	{$space.name}
 </a>
 
 <style>

@@ -6,65 +6,27 @@
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import {getApp} from '$lib/ui/app';
 
-	const {dispatch} = getApp();
+	const {
+		ui: {contextmenu},
+	} = getApp();
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
-	export let spaces: Space[]; // TODO array of stores?
+	export let spaces: Readable<Space>[];
 	export let selectedSpace: Readable<Space>;
 </script>
 
-<div class="space-nav" data-entity="community:{$community.name}">
-	<div class="header">
-		<button
-			aria-label="Create Space"
-			type="button"
-			on:click={() =>
-				dispatch('OpenDialog', {
-					name: 'SpaceInput',
-					props: {persona, community, done: () => dispatch('CloseDialog')},
-				})}
-		>
-			➕
-		</button>
-		<button
-			aria-label="Invite users to {$community.name}"
-			type="button"
-			on:click={() =>
-				dispatch('OpenDialog', {
-					name: 'MembershipInput',
-					props: {community},
-				})}
-		>
-			✉️
-		</button>
-		<button
-			aria-label="Delete Space"
-			type="button"
-			on:click={() =>
-				dispatch('OpenDialog', {
-					name: 'SpaceDelete',
-					props: {space: selectedSpace, done: () => dispatch('CloseDialog')},
-				})}
-		>
-			🗑️
-		</button>
-	</div>
-	<!-- TODO the community url -->
-	{#each spaces as space (space.space_id)}
-		<SpaceNavItem {persona} {community} {space} selected={space === $selectedSpace} />
+<nav class="space-nav" use:contextmenu.action={{CommunityContextmenu: {community, persona}}}>
+	{#each spaces as space (space)}
+		<SpaceNavItem {persona} {community} {space} selected={space === selectedSpace} />
 	{/each}
-</div>
+</nav>
 
 <style>
 	.space-nav {
-		height: 100%;
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-	}
-
-	.header {
-		display: flex;
+		justify-content: flex-start;
 	}
 </style>

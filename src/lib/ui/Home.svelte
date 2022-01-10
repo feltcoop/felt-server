@@ -11,7 +11,7 @@
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 
 	const {
-		ui: {spaceSelection, spacesByCommunityId},
+		ui: {contextmenu, spaceSelection, spacesByCommunityId, personasById},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -29,7 +29,7 @@
 		<!-- TODO display other meta info about the community -->
 		<ul>
 			{#each $community.memberPersonas as persona (persona.persona_id)}
-				<li data-entity="persona:{persona.name}">
+				<li use:contextmenu.action={{PersonaContextmenu: personasById.get(persona.persona_id)}}>
 					<Avatar name={toName(persona)} icon={toIcon(persona)} />
 				</li>
 			{/each}
