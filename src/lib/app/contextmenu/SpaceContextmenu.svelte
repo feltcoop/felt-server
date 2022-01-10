@@ -23,5 +23,5 @@
 			props: {space, done: () => dispatch('CloseDialog')},
 		})}
 >
-	🗑️ Delete Space
+	Delete Space
 </button>

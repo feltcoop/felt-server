@@ -26,7 +26,7 @@
 			props: {persona, community, done: () => dispatch('CloseDialog')},
 		})}
 >
-	➕ Create Space
+	Create Space
 </button>
 <button
 	type="button"
@@ -37,5 +37,5 @@
 			props: {community},
 		})}
 >
-	✉️ Invite Members
+	Invite Members
 </button>

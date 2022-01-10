@@ -170,7 +170,7 @@
 
 <svelte:body
 	use:contextmenu.action={{
-		SelectedPersonaContextmenu: selectedPersona || undefined,
+		ActingPersonaContextmenu: selectedPersona || undefined,
 		AppContextmenu: null,
 	}} />
 

@@ -11,7 +11,7 @@
 	export let contextmenu: ContextmenuStore;
 
 	let persona: Writable<Persona>;
-	$: persona = $contextmenu.items.SelectedPersonaContextmenu;
+	$: persona = $contextmenu.items.ActingPersonaContextmenu;
 </script>
 
 <Avatar name={$persona.name} />
@@ -24,12 +24,12 @@
 			props: {persona, done: () => dispatch('CloseDialog')},
 		})}
 >
-	➕ Create Community
+	Create Community
 </button>
 <button
 	type="button"
 	class="menu-button"
 	on:click={() => dispatch('OpenDialog', {name: 'ManageMembershipForm'})}
 >
-	👋 Manage Memberships
+	Manage Memberships
 </button>

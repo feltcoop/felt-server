@@ -6,7 +6,7 @@ import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
 import LinkContextmenu from '$lib/app/contextmenu/LinkContextmenu.svelte';
 import LuggageContextmenu from '$lib/app/contextmenu/LuggageContextmenu.svelte';
 import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
-import SelectedPersonaContextmenu from '$lib/app/contextmenu/SelectedPersonaContextmenu.svelte';
+import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
 import SpaceContextmenu from '$lib/app/contextmenu/SpaceContextmenu.svelte';
 
 // TODO should ideally dynamically load these -- see `$lib/app/components` for more
@@ -17,6 +17,6 @@ export const contextmenuComponents: {[key: string]: typeof SvelteComponent} = {
 	LinkContextmenu,
 	LuggageContextmenu,
 	PersonaContextmenu,
-	SelectedPersonaContextmenu,
+	ActingPersonaContextmenu,
 	SpaceContextmenu,
 };
