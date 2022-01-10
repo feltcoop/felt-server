@@ -12,13 +12,14 @@
 	--contextmenu_width: 360px;
 }
 
+html {
+	height: 100%;
+}
+
 body {
 	height: 100%;
 	/* TODO remove the `important` after the SvelteKit import issue between dev and prod is fixed */
 	background-color: hsl(var(--bg_hue), var(--bg_saturation), var(--bg_lightness)) !important;
-}
-#root {
-	height: 100%;
 }
 
 main {

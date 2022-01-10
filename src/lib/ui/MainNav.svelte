@@ -105,7 +105,7 @@
 	}
 	:global(.mobile) .main-nav-bg {
 		display: block;
-		animation: fade-in var(--transition_duration_4) ease-out;
+		animation: fade-in var(--transition_duration_3) ease-out;
 	}
 	:global(.mobile) .main-nav-panel.expanded {
 		width: 0;

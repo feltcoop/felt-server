@@ -99,9 +99,6 @@
 		z-index: 9;
 		width: var(--contextmenu_width);
 		border: var(--border);
-		/* TODO delete these lines after updating Felt */
-		filter: drop-shadow(2px 4px 9px hsla(0, 100%, 0%, 0.28));
-		box-shadow: none;
 	}
 	section {
 		border-bottom: var(--border);
