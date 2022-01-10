@@ -21,7 +21,7 @@ export const entityRepo = (db: Database) => ({
 	filterBySpace: async (space_id: number): Promise<Result<{value: Entity[]}>> => {
 		console.log(`[db] preparing to query for space entities: ${space_id}`);
 		const data = await db.sql<Entity[]>`
-			SELECT entity_id, content, actor_id, space_id, created, updated 
+			SELECT entity_id, content, type, actor_id, space_id, created, updated 
 			FROM entities WHERE space_id= ${space_id}
 		`;
 		console.log('[db] space entities', data);
