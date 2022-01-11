@@ -2,7 +2,7 @@
 	import '@feltcoop/felt/ui/style.css';
 	import '$lib/ui/style.css';
 	import {setDevmode} from '@feltcoop/felt/ui/devmode.js';
-	import Devmode from '@feltcoop/felt/ui/Devmode.svelte';
+	import DevmodeControls from '@feltcoop/felt/ui/DevmodeControls.svelte';
 	import FeltWindowHost from '@feltcoop/felt/ui/FeltWindowHost.svelte';
 	import {onMount} from 'svelte';
 	import {session} from '$app/stores';
@@ -196,7 +196,7 @@
 			<slot />
 		{/if}
 	</main>
-	<Devmode {devmode} />
+	<DevmodeControls {devmode} />
 	<Dialogs {dialogs} {components} />
 	<Contextmenu {contextmenu} {components} />
 	<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />

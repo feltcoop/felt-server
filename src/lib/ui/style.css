@@ -10,22 +10,16 @@
 	--navbar_size: var(--luggage_size);
 	--icon_size: var(--icon_size_md);
 	--contextmenu_width: 360px;
+}
 
-	/* TODO upstream to felt */
-	--transition_duration_xl: 0.75s;
-	--transition_duration_lg: 0.56s;
-	--transition_duration_md: 0.36s;
-	--transition_duration_sm: 0.22s;
-	--transition_duration_xs: 0.08s;
+html {
+	height: 100%;
 }
 
 body {
 	height: 100%;
 	/* TODO remove the `important` after the SvelteKit import issue between dev and prod is fixed */
 	background-color: hsl(var(--bg_hue), var(--bg_saturation), var(--bg_lightness)) !important;
-}
-#root {
-	height: 100%;
 }
 
 main {
