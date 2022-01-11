@@ -14,7 +14,6 @@ export default {
 	},
 	kit: {
 		adapter: node(),
-		target: '#root',
 		files: {assets: 'src/static'},
 		vite: {
 			server: {
