@@ -15,7 +15,6 @@ import type {UiHandlers} from '$lib/app/eventTypes';
 import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import type {DialogState} from '$lib/ui/dialog/dialog';
-import {components} from '$lib/app/components';
 
 const KEY = Symbol();
 
@@ -66,7 +65,11 @@ export interface Ui extends Partial<UiHandlers> {
 	dialogs: Writable<DialogState[]>;
 }
 
-export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): Ui => {
+export const toUi = (
+	session: Writable<ClientSession>,
+	initialMobile: boolean,
+	components: {[key: string]: typeof SvelteComponent},
+): Ui => {
 	const initialSession = get(session);
 
 	// TODO would it helpfully simplify things to put these stores on the actual store state?

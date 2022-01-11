@@ -30,6 +30,7 @@
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
 	import Dialogs from '$lib/ui/dialog/Dialogs.svelte';
+	import {components} from '$lib/app/components';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -63,7 +64,7 @@
 			() => dispatch('Ping'),
 		),
 	);
-	const ui = setUi(toUi(session, initialMobileValue));
+	const ui = setUi(toUi(session, initialMobileValue, components));
 
 	const apiClient = toWebsocketApiClient(findService, socket.send); // TODO expose on `app`?
 	// alternative http client:
