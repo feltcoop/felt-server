@@ -1,15 +1,18 @@
 <script lang="ts">
 	import {isEditable} from '@feltcoop/felt/util/dom.js';
-	import {type SvelteComponent} from 'svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
+	import {getApp} from '$lib/ui/app';
+
+	const {
+		ui: {components},
+	} = getApp();
 
 	// TODO upstream to Felt
 
 	export let contextmenu: ContextmenuStore;
-	export let components: {[key: string]: typeof SvelteComponent};
 
 	let contextmenuEl: HTMLElement;
 

@@ -4,7 +4,7 @@
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
-	import {ViewType, viewTypes as allViewTypes} from '$lib/vocab/space/space';
+	import {ViewType, viewTypes as allViewTypes} from '$lib/vocab/view/view';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';

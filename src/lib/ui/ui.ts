@@ -1,6 +1,6 @@
 import type {Readable, Writable} from 'svelte/store';
 import {writable, derived, get} from 'svelte/store';
-import {setContext, getContext} from 'svelte';
+import {setContext, getContext, type SvelteComponent} from 'svelte';
 import {goto} from '$app/navigation';
 
 import type {Community} from '$lib/vocab/community/community';
@@ -15,6 +15,7 @@ import type {UiHandlers} from '$lib/app/eventTypes';
 import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import type {DialogState} from '$lib/ui/dialog/dialog';
+import {components} from '$lib/app/components';
 
 const KEY = Symbol();
 
@@ -27,6 +28,10 @@ export const setUi = (store: Ui): Ui => {
 
 export interface Ui extends Partial<UiHandlers> {
 	dispatch: (ctx: DispatchContext) => any; // TODO return value type?
+
+	// TODO instead of eagerly loading these components,
+	// this should be an interface to lazy-load UI components
+	components: {[key: string]: typeof SvelteComponent};
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
@@ -229,6 +234,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 	};
 
 	const ui: Ui = {
+		components,
 		account,
 		personas,
 		sessionPersonas,

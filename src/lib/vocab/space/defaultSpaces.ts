@@ -1,5 +1,5 @@
 import type {CreateSpaceParams} from '$lib/app/eventTypes';
-import {ViewType} from '$lib/vocab/space/space';
+import {ViewType} from '$lib/vocab/view/view';
 import type {Community} from '$lib/vocab/community/community';
 
 export const toDefaultSpaces = ({community_id, name}: Community): CreateSpaceParams[] => [

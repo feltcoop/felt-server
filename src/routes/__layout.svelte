@@ -30,7 +30,6 @@
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
 	import Dialogs from '$lib/ui/dialog/Dialogs.svelte';
-	import {components} from '$lib/app/components';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -197,8 +196,8 @@
 		{/if}
 	</main>
 	<Devmode {devmode} />
-	<Dialogs {dialogs} {components} />
-	<Contextmenu {contextmenu} {components} />
+	<Dialogs {dialogs} />
+	<Contextmenu {contextmenu} />
 	<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 </div>
 

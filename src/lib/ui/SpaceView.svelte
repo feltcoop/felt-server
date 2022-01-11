@@ -1,16 +1,23 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
+	import Message from '@feltcoop/felt/ui/Message.svelte';
 
-	import {spaceViews} from '$lib/ui/spaceViews';
-	import type {Space, SpaceViewData} from '$lib/vocab/space/space';
+	import type {Space} from '$lib/vocab/space/space';
+	import type {ViewData} from '$lib/vocab/view/view';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Persona} from '$lib/vocab/persona/persona';
+	import {getApp} from '$lib/ui/app';
+
+	const {
+		ui: {components},
+	} = getApp();
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
 	export let space: Readable<Space | null>; // TODO the `| null` is a hack that gets bypassed below, not sure how to make it work with nullable "selected" stores
 
-	const toSpaceData = (space: Space): SpaceViewData => {
+	// TODO refactor this once `view` is a JSON column of `Space`
+	const toViewData = (space: Space): ViewData => {
 		switch (space.media_type) {
 			case 'application/fuz+json': {
 				return JSON.parse(space.content);
@@ -21,12 +28,14 @@
 		}
 	};
 
-	$: spaceData = toSpaceData($space!);
-	$: component = spaceViews[spaceData.type];
+	$: viewData = toViewData($space!);
+	$: component = components[viewData.type];
 </script>
 
 {#if component}
-	<svelte:component this={component} {persona} {community} {space} {...spaceData.props} />
+	<svelte:component this={component} {persona} {community} {space} {...viewData.props} />
 {:else}
-	unknown space type: {spaceData.type}
+	<Message status="error">
+		unknown space type: {viewData.type}
+	</Message>
 {/if}
