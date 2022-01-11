@@ -1,4 +1,4 @@
-// TODO the npm package `svast` will be the data structure for `ViewData:
+// TODO the npm package `svast` will be the data structure for `ViewData`:
 // https://github.com/pngwn/MDsveX/tree/master/packages/svast
 
 export enum ViewType {
