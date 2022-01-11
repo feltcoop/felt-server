@@ -1,8 +1,5 @@
 <script lang="ts">
 	import {VITE_GIT_HASH} from '$lib/config';
-	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-
-	export const contextmenu: ContextmenuStore = undefined as any;
 </script>
 
 <div class="markup">

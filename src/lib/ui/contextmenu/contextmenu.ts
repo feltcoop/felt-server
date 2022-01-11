@@ -100,7 +100,7 @@ const queryContextmenuItems = (target: HTMLElement | SVGElement): null | Context
 		}
 		if (el.tagName === 'A') {
 			if (!items) items = {};
-			items.LinkContextmenu = (el as HTMLAnchorElement).href;
+			items.LinkContextmenu = {href: (el as HTMLAnchorElement).href};
 		}
 		el = el.parentElement;
 	}
