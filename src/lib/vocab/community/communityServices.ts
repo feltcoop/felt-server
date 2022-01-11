@@ -8,6 +8,8 @@ import type {
 	ReadCommunitiesResponseResult,
 	UpdateCommunitySettingsParams,
 	UpdateCommunitySettingsResponseResult,
+	CreateMembershipParams,
+	CreateMembershipResponseResult,
 } from '$lib/app/eventTypes';
 import {
 	CreateCommunity,
@@ -15,11 +17,7 @@ import {
 	ReadCommunity,
 	UpdateCommunitySettings,
 } from '$lib/vocab/community/community.events';
-import {
-	CreateMembership,
-	type CreateMembershipParams,
-	type CreateMembershipResponseResult,
-} from '$lib/vocab/membership/membership.events';
+import {CreateMembership} from '$lib/vocab/membership/membership.events';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 
 // Returns a list of community objects
