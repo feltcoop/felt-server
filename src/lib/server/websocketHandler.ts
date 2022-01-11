@@ -57,7 +57,7 @@ export const websocketHandler: WebsocketHandler = async (
 		result = {
 			ok: false,
 			status: 400,
-			reason: 'invalid params: ' + toValidationErrorMessage(validateParams.errors![0]),
+			message: 'invalid params: ' + toValidationErrorMessage(validateParams.errors![0]),
 		};
 	} else {
 		result = await service.perform({server, params, account_id});
@@ -92,7 +92,7 @@ export const websocketHandler: WebsocketHandler = async (
 	// and some generic broadcast message type for everyone else.
 	socket.send(serializedResponse);
 
-	if (method === 'create_file') {
+	if (method === 'CreateEntity') {
 		console.log('[websocketHandler] broadcasting', responseMessage);
 		const broadcastMessage: BroadcastMessage = {
 			type: 'broadcast',

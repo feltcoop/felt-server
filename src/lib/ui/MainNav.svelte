@@ -4,7 +4,6 @@
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
-	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
@@ -13,23 +12,27 @@
 		ui: {
 			expandMainNav,
 			contextmenu,
-			selectedSpace: selectedSpaceStore,
-			selectedPersona: selectedPersonaStore,
-			selectedCommunity: selectedCommunityStore,
+			spaceSelection,
+			personaSelection,
+			communitySelection,
+			spacesById,
 		},
 	} = getApp();
 
-	$: selectedPersona = $selectedPersonaStore!; // TODO type?
-	$: selectedCommunity = $selectedCommunityStore;
-	$: selectedSpace = $selectedSpaceStore;
+	$: selectedPersona = $personaSelection!;
+	$: selectedCommunity = $communitySelection;
+	$: selectedSpace = $spaceSelection;
+
+	// TODO refactor once community data is normalized
+	$: selectedCommunitySpaces =
+		selectedCommunity && $selectedCommunity.spaces.map((s) => $spacesById.get(s.space_id)!);
 
 	// TODO refactor to some client view-model for the account
-	$: selectedPersonaName = $selectedPersona?.name || GUEST_PERSONA_NAME;
-	$: hue = randomHue(selectedPersonaName);
+	$: hue = randomHue(toName($selectedPersona));
 </script>
 
 {#if $expandMainNav}
-	<div class="main-nav-bg" on:click={() => ($expandMainNav ? dispatch('toggle_main_nav') : null)} />
+	<div class="main-nav-bg" on:click={() => ($expandMainNav ? dispatch('ToggleMainNav') : null)} />
 {/if}
 <div class="main-nav-panel" class:expanded={$expandMainNav} style="--hue: {hue}">
 	<div class="main-nav">
@@ -39,7 +42,7 @@
 			<!-- TODO or maybe `selectedPersona.id` ? can't be `$selectedPersona.persona_id` as a serial value -->
 			<button
 				class="explorer-button"
-				data-entity="selectedPersona"
+				use:contextmenu.action={{LuggageContextmenu: null}}
 				on:click={onContextmenu(contextmenu)}
 			>
 				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
@@ -47,11 +50,11 @@
 		</div>
 		<div class="explorer">
 			<CommunityNav />
-			{#if selectedPersona && selectedCommunity && selectedSpace}
+			{#if selectedPersona && selectedCommunity && selectedCommunitySpaces && selectedSpace}
 				<SpaceNav
-					{selectedPersona}
+					persona={selectedPersona}
 					community={selectedCommunity}
-					spaces={$selectedCommunity.spaces}
+					spaces={selectedCommunitySpaces}
 					{selectedSpace}
 				/>
 			{/if}

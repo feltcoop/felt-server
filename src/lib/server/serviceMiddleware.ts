@@ -5,11 +5,6 @@ import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Service} from '$lib/server/service';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 
-// TODO use
-
-// TODO refactor this with the `ApiServer` websocket handler,
-// probably just a config object
-
 // Wraps a `Service` in an http `Middleware`
 export const toServiceMiddleware =
 	(server: ApiServer, service: Service<any, any>): Middleware =>
@@ -36,7 +31,7 @@ export const toServiceMiddleware =
 					if (paramName in reqBody) {
 						if (reqParams[paramName] !== reqBody[paramName]) {
 							return send(res, 400, {
-								reason: `Route param '${paramName}' mismatches the value in the request body`,
+								message: `route param '${paramName}' mismatches the request body value`,
 							});
 						}
 					}
@@ -44,7 +39,7 @@ export const toServiceMiddleware =
 			}
 
 			if (!service.event.params || !service.event.response) {
-				return send(res, 500, {reason: 'unimplemented service schema'});
+				return send(res, 500, {message: 'unimplemented service schema'});
 			}
 
 			const params = {...reqBody, ...reqParams};
@@ -54,19 +49,19 @@ export const toServiceMiddleware =
 				// TODO handle multiple errors instead of just the first
 				console.error('validation failed:', params, validateParams.errors);
 				const validationError = validateParams.errors![0];
-				return send(res, 400, {reason: toValidationErrorMessage(validationError)});
+				return send(res, 400, {message: toValidationErrorMessage(validationError)});
 			}
 			if (!req.account_id) {
 				// TODO this is duplicating the role of the `authorizationMiddleware` to avoid mistakes,
 				// but what's the better design here?
 				// Should each service declare if `account_id` is required?
-				return send(res, 401, {reason: 'not logged in'});
+				return send(res, 401, {message: 'not logged in'});
 			}
 
 			const result = await service.perform({server, params, account_id: req.account_id});
 
 			if (!result.ok) {
-				send(res, result.status || 500, {reason: result.reason});
+				send(res, result.status || 500, {message: result.message});
 				return;
 			}
 			if (process.env.NODE_ENV !== 'production') {
@@ -79,6 +74,6 @@ export const toServiceMiddleware =
 			send(res, result.status, result.value); // TODO consider returning the entire `result` for convenience (but it's less efficient)
 		} catch (err) {
 			console.error(err);
-			send(res, 500, {reason: 'unknown server error'});
+			send(res, 500, {message: 'unknown server error'});
 		}
 	};

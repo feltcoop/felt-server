@@ -1,6 +1,6 @@
 <script lang="ts">
-	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import SpaceView from '$lib/ui/SpaceView.svelte';
+	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import Marquee from '$lib/ui/Marquee.svelte';
 	import WorkspaceHeader from '$lib/ui/WorkspaceHeader.svelte';
 	import MarqueeButton from '$lib/ui/MarqueeButton.svelte';
@@ -8,31 +8,28 @@
 
 	const {
 		dispatch,
-		ui: {
-			expandMarquee,
-			selectedSpace: selectedSpaceStore,
-			selectedPersona: selectedPersonaStore,
-			selectedCommunity: selectedCommunityStore,
-		},
+		ui: {contextmenu, expandMarquee, spaceSelection, personaSelection, communitySelection},
 	} = getApp();
 
-	$: selectedPersona = $selectedPersonaStore;
-	$: selectedCommunity = $selectedCommunityStore;
-	$: selectedSpace = $selectedSpaceStore;
-
-	$: layoutEntities = [
-		selectedSpace ? 'space:' + $selectedSpace.name : '',
-		selectedCommunity ? 'community:' + $selectedCommunity.name : '',
-	]
-		.filter(Boolean)
-		.join(',');
+	$: selectedPersona = $personaSelection;
+	$: selectedCommunity = $communitySelection;
+	$: selectedSpace = $spaceSelection;
 </script>
 
-<div class="workspace" data-entity={layoutEntities}>
+<div
+	class="workspace"
+	use:contextmenu.action={{
+		SpaceContextmenu: selectedSpace || undefined,
+		CommunityContextmenu:
+			selectedCommunity && selectedPersona
+				? {community: selectedCommunity, persona: selectedPersona}
+				: undefined,
+	}}
+>
 	{#if $expandMarquee}
 		<div
 			class="marquee-bg"
-			on:click={() => ($expandMarquee ? dispatch('toggle_secondary_nav') : null)}
+			on:click={() => ($expandMarquee ? dispatch('ToggleSecondaryNav') : null)}
 		/>
 	{/if}
 	<div class="column">
@@ -40,8 +37,9 @@
 		<WorkspaceHeader space={selectedSpace} community={selectedCommunity} />
 		{#if selectedPersona && selectedCommunity && selectedSpace}
 			<SpaceView persona={selectedPersona} community={selectedCommunity} space={selectedSpace} />
-		{:else if selectedCommunity}
-			<SpaceInput community={selectedCommunity}>Create a new space</SpaceInput>
+		{:else if selectedPersona && selectedCommunity}
+			<!-- TODO this should be the form, not dialog trigger -- fix after refactoring dialogs -->
+			<SpaceInput persona={selectedPersona} community={selectedCommunity} />
 		{/if}
 		<MarqueeButton />
 	</div>

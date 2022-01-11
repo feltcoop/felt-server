@@ -34,10 +34,10 @@
 		submitting = true;
 		errorMessage = '';
 		console.log('logging in with accountName', accountName);
-		const result = await dispatch('log_in', {accountName, password});
+		const result = await dispatch('LogIn', {accountName, password});
 		submitting = false;
 		if (!result.ok) {
-			errorMessage = result.reason;
+			errorMessage = result.message;
 			await tick();
 			passwordEl.select(); // wait a tick to let the DOM update (the input is disabled when fetching)
 		}

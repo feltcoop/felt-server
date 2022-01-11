@@ -1,32 +1,40 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
 
-	import type {File} from '$lib/vocab/file/file.js';
+	import type {Entity} from '$lib/vocab/entity/entity';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import {toIcon, toName} from '$lib/vocab/entity/entity';
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {findPersonaById},
+		ui: {contextmenu, findPersonaById},
 	} = getApp();
 
-	export let file: Readable<File>;
+	export let entity: Readable<Entity>;
 
-	$: persona = findPersonaById($file.actor_id); // TODO should this be `Actor` and `actor`?
+	$: persona = findPersonaById($entity.actor_id); // TODO should this be `Actor` and `actor`?
 
 	// TODO refactor to some client view-model for the actor
 	$: hue = randomHue($persona.name);
 </script>
 
-<li style="--hue: {hue}" data-entity="persona:{$persona.name},file:{$file.file_id}">
+<!-- TODO delete `PersonaContextmenu` ? should that be handled by the entity contextmenu?
+And then PersonaContextmenu would be only for *session* personas? `SessionPersonaContextmenu` -->
+<li
+	style="--hue: {hue}"
+	use:contextmenu.action={{
+		PersonaContextmenu: persona,
+		EntityContextmenu: $entity.entity_id,
+	}}
+>
 	<div class="content">
 		<div class="timestamp">
 			<Avatar name={toName($persona)} icon={toIcon($persona)} />
-			{$file.created}
+			{$entity.created}
 		</div>
 		<div>
-			{$file.content}
+			{$entity.content}
 		</div>
 	</div>
 </li>

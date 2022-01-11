@@ -2,14 +2,13 @@ import type {Result} from '@feltcoop/felt';
 
 import type {Membership} from '$lib/vocab/membership/membership.js';
 import type {Database} from '$lib/db/Database';
-import type {CreateMembershipParams} from '$lib/app/eventTypes';
 import type {ErrorResponse} from '$lib/util/error';
 
 export const membershipRepo = (db: Database) => ({
-	create: async ({
-		persona_id,
-		community_id,
-	}: CreateMembershipParams): Promise<Result<{value: Membership}, ErrorResponse>> => {
+	create: async (
+		persona_id: number,
+		community_id: number,
+	): Promise<Result<{value: Membership}, ErrorResponse>> => {
 		// TODO use `unwrap` and propagate errors
 
 		// Personal communities disallow memberships as a hard rule.
@@ -23,15 +22,16 @@ export const membershipRepo = (db: Database) => ({
 			if (!personaResult.ok) return personaResult;
 			const persona = personaResult.value;
 			if (persona && persona.persona_id !== persona_id) {
-				return {ok: false, reason: 'personal communities disallow memberships'};
+				// TODO return a specific error type?
+				return {ok: false, message: 'personal communities disallow memberships'};
 			}
 		}
 
 		const data = await db.sql<Membership[]>`
-      INSERT INTO memberships (persona_id, community_id) VALUES (
-        ${persona_id},${community_id}
-      ) RETURNING *
-    `;
+			INSERT INTO memberships (persona_id, community_id) VALUES (
+				${persona_id},${community_id}
+			) RETURNING *
+		`;
 		console.log('[db] created membership', data);
 		return {ok: true, value: data[0]};
 	},
@@ -50,7 +50,7 @@ export const membershipRepo = (db: Database) => ({
 		return {
 			ok: false,
 			type: 'query_error',
-			reason: `No membership found for person_id: ${persona_id},community_id:${community_id}`,
+			message: 'no membership found',
 		};
 	},
 	deleteById: async (
@@ -58,15 +58,15 @@ export const membershipRepo = (db: Database) => ({
 		community_id: number,
 	): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {
 		const data = await db.sql<any[]>`
-      DELETE FROM memberships 
+			DELETE FROM memberships 
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
-    `;
+		`;
 
 		if (data.count !== 1) {
 			return {
 				ok: false,
 				type: 'deletion_error',
-				reason: `There was an issue deleting membership for persona: ${persona_id} in community: ${community_id}`,
+				message: 'failed to delete membership',
 			};
 		}
 

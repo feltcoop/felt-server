@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Dialog from '@feltcoop/felt/ui/Dialog.svelte';
 	import {get} from 'svelte/store';
 	import type {Readable} from 'svelte/store';
 
@@ -13,8 +12,6 @@
 
 	export let community: Readable<Community>;
 
-	let opened = false;
-
 	// TODO speed this up with a better cached data structures; the use of `get` is particularly bad
 	$: invitableMembers = $community
 		? $personas.filter(
@@ -23,34 +20,11 @@
 		: [];
 </script>
 
-<!--TODO: Make an IconButton component in felt and use it here-->
-<button
-	aria-label="Invite users to {$community.name}"
-	type="button"
-	class="button-emoji"
-	on:click={() => (opened = true)}
->
-	✉️
-</button>
-{#if opened}
-	<Dialog on:close={() => (opened = false)}>
-		<div class="markup">
-			<h1>Invite users to {$community.name}</h1>
-			{#each invitableMembers as persona (persona)}
-				<MembershipInputItem {persona} {community} />
-			{:else}
-				<p>There's no one new to invite</p>
-			{/each}
-		</div>
-	</Dialog>
-{/if}
-
-<style>
-	.button-emoji {
-		background: none;
-		border: none;
-		cursor: pointer;
-		margin: 0;
-		word-wrap: break-word;
-	}
-</style>
+<div class="markup">
+	<h1>Invite users to {$community.name}</h1>
+	{#each invitableMembers as persona (persona)}
+		<MembershipInputItem {persona} {community} />
+	{:else}
+		<p>There's no one new to invite</p>
+	{/each}
+</div>

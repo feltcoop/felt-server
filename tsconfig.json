@@ -16,7 +16,7 @@
 		"noImplicitOverride": true,
 		"noFallthroughCasesInSwitch": true,
 		"preserveValueImports": true,
-		"importsNotUsedAsValues": "error",
+		"importsNotUsedAsValues": "remove",
 		"isolatedModules": true,
 		"resolveJsonModule": true,
 		"sourceMap": true,

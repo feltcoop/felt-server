@@ -9,7 +9,7 @@
 
 	const {
 		dispatch,
-		ui: {selectedSpaceIdByCommunity, findSpaceById, sessionPersonaIndices},
+		ui: {contextmenu, spaceIdByCommunitySelection, findSpaceById, sessionPersonaIndices},
 	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
@@ -19,9 +19,9 @@
 	export let community: Readable<Community>;
 	export let selected: boolean = false;
 
-	$: selectedCommunitySpaceId = $selectedSpaceIdByCommunity[$community.community_id];
-	$: selectedCommunitySpace =
-		selectedCommunitySpaceId === null ? null : findSpaceById(selectedCommunitySpaceId);
+	$: communitySelectionSpaceId = $spaceIdByCommunitySelection[$community.community_id];
+	$: communitySelectionSpace =
+		communitySelectionSpaceId === null ? null : findSpaceById(communitySelectionSpaceId);
 
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
 
@@ -31,12 +31,12 @@
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
 <a
 	class="community"
-	href={toSpaceUrl(personaIndex, $community, selectedCommunitySpace && $selectedCommunitySpace)}
+	href={toSpaceUrl(personaIndex, $community, communitySelectionSpace && $communitySelectionSpace)}
 	class:selected
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {$community.settings.hue}"
-	data-entity="community:{$community.name}"
-	on:click={() => dispatch('select_persona', {persona_id: $persona.persona_id})}
+	use:contextmenu.action={{CommunityContextmenu: {community, persona}}}
+	on:click={() => dispatch('SelectPersona', {persona_id: $persona.persona_id})}
 >
 	<!-- TODO maybe use `Avatar`? does `hue` need to be on the link? -->
 	<EntityIcon name={$community.name} type="Community" />
@@ -53,7 +53,6 @@
 		background-color: var(--bg);
 	}
 	.persona {
-		margin-top: var(--spacing_xl5);
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -61,8 +60,5 @@
 		width: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
 		height: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
 		--icon_size: var(--icon_size_sm);
-	}
-	.persona:first-child {
-		margin-top: 0;
 	}
 </style>

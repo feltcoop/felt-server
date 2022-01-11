@@ -7,6 +7,9 @@ const KEY = Symbol();
 
 export const HEARTBEAT_INTERVAL = 300000;
 
+const RECONNECT_DELAY = 1000; // matches the current Vite/SvelteKit retry rate, but we use a counter to back off
+const RECONNECT_DELAY_MAX = 60000;
+
 export const getSocket = (): SocketStore => getContext(KEY);
 
 export const setSocket = (store: SocketStore): SocketStore => {
@@ -14,95 +17,133 @@ export const setSocket = (store: SocketStore): SocketStore => {
 	return store;
 };
 
-// This store wraps a browser `WebSocket` connection with all of the Sveltey goodness.
+// TODO consider extracting a higher order store or component
+// to handle reconnection and heartbeat. Connection? SocketConnection?
+// A Svelte component could export the `socket` store.
 
-// TODO rename? Connection? SocketConnection?
 // TODO consider xstate, looks like a good usecase
 
 export interface SocketState {
 	url: string | null;
 	ws: WebSocket | null;
-	connected: boolean;
-	status: AsyncStatus; // rename? `connectionStatus`?
-	error: string | null;
+	open: boolean;
+	status: AsyncStatus;
 }
 
 export interface SocketStore {
 	subscribe: Readable<SocketState>['subscribe'];
-	disconnect: (code?: number) => void;
 	connect: (url: string) => void;
+	disconnect: (code?: number) => void;
 	send: (data: object) => boolean; // returns `true` if sent, `false` if not for some reason
+	updateUrl: (url: string) => void;
 }
 
 export interface HandleSocketMessage {
 	(event: MessageEvent<any>): void;
 }
 
+/**
+ * Wraps a browser `WebSocket` connection with autoreconnect and heartbeat behaviors.
+ * The methods `connect`, `disconnect`, and `updateUrl` may be called in any state
+ * to synchronously update the `status`.
+ * The `open` property indicates the status of the internal `WebSocket` instance `ws`.
+ * @param handleMessage Callback to handle incoming messages.
+ * @param sendHeartbeat Callback to perform a heartbeat.
+ * @param heartbeatInterval Milliseconds between keepalive heartbeat.
+ */
 export const toSocketStore = (
 	handleMessage: HandleSocketMessage,
 	sendHeartbeat: () => void,
-	heartbeatInterval = HEARTBEAT_INTERVAL,
+	heartbeatInterval: number = HEARTBEAT_INTERVAL,
 ): SocketStore => {
 	const {subscribe, update} = writable<SocketState>(toDefaultSocketState());
 
 	const onWsOpen = () => {
 		console.log('[socket] open');
-		update(($socket) => ({...$socket, status: 'success', connected: true}));
+		cancelReconnect(); // resets the count but is not expected to be needed to clear the timeout
+		update(($socket) => ({...$socket, status: 'success', open: true}));
 	};
-	const onWsClose = () => {
+	// This handler gets called when the websocket closes unexpectedly or when it fails to connect.
+	// It's not called when the websocket closes due to a `disconnect` call.
+	const onWsCloseUnexpectedly = () => {
 		console.log('[socket] close');
-		update(($socket) => ({
-			...$socket,
-			status: 'initial',
-			connected: false,
-			ws: null,
-			url: null,
-		}));
+		if (get(store).open) {
+			update(($socket) => ({...$socket, open: false}));
+		}
+		queueReconnect();
+	};
+
+	// TODO extract this?
+	let reconnectCount = 0;
+	let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+	const queueReconnect = () => {
+		reconnectCount++;
+		reconnectTimeout = setTimeout(() => {
+			reconnectTimeout = null;
+			const currentReconnectCount = reconnectCount; // preserve count because `connect` calls `disconnect`
+			store.connect(get(store).url!);
+			reconnectCount = currentReconnectCount;
+		}, Math.min(RECONNECT_DELAY_MAX, RECONNECT_DELAY * reconnectCount));
+	};
+	const cancelReconnect = () => {
+		reconnectCount = 0;
+		if (reconnectTimeout !== null) {
+			clearTimeout(reconnectTimeout);
+			reconnectTimeout = null;
+		}
+	};
+
+	// Returns a bool indicating if it disconnected.
+	const tryToDisconnect = (): boolean => {
+		if (get(store).ws) {
+			store.disconnect();
+			return true;
+		} else {
+			return false;
+		}
 	};
 
 	const store: SocketStore = {
 		subscribe,
-		disconnect: (code = 1000) => {
-			update(($socket) => {
-				// TODO this is buggy if `connect` is still pending
-				console.log('[socket] disconnect', code, $socket);
-				if (!$socket.connected || !$socket.ws || $socket.status !== 'success') {
-					console.error('[ws] cannot disconnect because it is not connected'); // TODO return errors instead?
-					return $socket;
-				}
-				$socket.ws.close(code);
-				return {...$socket, status: 'pending', connected: false, ws: null, url: null};
-			});
-		},
 		connect: (url) => {
+			tryToDisconnect();
 			update(($socket) => {
 				console.log('[socket] connect', $socket);
-				if ($socket.connected || $socket.ws || $socket.status !== 'initial') {
-					console.error('[ws] cannot connect because it is already connected'); // TODO return errors instead?
-					return $socket;
-				}
 				const ws = createWebSocket(url, handleMessage, sendHeartbeat, heartbeatInterval);
 				ws.addEventListener('open', onWsOpen);
-				ws.addEventListener('close', onWsClose);
-				return {
-					...$socket,
-					url,
-					connected: false,
-					status: 'pending',
-					ws,
-					error: null,
-				};
+				ws.addEventListener('close', onWsCloseUnexpectedly);
+				return {...$socket, url, status: 'pending', ws};
 			});
+		},
+		disconnect: (code = 1000) => {
+			if (!get(store).ws) return;
+			cancelReconnect();
+			update(($socket) => {
+				console.log('[socket] disconnect', code, $socket);
+				const ws = $socket.ws!;
+				ws.removeEventListener('open', onWsOpen);
+				ws.removeEventListener('close', onWsCloseUnexpectedly);
+				ws.close(code); // close *after* removing the 'close' listener
+				return {...$socket, status: 'initial', open: false, ws: null};
+			});
+		},
+		updateUrl: (url) => {
+			if (get(store).url === url) return;
+			if (tryToDisconnect()) {
+				store.connect(url);
+			} else {
+				update(($socket) => ({...$socket, url}));
+			}
 		},
 		send: (data) => {
 			const $socket = get(store);
 			// console.log('[ws] send', data, $socket);
 			if (!$socket.ws) {
-				console.error('[ws] cannot send without a socket', data, $socket);
+				console.error('[ws] cannot send because the socket is disconnected', data, $socket);
 				return false;
 			}
-			if (!$socket.connected) {
-				console.error('[ws] cannot send because the websocket is not connected', data, $socket);
+			if (!$socket.open) {
+				console.error('[ws] cannot send because the websocket is not open', data, $socket);
 				return false;
 			}
 			$socket.ws.send(JSON.stringify(data));
@@ -116,9 +157,8 @@ export const toSocketStore = (
 const toDefaultSocketState = (): SocketState => ({
 	url: null,
 	ws: null,
-	connected: false,
+	open: false,
 	status: 'initial',
-	error: null,
 });
 
 const createWebSocket = (
@@ -149,7 +189,7 @@ const createWebSocket = (
 	// see `proxy_read_timeout` and `proxy_send_timeout` for more)
 	let lastSendTime: number;
 	let lastReceiveTime: number;
-	let heartbeatTimeout: NodeJS.Timeout | null = null;
+	let heartbeatTimeout: ReturnType<typeof setTimeout> | null = null;
 	const startHeartbeat = () => {
 		const now = Date.now();
 		lastSendTime = now;
@@ -157,8 +197,10 @@ const createWebSocket = (
 		queueHeartbeat();
 	};
 	const stopHeartbeat = () => {
-		clearTimeout(heartbeatTimeout!);
-		heartbeatTimeout = null;
+		if (heartbeatTimeout !== null) {
+			clearTimeout(heartbeatTimeout);
+			heartbeatTimeout = null;
+		}
 	};
 	const queueHeartbeat = () => {
 		heartbeatTimeout = setTimeout(() => {

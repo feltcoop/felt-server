@@ -9,6 +9,7 @@
 	--luggage_size: var(--icon_size_md);
 	--navbar_size: var(--luggage_size);
 	--icon_size: var(--icon_size_md);
+	--contextmenu_width: 360px;
 
 	/* TODO upstream to felt */
 	--transition_duration_xl: 0.75s;
@@ -35,6 +36,11 @@ main {
 .icon-button {
 	width: var(--navbar_size);
 	height: var(--navbar_size);
+}
+/* TODO refactor or upstream */
+.menu-button {
+	width: 100%;
+	justify-content: flex-start;
 }
 
 /* TODO upstream to Felt */
