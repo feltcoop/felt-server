@@ -8,7 +8,7 @@
 	$: open = focused || hovered;
 </script>
 
-<!-- TODO focusin and focusout are being used so they bubble, but keyboard controls aren't working still -->
+<!-- TODO focusout shouldn't be used because focus blips off while tabbing -->
 <div
 	class="contextsubmenu-item"
 	on:mouseenter={() => (hovered = true)}
