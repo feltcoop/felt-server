@@ -6,6 +6,7 @@
 	import {getApp} from '$lib/ui/app';
 	import {type Community} from '$lib/vocab/community/community';
 	import {type Persona} from '$lib/vocab/persona/persona';
+	import ContextmenuItem from '$lib/ui/contextmenu/ContextmenuItem.svelte';
 
 	const {dispatch} = getApp();
 
@@ -17,9 +18,7 @@
 </script>
 
 <Avatar name={$community.name} type="Community" />
-<button
-	type="button"
-	class="menu-button"
+<ContextmenuItem
 	on:click={() =>
 		dispatch('OpenDialog', {
 			name: 'SpaceInput',
@@ -27,10 +26,8 @@
 		})}
 >
 	Create Space
-</button>
-<button
-	type="button"
-	class="menu-button"
+</ContextmenuItem>
+<ContextmenuItem
 	on:click={() =>
 		dispatch('OpenDialog', {
 			name: 'MembershipInput',
@@ -38,4 +35,4 @@
 		})}
 >
 	Invite Members
-</button>
+</ContextmenuItem>

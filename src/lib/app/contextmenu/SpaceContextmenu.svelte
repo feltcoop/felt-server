@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {getApp} from '$lib/ui/app';
+	import ContextmenuItem from '$lib/ui/contextmenu/ContextmenuItem.svelte';
 
 	const {dispatch} = getApp();
 
@@ -14,9 +15,7 @@
 		{$space.name}
 	</p>
 </div>
-<button
-	type="button"
-	class="menu-button"
+<ContextmenuItem
 	on:click={() =>
 		dispatch('OpenDialog', {
 			name: 'SpaceDelete',
@@ -24,4 +23,4 @@
 		})}
 >
 	Delete Space
-</button>
+</ContextmenuItem>

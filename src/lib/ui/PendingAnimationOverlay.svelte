@@ -10,10 +10,7 @@
 <style>
 	.pending-animation-overlay {
 		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
+		inset: 0;
 		display: flex;
 		justify-content: center;
 		align-items: center;

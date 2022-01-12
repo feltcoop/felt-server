@@ -5,6 +5,7 @@
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {type Persona} from '$lib/vocab/persona/persona';
+	import ContextmenuItem from '$lib/ui/contextmenu/ContextmenuItem.svelte';
 
 	const {dispatch} = getApp();
 
@@ -15,9 +16,7 @@
 </script>
 
 <Avatar name={$persona.name} />
-<button
-	type="button"
-	class="menu-button"
+<ContextmenuItem
 	on:click={() =>
 		dispatch('OpenDialog', {
 			name: 'CommunityInput',
@@ -25,11 +24,7 @@
 		})}
 >
 	Create Community
-</button>
-<button
-	type="button"
-	class="menu-button"
-	on:click={() => dispatch('OpenDialog', {name: 'ManageMembershipForm'})}
->
+</ContextmenuItem>
+<ContextmenuItem on:click={() => dispatch('OpenDialog', {name: 'ManageMembershipForm'})}>
 	Manage Memberships
-</button>
+</ContextmenuItem>
