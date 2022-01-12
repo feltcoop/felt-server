@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
+	import {type Readable} from 'svelte/store';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
-	import type {Space} from '$lib/vocab/space/space';
-	import type {ViewData} from '$lib/vocab/view/view';
-	import type {Community} from '$lib/vocab/community/community';
-	import type {Persona} from '$lib/vocab/persona/persona';
+	import {type Space} from '$lib/vocab/space/space';
+	import {type ViewData} from '$lib/vocab/view/view';
+	import {type Community} from '$lib/vocab/community/community';
+	import {type Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 
 	const {
