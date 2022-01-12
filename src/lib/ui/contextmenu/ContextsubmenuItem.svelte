@@ -42,7 +42,8 @@
 	}
 	.contextsubmenu {
 		position: absolute;
-		left: 0;
+		/* TODO this is a hack to avoid the pixel gap, probably change to 0 after adding transparent bg hitbox */
+		left: -1px;
 		top: 0;
 		width: var(--contextmenu_width);
 	}
