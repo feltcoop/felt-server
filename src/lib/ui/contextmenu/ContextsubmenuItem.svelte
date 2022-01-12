@@ -1,8 +1,7 @@
 <script lang="ts">
-	// TODO add hover behavior that opens the submenu
-	// TOOD add focus that opens the menu
 	// TODO add toggle action to the button that opens the menu and focuses on the first item
 	// TODO add larger transparent cursor hit area
+	// TODO fix keyboard nav (is the delay between focus the problem?)
 
 	let focused = false;
 	let hovered = false;
