@@ -1,20 +1,20 @@
-import type {Readable, Writable} from 'svelte/store';
-import {writable, derived, get} from 'svelte/store';
+import {writable, derived, get, type Readable, type Writable} from 'svelte/store';
 import {setContext, getContext, type SvelteComponent} from 'svelte';
 import {goto} from '$app/navigation';
 
-import type {Community} from '$lib/vocab/community/community';
-import type {Space} from '$lib/vocab/space/space';
-import type {Persona} from '$lib/vocab/persona/persona';
-import type {ClientSession} from '$lib/session/clientSession';
-import type {AccountModel} from '$lib/vocab/account/account';
-import type {Entity} from '$lib/vocab/entity/entity';
-import type {Membership} from '$lib/vocab/membership/membership';
-import type {DispatchContext} from '$lib/app/dispatch';
-import type {UiHandlers} from '$lib/app/eventTypes';
-import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+import {type Community} from '$lib/vocab/community/community';
+import {type Space} from '$lib/vocab/space/space';
+import {type Persona} from '$lib/vocab/persona/persona';
+import {type ClientSession} from '$lib/session/clientSession';
+import {type AccountModel} from '$lib/vocab/account/account';
+import {type Entity} from '$lib/vocab/entity/entity';
+import {type Membership} from '$lib/vocab/membership/membership';
+import {type DispatchContext} from '$lib/app/dispatch';
+import {type UiHandlers} from '$lib/app/eventTypes';
+import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-import type {DialogState} from '$lib/ui/dialog/dialog';
+import {type DialogState} from '$lib/ui/dialog/dialog';
+import {type ViewData} from '$lib/vocab/view/view';
 
 const KEY = Symbol();
 
@@ -63,6 +63,7 @@ export interface Ui extends Partial<UiHandlers> {
 	mobile: Readable<boolean>;
 	contextmenu: ContextmenuStore;
 	dialogs: Writable<DialogState[]>;
+	viewsBySpace: Readable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
 }
 
 export const toUi = (
@@ -124,6 +125,7 @@ export const toUi = (
 	const mobile = writable(initialMobile);
 	const contextmenu = createContextmenuStore();
 	const dialogs = writable<DialogState[]>([]);
+	const viewsBySpace = writable(new WeakMap());
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -547,6 +549,7 @@ export const toUi = (
 		expandMarquee,
 		contextmenu,
 		dialogs,
+		viewsBySpace,
 		// derived state
 		personaIdSelection,
 		personaSelection,
@@ -589,6 +592,16 @@ export const toUi = (
 				...$spaceIdByCommunitySelection,
 				[community_id]: space_id,
 			}));
+		},
+		ViewSpace: ({params: {space, view}}) => {
+			viewsBySpace.update(($viewsBySpace) => {
+				if (view) {
+					$viewsBySpace.set(space, view);
+				} else {
+					$viewsBySpace.delete(space);
+				}
+				return $viewsBySpace;
+			});
 		},
 		ToggleMainNav: () => {
 			expandMainNav.update(($expandMainNav) => !$expandMainNav);

@@ -1,5 +1,4 @@
 import type {CreateSpaceParams} from '$lib/app/eventTypes';
-import {ViewType} from '$lib/vocab/view/view';
 import type {Community} from '$lib/vocab/community/community';
 
 export const toDefaultSpaces = ({community_id, name}: Community): CreateSpaceParams[] => [
@@ -8,55 +7,55 @@ export const toDefaultSpaces = ({community_id, name}: Community): CreateSpacePar
 		name,
 		url: '/',
 		media_type: 'application/fuz+json',
-		content: `{"type": "${ViewType.Home}", "props": {"data": "/entities"}}`,
+		content: `{"type": "Home", "props": {"data": "/entities"}}`,
 	},
 	{
 		community_id,
 		name: 'room',
 		url: '/room',
 		media_type: 'application/fuz+json',
-		content: `{"type": "${ViewType.Room}", "props": {"data": "/entities"}}`,
+		content: `{"type": "Room", "props": {"data": "/entities"}}`,
 	},
 	{
 		community_id,
 		name: 'board',
 		url: '/board',
 		media_type: 'application/fuz+json',
-		content: `{"type": "${ViewType.Board}", "props": {"data": "/entities"}}`,
+		content: `{"type": "Board", "props": {"data": "/entities"}}`,
 	},
 	{
 		community_id,
 		name: 'forum',
 		url: '/forum',
 		media_type: 'application/fuz+json',
-		content: `{"type": "${ViewType.Forum}", "props": {"data": "/entities"}}`,
+		content: `{"type": "Forum", "props": {"data": "/entities"}}`,
 	},
 	{
 		community_id,
 		name: 'notes',
 		url: '/notes',
 		media_type: 'application/fuz+json',
-		content: `{"type": "${ViewType.Notes}", "props": {"data": "/entities"}}`,
+		content: `{"type": "Notes", "props": {"data": "/entities"}}`,
 	},
 	{
 		community_id,
 		name: 'voice',
 		url: '/voice',
 		media_type: 'application/fuz+json',
-		content: `{"type": "${ViewType.Voice}", "props": {"data": "/entities"}}`,
+		content: `{"type": "Voice", "props": {"data": "/entities"}}`,
 	},
 	{
 		community_id,
 		name: 'felt library',
 		url: '/library',
 		media_type: 'application/fuz+json',
-		content: `{"type": "${ViewType.Iframe}", "props": {"url": "https://www.felt.dev/sketch/library"}}`,
+		content: `{"type": "Iframe", "props": {"url": "https://www.felt.dev/sketch/library"}}`,
 	},
 	{
 		community_id,
 		name: 'dealt: tar',
 		url: '/tar',
 		media_type: 'application/fuz+json',
-		content: `{"type": "${ViewType.Iframe}", "props": {"url": "https://www.dealt.dev/tar"}}`,
+		content: `{"type": "Iframe", "props": {"url": "https://www.dealt.dev/tar"}}`,
 	},
 ];

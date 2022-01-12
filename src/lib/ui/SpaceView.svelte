@@ -1,3 +1,7 @@
+<!-- TODO currently disabling immutability because we're putting a WeakMap in a store,
+	and not mutating the map, but maybe there's a better pattern? -->
+<svelte:options immutable={false} />
+
 <script lang="ts">
 	import {type Readable} from 'svelte/store';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
@@ -9,7 +13,7 @@
 	import {getApp} from '$lib/ui/app';
 
 	const {
-		ui: {components},
+		ui: {components, viewsBySpace},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -28,7 +32,8 @@
 		}
 	};
 
-	$: viewData = toViewData($space);
+	$: viewData = $viewsBySpace.get(space) || toViewData($space);
+	$: console.log('viewData', viewData);
 	$: component = components[viewData.type];
 </script>
 
