@@ -14,7 +14,7 @@
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
-	export let space: Readable<Space | null>; // TODO the `| null` is a hack that gets bypassed below, not sure how to make it work with nullable "selected" stores
+	export let space: Readable<Space>;
 
 	// TODO delete this once `view` is a JSON column of `Space`
 	const toViewData = (space: Space): ViewData => {
@@ -28,7 +28,7 @@
 		}
 	};
 
-	$: viewData = toViewData($space!);
+	$: viewData = toViewData($space);
 	$: component = components[viewData.type];
 </script>
 
