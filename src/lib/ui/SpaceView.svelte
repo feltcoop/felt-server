@@ -16,7 +16,7 @@
 	export let community: Readable<Community>;
 	export let space: Readable<Space | null>; // TODO the `| null` is a hack that gets bypassed below, not sure how to make it work with nullable "selected" stores
 
-	// TODO refactor this once `view` is a JSON column of `Space`
+	// TODO delete this once `view` is a JSON column of `Space`
 	const toViewData = (space: Space): ViewData => {
 		switch (space.media_type) {
 			case 'application/fuz+json': {
