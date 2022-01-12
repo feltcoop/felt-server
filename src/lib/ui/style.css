@@ -46,3 +46,15 @@ main {
 		opacity: 1;
 	}
 }
+
+/* TODO change to SVG? or use CSS vars for size and color? rename to indicate it's facing right? */
+.chevron {
+	position: relative;
+	height: 10px;
+}
+.chevron::before {
+	display: block;
+	content: '';
+	border: 5px solid transparent;
+	border-left-color: #000;
+}

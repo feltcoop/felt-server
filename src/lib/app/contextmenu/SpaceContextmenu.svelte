@@ -2,6 +2,7 @@
 	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {getApp} from '$lib/ui/app';
 	import ContextmenuItem from '$lib/ui/contextmenu/ContextmenuItem.svelte';
+	import ContextsubmenuItem from '$lib/ui/contextmenu/ContextsubmenuItem.svelte';
 
 	const {dispatch} = getApp();
 
@@ -10,17 +11,19 @@
 	$: space = $contextmenu.items.SpaceContextmenu;
 </script>
 
-<div class="markup">
-	<p>
+<ContextsubmenuItem>
+	<svelte:fragment slot="button">
 		{$space.name}
-	</p>
-</div>
-<ContextmenuItem
-	on:click={() =>
-		dispatch('OpenDialog', {
-			name: 'SpaceDelete',
-			props: {space, done: () => dispatch('CloseDialog')},
-		})}
->
-	Delete Space
-</ContextmenuItem>
+	</svelte:fragment>
+	<svelte:fragment slot="menu">
+		<ContextmenuItem
+			on:click={() =>
+				dispatch('OpenDialog', {
+					name: 'SpaceDelete',
+					props: {space, done: () => dispatch('CloseDialog')},
+				})}
+		>
+			Delete Space
+		</ContextmenuItem>
+	</svelte:fragment>
+</ContextsubmenuItem>
