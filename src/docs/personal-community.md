@@ -7,16 +7,8 @@ with some important differences:
 
 - a personal community is created automatically for every persona
 - a personal community has the same `name` as its persona
-- a personal community has the same `settings.hue` as its persona
+- instead of a "home" view at the root space, they have a "profile" view,
+  with a set of widgets designed for single-player usage
 - a personal community's membership includes its owning persona,
   and **no other personas may be invited as members**,
   including other personas under the same account
-
-## questions
-
-- can resources be shared outside of the community's membrane?
-  - publishing usecase: e.g. a blog or a public poll
-  - what about spaces?
-  - what is the UX like? do personas get a list of all of the resources they can access?
-- what should the default spaces be?
-- how else are they distinct?
