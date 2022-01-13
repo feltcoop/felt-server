@@ -64,7 +64,7 @@
 			() => dispatch('Ping'),
 		),
 	);
-	const ui = setUi(toUi(session, initialMobileValue));
+	const ui = setUi(toUi(session, initialMobileValue, components));
 
 	const apiClient = toWebsocketApiClient(findService, socket.send); // TODO expose on `app`?
 	// alternative http client:
@@ -197,8 +197,8 @@
 		{/if}
 	</main>
 	<DevmodeControls {devmode} />
-	<Dialogs {dialogs} {components} />
-	<Contextmenu {contextmenu} {components} />
+	<Dialogs {dialogs} />
+	<Contextmenu {contextmenu} />
 	<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 </div>
 
