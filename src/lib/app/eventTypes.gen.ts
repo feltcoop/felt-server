@@ -31,7 +31,6 @@ import type {Entity} from '$lib/vocab/entity/entity';
 import type {ViewData} from '$lib/vocab/view/view';
 import type {DispatchContext} from '$lib/app/dispatch';
 
-
 export interface EventParamsByName {
 	${eventInfos.reduce(
 		(str, eventInfo) =>
