@@ -5,8 +5,10 @@ export interface Mutable<T> {
 	update(updater?: MutableUpdater<T>): void;
 }
 
+// Returning `T` updates the `value` reference,
+// but typical usage is to mutate `value` in the `MutableUpdater` and return nothing.
 export interface MutableUpdater<T> {
-	(value: T): void; // no return value
+	(value: T): T | void;
 }
 
 /**
@@ -16,7 +18,7 @@ export interface MutableUpdater<T> {
  * Typical usage mutates `value` inside the `updater` callback and returns nothing,
  * but the `updater` can return a new reference for `value`.
  * Calling `update` with no callback triggers a change,
- * which is useful if `value` is mutated elsewhere.
+ * which is useful if `value` is mutated elsewhere, but that's usually discouraged.
  * Returning `undefined` from `updater` keeps the existing `value` reference,
  * and therefore `undefined` is not a valid `value`,
  * so prefer `null` over `undefined` to represent empty values.
