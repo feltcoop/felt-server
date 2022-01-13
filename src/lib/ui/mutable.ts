@@ -10,7 +10,7 @@ export interface MutableUpdater<T> {
 }
 
 /**
- * Creates a store representing a mutable `value`.
+ * Creates a store wrapping a mutable `value`.
  * Useful for values that are expensive to copy, like large `Map`s,
  * in combination with the Svelte `immutable` compiler flag.
  * Typical usage mutates `value` inside the `updater` callback and returns nothing,
@@ -21,7 +21,6 @@ export interface MutableUpdater<T> {
  * and therefore `undefined` is not a valid `value`,
  * so prefer `null` over `undefined` to represent empty values.
  * @param value
- * @returns
  */
 export const mutable = <T>(value: T): Mutable<T> => {
 	let swap = false;
