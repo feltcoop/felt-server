@@ -21,16 +21,7 @@ export const PersonaSchema = {
 		created: {type: 'object', format: 'date-time', tsType: 'Date'},
 		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 	},
-	required: [
-		'persona_id',
-		'account_id',
-		'community_id',
-		'type',
-		'name',
-		'community_ids',
-		'created',
-		'updated',
-	],
+	required: ['persona_id', 'account_id', 'type', 'name', 'community_ids', 'created', 'updated'],
 	additionalProperties: false,
 };
 
