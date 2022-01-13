@@ -23,9 +23,9 @@
 </script>
 
 <div class="entity-explorer">
-	<button type="button" on:click={() => dispatch('ViewSpace', {space, view: null})}
-		>Close EntityExplorer</button
-	>
+	<button type="button" on:click={() => dispatch('ViewSpace', {space, view: null})}>
+		Close EntityExplorer
+	</button>
 	<div class="entities">
 		{#if entities}
 			<EntityItems {entities} />
