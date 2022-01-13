@@ -8,7 +8,7 @@ export interface Mutable<T> {
 // Returning `T` updates the `value` reference,
 // but typical usage is to mutate `value` in the `MutableUpdater` and return nothing.
 export interface MutableUpdater<T> {
-	(value: T): T | void;
+	(value: T): void | T;
 }
 
 /**
