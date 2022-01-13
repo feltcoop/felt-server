@@ -2,7 +2,7 @@ import {writable, type Readable} from 'svelte/store';
 
 export interface Mutable<T> {
 	subscribe: Readable<{value: T}>['subscribe'];
-	update(updater: MutableUpdater<T>): void;
+	update(updater?: MutableUpdater<T>): void;
 }
 
 export interface MutableUpdater<T> {
@@ -19,7 +19,7 @@ export const mutable = <T>(value: T): Mutable<T> => {
 	return {
 		subscribe,
 		update: (updater) => {
-			updater(value);
+			updater?.(value);
 			set((swap = !swap) ? b : a);
 		},
 	};
