@@ -1,8 +1,7 @@
 export interface Persona {
 	persona_id: number;
 	account_id: number;
-	community_id: number;
-	type: 'user' | 'group';
+	type: 'account' | 'community';
 	name: string;
 	icon?: string;
 	community_ids: number[];
@@ -15,8 +14,7 @@ export const PersonaSchema = {
 	properties: {
 		persona_id: {type: 'number'},
 		account_id: {type: 'number'},
-		community_id: {type: 'number'},
-		type: {type: 'string', enum: ['user', 'group']},
+		type: {type: 'string', enum: ['account', 'community']},
 		name: {type: 'string'},
 		icon: {type: 'string'},
 		community_ids: {type: 'array', items: {type: 'number'}},
