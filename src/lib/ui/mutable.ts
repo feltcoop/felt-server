@@ -9,6 +9,12 @@ export interface MutableUpdater<T> {
 	(value: T): void; // no return value
 }
 
+/**
+ * Creates a store representing a mutable `value`.
+ * Useful in combination with the Svelte `immutable` compiler flag.
+ * @param value
+ * @returns
+ */
 export const mutable = <T>(value: T): Mutable<T> => {
 	let swap = false;
 	const a = {value};
