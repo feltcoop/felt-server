@@ -19,9 +19,7 @@
 		EntityContextmenu: $entity.entity_id,
 	}}
 >
-	<pre>
-    {JSON.stringify($entity, null, 2)}
-  </pre>
+	<pre>{JSON.stringify($entity, null, 2)}</pre>
 </li>
 
 <style>
