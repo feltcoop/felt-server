@@ -64,7 +64,7 @@ export interface Ui extends Partial<UiHandlers> {
 	mobile: Readable<boolean>;
 	contextmenu: ContextmenuStore;
 	dialogs: Writable<DialogState[]>;
-	viewsBySpace: Mutable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
+	viewBySpace: Mutable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
 }
 
 export const toUi = (
@@ -126,7 +126,7 @@ export const toUi = (
 	const mobile = writable(initialMobile);
 	const contextmenu = createContextmenuStore();
 	const dialogs = writable<DialogState[]>([]);
-	const viewsBySpace = mutable(new WeakMap());
+	const viewBySpace = mutable(new WeakMap());
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -550,7 +550,7 @@ export const toUi = (
 		expandMarquee,
 		contextmenu,
 		dialogs,
-		viewsBySpace,
+		viewBySpace,
 		// derived state
 		personaIdSelection,
 		personaSelection,
@@ -595,11 +595,11 @@ export const toUi = (
 			}));
 		},
 		ViewSpace: ({params: {space, view}}) => {
-			viewsBySpace.update(($viewsBySpace) => {
+			viewBySpace.update(($viewBySpace) => {
 				if (view) {
-					$viewsBySpace.set(space, view);
+					$viewBySpace.set(space, view);
 				} else {
-					$viewsBySpace.delete(space);
+					$viewBySpace.delete(space);
 				}
 			});
 		},
