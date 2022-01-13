@@ -15,6 +15,7 @@ import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {type DialogState} from '$lib/ui/dialog/dialog';
 import {type ViewData} from '$lib/vocab/view/view';
+import {mutable, type Mutable} from './mutable';
 
 const KEY = Symbol();
 
@@ -63,7 +64,7 @@ export interface Ui extends Partial<UiHandlers> {
 	mobile: Readable<boolean>;
 	contextmenu: ContextmenuStore;
 	dialogs: Writable<DialogState[]>;
-	viewsBySpace: Readable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
+	viewsBySpace: Mutable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
 }
 
 export const toUi = (
@@ -125,7 +126,7 @@ export const toUi = (
 	const mobile = writable(initialMobile);
 	const contextmenu = createContextmenuStore();
 	const dialogs = writable<DialogState[]>([]);
-	const viewsBySpace = writable(new WeakMap());
+	const viewsBySpace = mutable(new WeakMap());
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -600,7 +601,6 @@ export const toUi = (
 				} else {
 					$viewsBySpace.delete(space);
 				}
-				return $viewsBySpace;
 			});
 		},
 		ToggleMainNav: () => {
