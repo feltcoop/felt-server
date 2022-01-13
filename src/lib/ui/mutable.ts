@@ -11,7 +11,8 @@ export interface MutableUpdater<T> {
 
 /**
  * Creates a store representing a mutable `value`.
- * Useful in combination with the Svelte `immutable` compiler flag.
+ * Useful for values that are expensive to copy, like large `Map`s,
+ * in combination with the Svelte `immutable` compiler flag.
  * Typical usage mutates `value` inside the `updater` callback and returns nothing,
  * but the `updater` can return a new reference for `value`.
  * Calling `update` with no callback triggers a change,
