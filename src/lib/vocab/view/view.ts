@@ -7,7 +7,7 @@ export interface ViewData {
 export type ViewProps = any; // TODO generic per type?
 
 /**
- * The views available for users to create in a community.
+ * The views available for users to create in a community, in order of appearance.
  */
 export const availableViewTypes: string[] = [
 	'Room',
