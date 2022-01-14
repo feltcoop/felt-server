@@ -28,10 +28,9 @@ export interface MutableUpdater<T> {
  * the implementation swaps between two stable object references.
  * This may hinder composability with code that
  * expects immutable references on every store change,
- * but given that this store is named `mutable`,
- * it seems acceptable to push this concern downstream for better efficiency in the typical case.
- * An immutable stream of values can be derived quite easily for those cases that need it:
- * const someImmutableValue = derived(mutable({}), ($v) => ({value: $v.value}));
+ * but given that this store is named `mutable`, it seems like an acceptable tradeoff.
+ * We may want to offer an alternative "pure" version of this store
+ * that creates a new wrapper object on every change.
  *
  * @param value
  */
