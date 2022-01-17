@@ -1,4 +1,4 @@
-import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
+import {type Gen} from '@feltcoop/gro';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
 import {resolve, basename} from 'path';
 
