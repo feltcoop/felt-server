@@ -44,6 +44,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 
 <style>
 	li {
+		align-items: flex-start;
 		padding: var(--spacing_xs);
 		/* TODO experiment with a border color instead of bg */
 		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
@@ -54,7 +55,11 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	}
 	.markup {
 		padding: 0 0 0 var(--spacing_md);
-		/* force wrap long strings of text like links */
-		word-break: break-all;
+		/* force wrap long strings of text */
+		overflow: hidden;
+		/* remove this line when `break-spaces` is supported by Firefox Android:
+		https://caniuse.com/mdn-css_properties_white-space_break-spaces */
+		white-space: pre-wrap;
+		white-space: break-spaces;
 	}
 </style>

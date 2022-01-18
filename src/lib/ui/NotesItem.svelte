@@ -34,8 +34,11 @@
 	}
 
 	.markup {
-		/* force wrap long strings of text like links */
-		word-break: normal;
-		overflow-wrap: break-word;
+		/* force wrap long strings of text */
+		overflow: hidden;
+		/* remove this line when `break-spaces` is supported by Firefox Android:
+		https://caniuse.com/mdn-css_properties_white-space_break-spaces */
+		white-space: pre-wrap;
+		white-space: break-spaces;
 	}
 </style>
