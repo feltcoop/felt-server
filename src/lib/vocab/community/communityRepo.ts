@@ -49,13 +49,7 @@ export const communityRepo = (db: Database) => ({
 	): Promise<Result<{value: Community[]}, ErrorResponse>> => {
 		console.log(`[db] preparing to query for communities & spaces persona: ${account_id}`);
 		const data = await db.sql<Community[]>`
-			SELECT c.community_id, c.name, c.settings, c.created, c.updated,
-				(
-					SELECT array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
-					FROM (
-						SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.created, s.updated FROM spaces s WHERE s.community_id = c.community_id
-					) d
-				) as spaces,
+			SELECT c.community_id, c.name, c.settings, c.created, c.updated,			
 				(
 					SELECT array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
 					FROM (
