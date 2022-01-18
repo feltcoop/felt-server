@@ -32,14 +32,14 @@
 		display: flex;
 		align-items: center;
 		width: 100%;
+		padding: var(--spacing_sm);
 	}
 	.icon {
 		display: flex;
 		font-size: var(--icon_size_sm);
-		padding: var(--spacing_sm);
 	}
 	.text {
-		padding: var(--spacing_sm) var(--spacing_sm) var(--spacing_sm) 0;
+		padding-left: var(--spacing_sm);
 		overflow: hidden;
 		overflow-wrap: break-word;
 	}
