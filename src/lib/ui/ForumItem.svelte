@@ -26,7 +26,9 @@
 		EntityContextmenu: $entity.entity_id,
 	}}
 >
-	<div class="content">
+	<!-- TODO markup needs to be used for `overflow-wrap: break-word;` but fix padding,
+	and also fix the icon being to the side -->
+	<div class="markup">
 		{$entity.content}
 	</div>
 	<Avatar name={toName($persona)} icon={toIcon($persona)} />
@@ -40,7 +42,11 @@
 		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
 		flex-direction: column;
 	}
-	.content {
+
+	.markup {
 		font-size: var(--font_size_lg);
+		padding: 0 0 0 var(--spacing_md);
+		/* force wrap long strings of text like links */
+		word-break: break-all;
 	}
 </style>

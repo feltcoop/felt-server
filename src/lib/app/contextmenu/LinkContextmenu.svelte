@@ -32,7 +32,7 @@
 		display: flex;
 		align-items: center;
 		width: 100%;
-		word-break: break-word;
+		word-break: break-all;
 	}
 	.icon {
 		display: flex;

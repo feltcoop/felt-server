@@ -41,4 +41,9 @@
 		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
 		flex-direction: column;
 	}
+	.markup {
+		padding: var(--spacing_sm);
+		/* force wrap long strings of text like links */
+		word-break: break-all;
+	}
 </style>
