@@ -52,8 +52,7 @@ export const personaRepo = (db: Database) => ({
 		`;
 		return {ok: true, value: data};
 	},
-	// TODO `findById` is very generic and could be refactored
-	// into a helper (or base class method, if we want to use classes)
+	// TODO `findById` could be constructed by a generic function with id/columns params
 	findById: async (
 		persona_id: number,
 	): Promise<Result<{value: Persona}, {type: 'no_persona_found'} & ErrorResponse>> => {

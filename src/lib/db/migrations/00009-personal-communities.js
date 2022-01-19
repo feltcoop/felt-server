@@ -1,10 +1,35 @@
 /** @param {import('postgres').Sql<any>} sql */
 export const up = async (sql) => {
-	// TODO add `type` and `persona_id` to all communities
+	// add `type` column to communities
 	await sql`
 		ALTER TABLE communities
-			ADD COLUMN type text
-			NOT NULL DEFAULT 'standard';
+			ADD COLUMN type text NOT NULL DEFAULT 'standard';
 	`;
-	// TODO update all communities that should be type 'personal'
+	// add `persona_id` column to communities
+	// TODO should this be NOT NULL ? (also see `space` migration)
+	await sql`
+		ALTER TABLE communities
+			ADD persona_id int REFERENCES personas (persona_id) ON UPDATE CASCADE ON DELETE CASCADE;
+	`;
+	// add `type` column to personas
+	await sql`
+		ALTER TABLE personas
+			ADD COLUMN type text NOT NULL DEFAULT 'account';
+	`;
+	// TODO write this query
+	// create a persona of type 'community' for every community that doesn't have one of the same name
+	await sql`
+		INSERT INTO personas (name, type)
+			VALUES (
+				(SELECT name FROM communities WHERE ),
+				'community',
+			);
+	`;
+	// set the type of each personal community and their `persona_id` reference
+	await sql`
+		UPDATE communities c
+			SET type = 'personal', persona_id = p.persona_id
+			FROM personas p 
+			WHERE c.name = p.name;
+	`;
 };
