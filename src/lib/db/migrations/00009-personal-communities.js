@@ -23,6 +23,7 @@ export const up = async (sql) => {
 			SELECT name, 'community' FROM communities
 			WHERE name NOT IN (SELECT c.name FROM communities c JOIN personas p ON p.name = c.name)
 	`;
+	// TODO broken -- does this go before the previous one?
 	// set the type of each personal community and their `persona_id` reference
 	await sql`
 		UPDATE communities c
