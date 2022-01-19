@@ -17,11 +17,8 @@
 	{#if showIcon}
 		<EntityIcon {name} {icon} {type} />
 	{/if}
-	{#if showIcon && showName}
-		<span class="spacer" />
-	{/if}
 	{#if showName}
-		<span class="actor">{name}</span>
+		<span class="actor" class:spaced={showIcon}>{name}</span>
 	{/if}
 </div>
 
@@ -30,10 +27,10 @@
 		display: flex;
 		align-items: center;
 	}
-	.spacer {
-		padding-left: var(--spacing_md);
-	}
 	.actor {
 		font-weight: var(--font_weight_4);
+	}
+	.spaced {
+		padding-left: var(--spacing_sm);
 	}
 </style>
