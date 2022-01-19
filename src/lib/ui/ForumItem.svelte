@@ -26,8 +26,6 @@
 		EntityContextmenu: $entity.entity_id,
 	}}
 >
-	<!-- TODO markup needs to be used for `overflow-wrap: break-word;` but fix padding,
-	and also fix the icon being to the side -->
 	<div class="markup formatted">
 		{$entity.content}
 	</div>
