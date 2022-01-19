@@ -34,7 +34,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			{$entity.created}
 		</div>
 		<div>
-			{$entity.content}
+			{$entity.data.content}
 		</div>
 	</div>
 </li>

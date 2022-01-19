@@ -19,7 +19,7 @@
 		EntityContextmenu: $entity.entity_id,
 	}}
 >
-	{$entity.content}
+	{$entity.data.content}
 </li>
 
 <style>
