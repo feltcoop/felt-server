@@ -2,6 +2,7 @@
 	import type {Readable} from 'svelte/store';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
+	import type {Post} from '$lib/vocab/entity/entityDataType';
 	import {randomHue} from '$lib/ui/color';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
@@ -12,6 +13,7 @@
 	} = getApp();
 
 	export let entity: Readable<Entity>;
+	$: data = $entity.data as Post;
 
 	$: persona = findPersonaById($entity.actor_id); // TODO should this be `Actor` and `actor`?
 
@@ -28,7 +30,7 @@
 >
 	<div class="markup">
 		<p>
-			{$entity.data.content}
+			{data.content}
 		</p>
 	</div>
 	<Avatar name={toName($persona)} icon={toIcon($persona)} />

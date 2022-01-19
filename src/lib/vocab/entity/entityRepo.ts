@@ -7,11 +7,11 @@ export const entityRepo = (db: Database) => ({
 	create: async (
 		actor_id: number,
 		space_id: number,
-		data: JSON,
+		data: Object,
 	): Promise<Result<{value: Entity}>> => {
 		const response = await db.sql<Entity[]>`
 			INSERT INTO entities (actor_id, space_id, data) VALUES (
-				${actor_id},${space_id},${data}
+				${actor_id},${space_id},${db.sql.json(data)}
 			) RETURNING *
 		`;
 		// console.log('[db] create entity', data);

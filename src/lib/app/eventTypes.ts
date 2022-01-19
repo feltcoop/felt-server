@@ -169,7 +169,9 @@ export type DeleteSpaceResponseResult = ApiResult<DeleteSpaceResponse>;
 export interface CreateEntityParams {
 	actor_id: number;
 	space_id: number;
-	content: string;
+	data: {
+		[k: string]: unknown;
+	};
 }
 export interface CreateEntityResponse {
 	entity: Entity;

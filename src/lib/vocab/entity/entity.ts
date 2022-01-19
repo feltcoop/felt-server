@@ -4,7 +4,7 @@ export interface Entity {
 	entity_id: number;
 	actor_id: number;
 	space_id: number;
-	data: JSON;
+	data: Object;
 	created: Date;
 	updated: Date | null;
 }

@@ -2,6 +2,7 @@
 	import type {Readable} from 'svelte/store';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
+	import type {Post} from '$lib/vocab/entity/entityDataType';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import {toIcon, toName} from '$lib/vocab/entity/entity';
@@ -12,6 +13,7 @@
 	} = getApp();
 
 	export let entity: Readable<Entity>;
+	$: data = $entity.data as Post;
 
 	$: persona = findPersonaById($entity.actor_id); // TODO should this be `Actor` and `actor`?
 
@@ -34,7 +36,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			{$entity.created}
 		</div>
 		<div>
-			{$entity.data.content}
+			{data.content}
 		</div>
 	</div>
 </li>
