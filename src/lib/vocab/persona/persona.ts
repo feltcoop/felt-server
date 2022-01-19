@@ -1,6 +1,6 @@
 export interface Persona {
 	persona_id: number;
-	account_id: number;
+	account_id?: number;
 	type: 'account' | 'community';
 	name: string;
 	icon?: string;
@@ -21,7 +21,7 @@ export const PersonaSchema = {
 		created: {type: 'object', format: 'date-time', tsType: 'Date'},
 		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 	},
-	required: ['persona_id', 'account_id', 'type', 'name', 'community_ids', 'created', 'updated'],
+	required: ['persona_id', 'type', 'name', 'community_ids', 'created', 'updated'],
 	additionalProperties: false,
 };
 
