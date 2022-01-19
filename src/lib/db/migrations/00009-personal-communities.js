@@ -33,3 +33,29 @@ export const up = async (sql) => {
 			WHERE c.name = p.name;
 	`;
 };
+
+/*
+
+TODO remove all of this
+
+SELECT c.name, 'community' FROM communities c JOIN personas p ON p.name = c.name
+
+SELECT c.name FROM communities c JOIN personas p ON p.name = c.name;
+
+SELECT name FROM personas;
+
+SELECT name FROM communities;
+
+INSERT INTO personas (name, type)
+  VALUES (
+  	'hey', 'community'
+  );
+
+
+DELETE FROM personas WHERE name = 'hey';
+
+
+INSERT INTO personas (name, type)
+	(SELECT c.name, 'community' FROM communities c JOIN personas p ON p.name = c.name);
+
+*/
