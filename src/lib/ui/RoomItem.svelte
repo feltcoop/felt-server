@@ -55,9 +55,9 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	}
 	.markup {
 		padding: 0 0 0 var(--spacing_md);
-		/* force wrap long strings of text */
+		/* wrap long strings of text */
 		overflow: hidden;
-		/* remove this line when `break-spaces` is supported by Firefox Android:
+		/* TODO remove this line when `break-spaces` is supported by Firefox Android:
 		https://caniuse.com/mdn-css_properties_white-space_break-spaces */
 		white-space: pre-wrap;
 		white-space: break-spaces;

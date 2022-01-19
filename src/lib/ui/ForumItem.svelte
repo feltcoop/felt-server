@@ -46,9 +46,9 @@
 	.markup {
 		font-size: var(--font_size_lg);
 		padding: 0 0 0 var(--spacing_md);
-		/* force wrap long strings of text */
+		/* wrap long strings of text */
 		overflow: hidden;
-		/* remove this line when `break-spaces` is supported by FF Android:
+		/* TODO remove this line when `break-spaces` is supported by FF Android:
 		https://caniuse.com/mdn-css_properties_white-space_break-spaces */
 		white-space: pre-wrap;
 		white-space: break-spaces;
