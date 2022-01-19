@@ -48,7 +48,7 @@ main {
 }
 
 /* TODO likely upstream to Felt */
-/* Formats blocks of text to wrap long strings and preserve displayed whitespace. */
+/* Formats content to wrap long strings and preserve displayed whitespace. */
 .formatted {
 	overflow: hidden;
 	/* TODO remove this line when `break-spaces` is supported by Firefox Android:
