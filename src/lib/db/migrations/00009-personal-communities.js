@@ -16,14 +16,12 @@ export const up = async (sql) => {
 		ALTER TABLE personas
 			ADD COLUMN type text NOT NULL DEFAULT 'account';
 	`;
-	// TODO write this query
+	// TODO delete communities/personas that have a duplicate name first
 	// create a persona of type 'community' for every community that doesn't have one of the same name
 	await sql`
 		INSERT INTO personas (name, type)
-			VALUES (
-				(SELECT name FROM communities WHERE ),
-				'community',
-			);
+			SELECT name, 'community' FROM communities
+			WHERE name NOT IN (SELECT c.name FROM communities c JOIN personas p ON p.name = c.name)
 	`;
 	// set the type of each personal community and their `persona_id` reference
 	await sql`
@@ -35,6 +33,9 @@ export const up = async (sql) => {
 };
 
 /*
+
+SELECT * from communities WHERE name NOT IN (SELECT c.name FROM communities c JOIN personas p ON p.name = c.name)
+
 
 TODO remove all of this
 
