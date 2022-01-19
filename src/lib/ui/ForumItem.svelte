@@ -28,7 +28,7 @@
 >
 	<!-- TODO markup needs to be used for `overflow-wrap: break-word;` but fix padding,
 	and also fix the icon being to the side -->
-	<div class="markup">
+	<div class="markup formatted">
 		{$entity.content}
 	</div>
 	<Avatar name={toName($persona)} icon={toIcon($persona)} />
@@ -46,11 +46,5 @@
 	.markup {
 		font-size: var(--font_size_lg);
 		padding: 0 0 0 var(--spacing_md);
-		/* wrap long strings of text */
-		overflow: hidden;
-		/* TODO remove this line when `break-spaces` is supported by FF Android:
-		https://caniuse.com/mdn-css_properties_white-space_break-spaces */
-		white-space: pre-wrap;
-		white-space: break-spaces;
 	}
 </style>

@@ -26,7 +26,7 @@
 		EntityContextmenu: $entity.entity_id,
 	}}
 >
-	<div class="markup">
+	<div class="markup formatted">
 		<p>
 			{$entity.content}
 		</p>
@@ -43,11 +43,5 @@
 	}
 	.markup {
 		padding: var(--spacing_sm);
-		/* wrap long strings of text */
-		overflow: hidden;
-		/* TODO remove this line when `break-spaces` is supported by Firefox Android:
-		https://caniuse.com/mdn-css_properties_white-space_break-spaces */
-		white-space: pre-wrap;
-		white-space: break-spaces;
 	}
 </style>

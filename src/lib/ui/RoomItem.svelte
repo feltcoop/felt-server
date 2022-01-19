@@ -31,7 +31,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	<div class="timestamp">
 		<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
 	</div>
-	<div class="markup">
+	<div class="markup formatted">
 		<div class="timestamp">
 			<Avatar name={toName($persona)} icon={toIcon($persona)} showIcon={false} />
 			{$entity.created}
@@ -55,11 +55,5 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	}
 	.markup {
 		padding: 0 0 0 var(--spacing_md);
-		/* wrap long strings of text */
-		overflow: hidden;
-		/* TODO remove this line when `break-spaces` is supported by Firefox Android:
-		https://caniuse.com/mdn-css_properties_white-space_break-spaces */
-		white-space: pre-wrap;
-		white-space: break-spaces;
 	}
 </style>
