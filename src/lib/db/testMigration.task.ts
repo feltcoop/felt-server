@@ -3,6 +3,8 @@ import type {Task} from '@feltcoop/gro';
 // TODO what behavior should this do? do we want a flag to not do anything further,
 // so we can run queries against the current data?
 
+// TODO handle production data dumps somehow
+
 interface Args {
 	run?: boolean;
 	'no-run'?: boolean;
