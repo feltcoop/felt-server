@@ -16,9 +16,6 @@ export const up = async (sql) => {
 		ALTER TABLE personas
 			ADD COLUMN type text NOT NULL DEFAULT 'account';
 	`;
-
-	// TODO ? delete communities/personas that have a duplicate name first? or manually?
-
 	// create a persona of type 'community' for every community that doesn't have one of the same name
 	await sql`
 		INSERT INTO personas (name, type)
