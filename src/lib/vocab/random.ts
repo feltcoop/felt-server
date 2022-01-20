@@ -47,7 +47,7 @@ export const randomCommunityParams = (persona_id: number): CreateCommunityParams
 };
 export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 	community_id,
-	content: JSON.stringify(randomData()),
+	content: randomString(),
 	media_type: 'text/plain',
 	name: randomSpaceName(),
 	url: randomSpaceUrl(),
