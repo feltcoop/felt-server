@@ -16,48 +16,27 @@ export const up = async (sql) => {
 		ALTER TABLE personas
 			ADD COLUMN type text NOT NULL DEFAULT 'account';
 	`;
-	// TODO delete communities/personas that have a duplicate name first
+
+	// TODO ? delete communities/personas that have a duplicate name first? or manually?
+
 	// create a persona of type 'community' for every community that doesn't have one of the same name
 	await sql`
 		INSERT INTO personas (name, type)
 			SELECT name, 'community' FROM communities
-			WHERE name NOT IN (SELECT c.name FROM communities c JOIN personas p ON p.name = c.name)
+			WHERE name NOT IN (SELECT c.name FROM communities c JOIN personas p ON p.name = c.name);
 	`;
-	// TODO broken -- does this go before the previous one?
-	// set the type of each personal community and their `persona_id` reference
+	// set the `persona_id` reference of each 'standard' community
+	await sql`
+		UPDATE communities c
+			SET persona_id = p.persona_id
+			FROM personas p
+			WHERE c.persona_id IS NULL AND p.type = 'community' AND c.name = p.name;
+	`;
+	// set the type and `persona_id` reference of each personal community
 	await sql`
 		UPDATE communities c
 			SET type = 'personal', persona_id = p.persona_id
 			FROM personas p 
-			WHERE c.name = p.name;
+			WHERE c.persona_id IS NULL AND p.type = 'account' AND c.name = p.name;
 	`;
 };
-
-/*
-
-SELECT * from communities WHERE name NOT IN (SELECT c.name FROM communities c JOIN personas p ON p.name = c.name)
-
-
-TODO remove all of this
-
-SELECT c.name, 'community' FROM communities c JOIN personas p ON p.name = c.name
-
-SELECT c.name FROM communities c JOIN personas p ON p.name = c.name;
-
-SELECT name FROM personas;
-
-SELECT name FROM communities;
-
-INSERT INTO personas (name, type)
-  VALUES (
-  	'hey', 'community'
-  );
-
-
-DELETE FROM personas WHERE name = 'hey';
-
-
-INSERT INTO personas (name, type)
-	(SELECT c.name, 'community' FROM communities c JOIN personas p ON p.name = c.name);
-
-*/
