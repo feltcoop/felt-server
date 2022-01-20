@@ -16,7 +16,7 @@ export const toDefaultCommunitySettings = (name: string): Community['settings'] 
 });
 
 export interface Community {
-	[key: string]: any; // TODO hack related to the below
+	//[key: string]: any; // TODO hack related to the below
 	community_id: number;
 	name: string;
 	settings: {hue: number};
@@ -37,5 +37,5 @@ export const CommunitySchema = {
 		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 	},
 	required: ['community_id', 'name', 'created', 'updated'],
-	additionalProperties: true, // TODO `true` is a hack related to the above
+	additionalProperties: false, // TODO `true` is a hack related to the above
 };
