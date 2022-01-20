@@ -1,5 +1,6 @@
 export interface Post {
-	type: String;
+	type: string;
 	partOf?: number;
-	content: String;
+	content: string;
+	title: string;
 }
