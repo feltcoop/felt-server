@@ -6,8 +6,9 @@
 
 Account personas are created by users and have an `account_id`
 and a `community_id` that points to their [`'personal'` community](./community-types.md).
-They act as a privacy shield to protect account identity;
-when you join a community, you join as one of your personas.
+They act as a privacy and security shield to protect account identity;
+when you join a community, you join as one of your personas,
+and your account information is never visible to other users.
 They can be created and deleted as desired.
 
 ## `'community'` personas
