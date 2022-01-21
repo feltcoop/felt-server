@@ -16,6 +16,16 @@ export const createMembershipService: Service<
 	perform: async ({server, params}) => {
 		console.log('[CreateMembership] creating membership', params.persona_id, params.community_id);
 
+		// Personal communities disallow memberships as a hard rule.
+		const communityResult = await server.db.repos.community.findById(params.community_id);
+		if (!communityResult.ok) {
+			return {ok: false, status: 400, message: 'community not found'};
+		}
+		const community = communityResult.value;
+		if (community.type === 'personal') {
+			return {ok: false, status: 403, message: 'personal communities disallow memberships'};
+		}
+
 		const createMembershipResult = await server.db.repos.membership.create(
 			params.persona_id,
 			params.community_id,

@@ -9,14 +9,6 @@ export const membershipRepo = (db: Database) => ({
 		persona_id: number,
 		community_id: number,
 	): Promise<Result<{value: Membership}, ErrorResponse>> => {
-		// Personal communities disallow memberships as a hard rule.
-		const communityResult = await db.repos.community.findById(community_id);
-		if (!communityResult.ok) return communityResult;
-		const community = communityResult.value;
-		if (community.type === 'personal') {
-			return {ok: false, message: 'personal communities disallow memberships'};
-		}
-
 		const data = await db.sql<Membership[]>`
 			INSERT INTO memberships (persona_id, community_id) VALUES (
 				${persona_id},${community_id}
