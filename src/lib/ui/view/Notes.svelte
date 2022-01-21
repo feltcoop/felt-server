@@ -8,7 +8,6 @@
 	import type {Space} from '$lib/vocab/space/space.js';
 	import NoteItems from '$lib/ui/NotesItems.svelte';
 	import {getApp} from '$lib/ui/app';
-	import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 
 	const {dispatch, socket} = getApp();
 
@@ -26,11 +25,11 @@
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
-		const data = {type: 'Note', content: content} as NoteEntityData;
+
 		if (!content) return;
 		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
-			data,
+			data: {type: 'Note', content: content},
 			actor_id: $persona.persona_id,
 		});
 		text = '';
