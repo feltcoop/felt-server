@@ -6,7 +6,7 @@ import {MIGRATIONS_DIR} from '$lib/db/migrate.task';
 
 interface Args {
 	checkpoint: boolean; // if `true`, does not run the `count` number of final migrations
-	count: number; // defaults to 1; use in the rare case you need to test more than 1 migration
+	count: number; // defaults to 1; number of migrations being tested; rarely might need more
 }
 
 export const task: Task<Args> = {
