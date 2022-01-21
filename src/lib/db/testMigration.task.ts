@@ -1,28 +1,28 @@
 import type {Task} from '@feltcoop/gro';
 
-// TODO what behavior should this do? do we want a flag to not do anything further,
-// so we can run queries against the current data?
+import {MIGRATIONS_DIR} from '$lib/db/migrate.task';
 
 // TODO handle production data dumps somehow
 
 interface Args {
-	run?: boolean;
-	'no-run'?: boolean;
+	// TODO count = 1
+	checkpoint: boolean; // if `true`, do not run the final migrations that are being tested
 }
 
 export const task: Task<Args> = {
 	summary: 'tests the most recent mogration file against the seeded database',
 	run: async ({invokeTask, fs, args}) => {
-		const {run = true} = args;
+		const {checkpoint = false} = args;
 
 		// first move the latest migration temporarily out of `$lib/db/migrations`
 		// and create the database with seeded data
-		const path = 'src/lib/db/migrations';
-		const migrationFiles = await fs.readDir(path);
+		const TEMP_PATH = 'src/lib/db';
+		const migrationFiles = await fs.readDir(MIGRATIONS_DIR);
 		const latestMigrationFile = migrationFiles[migrationFiles.length - 1];
-		console.log('migrationFiles', latestMigrationFile);
-		const tempPath = 'src/lib/db';
-		await fs.move(`${path}/${latestMigrationFile}`, `${tempPath}/${latestMigrationFile}`);
+		await fs.move(
+			`${MIGRATIONS_DIR}/${latestMigrationFile}`,
+			`${TEMP_PATH}/${latestMigrationFile}`,
+		);
 
 		let err;
 		try {
@@ -32,12 +32,15 @@ export const task: Task<Args> = {
 		}
 
 		// move the file back
-		await fs.move(`${tempPath}/${latestMigrationFile}`, `${path}/${latestMigrationFile}`);
+		await fs.move(
+			`${TEMP_PATH}/${latestMigrationFile}`,
+			`${MIGRATIONS_DIR}/${latestMigrationFile}`,
+		);
 
 		// throw any error that occurred, but only after moving the file back
 		if (err) throw err;
 
-		if (run) {
+		if (!checkpoint) {
 			await invokeTask('lib/db/migrate');
 		}
 	},

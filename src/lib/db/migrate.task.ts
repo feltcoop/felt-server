@@ -2,11 +2,13 @@ import type {Task} from '@feltcoop/gro';
 import ley from 'ley';
 import {defaultPostgresOptions} from '$lib/db/postgres.js';
 
+export const MIGRATIONS_DIR = 'src/lib/db/migrations';
+
 export const task: Task = {
 	summary: 'running new migrations to bring database up to date',
 	run: async ({log}) => {
 		const status = await ley.status({
-			dir: 'src/lib/db/migrations',
+			dir: MIGRATIONS_DIR,
 			driver: 'postgres',
 			config: defaultPostgresOptions as any,
 		});
@@ -14,7 +16,7 @@ export const task: Task = {
 		log.info('the following migrations will be run: ', status);
 
 		const successes = await ley.up({
-			dir: 'src/lib/db/migrations',
+			dir: MIGRATIONS_DIR,
 			driver: 'postgres',
 			config: defaultPostgresOptions as any,
 		});

@@ -10,7 +10,9 @@ export const personaRepo = (db: Database) => ({
 	create: async (
 		name: string,
 		account_id: number,
+		// type: Persona['type']
 	): Promise<Result<{value: {persona: Persona; community: Community}}, ErrorResponse>> => {
+		// TODO maybe `insertCommunity` helper?
 		const data = await db.sql<Persona[]>`
 			INSERT INTO personas (name, account_id) VALUES (
 				${name}, ${account_id}
@@ -18,10 +20,12 @@ export const personaRepo = (db: Database) => ({
 		`;
 		const persona = data[0];
 		console.log('[db] created persona', persona);
+		// if (type === 'account')
 		const createCommunityResult = await db.repos.community.create(
 			name,
 			persona.persona_id,
 			toDefaultCommunitySettings(name),
+			// 'personal',
 		);
 		if (!createCommunityResult.ok) {
 			return {ok: false, message: 'failed to create initial persona community'};

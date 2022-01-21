@@ -9,6 +9,7 @@ export const communityRepo = (db: Database) => ({
 		name: string,
 		persona_id: number,
 		settings: Community['settings'],
+		// type: Community['type'],
 	): Promise<Result<{value: Community}, ErrorResponse>> => {
 		const data = await db.sql<Community[]>`
 			INSERT INTO communities (name, settings) VALUES (
@@ -18,6 +19,9 @@ export const communityRepo = (db: Database) => ({
 		console.log('[db] created community', data, {persona_id});
 		const community = data[0];
 		const community_id = community.community_id;
+		// if (type === 'personal') {
+		// TODO create 'community' persona if needed
+		// }
 		// TODO more robust error handling or condense into single query
 		const membershipResult = await db.repos.membership.create(persona_id, community_id);
 		if (!membershipResult.ok) return membershipResult;
