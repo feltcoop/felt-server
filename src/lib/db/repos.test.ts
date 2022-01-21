@@ -19,6 +19,7 @@ import {
 	randomSpaceParams,
 } from '$lib/vocab/random';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
+import {type NoteEntityData} from '$lib/vocab/entity/entityData';
 
 // TODO this only depends on the database --
 // if we don't figure out a robust way to make a global reusable server,
@@ -99,8 +100,8 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 
 	const entityContent1 = 'this is entity 1';
 	const entityContent2 = 'entity: 2';
-	const data1 = {type: 'Note', content: entityContent1};
-	const data2 = {type: 'Note', content: entityContent2};
+	const data1 = {type: 'Note', content: entityContent1} as NoteEntityData;
+	const data2 = {type: 'Note', content: entityContent2} as NoteEntityData;
 	const entity1 = await unwrapEntity(
 		server.db.repos.entity.create(persona.persona_id, space.space_id, data1),
 	);

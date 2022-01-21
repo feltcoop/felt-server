@@ -2,12 +2,13 @@ import type {Result} from '@feltcoop/felt';
 
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Database} from '$lib/db/Database';
+import type {EntityData} from './entityData';
 
 export const entityRepo = (db: Database) => ({
 	create: async (
 		actor_id: number,
 		space_id: number,
-		data: Object,
+		data: EntityData,
 	): Promise<Result<{value: Entity}>> => {
 		const entity = await db.sql<Entity[]>`
 			INSERT INTO entities (actor_id, space_id, data) VALUES (

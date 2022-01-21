@@ -2,7 +2,7 @@
 	import type {Readable} from 'svelte/store';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
-	import type {Post} from '$lib/vocab/entity/entityDataType';
+	import {type NoteEntityData} from '$lib/vocab/entity/entityData';
 	import {getApp} from '$lib/ui/app';
 
 	const {
@@ -10,7 +10,7 @@
 	} = getApp();
 
 	export let entity: Readable<Entity>;
-	$: data = $entity.data as Post;
+	$: data = $entity.data as NoteEntityData;
 
 	$: persona = findPersonaById($entity.actor_id);
 </script>
