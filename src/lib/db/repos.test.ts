@@ -3,8 +3,7 @@ import * as assert from 'uvu/assert';
 import type {Result} from '@feltcoop/felt';
 import {unwrap} from '@feltcoop/felt';
 
-import type {TestServerContext} from '$lib/util/testServerHelpers';
-import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
+import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {validateEntity} from '$lib/vocab/entity/validateEntity';
 import {validateSpace} from '$lib/vocab/space/validateSpace';
 import {toValidationErrorMessage} from '$lib/util/ajv';
@@ -27,25 +26,23 @@ import {type NoteEntityData} from '$lib/vocab/entity/entityData';
 // instead of the whole server
 
 /* test__repos */
-const test__repos = suite<TestServerContext>('repos');
+const test__repos = suite<TestDbContext>('repos');
 
-test__repos.before(setupServer);
-test__repos.after(teardownServer);
+test__repos.before(setupDb);
+test__repos.after(teardownDb);
 
-test__repos('create, change, and delete some data from repos', async ({server}) => {
+test__repos('create, change, and delete some data from repos', async ({db}) => {
 	// create everything
 	//
 	//
 	//
 	const accountParams = randomAccountParams();
-	const account = unwrap(
-		await server.db.repos.account.create(accountParams.name, accountParams.password),
-	);
+	const account = unwrap(await db.repos.account.create(accountParams.name, accountParams.password));
 
 	// TODO create 2 personas
 	const personaParams = randomPersonaParams();
 	const {persona, community: personaHomeCommunity} = unwrap(
-		await server.db.repos.persona.create('account', personaParams.name, account.account_id, null),
+		await db.repos.persona.create('account', personaParams.name, account.account_id, null),
 	);
 	if (!validatePersona()(persona)) {
 		throw new Error(
@@ -61,7 +58,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 
 	const communityParams = randomCommunityParams(persona.persona_id);
 	const community = unwrap(
-		await server.db.repos.community.create(
+		await db.repos.community.create(
 			'standard',
 			communityParams.name,
 			communityParams.settings!,
@@ -72,7 +69,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 
 	const spaceParams = randomSpaceParams(community.community_id);
 	const space = unwrap(
-		await server.db.repos.space.create(
+		await db.repos.space.create(
 			spaceParams.name,
 			spaceParams.content,
 			spaceParams.media_type,
@@ -104,10 +101,10 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const data1 = {type: 'Note', content: entityContent1} as NoteEntityData;
 	const data2 = {type: 'Note', content: entityContent2} as NoteEntityData;
 	const entity1 = await unwrapEntity(
-		server.db.repos.entity.create(persona.persona_id, space.space_id, data1),
+		db.repos.entity.create(persona.persona_id, space.space_id, data1),
 	);
 	const entity2 = await unwrapEntity(
-		server.db.repos.entity.create(persona.persona_id, space.space_id, data2),
+		db.repos.entity.create(persona.persona_id, space.space_id, data2),
 	);
 
 	// do queries
@@ -115,7 +112,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	//
 	//
 
-	const filterFilesValue = unwrap(await server.db.repos.entity.filterBySpace(space.space_id));
+	const filterFilesValue = unwrap(await db.repos.entity.filterBySpace(space.space_id));
 	assert.is(filterFilesValue.length, 2);
 	filterFilesValue.forEach((f) => {
 		if (!validateEntity()(f)) {
@@ -126,16 +123,14 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	});
 	assert.equal(filterFilesValue, [entity1, entity2]);
 
-	const findSpaceValue = unwrap(await server.db.repos.space.findById(space.space_id));
+	const findSpaceValue = unwrap(await db.repos.space.findById(space.space_id));
 	assert.equal(findSpaceValue, space);
 	if (!validateSpace()(findSpaceValue)) {
 		throw new Error(
 			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
 		);
 	}
-	const filterSpacesValue = unwrap(
-		await server.db.repos.space.filterByCommunity(community.community_id),
-	);
+	const filterSpacesValue = unwrap(await db.repos.space.filterByCommunity(community.community_id));
 	assert.equal(filterSpacesValue.length, spaceCount + defaultSpaceCount);
 	filterSpacesValue.forEach((s) => {
 		if (!validateSpace()(s)) {
@@ -145,9 +140,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 		}
 	});
 
-	const findCommunityValue = unwrap(
-		await server.db.repos.community.findById(community.community_id),
-	);
+	const findCommunityValue = unwrap(await db.repos.community.findById(community.community_id));
 	assert.is(findCommunityValue.name, community.name); // TODO do a better check
 	if (!validateCommunity()(findCommunityValue)) {
 		throw new Error(
@@ -155,7 +148,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 		);
 	}
 	const filterCommunitiesValue = unwrap(
-		await server.db.repos.community.filterByAccount(account.account_id),
+		await db.repos.community.filterByAccount(account.account_id),
 	);
 	assert.equal(filterCommunitiesValue.length, 2); // TODO do a better check
 	filterCommunitiesValue.forEach((s) => {
@@ -166,9 +159,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 		}
 	});
 
-	const filterPersonasValue = unwrap(
-		await server.db.repos.persona.filterByAccount(account.account_id),
-	);
+	const filterPersonasValue = unwrap(await db.repos.persona.filterByAccount(account.account_id));
 	assert.is(filterPersonasValue.length, 1);
 	assert.equal(filterPersonasValue, [persona]);
 	filterPersonasValue.forEach((p) => {
@@ -179,14 +170,14 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 		}
 	});
 
-	const findAccountByIdValue = unwrap(await server.db.repos.account.findById(account.account_id));
+	const findAccountByIdValue = unwrap(await db.repos.account.findById(account.account_id));
 	assert.is(findAccountByIdValue.name, account.name); // TODO do a better check
 	if (!validateAccountModel()(findAccountByIdValue)) {
 		throw new Error(
 			`Failed to validate account: ${toValidationErrorMessage(validateAccountModel().errors![0])}`,
 		);
 	}
-	const findAccountByNameValue = unwrap(await server.db.repos.account.findByName(account.name));
+	const findAccountByNameValue = unwrap(await db.repos.account.findByName(account.name));
 	assert.is(findAccountByNameValue.name, account.name); // TODO do a better check
 	if (!validateAccount()(findAccountByNameValue)) {
 		throw new Error(
@@ -205,7 +196,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	//
 
 	// TODO implement
-	// const deleteFileResult = await server.db.repos.entity.delete(
+	// const deleteFileResult = await db.repos.entity.delete(
 	// 	account.account_id,
 	// 	space.space_id,
 	// 	content,
