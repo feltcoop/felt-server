@@ -17,7 +17,7 @@ export const task: Task<Args> = {
 		// First move the skipped migration files temporarily out of the migration dir
 		// and create the database with seeded data.
 		const TEMP_PATH = 'src/lib/db';
-		const migrationFiles = await fs.readDir(MIGRATIONS_DIR);
+		const migrationFiles = (await fs.readDir(MIGRATIONS_DIR)).sort();
 		const migrationFilesToSkip = migrationFiles.slice(-1 * count);
 		for (const file of migrationFilesToSkip) {
 			await fs.move(`${MIGRATIONS_DIR}/${file}`, `${TEMP_PATH}/${file}`);
