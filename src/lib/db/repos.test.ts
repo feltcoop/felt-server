@@ -44,7 +44,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	// TODO create 2 personas
 	const personaParams = randomPersonaParams();
 	const {persona, community: personaHomeCommunity} = unwrap(
-		await server.db.repos.persona.create(personaParams.name, account.account_id),
+		await server.db.repos.persona.create('account', personaParams.name, account.account_id, null),
 	);
 	if (!validatePersona()(persona)) {
 		throw new Error(
@@ -61,9 +61,10 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const communityParams = randomCommunityParams(persona.persona_id);
 	const community = unwrap(
 		await server.db.repos.community.create(
+			'standard',
 			communityParams.name,
-			communityParams.persona_id,
 			communityParams.settings!,
+			communityParams.persona_id,
 		),
 	);
 	persona.community_ids.push(community.community_id); // TODO hacky

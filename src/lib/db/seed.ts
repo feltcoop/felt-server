@@ -43,7 +43,7 @@ export const seed = async (db: Database): Promise<void> => {
 		log.trace('created account', account);
 		for (const personaName of personasParams[account.name]) {
 			const {persona, community} = unwrap(
-				await db.repos.persona.create(personaName, account.account_id),
+				await db.repos.persona.create('account', personaName, account.account_id, null),
 			);
 			log.trace('created persona', persona);
 			personas.push(persona);
@@ -65,9 +65,10 @@ export const seed = async (db: Database): Promise<void> => {
 	for (const communityParams of communitiesParams) {
 		const community = unwrap(
 			await db.repos.community.create(
+				'standard',
 				communityParams.name,
-				communityParams.persona_id,
 				toDefaultCommunitySettings(communityParams.name),
+				communityParams.persona_id,
 			),
 		);
 		communities.push(community);

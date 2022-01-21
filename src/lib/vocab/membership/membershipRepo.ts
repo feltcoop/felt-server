@@ -14,7 +14,7 @@ export const membershipRepo = (db: Database) => ({
 				${persona_id},${community_id}
 			) RETURNING *
 		`;
-		console.log('[db] created membership', data);
+		console.log('[db] created membership', data[0]);
 		return {ok: true, value: data[0]};
 	},
 	findById: async (

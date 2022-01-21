@@ -67,9 +67,10 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 			console.log('created community account_id', account_id);
 			// TODO validate that `account_id` is `persona_id`
 			const createCommunityResult = await server.db.repos.community.create(
+				'standard',
 				params.name,
-				params.persona_id,
 				params.settings || toDefaultCommunitySettings(params.name),
+				params.persona_id,
 			);
 			console.log('createCommunityResult', createCommunityResult);
 			if (createCommunityResult.ok) {

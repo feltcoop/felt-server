@@ -27,7 +27,7 @@ export const createPersonaService: Service<CreatePersonaParams, CreatePersonaRes
 		}
 
 		console.log('[CreatePersona] creating persona', name);
-		const createPersonaResult = await db.repos.persona.create(name, account_id);
+		const createPersonaResult = await db.repos.persona.create('account', name, account_id, null);
 		if (createPersonaResult.ok) {
 			return {ok: true, status: 200, value: createPersonaResult.value};
 		} else {
