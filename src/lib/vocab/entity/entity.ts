@@ -1,10 +1,11 @@
 import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
+import type {EntityData} from './entityData';
 
 export interface Entity {
 	entity_id: number;
 	actor_id: number;
 	space_id: number;
-	content: string;
+	data: EntityData;
 	created: Date;
 	updated: Date | null;
 }
@@ -15,11 +16,11 @@ export const EntitySchema = {
 		entity_id: {type: 'number'},
 		actor_id: {type: 'number'},
 		space_id: {type: 'number'},
-		content: {type: 'string'},
+		data: {type: 'object', tsType: 'EntityData'},
 		created: {type: 'object', format: 'date-time', tsType: 'Date'},
 		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 	},
-	required: ['entity_id', 'actor_id', 'space_id', 'content', 'created', 'updated'],
+	required: ['entity_id', 'actor_id', 'space_id', 'data', 'created', 'updated'],
 	additionalProperties: false,
 };
 

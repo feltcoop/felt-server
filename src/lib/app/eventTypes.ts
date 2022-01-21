@@ -9,6 +9,7 @@ import type {Persona} from '$lib/vocab/persona/persona';
 import type {Membership} from '$lib/vocab/membership/membership';
 import type {Space} from '$lib/vocab/space/space';
 import type {Entity} from '$lib/vocab/entity/entity';
+import type {EntityData} from '$lib/vocab/entity/entityData';
 import type {ViewData} from '$lib/vocab/view/view';
 import type {DispatchContext} from '$lib/app/dispatch';
 
@@ -169,7 +170,7 @@ export type DeleteSpaceResponseResult = ApiResult<DeleteSpaceResponse>;
 export interface CreateEntityParams {
 	actor_id: number;
 	space_id: number;
-	content: string;
+	data: EntityData;
 }
 export interface CreateEntityResponse {
 	entity: Entity;

@@ -9,6 +9,7 @@ import type {Community} from '$lib/vocab/community/community';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
+import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 
 // TODO extract seed helpers and db methods
 
@@ -108,7 +109,8 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 		}
 		const entityContents = entitiesContents[spaceContent.type];
 		for (const entityContent of entityContents) {
-			await db.repos.entity.create(nextPersona().persona_id, space.space_id, entityContent);
+			const data = {type: 'Note', content: entityContent} as NoteEntityData;
+			await db.repos.entity.create(nextPersona().persona_id, space.space_id, data);
 		}
 	}
 };

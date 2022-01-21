@@ -28,7 +28,7 @@
 >
 	<div class="markup formatted">
 		<p>
-			{$entity.content}
+			{$entity.data.content}
 		</p>
 	</div>
 	<Avatar name={toName($persona)} icon={toIcon($persona)} />

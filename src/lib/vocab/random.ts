@@ -22,7 +22,7 @@ export const randomPersonaName = randomString;
 export const randomCommunnityName = randomString;
 export const randomSpaceUrl = randomString;
 export const randomSpaceName = randomString;
-export const randomContent = randomString;
+export const randomData = (): any => ({type: 'Note', content: randomString()});
 export const randomAccountParams = (): CreateAccountParams => ({
 	name: randomAccountName(),
 	password: randomPassword(),
@@ -47,7 +47,7 @@ export const randomCommunityParams = (persona_id: number): CreateCommunityParams
 };
 export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 	community_id,
-	content: randomContent(),
+	content: randomString(),
 	media_type: 'text/plain',
 	name: randomSpaceName(),
 	url: randomSpaceUrl(),
@@ -55,7 +55,7 @@ export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 export const randomEntityParams = (actor_id: number, space_id: number): CreateEntityParams => ({
 	actor_id,
 	space_id,
-	content: randomContent(),
+	data: randomData(),
 });
 
 // TODO maybe compute in relation to `RandomVocabContext`
