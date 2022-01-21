@@ -2,7 +2,7 @@
 export const up = async (sql) => {
 	await sql`
 	 UPDATE entities
-	 SET content = concat('{"type":"Post","partOf":null,"content":"',content,'"}');
+	 SET content = concat('{"type":"Note","partOf":null,"title","","content":"',content,'"}');
 	 `;
 
 	await sql`
