@@ -25,3 +25,15 @@
 >
 	Delete Space
 </button>
+
+<button
+	type="button"
+	class="menu-button"
+	on:click={() =>
+		dispatch('ViewSpace', {
+			space,
+			view: {type: 'EntityExplorer'},
+		})}
+>
+	View with EntityExplorer
+</button>

@@ -8,13 +8,13 @@ export const membershipRepo = (db: Database) => ({
 	create: async (
 		persona_id: number,
 		community_id: number,
-	): Promise<Result<{value: Membership}>> => {
+	): Promise<Result<{value: Membership}, ErrorResponse>> => {
 		const data = await db.sql<Membership[]>`
 			INSERT INTO memberships (persona_id, community_id) VALUES (
 				${persona_id},${community_id}
 			) RETURNING *
 		`;
-		console.log('[db] created membership', data);
+		console.log('[db] created membership', data[0]);
 		return {ok: true, value: data[0]};
 	},
 	findById: async (

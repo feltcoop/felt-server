@@ -2,6 +2,7 @@
 	import type {Readable} from 'svelte/store';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
+	import {type NoteEntityData} from '$lib/vocab/entity/entityData';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import {toIcon, toName} from '$lib/vocab/entity/entity';
@@ -12,6 +13,7 @@
 	} = getApp();
 
 	export let entity: Readable<Entity>;
+	$: data = $entity.data as NoteEntityData;
 
 	$: persona = findPersonaById($entity.actor_id); // TODO should this be `Actor` and `actor`?
 
@@ -28,19 +30,23 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		EntityContextmenu: {entity},
 	}}
 >
-	<div class="content">
+	<div class="timestamp">
+		<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
+	</div>
+	<div class="markup formatted">
 		<div class="timestamp">
-			<Avatar name={toName($persona)} icon={toIcon($persona)} />
+			<Avatar name={toName($persona)} icon={toIcon($persona)} showIcon={false} />
 			{$entity.created}
 		</div>
 		<div>
-			{$entity.content}
+			{data.content}
 		</div>
 	</div>
 </li>
 
 <style>
 	li {
+		align-items: flex-start;
 		padding: var(--spacing_xs);
 		/* TODO experiment with a border color instead of bg */
 		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
@@ -49,7 +55,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		display: flex;
 		align-items: center;
 	}
-	.content {
-		padding-left: var(--spacing_sm);
+	.markup {
+		padding: 0 0 0 var(--spacing_md);
 	}
 </style>

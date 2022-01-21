@@ -1,20 +1,21 @@
-import type {Readable, Writable} from 'svelte/store';
-import {writable, derived, get} from 'svelte/store';
-import {setContext, getContext} from 'svelte';
+import {writable, derived, get, type Readable, type Writable} from 'svelte/store';
+import {setContext, getContext, type SvelteComponent} from 'svelte';
 import {goto} from '$app/navigation';
 
-import type {Community} from '$lib/vocab/community/community';
-import type {Space} from '$lib/vocab/space/space';
-import type {Persona} from '$lib/vocab/persona/persona';
-import type {ClientSession} from '$lib/session/clientSession';
-import type {AccountModel} from '$lib/vocab/account/account';
-import type {Entity} from '$lib/vocab/entity/entity';
-import type {Membership} from '$lib/vocab/membership/membership';
-import type {DispatchContext} from '$lib/app/dispatch';
-import type {UiHandlers} from '$lib/app/eventTypes';
-import type {ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+import {type Community} from '$lib/vocab/community/community';
+import {type Space} from '$lib/vocab/space/space';
+import {type Persona} from '$lib/vocab/persona/persona';
+import {type ClientSession} from '$lib/session/clientSession';
+import {type AccountModel} from '$lib/vocab/account/account';
+import {type Entity} from '$lib/vocab/entity/entity';
+import {type Membership} from '$lib/vocab/membership/membership';
+import {type DispatchContext} from '$lib/app/dispatch';
+import {type UiHandlers} from '$lib/app/eventTypes';
+import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-import type {DialogState} from '$lib/ui/dialog/dialog';
+import {type DialogState} from '$lib/ui/dialog/dialog';
+import {type ViewData} from '$lib/vocab/view/view';
+import {mutable, type Mutable} from './mutable';
 
 const KEY = Symbol();
 
@@ -27,6 +28,10 @@ export const setUi = (store: Ui): Ui => {
 
 export interface Ui extends Partial<UiHandlers> {
 	dispatch: (ctx: DispatchContext) => any; // TODO return value type?
+
+	// TODO instead of eagerly loading these components,
+	// this should be an interface to lazy-load UI components
+	components: {[key: string]: typeof SvelteComponent};
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
@@ -59,9 +64,14 @@ export interface Ui extends Partial<UiHandlers> {
 	mobile: Readable<boolean>;
 	contextmenu: ContextmenuStore;
 	dialogs: Writable<DialogState[]>;
+	viewBySpace: Mutable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
 }
 
-export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): Ui => {
+export const toUi = (
+	session: Writable<ClientSession>,
+	initialMobile: boolean,
+	components: {[key: string]: typeof SvelteComponent},
+): Ui => {
 	const initialSession = get(session);
 
 	// TODO would it helpfully simplify things to put these stores on the actual store state?
@@ -116,6 +126,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 	const mobile = writable(initialMobile);
 	const contextmenu = createContextmenuStore();
 	const dialogs = writable<DialogState[]>([]);
+	const viewBySpace = mutable(new WeakMap());
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -229,6 +240,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 	};
 
 	const ui: Ui = {
+		components,
 		account,
 		personas,
 		sessionPersonas,
@@ -538,6 +550,7 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 		expandMarquee,
 		contextmenu,
 		dialogs,
+		viewBySpace,
 		// derived state
 		personaIdSelection,
 		personaSelection,
@@ -580,6 +593,15 @@ export const toUi = (session: Writable<ClientSession>, initialMobile: boolean): 
 				...$spaceIdByCommunitySelection,
 				[community_id]: space_id,
 			}));
+		},
+		ViewSpace: ({params: {space, view}}) => {
+			viewBySpace.update(($viewBySpace) => {
+				if (view) {
+					$viewBySpace.set(space, view);
+				} else {
+					$viewBySpace.delete(space);
+				}
+			});
 		},
 		ToggleMainNav: () => {
 			expandMainNav.update(($expandMainNav) => !$expandMainNav);

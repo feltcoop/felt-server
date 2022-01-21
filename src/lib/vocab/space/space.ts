@@ -33,21 +33,3 @@ export const SpaceSchema = {
 	],
 	additionalProperties: false,
 };
-
-export enum ViewType {
-	Home = 'Home',
-	Room = 'Room',
-	Board = 'Board',
-	Forum = 'Forum',
-	Notes = 'Notes',
-	Voice = 'Voice',
-	Iframe = 'Iframe',
-}
-export const viewTypes: ViewType[] = Object.keys(ViewType) as ViewType[];
-
-// TODO refactor? rename? or how to define this?
-export interface SpaceViewData {
-	type: ViewType;
-	props: SpaceProps;
-}
-export type SpaceProps = any; // TODO generic per type?

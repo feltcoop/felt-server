@@ -2,7 +2,7 @@
 	import '@feltcoop/felt/ui/style.css';
 	import '$lib/ui/style.css';
 	import {setDevmode} from '@feltcoop/felt/ui/devmode.js';
-	import Devmode from '@feltcoop/felt/ui/Devmode.svelte';
+	import DevmodeControls from '@feltcoop/felt/ui/DevmodeControls.svelte';
 	import FeltWindowHost from '@feltcoop/felt/ui/FeltWindowHost.svelte';
 	import {onMount} from 'svelte';
 	import {session} from '$app/stores';
@@ -64,7 +64,7 @@
 			() => dispatch('Ping'),
 		),
 	);
-	const ui = setUi(toUi(session, initialMobileValue));
+	const ui = setUi(toUi(session, initialMobileValue, components));
 
 	const apiClient = toWebsocketApiClient(findService, socket.send); // TODO expose on `app`?
 	// alternative http client:
@@ -196,9 +196,9 @@
 			<slot />
 		{/if}
 	</main>
-	<Devmode {devmode} />
-	<Dialogs {dialogs} {components} />
-	<Contextmenu {contextmenu} {components} />
+	<DevmodeControls {devmode} />
+	<Dialogs {dialogs} />
+	<Contextmenu {contextmenu} />
 	<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 </div>
 

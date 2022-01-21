@@ -1,4 +1,5 @@
 import {randomBool, randomItem} from '@feltcoop/felt/util/random.js';
+import {writable} from 'svelte/store';
 
 import type {EventInfo} from '$lib/vocab/event/event';
 import {
@@ -142,6 +143,12 @@ export const randomEventParams = async (
 					.community_id,
 				space_id: (randomItem(random.spaces) || (await random.space(persona, account, community)))
 					.space_id,
+			};
+		}
+		case 'ViewSpace': {
+			return {
+				space: writable(await random.space(persona, account, community)),
+				view: {type: 'EntityExplorer'},
 			};
 		}
 		// TODO could do an exhaustive typecheck (so it'll be caught by TS, not at runtime)

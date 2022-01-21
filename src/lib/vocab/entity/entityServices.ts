@@ -30,7 +30,7 @@ export const createEntityService: Service<CreateEntityParams, CreateEntityRespon
 		const insertEntitiesResult = await server.db.repos.entity.create(
 			params.actor_id,
 			params.space_id,
-			params.content,
+			params.data,
 		);
 		if (insertEntitiesResult.ok) {
 			return {ok: true, status: 200, value: {entity: insertEntitiesResult.value}}; // TODO API types

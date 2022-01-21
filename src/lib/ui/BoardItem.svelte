@@ -26,9 +26,9 @@
 		EntityContextmenu: {entity},
 	}}
 >
-	<div class="markup">
+	<div class="markup formatted">
 		<p>
-			{$entity.content}
+			{$entity.data.content}
 		</p>
 	</div>
 	<Avatar name={toName($persona)} icon={toIcon($persona)} />
@@ -40,5 +40,8 @@
 		/* TODO experiment with a border color instead of bg */
 		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
 		flex-direction: column;
+	}
+	.markup {
+		padding: var(--spacing_sm);
 	}
 </style>

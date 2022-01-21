@@ -6,8 +6,9 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
-	import ForumItems from '$lib/ui/ForumItems.svelte';
+	import RoomItems from '$lib/ui/RoomItems.svelte';
 	import {getApp} from '$lib/ui/app';
+	import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 
 	const {dispatch, socket} = getApp();
 
@@ -25,10 +26,11 @@
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
+		const data = {type: 'Note', content: content} as NoteEntityData;
 		if (!content) return;
 		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
-			content,
+			data,
 			actor_id: $persona.persona_id,
 		});
 		text = '';
@@ -41,19 +43,19 @@
 	};
 </script>
 
-<div class="forum">
-	<textarea placeholder="> new topic" on:keydown={onKeydown} bind:value={text} />
+<div class="room">
 	<div class="entities">
 		{#if entities}
-			<ForumItems {entities} />
+			<RoomItems {entities} />
 		{:else}
 			<PendingAnimation />
 		{/if}
 	</div>
+	<input placeholder="> chat" on:keydown={onKeydown} bind:value={text} />
 </div>
 
 <style>
-	.forum {
+	.room {
 		display: flex;
 		flex-direction: column;
 		flex: 1;
@@ -64,12 +66,13 @@
 		overflow: auto;
 		flex: 1;
 		display: flex;
-		flex-direction: column;
+		/* makes scrolling start at the bottom */
+		flex-direction: column-reverse;
 	}
-	textarea {
+	input {
 		border-left: none;
 		border-right: none;
-		border-top: none;
+		border-bottom: none;
 		border-radius: 0;
 	}
 </style>

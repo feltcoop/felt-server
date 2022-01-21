@@ -85,7 +85,7 @@ export const events: EventInfo[] = [
 			$id: 'https://felt.social/vocab/SelectCommunityParams.json',
 			type: 'object',
 			properties: {
-				community_id: {anyOf: [{type: 'number'}, {type: 'null'}]},
+				community_id: {type: ['number', 'null']},
 			},
 			required: ['community_id'],
 			additionalProperties: false,
@@ -103,6 +103,21 @@ export const events: EventInfo[] = [
 				space_id: {type: 'number'},
 			},
 			required: ['community_id', 'space_id'],
+			additionalProperties: false,
+		},
+		returns: 'void',
+	},
+	{
+		type: 'ClientEvent',
+		name: 'ViewSpace',
+		params: {
+			$id: 'https://felt.social/vocab/ViewSpaceParams.json',
+			type: 'object',
+			properties: {
+				space: {type: 'object', tsType: 'Readable<Space>'},
+				view: {type: ['object', 'null'], tsType: 'ViewData | null'},
+			},
+			required: ['space', 'view'],
 			additionalProperties: false,
 		},
 		returns: 'void',

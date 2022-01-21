@@ -1,4 +1,4 @@
-import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
+import {type Gen} from '@feltcoop/gro';
 
 import {VITE_DEPLOY_SERVER_HOST, API_SERVER_HOST_PROD, SVELTEKIT_SERVER_HOST} from '$lib/config';
 import {HEARTBEAT_INTERVAL} from '$lib/ui/socket';

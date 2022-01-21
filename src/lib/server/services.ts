@@ -6,9 +6,11 @@ import {
 	readCommunitiesService,
 	createCommunityService,
 	updateCommunitySettingsService,
-	createMembershipService,
 } from '$lib/vocab/community/communityServices';
-import {deleteMembershipService} from '$lib/vocab/membership/membershipServices';
+import {
+	createMembershipService,
+	deleteMembershipService,
+} from '$lib/vocab/membership/membershipServices';
 import {readEntitiesService, createEntityService} from '$lib/vocab/entity/entityServices';
 import {
 	readSpaceService,

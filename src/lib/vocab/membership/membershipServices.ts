@@ -1,6 +1,45 @@
 import type {Service} from '$lib/server/service';
-import type {DeleteMembershipParams, DeleteMembershipResponseResult} from '$lib/app/eventTypes';
-import {DeleteMembership} from '$lib/vocab/membership/membership.events';
+import type {
+	CreateMembershipParams,
+	CreateMembershipResponseResult,
+	DeleteMembershipParams,
+	DeleteMembershipResponseResult,
+} from '$lib/app/eventTypes';
+import {CreateMembership, DeleteMembership} from '$lib/vocab/membership/membership.events';
+
+//Creates a new member relation for a community
+export const createMembershipService: Service<
+	CreateMembershipParams,
+	CreateMembershipResponseResult
+> = {
+	event: CreateMembership,
+	perform: async ({server, params}) => {
+		console.log('[CreateMembership] creating membership', params.persona_id, params.community_id);
+
+		// Personal communities disallow memberships as a hard rule.
+		const communityResult = await server.db.repos.community.findById(params.community_id);
+		if (!communityResult.ok) {
+			return {ok: false, status: 400, message: 'community not found'};
+		}
+		const community = communityResult.value;
+		if (community.type === 'personal') {
+			return {ok: false, status: 403, message: 'personal communities disallow memberships'};
+		}
+
+		// TODO test what happens if the persona doesn't exist
+
+		const createMembershipResult = await server.db.repos.membership.create(
+			params.persona_id,
+			params.community_id,
+		);
+		if (createMembershipResult.ok) {
+			return {ok: true, status: 200, value: {membership: createMembershipResult.value}};
+		} else {
+			console.log('[CreateMembership] error creating membership');
+			return {ok: false, status: 500, message: 'error creating membership'};
+		}
+	},
+};
 
 //deletes a membership of a given persona in a given community
 //TODO after front end data normalization make this use membership_id
