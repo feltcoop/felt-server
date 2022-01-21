@@ -5,24 +5,23 @@ import {MIGRATIONS_DIR} from '$lib/db/migrate.task';
 // TODO handle production data dumps somehow
 
 interface Args {
-	// TODO count = 1
 	checkpoint: boolean; // if `true`, do not run the final migrations that are being tested
+	count: number; // defaults to 1
 }
 
 export const task: Task<Args> = {
 	summary: 'tests the most recent mogration file against the seeded database',
 	run: async ({invokeTask, fs, args}) => {
-		const {checkpoint = false} = args;
+		const {checkpoint = false, count = 1} = args;
 
-		// first move the latest migration temporarily out of `$lib/db/migrations`
-		// and create the database with seeded data
+		// First move the skipped migration files temporarily out of the migration dir
+		// and create the database with seeded data.
 		const TEMP_PATH = 'src/lib/db';
 		const migrationFiles = await fs.readDir(MIGRATIONS_DIR);
-		const latestMigrationFile = migrationFiles[migrationFiles.length - 1];
-		await fs.move(
-			`${MIGRATIONS_DIR}/${latestMigrationFile}`,
-			`${TEMP_PATH}/${latestMigrationFile}`,
-		);
+		const migrationFilesToSkip = migrationFiles.slice(-1 * count);
+		for (const file of migrationFilesToSkip) {
+			await fs.move(`${MIGRATIONS_DIR}/${file}`, `${TEMP_PATH}/${file}`);
+		}
 
 		let err;
 		try {
@@ -31,13 +30,12 @@ export const task: Task<Args> = {
 			err = _err;
 		}
 
-		// move the file back
-		await fs.move(
-			`${TEMP_PATH}/${latestMigrationFile}`,
-			`${MIGRATIONS_DIR}/${latestMigrationFile}`,
-		);
+		// Move the files back.
+		for (const file of migrationFilesToSkip) {
+			await fs.move(`${TEMP_PATH}/${file}`, `${MIGRATIONS_DIR}/${file}`);
+		}
 
-		// throw any error that occurred, but only after moving the file back
+		// Throw any error that occurred, but only after moving the file back.
 		if (err) throw err;
 
 		if (!checkpoint) {
