@@ -24,9 +24,8 @@ import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 export const readCommunitiesService: Service<ReadCommunitiesParams, ReadCommunitiesResponseResult> =
 	{
 		event: ReadCommunities,
-		perform: async ({server, account_id}) => {
-			const {db} = server;
-			const findCommunitiesResult = await db.repos.community.filterByAccount(account_id);
+		perform: async ({repos, account_id}) => {
+			const findCommunitiesResult = await repos.community.filterByAccount(account_id);
 			if (findCommunitiesResult.ok) {
 				return {ok: true, status: 200, value: {communities: findCommunitiesResult.value}};
 			} else {
@@ -39,12 +38,11 @@ export const readCommunitiesService: Service<ReadCommunitiesParams, ReadCommunit
 //Returns a single community object
 export const readCommunityService: Service<ReadCommunityParams, ReadCommunityResponseResult> = {
 	event: ReadCommunity,
-	perform: async ({server, params, account_id}) => {
-		const {db} = server;
+	perform: async ({repos, params, account_id}) => {
 		console.log('[ReadCommunity] account', account_id); // TODO logging
 		console.log('[ReadCommunity] community', params.community_id);
 
-		const findCommunityResult = await db.repos.community.findById(params.community_id);
+		const findCommunityResult = await repos.community.findById(params.community_id);
 		if (findCommunityResult.ok) {
 			return {ok: true, status: 200, value: {community: findCommunityResult.value}};
 		} else {
@@ -63,10 +61,10 @@ export const readCommunityService: Service<ReadCommunityParams, ReadCommunityRes
 export const createCommunityService: Service<CreateCommunityParams, CreateCommunityResponseResult> =
 	{
 		event: CreateCommunity,
-		perform: async ({server, params, account_id}) => {
+		perform: async ({repos, params, account_id}) => {
 			console.log('created community account_id', account_id);
 			// TODO validate that `account_id` is `persona_id`
-			const createCommunityResult = await server.db.repos.community.create(
+			const createCommunityResult = await repos.community.create(
 				'standard',
 				params.name,
 				params.settings || toDefaultCommunitySettings(params.name),
@@ -76,7 +74,7 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 			if (createCommunityResult.ok) {
 				// TODO optimize this to return `createCommunityResult.value` instead of making another db call,
 				// needs to populate members, but we probably want to normalize the data, returning only ids
-				const communityData = await server.db.repos.community.filterByAccount(account_id);
+				const communityData = await repos.community.filterByAccount(account_id);
 				if (communityData.ok) {
 					const {community_id} = createCommunityResult.value;
 					console.log('community_id', community_id);
@@ -112,14 +110,11 @@ export const updateCommunitySettingsService: Service<
 	UpdateCommunitySettingsResponseResult
 > = {
 	event: UpdateCommunitySettings,
-	perform: async ({server, params, account_id}) => {
+	perform: async ({repos, params, account_id}) => {
 		// TODO authorize `account_id` declaratively
 		account_id;
 
-		const result = await server.db.repos.community.updateSettings(
-			params.community_id,
-			params.settings,
-		);
+		const result = await repos.community.updateSettings(params.community_id, params.settings);
 		if (result.ok) {
 			return {ok: true, status: 200, value: null};
 		} else {
@@ -135,10 +130,10 @@ export const createMembershipService: Service<
 	CreateMembershipResponseResult
 > = {
 	event: CreateMembership,
-	perform: async ({server, params}) => {
+	perform: async ({repos, params}) => {
 		console.log('[CreateMembership] creating membership', params.persona_id, params.community_id);
 
-		const createMembershipResult = await server.db.repos.membership.create(
+		const createMembershipResult = await repos.membership.create(
 			params.persona_id,
 			params.community_id,
 		);

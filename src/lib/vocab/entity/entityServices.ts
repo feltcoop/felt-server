@@ -10,9 +10,8 @@ import {ReadEntities, CreateEntity} from '$lib/vocab/entity/entity.events';
 // TODO rename to `getEntities`? `loadEntities`?
 export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesResponseResult> = {
 	event: ReadEntities,
-	perform: async ({server, params}) => {
-		const {db} = server;
-		const findEntitiesResult = await db.repos.entity.filterBySpace(params.space_id);
+	perform: async ({repos, params}) => {
+		const findEntitiesResult = await repos.entity.filterBySpace(params.space_id);
 		if (findEntitiesResult.ok) {
 			return {ok: true, status: 200, value: {entities: findEntitiesResult.value}}; // TODO API types
 		} else {
@@ -24,10 +23,10 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 
 export const createEntityService: Service<CreateEntityParams, CreateEntityResponseResult> = {
 	event: CreateEntity,
-	perform: async ({server, params}) => {
+	perform: async ({repos, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
 		// server.db.repos.account.validatePersona(account_id, actor_id);
-		const insertEntitiesResult = await server.db.repos.entity.create(
+		const insertEntitiesResult = await repos.entity.create(
 			params.actor_id,
 			params.space_id,
 			params.data,
