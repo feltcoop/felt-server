@@ -98,9 +98,11 @@ export const personaRepo = (db: Database) => ({
 		`;
 		return {ok: true, value: data[0]};
 	},
+	// TODO needs to be a subset just for the session, maybe either `community_ids` or `account_id` as a param
+	// TODO this type isn't `Persona`, it's a public subset of fields
 	getAll: async (): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 		const data = await db.sql<Persona[]>`
-			SELECT persona_id, name FROM personas
+			SELECT persona_id, name FROM personas WHERE type = 'account'
 		`;
 		return {ok: true, value: data};
 	},
