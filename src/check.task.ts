@@ -3,7 +3,7 @@ import type {Task} from '@feltcoop/gro';
 import {MIGRATIONS_DIR, toMigrationIndex} from '$lib/db/migration';
 
 export const task: Task = {
-	summary: 'extends the default check task with additional checks for this repo',
+	summary: 'runs gro check with additional checks for this repo',
 	run: async ({invokeTask, fs}) => {
 		// Check migration files are properly numbered.
 		const migrationFiles = (await fs.readDir(MIGRATIONS_DIR)).sort();
