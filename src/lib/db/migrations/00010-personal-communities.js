@@ -1,16 +1,20 @@
 /** @param {import('postgres').Sql<any>} sql */
 export const up = async (sql) => {
+	await sql`
+		CREATE TYPE community_type AS ENUM ('standard', 'personal');
+	`;
+	await sql`
+		CREATE TYPE persona_type AS ENUM ('account', 'community');
+	`;
 	// add `type` column to communities
-	// TODO use enums 'standard' | 'personal'
 	await sql`
 		ALTER TABLE communities
-			ADD type text NOT NULL DEFAULT 'standard';
+			ADD type community_type NOT NULL DEFAULT 'standard';
 	`;
 	// add `type` column to personas
-	// TODO use enums 'account' | 'community'
 	await sql`
 		ALTER TABLE personas
-			ADD type text NOT NULL DEFAULT 'account';
+			ADD type persona_type NOT NULL DEFAULT 'account';
 	`;
 	// add `community_id` column to personas
 	await sql`
