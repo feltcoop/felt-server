@@ -9,7 +9,7 @@ export const CreateEntity: ServiceEventInfo = {
 		properties: {
 			actor_id: {type: 'number'},
 			space_id: {type: 'number'},
-			data: {$ref: 'EntityData.json', tsType: 'EntityData'},
+			data: {type: 'object', tsType: 'EntityData'},
 		},
 		required: ['actor_id', 'space_id', 'data'],
 		additionalProperties: false,

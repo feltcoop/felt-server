@@ -16,7 +16,7 @@ export const EntitySchema = {
 		entity_id: {type: 'number'},
 		actor_id: {type: 'number'},
 		space_id: {type: 'number'},
-		data: {$ref: 'EntityData.json', tsType: 'EntityData'},
+		data: {type: 'object', tsType: 'EntityData'},
 		created: {type: 'object', format: 'date-time', tsType: 'Date'},
 		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 	},

@@ -6,18 +6,6 @@ export interface BaseEntityData {
 	name?: string;
 }
 
-export const EntityDataSchema = {
-	$id: 'https://felt.social/vocab/EntityData.json',
-	type: 'object',
-	properties: {
-		type: {type: 'string'},
-		content: {type: 'string'},
-		name: {type: 'string'},
-	},
-	required: ['type'],
-	additionalProperties: false,
-};
-
 export interface NoteEntityData extends BaseEntityData {
 	type: 'Note';
 	content: string;
