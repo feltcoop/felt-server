@@ -5,7 +5,7 @@ import {MIGRATIONS_DIR} from '$lib/db/migrate.task';
 // TODO handle production data dumps somehow
 
 interface Args {
-	checkpoint: boolean; // if `true`, do not run the final migrations that are being tested
+	checkpoint: boolean; // if `true`, does not run the `count` number of final migrations
 	count: number; // defaults to 1; use in the rare case you need to test more than 1 migration
 }
 
