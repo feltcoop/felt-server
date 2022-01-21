@@ -26,6 +26,8 @@ export const createMembershipService: Service<
 			return {ok: false, status: 403, message: 'personal communities disallow memberships'};
 		}
 
+		// TODO test what happens if the persona doesn't exist
+
 		const createMembershipResult = await server.db.repos.membership.create(
 			params.persona_id,
 			params.community_id,
