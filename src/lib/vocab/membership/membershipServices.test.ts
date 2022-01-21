@@ -25,7 +25,6 @@ test__membershipServices('disallow creating duplicate memberships', async ({serv
 		account_id: account.account_id,
 		params: {community_id: community.community_id, persona_id: persona.persona_id},
 	});
-
 	assert.ok(createMembershipResult.ok);
 
 	let errorMessage;
@@ -57,7 +56,6 @@ test__membershipServices(
 				persona_id: (await random.persona()).persona_id,
 			},
 		});
-
 		assert.ok(!createMembershipResult.ok);
 	},
 );
