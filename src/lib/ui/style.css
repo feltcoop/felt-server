@@ -46,3 +46,13 @@ main {
 		opacity: 1;
 	}
 }
+
+/* TODO likely upstream to Felt */
+/* Formats content to wrap long strings and preserve displayed whitespace. */
+.formatted {
+	overflow: hidden;
+	/* TODO remove this line when `break-spaces` is supported by Firefox Android:
+		https://caniuse.com/mdn-css_properties_white-space_break-spaces */
+	white-space: pre-wrap;
+	white-space: break-spaces;
+}

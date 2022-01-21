@@ -4,7 +4,7 @@
 
 ## `'standard'` communities
 
-Standard communities are the typical kind;
+Standard communities are the default kind;
 you can create them, invite other personas, and all the rest.
 
 ## `'personal'` communities

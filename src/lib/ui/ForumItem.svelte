@@ -26,7 +26,7 @@
 		EntityContextmenu: $entity.entity_id,
 	}}
 >
-	<div class="content">
+	<div class="markup formatted">
 		{$entity.content}
 	</div>
 	<Avatar name={toName($persona)} icon={toIcon($persona)} />
@@ -40,7 +40,9 @@
 		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
 		flex-direction: column;
 	}
-	.content {
+
+	.markup {
 		font-size: var(--font_size_lg);
+		padding: 0 0 0 var(--spacing_md);
 	}
 </style>

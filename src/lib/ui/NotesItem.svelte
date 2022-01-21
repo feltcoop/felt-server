@@ -19,7 +19,9 @@
 		EntityContextmenu: $entity.entity_id,
 	}}
 >
-	{$entity.content}
+	<div class="markup formatted">
+		{$entity.content}
+	</div>
 </li>
 
 <style>
@@ -28,7 +30,6 @@
 		border: var(--border);
 		max-width: var(--column_width_min);
 		margin: 10px;
-		padding: 10px;
 		background-color: var(--input_bg_color);
 	}
 </style>

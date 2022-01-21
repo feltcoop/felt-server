@@ -18,7 +18,7 @@
 		<EntityIcon {name} {icon} {type} />
 	{/if}
 	{#if showName}
-		<span class="actor">{name}</span>
+		<span class="actor" class:has-icon={showIcon}>{name}</span>
 	{/if}
 </div>
 
@@ -28,7 +28,9 @@
 		align-items: center;
 	}
 	.actor {
-		padding-left: var(--spacing_md);
 		font-weight: var(--font_weight_4);
+	}
+	.has-icon {
+		padding-left: var(--spacing_sm);
 	}
 </style>

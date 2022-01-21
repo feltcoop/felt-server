@@ -26,7 +26,7 @@
 		EntityContextmenu: $entity.entity_id,
 	}}
 >
-	<div class="markup">
+	<div class="markup formatted">
 		<p>
 			{$entity.content}
 		</p>
@@ -40,5 +40,8 @@
 		/* TODO experiment with a border color instead of bg */
 		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
 		flex-direction: column;
+	}
+	.markup {
+		padding: var(--spacing_sm);
 	}
 </style>

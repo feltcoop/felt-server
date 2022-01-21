@@ -28,9 +28,12 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		EntityContextmenu: $entity.entity_id,
 	}}
 >
-	<div class="content">
+	<div class="timestamp">
+		<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
+	</div>
+	<div class="markup formatted">
 		<div class="timestamp">
-			<Avatar name={toName($persona)} icon={toIcon($persona)} />
+			<Avatar name={toName($persona)} icon={toIcon($persona)} showIcon={false} />
 			{$entity.created}
 		</div>
 		<div>
@@ -41,6 +44,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 
 <style>
 	li {
+		align-items: flex-start;
 		padding: var(--spacing_xs);
 		/* TODO experiment with a border color instead of bg */
 		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
@@ -49,7 +53,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		display: flex;
 		align-items: center;
 	}
-	.content {
-		padding-left: var(--spacing_sm);
+	.markup {
+		padding: 0 0 0 var(--spacing_md);
 	}
 </style>
