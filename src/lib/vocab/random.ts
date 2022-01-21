@@ -13,6 +13,7 @@ import type {
 	CreateMembershipParams,
 } from '$lib/app/eventTypes';
 import type {Database} from '$lib/db/Database';
+import type {EntityData} from '$lib/vocab/entity/entityData';
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = () => Math.random().toString().slice(2);
@@ -22,7 +23,7 @@ export const randomPersonaName = randomString;
 export const randomCommunnityName = randomString;
 export const randomSpaceUrl = randomString;
 export const randomSpaceName = randomString;
-export const randomData = (): any => ({type: 'Note', content: randomString()});
+export const randomEntityData = (): EntityData => ({type: 'Note', content: randomString()});
 export const randomAccountParams = (): CreateAccountParams => ({
 	name: randomAccountName(),
 	password: randomPassword(),
@@ -55,7 +56,7 @@ export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 export const randomEntityParams = (actor_id: number, space_id: number): CreateEntityParams => ({
 	actor_id,
 	space_id,
-	data: randomData(),
+	data: randomEntityData(),
 });
 
 // TODO maybe compute in relation to `RandomVocabContext`
