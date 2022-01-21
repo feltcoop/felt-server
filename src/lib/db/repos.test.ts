@@ -99,8 +99,8 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 
 	const entityContent1 = 'this is entity 1';
 	const entityContent2 = 'entity: 2';
-	const data1 = {type: 'Note', partOf: null, title: '', content: entityContent1};
-	const data2 = {type: 'Note', partOf: null, title: '', content: entityContent2};
+	const data1 = {type: 'Note', content: entityContent1};
+	const data2 = {type: 'Note', content: entityContent2};
 	const entity1 = await unwrapEntity(
 		server.db.repos.entity.create(persona.persona_id, space.space_id, data1),
 	);

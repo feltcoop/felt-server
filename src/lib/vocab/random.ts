@@ -22,7 +22,7 @@ export const randomPersonaName = randomString;
 export const randomCommunnityName = randomString;
 export const randomSpaceUrl = randomString;
 export const randomSpaceName = randomString;
-export const randomData = (): any => ({type: 'Post', partOf: null, content: randomString()});
+export const randomData = (): any => ({type: 'Note', content: randomString()});
 export const randomAccountParams = (): CreateAccountParams => ({
 	name: randomAccountName(),
 	password: randomPassword(),

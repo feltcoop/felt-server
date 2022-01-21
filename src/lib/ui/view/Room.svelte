@@ -25,7 +25,7 @@
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
-		const data = {type: 'Post', partOf: null, content: content};
+		const data = {type: 'Note', content: content};
 		if (!content) return;
 		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
