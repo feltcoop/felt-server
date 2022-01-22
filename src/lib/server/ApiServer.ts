@@ -18,8 +18,7 @@ import {websocketHandler} from '$lib/server/websocketHandler';
 
 const log = new Logger([blue('[ApiServer]')]);
 
-// TODO not sure what these types should look like in their final form,
-// there's currently some redundancy and weirdness
+// similar but not identical to `WebsocketServerRequest`
 export interface ApiServerRequest extends PolkaRequest, CookieSessionRequest {
 	account_id?: number;
 }

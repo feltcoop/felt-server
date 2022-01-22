@@ -8,6 +8,7 @@ import type StrictEventEmitter from 'strict-event-emitter-types';
 import type {CookieSessionIncomingMessage} from '$lib/session/cookieSession';
 import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 
+// similar but not identical to `ApiServerRequest`
 export interface WebsocketServerRequest extends CookieSessionIncomingMessage {
 	account_id?: number;
 }
