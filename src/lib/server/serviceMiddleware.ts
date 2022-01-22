@@ -63,6 +63,12 @@ export const toServiceMiddleware =
 				params,
 				account_id: req.account_id,
 			});
+			if ('effects' in result) {
+				delete result.effects; // TODO this is awkward; maybe wrap the whole `result` in an object?
+				for (const effect of result.effects) {
+					await effect({server, req});
+				}
+			}
 
 			if (!result.ok) {
 				send(res, result.status || 500, {message: result.message});

@@ -30,7 +30,8 @@ test__services('perform services', async ({db}) => {
 		const result = await service.perform({
 			repos: db.repos,
 			params,
-			account_id: account.account_id,
+			// TODO hacky -- how to structure this?
+			account_id: service.event.name === 'LoginAccount' ? (null as any) : account.account_id,
 		});
 		if (!result.ok || !validateSchema(service.event.response!)(result.value)) {
 			console.error(red(`failed to validate service response: ${service.event.name}`), result);

@@ -262,8 +262,7 @@ export const toUi = (
 			}
 		},
 		Ping: ({invoke}) => invoke(),
-		LoginAccount: async ({params, invoke}) => {
-			console.log('[LogIn] logging in as', params.username); // TODO logging
+		LoginAccount: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			session.set(result.value.session);

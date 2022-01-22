@@ -43,7 +43,6 @@ export const LogoutAccount: ServiceEventInfo = {
 	response: {
 		$id: 'https://felt.social/vocab/LogoutAccountResponse.json',
 		type: 'null',
-		tsType: 'void',
 	},
 	returns: 'Promise<LogoutAccountResponseResult>',
 	route: {

@@ -70,7 +70,7 @@ export interface LoginAccountResponse {
 export type LoginAccountResponseResult = ApiResult<LoginAccountResponse>;
 
 export type LogoutAccountParams = void;
-export type LogoutAccountResponse = void;
+export type LogoutAccountResponse = null;
 export type LogoutAccountResponseResult = ApiResult<LogoutAccountResponse>;
 
 export interface CreateCommunityParams {

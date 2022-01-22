@@ -8,9 +8,9 @@
 
 	const {dispatch} = getApp();
 
-	let accountName = '';
+	let username = '';
 	let password = '';
-	let accountNameEl: HTMLInputElement;
+	let usernameEl: HTMLInputElement;
 	let passwordEl: HTMLInputElement;
 	let buttonEl: HTMLButtonElement;
 	let errorMessage: string | undefined;
@@ -18,10 +18,10 @@
 
 	$: disabled = !!submitting;
 
-	const doLogIn = async () => {
+	const login = async () => {
 		if (submitting) return;
-		if (!accountName) {
-			accountNameEl.focus();
+		if (!username) {
+			usernameEl.focus();
 			errorMessage = 'please enter an account name';
 			return;
 		}
@@ -33,8 +33,8 @@
 		buttonEl.focus();
 		submitting = true;
 		errorMessage = '';
-		console.log('logging in with accountName', accountName);
-		const result = await dispatch('LogIn', {accountName, password});
+		console.log('logging in with username', username);
+		const result = await dispatch('LoginAccount', {username, password});
 		submitting = false;
 		if (!result.ok) {
 			errorMessage = result.message;
@@ -45,7 +45,7 @@
 
 	const onKeypress = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			doLogIn();
+			login();
 		}
 	};
 </script>
@@ -55,8 +55,8 @@
 </div>
 <form>
 	<input
-		bind:this={accountNameEl}
-		bind:value={accountName}
+		bind:this={usernameEl}
+		bind:value={username}
 		on:keypress={onKeypress}
 		{disabled}
 		placeholder="account name"
@@ -70,7 +70,7 @@
 		{disabled}
 		placeholder="password"
 	/>
-	<PendingButton pending={!!submitting} bind:el={buttonEl} type="button" on:click={doLogIn}>
+	<PendingButton pending={!!submitting} bind:el={buttonEl} type="button" on:click={login}>
 		log in
 	</PendingButton>
 	<div class:error={!!errorMessage}>{errorMessage || '💚'}</div>

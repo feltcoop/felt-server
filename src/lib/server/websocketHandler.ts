@@ -60,7 +60,17 @@ export const websocketHandler: WebsocketHandler = async (
 			message: 'invalid params: ' + toValidationErrorMessage(validateParams.errors![0]),
 		};
 	} else {
-		result = await service.perform({repos: server.db.repos, params, account_id});
+		result = await service.perform({
+			repos: server.db.repos,
+			params,
+			account_id,
+		});
+		if ('effects' in result) {
+			delete result.effects; // TODO this is awkward; maybe wrap the whole `result` in an object?
+			for (const effect of result.effects) {
+				await effect({server, req: null});
+			}
+		}
 	}
 
 	const responseMessage: JsonRpcResponse = {
