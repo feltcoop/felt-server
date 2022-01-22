@@ -20,14 +20,14 @@ const log = new Logger([blue('[ApiServer]')]);
 
 // TODO not sure what these types should look like in their final form,
 // there's currently some redundancy and weirdness
-export interface Request extends PolkaRequest, CookieSessionRequest {
+export interface ApiServerRequest extends PolkaRequest, CookieSessionRequest {
 	account_id?: number;
 }
-export interface Middleware extends PolkaMiddleware<Request> {}
+export interface Middleware extends PolkaMiddleware<ApiServerRequest> {}
 
 export interface Options {
 	server: HttpServer | HttpsServer;
-	app: Polka<Request>;
+	app: Polka<ApiServerRequest>;
 	websocketServer: WebsocketServer;
 	port: number;
 	db: Database;
@@ -36,7 +36,7 @@ export interface Options {
 
 export class ApiServer {
 	readonly server: HttpServer | HttpsServer;
-	readonly app: Polka<Request>;
+	readonly app: Polka<ApiServerRequest>;
 	readonly websocketServer: WebsocketServer;
 	readonly port: number;
 	readonly db: Database;

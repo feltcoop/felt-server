@@ -8,9 +8,18 @@ import type StrictEventEmitter from 'strict-event-emitter-types';
 import type {CookieSessionIncomingMessage} from '$lib/session/cookieSession';
 import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 
+export interface WebsocketServerRequest extends CookieSessionIncomingMessage {
+	account_id?: number;
+}
+
 type WebsocketServerEmitter = StrictEventEmitter<EventEmitter, WebsocketServerEvents>;
 interface WebsocketServerEvents {
-	message: (socket: WebSocket, message: Data, account_id: number) => void;
+	message: (
+		socket: WebSocket,
+		message: Data,
+		account_id: number,
+		req: WebsocketServerRequest,
+	) => void;
 }
 
 const cookieSessionMiddleware = toCookieSessionMiddleware();
@@ -27,7 +36,7 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 
 	async init(): Promise<void> {
 		const {wss} = this;
-		wss.on('connection', (socket, req: CookieSessionIncomingMessage) => {
+		wss.on('connection', (socket, req: WebsocketServerRequest) => {
 			console.log('[wss] connection req.url', req.url, wss.clients.size);
 			console.log('[wss] connection req.headers', req.headers);
 			cookieSessionMiddleware(req, {}, () => {});
@@ -42,7 +51,7 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 			//to prevent actions on other actors resources?
 			socket.on('message', async (data, isBinary) => {
 				const message = isBinary ? data : data.toString();
-				this.emit('message', socket, message, account_id);
+				this.emit('message', socket, message, account_id, req);
 			});
 			socket.on('open', () => {
 				console.log('[wss] open');

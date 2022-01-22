@@ -11,7 +11,7 @@ import type {
 
 export const loginAccountService: Service<LoginAccountParams, LoginAccountResponseResult> = {
 	event: LoginAccount,
-	perform: async ({repos, params, account_id}) => {
+	perform: async ({repos, params, account_id, effects}) => {
 		const {username, password} = params;
 		console.log('[loginMiddleware] req.body', username); // TODO logging
 		// TODO formalize and automate validation and normalization
@@ -53,30 +53,18 @@ export const loginAccountService: Service<LoginAccountParams, LoginAccountRespon
 		const clientSessionResult = await repos.session.loadClientSession(account.account_id);
 
 		if (clientSessionResult.ok) {
+			effects.login(account.account_id);
 			return {
 				ok: true,
 				status: 200,
 				value: {session: clientSessionResult.value},
-				effects: [
-					// login
-					({req}) => {
-						if (!req) return;
-						req.session.account_id = account.account_id;
-					},
-				],
 			};
 		} else {
+			effects.logout();
 			return {
 				ok: false,
 				status: 500,
 				message: 'failed to load client session',
-				effects: [
-					// logout
-					({req}) => {
-						if (!req) return;
-						req.session = null!;
-					},
-				],
 			};
 		}
 	},
@@ -84,20 +72,12 @@ export const loginAccountService: Service<LoginAccountParams, LoginAccountRespon
 
 export const logoutAccountService: Service<LogoutAccountParams, LogoutAccountResponseResult> = {
 	event: LogoutAccount,
-	perform: async () => {
+	perform: async ({effects}) => {
+		effects.logout();
 		return {
 			ok: true,
 			status: 200,
 			value: null,
-			effects: [
-				// logout
-				({req}) => {
-					if (!req) return;
-					console.log('[logoutMiddleware] account', req.account_id); // TODO logging
-					req.account_id = undefined!;
-					req.session = null!;
-				},
-			],
 		};
 	},
 };

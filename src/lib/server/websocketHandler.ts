@@ -4,9 +4,17 @@ import {red} from '@feltcoop/felt/util/terminal.js';
 import {type JsonRpcResponse, parseJsonRpcRequest} from '$lib/util/jsonRpc';
 import type {ApiServer} from '$lib/server/ApiServer';
 import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
+import {ServiceEffects} from '$lib/server/ServiceEffects';
+import type {WebsocketServerRequest} from '$lib/server/WebsocketServer';
 
 export interface WebsocketHandler {
-	(server: ApiServer, socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
+	(
+		server: ApiServer,
+		socket: ws,
+		rawMessage: ws.Data,
+		account_id: number,
+		req: WebsocketServerRequest,
+	): Promise<void>;
 }
 
 //TODO clean this up
@@ -17,10 +25,11 @@ export interface BroadcastMessage {
 }
 
 export const websocketHandler: WebsocketHandler = async (
-	server: ApiServer,
-	socket: ws,
-	messageData: ws.Data,
-	account_id: number,
+	server,
+	socket,
+	messageData,
+	account_id,
+	req,
 ) => {
 	if (typeof messageData !== 'string') {
 		console.error(
@@ -64,14 +73,8 @@ export const websocketHandler: WebsocketHandler = async (
 			repos: server.db.repos,
 			params,
 			account_id,
+			effects: new ServiceEffects(req),
 		});
-		if ('effects' in result) {
-			const {effects} = result;
-			delete result.effects; // TODO this is awkward; maybe wrap the whole `result` in an object?
-			for (const effect of effects) {
-				await effect({server, req: null});
-			}
-		}
 	}
 
 	const responseMessage: JsonRpcResponse = {

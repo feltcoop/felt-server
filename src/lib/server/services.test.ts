@@ -7,6 +7,7 @@ import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {services} from '$lib/server/services';
 import {toRandomVocabContext} from '$lib/vocab/random';
 import {randomEventParams} from '$lib/server/random';
+import {ServiceEffectsMock} from '$lib/server/ServiceEffectsMock';
 
 /* test__services */
 const test__services = suite<TestDbContext>('services');
@@ -32,6 +33,7 @@ test__services('perform services', async ({db}) => {
 			params,
 			// TODO hacky -- how to structure this?
 			account_id: service.event.name === 'LoginAccount' ? (null as any) : account.account_id,
+			effects: new ServiceEffectsMock(),
 		});
 		if (!result.ok || !validateSchema(service.event.response!)(result.value)) {
 			console.error(red(`failed to validate service response: ${service.event.name}`), result);

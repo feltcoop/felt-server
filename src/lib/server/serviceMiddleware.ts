@@ -4,6 +4,7 @@ import {red} from '@feltcoop/felt/util/terminal.js';
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Service} from '$lib/server/service';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
+import {ServiceEffects} from '$lib/server/ServiceEffects';
 
 // Wraps a `Service` in an http `Middleware`
 export const toServiceMiddleware =
@@ -62,14 +63,8 @@ export const toServiceMiddleware =
 				repos: server.db.repos,
 				params,
 				account_id: req.account_id,
+				effects: new ServiceEffects(req),
 			});
-			if ('effects' in result) {
-				const {effects} = result;
-				delete result.effects; // TODO this is awkward; maybe wrap the whole `result` in an object?
-				for (const effect of effects) {
-					await effect({server, req});
-				}
-			}
 
 			if (!result.ok) {
 				send(res, result.status || 500, {message: result.message});

@@ -5,6 +5,7 @@ import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {toRandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {deleteSpaceService} from '$lib/vocab/space/spaceServices';
+import {ServiceEffectsMock} from '$lib/server/ServiceEffectsMock';
 
 /* test__spaceServices */
 const test__spaceServices = suite<TestDbContext & TestAppContext>('spaceServices');
@@ -22,6 +23,7 @@ test__spaceServices('delete a space in multiple communities', async ({db}) => {
 		repos: db.repos,
 		params: {space_id: space.space_id},
 		account_id: account.account_id,
+		effects: new ServiceEffectsMock(),
 	});
 	assert.ok(deleteResult.ok);
 
