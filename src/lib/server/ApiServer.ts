@@ -8,8 +8,6 @@ import {promisify} from 'util';
 
 import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.js';
 import {toAuthorizationMiddleware} from '$lib/session/authorizationMiddleware.js';
-import {toLoginMiddleware} from '$lib/session/loginMiddleware.js';
-import {toLogoutMiddleware} from '$lib/session/logoutMiddleware.js';
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
@@ -83,12 +81,9 @@ export class ApiServer {
 			})
 			.use(toCookieSessionMiddleware())
 			.use(toAuthenticationMiddleware(this))
-			// API
-			.post('/api/v1/login', toLoginMiddleware(this)) // TODO wait shouldn't this fail in Polka's system??
 			// TODO we want to support unauthenticated routes so users can publish public content,
 			// but for now it's simple and secure to just require an authenticated account for everything
-			.use('/api', toAuthorizationMiddleware(this))
-			.post('/api/v1/logout', toLogoutMiddleware(this));
+			.use('/api', toAuthorizationMiddleware(this));
 
 		// Register services as http routes.
 		for (const service of this.services.values()) {

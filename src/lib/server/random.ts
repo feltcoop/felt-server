@@ -27,13 +27,13 @@ export const randomEventParams = async (
 		case 'Ping': {
 			return null;
 		}
-		case 'LogIn': {
+		case 'LoginAccount': {
 			return {
-				accountName: randomString(),
+				username: randomString(),
 				password: randomString(),
 			};
 		}
-		case 'LogOut': {
+		case 'LogoutAccount': {
 			return null;
 		}
 		case 'CreateCommunity': {
