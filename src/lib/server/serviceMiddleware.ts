@@ -64,8 +64,9 @@ export const toServiceMiddleware =
 				account_id: req.account_id,
 			});
 			if ('effects' in result) {
+				const {effects} = result;
 				delete result.effects; // TODO this is awkward; maybe wrap the whole `result` in an object?
-				for (const effect of result.effects) {
+				for (const effect of effects) {
 					await effect({server, req});
 				}
 			}
