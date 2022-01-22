@@ -265,9 +265,8 @@ export const toUi = (
 		LoginAccount: async ({params, invoke}) => {
 			console.log('[LogIn] logging in as', params.username); // TODO logging
 			const result = await invoke();
-			if (result.ok) {
-				session.set(result.value.session);
-			}
+			if (!result.ok) return result;
+			session.set(result.value.session);
 			return result;
 		},
 		LogoutAccount: ({invoke}) => invoke(),
