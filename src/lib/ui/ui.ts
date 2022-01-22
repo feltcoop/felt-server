@@ -261,16 +261,16 @@ export const toUi = (
 				console.warn('[ui] ignoring unhandled event', ctx);
 			}
 		},
-		Ping: async ({invoke}) => invoke(),
+		Ping: ({invoke}) => invoke(),
 		LoginAccount: async ({params, invoke}) => {
 			console.log('[LogIn] logging in as', params.username); // TODO logging
 			const result = await invoke();
-			session.set(responseData.session);
-			return {ok: true, status: response.status, value: responseData}; // TODO doesn't this have other status codes?
+			if (result.ok) {
+				session.set(result.value.session);
+			}
+			return result;
 		},
-		LogoutAccount: async ({invoke}) => {
-			await invoke();
-		},
+		LogoutAccount: ({invoke}) => invoke(),
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
