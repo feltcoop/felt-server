@@ -1,4 +1,4 @@
-import type {Gen} from '@feltcoop/gro/dist/gen/gen.js';
+import {type Gen} from '@feltcoop/gro';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
 import {resolve, basename} from 'path';
 
@@ -28,6 +28,8 @@ import type {Persona} from '$lib/vocab/persona/persona';
 import type {Membership} from '$lib/vocab/membership/membership';
 import type {Space} from '$lib/vocab/space/space';
 import type {Entity} from '$lib/vocab/entity/entity';
+import type {EntityData} from '$lib/vocab/entity/entityData';
+import type {ViewData} from '$lib/vocab/view/view';
 import type {DispatchContext} from '$lib/app/dispatch';
 
 export interface EventParamsByName {

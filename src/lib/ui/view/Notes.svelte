@@ -6,8 +6,9 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
-	import RoomItems from '$lib/ui/RoomItems.svelte';
+	import NoteItems from '$lib/ui/NotesItems.svelte';
 	import {getApp} from '$lib/ui/app';
+	import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 
 	const {dispatch, socket} = getApp();
 
@@ -25,10 +26,11 @@
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
+		const data = {type: 'Note', content: content} as NoteEntityData;
 		if (!content) return;
 		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
-			content,
+			data,
 			actor_id: $persona.persona_id,
 		});
 		text = '';
@@ -41,36 +43,34 @@
 	};
 </script>
 
-<div class="room">
+<div class="notes">
+	<textarea placeholder="> note" on:keydown={onKeydown} bind:value={text} />
 	<div class="entities">
 		{#if entities}
-			<RoomItems {entities} />
+			<NoteItems {entities} />
 		{:else}
 			<PendingAnimation />
 		{/if}
 	</div>
-	<input placeholder="> chat" on:keydown={onKeydown} bind:value={text} />
 </div>
 
 <style>
-	.room {
+	.notes {
 		display: flex;
 		flex-direction: column;
 		flex: 1;
 		overflow: hidden; /* make the content scroll */
 	}
-	.entities {
-		max-width: var(--column_width);
-		overflow: auto;
-		flex: 1;
-		display: flex;
-		/* makes scrolling start at the bottom */
-		flex-direction: column-reverse;
-	}
-	input {
+	textarea {
 		border-left: none;
 		border-right: none;
-		border-bottom: none;
+		border-top: none;
 		border-radius: 0;
+	}
+	.entities {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		overflow: auto;
 	}
 </style>

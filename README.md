@@ -7,7 +7,7 @@
 
 > **work in progress**: pre-pre-alpha
 
-For more in depth development docs, please see [Contributing](/src/lib/docs/contributing.md)
+For more in depth development docs, please see [Contributing](/src/docs/contributing.md)
 
 For build & deployment docs, please see the [Infra README](/src/infra/README.md)
 
@@ -32,7 +32,7 @@ gro test
 ```
 
 > learn more [about Gro](https://github.com/feltcoop/gro) and
-> [setting up a dev environment](/src/lib/docs/contributing.md)
+> [setting up a dev environment](/src/docs/contributing.md)
 
 ## credits 🐢<sub>🐢</sub><sub><sub>🐢</sub></sub>
 

@@ -35,6 +35,8 @@ export const setupServer = async (context: TestServerContext): Promise<void> => 
 	await context.server.init();
 };
 
+// TODO make this check the db's state before and after
+// (if needed something like a `context.meta` key)
 export const teardownServer = async (context: TestServerContext): Promise<void> => {
 	console.log('teardown server!!!');
 	const {server} = context;

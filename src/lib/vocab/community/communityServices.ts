@@ -8,6 +8,8 @@ import type {
 	ReadCommunitiesResponseResult,
 	UpdateCommunitySettingsParams,
 	UpdateCommunitySettingsResponseResult,
+	CreateMembershipParams,
+	CreateMembershipResponseResult,
 } from '$lib/app/eventTypes';
 import {
 	CreateCommunity,
@@ -15,7 +17,6 @@ import {
 	ReadCommunity,
 	UpdateCommunitySettings,
 } from '$lib/vocab/community/community.events';
-import type {CreateMembershipParams, CreateMembershipResponseResult} from '$lib/app/eventTypes';
 import {CreateMembership} from '$lib/vocab/membership/membership.events';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 
@@ -66,9 +67,10 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 			console.log('created community account_id', account_id);
 			// TODO validate that `account_id` is `persona_id`
 			const createCommunityResult = await server.db.repos.community.create(
+				'standard',
 				params.name,
-				params.persona_id,
 				params.settings || toDefaultCommunitySettings(params.name),
+				params.persona_id,
 			);
 			console.log('createCommunityResult', createCommunityResult);
 			if (createCommunityResult.ok) {

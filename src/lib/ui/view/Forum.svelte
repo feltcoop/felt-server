@@ -6,8 +6,9 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
-	import BoardItems from '$lib/ui/BoardItems.svelte';
+	import ForumItems from '$lib/ui/ForumItems.svelte';
 	import {getApp} from '$lib/ui/app';
+	import type {EntityData} from '$lib/vocab/entity/entityData';
 
 	const {dispatch, socket} = getApp();
 
@@ -25,10 +26,11 @@
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
+		const data = {type: 'Note', content: content} as EntityData;
 		if (!content) return;
 		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
-			content,
+			data,
 			actor_id: $persona.persona_id,
 		});
 		text = '';
@@ -41,11 +43,11 @@
 	};
 </script>
 
-<div class="board">
-	<textarea placeholder="> post" on:keydown={onKeydown} bind:value={text} />
+<div class="forum">
+	<textarea placeholder="> new topic" on:keydown={onKeydown} bind:value={text} />
 	<div class="entities">
 		{#if entities}
-			<BoardItems {entities} />
+			<ForumItems {entities} />
 		{:else}
 			<PendingAnimation />
 		{/if}
@@ -53,7 +55,7 @@
 </div>
 
 <style>
-	.board {
+	.forum {
 		display: flex;
 		flex-direction: column;
 		flex: 1;

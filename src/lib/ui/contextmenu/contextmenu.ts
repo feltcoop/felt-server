@@ -70,7 +70,7 @@ const contextmenuAction = (el: HTMLElement | SVGElement, params: any): any => {
 export const onContextmenu =
 	(contextmenu: ContextmenuStore) =>
 	(e: MouseEvent, excludeEl?: HTMLElement): void | false => {
-		if (e.ctrlKey) return; // defer control!
+		if (e.shiftKey) return;
 		const target = e.target as HTMLElement;
 		if (isEditable(target) || excludeEl?.contains(target)) return;
 		const items = queryContextmenuItems(target);

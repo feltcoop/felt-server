@@ -6,18 +6,34 @@ import type {ErrorResponse} from '$lib/util/error';
 
 export const communityRepo = (db: Database) => ({
 	create: async (
+		type: Community['type'],
 		name: string,
-		persona_id: number,
 		settings: Community['settings'],
-	): Promise<Result<{value: Community}>> => {
+		persona_id: number,
+	): Promise<Result<{value: Community}, ErrorResponse>> => {
 		const data = await db.sql<Community[]>`
-			INSERT INTO communities (name, settings) VALUES (
-				${name}, ${db.sql.json(settings)}
+			INSERT INTO communities (type, name, settings) VALUES (
+				${type}, ${name}, ${db.sql.json(settings)}
 			) RETURNING *
 		`;
-		console.log('[db] created community', data, {persona_id});
+		console.log('[db] created community', data[0], {persona_id});
 		const community = data[0];
-		const community_id = community.community_id;
+		const {community_id} = community;
+		// TODO move this code into the service layer
+		if (type === 'standard') {
+			const personaResult = await db.repos.persona.create(
+				'community',
+				community.name,
+				null,
+				community_id,
+			);
+			if (!personaResult.ok) return personaResult;
+			const membershipResult = await db.repos.membership.create(
+				personaResult.value.persona.persona_id,
+				community_id,
+			);
+			if (!membershipResult.ok) return membershipResult;
+		}
 		// TODO more robust error handling or condense into single query
 		const membershipResult = await db.repos.membership.create(persona_id, community_id);
 		if (!membershipResult.ok) return membershipResult;
@@ -31,8 +47,8 @@ export const communityRepo = (db: Database) => ({
 	): Promise<Result<{value: Community}, {type: 'no_community_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for community id: ${community_id}`);
 		const data = await db.sql<Community[]>`
-			SELECT community_id, name, settings, created, updated
-			FROM communities WHERE community_id=${community_id}
+			SELECT community_id, type, name, settings, created, updated
+				FROM communities WHERE community_id=${community_id}
 		`;
 		// console.log('[db.findById]', data);
 		if (data.length) {
@@ -44,12 +60,22 @@ export const communityRepo = (db: Database) => ({
 			message: 'no community found',
 		};
 	},
+	findByName: async (
+		name: string,
+	): Promise<Result<{value: Community | undefined}, ErrorResponse>> => {
+		console.log('[communityRepo] finding by name', name);
+		const data = await db.sql<Community[]>`
+			SELECT community_id, type, name, settings, created, updated
+				FROM communities WHERE LOWER(name) = LOWER(${name})
+		`;
+		return {ok: true, value: data[0]};
+	},
 	filterByAccount: async (
 		account_id: number,
 	): Promise<Result<{value: Community[]}, ErrorResponse>> => {
 		console.log(`[db] preparing to query for communities & spaces persona: ${account_id}`);
 		const data = await db.sql<Community[]>`
-			SELECT c.community_id, c.name, c.settings, c.created, c.updated,
+			SELECT c.community_id, c.type, c.name, c.settings, c.created, c.updated,
 				(
 					SELECT array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
 					FROM (

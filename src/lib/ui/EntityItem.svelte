@@ -2,7 +2,6 @@
 	import type {Readable} from 'svelte/store';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
-	import {type NoteEntityData} from '$lib/vocab/entity/entityData';
 	import {getApp} from '$lib/ui/app';
 
 	const {
@@ -10,7 +9,6 @@
 	} = getApp();
 
 	export let entity: Readable<Entity>;
-	$: data = $entity.data as NoteEntityData;
 
 	$: persona = findPersonaById($entity.actor_id);
 </script>
@@ -21,17 +19,16 @@
 		EntityContextmenu: $entity.entity_id,
 	}}
 >
-	<div class="markup formatted">
-		{data.content}
-	</div>
+	<pre>{JSON.stringify($entity, null, 2)}</pre>
 </li>
 
 <style>
 	li {
 		padding: var(--spacing_sm);
 		border: var(--border);
-		max-width: var(--column_width_min);
 		margin: 10px;
+		padding: 10px;
 		background-color: var(--input_bg_color);
+		overflow: auto;
 	}
 </style>

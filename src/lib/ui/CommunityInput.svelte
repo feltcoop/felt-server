@@ -25,14 +25,14 @@
 		const result = await dispatch('CreateCommunity', {name, persona_id: $persona.persona_id});
 		pending = false;
 		errorMessage = result.ok ? null : result.message;
+		name = '';
+		done?.();
 	};
 
 	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
 			e.preventDefault();
 			await create();
-			name = '';
-			done?.();
 		}
 	};
 </script>
