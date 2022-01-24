@@ -4,8 +4,8 @@ export const MIGRATIONS_DIR = 'src/lib/db/migrations';
 
 /**
  * Extracts the numerical index of the given migraiton file name,
- * of the form `00000-some-migration-name.ext`,
- * so `00011-some-migration-name.ext` returns `11`.
+ * of the form `'00000-some-migration-name.ext'`,
+ * so `'00011-some-migration-name.ext'` returns `11`.
  * Handles any number of prefixed zeros.
  * @param file
  */
