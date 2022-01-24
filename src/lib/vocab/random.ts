@@ -13,6 +13,7 @@ import type {
 	CreateMembershipParams,
 } from '$lib/app/eventTypes';
 import type {Database} from '$lib/db/Database';
+import type {EntityData} from '$lib/vocab/entity/entityData';
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = () => Math.random().toString().slice(2);
@@ -22,7 +23,7 @@ export const randomPersonaName = randomString;
 export const randomCommunnityName = randomString;
 export const randomSpaceUrl = randomString;
 export const randomSpaceName = randomString;
-export const randomContent = randomString;
+export const randomEntityData = (): EntityData => ({type: 'Note', content: randomString()});
 export const randomAccountParams = (): CreateAccountParams => ({
 	name: randomAccountName(),
 	password: randomPassword(),
@@ -47,7 +48,7 @@ export const randomCommunityParams = (persona_id: number): CreateCommunityParams
 };
 export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 	community_id,
-	content: randomContent(),
+	content: randomString(),
 	media_type: 'text/plain',
 	name: randomSpaceName(),
 	url: randomSpaceUrl(),
@@ -55,7 +56,7 @@ export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 export const randomEntityParams = (actor_id: number, space_id: number): CreateEntityParams => ({
 	actor_id,
 	space_id,
-	content: randomContent(),
+	data: randomEntityData(),
 });
 
 // TODO maybe compute in relation to `RandomVocabContext`
@@ -94,7 +95,12 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 		persona: async (account) => {
 			if (!account) account = await random.account();
 			const {community, persona} = unwrap(
-				await db.repos.persona.create(randomPersonaParams().name, account.account_id),
+				await db.repos.persona.create(
+					'account',
+					randomPersonaParams().name,
+					account.account_id,
+					null,
+				),
 			);
 			random.communities.push(community);
 			random.personas.push(persona);
@@ -104,7 +110,12 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 			if (!persona) persona = await random.persona(account);
 			const params = randomCommunityParams(persona.persona_id);
 			const {community} = unwrap(
-				await db.repos.community.create(params.name, params.persona_id, params.settings!),
+				await db.repos.community.create(
+					'standard',
+					params.name,
+					params.settings!,
+					params.persona_id,
+				),
 			);
 			random.communities.push(community);
 			return community;

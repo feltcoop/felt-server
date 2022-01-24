@@ -24,7 +24,7 @@
 <!-- TODO if it's an external link, add target="_blank" -->
 <a href={value}>
 	<span class="icon">🔗</span>
-	{formatUrl(value)}
+	<span class="text">{formatUrl(value)}</span>
 </a>
 
 <style>
@@ -32,11 +32,15 @@
 		display: flex;
 		align-items: center;
 		width: 100%;
-		word-break: break-word;
+		padding: var(--spacing_sm);
 	}
 	.icon {
 		display: flex;
 		font-size: var(--icon_size_sm);
-		padding: var(--spacing_sm);
+	}
+	.text {
+		padding-left: var(--spacing_sm);
+		overflow: hidden;
+		overflow-wrap: break-word;
 	}
 </style>

@@ -25,10 +25,11 @@
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
+
 		if (!content) return;
 		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
-			content,
+			data: {type: 'Note', content: content},
 			actor_id: $persona.persona_id,
 		});
 		text = '';

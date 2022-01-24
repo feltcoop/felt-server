@@ -17,6 +17,7 @@ export const toDefaultCommunitySettings = (name: string): Community['settings'] 
 
 export interface Community {
 	community_id: number;
+	type: 'standard' | 'personal';
 	name: string;
 	settings: {hue: number};
 	memberPersonas: Persona[]; // TODO if we normalize all data, this should be an array of ids or stores
@@ -30,11 +31,12 @@ export const CommunitySchema = {
 	type: 'object',
 	properties: {
 		community_id: {type: 'number'},
+		type: {type: 'string', enum: ['standard', 'personal']},
 		name: {type: 'string'},
 		settings: CommunitySettingsSchema,
 		created: {type: 'object', format: 'date-time', tsType: 'Date'},
 		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 	},
-	required: ['community_id', 'name', 'created', 'updated'],
+	required: ['community_id', 'type', 'name', 'created', 'updated'],
 	additionalProperties: true, // TODO `true` is a hack related to the above
 };

@@ -19,6 +19,7 @@ import {
 	randomSpaceParams,
 } from '$lib/vocab/random';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
+import {type NoteEntityData} from '$lib/vocab/entity/entityData';
 
 // TODO this only depends on the database --
 // if we don't figure out a robust way to make a global reusable server,
@@ -44,7 +45,7 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	// TODO create 2 personas
 	const personaParams = randomPersonaParams();
 	const {persona, community: personaHomeCommunity} = unwrap(
-		await server.db.repos.persona.create(personaParams.name, account.account_id),
+		await server.db.repos.persona.create('account', personaParams.name, account.account_id, null),
 	);
 	if (!validatePersona()(persona)) {
 		throw new Error(
@@ -61,9 +62,10 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 	const communityParams = randomCommunityParams(persona.persona_id);
 	const {community} = unwrap(
 		await server.db.repos.community.create(
+			'standard',
 			communityParams.name,
-			communityParams.persona_id,
 			communityParams.settings!,
+			communityParams.persona_id,
 		),
 	);
 	persona.community_ids.push(community.community_id); // TODO hacky
@@ -97,14 +99,20 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 		return entity;
 	};
 
-	const entityContent1 = 'this is entity 1';
-	const entityContent2 = 'entity: 2';
+	const entityData1: NoteEntityData = {type: 'Note', content: 'this is entity 1'};
+	const entityData2: NoteEntityData = {type: 'Note', content: 'entity: 2'};
 	const entity1 = await unwrapEntity(
-		server.db.repos.entity.create(persona.persona_id, space.space_id, entityContent1),
+		server.db.repos.entity.create(persona.persona_id, space.space_id, entityData1),
 	);
 	const entity2 = await unwrapEntity(
-		server.db.repos.entity.create(persona.persona_id, space.space_id, entityContent2),
+		server.db.repos.entity.create(persona.persona_id, space.space_id, entityData2),
 	);
+	assert.is(entity1.actor_id, persona.persona_id);
+	assert.is(entity2.actor_id, persona.persona_id);
+	assert.is(entity1.space_id, space.space_id);
+	assert.is(entity2.space_id, space.space_id);
+	assert.equal(entity1.data, entityData1);
+	assert.equal(entity2.data, entityData2);
 
 	// do queries
 	//

@@ -16,7 +16,7 @@ export const accountRepo = (db: Database) => ({
 				${name}, ${passwordKey}
 			) RETURNING *
 		`;
-		console.log('[db] created account', data);
+		console.log('[db] created account', data[0]);
 		const account = data[0];
 		return {ok: true, value: account};
 	},
