@@ -81,6 +81,7 @@ export interface CreateCommunityParams {
 }
 export interface CreateCommunityResponse {
 	community: Community;
+	spaces: Space[];
 }
 export type CreateCommunityResponseResult = ApiResult<CreateCommunityResponse>;
 
@@ -113,6 +114,7 @@ export interface CreatePersonaParams {
 export interface CreatePersonaResponse {
 	persona: Persona;
 	community: Community;
+	spaces: Space[];
 }
 export type CreatePersonaResponseResult = ApiResult<CreatePersonaResponse>;
 

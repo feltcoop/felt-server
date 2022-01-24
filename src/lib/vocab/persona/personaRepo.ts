@@ -1,16 +1,19 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {Persona} from '$lib/vocab/persona/persona.js';
+import type {Persona} from '$lib/vocab/persona/persona';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
-import type {Community} from '$lib/vocab/community/community.js';
+import type {Community} from '$lib/vocab/community/community';
+import type {Space} from '$lib/vocab/space/space';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 
 export const personaRepo = (db: Database) => ({
 	create: async (
 		name: string,
 		account_id: number,
-	): Promise<Result<{value: {persona: Persona; community: Community}}, ErrorResponse>> => {
+	): Promise<
+		Result<{value: {persona: Persona; community: Community; spaces: Space[]}}, ErrorResponse>
+	> => {
 		const data = await db.sql<Persona[]>`
 			INSERT INTO personas (name, account_id) VALUES (
 				${name}, ${account_id}
@@ -28,11 +31,11 @@ export const personaRepo = (db: Database) => ({
 		}
 		// TODO this is a hack -- always adding/expecting `community_ids`
 		// like in `filterByAccount` below is probably not the best idea because of overfetching
-		const community = createCommunityResult.value;
+		const {community, spaces} = createCommunityResult.value;
 		persona.community_ids = [community.community_id];
 		// TODO this is also a yucky hack
 		community.memberPersonas = [persona];
-		return {ok: true, value: {persona, community}};
+		return {ok: true, value: {persona, community, spaces}};
 	},
 	filterByAccount: async (
 		account_id: number,

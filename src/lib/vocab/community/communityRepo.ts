@@ -1,6 +1,7 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {Community} from '$lib/vocab/community/community.js';
+import type {Community} from '$lib/vocab/community/community';
+import type {Space} from '$lib/vocab/space/space';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 
@@ -9,7 +10,7 @@ export const communityRepo = (db: Database) => ({
 		name: string,
 		persona_id: number,
 		settings: Community['settings'],
-	): Promise<Result<{value: Community}>> => {
+	): Promise<Result<{value: {community: Community; spaces: Space[]}}>> => {
 		const data = await db.sql<Community[]>`
 			INSERT INTO communities (name, settings) VALUES (
 				${name}, ${db.sql.json(settings)}
@@ -23,8 +24,8 @@ export const communityRepo = (db: Database) => ({
 		if (!membershipResult.ok) return membershipResult;
 		const spacesResult = await db.repos.space.createDefaultSpaces(community); // TODO should this work happen elsewhere?
 		if (!spacesResult.ok) return spacesResult;
-		community.spaces = spacesResult.value;
-		return {ok: true, value: community};
+		const spaces = spacesResult.value;
+		return {ok: true, value: {community, spaces}};
 	},
 	findById: async (
 		community_id: number,

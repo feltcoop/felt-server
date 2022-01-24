@@ -103,7 +103,7 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 		community: async (persona, account) => {
 			if (!persona) persona = await random.persona(account);
 			const params = randomCommunityParams(persona.persona_id);
-			const community = unwrap(
+			const {community} = unwrap(
 				await db.repos.community.create(params.name, params.persona_id, params.settings!),
 			);
 			random.communities.push(community);

@@ -211,7 +211,11 @@ export const toUi = (
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
 
-	const addCommunity = (community: Community, persona_id: number): void => {
+	const addCommunity = (
+		community: Community,
+		persona_id: number,
+		communitySpaces: Space[],
+	): void => {
 		const persona = personasById.get(persona_id)!;
 		const $persona = get(persona);
 		if (!$persona.community_ids.includes(community.community_id)) {
@@ -223,8 +227,7 @@ export const toUi = (
 		}
 		const $spacesById = get(spacesById);
 		let spacesToAdd: Space[] | null = null;
-		//TODO - we need to return spaces as well when creating new communities
-		for (const space of community.spaces) {
+		for (const space of communitySpaces) {
 			if (!$spacesById.has(space.space_id)) {
 				(spacesToAdd || (spacesToAdd = [])).push(space);
 			}
@@ -233,7 +236,7 @@ export const toUi = (
 			spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
 		}
 		spaceIdByCommunitySelection.update(($spaceIdByCommunitySelection) => {
-			$spaceIdByCommunitySelection[community.community_id] = community.spaces[0].space_id;
+			$spaceIdByCommunitySelection[community.community_id] = communitySpaces[0].space_id;
 			return $spaceIdByCommunitySelection;
 		});
 		const communityStore = writable(community);
@@ -366,14 +369,14 @@ export const toUi = (
 		CreatePersona: async ({invoke, dispatch}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
-			const {persona, community} = result.value;
+			const {persona, community, spaces} = result.value;
 			console.log('[ui.CreatePersona]', persona);
 			const personaStore = writable(persona);
 			personas.update(($personas) => $personas.concat(personaStore));
 			personasById.set(persona.persona_id, personaStore);
 			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
 			dispatch('SelectPersona', {persona_id: persona.persona_id});
-			addCommunity(community as Community, persona.persona_id); // TODO fix type mismatch
+			addCommunity(community, persona.persona_id, spaces);
 			dispatch('SelectCommunity', {community_id: community.community_id});
 			return result;
 		},
@@ -381,10 +384,10 @@ export const toUi = (
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {persona_id} = params;
-			const community = result.value.community as Community; // TODO fix type mismatch
+			const {community, spaces} = result.value;
 			console.log('[ui.CreateCommunity]', community, persona_id);
 			// TODO how should `persona.community_ids` be modeled and kept up to date?
-			addCommunity(community, persona_id);
+			addCommunity(community, persona_id, spaces);
 			dispatch('SelectCommunity', {community_id: community.community_id});
 			return result;
 		},
