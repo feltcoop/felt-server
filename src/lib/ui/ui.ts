@@ -165,7 +165,7 @@ export const toUi = (
 	);
 	const communitySelection = derived(
 		[communities, communityIdSelection],
-		// TODO lookup from `communitiesById` map instead
+		// TODO lookup from `communityById` map instead
 		([$communities, $communityIdSelection]) =>
 			$communities.find((c) => get(c).community_id === $communityIdSelection) || null,
 	);
@@ -602,6 +602,13 @@ export const toUi = (
 					$viewBySpace.delete(space);
 				}
 			});
+			// TODO speed this up with a map of `communityById`
+			const community = getCommunity(get(communities), get(space).community_id);
+			const $community = get(community);
+			goto('/' + $community.name + $community.spaces[0].url + location.search, {
+				replaceState: true,
+			});
+			// TODO nav
 		},
 		ToggleMainNav: () => {
 			expandMainNav.update(($expandMainNav) => !$expandMainNav);
@@ -626,3 +633,9 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 					(p1) => !session.personas.find((p2) => p2.persona_id === p1.persona_id),
 				),
 		  );
+
+// TODO delete this and lookup from `communityById` map instead
+export const getCommunity = (
+	communities: Readable<Community>[],
+	community_id: number,
+): Readable<Community> => communities.find((c) => get(c).community_id === community_id)!;
