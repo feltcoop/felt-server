@@ -2,7 +2,7 @@ import type {Task} from '@feltcoop/gro';
 import ley from 'ley';
 import {defaultPostgresOptions} from '$lib/db/postgres.js';
 
-export const MIGRATIONS_DIR = 'src/lib/db/migrations';
+import {MIGRATIONS_DIR} from '$lib/db/migration';
 
 export const task: Task = {
 	summary: 'running new migrations to bring database up to date',
