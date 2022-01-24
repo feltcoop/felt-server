@@ -99,16 +99,20 @@ test__repos('create, change, and delete some data from repos', async ({server}) 
 		return entity;
 	};
 
-	const entityContent1 = 'this is entity 1';
-	const entityContent2 = 'entity: 2';
-	const data1 = {type: 'Note', content: entityContent1} as NoteEntityData;
-	const data2 = {type: 'Note', content: entityContent2} as NoteEntityData;
+	const entityData1: NoteEntityData = {type: 'Note', content: 'this is entity 1'};
+	const entityData2: NoteEntityData = {type: 'Note', content: 'entity: 2'};
 	const entity1 = await unwrapEntity(
-		server.db.repos.entity.create(persona.persona_id, space.space_id, data1),
+		server.db.repos.entity.create(persona.persona_id, space.space_id, entityData1),
 	);
 	const entity2 = await unwrapEntity(
-		server.db.repos.entity.create(persona.persona_id, space.space_id, data2),
+		server.db.repos.entity.create(persona.persona_id, space.space_id, entityData2),
 	);
+	assert.is(entity1.actor_id, persona.persona_id);
+	assert.is(entity2.actor_id, persona.persona_id);
+	assert.is(entity1.space_id, space.space_id);
+	assert.is(entity2.space_id, space.space_id);
+	assert.equal(entity1.data, entityData1);
+	assert.equal(entity2.data, entityData2);
 
 	// do queries
 	//

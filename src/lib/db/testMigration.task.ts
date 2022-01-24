@@ -1,6 +1,6 @@
 import type {Task} from '@feltcoop/gro';
 
-import {MIGRATIONS_DIR} from '$lib/db/migrate.task';
+import {MIGRATIONS_DIR} from '$lib/db/migration';
 
 // TODO handle production data dumps somehow
 

@@ -1,6 +1,7 @@
 import {writable, derived, get, type Readable, type Writable} from 'svelte/store';
 import {setContext, getContext, type SvelteComponent} from 'svelte';
 import {goto} from '$app/navigation';
+import {mutable, type Mutable} from '@feltcoop/svelte-mutable-store';
 
 import {type Community} from '$lib/vocab/community/community';
 import {type Space} from '$lib/vocab/space/space';
@@ -15,7 +16,6 @@ import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {type DialogState} from '$lib/ui/dialog/dialog';
 import {type ViewData} from '$lib/vocab/view/view';
-import {mutable, type Mutable} from './mutable';
 
 const KEY = Symbol();
 
@@ -595,7 +595,7 @@ export const toUi = (
 			}));
 		},
 		ViewSpace: ({params: {space, view}}) => {
-			viewBySpace.update(($viewBySpace) => {
+			viewBySpace.mutate(($viewBySpace) => {
 				if (view) {
 					$viewBySpace.set(space, view);
 				} else {
