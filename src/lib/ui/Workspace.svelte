@@ -68,7 +68,7 @@
 	.marquee {
 		position: relative;
 		height: 100%;
-		width: var(--column_width_min);
+		width: var(--column_width_sm);
 		overflow: auto;
 		display: flex;
 		flex-direction: column;

@@ -28,7 +28,7 @@
 	li {
 		padding: var(--spacing_sm);
 		border: var(--border);
-		max-width: var(--column_width_min);
+		max-width: var(--column_width_sm);
 		margin: 10px;
 		background-color: var(--input_bg_color);
 	}

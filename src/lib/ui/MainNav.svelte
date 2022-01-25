@@ -67,13 +67,13 @@
 		width: 0;
 	}
 	.main-nav-panel.expanded {
-		width: var(--column_width_min);
+		width: var(--column_width_sm);
 	}
 	.main-nav {
 		position: relative;
 		z-index: 2;
 		height: 100%;
-		width: var(--column_width_min);
+		width: var(--column_width_sm);
 		overflow: auto;
 		display: flex;
 		flex-direction: column;
