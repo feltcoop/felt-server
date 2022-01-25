@@ -60,7 +60,7 @@ export const websocketHandler: WebsocketHandler = async (
 			message: 'invalid params: ' + toValidationErrorMessage(validateParams.errors![0]),
 		};
 	} else {
-		result = await service.perform({server, params, account_id});
+		result = await service.perform({repos: server.db.repos, params, account_id});
 	}
 
 	const responseMessage: JsonRpcResponse = {

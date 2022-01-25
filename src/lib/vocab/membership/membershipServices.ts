@@ -13,11 +13,11 @@ export const createMembershipService: Service<
 	CreateMembershipResponseResult
 > = {
 	event: CreateMembership,
-	perform: async ({server, params}) => {
+	perform: async ({repos, params}) => {
 		console.log('[CreateMembership] creating membership', params.persona_id, params.community_id);
 
 		// Personal communities disallow memberships as a hard rule.
-		const communityResult = await server.db.repos.community.findById(params.community_id);
+		const communityResult = await repos.community.findById(params.community_id);
 		if (!communityResult.ok) {
 			return {ok: false, status: 400, message: 'community not found'};
 		}
@@ -28,7 +28,7 @@ export const createMembershipService: Service<
 
 		// TODO test what happens if the persona doesn't exist
 
-		const createMembershipResult = await server.db.repos.membership.create(
+		const createMembershipResult = await repos.membership.create(
 			params.persona_id,
 			params.community_id,
 		);
@@ -48,15 +48,14 @@ export const deleteMembershipService: Service<
 	DeleteMembershipResponseResult
 > = {
 	event: DeleteMembership,
-	perform: async ({server, params}) => {
-		const {db} = server;
+	perform: async ({repos, params}) => {
 		const {persona_id, community_id} = params;
 		console.log(
 			'[DeleteSpace] deleting membership for persona in community',
 			persona_id,
 			community_id,
 		);
-		const result = await db.repos.membership.deleteById(persona_id, community_id);
+		const result = await repos.membership.deleteById(persona_id, community_id);
 		console.log(result);
 		if (!result.ok) {
 			console.log('[DeleteSpace] error removing membership: ', persona_id, community_id);

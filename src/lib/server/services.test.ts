@@ -28,7 +28,11 @@ test__services('perform services', async ({server}) => {
 				}: ${toValidationErrorMessage(validateSchema(service.event.params!).errors![0])}`,
 			);
 		}
-		const result = await service.perform({server, params, account_id: account.account_id});
+		const result = await service.perform({
+			repos: server.db.repos,
+			params,
+			account_id: account.account_id,
+		});
 		if (!result.ok || !validateSchema(service.event.response!)(result.value)) {
 			console.error(red(`failed to validate service response: ${service.event.name}`), result);
 			throw new Error(

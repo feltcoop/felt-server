@@ -14,12 +14,10 @@ import {CreateSpace, ReadSpace, ReadSpaces, DeleteSpace} from '$lib/vocab/space/
 //Returns a single space object
 export const readSpaceService: Service<ReadSpaceParams, ReadSpaceResponseResult> = {
 	event: ReadSpace,
-	perform: async ({server, params}) => {
-		const {db} = server;
-
+	perform: async ({repos, params}) => {
 		console.log('[ReadSpace] space', params.space_id);
 
-		const findSpaceResult = await db.repos.space.findById(params.space_id);
+		const findSpaceResult = await repos.space.findById(params.space_id);
 		if (findSpaceResult.ok) {
 			return {ok: true, status: 200, value: {space: findSpaceResult.value}};
 		} else {
@@ -36,12 +34,10 @@ export const readSpaceService: Service<ReadSpaceParams, ReadSpaceResponseResult>
 //Returns all spaces in a given community
 export const readSpacesService: Service<ReadSpacesParams, ReadSpacesResponseResult> = {
 	event: ReadSpaces,
-	perform: async ({server, params}) => {
-		const {db} = server;
-
+	perform: async ({repos, params}) => {
 		console.log('[ReadSpaces] retrieving spaces for community', params.community_id);
 
-		const findSpacesResult = await db.repos.space.filterByCommunity(params.community_id);
+		const findSpacesResult = await repos.space.filterByCommunity(params.community_id);
 		if (findSpacesResult.ok) {
 			return {ok: true, status: 200, value: {spaces: findSpacesResult.value}};
 		} else {
@@ -56,10 +52,9 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 	event: CreateSpace,
 	// TODO security: verify the `account_id` has permission to modify this space
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
-	perform: async ({server, params}) => {
-		const {db} = server;
+	perform: async ({repos, params}) => {
 		console.log('[CreateSpace] validating space url uniqueness');
-		const findByCommunityUrlResult = await db.repos.space.findByCommunityUrl(
+		const findByCommunityUrlResult = await repos.space.findByCommunityUrl(
 			params.community_id,
 			params.url,
 		);
@@ -75,7 +70,7 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 		}
 
 		console.log('[CreateSpace] creating space for community', params.community_id);
-		const createSpaceResult = await db.repos.space.create(
+		const createSpaceResult = await repos.space.create(
 			params.name,
 			params.content,
 			params.media_type,
@@ -94,10 +89,9 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 //deletes a single space and returns the id of the deleted spaces
 export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseResult> = {
 	event: DeleteSpace,
-	perform: async ({server, params}) => {
-		const {db} = server;
+	perform: async ({repos, params}) => {
 		console.log('[DeleteSpace] deleting space with id:', params.space_id);
-		const result = await db.repos.space.deleteById(params.space_id);
+		const result = await repos.space.deleteById(params.space_id);
 		console.log(result);
 		if (!result.ok) {
 			console.log('[DeleteSpace] error removing space: ', params.space_id);

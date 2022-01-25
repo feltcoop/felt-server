@@ -7,14 +7,12 @@ export const createPersonaService: Service<CreatePersonaParams, CreatePersonaRes
 	event: CreatePersona,
 	// TODO verify the `account_id` has permission to modify this persona
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
-	perform: async ({server, params, account_id}) => {
-		const {db} = server;
-
+	perform: async ({repos, params, account_id}) => {
 		console.log('[CreatePersona] creating persona', params.name);
 		const name = params.name.trim();
 
 		console.log('[CreatePersona] validating persona uniqueness', name);
-		const findByNameResult = await db.repos.persona.findByName(name);
+		const findByNameResult = await repos.persona.findByName(name);
 
 		if (!findByNameResult.ok) {
 			console.log('[CreatePersona] error validating unique name for new persona');
@@ -27,7 +25,7 @@ export const createPersonaService: Service<CreatePersonaParams, CreatePersonaRes
 		}
 
 		console.log('[CreatePersona] creating persona', name);
-		const createPersonaResult = await db.repos.persona.create('account', name, account_id, null);
+		const createPersonaResult = await repos.persona.create('account', name, account_id, null);
 		if (createPersonaResult.ok) {
 			return {ok: true, status: 200, value: createPersonaResult.value};
 		} else {
