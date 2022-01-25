@@ -63,7 +63,7 @@ export const seed = async (db: Database): Promise<void> => {
 	const communities: Community[] = [];
 
 	for (const communityParams of communitiesParams) {
-		const community = unwrap(
+		const {community, spaces} = unwrap(
 			await db.repos.community.create(
 				'standard',
 				communityParams.name,
@@ -75,7 +75,7 @@ export const seed = async (db: Database): Promise<void> => {
 		for (const persona of otherPersonas) {
 			await db.repos.membership.create(persona.persona_id, community.community_id);
 		}
-		await createDefaultEntities(db, community.spaces, personas);
+		await createDefaultEntities(db, spaces, personas);
 	}
 };
 

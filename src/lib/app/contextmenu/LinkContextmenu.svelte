@@ -1,9 +1,8 @@
 <script lang="ts">
-	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {page} from '$app/stores';
 	import {stripStart} from '@feltcoop/felt/util/string.js';
 
-	export let contextmenu: ContextmenuStore;
+	export let href: string;
 
 	// TODO refactor this after upgrading SvelteKit to where `$page` has `url`
 	// TODO move or upstream? rename? `printUrl`
@@ -14,17 +13,14 @@
 		}
 		return url;
 	};
-
-	// TODO strip any local url prefix
-	$: value = $contextmenu.items.LinkContextmenu;
 </script>
 
 <!-- TODO could do more if we had the original `target` element
 							(but it might go stale on $contextmenu?) -->
 <!-- TODO if it's an external link, add target="_blank" -->
-<a href={value}>
+<a {href}>
 	<span class="icon">🔗</span>
-	<span class="text">{formatUrl(value)}</span>
+	<span class="text">{formatUrl(href)}</span>
 </a>
 
 <style>

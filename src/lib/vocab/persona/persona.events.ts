@@ -18,8 +18,9 @@ export const CreatePersona: ServiceEventInfo = {
 		properties: {
 			persona: {$ref: 'Persona.json', tsType: 'Persona'},
 			community: {$ref: 'Community.json', tsType: 'Community'},
+			spaces: {type: 'array', items: {$ref: 'Space.json', tsType: 'Space'}},
 		},
-		required: ['persona', 'community'],
+		required: ['persona', 'community', 'spaces'],
 		additionalProperties: false,
 	},
 	returns: 'Promise<CreatePersonaResponseResult>',

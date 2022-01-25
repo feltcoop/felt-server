@@ -15,7 +15,7 @@
 			spaceSelection,
 			personaSelection,
 			communitySelection,
-			spacesById,
+			spacesByCommunityId,
 		},
 	} = getApp();
 
@@ -25,7 +25,7 @@
 
 	// TODO refactor once community data is normalized
 	$: selectedCommunitySpaces =
-		selectedCommunity && $selectedCommunity.spaces.map((s) => $spacesById.get(s.space_id)!);
+		selectedCommunity && $spacesByCommunityId.get($selectedCommunity.community_id);
 
 	// TODO refactor to some client view-model for the account
 	$: hue = randomHue(toName($selectedPersona));

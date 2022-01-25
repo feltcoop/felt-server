@@ -29,7 +29,7 @@
 <nav class="community-nav">
 	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
 	{#each $sessionPersonas as persona (persona)}
-		<div class="persona-group" use:contextmenu.action={{ActingPersonaContextmenu: persona}}>
+		<div class="persona-group" use:contextmenu.action={{ActingPersonaContextmenu: {persona}}}>
 			<!-- TODO refactor this hacky usage of `get` -->
 			<CommunityNavButton
 				community={toPersonaCommunity(get(persona))}

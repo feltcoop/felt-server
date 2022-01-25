@@ -57,7 +57,7 @@ test__repos('create, change, and delete some data from repos', async ({db}) => {
 	}
 
 	const communityParams = randomCommunityParams(persona.persona_id);
-	const community = unwrap(
+	const {community} = unwrap(
 		await db.repos.community.create(
 			'standard',
 			communityParams.name,

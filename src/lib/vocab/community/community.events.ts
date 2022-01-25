@@ -20,8 +20,9 @@ export const CreateCommunity: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			community: {$ref: 'Community.json', tsType: 'Community'},
+			spaces: {type: 'array', items: {$ref: 'Space.json', tsType: 'Space'}},
 		},
-		required: ['community'],
+		required: ['community', 'spaces'],
 		additionalProperties: false,
 	},
 	returns: 'Promise<CreateCommunityResponseResult>',
