@@ -31,11 +31,17 @@ main {
 	width: var(--navbar_size);
 	height: var(--navbar_size);
 }
+
 /* TODO refactor or upstream */
-/* TODO should this be a `[role="menu"]` selector instead? */
-.menu-button {
+.menu-item {
 	width: 100%;
-	justify-content: flex-start;
+	justify-content: space-between;
+
+	align-items: center;
+	padding: var(--spacing_xs);
+}
+.menu-item.selected {
+	background-color: var(--tint_dark_2);
 }
 
 /* TODO upstream to Felt */

@@ -11,6 +11,9 @@ export interface Contextmenu {
 	// so could they be addressed by `name || id`? e.g. `'personaSelection'`
 	// maybe they should be blocks and block ids? or both?
 	items: ContextmenuItems;
+	// the 0th array item is the the only guaranteed one; submenus are subsequent items
+	selections: {count: number; index: number}[];
+	count: number;
 	x: number;
 	y: number;
 }
@@ -18,11 +21,17 @@ export interface Contextmenu {
 export interface ContextmenuStore extends Readable<Contextmenu> {
 	open(items: ContextmenuItems, x: number, y: number): void;
 	close(): void;
+	selectItem(menuIndex: number, itemIndex: number): void;
+	selectSubmenuItem(menuIndex: number, itemIndex: number): void;
+	closeSelected(): void; // removes one
+	openSelected(): void; // opens the selected submenu
+	selectNext(): void; // advances to the next of the latest
+	selectPrevious(): void; // removes one
 	action: typeof contextmenuAction;
 }
 
 export const createContextmenuStore = (
-	initialValue: Contextmenu = {open: false, items: {}, x: 0, y: 0},
+	initialValue: Contextmenu = {open: false, items: {}, selections: [], x: 0, y: 0, count: 0},
 	start?: StartStopNotifier<Contextmenu>,
 ): ContextmenuStore => {
 	const {subscribe, update} = writable(initialValue, start);
@@ -33,7 +42,102 @@ export const createContextmenuStore = (
 			update(($state) => ({...$state, open: true, items, x, y}));
 		},
 		close: () => {
-			update(($state) => ({...$state, open: false}));
+			update(($state) => ({...$state, open: false, selections: []}));
+		},
+		selectItem: (menuIndex, itemIndex) => {
+			update(($state) => {
+				const {length} = $state.selections;
+				console.log('\n\n\nITEM menuIndex, itemIndex, length', menuIndex, itemIndex, length);
+				// ignore `menuIndex` overflowing the max
+				let selections;
+				if (menuIndex <= length) {
+					selections = $state.selections.slice(0, menuIndex + 1);
+					selections[selections.length - 1] = {
+						...selections[selections.length - 1],
+						index: itemIndex,
+					};
+					console.log('selectionsB, menuIndex', selections, menuIndex);
+				} else {
+					// TODO handle if `menuIndex` is less than length - 1
+					const item = {...$state.selections[length - 1]};
+					if (item.index === itemIndex) return $state;
+					selections = $state.selections.slice(0, -1);
+					// TODO use `clamp` after upgrading Felt
+					item.index = Math.min(Math.max(0, itemIndex), item.count - 1); // just clamp if it's bad data
+					console.log('selectionsC, item', selections, item);
+				}
+				return {...$state, selections};
+			});
+		},
+		selectSubmenuItem: (menuIndex, itemIndex) => {
+			update(($state) => {
+				const {length} = $state.selections;
+				console.log(
+					'\n\n\nSUBMENU ITEM menuIndex, itemIndex, length',
+					menuIndex,
+					itemIndex,
+					length,
+				);
+				// ignore `menuIndex` overflowing the max
+				let selections;
+				if (menuIndex >= length - 1) {
+					selections = [...$state.selections, {count: $state.count, index: itemIndex}];
+					console.log('selectionsA', selections);
+				} else if (menuIndex <= length) {
+					selections = $state.selections.slice(0, menuIndex + 1);
+					selections[selections.length - 1] = {
+						...selections[selections.length - 1],
+						index: itemIndex,
+					};
+					console.log('selectionsB, menuIndex', selections, menuIndex);
+				} else {
+					// TODO handle if `menuIndex` is less than length - 1
+					const item = {...$state.selections[length - 1]};
+					if (item.index === itemIndex) return $state;
+					selections = $state.selections.slice(0, -1);
+					// TODO use `clamp` after upgrading Felt
+					item.index = Math.min(Math.max(0, itemIndex), item.count - 1); // just clamp if it's bad data
+					console.log('selectionsC, item', selections, item);
+				}
+				return {...$state, selections};
+			});
+		},
+		closeSelected: () => {
+			update(($state) => {
+				if (!$state.selections.length) return $state;
+				return {...$state, selections: $state.selections.slice(0, -1)};
+			});
+		},
+		openSelected: () => {
+			// TODO how does this work? need to detect if the selected one is a submenu,
+			// and if so select the `menuItem+1` at `itemIndex=0`
+			console.log('OPEN SELECTED');
+			// update(($state) => {
+			// 	if (!$state.selections.length) return $state;
+			// 	return {...$state, selections: $state.selections.slice(0, -1)};
+			// });
+		},
+		selectNext: () => {
+			update(($state) => {
+				const {length} = $state.selections;
+				if (!length) return $state;
+				const selections = $state.selections.slice(0, -1);
+				const item = {...$state.selections[length - 1]};
+				item.index = item.index === item.count - 1 ? 0 : item.index + 1;
+				selections.push(item);
+				return {...$state, selections};
+			});
+		},
+		selectPrevious: () => {
+			update(($state) => {
+				const {length} = $state.selections;
+				if (!length) return $state;
+				const selections = $state.selections.slice(0, -1);
+				const item = {...$state.selections[length - 1]};
+				item.index = item.index === 0 ? item.index - 1 : 0;
+				selections.push(item);
+				return {...$state, selections};
+			});
 		},
 		action: contextmenuAction,
 	};

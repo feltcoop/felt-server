@@ -26,19 +26,34 @@
 
 	// TODO hook into a ui input system
 	const onWindowKeydown = (e: KeyboardEvent) => {
+		console.log('e.key', e.key);
 		if (e.key === 'Escape' && !(e.target instanceof HTMLElement && isEditable(e.target))) {
 			contextmenu.close();
 			e.stopPropagation();
 			e.preventDefault();
+		} else if (e.key === 'ArrowLeft') {
+			contextmenu.closeSelected();
+		} else if (e.key === 'ArrowRight') {
+			contextmenu.openSelected();
+		} else if (e.key === 'ArrowDown') {
+			contextmenu.selectNext();
+		} else if (e.key === 'ArrowUp') {
+			contextmenu.selectPrevious();
+		} else if (e.key === 'Home') {
+			// TODO
+			// contextmenu.selectFirst();
+		} else if (e.key === 'End') {
+			// TODO
+			// contextmenu.selectLast();
+		} else if (e.key === 'Space' || e.key === 'Enter') {
+			// TODO handle these to activate the selected menu item
+			// contextmenu.activateSelected();
 		}
 	};
 
 	// TODO hacky -- maybe check things like `role="button"`? also, upstream to Felt utils
-	const isInteractive = (el: Element): boolean =>
-		el.tagName === 'A' ||
-		el.tagName === 'BUTTON' ||
-		el.tagName === 'AREA' ||
-		!!el.closest('button,a');
+	// const isInteractive = (el: Element): boolean => !!el.closest('button,a,area,[role=menuitem]');
+	const isInteractive = (el: Element): boolean => !!el.closest('[role=menuitem]');
 
 	const onClickContent = (e: MouseEvent) => {
 		// TODO this is hacky, but improves the behavior to let us select content on the contextmenu,
@@ -71,27 +86,25 @@
 	Maybe a better solution is to show the content immediately, but animate the periphery.
 -->
 {#if $contextmenu.open}
-	<div
+	<ul
 		class="contextmenu pane"
 		role="menu"
 		aria-modal
 		tabindex="-1"
 		bind:this={contextmenuEl}
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
+		on:click={onClickContent}
 	>
-		<div on:click={onClickContent}>
-			{#each keys as key (key)}
-				{#if key in components}
-					<section class="panel-inset">
-						<!-- TODO maybe pass through the key/value generically? -->
-						<svelte:component this={components[key]} {contextmenu} />
-					</section>
-				{:else}
-					<Message status="error">unknown contextmenu "{key}"</Message>
-				{/if}
-			{/each}
-		</div>
-	</div>
+		{#each keys as key, itemIndex (key)}
+			{#if key in components}
+				<section>
+					<svelte:component this={components[key]} {contextmenu} menuIndex={0} {itemIndex} />
+				</section>
+			{:else}
+				<Message status="error">unknown contextmenu "{key}"</Message>
+			{/if}
+		{/each}
+	</ul>
 {/if}
 
 <style>
