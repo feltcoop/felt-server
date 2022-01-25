@@ -43,7 +43,9 @@
 	}
 	.timestamp {
 		font-size: var(--font_size_md);
-		padding-left: 50%;
+		flex: 1;
+		display: flex;
+		justify-content: flex-end;
 	}
 	.expanded-nav .luggage-placeholder {
 		display: none;

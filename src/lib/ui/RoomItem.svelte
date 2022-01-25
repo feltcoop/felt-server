@@ -57,7 +57,9 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		align-items: center;
 	}
 	.timestamp {
-		padding-left: 60%;
+		flex: 1;
+		display: flex;
+		justify-content: flex-end;
 	}
 	.markup {
 		padding: 0 0 0 var(--spacing_md);
