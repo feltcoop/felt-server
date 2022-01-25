@@ -56,7 +56,7 @@ export const createContextmenuStore = (
 						...selections[selections.length - 1],
 						index: itemIndex,
 					};
-					console.log('selectionsB, menuIndex', selections, menuIndex);
+					console.log('selectionsB, menuIndex', selections.length, menuIndex);
 				} else {
 					// TODO handle if `menuIndex` is less than length - 1
 					const item = {...$state.selections[length - 1]};
@@ -84,12 +84,13 @@ export const createContextmenuStore = (
 					selections = [...$state.selections, {count: $state.count, index: itemIndex}];
 					console.log('selectionsA', selections);
 				} else if (menuIndex <= length) {
+					if ($state.selections[menuIndex].index === itemIndex) return $state;
 					selections = $state.selections.slice(0, menuIndex + 1);
 					selections[selections.length - 1] = {
 						...selections[selections.length - 1],
 						index: itemIndex,
 					};
-					console.log('selectionsB, menuIndex', selections, menuIndex);
+					console.log('selectionsB, menuIndex', selections.length, menuIndex);
 				} else {
 					// TODO handle if `menuIndex` is less than length - 1
 					const item = {...$state.selections[length - 1]};
