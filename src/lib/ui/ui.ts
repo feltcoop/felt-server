@@ -167,7 +167,7 @@ export const toUi = (
 		[communities, communityIdSelection],
 		// TODO lookup from `communityById` map instead
 		([$communities, $communityIdSelection]) =>
-			$communities.find((c) => get(c).community_id === $communityIdSelection) || null,
+			$communityIdSelection === null ? null : getCommunity($communities, $communityIdSelection),
 	);
 	// TODO this should store the selected space by community+persona,
 	// possibly alongside additional UI state, maybe in a store or namespace of stores
