@@ -95,7 +95,7 @@ export const toUi = (
 	const communities = writable<Writable<Community>[]>(
 		initialSession.guest ? [] : initialSession.communities.map((p) => writable(p)),
 	);
-	// TODO communitiesById
+	// TODO add `communityById` and delete `getCommunity`
 	const spaces = writable<Writable<Space>[]>(
 		initialSession.guest ? [] : initialSession.spaces.map((s) => writable(s)),
 	);
@@ -393,8 +393,7 @@ export const toUi = (
 		},
 		UpdateCommunitySettings: async ({params, invoke}) => {
 			// optimistic update
-			// TODO lookup with `communitiesById`
-			const community = get(communities).find((c) => get(c).community_id === params.community_id)!;
+			const community = getCommunity(get(communities), params.community_id);
 			const originalSettings = get(community).settings;
 			community.update(($community) => ({
 				...$community,
@@ -477,9 +476,7 @@ export const toUi = (
 							$community.name +
 							get(get(spacesByCommunityId).get($community.community_id)![0]).url +
 							location.search,
-						{
-							replaceState: true,
-						},
+						{replaceState: true},
 					);
 				}
 			});
@@ -594,13 +591,9 @@ export const toUi = (
 					$viewBySpace.delete(space);
 				}
 			});
-			// TODO speed this up with a map of `communityById`
-			const community = getCommunity(get(communities), get(space).community_id);
-			const $community = get(community);
-			goto('/' + $community.name + $community.spaces[0].url + location.search, {
-				replaceState: true,
-			});
-			// TODO nav
+			const $space = get(space);
+			const $community = get(getCommunity(get(communities), $space.community_id));
+			goto('/' + $community.name + $space.url + location.search, {replaceState: true});
 		},
 		ToggleMainNav: () => {
 			expandMainNav.update(($expandMainNav) => !$expandMainNav);
@@ -630,4 +623,7 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 export const getCommunity = (
 	communities: Readable<Community>[],
 	community_id: number,
-): Readable<Community> => communities.find((c) => get(c).community_id === community_id)!;
+): Writable<Community> =>
+	// TODO typecast allows `Readable` input and `Writable` return value for usage in components,
+	// but this function will be deleted soon anyway (see the comment above)
+	communities.find((c) => get(c).community_id === community_id) as Writable<Community>;
