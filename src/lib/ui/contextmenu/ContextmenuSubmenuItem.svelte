@@ -9,26 +9,35 @@
 	// TODO add larger transparent cursor hit area
 	// TODO fix keyboard nav (is the delay between focus the problem?)
 
-	$: expanded = $contextmenu.selections[menuIndex]?.index === itemIndex;
+	$: expanded =
+		$contextmenu.selections[menuIndex + 1] !== undefined &&
+		$contextmenu.selections[menuIndex]?.index === itemIndex;
+	$: selected = $contextmenu.selections[menuIndex]?.index === itemIndex;
 
-	const selectItem = (e: MouseEvent) => {
-		e.stopPropagation();
-		contextmenu.selectSubmenuItem(menuIndex, itemIndex);
+	const selectItem = () => {
+		if (!expanded) contextmenu.selectSubmenuItem(menuIndex, itemIndex);
 	};
 </script>
 
-<!-- TODO focusout shouldn't be used because focus blips off while tabbing -->
-<ul class="contextmenu-submenu-item" role="menu" on:mousemove={selectItem} aria-expanded={expanded}>
-	<li class="menu-item" role="menuitem" on:click|stopPropagation>
+<!-- TODO what's the right structure for a11y? -->
+<li class="contextmenu-submenu-item">
+	<div
+		class="menu-item"
+		role="menuitem"
+		class:selected
+		on:click|stopPropagation
+		on:mousemove|stopPropagation={selectItem}
+		aria-expanded={expanded}
+	>
 		<slot name="button" />
 		<div class="chevron" />
-	</li>
+	</div>
 	{#if expanded}
 		<ul class="contextmenu-submenu pane" role="menu" style="transform: translate3d(100%, 0, 0)">
 			<slot name="menu">TODO no menu content (make this a Message?)</slot>
 		</ul>
 	{/if}
-</ul>
+</li>
 
 <style>
 	.contextmenu-submenu-item {

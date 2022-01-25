@@ -6,6 +6,11 @@ interface ContextmenuItems {
 	[key: string]: any; // TODO types
 }
 
+interface SelectionItem {
+	count: number;
+	index: number | null;
+}
+
 export interface Contextmenu {
 	open: boolean;
 	// TODO not sure about this, currently they're magic keys, maybe keys on `ui`?
@@ -13,7 +18,7 @@ export interface Contextmenu {
 	// maybe they should be blocks and block ids? or both?
 	items: ContextmenuItems;
 	// the 0th array item is the the only guaranteed one; submenus are subsequent items
-	selections: {count: number; index: number}[];
+	selections: SelectionItem[];
 	count: number;
 	x: number;
 	y: number;
@@ -30,6 +35,13 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 	selectPrevious(): void; // removes one
 	action: typeof contextmenuAction;
 }
+
+const logSelections = (selections: SelectionItem[]) => {
+	console.log(
+		'selections',
+		selections.map((s, i) => `${i}__${s.index}__${s.count}  `),
+	);
+};
 
 export const createContextmenuStore = (
 	initialValue: Contextmenu = {open: false, items: {}, selections: [], x: 0, y: 0, count: 0},
@@ -66,6 +78,7 @@ export const createContextmenuStore = (
 					item.index = clamp(itemIndex, 0, item.count - 1); // just clamp if it's bad data
 					console.log('selectionsC, item', selections, item);
 				}
+				logSelections(selections);
 				return {...$state, selections};
 			});
 		},
@@ -81,7 +94,7 @@ export const createContextmenuStore = (
 				// ignore `menuIndex` overflowing the max
 				let selections;
 				if (menuIndex >= length - 1) {
-					selections = [...$state.selections, {count: $state.count, index: itemIndex}];
+					selections = [...$state.selections, {count: $state.count, index: null}];
 					console.log('selectionsA', selections);
 				} else if (menuIndex <= length) {
 					if ($state.selections[menuIndex].index === itemIndex) return $state;
@@ -99,6 +112,7 @@ export const createContextmenuStore = (
 					item.index = clamp(itemIndex, 0, item.count - 1); // just clamp if it's bad data
 					console.log('selectionsC, item', selections, item);
 				}
+				logSelections(selections);
 				return {...$state, selections};
 			});
 		},
@@ -112,10 +126,13 @@ export const createContextmenuStore = (
 			// TODO how does this work? need to detect if the selected one is a submenu,
 			// and if so select the `menuItem+1` at `itemIndex=0`
 			console.log('OPEN SELECTED');
-			// update(($state) => {
-			// 	if (!$state.selections.length) return $state;
-			// 	return {...$state, selections: $state.selections.slice(0, -1)};
-			// });
+			update(($state) => {
+				const {selections} = $state;
+				if (!selections.length) return $state;
+				// TODO the count is what? should we prebake the data structure on mount?
+				const newItem: SelectionItem = {count: 2, index: 0};
+				return {...$state, selections: selections.concat(newItem)};
+			});
 		},
 		selectNext: () => {
 			update(($state) => {
@@ -123,8 +140,9 @@ export const createContextmenuStore = (
 				if (!length) return $state;
 				const selections = $state.selections.slice(0, -1);
 				const item = {...$state.selections[length - 1]};
-				item.index = item.index === item.count - 1 ? 0 : item.index + 1;
+				item.index = item.index === null ? 0 : item.index === item.count - 1 ? 0 : item.index + 1;
 				selections.push(item);
+				logSelections(selections);
 				return {...$state, selections};
 			});
 		},
@@ -134,8 +152,10 @@ export const createContextmenuStore = (
 				if (!length) return $state;
 				const selections = $state.selections.slice(0, -1);
 				const item = {...$state.selections[length - 1]};
-				item.index = item.index === 0 ? item.index - 1 : 0;
+				item.index =
+					item.index === null ? item.count - 1 : item.index === 0 ? item.count - 1 : item.index - 1;
 				selections.push(item);
+				logSelections(selections);
 				return {...$state, selections};
 			});
 		},

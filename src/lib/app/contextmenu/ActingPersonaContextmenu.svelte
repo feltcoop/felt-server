@@ -43,3 +43,4 @@
 		</ContextmenuItem>
 	</svelte:fragment>
 </ContextmenuSubmenuItem>
+<ContextmenuItem {contextmenu} {menuIndex} itemIndex={itemIndex + 1}>Testig thing</ContextmenuItem>

@@ -17,6 +17,6 @@
 https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.html
 how to handle the fact that they shouldn't receive focus? disable `Tab`?
 -->
-<li class="menu-item" class:selected role="menuitem" on:click on:mousemove={selectItem}>
+<li class="menu-item" role="menuitem" class:selected on:click on:mousemove={selectItem}>
 	<slot />
 </li>
