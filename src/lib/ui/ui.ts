@@ -165,7 +165,6 @@ export const toUi = (
 	);
 	const communitySelection = derived(
 		[communities, communityIdSelection],
-		// TODO lookup from `communityById` map instead
 		([$communities, $communityIdSelection]) =>
 			$communityIdSelection === null ? null : getCommunity($communities, $communityIdSelection),
 	);
