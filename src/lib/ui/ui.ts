@@ -97,9 +97,7 @@ export const toUi = (
 	);
 	// TODO communitiesById
 	const spaces = writable<Writable<Space>[]>(
-		initialSession.guest
-			? []
-			: initialSession.communities.flatMap((community) => community.spaces).map((s) => writable(s)),
+		initialSession.guest ? [] : initialSession.spaces.map((s) => writable(s)),
 	);
 	// TODO do these maps more efficiently
 	const spacesById: Readable<Map<number, Writable<Space>>> = derived(
@@ -107,16 +105,18 @@ export const toUi = (
 		($spaces) => new Map($spaces.map((space) => [get(space).space_id, space])),
 	);
 	const spacesByCommunityId: Readable<Map<number, Readable<Space>[]>> = derived(
-		[communities, spacesById],
-		([$communites, $spacesById]) => {
+		[communities, spaces],
+		([$communites, $spaces]) => {
 			const map = new Map();
 			for (const community of $communites) {
-				const spaces: Writable<Space>[] = [];
-				for (const $space of get(community).spaces) {
-					const space = $spacesById.get($space.space_id);
-					spaces.push(space!);
+				const communitySpaces: Writable<Space>[] = [];
+				const {community_id} = get(community);
+				for (const space of $spaces) {
+					if (get(space).community_id === community_id) {
+						communitySpaces.push(space!);
+					}
 				}
-				map.set(get(community).community_id, spaces);
+				map.set(community_id, communitySpaces);
 			}
 			return map;
 		},
@@ -177,7 +177,7 @@ export const toUi = (
 			: Object.fromEntries(
 					initialSession.communities.map((community) => [
 						community.community_id,
-						community.spaces[0]?.space_id ?? null,
+						get(get(spacesByCommunityId).get(community.community_id)![0]).space_id ?? null,
 					]),
 			  ),
 	);
@@ -211,7 +211,11 @@ export const toUi = (
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
 
-	const addCommunity = (community: Community, persona_id: number): void => {
+	const addCommunity = (
+		community: Community,
+		persona_id: number,
+		communitySpaces: Space[],
+	): void => {
 		const persona = personasById.get(persona_id)!;
 		const $persona = get(persona);
 		if (!$persona.community_ids.includes(community.community_id)) {
@@ -223,7 +227,7 @@ export const toUi = (
 		}
 		const $spacesById = get(spacesById);
 		let spacesToAdd: Space[] | null = null;
-		for (const space of community.spaces) {
+		for (const space of communitySpaces) {
 			if (!$spacesById.has(space.space_id)) {
 				(spacesToAdd || (spacesToAdd = [])).push(space);
 			}
@@ -232,7 +236,7 @@ export const toUi = (
 			spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
 		}
 		spaceIdByCommunitySelection.update(($spaceIdByCommunitySelection) => {
-			$spaceIdByCommunitySelection[community.community_id] = community.spaces[0].space_id;
+			$spaceIdByCommunitySelection[community.community_id] = communitySpaces[0].space_id;
 			return $spaceIdByCommunitySelection;
 		});
 		const communityStore = writable(community);
@@ -336,11 +340,7 @@ export const toUi = (
 
 			communities.set(session.guest ? [] : session.communities.map((p) => writable(p)));
 			// TODO init memberships when they're added to the session
-			spaces.set(
-				session.guest
-					? []
-					: session.communities.flatMap((community) => community.spaces).map((s) => writable(s)),
-			);
+			spaces.set(session.guest ? [] : session.spaces.map((s) => writable(s)));
 			communityIdByPersonaSelection.set(
 				// TODO copypasta from above
 				Object.fromEntries(
@@ -361,7 +361,7 @@ export const toUi = (
 					: Object.fromEntries(
 							session.communities.map((community) => [
 								community.community_id,
-								community.spaces[0]?.space_id ?? null,
+								get(get(spacesByCommunityId).get(community.community_id)![0]).space_id ?? null,
 							]),
 					  ),
 			);
@@ -369,14 +369,14 @@ export const toUi = (
 		CreatePersona: async ({invoke, dispatch}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
-			const {persona, community} = result.value;
+			const {persona, community, spaces} = result.value;
 			console.log('[ui.CreatePersona]', persona);
 			const personaStore = writable(persona);
 			personas.update(($personas) => $personas.concat(personaStore));
 			personasById.set(persona.persona_id, personaStore);
 			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
 			dispatch('SelectPersona', {persona_id: persona.persona_id});
-			addCommunity(community as Community, persona.persona_id); // TODO fix type mismatch
+			addCommunity(community, persona.persona_id, spaces);
 			dispatch('SelectCommunity', {community_id: community.community_id});
 			return result;
 		},
@@ -384,10 +384,10 @@ export const toUi = (
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {persona_id} = params;
-			const community = result.value.community as Community; // TODO fix type mismatch
+			const {community, spaces} = result.value;
 			console.log('[ui.CreateCommunity]', community, persona_id);
 			// TODO how should `persona.community_ids` be modeled and kept up to date?
-			addCommunity(community, persona_id);
+			addCommunity(community, persona_id, spaces);
 			dispatch('SelectCommunity', {community_id: community.community_id});
 			return result;
 		},
@@ -454,20 +454,11 @@ export const toUi = (
 
 			return result;
 		},
-		CreateSpace: async ({params, invoke}) => {
+		CreateSpace: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {space} = result.value;
-			const {community_id} = params;
 			console.log('[ui.CreateSpace]', space);
-			const community = get(communities).find((c) => get(c).community_id === community_id)!;
-			community.update(($community) => ({
-				...$community,
-				// TODO `community.spaces` is not reactive, and should be replaced with flat data structures,
-				// but we may want to make them readable stores in the meantime
-				spaces: $community.spaces.concat(space), // TODO should this check if it's already there? yes but for different data structures
-			}));
-
 			spaces.update(($spaces) => $spaces.concat(writable(space)));
 			return result;
 		},
@@ -477,18 +468,19 @@ export const toUi = (
 			//update state here
 			const {space_id} = params;
 			get(communities).forEach((community) => {
-				community.update(($community) => ({
-					...$community,
-					// TODO clean this up as part of the data normalization efforts
-					spaces: $community.spaces.filter((space) => space.space_id !== space_id),
-				}));
-
 				// TODO maybe make a nav helper or event?
 				const $community = get(community);
+				// TODO this should only nav for the active community, otherwise update just update the spaceIdByCommunitySelection
 				if (space_id === get(spaceIdByCommunitySelection)[$community.community_id]) {
-					goto('/' + $community.name + $community.spaces[0].url + location.search, {
-						replaceState: true,
-					});
+					goto(
+						'/' +
+							$community.name +
+							get(get(spacesByCommunityId).get($community.community_id)![0]).url +
+							location.search,
+						{
+							replaceState: true,
+						},
+					);
 				}
 			});
 
