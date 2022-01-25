@@ -1,5 +1,6 @@
 import {writable, type Readable, type StartStopNotifier} from 'svelte/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
+import {clamp} from '@feltcoop/felt/util/maths.js';
 
 interface ContextmenuItems {
 	[key: string]: any; // TODO types
@@ -62,8 +63,7 @@ export const createContextmenuStore = (
 					const item = {...$state.selections[length - 1]};
 					if (item.index === itemIndex) return $state;
 					selections = $state.selections.slice(0, -1);
-					// TODO use `clamp` after upgrading Felt
-					item.index = Math.min(Math.max(0, itemIndex), item.count - 1); // just clamp if it's bad data
+					item.index = clamp(itemIndex, 0, item.count - 1); // just clamp if it's bad data
 					console.log('selectionsC, item', selections, item);
 				}
 				return {...$state, selections};
@@ -96,8 +96,7 @@ export const createContextmenuStore = (
 					const item = {...$state.selections[length - 1]};
 					if (item.index === itemIndex) return $state;
 					selections = $state.selections.slice(0, -1);
-					// TODO use `clamp` after upgrading Felt
-					item.index = Math.min(Math.max(0, itemIndex), item.count - 1); // just clamp if it's bad data
+					item.index = clamp(itemIndex, 0, item.count - 1); // just clamp if it's bad data
 					console.log('selectionsC, item', selections, item);
 				}
 				return {...$state, selections};
