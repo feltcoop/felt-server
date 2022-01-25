@@ -1,8 +1,7 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
 
-import type {TestServerContext} from '$lib/util/testServerHelpers';
-import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
+import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {eventInfos} from '$lib/app/events';
 import {toRandomVocabContext} from '$lib/vocab/random';
@@ -11,15 +10,15 @@ import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {setupApp, teardownApp} from '$lib/util/testAppHelpers';
 
 /* test__eventInfos */
-const test__eventInfos = suite<TestServerContext & TestAppContext>('eventInfos');
+const test__eventInfos = suite<TestDbContext & TestAppContext>('eventInfos');
 
-test__eventInfos.before(setupServer);
-test__eventInfos.after(teardownServer);
+test__eventInfos.before(setupDb);
+test__eventInfos.after(teardownDb);
 test__eventInfos.before(setupApp((() => {}) as any)); // TODO either use `node-fetch` or mock
 test__eventInfos.after(teardownApp);
 
-test__eventInfos('dispatch random events in a client app', async ({server, app}) => {
-	const random = toRandomVocabContext(server.db);
+test__eventInfos('dispatch random events in a client app', async ({db, app}) => {
+	const random = toRandomVocabContext(db);
 
 	for (const eventInfo of eventInfos.values()) {
 		const account = await random.account();

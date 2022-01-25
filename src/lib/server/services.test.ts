@@ -2,21 +2,20 @@ import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
 import {red} from '@feltcoop/felt/util/terminal.js';
 
-import type {TestServerContext} from '$lib/util/testServerHelpers';
-import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
+import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {services} from '$lib/server/services';
 import {toRandomVocabContext} from '$lib/vocab/random';
 import {randomEventParams} from '$lib/server/random';
 
 /* test__services */
-const test__services = suite<TestServerContext>('services');
+const test__services = suite<TestDbContext>('services');
 
-test__services.before(setupServer);
-test__services.after(teardownServer);
+test__services.before(setupDb);
+test__services.after(teardownDb);
 
-test__services('perform services', async ({server}) => {
-	const random = toRandomVocabContext(server.db);
+test__services('perform services', async ({db}) => {
+	const random = toRandomVocabContext(db);
 
 	for (const service of services.values()) {
 		const account = await random.account();
@@ -29,7 +28,7 @@ test__services('perform services', async ({server}) => {
 			);
 		}
 		const result = await service.perform({
-			repos: server.db.repos,
+			repos: db.repos,
 			params,
 			account_id: account.account_id,
 		});

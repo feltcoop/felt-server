@@ -1,21 +1,19 @@
 <script lang="ts">
-	import {type Writable} from 'svelte/store';
+	import {type Readable} from 'svelte/store';
 
-	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {type Persona} from '$lib/vocab/persona/persona';
 	import ContextmenuItem from '$lib/ui/contextmenu/ContextmenuItem.svelte';
 	import ContextmenuSubmenuItem from '$lib/ui/contextmenu/ContextmenuSubmenuItem.svelte';
+	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
 	const {dispatch} = getApp();
 
 	export let contextmenu: ContextmenuStore;
 	export let menuIndex: number; // TODO infer this automatically everywhere it appears
 	export let itemIndex: number; // TODO infer this automatically everywhere it appears
-
-	let persona: Writable<Persona>;
-	$: persona = $contextmenu.items.ActingPersonaContextmenu;
+	export let persona: Readable<Persona>;
 </script>
 
 <ContextmenuSubmenuItem {contextmenu} {menuIndex} {itemIndex}>

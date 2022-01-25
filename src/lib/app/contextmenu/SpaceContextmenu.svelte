@@ -1,20 +1,18 @@
 <script lang="ts">
 	import {type Readable} from 'svelte/store';
 
-	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {getApp} from '$lib/ui/app';
 	import ContextmenuItem from '$lib/ui/contextmenu/ContextmenuItem.svelte';
 	import ContextmenuSubmenuItem from '$lib/ui/contextmenu/ContextmenuSubmenuItem.svelte';
 	import {type Space} from '$lib/vocab/space/space';
+	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
 	const {dispatch} = getApp();
 
 	export let contextmenu: ContextmenuStore;
 	export let menuIndex: number; // TODO infer this automatically everywhere it appears
 	export let itemIndex: number; // TODO infer this automatically everywhere it appears
-
-	let space: Readable<Space>;
-	$: space = $contextmenu.items.SpaceContextmenu;
+	export let space: Readable<Space>;
 </script>
 
 <ContextmenuSubmenuItem {contextmenu} {menuIndex} {itemIndex}>
