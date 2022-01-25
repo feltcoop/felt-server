@@ -21,7 +21,7 @@ test__membershipServices('disallow creating duplicate memberships', async ({serv
 	const community = await random.community();
 
 	let createMembershipResult = await createMembershipService.perform({
-		server,
+		repos: server.db.repos,
 		account_id: account.account_id,
 		params: {community_id: community.community_id, persona_id: persona.persona_id},
 	});
@@ -30,7 +30,7 @@ test__membershipServices('disallow creating duplicate memberships', async ({serv
 	let errorMessage;
 	try {
 		createMembershipResult = await createMembershipService.perform({
-			server,
+			repos: server.db.repos,
 			account_id: account.account_id,
 			params: {community_id: community.community_id, persona_id: persona.persona_id},
 		});
@@ -49,7 +49,7 @@ test__membershipServices(
 		const persona = await random.persona();
 		const community = unwrap(await server.db.repos.community.findByName(persona.name))!;
 		const createMembershipResult = await createMembershipService.perform({
-			server,
+			repos: server.db.repos,
 			account_id: account.account_id,
 			params: {
 				community_id: community.community_id,
@@ -67,7 +67,7 @@ test__membershipServices('delete a membership in a community', async ({server}) 
 	const community1 = await random.community(persona);
 
 	const deleteResult = await deleteMembershipService.perform({
-		server,
+		repos: server.db.repos,
 		params: {persona_id: persona.persona_id, community_id: community1.community_id},
 		account_id: account.account_id,
 	});

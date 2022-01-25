@@ -20,7 +20,7 @@ test__spaceServices('delete a space in multiple communities', async ({server}) =
 	const space = await random.space(undefined, account, community1);
 
 	const deleteResult = await deleteSpaceService.perform({
-		server,
+		repos: server.db.repos,
 		params: {space_id: space.space_id},
 		account_id: account.account_id,
 	});

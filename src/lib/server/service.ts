@@ -1,4 +1,4 @@
-import type {ApiServer} from '$lib/server/ApiServer.js';
+import type {Database} from '$lib/db/Database';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
 
 export type ServiceMethod =
@@ -20,7 +20,7 @@ export interface Service<TParams, TResponse> {
 }
 
 export interface ServiceRequest<TParams> {
-	server: ApiServer;
+	repos: Database['repos'];
 	params: TParams;
 	account_id: number;
 }

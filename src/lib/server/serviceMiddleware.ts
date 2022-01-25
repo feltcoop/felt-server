@@ -58,7 +58,11 @@ export const toServiceMiddleware =
 				return send(res, 401, {message: 'not logged in'});
 			}
 
-			const result = await service.perform({server, params, account_id: req.account_id});
+			const result = await service.perform({
+				repos: server.db.repos,
+				params,
+				account_id: req.account_id,
+			});
 
 			if (!result.ok) {
 				send(res, result.status || 500, {message: result.message});

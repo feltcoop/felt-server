@@ -28,7 +28,7 @@ test__personaService('create a persona & test collisions', async ({server}) => {
 	params.name = params.name.toLowerCase();
 
 	let result = await createPersonaService.perform({
-		server,
+		repos: server.db.repos,
 		params,
 		account_id: account.account_id,
 	});
@@ -36,7 +36,7 @@ test__personaService('create a persona & test collisions', async ({server}) => {
 	assert.equal(result.ok, true);
 
 	result = await createPersonaService.perform({
-		server,
+		repos: server.db.repos,
 		params,
 		account_id: account.account_id,
 	});
@@ -45,7 +45,7 @@ test__personaService('create a persona & test collisions', async ({server}) => {
 
 	params.name = params.name.toUpperCase();
 	result = await createPersonaService.perform({
-		server,
+		repos: server.db.repos,
 		params,
 		account_id: account.account_id,
 	});
