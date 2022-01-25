@@ -33,12 +33,6 @@
 	};
 </script>
 
-{#if account}
-	<div>This account was created {account.created}</div>
-{/if}
-{#if selectedPersona}
-	<div>This persona was created {$selectedPersona.created}</div>
-{/if}
 <form>
 	<PendingButton pending={!!submitting} type="button" on:click={doLogOut} {disabled}>
 		log out
