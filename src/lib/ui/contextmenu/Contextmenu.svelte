@@ -51,7 +51,7 @@
 		}
 	};
 
-	$: keys = Object.keys($contextmenu.items);
+	$: items = Object.entries($contextmenu.items);
 
 	const doContextmenu = onContextmenu(contextmenu);
 </script>
@@ -65,11 +65,7 @@
 	on:keydown|capture={$contextmenu.open ? onWindowKeydown : undefined}
 />
 
-<!--
-	TODO This originally had an `in:scale` transition, `in:scale={{duration: 50}}`
-	but even a 50ms animation makes it feel slow.
-	Maybe a better solution is to show the content immediately, but animate the periphery.
--->
+<!-- TODO Maybe animate a subtle highlight around the contextmenu as it appears? -->
 {#if $contextmenu.open}
 	<div
 		class="contextmenu pane"
@@ -80,11 +76,10 @@
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
 	>
 		<div on:click={onClickContent}>
-			{#each keys as key (key)}
+			{#each items as [key, props] (key)}
 				{#if key in components}
 					<section class="panel-inset">
-						<!-- TODO maybe pass through the key/value generically? -->
-						<svelte:component this={components[key]} {contextmenu} />
+						<svelte:component this={components[key]} {...props} />
 					</section>
 				{:else}
 					<Message status="error">unknown contextmenu "{key}"</Message>

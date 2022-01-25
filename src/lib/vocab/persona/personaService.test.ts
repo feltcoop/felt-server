@@ -1,8 +1,7 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
 
-import type {TestServerContext} from '$lib/util/testServerHelpers';
-import {setupServer, teardownServer} from '$lib/util/testServerHelpers';
+import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {toRandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {createPersonaService} from '$lib/vocab/persona/personaServices';
@@ -15,20 +14,20 @@ import {CreatePersona} from '$lib/vocab/persona/persona.events';
 // instead of the whole server
 
 /* test__repos */
-const test__personaService = suite<TestServerContext & TestAppContext>('personaService');
+const test__personaService = suite<TestDbContext & TestAppContext>('personaService');
 
-test__personaService.before(setupServer);
-test__personaService.after(teardownServer);
+test__personaService.before(setupDb);
+test__personaService.after(teardownDb);
 
-test__personaService('create a persona & test collisions', async ({server}) => {
+test__personaService('create a persona & test collisions', async ({db}) => {
 	//STEP 1: get a server, account, and event context lined up
-	const random = toRandomVocabContext(server.db);
+	const random = toRandomVocabContext(db);
 	const account = await random.account();
 	const params = await randomEventParams(CreatePersona, random);
 	params.name = params.name.toLowerCase();
 
 	let result = await createPersonaService.perform({
-		repos: server.db.repos,
+		repos: db.repos,
 		params,
 		account_id: account.account_id,
 	});
@@ -36,7 +35,7 @@ test__personaService('create a persona & test collisions', async ({server}) => {
 	assert.equal(result.ok, true);
 
 	result = await createPersonaService.perform({
-		repos: server.db.repos,
+		repos: db.repos,
 		params,
 		account_id: account.account_id,
 	});
@@ -45,7 +44,7 @@ test__personaService('create a persona & test collisions', async ({server}) => {
 
 	params.name = params.name.toUpperCase();
 	result = await createPersonaService.perform({
-		repos: server.db.repos,
+		repos: db.repos,
 		params,
 		account_id: account.account_id,
 	});

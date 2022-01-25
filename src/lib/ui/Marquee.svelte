@@ -28,7 +28,11 @@
 			<!-- TODO probably want these to be sorted so the selected persona is always first -->
 			{#each $community.memberPersonas as persona (persona.persona_id)}
 				<!-- TODO this is going to change to a store, won't need the inefficient lookup -->
-				<li use:contextmenu.action={{PersonaContextmenu: personasById.get(persona.persona_id)}}>
+				<li
+					use:contextmenu.action={{
+						PersonaContextmenu: {persona: personasById.get(persona.persona_id)},
+					}}
+				>
 					<Avatar name={toName(persona)} icon={toIcon(persona)} />
 				</li>
 			{/each}
