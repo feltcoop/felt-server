@@ -35,9 +35,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	<div class="markup formatted">
 		<div class="signature">
 			<Avatar name={toName($persona)} icon={toIcon($persona)} showIcon={false} />
-			<div class="timestamp">
-				{format(new Date($entity.created), 'Pp')}
-			</div>
+			{format(new Date($entity.created), 'Pp')}
 		</div>
 		<div>
 			{$entity.data.content}
@@ -55,11 +53,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	.signature {
 		display: flex;
 		align-items: center;
-	}
-	.timestamp {
-		flex: 1;
-		display: flex;
-		justify-content: flex-end;
+		justify-content: space-between;
 	}
 	.markup {
 		padding: 0 0 0 var(--spacing_md);
