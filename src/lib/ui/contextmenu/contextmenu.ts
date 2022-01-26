@@ -20,7 +20,6 @@ interface MenuState {
 	isMenu: true;
 	menu: MenuState | RootMenuState;
 	selected: boolean;
-	expanded: boolean;
 	// TODO is `entries` what we want? maybe swap with `ItemState`, so `items` and `EntryState`?
 	items: ItemState[];
 }
@@ -68,7 +67,7 @@ export const createContextmenuStore = (
 		open: false,
 		items: {},
 		selections: [],
-		menu: null as any, // TODO ? should this property be nullable or do we not care?
+		menu: {isMenu: true, menu: null, items: []},
 		x: 0,
 		y: 0,
 		count: 0,
@@ -84,7 +83,7 @@ export const createContextmenuStore = (
 			update(($state) => ({...$state, open: true, items, x, y}));
 		},
 		close: () => {
-			update(($state) => ({...$state, open: false, menu: null as any, selections: []}));
+			update(($state) => ({...$state, open: false, selections: []}));
 		},
 		selectItem: (item) => {
 			update(($state) => {
@@ -133,8 +132,7 @@ export const createContextmenuStore = (
 		},
 		action: contextmenuAction,
 		addRootMenu: () => {
-			const menu: RootMenuState = {isMenu: true, menu: null, items: []};
-			get(store).menu = menu; // TODO mutation is good here right?
+			const {menu} = get(store);
 			setContext('contextmenuState', menu); // TODO extract
 			console.log('addRootMenu', menu);
 			return menu;
@@ -145,20 +143,18 @@ export const createContextmenuStore = (
 			console.log('addEntry', menu, entry);
 			menu.items.push(entry);
 			onDestroy(() => {
-				// TODO instead of removing individual items, could we just set `length = 0` ?
-				menu.items.splice(menu.items.indexOf(entry), 1);
+				menu.items.length = 0;
 			});
 			return entry;
 		},
 		addSubmenu: () => {
 			const menu = getContext('contextmenuState') as MenuState; // TODO extract
-			const submenu: MenuState = {isMenu: true, menu, selected: false, expanded: false, items: []};
+			const submenu: MenuState = {isMenu: true, menu, selected: false, items: []};
 			menu.items.push(submenu);
 			setContext('contextmenuState', submenu); // TODO extract
 			console.log('addSubmenu', submenu);
 			onDestroy(() => {
-				// TODO instead of removing individual items, could we just set `length = 0` ?
-				menu.items.splice(menu.items.indexOf(submenu), 1);
+				menu.items.length = 0;
 			});
 			return submenu;
 		},
@@ -171,6 +167,10 @@ const cycleSelections = ($state: Contextmenu, forward: boolean): ItemState[] => 
 	let nextItem: ItemState;
 	if (deselected) {
 		deselected.selected = false;
+		if (!deselected.menu) {
+			// TODO
+			debugger;
+		}
 		const items = deselected.menu.items;
 		const i = items.indexOf(deselected);
 		nextItem =

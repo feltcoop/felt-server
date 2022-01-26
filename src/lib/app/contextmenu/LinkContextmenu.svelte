@@ -2,6 +2,9 @@
 	import {page} from '$app/stores';
 	import {stripStart} from '@feltcoop/felt/util/string.js';
 
+	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+
+	export const contextmenu: ContextmenuStore = undefined as any;
 	export let href: string;
 
 	// TODO refactor this after upgrading SvelteKit to where `$page` has `url`

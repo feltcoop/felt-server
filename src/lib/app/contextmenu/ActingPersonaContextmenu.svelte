@@ -15,7 +15,7 @@
 </script>
 
 <ContextmenuSubmenu {contextmenu}>
-	<svelte:fragment slot="button">
+	<svelte:fragment slot="entry">
 		<Avatar name={$persona.name} />
 	</svelte:fragment>
 	<svelte:fragment slot="menu">

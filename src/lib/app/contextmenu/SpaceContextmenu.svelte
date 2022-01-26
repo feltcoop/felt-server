@@ -14,7 +14,7 @@
 </script>
 
 <ContextmenuSubmenu {contextmenu}>
-	<svelte:fragment slot="button">
+	<svelte:fragment slot="entry">
 		{$space.name}
 	</svelte:fragment>
 	<svelte:fragment slot="menu">

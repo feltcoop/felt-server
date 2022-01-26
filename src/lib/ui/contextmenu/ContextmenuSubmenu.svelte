@@ -29,7 +29,7 @@
 		on:mousemove|stopPropagation={select}
 		aria-expanded={selected}
 	>
-		<slot name="button" />
+		<slot name="entry" />
 		<div class="chevron" />
 	</div>
 	{#if selected}
