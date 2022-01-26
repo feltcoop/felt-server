@@ -2,7 +2,7 @@
 	import {VITE_GIT_HASH} from '$lib/config';
 </script>
 
-<div class="markup">
+<li role="none" class="markup">
 	<p>
 		💚
 		<a href="https://github.com/feltcoop/felt-server" target="_blank" rel="noreferrer"
@@ -13,4 +13,4 @@
 			{VITE_GIT_HASH}
 		</a>
 	</p>
-</div>
+</li>

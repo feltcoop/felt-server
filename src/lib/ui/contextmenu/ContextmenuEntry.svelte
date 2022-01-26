@@ -2,12 +2,13 @@
 	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
 	export let contextmenu: ContextmenuStore;
-	export let menuIndex: number; // TODO infer this automatically everywhere it appears
-	export let itemIndex: number; // TODO infer this automatically everywhere it appears
 
-	const selectItem = (e: MouseEvent) => {
+	const entry = contextmenu.addItem();
+	console.log('entry', entry);
+
+	const select = (e: MouseEvent) => {
 		e.stopPropagation();
-		contextmenu.selectItem(menuIndex, itemIndex);
+		contextmenu.selectEntry(entry);
 	};
 
 	$: selected = $contextmenu.selections[menuIndex]?.index === itemIndex;
@@ -17,6 +18,6 @@
 https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.html
 how to handle the fact that they shouldn't receive focus? disable `Tab`?
 -->
-<li class="menu-item" role="menuitem" class:selected on:click on:mousemove={selectItem}>
+<li class="menu-item" role="menuitem" class:selected on:click on:mousemove={select}>
 	<slot />
 </li>

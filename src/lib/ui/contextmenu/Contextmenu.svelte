@@ -30,24 +30,30 @@
 		if (e.key === 'Escape' && !(e.target instanceof HTMLElement && isEditable(e.target))) {
 			contextmenu.close();
 			e.stopPropagation();
-			e.preventDefault();
 		} else if (e.key === 'ArrowLeft') {
-			contextmenu.closeSelected();
+			contextmenu.collapseSelected();
+			e.stopPropagation();
 		} else if (e.key === 'ArrowRight') {
-			contextmenu.openSelected();
+			contextmenu.expandSelected();
+			e.stopPropagation();
 		} else if (e.key === 'ArrowDown') {
 			contextmenu.selectNext();
+			e.stopPropagation();
 		} else if (e.key === 'ArrowUp') {
 			contextmenu.selectPrevious();
+			e.stopPropagation();
 		} else if (e.key === 'Home') {
 			// TODO
 			// contextmenu.selectFirst();
+			e.stopPropagation();
 		} else if (e.key === 'End') {
 			// TODO
 			// contextmenu.selectLast();
+			e.stopPropagation();
 		} else if (e.key === 'Space' || e.key === 'Enter') {
 			// TODO handle these to activate the selected menu item
 			// contextmenu.activateSelected();
+			e.stopPropagation();
 		}
 	};
 
@@ -67,6 +73,10 @@
 	};
 
 	$: items = Object.entries($contextmenu.items);
+
+	const menu = contextmenu.addRootMenu();
+	console.log('main contextmenu menu', menu);
+	if (typeof window !== 'undefined') window.menu = menu;
 
 	const doContextmenu = onContextmenu(contextmenu);
 </script>
@@ -91,16 +101,10 @@
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
 		on:click={onClickContent}
 	>
-		{#each items as [key, props], itemIndex (key)}
+		{#each items as [key, props] (key)}
 			{#if key in components}
 				<section>
-					<svelte:component
-						this={components[key]}
-						{...props}
-						{contextmenu}
-						menuIndex={0}
-						{itemIndex}
-					/>
+					<svelte:component this={components[key]} {...props} {contextmenu} />
 				</section>
 			{:else}
 				<Message status="error">unknown contextmenu "{key}"</Message>

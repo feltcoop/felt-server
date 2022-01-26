@@ -1,14 +1,25 @@
-import {writable, type Readable, type StartStopNotifier} from 'svelte/store';
+import {writable, get, type Readable, type StartStopNotifier} from 'svelte/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {clamp} from '@feltcoop/felt/util/maths.js';
+import {getContext, setContext} from 'svelte';
 
 interface ContextmenuItems {
 	[key: string]: any; // TODO types
 }
 
-interface SelectionItem {
-	count: number;
-	index: number | null;
+type ItemState = MenuState | EntryState;
+interface EntryState {
+	// TODO action callback or event?
+	menu: false;
+	selected: boolean;
+}
+interface MenuState {
+	// TODO action callback or event?
+	menu: true;
+	selected: boolean;
+	expanded: boolean;
+	// TODO is `entries` what we want? maybe swap with `ItemState`, so `items` and `EntryState`?
+	items: ItemState[];
 }
 
 export interface Contextmenu {
@@ -18,7 +29,8 @@ export interface Contextmenu {
 	// maybe they should be blocks and block ids? or both?
 	items: ContextmenuItems;
 	// the 0th array item is the the only guaranteed one; submenus are subsequent items
-	selections: SelectionItem[];
+	selections: number[];
+	menu: MenuState;
 	count: number;
 	x: number;
 	y: number;
@@ -27,27 +39,39 @@ export interface Contextmenu {
 export interface ContextmenuStore extends Readable<Contextmenu> {
 	open(items: ContextmenuItems, x: number, y: number): void;
 	close(): void;
-	selectItem(menuIndex: number, itemIndex: number): void;
-	selectSubmenuItem(menuIndex: number, itemIndex: number): void;
-	closeSelected(): void; // removes one
-	openSelected(): void; // opens the selected submenu
+	selectEntry(entry: EntryState): void;
+	selectSubmenu(submenu: MenuState): void;
+	collapseSelected(): void; // removes one
+	expandSelected(): void; // opens the selected submenu
 	selectNext(): void; // advances to the next of the latest
 	selectPrevious(): void; // removes one
 	action: typeof contextmenuAction;
+	addRootMenu(): MenuState;
+	addItem(): EntryState;
+	addSubmenu(): MenuState;
 }
 
-const logSelections = (selections: SelectionItem[]) => {
+const logSelections = (selections: number[]) => {
 	console.log(
 		'selections',
-		selections.map((s, i) => `${i}__${s.index}__${s.count}  `),
+		selections.map((s, i) => `${i}__${s}  `),
 	);
 };
 
 export const createContextmenuStore = (
-	initialValue: Contextmenu = {open: false, items: {}, selections: [], x: 0, y: 0, count: 0},
+	initialValue: Contextmenu = {
+		open: false,
+		items: {},
+		selections: [],
+		menu: null as any, // TODO ? should this property be nullable or do we not care?
+		x: 0,
+		y: 0,
+		count: 0,
+	},
 	start?: StartStopNotifier<Contextmenu>,
 ): ContextmenuStore => {
-	const {subscribe, update} = writable(initialValue, start);
+	const store = writable(initialValue, start);
+	const {subscribe, update} = store;
 
 	return {
 		subscribe,
@@ -55,59 +79,49 @@ export const createContextmenuStore = (
 			update(($state) => ({...$state, open: true, items, x, y}));
 		},
 		close: () => {
-			update(($state) => ({...$state, open: false, selections: []}));
+			update(($state) => ({...$state, open: false, menu: null as any, selections: []}));
 		},
-		selectItem: (menuIndex, itemIndex) => {
+		selectEntry: (entry) => {
 			update(($state) => {
 				const {length} = $state.selections;
-				console.log('\n\n\nITEM menuIndex, itemIndex, length', menuIndex, itemIndex, length);
+				console.log('\n\n\nSELECT entry, length', entry, length);
 				// ignore `menuIndex` overflowing the max
 				let selections;
 				if (menuIndex <= length) {
 					selections = $state.selections.slice(0, menuIndex + 1);
-					selections[selections.length - 1] = {
-						...selections[selections.length - 1],
-						index: itemIndex,
-					};
+					selections[selections.length - 1] = itemIndex;
 					console.log('selectionsB, menuIndex', selections.length, menuIndex);
 				} else {
 					// TODO handle if `menuIndex` is less than length - 1
-					const item = {...$state.selections[length - 1]};
-					if (item.index === itemIndex) return $state;
+					const item = $state.selections[length - 1];
+					if (item === itemIndex) return $state;
 					selections = $state.selections.slice(0, -1);
-					item.index = clamp(itemIndex, 0, item.count - 1); // just clamp if it's bad data
+					$state.selections[length - 1] = clamp(itemIndex, 0, item.count - 1); // just clamp if it's bad data
 					console.log('selectionsC, item', selections, item);
 				}
 				logSelections(selections);
 				return {...$state, selections};
 			});
 		},
-		selectSubmenuItem: (menuIndex, itemIndex) => {
+		selectSubmenu: (submenu) => {
 			update(($state) => {
 				const {length} = $state.selections;
-				console.log(
-					'\n\n\nSUBMENU ITEM menuIndex, itemIndex, length',
-					menuIndex,
-					itemIndex,
-					length,
-				);
+				console.log('\n\n\nSELECT submenu, length', submenu, length);
 				// ignore `menuIndex` overflowing the max
 				let selections;
 				if (menuIndex >= length - 1) {
-					selections = [...$state.selections, {count: $state.count, index: null}];
+					// TODO the count?
+					selections = [...$state.selections, {count: 4, index: null}];
 					console.log('selectionsA', selections);
 				} else if (menuIndex <= length) {
 					if ($state.selections[menuIndex].index === itemIndex) return $state;
 					selections = $state.selections.slice(0, menuIndex + 1);
-					selections[selections.length - 1] = {
-						...selections[selections.length - 1],
-						index: itemIndex,
-					};
+					selections[selections.length - 1] = itemIndex;
 					console.log('selectionsB, menuIndex', selections.length, menuIndex);
 				} else {
 					// TODO handle if `menuIndex` is less than length - 1
-					const item = {...$state.selections[length - 1]};
-					if (item.index === itemIndex) return $state;
+					const item = $state.selections[length - 1];
+					if (item === itemIndex) return $state;
 					selections = $state.selections.slice(0, -1);
 					item.index = clamp(itemIndex, 0, item.count - 1); // just clamp if it's bad data
 					console.log('selectionsC, item', selections, item);
@@ -116,32 +130,29 @@ export const createContextmenuStore = (
 				return {...$state, selections};
 			});
 		},
-		closeSelected: () => {
+		collapseSelected: () => {
 			update(($state) => {
 				if (!$state.selections.length) return $state;
 				return {...$state, selections: $state.selections.slice(0, -1)};
 			});
 		},
-		openSelected: () => {
+		expandSelected: () => {
 			// TODO how does this work? need to detect if the selected one is a submenu,
 			// and if so select the `menuItem+1` at `itemIndex=0`
-			console.log('OPEN SELECTED');
+			console.log('EXPAND SELECTED');
 			update(($state) => {
 				const {selections} = $state;
 				if (!selections.length) return $state;
-				// TODO the count is what? should we prebake the data structure on mount?
-				const newItem: SelectionItem = {count: 2, index: 0};
-				return {...$state, selections: selections.concat(newItem)};
+				return {...$state, selections: selections.concat(0)};
 			});
 		},
 		selectNext: () => {
 			update(($state) => {
 				const {length} = $state.selections;
-				if (!length) return $state;
 				const selections = $state.selections.slice(0, -1);
-				const item = {...$state.selections[length - 1]};
-				item.index = item.index === null ? 0 : item.index === item.count - 1 ? 0 : item.index + 1;
-				selections.push(item);
+				const item = length ? {...$state.selections[length - 1]} : {index: null, count: 4};
+				const index = item.index === null ? 0 : item.index === item.count - 1 ? 0 : item.index + 1;
+				selections.push(index);
 				logSelections(selections);
 				return {...$state, selections};
 			});
@@ -149,17 +160,42 @@ export const createContextmenuStore = (
 		selectPrevious: () => {
 			update(($state) => {
 				const {length} = $state.selections;
-				if (!length) return $state;
 				const selections = $state.selections.slice(0, -1);
-				const item = {...$state.selections[length - 1]};
-				item.index =
+				const item = length ? {...$state.selections[length - 1]} : {index: null, count: 4};
+				const index =
 					item.index === null ? item.count - 1 : item.index === 0 ? item.count - 1 : item.index - 1;
-				selections.push(item);
+				selections.push(index);
 				logSelections(selections);
 				return {...$state, selections};
 			});
 		},
 		action: contextmenuAction,
+		addRootMenu: () => {
+			const menu: MenuState = {menu: true, selected: false, expanded: false, items: []};
+			get(store).menu = menu; // TODO mutation is good here right?
+			setContext('contextmenuState', menu); // TODO extract
+			console.log('addRootMenu', menu);
+			return menu;
+		},
+		addItem: () => {
+			const menu = getContext('contextmenuState') as MenuState; // TODO extract
+			const entry: EntryState = {menu: false, selected: false};
+			console.log('addItem', menu, entry);
+			menu.items.push(entry);
+			return entry;
+		},
+		addSubmenu: () => {
+			const menu = getContext('contextmenuState') as MenuState; // TODO extract
+			const submenu: MenuState = {menu: true, selected: false, expanded: false, items: []};
+			menu.items.push(submenu);
+			setContext('contextmenuState', submenu); // TODO extract
+			console.log('addSubmenu', submenu);
+			// TODO is this needed?
+			// onDestroy(() => {
+			// 	data.delete(submenu);
+			// });
+			return submenu;
+		},
 	};
 };
 

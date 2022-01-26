@@ -2,21 +2,23 @@
 	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
 	export let contextmenu: ContextmenuStore;
-	export let menuIndex: number; // TODO infer this automatically everywhere it appears
-	export let itemIndex: number; // TODO infer this automatically everywhere it appears
 
 	// TODO add toggle action to the button that opens the menu and focuses on the first item
 	// TODO add larger transparent cursor hit area
 	// TODO fix keyboard nav (is the delay between focus the problem?)
 
+	// should this set context so we automatically know where it's nested? set using the id?
+	const submenu = contextmenu.addSubmenu();
+	console.log('submenu submenu', submenu);
+
+	const select = () => {
+		if (!expanded) contextmenu.selectSubmenu(submenu);
+	};
+
 	$: expanded =
 		$contextmenu.selections[menuIndex + 1] !== undefined &&
 		$contextmenu.selections[menuIndex]?.index === itemIndex;
 	$: selected = $contextmenu.selections[menuIndex]?.index === itemIndex;
-
-	const selectItem = () => {
-		if (!expanded) contextmenu.selectSubmenuItem(menuIndex, itemIndex);
-	};
 </script>
 
 <!-- TODO what's the right structure for a11y? -->
@@ -26,7 +28,7 @@
 		role="menuitem"
 		class:selected
 		on:click|stopPropagation
-		on:mousemove|stopPropagation={selectItem}
+		on:mousemove|stopPropagation={select}
 		aria-expanded={expanded}
 	>
 		<slot name="button" />

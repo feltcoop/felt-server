@@ -18,10 +18,12 @@
 <!-- TODO could do more if we had the original `target` element
 							(but it might go stale on $contextmenu?) -->
 <!-- TODO if it's an external link, add target="_blank" -->
-<a {href}>
-	<span class="icon">🔗</span>
-	<span class="text">{formatUrl(href)}</span>
-</a>
+<li role="none">
+	<a {href}>
+		<span class="icon">🔗</span>
+		<span class="text">{formatUrl(href)}</span>
+	</a>
+</li>
 
 <style>
 	a {
