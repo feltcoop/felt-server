@@ -9,16 +9,14 @@
 
 	// should this set context so we automatically know where it's nested? set using the id?
 	const submenu = contextmenu.addSubmenu();
-	console.log('submenu submenu', submenu);
+	console.log('submenu', submenu);
 
 	const select = () => {
-		if (!expanded) contextmenu.selectSubmenu(submenu);
+		if (!selected) contextmenu.selectItem(submenu);
 	};
 
-	$: expanded =
-		$contextmenu.selections[menuIndex + 1] !== undefined &&
-		$contextmenu.selections[menuIndex]?.index === itemIndex;
-	$: selected = $contextmenu.selections[menuIndex]?.index === itemIndex;
+	// TODO remove $contextmenu if we make `submenu` reactive, or delete this TODO
+	$: ({selected} = ($contextmenu, submenu));
 </script>
 
 <!-- TODO what's the right structure for a11y? -->
@@ -29,14 +27,14 @@
 		class:selected
 		on:click|stopPropagation
 		on:mousemove|stopPropagation={select}
-		aria-expanded={expanded}
+		aria-expanded={selected}
 	>
 		<slot name="button" />
 		<div class="chevron" />
 	</div>
-	{#if expanded}
+	{#if selected}
 		<ul class="contextmenu-submenu pane" role="menu" style="transform: translate3d(100%, 0, 0)">
-			<slot name="menu">TODO no menu content (make this a Message?)</slot>
+			<slot name="menu" />
 		</ul>
 	{/if}
 </li>

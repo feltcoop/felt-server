@@ -10,15 +10,23 @@ interface ContextmenuItems {
 type ItemState = MenuState | EntryState;
 interface EntryState {
 	// TODO action callback or event?
-	menu: false;
+	isMenu: false;
+	menu: MenuState | RootMenuState;
 	selected: boolean;
 }
+// TODO rename to `SubmenuState` if it stays distinct from `RootMenuState`
 interface MenuState {
 	// TODO action callback or event?
-	menu: true;
+	isMenu: true;
+	menu: MenuState | RootMenuState;
 	selected: boolean;
 	expanded: boolean;
 	// TODO is `entries` what we want? maybe swap with `ItemState`, so `items` and `EntryState`?
+	items: ItemState[];
+}
+interface RootMenuState {
+	isMenu: true;
+	menu: null;
 	items: ItemState[];
 }
 
@@ -29,8 +37,8 @@ export interface Contextmenu {
 	// maybe they should be blocks and block ids? or both?
 	items: ContextmenuItems;
 	// the 0th array item is the the only guaranteed one; submenus are subsequent items
-	selections: number[];
-	menu: MenuState;
+	selections: ItemState[];
+	menu: RootMenuState;
 	count: number;
 	x: number;
 	y: number;
@@ -39,23 +47,20 @@ export interface Contextmenu {
 export interface ContextmenuStore extends Readable<Contextmenu> {
 	open(items: ContextmenuItems, x: number, y: number): void;
 	close(): void;
-	selectEntry(entry: EntryState): void;
-	selectSubmenu(submenu: MenuState): void;
+	selectItem(item: ItemState): void;
 	collapseSelected(): void; // removes one
 	expandSelected(): void; // opens the selected submenu
 	selectNext(): void; // advances to the next of the latest
 	selectPrevious(): void; // removes one
 	action: typeof contextmenuAction;
-	addRootMenu(): MenuState;
-	addItem(): EntryState;
+	addRootMenu(): RootMenuState;
+	addEntry(): EntryState;
 	addSubmenu(): MenuState;
 }
 
-const logSelections = (selections: number[]) => {
-	console.log(
-		'selections',
-		selections.map((s, i) => `${i}__${s}  `),
-	);
+const logSelections = (selections: ItemState[]) => {
+	console.log('selections:');
+	selections.forEach((s, i) => console.log(i, s));
 };
 
 export const createContextmenuStore = (
@@ -81,53 +86,24 @@ export const createContextmenuStore = (
 		close: () => {
 			update(($state) => ({...$state, open: false, menu: null as any, selections: []}));
 		},
-		selectEntry: (entry) => {
+		selectItem: (item) => {
 			update(($state) => {
 				const {length} = $state.selections;
-				console.log('\n\n\nSELECT entry, length', entry, length);
-				// ignore `menuIndex` overflowing the max
-				let selections;
-				if (menuIndex <= length) {
-					selections = $state.selections.slice(0, menuIndex + 1);
-					selections[selections.length - 1] = itemIndex;
-					console.log('selectionsB, menuIndex', selections.length, menuIndex);
-				} else {
-					// TODO handle if `menuIndex` is less than length - 1
-					const item = $state.selections[length - 1];
-					if (item === itemIndex) return $state;
-					selections = $state.selections.slice(0, -1);
-					$state.selections[length - 1] = clamp(itemIndex, 0, item.count - 1); // just clamp if it's bad data
-					console.log('selectionsC, item', selections, item);
+				if ($state.selections[length - 1] === item) return $state;
+				console.log('\n\n\nSELECT item, length', item, length);
+				for (const selection of $state.selections) {
+					selection.selected = false;
 				}
-				logSelections(selections);
-				return {...$state, selections};
-			});
-		},
-		selectSubmenu: (submenu) => {
-			update(($state) => {
-				const {length} = $state.selections;
-				console.log('\n\n\nSELECT submenu, length', submenu, length);
-				// ignore `menuIndex` overflowing the max
-				let selections;
-				if (menuIndex >= length - 1) {
-					// TODO the count?
-					selections = [...$state.selections, {count: 4, index: null}];
-					console.log('selectionsA', selections);
-				} else if (menuIndex <= length) {
-					if ($state.selections[menuIndex].index === itemIndex) return $state;
-					selections = $state.selections.slice(0, menuIndex + 1);
-					selections[selections.length - 1] = itemIndex;
-					console.log('selectionsB, menuIndex', selections.length, menuIndex);
-				} else {
-					// TODO handle if `menuIndex` is less than length - 1
-					const item = $state.selections[length - 1];
-					if (item === itemIndex) return $state;
-					selections = $state.selections.slice(0, -1);
-					item.index = clamp(itemIndex, 0, item.count - 1); // just clamp if it's bad data
-					console.log('selectionsC, item', selections, item);
+				const newSelections: ItemState[] = [item];
+				item.selected = true;
+				let parent: ItemState | RootMenuState = item;
+				while ((parent = parent.menu)) {
+					parent.selected = true;
+					newSelections.unshift(parent);
 				}
-				logSelections(selections);
-				return {...$state, selections};
+				console.log('newSelections', newSelections);
+				logSelections(newSelections);
+				return {...$state, selections: newSelections};
 			});
 		},
 		collapseSelected: () => {
@@ -171,22 +147,22 @@ export const createContextmenuStore = (
 		},
 		action: contextmenuAction,
 		addRootMenu: () => {
-			const menu: MenuState = {menu: true, selected: false, expanded: false, items: []};
+			const menu: RootMenuState = {isMenu: true, menu: null, items: []};
 			get(store).menu = menu; // TODO mutation is good here right?
 			setContext('contextmenuState', menu); // TODO extract
 			console.log('addRootMenu', menu);
 			return menu;
 		},
-		addItem: () => {
+		addEntry: () => {
 			const menu = getContext('contextmenuState') as MenuState; // TODO extract
-			const entry: EntryState = {menu: false, selected: false};
-			console.log('addItem', menu, entry);
+			const entry: EntryState = {isMenu: false, menu, selected: false};
+			console.log('addEntry', menu, entry);
 			menu.items.push(entry);
 			return entry;
 		},
 		addSubmenu: () => {
 			const menu = getContext('contextmenuState') as MenuState; // TODO extract
-			const submenu: MenuState = {menu: true, selected: false, expanded: false, items: []};
+			const submenu: MenuState = {isMenu: true, menu, selected: false, expanded: false, items: []};
 			menu.items.push(submenu);
 			setContext('contextmenuState', submenu); // TODO extract
 			console.log('addSubmenu', submenu);

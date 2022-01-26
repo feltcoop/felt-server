@@ -3,20 +3,20 @@
 
 	export let contextmenu: ContextmenuStore;
 
-	const entry = contextmenu.addItem();
+	const entry = contextmenu.addEntry();
 	console.log('entry', entry);
 
 	const select = (e: MouseEvent) => {
 		e.stopPropagation();
-		contextmenu.selectEntry(entry);
+		contextmenu.selectItem(entry);
 	};
 
-	$: selected = $contextmenu.selections[menuIndex]?.index === itemIndex;
+	// TODO remove $contextmenu if we make `entry` reactive, or delete this TODO
+	$: ({selected} = ($contextmenu, entry));
 </script>
 
-<!-- TODO should be <a> ? 
+<!-- TODO should be <a> ? but they don't have a `href` currently which is an a11y warning -- should they?
 https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.html
-how to handle the fact that they shouldn't receive focus? disable `Tab`?
 -->
 <li class="menu-item" role="menuitem" class:selected on:click on:mousemove={select}>
 	<slot />
