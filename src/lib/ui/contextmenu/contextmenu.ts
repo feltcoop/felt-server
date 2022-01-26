@@ -1,7 +1,9 @@
-import {writable, get, type Readable, type StartStopNotifier} from 'svelte/store';
+import {writable, type Readable, type StartStopNotifier} from 'svelte/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {last} from '@feltcoop/felt/util/array.js';
 import {getContext, onDestroy, setContext} from 'svelte';
+
+const CONTEXTMENU_STATE_KEY = Symbol();
 
 interface ContextmenuItems {
 	[key: string]: any; // TODO types
@@ -38,7 +40,6 @@ export interface Contextmenu {
 	// the 0th array item is the the only guaranteed one; submenus are subsequent items
 	selections: ItemState[];
 	menu: RootMenuState;
-	count: number;
 	x: number;
 	y: number;
 }
@@ -52,7 +53,6 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 	selectNext(): void; // advances to the next of the latest
 	selectPrevious(): void; // removes one
 	action: typeof contextmenuAction;
-	addRootMenu(): RootMenuState;
 	addEntry(): EntryState;
 	addSubmenu(): MenuState;
 }
@@ -70,10 +70,11 @@ export const createContextmenuStore = (
 		menu: {isMenu: true, menu: null, items: []},
 		x: 0,
 		y: 0,
-		count: 0,
 	},
 	start?: StartStopNotifier<Contextmenu>,
 ): ContextmenuStore => {
+	const rootMenu = initialValue.menu;
+
 	const store = writable(initialValue, start);
 	const {subscribe, update} = store;
 
@@ -131,14 +132,8 @@ export const createContextmenuStore = (
 			update(($state) => ({...$state, selections: cycleSelections($state, false)}));
 		},
 		action: contextmenuAction,
-		addRootMenu: () => {
-			const {menu} = get(store);
-			setContext('contextmenuState', menu); // TODO extract
-			console.log('addRootMenu', menu);
-			return menu;
-		},
 		addEntry: () => {
-			const menu = getContext('contextmenuState') as MenuState; // TODO extract
+			const menu = (getContext(CONTEXTMENU_STATE_KEY) as MenuState | undefined) || rootMenu;
 			const entry: EntryState = {isMenu: false, menu, selected: false};
 			console.log('addEntry', menu, entry);
 			menu.items.push(entry);
@@ -148,10 +143,10 @@ export const createContextmenuStore = (
 			return entry;
 		},
 		addSubmenu: () => {
-			const menu = getContext('contextmenuState') as MenuState; // TODO extract
+			const menu = (getContext(CONTEXTMENU_STATE_KEY) as MenuState | undefined) || rootMenu;
 			const submenu: MenuState = {isMenu: true, menu, selected: false, items: []};
 			menu.items.push(submenu);
-			setContext('contextmenuState', submenu); // TODO extract
+			setContext(CONTEXTMENU_STATE_KEY, submenu);
 			console.log('addSubmenu', menu, submenu);
 			onDestroy(() => {
 				menu.items.length = 0;

@@ -75,11 +75,6 @@
 	$: items = Object.entries($contextmenu.items);
 	$: console.log('$contextmenu', $contextmenu);
 
-	const menu = contextmenu.addRootMenu();
-	// TODO remove
-	console.log('main contextmenu menu', menu);
-	if (typeof window !== 'undefined') (window as any).menu = menu;
-
 	const doContextmenu = onContextmenu(contextmenu);
 </script>
 
