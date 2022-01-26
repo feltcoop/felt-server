@@ -1,6 +1,7 @@
 import {writable, get, type Readable, type StartStopNotifier} from 'svelte/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
-import {getContext, setContext} from 'svelte';
+import {last} from '@feltcoop/felt/util/array.js';
+import {getContext, onDestroy, setContext} from 'svelte';
 
 interface ContextmenuItems {
 	[key: string]: any; // TODO types
@@ -88,7 +89,7 @@ export const createContextmenuStore = (
 		selectItem: (item) => {
 			update(($state) => {
 				const {selections} = $state;
-				if (selections[selections.length - 1] === item) return $state;
+				if (last(selections) === item) return $state;
 				console.log('\n\n\nSELECT item, length', item, selections.length);
 				for (const selection of selections) {
 					selection.selected = false;
@@ -108,8 +109,8 @@ export const createContextmenuStore = (
 		collapseSelected: () => {
 			update(($state) => {
 				const {selections} = $state;
-				if (!selections.length) return $state;
-				const deselected = selections[selections.length - 1];
+				if (selections.length <= 1) return $state;
+				const deselected = last(selections)!;
 				deselected.selected = false;
 				return {...$state, selections: selections.slice(0, -1)};
 			});
@@ -117,9 +118,8 @@ export const createContextmenuStore = (
 		expandSelected: () => {
 			update(($state) => {
 				const {selections} = $state;
-				if (!selections.length) return $state;
-				const parent = selections[selections.length - 1];
-				if (!parent.isMenu) return $state;
+				const parent = last(selections);
+				if (!parent?.isMenu) return $state;
 				const selected = parent.items[0];
 				selected.selected = true;
 				return {...$state, selections: selections.concat(selected)};
@@ -144,6 +144,10 @@ export const createContextmenuStore = (
 			const entry: EntryState = {isMenu: false, menu, selected: false};
 			console.log('addEntry', menu, entry);
 			menu.items.push(entry);
+			onDestroy(() => {
+				// TODO instead of removing individual items, could we just set `length = 0` ?
+				menu.items.splice(menu.items.indexOf(entry), 1);
+			});
 			return entry;
 		},
 		addSubmenu: () => {
@@ -152,10 +156,10 @@ export const createContextmenuStore = (
 			menu.items.push(submenu);
 			setContext('contextmenuState', submenu); // TODO extract
 			console.log('addSubmenu', submenu);
-			// TODO is this needed?
-			// onDestroy(() => {
-			// 	data.delete(submenu);
-			// });
+			onDestroy(() => {
+				// TODO instead of removing individual items, could we just set `length = 0` ?
+				menu.items.splice(menu.items.indexOf(submenu), 1);
+			});
 			return submenu;
 		},
 	};
@@ -163,7 +167,7 @@ export const createContextmenuStore = (
 
 const cycleSelections = ($state: Contextmenu, forward: boolean): ItemState[] => {
 	const {selections} = $state;
-	const deselected = selections[selections.length - 1] as ItemState | undefined;
+	const deselected = last(selections) as ItemState | undefined;
 	let nextItem: ItemState;
 	if (deselected) {
 		deselected.selected = false;

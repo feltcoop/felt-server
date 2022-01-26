@@ -73,7 +73,7 @@
 	};
 
 	$: items = Object.entries($contextmenu.items);
-	$: console.log('items', items);
+	$: console.log('$contextmenu', $contextmenu);
 
 	const menu = contextmenu.addRootMenu();
 	// TODO remove
