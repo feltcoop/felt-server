@@ -96,7 +96,7 @@ export const createContextmenuStore = (
 				const nextSelections: ItemState[] = [item];
 				item.selected = true;
 				let parent: ItemState | RootMenuState = item;
-				while ((parent = parent.menu)) {
+				while ((parent = parent.menu) && parent.menu) {
 					parent.selected = true;
 					nextSelections.unshift(parent);
 				}
@@ -152,7 +152,7 @@ export const createContextmenuStore = (
 			const submenu: MenuState = {isMenu: true, menu, selected: false, items: []};
 			menu.items.push(submenu);
 			setContext('contextmenuState', submenu); // TODO extract
-			console.log('addSubmenu', submenu);
+			console.log('addSubmenu', menu, submenu);
 			onDestroy(() => {
 				menu.items.length = 0;
 			});
@@ -167,10 +167,6 @@ const cycleSelections = ($state: Contextmenu, forward: boolean): ItemState[] => 
 	let nextItem: ItemState;
 	if (deselected) {
 		deselected.selected = false;
-		if (!deselected.menu) {
-			// TODO
-			debugger;
-		}
 		const items = deselected.menu.items;
 		const i = items.indexOf(deselected);
 		nextItem =
