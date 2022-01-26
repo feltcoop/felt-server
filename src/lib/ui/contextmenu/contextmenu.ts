@@ -1,6 +1,5 @@
 import {writable, get, type Readable, type StartStopNotifier} from 'svelte/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
-import {clamp} from '@feltcoop/felt/util/maths.js';
 import {getContext, setContext} from 'svelte';
 
 interface ContextmenuItems {
@@ -88,62 +87,49 @@ export const createContextmenuStore = (
 		},
 		selectItem: (item) => {
 			update(($state) => {
-				const {length} = $state.selections;
-				if ($state.selections[length - 1] === item) return $state;
-				console.log('\n\n\nSELECT item, length', item, length);
-				for (const selection of $state.selections) {
+				const {selections} = $state;
+				if (selections[selections.length - 1] === item) return $state;
+				console.log('\n\n\nSELECT item, length', item, selections.length);
+				for (const selection of selections) {
 					selection.selected = false;
 				}
-				const newSelections: ItemState[] = [item];
+				const nextSelections: ItemState[] = [item];
 				item.selected = true;
 				let parent: ItemState | RootMenuState = item;
 				while ((parent = parent.menu)) {
 					parent.selected = true;
-					newSelections.unshift(parent);
+					nextSelections.unshift(parent);
 				}
-				console.log('newSelections', newSelections);
-				logSelections(newSelections);
-				return {...$state, selections: newSelections};
+				console.log('nextSelections', nextSelections);
+				logSelections(nextSelections);
+				return {...$state, selections: nextSelections};
 			});
 		},
 		collapseSelected: () => {
 			update(($state) => {
-				if (!$state.selections.length) return $state;
-				return {...$state, selections: $state.selections.slice(0, -1)};
+				const {selections} = $state;
+				if (!selections.length) return $state;
+				const deselected = selections[selections.length - 1];
+				deselected.selected = false;
+				return {...$state, selections: selections.slice(0, -1)};
 			});
 		},
 		expandSelected: () => {
-			// TODO how does this work? need to detect if the selected one is a submenu,
-			// and if so select the `menuItem+1` at `itemIndex=0`
-			console.log('EXPAND SELECTED');
 			update(($state) => {
 				const {selections} = $state;
 				if (!selections.length) return $state;
-				return {...$state, selections: selections.concat(0)};
+				const parent = selections[selections.length - 1];
+				if (!parent.isMenu) return $state;
+				const selected = parent.items[0];
+				selected.selected = true;
+				return {...$state, selections: selections.concat(selected)};
 			});
 		},
 		selectNext: () => {
-			update(($state) => {
-				const {length} = $state.selections;
-				const selections = $state.selections.slice(0, -1);
-				const item = length ? {...$state.selections[length - 1]} : {index: null, count: 4};
-				const index = item.index === null ? 0 : item.index === item.count - 1 ? 0 : item.index + 1;
-				selections.push(index);
-				logSelections(selections);
-				return {...$state, selections};
-			});
+			update(($state) => ({...$state, selections: cycleSelections($state, true)}));
 		},
 		selectPrevious: () => {
-			update(($state) => {
-				const {length} = $state.selections;
-				const selections = $state.selections.slice(0, -1);
-				const item = length ? {...$state.selections[length - 1]} : {index: null, count: 4};
-				const index =
-					item.index === null ? item.count - 1 : item.index === 0 ? item.count - 1 : item.index - 1;
-				selections.push(index);
-				logSelections(selections);
-				return {...$state, selections};
-			});
+			update(($state) => ({...$state, selections: cycleSelections($state, false)}));
 		},
 		action: contextmenuAction,
 		addRootMenu: () => {
@@ -173,6 +159,26 @@ export const createContextmenuStore = (
 			return submenu;
 		},
 	};
+};
+
+const cycleSelections = ($state: Contextmenu, forward: boolean): ItemState[] => {
+	const {selections} = $state;
+	const deselected = selections[selections.length - 1] as ItemState | undefined;
+	let nextItem: ItemState;
+	if (deselected) {
+		deselected.selected = false;
+		const items = deselected.menu.items;
+		const i = items.indexOf(deselected);
+		nextItem =
+			items[forward ? (i === items.length - 1 ? 0 : i + 1) : i === 0 ? items.length - 1 : i - 1];
+	} else {
+		nextItem = $state.menu.items[forward ? 0 : $state.menu.items.length - 1];
+	}
+	nextItem.selected = true;
+	const nextSelections = selections.slice(0, -1);
+	nextSelections.push(nextItem);
+	logSelections(nextSelections);
+	return nextSelections;
 };
 
 // The dataset key must not have capital letters or dashes or it'll differ between JS and DOM:
