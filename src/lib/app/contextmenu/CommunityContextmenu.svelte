@@ -7,22 +7,19 @@
 	import {type Persona} from '$lib/vocab/persona/persona';
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
-	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
 	const {dispatch} = getApp();
 
-	export let contextmenu: ContextmenuStore;
 	export let community: Readable<Community>;
 	export let persona: Readable<Persona>;
 </script>
 
-<ContextmenuSubmenu {contextmenu}>
+<ContextmenuSubmenu>
 	<svelte:fragment slot="entry">
 		<Avatar name={$community.name} type="Community" />
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
-			{contextmenu}
 			on:click={() =>
 				dispatch('OpenDialog', {
 					name: 'SpaceInput',
@@ -32,7 +29,6 @@
 			Create Space
 		</ContextmenuEntry>
 		<ContextmenuEntry
-			{contextmenu}
 			on:click={() =>
 				dispatch('OpenDialog', {
 					name: 'MembershipInput',
@@ -41,12 +37,12 @@
 		>
 			Invite Members
 		</ContextmenuEntry>
-		<ContextmenuSubmenu {contextmenu}>
+		<ContextmenuSubmenu>
 			<svelte:fragment slot="entry">testing 1 2 3</svelte:fragment>
 			<svelte:fragment slot="menu">
-				<ContextmenuEntry {contextmenu}>1</ContextmenuEntry>
-				<ContextmenuEntry {contextmenu}>2</ContextmenuEntry>
-				<ContextmenuEntry {contextmenu}>3</ContextmenuEntry>
+				<ContextmenuEntry>1</ContextmenuEntry>
+				<ContextmenuEntry>2</ContextmenuEntry>
+				<ContextmenuEntry>3</ContextmenuEntry>
 			</svelte:fragment>
 		</ContextmenuSubmenu>
 	</svelte:fragment>

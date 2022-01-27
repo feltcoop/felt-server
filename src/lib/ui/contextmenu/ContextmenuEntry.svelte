@@ -1,7 +1,7 @@
 <script lang="ts">
-	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+	import {getContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
-	export let contextmenu: ContextmenuStore;
+	const contextmenu = getContextmenu();
 
 	const entry = contextmenu.addEntry();
 	console.log('entry', entry);

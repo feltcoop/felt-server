@@ -43,7 +43,7 @@
 			<button
 				class="explorer-button"
 				use:contextmenu.action={{LuggageContextmenu: null}}
-				on:click={onContextmenu(contextmenu)}
+				on:click={(e) => onContextmenu(e, contextmenu)}
 			>
 				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
 			</button>

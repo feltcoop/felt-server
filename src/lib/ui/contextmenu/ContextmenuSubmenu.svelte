@@ -1,7 +1,7 @@
 <script lang="ts">
-	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+	import {getContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
-	export let contextmenu: ContextmenuStore;
+	const contextmenu = getContextmenu();
 
 	// TODO add toggle action to the button that opens the menu and focuses on the first item
 	// TODO add larger transparent cursor hit area

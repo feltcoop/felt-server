@@ -3,8 +3,6 @@ import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {last} from '@feltcoop/felt/util/array.js';
 import {getContext, onDestroy, setContext} from 'svelte';
 
-const CONTEXTMENU_STATE_KEY = Symbol();
-
 interface ContextmenuItems {
 	[key: string]: any; // TODO types
 }
@@ -50,10 +48,7 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 	addSubmenu(): SubmenuState;
 }
 
-const logSelections = (selections: ItemState[]) => {
-	console.log('selections:');
-	selections.forEach((s, i) => console.log(i, s));
-};
+const CONTEXTMENU_STATE_KEY = Symbol();
 
 export const createContextmenuStore = (
 	initialValue: Contextmenu = {
@@ -98,7 +93,6 @@ export const createContextmenuStore = (
 					i.selected = true;
 					selections.unshift(i);
 				} while ((i = i.menu) && i.menu);
-				logSelections(selections);
 				return {...$state};
 			});
 		},
@@ -175,7 +169,6 @@ const cycleSelections = ($state: Contextmenu, forward: boolean): void => {
 	nextItem.selected = true;
 	selections.pop();
 	selections.push(nextItem);
-	logSelections(selections);
 };
 
 // The dataset key must not have capital letters or dashes or it'll differ between JS and DOM:
@@ -206,20 +199,22 @@ const contextmenuAction = (el: HTMLElement | SVGElement, params: any): any => {
  * @param contextmenu
  * @returns An event handler that opens the contextmenu, unless the target is inside `excludeEl`.
  */
-export const onContextmenu =
-	(contextmenu: ContextmenuStore) =>
-	(e: MouseEvent, excludeEl?: HTMLElement): void | false => {
-		if (e.shiftKey) return;
-		const target = e.target as HTMLElement;
-		if (isEditable(target) || excludeEl?.contains(target)) return;
-		const items = queryContextmenuItems(target);
-		if (!items) return;
-		e.stopPropagation();
-		e.preventDefault();
-		// TODO dispatch a UI event, like OpenContextmenu
-		contextmenu.open(items, e.clientX, e.clientY);
-		return false; // TODO remove this if it doesn't fix FF mobile (and update the `false` return value)
-	};
+export const onContextmenu = (
+	e: MouseEvent,
+	contextmenu: ContextmenuStore,
+	excludeEl?: HTMLElement,
+): void | false => {
+	if (e.shiftKey) return;
+	const target = e.target as HTMLElement;
+	if (isEditable(target) || excludeEl?.contains(target)) return;
+	const items = queryContextmenuItems(target);
+	if (!items) return;
+	e.stopPropagation();
+	e.preventDefault();
+	// TODO dispatch a UI event, like OpenContextmenu
+	contextmenu.open(items, e.clientX, e.clientY);
+	return false; // TODO remove this if it doesn't fix FF mobile (and update the `false` return value)
+};
 
 const queryContextmenuItems = (target: HTMLElement | SVGElement): null | ContextmenuItems => {
 	let items: null | ContextmenuItems = null;
@@ -245,3 +240,8 @@ const queryContextmenuItems = (target: HTMLElement | SVGElement): null | Context
 	}
 	return items;
 };
+
+const CONTEXTMENU_STORE_KEY = Symbol();
+export const setContextmenu = (contextmenu: ContextmenuStore): void =>
+	setContext(CONTEXTMENU_STORE_KEY, contextmenu);
+export const getContextmenu = (): ContextmenuStore => getContext(CONTEXTMENU_STORE_KEY);

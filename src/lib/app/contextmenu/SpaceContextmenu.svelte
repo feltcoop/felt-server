@@ -5,21 +5,18 @@
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
 	import {type Space} from '$lib/vocab/space/space';
-	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 
 	const {dispatch} = getApp();
 
-	export let contextmenu: ContextmenuStore;
 	export let space: Readable<Space>;
 </script>
 
-<ContextmenuSubmenu {contextmenu}>
+<ContextmenuSubmenu>
 	<svelte:fragment slot="entry">
 		{$space.name}
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
-			{contextmenu}
 			on:click={() =>
 				dispatch('OpenDialog', {
 					name: 'SpaceDelete',
@@ -29,7 +26,6 @@
 			Delete Space
 		</ContextmenuEntry>
 		<ContextmenuEntry
-			{contextmenu}
 			on:click={() =>
 				dispatch('ViewSpace', {
 					space,

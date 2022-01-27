@@ -2,17 +2,25 @@
 	import {isEditable} from '@feltcoop/felt/util/dom.js';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
-	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+	import {setContextmenu, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 	import {getApp} from '$lib/ui/app';
 
+	// TODO upstream to Felt
+
+	// TODO change this API to have the component classes in the `contextmenu.items`
+	// so there's no dependeny on `getApp`
 	const {
 		ui: {components},
 	} = getApp();
 
-	// TODO upstream to Felt
-
+	// The `contextmenu` prop cannot be changed because that's a rare corner case and
+	// it's easier to put the `contextmenu` directly in the context.
+	// If you need to change the contextmenu prop for some reason, use a `{#key contextmenu}` block:
+	// https://svelte.dev/docs#template-syntax-key
 	export let contextmenu: ContextmenuStore;
+
+	setContextmenu(contextmenu);
 
 	let contextmenuEl: HTMLElement;
 
@@ -74,15 +82,13 @@
 
 	$: items = Object.entries($contextmenu.items);
 	$: console.log('$contextmenu', $contextmenu);
-
-	const doContextmenu = onContextmenu(contextmenu);
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
 <!-- TODO ensure `mousedown` works everywhere; might want to add `touchstart` or substitute `pointerdown` -->
 <!-- Capture keydown so it can handle the event before any dialogs. -->
 <svelte:window
-	on:contextmenu|capture={(e) => doContextmenu(e, contextmenuEl)}
+	on:contextmenu|capture={(e) => onContextmenu(e, contextmenu, contextmenuEl)}
 	on:mousedown|capture={$contextmenu.open ? onWindowMousedown : undefined}
 	on:keydown|capture={$contextmenu.open ? onWindowKeydown : undefined}
 />
@@ -101,7 +107,7 @@
 		{#each items as [key, props] (key)}
 			{#if key in components}
 				<section>
-					<svelte:component this={components[key]} {...props} {contextmenu} />
+					<svelte:component this={components[key]} {...props} />
 				</section>
 			{:else}
 				<Message status="error">unknown contextmenu "{key}"</Message>
