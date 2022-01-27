@@ -15,7 +15,7 @@
 		if (!selected) contextmenu.selectItem(submenu);
 	};
 
-	// TODO remove $contextmenu if we make `submenu` reactive, or delete this TODO
+	// the `$contextmenu` is needed because `submenu` is not reactive
 	$: ({selected} = ($contextmenu, submenu));
 </script>
 

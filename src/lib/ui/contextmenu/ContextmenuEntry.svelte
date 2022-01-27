@@ -11,7 +11,7 @@
 		contextmenu.selectItem(entry);
 	};
 
-	// TODO remove $contextmenu if we make `entry` reactive, or delete this TODO
+	// the `$contextmenu` is needed because `entry` is not reactive
 	$: ({selected} = ($contextmenu, entry));
 </script>
 

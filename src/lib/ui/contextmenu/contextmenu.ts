@@ -9,20 +9,17 @@ interface ContextmenuItems {
 	[key: string]: any; // TODO types
 }
 
-type ItemState = MenuState | EntryState;
+type ItemState = SubmenuState | EntryState;
 interface EntryState {
 	// TODO action callback or event?
 	isMenu: false;
-	menu: MenuState | RootMenuState;
+	menu: SubmenuState | RootMenuState;
 	selected: boolean;
 }
-// TODO rename to `SubmenuState` if it stays distinct from `RootMenuState`
-interface MenuState {
-	// TODO action callback or event?
+interface SubmenuState {
 	isMenu: true;
-	menu: MenuState | RootMenuState;
+	menu: SubmenuState | RootMenuState;
 	selected: boolean;
-	// TODO is `entries` what we want? maybe swap with `ItemState`, so `items` and `EntryState`?
 	items: ItemState[];
 }
 interface RootMenuState {
@@ -33,13 +30,9 @@ interface RootMenuState {
 
 export interface Contextmenu {
 	open: boolean;
-	// TODO not sure about this, currently they're magic keys, maybe keys on `ui`?
-	// so could they be addressed by `name || id`? e.g. `'personaSelection'`
-	// maybe they should be blocks and block ids? or both?
 	items: ContextmenuItems;
-	// the 0th array item is the the only guaranteed one; submenus are subsequent items
-	selections: ItemState[];
-	menu: RootMenuState;
+	selections: ItemState[]; // mutated internally; components must not expect immutability!
+	menu: RootMenuState; // mutated internally; components must not expect immutability!
 	x: number;
 	y: number;
 }
@@ -54,7 +47,7 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 	selectPrevious(): void; // removes one
 	action: typeof contextmenuAction;
 	addEntry(): EntryState;
-	addSubmenu(): MenuState;
+	addSubmenu(): SubmenuState;
 }
 
 const logSelections = (selections: ItemState[]) => {
@@ -81,38 +74,41 @@ export const createContextmenuStore = (
 	return {
 		subscribe,
 		open: (items, x, y) => {
-			update(($state) => ({...$state, open: true, items, x, y}));
+			update(($state) => {
+				$state.selections.length = 0;
+				return {...$state, open: true, items, x, y};
+			});
 		},
 		close: () => {
-			update(($state) => ({...$state, open: false, selections: []}));
+			update(($state) => ({...$state, open: false}));
 		},
 		selectItem: (item) => {
 			update(($state) => {
 				const {selections} = $state;
 				if (last(selections) === item) return $state;
-				console.log('\n\n\nSELECT item, length', item, selections.length);
+				// Instead of diffing, this does the simple thing and
+				// deselects everything and then re-creates the list of selections.
+				// Could be improved but it's fine because we're using mutation.
 				for (const selection of selections) {
 					selection.selected = false;
 				}
-				const nextSelections: ItemState[] = [item];
-				item.selected = true;
-				let parent: ItemState | RootMenuState = item;
-				while ((parent = parent.menu) && parent.menu) {
-					parent.selected = true;
-					nextSelections.unshift(parent);
-				}
-				console.log('nextSelections', nextSelections);
-				logSelections(nextSelections);
-				return {...$state, selections: nextSelections};
+				selections.length = 0;
+				let i: ItemState | RootMenuState = item;
+				do {
+					i.selected = true;
+					selections.unshift(i);
+				} while ((i = i.menu) && i.menu);
+				logSelections(selections);
+				return {...$state};
 			});
 		},
 		collapseSelected: () => {
 			update(($state) => {
 				const {selections} = $state;
 				if (selections.length <= 1) return $state;
-				const deselected = last(selections)!;
+				const deselected = selections.pop()!;
 				deselected.selected = false;
-				return {...$state, selections: selections.slice(0, -1)};
+				return {...$state};
 			});
 		},
 		expandSelected: () => {
@@ -122,18 +118,25 @@ export const createContextmenuStore = (
 				if (!parent?.isMenu) return $state;
 				const selected = parent.items[0];
 				selected.selected = true;
-				return {...$state, selections: selections.concat(selected)};
+				selections.push(selected);
+				return {...$state};
 			});
 		},
 		selectNext: () => {
-			update(($state) => ({...$state, selections: cycleSelections($state, true)}));
+			update(($state) => {
+				cycleSelections($state, true);
+				return {...$state};
+			});
 		},
 		selectPrevious: () => {
-			update(($state) => ({...$state, selections: cycleSelections($state, false)}));
+			update(($state) => {
+				cycleSelections($state, false);
+				return {...$state};
+			});
 		},
 		action: contextmenuAction,
 		addEntry: () => {
-			const menu = (getContext(CONTEXTMENU_STATE_KEY) as MenuState | undefined) || rootMenu;
+			const menu = (getContext(CONTEXTMENU_STATE_KEY) as SubmenuState | undefined) || rootMenu;
 			const entry: EntryState = {isMenu: false, menu, selected: false};
 			console.log('addEntry', menu, entry);
 			menu.items.push(entry);
@@ -143,8 +146,8 @@ export const createContextmenuStore = (
 			return entry;
 		},
 		addSubmenu: () => {
-			const menu = (getContext(CONTEXTMENU_STATE_KEY) as MenuState | undefined) || rootMenu;
-			const submenu: MenuState = {isMenu: true, menu, selected: false, items: []};
+			const menu = (getContext(CONTEXTMENU_STATE_KEY) as SubmenuState | undefined) || rootMenu;
+			const submenu: SubmenuState = {isMenu: true, menu, selected: false, items: []};
 			menu.items.push(submenu);
 			setContext(CONTEXTMENU_STATE_KEY, submenu);
 			console.log('addSubmenu', menu, submenu);
@@ -156,7 +159,7 @@ export const createContextmenuStore = (
 	};
 };
 
-const cycleSelections = ($state: Contextmenu, forward: boolean): ItemState[] => {
+const cycleSelections = ($state: Contextmenu, forward: boolean): void => {
 	const {selections} = $state;
 	const deselected = last(selections) as ItemState | undefined;
 	let nextItem: ItemState;
@@ -170,10 +173,9 @@ const cycleSelections = ($state: Contextmenu, forward: boolean): ItemState[] => 
 		nextItem = $state.menu.items[forward ? 0 : $state.menu.items.length - 1];
 	}
 	nextItem.selected = true;
-	const nextSelections = selections.slice(0, -1);
-	nextSelections.push(nextItem);
-	logSelections(nextSelections);
-	return nextSelections;
+	selections.pop();
+	selections.push(nextItem);
+	logSelections(selections);
 };
 
 // The dataset key must not have capital letters or dashes or it'll differ between JS and DOM:
