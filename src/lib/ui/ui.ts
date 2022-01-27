@@ -36,14 +36,16 @@ export interface Ui extends Partial<UiHandlers> {
 	// db state and caches
 	account: Readable<AccountModel | null>;
 	personas: Readable<Readable<Persona>[]>;
-	personasById: Map<number, Readable<Persona>>;
+	personasById: Map<number, Readable<Persona>>; //TODO rename to singular
 	sessionPersonas: Readable<Readable<Persona>[]>;
 	sessionPersonaIndices: Readable<Map<Readable<Persona>, number>>;
 	communities: Readable<Readable<Community>[]>;
 	spaces: Readable<Readable<Space>[]>;
+	memberships: Readable<Readable<Membership>[]>;
 	spacesById: Readable<Map<number, Readable<Space>>>;
+	//TODO maybe refactor to remove store around map? Like personasById
 	spacesByCommunityId: Readable<Map<number, Readable<Space>[]>>;
-	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
+	personasByCommunityId: Readable<Map<number, Readable<Readable<Persona>[]>>>;
 	entitiesBySpace: Map<number, Readable<Readable<Entity>[]>>;
 	setSession: (session: ClientSession) => void;
 	findPersonaById: (persona_id: number) => Readable<Persona>;
@@ -99,6 +101,9 @@ export const toUi = (
 	const spaces = writable<Writable<Space>[]>(
 		initialSession.guest ? [] : initialSession.spaces.map((s) => writable(s)),
 	);
+	const memberships = writable<Writable<Membership>[]>(
+		initialSession.guest ? [] : initialSession.memberships.map((s) => writable(s)),
+	);
 	// TODO do these maps more efficiently
 	const spacesById: Readable<Map<number, Writable<Space>>> = derived(
 		spaces,
@@ -106,9 +111,9 @@ export const toUi = (
 	);
 	const spacesByCommunityId: Readable<Map<number, Readable<Space>[]>> = derived(
 		[communities, spaces],
-		([$communites, $spaces]) => {
+		([$communities, $spaces]) => {
 			const map = new Map();
-			for (const community of $communites) {
+			for (const community of $communities) {
 				const communitySpaces: Writable<Space>[] = [];
 				const {community_id} = get(community);
 				for (const space of $spaces) {
@@ -121,7 +126,24 @@ export const toUi = (
 			return map;
 		},
 	);
-	const memberships = writable<Membership[]>([]); // TODO should be on the session:  initialSession.guest ? [] : [],
+
+	const personasByCommunityId: Readable<Map<number, Readable<Readable<Persona>[]>>> = derived(
+		[communities, memberships],
+		([$communities, $memberships]) => {
+			const map = new Map();
+			for (const community of $communities) {
+				const communityPersonas: Writable<Persona>[] = [];
+				const {community_id} = get(community);
+				for (const membership of $memberships) {
+					if (get(membership).community_id === community_id) {
+						communityPersonas.push(personasById.get(get(membership).persona_id)!);
+					}
+				}
+				map.set(community_id, communityPersonas);
+			}
+			return map;
+		},
+	);
 
 	const mobile = writable(initialMobile);
 	const contextmenu = createContextmenuStore();
@@ -255,6 +277,7 @@ export const toUi = (
 		personasById,
 		spacesById,
 		spacesByCommunityId,
+		personasByCommunityId,
 		entitiesBySpace,
 		dispatch: (ctx) => {
 			const handler = (ui as any)[ctx.eventName];
@@ -411,7 +434,7 @@ export const toUi = (
 			const {membership} = result.value;
 			console.log('[ui.CreateMembership]', membership);
 			// TODO also update `communities.personas`
-			memberships.update(($memberships) => $memberships.concat(membership));
+			memberships.update(($memberships) => $memberships.concat(writable(membership)));
 			return result;
 		},
 		DeleteMembership: async ({params, invoke}) => {
@@ -422,34 +445,10 @@ export const toUi = (
 			memberships.update(($memberships) =>
 				$memberships.filter(
 					(membership) =>
-						membership.persona_id !== params.persona_id ||
-						membership.community_id !== params.community_id,
+						get(membership).persona_id !== params.persona_id ||
+						get(membership).community_id !== params.community_id,
 				),
 			);
-
-			const persona = personasById.get(params.persona_id)!;
-			persona.update(($persona) => ({
-				...$persona,
-				community_ids: $persona.community_ids.filter((c) => c !== params.community_id),
-			}));
-
-			communities.update(($communities) => {
-				const community = $communities.find(
-					(community) => get(community).community_id === params.community_id,
-				)!;
-				community.update(($community) => ({
-					...$community,
-					memberPersonas: $community.memberPersonas.filter(
-						(p) => p.persona_id !== params.persona_id,
-					),
-				}));
-				const empty = !get(community).memberPersonas.length;
-				if (empty) {
-					return $communities.filter((c) => get(c).community_id !== params.community_id);
-				} else {
-					return $communities;
-				}
-			});
 
 			return result;
 		},
