@@ -18,7 +18,7 @@
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
-			on:click={() =>
+			action={() =>
 				dispatch('OpenDialog', {
 					name: 'CommunityInput',
 					props: {persona, done: () => dispatch('CloseDialog')},
@@ -26,9 +26,8 @@
 		>
 			Create Community
 		</ContextmenuEntry>
-		<ContextmenuEntry on:click={() => dispatch('OpenDialog', {name: 'ManageMembershipForm'})}>
+		<ContextmenuEntry action={() => dispatch('OpenDialog', {name: 'ManageMembershipForm'})}>
 			Manage Memberships
 		</ContextmenuEntry>
 	</svelte:fragment>
 </ContextmenuSubmenu>
-<ContextmenuEntry>Testig thing</ContextmenuEntry>

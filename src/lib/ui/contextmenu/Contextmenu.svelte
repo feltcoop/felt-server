@@ -9,7 +9,7 @@
 	// TODO upstream to Felt
 
 	// TODO change this API to have the component classes in the `contextmenu.items`
-	// so there's no dependeny on `getApp`
+	// so there's no dependency on `getApp`
 	const {
 		ui: {components},
 	} = getApp();
@@ -61,14 +61,9 @@
 		}
 	};
 
-	// TODO hacky -- maybe check things like `role="button"`? also, upstream to Felt utils
-	// const isInteractive = (el: Element): boolean => !!el.closest('button,a,area,[role=menuitem]');
-	const isInteractive = (el: Element): boolean => !!el.closest('[role=menuitem]');
+	const isInteractive = (el: Element): boolean => !!el.closest('button,a,area,[role=menuitem]');
 
 	const onClickContent = (e: MouseEvent) => {
-		// TODO this is hacky, but improves the behavior to let us select content on the contextmenu,
-		// but automatically closes if e.g. a button is clicked, and the button can `stopPropagation`
-		// to keep the contextmenu open, because it'll stop it before this handler runs
 		if (isInteractive(e.target as any)) {
 			contextmenu.close();
 		} else {

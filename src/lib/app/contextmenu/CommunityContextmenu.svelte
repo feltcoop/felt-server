@@ -20,7 +20,7 @@
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
-			on:click={() =>
+			action={() =>
 				dispatch('OpenDialog', {
 					name: 'SpaceInput',
 					props: {persona, community, done: () => dispatch('CloseDialog')},
@@ -29,7 +29,7 @@
 			Create Space
 		</ContextmenuEntry>
 		<ContextmenuEntry
-			on:click={() =>
+			action={() =>
 				dispatch('OpenDialog', {
 					name: 'MembershipInput',
 					props: {community},
@@ -40,9 +40,9 @@
 		<ContextmenuSubmenu>
 			<svelte:fragment slot="entry">testing 1 2 3</svelte:fragment>
 			<svelte:fragment slot="menu">
-				<ContextmenuEntry>1</ContextmenuEntry>
-				<ContextmenuEntry>2</ContextmenuEntry>
-				<ContextmenuEntry>3</ContextmenuEntry>
+				<ContextmenuEntry action={() => alert('1')}>1</ContextmenuEntry>
+				<ContextmenuEntry action={() => alert('2')}>2</ContextmenuEntry>
+				<ContextmenuEntry action={() => alert('3')}>3</ContextmenuEntry>
 			</svelte:fragment>
 		</ContextmenuSubmenu>
 	</svelte:fragment>

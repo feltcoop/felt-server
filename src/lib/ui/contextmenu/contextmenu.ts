@@ -7,23 +7,26 @@ interface ContextmenuItems {
 	[key: string]: any; // TODO types
 }
 
-type ItemState = SubmenuState | EntryState;
-interface EntryState {
-	// TODO action callback or event?
+export type ItemState = SubmenuState | EntryState;
+export interface EntryState {
 	isMenu: false;
 	menu: SubmenuState | RootMenuState;
 	selected: boolean;
+	action: ContextmenuAction;
 }
-interface SubmenuState {
+export interface SubmenuState {
 	isMenu: true;
 	menu: SubmenuState | RootMenuState;
 	selected: boolean;
 	items: ItemState[];
 }
-interface RootMenuState {
+export interface RootMenuState {
 	isMenu: true;
 	menu: null;
 	items: ItemState[];
+}
+export interface ContextmenuAction {
+	(): void;
 }
 
 export interface Contextmenu {
@@ -45,7 +48,7 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 	selectFirst(): void; // advances to the next of the latest
 	selectLast(): void; // removes one
 	action: typeof contextmenuAction;
-	addEntry(): EntryState;
+	addEntry(action: ContextmenuAction): EntryState;
 	addSubmenu(): SubmenuState;
 	// These two properties are mutated internally.
 	// If you need reactivity, use `$contextmenu` in a reactive statement to react to all changes, and
@@ -85,8 +88,8 @@ export const createContextmenuStore = (): ContextmenuStore => {
 			if (selected.isMenu) {
 				store.expandSelected();
 			} else {
-				// TODO either call action callback or dispatch click event for entries
-				console.log('TODO implement');
+				store.close();
+				selected.action();
 			}
 		},
 		// Instead of diffing, this does the simple thing and
@@ -132,9 +135,9 @@ export const createContextmenuStore = (): ContextmenuStore => {
 		},
 		selectFirst: () => store.selectItem((last(selections)?.menu || rootMenu).items[0]),
 		selectLast: () => store.selectItem(last((last(selections)?.menu || rootMenu).items)!),
-		addEntry: () => {
+		addEntry: (action) => {
 			const menu = (getContext(CONTEXTMENU_STATE_KEY) as SubmenuState | undefined) || rootMenu;
-			const entry: EntryState = {isMenu: false, menu, selected: false};
+			const entry: EntryState = {isMenu: false, menu, selected: false, action};
 			menu.items.push(entry);
 			onDestroy(() => {
 				menu.items.length = 0;

@@ -1,10 +1,11 @@
 <script lang="ts">
-	import {getContextmenu} from '$lib/ui/contextmenu/contextmenu';
+	import {getContextmenu, type ContextmenuAction} from '$lib/ui/contextmenu/contextmenu';
+
+	export let action: ContextmenuAction;
 
 	const contextmenu = getContextmenu();
 
-	const entry = contextmenu.addEntry();
-	console.log('entry', entry);
+	const entry = contextmenu.addEntry(action);
 
 	const select = (e: MouseEvent) => {
 		e.stopPropagation();
@@ -18,6 +19,12 @@
 <!-- TODO should be <a> ? but they don't have a `href` currently which is an a11y warning -- should they?
 https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.html
 -->
-<li class="menu-item" role="menuitem" class:selected on:click on:mousemove={select}>
+<li
+	class="menu-item"
+	role="menuitem"
+	class:selected
+	on:click={() => action()}
+	on:mousemove={select}
+>
 	<slot />
 </li>

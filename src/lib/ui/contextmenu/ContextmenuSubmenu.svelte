@@ -3,13 +3,9 @@
 
 	const contextmenu = getContextmenu();
 
-	// TODO add toggle action to the button that opens the menu and focuses on the first item
 	// TODO add larger transparent cursor hit area
-	// TODO fix keyboard nav (is the delay between focus the problem?)
 
-	// should this set context so we automatically know where it's nested? set using the id?
 	const submenu = contextmenu.addSubmenu();
-	console.log('submenu', submenu);
 
 	const select = () => {
 		if (!selected) contextmenu.selectItem(submenu);

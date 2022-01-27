@@ -17,7 +17,7 @@
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
-			on:click={() =>
+			action={() =>
 				dispatch('OpenDialog', {
 					name: 'SpaceDelete',
 					props: {space, done: () => dispatch('CloseDialog')},
@@ -26,7 +26,7 @@
 			Delete Space
 		</ContextmenuEntry>
 		<ContextmenuEntry
-			on:click={() =>
+			action={() =>
 				dispatch('ViewSpace', {
 					space,
 					view: {type: 'EntityExplorer'},
