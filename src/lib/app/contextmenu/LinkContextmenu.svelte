@@ -15,9 +15,8 @@
 	};
 </script>
 
-<!-- TODO could do more if we had the original `target` element
-							(but it might go stale on $contextmenu?) -->
-<!-- TODO if it's an external link, add target="_blank" -->
+<!-- TODO could do more if we had the original `target` element (but it might go stale on $contextmenu?) -->
+<!-- TODO if it's an external link, add `target="_blank" rel="noreferrer"` -->
 <li role="none">
 	<a {href}>
 		<span class="icon">🔗</span>

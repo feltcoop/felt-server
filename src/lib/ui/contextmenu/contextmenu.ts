@@ -38,11 +38,14 @@ export interface Contextmenu {
 export interface ContextmenuStore extends Readable<Contextmenu> {
 	open(items: ContextmenuItems, x: number, y: number): void;
 	close(): void;
+	activateSelected(): void; // removes one
 	selectItem(item: ItemState): void;
 	collapseSelected(): void; // removes one
 	expandSelected(): void; // opens the selected submenu
 	selectNext(): void; // advances to the next of the latest
 	selectPrevious(): void; // removes one
+	selectFirst(): void; // advances to the next of the latest
+	selectLast(): void; // removes one
 	action: typeof contextmenuAction;
 	addEntry(): EntryState;
 	addSubmenu(): SubmenuState;
@@ -62,11 +65,11 @@ export const createContextmenuStore = (
 	start?: StartStopNotifier<Contextmenu>,
 ): ContextmenuStore => {
 	const rootMenu = initialValue.menu;
+	const _selections = initialValue.selections;
 
-	const store = writable(initialValue, start);
-	const {subscribe, update} = store;
+	const {subscribe, update} = writable(initialValue, start);
 
-	return {
+	const store: ContextmenuStore = {
 		subscribe,
 		open: (items, x, y) => {
 			update(($state) => {
@@ -74,8 +77,16 @@ export const createContextmenuStore = (
 				return {...$state, open: true, items, x, y};
 			});
 		},
-		close: () => {
-			update(($state) => ({...$state, open: false}));
+		close: () => update(($state) => ({...$state, open: false})),
+		activateSelected: () => {
+			const selected = last(_selections);
+			if (!selected) return;
+			if (selected.isMenu) {
+				store.expandSelected();
+			} else {
+				// TODO either call action callback or dispatch click event for entries
+				console.log('TODO implement');
+			}
 		},
 		selectItem: (item) => {
 			update(($state) => {
@@ -117,17 +128,13 @@ export const createContextmenuStore = (
 			});
 		},
 		selectNext: () => {
-			update(($state) => {
-				cycleSelections($state, true);
-				return {...$state};
-			});
+			update(($state) => (cycleSelections($state, true), {...$state}));
 		},
 		selectPrevious: () => {
-			update(($state) => {
-				cycleSelections($state, false);
-				return {...$state};
-			});
+			update(($state) => (cycleSelections($state, false), {...$state}));
 		},
+		selectFirst: () => store.selectItem((last(_selections)?.menu || rootMenu).items[0]),
+		selectLast: () => store.selectItem(last((last(_selections)?.menu || rootMenu).items)!),
 		action: contextmenuAction,
 		addEntry: () => {
 			const menu = (getContext(CONTEXTMENU_STATE_KEY) as SubmenuState | undefined) || rootMenu;
@@ -151,6 +158,7 @@ export const createContextmenuStore = (
 			return submenu;
 		},
 	};
+	return store;
 };
 
 const cycleSelections = ($state: Contextmenu, forward: boolean): void => {

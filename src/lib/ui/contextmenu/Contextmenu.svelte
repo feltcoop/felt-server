@@ -32,7 +32,6 @@
 		}
 	};
 
-	// TODO hook into a ui input system
 	const onWindowKeydown = (e: KeyboardEvent) => {
 		console.log('e.key', e.key);
 		if (e.key === 'Escape' && !(e.target instanceof HTMLElement && isEditable(e.target))) {
@@ -44,23 +43,20 @@
 		} else if (e.key === 'ArrowRight') {
 			contextmenu.expandSelected();
 			e.stopPropagation();
-		} else if (e.key === 'ArrowDown') {
+		} else if (e.key === 'ArrowDown' || e.key === 'PageDown') {
 			contextmenu.selectNext();
 			e.stopPropagation();
-		} else if (e.key === 'ArrowUp') {
+		} else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
 			contextmenu.selectPrevious();
 			e.stopPropagation();
 		} else if (e.key === 'Home') {
-			// TODO
-			// contextmenu.selectFirst();
+			contextmenu.selectFirst();
 			e.stopPropagation();
 		} else if (e.key === 'End') {
-			// TODO
-			// contextmenu.selectLast();
+			contextmenu.selectLast();
 			e.stopPropagation();
-		} else if (e.key === 'Space' || e.key === 'Enter') {
-			// TODO handle these to activate the selected menu item
-			// contextmenu.activateSelected();
+		} else if (e.key === ' ' || e.key === 'Enter') {
+			contextmenu.activateSelected();
 			e.stopPropagation();
 		}
 	};
