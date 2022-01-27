@@ -1,4 +1,4 @@
-import {writable, type Readable, type StartStopNotifier} from 'svelte/store';
+import {writable, type Readable} from 'svelte/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {last} from '@feltcoop/felt/util/array.js';
 import {getContext, onDestroy, setContext} from 'svelte';
@@ -29,8 +29,6 @@ interface RootMenuState {
 export interface Contextmenu {
 	open: boolean;
 	items: ContextmenuItems;
-	selections: ItemState[]; // mutated internally; components must not expect immutability!
-	menu: RootMenuState; // mutated internally; components must not expect immutability!
 	x: number;
 	y: number;
 }
@@ -49,37 +47,33 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 	action: typeof contextmenuAction;
 	addEntry(): EntryState;
 	addSubmenu(): SubmenuState;
+	// These two properties are mutated internally.
+	// If you need reactivity, use `$contextmenu` in a reactive statement to react to all changes, and
+	// then access the mutable non-reactive  `contextmenu.rootMenu` and `contextmenu.selections`.
+	// See `ContextmenuEntry.svelte` and `ContextmenuSubmenu.svelte` for reactive usage examples.
+	rootMenu: RootMenuState;
+	selections: ItemState[];
 }
 
 const CONTEXTMENU_STATE_KEY = Symbol();
 
-export const createContextmenuStore = (
-	initialValue: Contextmenu = {
-		open: false,
-		items: {},
-		selections: [],
-		menu: {isMenu: true, menu: null, items: []},
-		x: 0,
-		y: 0,
-	},
-	start?: StartStopNotifier<Contextmenu>,
-): ContextmenuStore => {
-	const rootMenu = initialValue.menu;
-	const _selections = initialValue.selections;
+export const createContextmenuStore = (): ContextmenuStore => {
+	const rootMenu: ContextmenuStore['rootMenu'] = {isMenu: true, menu: null, items: []};
+	const selections: ContextmenuStore['selections'] = [];
 
-	const {subscribe, update} = writable(initialValue, start);
+	const {subscribe, update} = writable({open: false, items: {}, x: 0, y: 0});
 
 	const store: ContextmenuStore = {
 		subscribe,
+		rootMenu,
+		selections,
 		open: (items, x, y) => {
-			update(($state) => {
-				$state.selections.length = 0;
-				return {...$state, open: true, items, x, y};
-			});
+			selections.length = 0;
+			update(($state) => ({...$state, open: true, items, x, y}));
 		},
 		close: () => update(($state) => ({...$state, open: false})),
 		activateSelected: () => {
-			const selected = last(_selections);
+			const selected = last(selections);
 			if (!selected) return;
 			if (selected.isMenu) {
 				store.expandSelected();
@@ -93,55 +87,44 @@ export const createContextmenuStore = (
 		// Could be improved but it's fine because we're using mutation and the N is very small,
 		// and it allows us to have a single code path for the various selection methods.
 		selectItem: (item) => {
-			update(($state) => {
-				const {selections} = $state;
-				if (last(selections) === item) return $state;
-				for (const selection of selections) {
-					selection.selected = false;
-				}
-				selections.length = 0;
-				let i: ItemState | RootMenuState = item;
-				do {
-					i.selected = true;
-					selections.unshift(i);
-				} while ((i = i.menu) && i.menu);
-				return {...$state};
-			});
+			if (last(selections) === item) return;
+			for (const s of selections) s.selected = false;
+			selections.length = 0;
+			let i: ItemState | RootMenuState = item;
+			do {
+				i.selected = true;
+				selections.unshift(i);
+			} while ((i = i.menu) && i.menu);
+			update(($) => ({...$}));
 		},
 		collapseSelected: () => {
-			update(($state) => {
-				const {selections} = $state;
-				if (selections.length <= 1) return $state;
-				const deselected = selections.pop()!;
-				deselected.selected = false;
-				return {...$state};
-			});
+			if (selections.length <= 1) return;
+			const deselected = selections.pop()!;
+			deselected.selected = false;
+			update(($) => ({...$}));
 		},
 		expandSelected: () => {
-			update(($state) => {
-				const {selections} = $state;
-				const parent = last(selections);
-				if (!parent?.isMenu) return $state;
-				const selected = parent.items[0];
-				selected.selected = true;
-				selections.push(selected);
-				return {...$state};
-			});
+			const parent = last(selections);
+			if (!parent?.isMenu) return;
+			const selected = parent.items[0];
+			selected.selected = true;
+			selections.push(selected);
+			update(($) => ({...$}));
 		},
 		selectNext: () => {
-			if (!_selections.length) return store.selectFirst();
-			const item = last(_selections)!;
+			if (!selections.length) return store.selectFirst();
+			const item = last(selections)!;
 			const index = item.menu.items.indexOf(item);
 			store.selectItem(item.menu.items[index === item.menu.items.length - 1 ? 0 : index + 1]);
 		},
 		selectPrevious: () => {
-			if (!_selections.length) return store.selectLast();
-			const item = last(_selections)!;
+			if (!selections.length) return store.selectLast();
+			const item = last(selections)!;
 			const index = item.menu.items.indexOf(item);
 			store.selectItem(item.menu.items[index === 0 ? item.menu.items.length - 1 : index - 1]);
 		},
-		selectFirst: () => store.selectItem((last(_selections)?.menu || rootMenu).items[0]),
-		selectLast: () => store.selectItem(last((last(_selections)?.menu || rootMenu).items)!),
+		selectFirst: () => store.selectItem((last(selections)?.menu || rootMenu).items[0]),
+		selectLast: () => store.selectItem(last((last(selections)?.menu || rootMenu).items)!),
 		action: contextmenuAction,
 		addEntry: () => {
 			const menu = (getContext(CONTEXTMENU_STATE_KEY) as SubmenuState | undefined) || rootMenu;
@@ -170,7 +153,6 @@ export const createContextmenuStore = (
 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
 const CONTEXTMENU_DATASET_KEY = 'contextmenu';
 const CONTEXTMENU_DOM_QUERY = `[data-${CONTEXTMENU_DATASET_KEY}],a`;
-// TODO consider a `WeakMap` instead; doesn't seem to improve things much
 const contextmenuCache = new Map<string, any>();
 let cacheKeyCounter = 0;
 
