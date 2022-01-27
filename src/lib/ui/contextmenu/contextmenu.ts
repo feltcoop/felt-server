@@ -113,9 +113,9 @@ export const createContextmenuStore = (): ContextmenuStore => {
 		expandSelected: () => {
 			const parent = last(selections);
 			if (!parent?.isMenu) return;
-			const target = parent.items[0];
-			target.selected = true;
-			selections.push(target);
+			const selected = parent.items[0];
+			selected.selected = true;
+			selections.push(selected);
 			update(($) => ({...$}));
 		},
 		selectNext: () => {
