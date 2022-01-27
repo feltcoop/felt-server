@@ -57,6 +57,12 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 
 const CONTEXTMENU_STATE_KEY = Symbol();
 
+/**
+ * Creates a `contextmenu` store.
+ * For external usage see `use:contextmenu.action` scattered throughout the app,
+ * and for internal usage see `Contextmenu.svelte`.
+ * @returns
+ */
 export const createContextmenuStore = (): ContextmenuStore => {
 	const rootMenu: ContextmenuStore['rootMenu'] = {isMenu: true, menu: null, items: []};
 	const selections: ContextmenuStore['selections'] = [];
@@ -67,6 +73,7 @@ export const createContextmenuStore = (): ContextmenuStore => {
 		subscribe,
 		rootMenu,
 		selections,
+		action: contextmenuAction,
 		open: (items, x, y) => {
 			selections.length = 0;
 			update(($state) => ({...$state, open: true, items, x, y}));
@@ -106,9 +113,9 @@ export const createContextmenuStore = (): ContextmenuStore => {
 		expandSelected: () => {
 			const parent = last(selections);
 			if (!parent?.isMenu) return;
-			const selected = parent.items[0];
-			selected.selected = true;
-			selections.push(selected);
+			const target = parent.items[0];
+			target.selected = true;
+			selections.push(target);
 			update(($) => ({...$}));
 		},
 		selectNext: () => {
@@ -125,7 +132,6 @@ export const createContextmenuStore = (): ContextmenuStore => {
 		},
 		selectFirst: () => store.selectItem((last(selections)?.menu || rootMenu).items[0]),
 		selectLast: () => store.selectItem(last((last(selections)?.menu || rootMenu).items)!),
-		action: contextmenuAction,
 		addEntry: () => {
 			const menu = (getContext(CONTEXTMENU_STATE_KEY) as SubmenuState | undefined) || rootMenu;
 			const entry: EntryState = {isMenu: false, menu, selected: false};
