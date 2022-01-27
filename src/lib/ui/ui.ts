@@ -95,7 +95,7 @@ export const toUi = (
 	const communities = writable<Writable<Community>[]>(
 		initialSession.guest ? [] : initialSession.communities.map((p) => writable(p)),
 	);
-	// TODO communitiesById
+	// TODO add `communityById` and delete `getCommunity`
 	const spaces = writable<Writable<Space>[]>(
 		initialSession.guest ? [] : initialSession.spaces.map((s) => writable(s)),
 	);
@@ -165,12 +165,12 @@ export const toUi = (
 	);
 	const communitySelection = derived(
 		[communities, communityIdSelection],
-		// TODO lookup from `communitiesById` map instead
 		([$communities, $communityIdSelection]) =>
-			$communities.find((c) => get(c).community_id === $communityIdSelection) || null,
+			$communityIdSelection === null ? null : getCommunity($communities, $communityIdSelection),
 	);
 	// TODO this should store the selected space by community+persona,
 	// possibly alongside additional UI state, maybe in a store or namespace of stores
+	// TODO consider making this the space store so we don't have to chase id references
 	const spaceIdByCommunitySelection = writable<{[key: number]: number | null}>(
 		initialSession.guest
 			? {}
@@ -393,8 +393,7 @@ export const toUi = (
 		},
 		UpdateCommunitySettings: async ({params, invoke}) => {
 			// optimistic update
-			// TODO lookup with `communitiesById`
-			const community = get(communities).find((c) => get(c).community_id === params.community_id)!;
+			const community = getCommunity(get(communities), params.community_id);
 			const originalSettings = get(community).settings;
 			community.update(($community) => ({
 				...$community,
@@ -477,9 +476,7 @@ export const toUi = (
 							$community.name +
 							get(get(spacesByCommunityId).get($community.community_id)![0]).url +
 							location.search,
-						{
-							replaceState: true,
-						},
+						{replaceState: true},
 					);
 				}
 			});
@@ -594,6 +591,19 @@ export const toUi = (
 					$viewBySpace.delete(space);
 				}
 			});
+			// Navigate the browser to the target space.
+			// The target community may not match the selected community,
+			// so it's not as simple as checking if this is already the selected space for its community,
+			// we need to check if the selected community's selected space matches this space.
+			const selectedCommunity = get(communitySelection);
+			const $space = get(space);
+			if (
+				selectedCommunity &&
+				$space.space_id !== get(spaceIdByCommunitySelection)[get(selectedCommunity).community_id]
+			) {
+				const $community = get(getCommunity(get(communities), $space.community_id));
+				goto('/' + $community.name + $space.url + location.search, {replaceState: true});
+			}
 		},
 		ToggleMainNav: () => {
 			expandMainNav.update(($expandMainNav) => !$expandMainNav);
@@ -618,3 +628,12 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 					(p1) => !session.personas.find((p2) => p2.persona_id === p1.persona_id),
 				),
 		  );
+
+// TODO delete this and lookup from `communityById` map instead
+export const getCommunity = (
+	communities: Readable<Community>[],
+	community_id: number,
+): Writable<Community> =>
+	// TODO typecast allows `Readable` input and `Writable` return value for usage in components,
+	// but this function will be deleted soon anyway (see the comment above)
+	communities.find((c) => get(c).community_id === community_id) as Writable<Community>;

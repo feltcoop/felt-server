@@ -6,10 +6,7 @@
 	import type {AccountModel} from '$lib/vocab/account/account';
 	import {getApp} from '$lib/ui/app';
 
-	const {
-		dispatch,
-		ui: {personaSelection},
-	} = getApp();
+	const {dispatch} = getApp();
 
 	let account: AccountModel | undefined;
 	$: account = $session.account;
@@ -18,8 +15,6 @@
 	let submitting: boolean | undefined;
 
 	$: disabled = !account;
-
-	$: selectedPersona = $personaSelection;
 
 	const doLogOut = async () => {
 		submitting = true;
@@ -33,12 +28,6 @@
 	};
 </script>
 
-{#if account}
-	<div>This account was created {account.created}</div>
-{/if}
-{#if selectedPersona}
-	<div>This persona was created {$selectedPersona.created}</div>
-{/if}
 <form>
 	<PendingButton pending={!!submitting} type="button" on:click={doLogOut} {disabled}>
 		log out

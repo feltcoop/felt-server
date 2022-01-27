@@ -129,7 +129,7 @@
 			dispatch('SelectPersona', {persona_id: get(persona).persona_id});
 		} // else already selected
 
-		// TODO speed this up with a map of communities by name
+		// TODO speed this up with a map of communityByName
 		const communityStore = $communities.find((c) => get(c).name === params.community);
 		if (!communityStore) return; // occurs when a session routes to a community they can't access
 		const community = get(communityStore);

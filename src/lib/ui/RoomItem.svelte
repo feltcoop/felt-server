@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
+	import {format} from 'date-fns';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import Avatar from '$lib/ui/Avatar.svelte';
@@ -28,13 +29,13 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		EntityContextmenu: {entity},
 	}}
 >
-	<div class="timestamp">
+	<div class="signature">
 		<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
 	</div>
 	<div class="markup formatted">
-		<div class="timestamp">
+		<div class="signature">
 			<Avatar name={toName($persona)} icon={toIcon($persona)} showIcon={false} />
-			{$entity.created}
+			{format(new Date($entity.created), 'Pp')}
 		</div>
 		<div>
 			{$entity.data.content}
@@ -49,9 +50,10 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		/* TODO experiment with a border color instead of bg */
 		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
 	}
-	.timestamp {
+	.signature {
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 	}
 	.markup {
 		padding: 0 0 0 var(--spacing_md);
