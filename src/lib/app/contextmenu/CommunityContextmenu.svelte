@@ -41,6 +41,13 @@
 		>
 			Invite Members
 		</ContextmenuEntry>
-		<ContextmenuEntry {contextmenu}>TODO removeme</ContextmenuEntry>
+		<ContextmenuSubmenu {contextmenu}>
+			<svelte:fragment slot="entry">testing 1 2 3</svelte:fragment>
+			<svelte:fragment slot="menu">
+				<ContextmenuEntry {contextmenu}>1</ContextmenuEntry>
+				<ContextmenuEntry {contextmenu}>2</ContextmenuEntry>
+				<ContextmenuEntry {contextmenu}>3</ContextmenuEntry>
+			</svelte:fragment>
+		</ContextmenuSubmenu>
 	</svelte:fragment>
 </ContextmenuSubmenu>
