@@ -88,13 +88,14 @@ export const createContextmenuStore = (
 				console.log('TODO implement');
 			}
 		},
+		// Instead of diffing, this does the simple thing and
+		// deselects everything and then re-creates the list of selections.
+		// Could be improved but it's fine because we're using mutation and the N is very small,
+		// and it allows us to have a single code path for the various selection methods.
 		selectItem: (item) => {
 			update(($state) => {
 				const {selections} = $state;
 				if (last(selections) === item) return $state;
-				// Instead of diffing, this does the simple thing and
-				// deselects everything and then re-creates the list of selections.
-				// Could be improved but it's fine because we're using mutation.
 				for (const selection of selections) {
 					selection.selected = false;
 				}
@@ -128,10 +129,16 @@ export const createContextmenuStore = (
 			});
 		},
 		selectNext: () => {
-			update(($state) => (cycleSelections($state, true), {...$state}));
+			if (!_selections.length) return store.selectFirst();
+			const item = last(_selections)!;
+			const index = item.menu.items.indexOf(item);
+			store.selectItem(item.menu.items[index === item.menu.items.length - 1 ? 0 : index + 1]);
 		},
 		selectPrevious: () => {
-			update(($state) => (cycleSelections($state, false), {...$state}));
+			if (!_selections.length) return store.selectLast();
+			const item = last(_selections)!;
+			const index = item.menu.items.indexOf(item);
+			store.selectItem(item.menu.items[index === 0 ? item.menu.items.length - 1 : index - 1]);
 		},
 		selectFirst: () => store.selectItem((last(_selections)?.menu || rootMenu).items[0]),
 		selectLast: () => store.selectItem(last((last(_selections)?.menu || rootMenu).items)!),
@@ -139,7 +146,6 @@ export const createContextmenuStore = (
 		addEntry: () => {
 			const menu = (getContext(CONTEXTMENU_STATE_KEY) as SubmenuState | undefined) || rootMenu;
 			const entry: EntryState = {isMenu: false, menu, selected: false};
-			console.log('addEntry', menu, entry);
 			menu.items.push(entry);
 			onDestroy(() => {
 				menu.items.length = 0;
@@ -151,7 +157,6 @@ export const createContextmenuStore = (
 			const submenu: SubmenuState = {isMenu: true, menu, selected: false, items: []};
 			menu.items.push(submenu);
 			setContext(CONTEXTMENU_STATE_KEY, submenu);
-			console.log('addSubmenu', menu, submenu);
 			onDestroy(() => {
 				menu.items.length = 0;
 			});
@@ -159,24 +164,6 @@ export const createContextmenuStore = (
 		},
 	};
 	return store;
-};
-
-const cycleSelections = ($state: Contextmenu, forward: boolean): void => {
-	const {selections} = $state;
-	const deselected = last(selections) as ItemState | undefined;
-	let nextItem: ItemState;
-	if (deselected) {
-		deselected.selected = false;
-		const items = deselected.menu.items;
-		const i = items.indexOf(deselected);
-		nextItem =
-			items[forward ? (i === items.length - 1 ? 0 : i + 1) : i === 0 ? items.length - 1 : i - 1];
-	} else {
-		nextItem = $state.menu.items[forward ? 0 : $state.menu.items.length - 1];
-	}
-	nextItem.selected = true;
-	selections.pop();
-	selections.push(nextItem);
 };
 
 // The dataset key must not have capital letters or dashes or it'll differ between JS and DOM:
