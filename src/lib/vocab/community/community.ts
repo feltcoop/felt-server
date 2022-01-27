@@ -1,5 +1,4 @@
 import {randomHue} from '$lib/ui/color';
-import type {Persona} from '$lib/vocab/persona/persona.js';
 
 // TODO generate types: export interface CommunitySettings
 export const CommunitySettingsSchema = {
@@ -20,7 +19,6 @@ export interface Community {
 	type: 'standard' | 'personal';
 	name: string;
 	settings: {hue: number};
-	memberPersonas: Persona[]; // TODO if we normalize all data, this should be an array of ids or stores
 	created: Date;
 	updated: Date | null;
 }
@@ -38,5 +36,5 @@ export const CommunitySchema = {
 		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 	},
 	required: ['community_id', 'type', 'name', 'created', 'updated'],
-	additionalProperties: true, // TODO `true` is a hack related to the above
+	additionalProperties: false,
 };

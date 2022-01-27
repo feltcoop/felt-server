@@ -45,9 +45,6 @@ export const personaRepo = (db: Database) => ({
 					WHERE persona_id = ${persona.persona_id}
 			`;
 			persona.community_id = community.community_id;
-			persona.community_ids = [community.community_id];
-			// TODO this is also a yucky hack
-			community.memberPersonas = [persona];
 			return {ok: true, value: {persona, community, spaces}};
 		} else {
 			// TODO this is a hack that can be removed when this code is moved into the service layer
@@ -60,14 +57,6 @@ export const personaRepo = (db: Database) => ({
 		console.log('[personaRepo] filtering by account', account_id);
 		const data = await db.sql<Persona[]>`
 			SELECT p.persona_id, p.type, p.name, p.account_id, p.community_id, p.created, p.updated,
-
-			(
-				SELECT array_to_json(coalesce(array_agg(d.community_id)))
-				FROM (
-					SELECT m.community_id FROM memberships m WHERE m.persona_id = p.persona_id
-				) d
-			) AS community_ids
-
 			FROM personas p WHERE p.account_id = ${account_id}
 		`;
 		return {ok: true, value: data};
