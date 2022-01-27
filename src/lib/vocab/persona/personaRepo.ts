@@ -56,7 +56,7 @@ export const personaRepo = (db: Database) => ({
 	): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 		console.log('[personaRepo] filtering by account', account_id);
 		const data = await db.sql<Persona[]>`
-			SELECT p.persona_id, p.type, p.name, p.account_id, p.community_id, p.created, p.updated,
+			SELECT p.persona_id, p.type, p.name, p.account_id, p.community_id, p.created, p.updated
 			FROM personas p WHERE p.account_id = ${account_id}
 		`;
 		return {ok: true, value: data};

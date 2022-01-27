@@ -38,7 +38,7 @@ export const membershipRepo = (db: Database) => ({
 	filterByAccount: async (
 		account_id: number,
 	): Promise<Result<{value: Membership[]}, ErrorResponse>> => {
-		console.log(`[spaceRepo] preparing to query for memberships by account: ${account_id}`);
+		console.log(`[membershipRepo] preparing to query for memberships by account: ${account_id}`);
 		const data = await db.sql<Membership[]>`
 			SELECT m.persona_id, m.community_id, m.created, m.updated 
 			FROM memberships m JOIN (
