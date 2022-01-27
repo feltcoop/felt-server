@@ -22,9 +22,9 @@
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {WEBSOCKET_URL} from '$lib/config';
 	import {toWebsocketApiClient} from '$lib/ui/WebsocketApiClient';
-	// import {toHttpApiClient} from '$lib/ui/HttpApiClient';
+	import {toHttpApiClient} from '$lib/ui/HttpApiClient';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
-	import {findService} from '$lib/ui/services';
+	import {findHttpService, findWebsocketService} from '$lib/ui/services';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {goto} from '$app/navigation';
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
@@ -48,7 +48,7 @@
 	const socket = setSocket(
 		toSocketStore(
 			(message) =>
-				apiClient.handle(message.data, (broadcastMessage) => {
+				websocketClient.handle(message.data, (broadcastMessage) => {
 					// TODO this is a hack to handle arbitrary messages from the server
 					// outside of the normal JSON RPC calls -- we'll want to rethink this
 					// so it's more structured and type safe
@@ -66,10 +66,9 @@
 	);
 	const ui = setUi(toUi(session, initialMobileValue, components));
 
-	const apiClient = toWebsocketApiClient(findService, socket.send); // TODO expose on `app`?
-	// alternative http client:
-	// const apiClient = toHttpApiClient(findService);
-	const dispatch = toDispatch(ui, apiClient);
+	const websocketClient = toWebsocketApiClient(findWebsocketService, socket.send); // TODO expose on `app`?
+	const httpClient = toHttpApiClient(findHttpService);
+	const dispatch = toDispatch(ui, [websocketClient, httpClient]);
 	const app = setApp({ui, dispatch, devmode, socket});
 	if (browser) {
 		(window as any).app = app;

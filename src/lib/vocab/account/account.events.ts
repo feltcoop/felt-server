@@ -3,6 +3,7 @@ import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 export const LoginAccount: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'LoginAccount',
+	authorize: false,
 	params: {
 		$id: 'https://felt.social/vocab/LoginAccountParams.json',
 		type: 'object',

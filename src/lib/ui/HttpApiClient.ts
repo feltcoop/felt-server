@@ -23,7 +23,7 @@ export const toHttpApiClient = <
 		has: (name) => !!findService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
 		invoke: async (name, params) => {
 			params = params ?? null!;
-			console.log('[http api client] invoke', name, params);
+			console.log('[http] invoke', name, params);
 			const service = findService(name);
 			if (!service) {
 				return {ok: false, status: 400, message: 'failed to invoke unknown service'};

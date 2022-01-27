@@ -7,14 +7,13 @@ import {blue} from '@feltcoop/felt/util/terminal.js';
 import {promisify} from 'util';
 
 import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.js';
-import {toAuthorizationMiddleware} from '$lib/session/authorizationMiddleware.js';
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import type {Service} from '$lib/server/service';
-import {toServiceMiddleware} from '$lib/server/serviceMiddleware';
-import {websocketHandler} from '$lib/server/websocketHandler';
+import {toHttpServiceMiddleware} from '$lib/server/httpServiceMiddleware';
+import {toWebsocketMiddleware} from '$lib/server/websocketMiddleware';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -22,7 +21,7 @@ const log = new Logger([blue('[ApiServer]')]);
 export interface ApiServerRequest extends PolkaRequest, CookieSessionRequest {
 	account_id?: number;
 }
-export interface Middleware extends PolkaMiddleware<ApiServerRequest> {}
+export interface HttpMiddleware extends PolkaMiddleware<ApiServerRequest> {}
 
 export interface Options {
 	server: HttpServer | HttpsServer;
@@ -41,7 +40,7 @@ export class ApiServer {
 	readonly db: Database;
 	readonly services: Map<string, Service<any, any>>;
 
-	websocketListener = websocketHandler.bind(null, this);
+	websocketListener = toWebsocketMiddleware(this);
 
 	constructor(options: Options) {
 		this.server = options.server;
@@ -79,17 +78,14 @@ export class ApiServer {
 				next();
 			})
 			.use(toCookieSessionMiddleware())
-			.use(toAuthenticationMiddleware(this))
-			// TODO we want to support unauthenticated routes so users can publish public content,
-			// but for now it's simple and secure to just require an authenticated account for everything
-			.use('/api', toAuthorizationMiddleware(this));
+			.use(toAuthenticationMiddleware(this));
 
 		// Register services as http routes.
 		for (const service of this.services.values()) {
 			this.app.add(
 				service.event.route!.method,
 				service.event.route!.path,
-				toServiceMiddleware(this, service),
+				toHttpServiceMiddleware(this, service),
 			);
 		}
 

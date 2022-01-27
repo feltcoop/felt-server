@@ -1,14 +1,15 @@
 import send from '@polka/send-type';
 import {red} from '@feltcoop/felt/util/terminal.js';
 
-import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
+import type {ApiServer, HttpMiddleware} from '$lib/server/ApiServer.js';
 import type {Service} from '$lib/server/service';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {ServiceEffects} from '$lib/server/ServiceEffects';
+import {authorize} from './authorize';
 
 // Wraps a `Service` in an http `Middleware`
-export const toServiceMiddleware =
-	(server: ApiServer, service: Service<any, any>): Middleware =>
+export const toHttpServiceMiddleware =
+	(server: ApiServer, service: Service<any, any>): HttpMiddleware =>
 	async (req, res) => {
 		// TODO validate input/output via properties on each `Service`
 		try {
@@ -43,6 +44,11 @@ export const toServiceMiddleware =
 				return send(res, 500, {message: 'unimplemented service schema'});
 			}
 
+			const authorizeResult = authorize(server, service, req);
+			if (!authorizeResult.ok) {
+				return send(res, 401, {message: authorizeResult.message});
+			}
+
 			const params = {...reqBody, ...reqParams};
 
 			const validateParams = validateSchema(service.event.params);
@@ -52,17 +58,11 @@ export const toServiceMiddleware =
 				const validationError = validateParams.errors![0];
 				return send(res, 400, {message: toValidationErrorMessage(validationError)});
 			}
-			if (!req.account_id) {
-				// TODO this is duplicating the role of the `authorizationMiddleware` to avoid mistakes,
-				// but what's the better design here?
-				// Should each service declare if `account_id` is required?
-				return send(res, 401, {message: 'not logged in'});
-			}
 
 			const result = await service.perform({
 				repos: server.db.repos,
 				params,
-				account_id: req.account_id,
+				account_id: req.account_id!, // TODO how to handle this type for services that don't require an account_id?
 				effects: new ServiceEffects(req),
 			});
 

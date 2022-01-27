@@ -6,11 +6,6 @@ import type {ApiResult} from '$lib/server/api';
 import type {EventParamsByName, EventResponseByName} from '$lib/app/eventTypes';
 import type {Dispatch} from '$lib/app/eventTypes';
 
-// TODO this has evolved to the point where perhaps this module should be `dispatch.ts`
-// and removing the `Api` namespace wrapper.
-// One reason we wouldn't do this is if we wanted to bundle other data/functions
-// inside the same closure as `dispatch`.
-
 const KEY = Symbol();
 
 export const getDispatch = (): Dispatch => getContext(KEY);
@@ -31,10 +26,7 @@ export interface DispatchContext<
 	invoke: TResult extends void ? null : (params?: TParams) => Promise<TResult>;
 }
 
-export const toDispatch = (
-	ui: Ui,
-	client: ApiClient<EventParamsByName, EventResponseByName>,
-): Dispatch => {
+export const toDispatch = (ui: Ui, clients: ApiClient[]): Dispatch => {
 	// TODO validate the params here to improve UX, but for now we're safe letting the server validate
 	const dispatch: Dispatch = (eventName, params) => {
 		console.log(
@@ -44,6 +36,11 @@ export const toDispatch = (
 			'color: gray',
 			params === undefined ? '' : params, // print null but not undefined
 		);
+		// TODO Falling back to the first client may be a bad idea,
+		// because events may want arbitrary access to any of the clients.
+		// Maybe `clients` should be an object that we pass through, `{http, ws}` ? (types?)
+		// Then `client` could be `null` when the service has data that says it uses no clients.
+		const client = clients.find((c) => c.has(eventName)) || clients[0];
 		const ctx: DispatchContext = {
 			eventName,
 			params,

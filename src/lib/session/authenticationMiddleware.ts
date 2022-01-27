@@ -1,13 +1,13 @@
 import send from '@polka/send-type';
 
-import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
+import type {ApiServer, HttpMiddleware} from '$lib/server/ApiServer.js';
 
 // TODO this used to lookup the `account` from the database,
 // but that'll result in a lot of overfetching.
 // Rather than deleting this module, it attaches `account_id` to the `req`,
 // and we'll want to take another look at this soon.
 
-export const toAuthenticationMiddleware = (_server: ApiServer): Middleware => {
+export const toAuthenticationMiddleware = (_server: ApiServer): HttpMiddleware => {
 	return async (req, res, next) => {
 		if (req.account_id) {
 			// TODO centralize error message strings
