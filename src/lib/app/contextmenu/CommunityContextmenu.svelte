@@ -37,13 +37,5 @@
 		>
 			Invite Members
 		</ContextmenuEntry>
-		<ContextmenuSubmenu>
-			<svelte:fragment slot="entry">testing 1 2 3</svelte:fragment>
-			<svelte:fragment slot="menu">
-				<ContextmenuEntry action={() => alert('1')}>1</ContextmenuEntry>
-				<ContextmenuEntry action={() => alert('2')}>2</ContextmenuEntry>
-				<ContextmenuEntry action={() => alert('3')}>3</ContextmenuEntry>
-			</svelte:fragment>
-		</ContextmenuSubmenu>
 	</svelte:fragment>
 </ContextmenuSubmenu>
