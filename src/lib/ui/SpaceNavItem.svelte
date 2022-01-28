@@ -6,6 +6,7 @@
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {toSpaceUrl} from '$lib/ui/url';
 	import {getApp} from '$lib/ui/app';
+	import SpaceContextmenu from '$lib/app/contextmenu/SpaceContextmenu.svelte';
 
 	const {
 		dispatch,
@@ -23,7 +24,7 @@
 <a
 	href={toSpaceUrl(personaIndex, $community, $space)}
 	class:selected
-	use:contextmenu.action={{SpaceContextmenu: {space}}}
+	use:contextmenu.action={[[SpaceContextmenu, {space}]]}
 	on:click={() => {
 		// TODO Should this be a click handler or react to UI system events/changes?
 		// Might make more UX sense to make it react to any state changes,

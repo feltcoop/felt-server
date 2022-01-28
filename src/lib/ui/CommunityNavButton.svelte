@@ -6,6 +6,7 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 	import {toSpaceUrl} from '$lib/ui/url';
+	import CommunityContextmenu from '$lib/app/contextmenu/CommunityContextmenu.svelte';
 
 	const {
 		dispatch,
@@ -35,7 +36,7 @@
 	class:selected
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {$community.settings.hue}"
-	use:contextmenu.action={{CommunityContextmenu: {community, persona}}}
+	use:contextmenu.action={[[CommunityContextmenu, {community, persona}]]}
 	on:click={() => dispatch('SelectPersona', {persona_id: $persona.persona_id})}
 >
 	<!-- TODO maybe use `Avatar`? does `hue` need to be on the link? -->

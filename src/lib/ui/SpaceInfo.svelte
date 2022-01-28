@@ -7,6 +7,7 @@
 	import {randomHue} from '$lib/ui/color';
 	import {toSpaceUrl} from '$lib/ui/url';
 	import {getApp} from '$lib/ui/app';
+	import SpaceContextmenu from '$lib/app/contextmenu/SpaceContextmenu.svelte';
 
 	const {
 		ui: {contextmenu, sessionPersonaIndices},
@@ -27,7 +28,7 @@
 	class:selected
 	class="space-info"
 	style="--hue: {hue}"
-	use:contextmenu.action={{SpaceContextmenu: {space}}}
+	use:contextmenu.action={[[SpaceContextmenu, {space}]]}
 >
 	<div class="name">{$space.name}</div>
 	<div>

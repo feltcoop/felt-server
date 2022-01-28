@@ -7,6 +7,8 @@
 	import {randomHue} from '$lib/ui/color';
 	import {toIcon, toName} from '$lib/vocab/entity/entity';
 	import {getApp} from '$lib/ui/app';
+	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
+	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
 
 	const {
 		ui: {contextmenu, findPersonaById},
@@ -24,10 +26,10 @@
 And then PersonaContextmenu would be only for *session* personas? `SessionPersonaContextmenu` -->
 <li
 	style="--hue: {hue}"
-	use:contextmenu.action={{
-		PersonaContextmenu: {persona},
-		EntityContextmenu: {entity},
-	}}
+	use:contextmenu.action={[
+		[PersonaContextmenu, {persona}],
+		[EntityContextmenu, {entity}],
+	]}
 >
 	<div class="signature">
 		<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />

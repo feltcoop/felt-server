@@ -8,6 +8,7 @@
 	import {toIcon, toName} from '$lib/vocab/entity/entity';
 	import {getApp} from '$lib/ui/app';
 	import SocketConnection from '$lib/ui/SocketConnection.svelte';
+	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 
 	const {
 		ui: {contextmenu, expandMarquee, personasById},
@@ -29,9 +30,9 @@
 			{#each $community.memberPersonas as persona (persona.persona_id)}
 				<!-- TODO this is going to change to a store, won't need the inefficient lookup -->
 				<li
-					use:contextmenu.action={{
-						PersonaContextmenu: {persona: personasById.get(persona.persona_id)},
-					}}
+					use:contextmenu.action={[
+						[PersonaContextmenu, {persona: personasById.get(persona.persona_id)}],
+					]}
 				>
 					<Avatar name={toName(persona)} icon={toIcon(persona)} />
 				</li>

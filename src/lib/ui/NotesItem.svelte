@@ -3,6 +3,8 @@
 
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import {getApp} from '$lib/ui/app';
+	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
+	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
 
 	const {
 		ui: {contextmenu, findPersonaById},
@@ -14,10 +16,10 @@
 </script>
 
 <li
-	use:contextmenu.action={{
-		PersonaContextmenu: {persona},
-		EntityContextmenu: {entity},
-	}}
+	use:contextmenu.action={[
+		[PersonaContextmenu, {persona}],
+		[EntityContextmenu, {entity}],
+	]}
 >
 	<div class="markup formatted">
 		{$entity.data.content}

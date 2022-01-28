@@ -4,7 +4,6 @@ import MembershipInput from '$lib/ui/MembershipInput.svelte';
 import SpaceDelete from '$lib/ui/SpaceDelete.svelte';
 import SpaceInput from '$lib/ui/SpaceInput.svelte';
 import type {SvelteComponent} from 'svelte';
-import {contextmenuComponents} from '$lib/app/contextmenu/components';
 import {viewComponents} from '$lib/ui/view/components';
 
 // The collection of components that can be dynamically mounted by the app.
@@ -18,6 +17,5 @@ export const components: {[key: string]: typeof SvelteComponent} = {
 	MembershipInput,
 	SpaceDelete,
 	SpaceInput,
-	...contextmenuComponents,
 	...viewComponents,
 };

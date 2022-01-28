@@ -31,6 +31,9 @@
 	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
 	import Dialogs from '$lib/ui/dialog/Dialogs.svelte';
 	import {components} from '$lib/app/components';
+	import AppContextmenu from '$lib/app/contextmenu/AppContextmenu.svelte';
+	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
+	import LinkContextmenu from '$lib/app/contextmenu/LinkContextmenu.svelte';
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -171,10 +174,10 @@
 </script>
 
 <svelte:body
-	use:contextmenu.action={{
-		ActingPersonaContextmenu: selectedPersona ? {persona: selectedPersona} : undefined,
-		AppContextmenu: null,
-	}} />
+	use:contextmenu.action={[
+		[ActingPersonaContextmenu, selectedPersona ? {persona: selectedPersona} : undefined],
+		[AppContextmenu, null],
+	]} />
 
 <svelte:head>
 	<link rel="shortcut icon" href="/favicon.png" />
@@ -200,7 +203,7 @@
 	</main>
 	<DevmodeControls {devmode} />
 	<Dialogs {dialogs} />
-	<Contextmenu {contextmenu} />
+	<Contextmenu {contextmenu} {LinkContextmenu} />
 	<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 </div>
 
