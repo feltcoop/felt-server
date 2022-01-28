@@ -272,7 +272,12 @@ export const toUi = (
 			session.set(result.value.session);
 			return result;
 		},
-		LogoutAccount: ({invoke}) => invoke(),
+		LogoutAccount: async ({invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
+			session.set({guest: true});
+			return result;
+		},
 		setSession: (session) => {
 			console.log('[data.setSession]', session);
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
