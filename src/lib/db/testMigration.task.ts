@@ -1,8 +1,6 @@
 import type {Task} from '@feltcoop/gro';
 
-import {MIGRATIONS_DIR} from '$lib/db/migrate.task';
-
-// TODO handle production data dumps somehow
+import {MIGRATIONS_DIR} from '$lib/db/migration';
 
 interface Args {
 	checkpoint: boolean; // if `true`, does not run the `count` number of final migrations

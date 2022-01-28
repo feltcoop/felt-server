@@ -9,7 +9,6 @@ import type {Community} from '$lib/vocab/community/community';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
-import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 
 // TODO extract seed helpers and db methods
 
@@ -64,7 +63,7 @@ export const seed = async (db: Database): Promise<void> => {
 	const communities: Community[] = [];
 
 	for (const communityParams of communitiesParams) {
-		const community = unwrap(
+		const {community, spaces} = unwrap(
 			await db.repos.community.create(
 				'standard',
 				communityParams.name,
@@ -76,7 +75,7 @@ export const seed = async (db: Database): Promise<void> => {
 		for (const persona of otherPersonas) {
 			await db.repos.membership.create(persona.persona_id, community.community_id);
 		}
-		await createDefaultEntities(db, community.spaces, personas);
+		await createDefaultEntities(db, spaces, personas);
 	}
 };
 
@@ -109,8 +108,10 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 		}
 		const entityContents = entitiesContents[spaceContent.type];
 		for (const entityContent of entityContents) {
-			const data = {type: 'Note', content: entityContent} as NoteEntityData;
-			await db.repos.entity.create(nextPersona().persona_id, space.space_id, data);
+			await db.repos.entity.create(nextPersona().persona_id, space.space_id, {
+				type: 'Note',
+				content: entityContent,
+			});
 		}
 	}
 };

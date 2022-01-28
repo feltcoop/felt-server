@@ -1,9 +1,10 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {Persona} from '$lib/vocab/persona/persona.js';
+import type {Persona} from '$lib/vocab/persona/persona';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
-import type {Community} from '$lib/vocab/community/community.js';
+import type {Community} from '$lib/vocab/community/community';
+import type {Space} from '$lib/vocab/space/space';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 
 export const personaRepo = (db: Database) => ({
@@ -15,8 +16,9 @@ export const personaRepo = (db: Database) => ({
 		// TODO clean up when logic is moved to services:
 		// `community_id` is `null` for `account` personas, gets set after creating personal community
 		community_id: number | null,
-	): Promise<Result<{value: {persona: Persona; community: Community}}, ErrorResponse>> => {
-		// TODO maybe `insertCommunity` helper?
+	): Promise<
+		Result<{value: {persona: Persona; community: Community; spaces: Space[]}}, ErrorResponse>
+	> => {
 		const data = await db.sql<Persona[]>`
 			INSERT INTO personas (type, name, account_id, community_id) VALUES (
 				${type}, ${name}, ${account_id}, ${community_id}
@@ -36,7 +38,7 @@ export const personaRepo = (db: Database) => ({
 			}
 			// TODO this is a hack -- always adding/expecting `community_ids`
 			// like in `filterByAccount` below is probably not the best idea because of overfetching
-			const community = createCommunityResult.value;
+			const {community, spaces} = createCommunityResult.value;
 			// TODO another hack
 			await db.sql`
 				UPDATE personas SET community_id = ${community.community_id}
@@ -46,10 +48,10 @@ export const personaRepo = (db: Database) => ({
 			persona.community_ids = [community.community_id];
 			// TODO this is also a yucky hack
 			community.memberPersonas = [persona];
-			return {ok: true, value: {persona, community}};
+			return {ok: true, value: {persona, community, spaces}};
 		} else {
 			// TODO this is a hack that can be removed when this code is moved into the service layer
-			return {ok: true, value: {persona, community: null as any}};
+			return {ok: true, value: {persona, community: null as any, spaces: null as any}};
 		}
 	},
 	filterByAccount: async (

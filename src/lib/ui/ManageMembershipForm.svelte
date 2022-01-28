@@ -1,9 +1,9 @@
 <script lang="ts">
 	import {get} from 'svelte/store';
-	import type {Community} from '$lib/vocab/community/community';
 
 	import {getApp} from '$lib/ui/app';
-	import Avatar from './Avatar.svelte';
+	import {getCommunity} from '$lib/ui/ui';
+	import Avatar from '$lib/ui/Avatar.svelte';
 
 	const {
 		dispatch,
@@ -13,10 +13,6 @@
 	$: persona = $personaSelection!;
 
 	let errorMessage: string | undefined;
-
-	// TODO lookup from `communitiesById` map instead
-	const getCommunity = (community_id: number): Community =>
-		get($communities.find((c) => get(c).community_id === community_id)!);
 
 	const leaveCommunity = async (community_id: number) => {
 		errorMessage = '';
@@ -39,7 +35,8 @@
 			{#each $persona.community_ids as community_id (community_id)}
 				<li class="community-badge">
 					<button type="button" on:click={() => leaveCommunity(community_id)}> 👋 </button>
-					{getCommunity(community_id).name}
+					<!-- TODO refactor, probably extract a component -->
+					{get(getCommunity($communities, community_id)).name}
 				</li>
 			{/each}
 		</ul>

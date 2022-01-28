@@ -25,6 +25,17 @@ export const spaceRepo = (db: Database) => ({
 			message: 'no space found',
 		};
 	},
+	filterByAccount: async (account_id: number): Promise<Result<{value: Space[]}, ErrorResponse>> => {
+		console.log(`[spaceRepo] preparing to query for community spaces by account: ${account_id}`);
+		const data = await db.sql<Space[]>`
+		SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.updated, s.created, s.community_id
+		FROM spaces s JOIN (
+			SELECT DISTINCT m.community_id FROM personas p JOIN memberships m ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
+		) apc
+		ON s.community_id=apc.community_id;							
+		`;
+		return {ok: true, value: data};
+	},
 	filterByCommunity: async (community_id: number): Promise<Result<{value: Space[]}>> => {
 		console.log(`[spaceRepo] preparing to query for community spaces: ${community_id}`);
 		const data = await db.sql<Space[]>`

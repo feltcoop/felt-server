@@ -4,6 +4,7 @@
 	import type {Space} from '$lib/vocab/space/space';
 	import type {Community} from '$lib/vocab/community/community';
 	import {getApp} from '$lib/ui/app';
+	import {format} from 'date-fns';
 
 	const {
 		ui: {expandMainNav},
@@ -20,7 +21,7 @@
 			$space.url.split('/').filter(Boolean).join(' / ')) ||
 			''}
 	</li>
-	<li class="timestamp">created {space && $space.created}</li>
+	<li class="timestamp">created {space && format(new Date($space.created), 'P')}</li>
 </ul>
 
 <style>
@@ -42,6 +43,9 @@
 	}
 	.timestamp {
 		font-size: var(--font_size_md);
+		flex: 1;
+		display: flex;
+		justify-content: flex-end;
 	}
 	.expanded-nav .luggage-placeholder {
 		display: none;

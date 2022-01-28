@@ -76,7 +76,10 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 				// needs to populate members, but we probably want to normalize the data, returning only ids
 				const communityData = await repos.community.filterByAccount(account_id);
 				if (communityData.ok) {
-					const {community_id} = createCommunityResult.value;
+					const {
+						community: {community_id},
+						spaces,
+					} = createCommunityResult.value;
 					console.log('community_id', community_id);
 					console.log('communityData', communityData);
 					return {
@@ -84,6 +87,7 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 						status: 200,
 						value: {
 							community: communityData.value.find((c) => c.community_id === community_id)!,
+							spaces,
 						},
 					}; // TODO API types
 				} else {

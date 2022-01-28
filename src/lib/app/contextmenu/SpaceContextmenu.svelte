@@ -1,16 +1,12 @@
 <script lang="ts">
 	import {type Readable} from 'svelte/store';
 
-	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {getApp} from '$lib/ui/app';
 	import {type Space} from '$lib/vocab/space/space';
 
 	const {dispatch} = getApp();
 
-	export let contextmenu: ContextmenuStore;
-
-	let space: Readable<Space>;
-	$: space = $contextmenu.items.SpaceContextmenu;
+	export let space: Readable<Space>;
 </script>
 
 <div class="markup">

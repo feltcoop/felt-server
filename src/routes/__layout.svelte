@@ -86,6 +86,7 @@
 		communities,
 		personaIndexSelection,
 		communityIdSelection,
+		spacesByCommunityId,
 		spaceIdByCommunitySelection,
 		personaSelection,
 		setSession,
@@ -127,7 +128,7 @@
 			dispatch('SelectPersona', {persona_id: get(persona).persona_id});
 		} // else already selected
 
-		// TODO speed this up with a map of communities by name
+		// TODO speed this up with a map of communityByName
 		const communityStore = $communities.find((c) => get(c).name === params.community);
 		if (!communityStore) return; // occurs when a session routes to a community they can't access
 		const community = get(communityStore);
@@ -137,9 +138,10 @@
 		}
 		if (community_id) {
 			const spaceUrl = '/' + (params.space || '');
-			const space = community.spaces.find((s) => s.url === spaceUrl);
+			//TODO lookup space by url
+			const space = $spacesByCommunityId.get(community_id)!.find((s) => get(s).url === spaceUrl);
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
-			const {space_id} = space;
+			const {space_id} = get(space);
 			if (space_id !== $spaceIdByCommunitySelection[community_id]) {
 				dispatch('SelectSpace', {community_id, space_id});
 			}
@@ -169,7 +171,7 @@
 
 <svelte:body
 	use:contextmenu.action={{
-		ActingPersonaContextmenu: selectedPersona || undefined,
+		ActingPersonaContextmenu: selectedPersona ? {persona: selectedPersona} : undefined,
 		AppContextmenu: null,
 	}} />
 
