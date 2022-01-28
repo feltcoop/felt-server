@@ -40,14 +40,14 @@ export const toHttpApiClient = <
 				try {
 					json = await res.json();
 				} catch (err) {
-					console.error('[http api client] parse error', err, res);
+					console.error('[http] parse error', err, res);
 					return {
 						ok: false,
 						status: null, // discard `res.status` because something else went wrong
 						message: 'failed to parse server response',
 					};
 				}
-				console.log('[http api client] result', res.ok, res.status, json);
+				console.log('[http] result', res.ok, res.status, json);
 				if (res.ok) {
 					return {ok: true, status: res.status, value: json};
 				} else {
@@ -58,7 +58,7 @@ export const toHttpApiClient = <
 					};
 				}
 			} catch (err) {
-				console.error('[http api client] fetch error', err);
+				console.error('[http] fetch error', err);
 				return {
 					ok: false,
 					status: null,
