@@ -36,6 +36,9 @@ export const LoginAccount: ServiceEventInfo = {
 export const LogoutAccount: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'LogoutAccount',
+	// TODO hack because logout doesn't work via websockets,
+	// maybe this should be a separate property like `websocket: false`?
+	authorize: false,
 	params: {
 		$id: 'https://felt.social/vocab/LogoutAccountParams.json',
 		type: 'null',

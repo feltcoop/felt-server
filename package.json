@@ -46,13 +46,13 @@
     "ajv": "^8.8.2",
     "ajv-formats": "^2.1.1",
     "body-parser": "^1.19.1",
-    "cookie-session": "^1.4.0",
+    "cookie-session": "^2.0.0",
     "date-fns": "^2.28.0",
     "dotenv": "^10.0.0",
     "polka": "^1.0.0-next.22",
     "postgres": "^1.0.2",
     "sirv": "^1.0.19",
-    "ws": "^8.3.0"
+    "ws": "^8.4.2"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.3",
