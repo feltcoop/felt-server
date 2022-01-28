@@ -25,6 +25,10 @@ interface WebsocketServerEvents {
 
 const cookieSessionMiddleware = toCookieSessionMiddleware();
 
+const UNAUTHORIZED_MESSAGE = JSON.stringify({
+	message: 'please log in before connecting via websockets',
+});
+
 export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEmitter}) {
 	readonly wss: WebSocketServer;
 	readonly server: HttpServer | HttpsServer;
@@ -40,16 +44,18 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 		wss.on('connection', (socket, req: WebsocketServerRequest) => {
 			console.log('[wss] connection req.url', req.url, wss.clients.size);
 			console.log('[wss] connection req.headers', req.headers);
+
+			// Disallow unauthenticated sessions from connecting via websockets.
 			cookieSessionMiddleware(req, {}, () => {});
 			const account_id = req.session?.account_id;
-			if (!account_id) {
+			if (account_id == null) {
 				console.log('[wss] request to open connection was unauthenticated');
-				//TODO return message to socket (401)
+				socket.send(UNAUTHORIZED_MESSAGE);
 				socket.close();
 				return;
 			}
-			//TODO where to store the authorized account for a given websocket connection
-			//to prevent actions on other actors resources?
+			req.account_id = account_id;
+
 			socket.on('message', async (data, isBinary) => {
 				const message = isBinary ? data : data.toString();
 				this.emit('message', socket, message, account_id, req);
