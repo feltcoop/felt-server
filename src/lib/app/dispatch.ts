@@ -3,7 +3,6 @@ import {setContext, getContext} from 'svelte';
 import type {Ui} from '$lib/ui/ui';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
-import type {EventParamsByName, EventResponseByName} from '$lib/app/eventTypes';
 import type {Dispatch} from '$lib/app/eventTypes';
 
 const KEY = Symbol();
@@ -22,7 +21,6 @@ export interface DispatchContext<
 	eventName: string;
 	params: TParams;
 	dispatch: Dispatch;
-	client: ApiClient<EventParamsByName, EventResponseByName>;
 	invoke: TResult extends void ? null : (params?: TParams) => Promise<TResult>;
 }
 
@@ -45,7 +43,6 @@ export const toDispatch = (ui: Ui, clients: ApiClient[]): Dispatch => {
 			eventName,
 			params,
 			dispatch,
-			client,
 			invoke: client.has(eventName) ? (p = params) => client.invoke(eventName, p) : (null as any), // TODO fix typecast?
 		};
 		return ui.dispatch(ctx);
