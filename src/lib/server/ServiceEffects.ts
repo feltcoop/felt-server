@@ -22,7 +22,7 @@ export class ServiceEffects implements IServiceEffects {
 		if (this.req.session) {
 			this.req.session.account_id = account_id;
 		} else {
-			// TODO how to handle this? in what cases can this happen? can it happen if our auth middleware is configured correctly?
+			console.error('Expected "req.session". The authentication middleware may be misconfigured.');
 		}
 	}
 
