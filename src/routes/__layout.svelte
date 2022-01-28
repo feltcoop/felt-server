@@ -68,7 +68,9 @@
 
 	const websocketClient = toWebsocketApiClient(findWebsocketService, socket.send); // TODO expose on `app`?
 	const httpClient = toHttpApiClient(findHttpService);
-	const dispatch = toDispatch(ui, [websocketClient, httpClient]);
+	const dispatch = toDispatch(ui, (e) =>
+		websocketClient.has(e) ? websocketClient : httpClient.has(e) ? httpClient : null,
+	);
 	const app = setApp({ui, dispatch, devmode, socket});
 	if (browser) {
 		(window as any).app = app;

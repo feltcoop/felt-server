@@ -26,7 +26,7 @@ export const setupApp =
 		);
 		context.app = {
 			ui,
-			dispatch: toDispatch(ui, [httpApiClient]),
+			dispatch: toDispatch(ui, () => httpApiClient),
 			devmode: writable(false),
 			// TODO refactor this so the socket isn't an app dependency,
 			// instead the socket should only exist for the websocket client
