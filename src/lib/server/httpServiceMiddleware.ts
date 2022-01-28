@@ -49,7 +49,7 @@ export const toHttpServiceMiddleware =
 				return send(res, 401, {message: authorizeResult.message});
 			}
 
-			const params = {...reqBody, ...reqParams};
+			const params = service.event.params.type === 'null' ? null : {...reqBody, ...reqParams};
 
 			const validateParams = validateSchema(service.event.params);
 			if (!validateParams(params)) {

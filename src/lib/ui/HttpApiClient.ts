@@ -35,7 +35,7 @@ export const toHttpApiClient = <
 				res = await fetch(path, {
 					method,
 					headers: {'content-type': 'application/json'},
-					body: method === 'GET' || method === 'HEAD' ? null : JSON.stringify(params),
+					body: method === 'GET' || method === 'HEAD' ? null : JSON.stringify(params || {}),
 				});
 			} catch (err) {
 				console.error('[http] fetch error', err);
