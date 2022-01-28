@@ -9,7 +9,7 @@ import type {WebsocketServerRequest} from '$lib/server/WebsocketServer';
 import {authorize} from './authorize';
 
 export interface WebsocketMiddleware {
-	(socket: ws, rawMessage: ws.Data, account_id: number, req: WebsocketServerRequest): Promise<void>;
+	(socket: ws, rawMessage: ws.Data, req: WebsocketServerRequest): Promise<void>;
 }
 
 //TODO clean this up
@@ -20,7 +20,7 @@ export interface BroadcastMessage {
 }
 
 export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
-	(server) => async (socket, messageData, account_id, req) => {
+	(server) => async (socket, messageData, req) => {
 		if (typeof messageData !== 'string') {
 			console.error(
 				'[websocketMiddleware] cannot handle websocket message; currently only supports strings',
@@ -74,7 +74,7 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 				result = await service.perform({
 					repos: server.db.repos,
 					params,
-					account_id,
+					account_id: req.account_id!,
 					effects: new ServiceEffects(req),
 				});
 			}

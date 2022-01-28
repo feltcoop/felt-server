@@ -17,7 +17,7 @@ import {toWebsocketMiddleware} from '$lib/server/websocketMiddleware';
 
 const log = new Logger([blue('[ApiServer]')]);
 
-// similar but not identical to `WebsocketServerRequest`
+// Similar but not identical to `WebsocketServerRequest`.
 export interface ApiServerRequest extends PolkaRequest, CookieSessionRequest {
 	account_id?: number;
 }
