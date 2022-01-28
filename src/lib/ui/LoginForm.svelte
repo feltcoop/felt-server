@@ -61,6 +61,7 @@
 		{disabled}
 		placeholder="account name"
 		use:autofocus
+		autocomplete="username"
 	/>
 	<input
 		type="password"
@@ -69,6 +70,7 @@
 		on:keypress={onKeypress}
 		{disabled}
 		placeholder="password"
+		autocomplete="current-password"
 	/>
 	<PendingButton pending={!!submitting} bind:el={buttonEl} type="button" on:click={login}>
 		log in
