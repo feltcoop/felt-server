@@ -13,7 +13,6 @@ export const loginAccountService: Service<LoginAccountParams, LoginAccountRespon
 	event: LoginAccount,
 	perform: async ({repos, params, account_id, effects}) => {
 		const {username, password} = params;
-		console.log('[loginMiddleware] req.body', username); // TODO logging
 		// TODO formalize and automate validation and normalization
 		if (!username) return {ok: false, status: 400, message: 'invalid username'};
 		if (!password) return {ok: false, status: 400, message: 'invalid password'};
@@ -26,7 +25,6 @@ export const loginAccountService: Service<LoginAccountParams, LoginAccountRespon
 
 		// First see if the account already exists.
 		const findAccountResult = await repos.account.findByName(username);
-		console.log('[loginMiddleware] findAccountResult', findAccountResult);
 		let account: Account;
 		if (findAccountResult.ok) {
 			// There's already an account, so proceed to log in after validating the password.
@@ -37,7 +35,6 @@ export const loginAccountService: Service<LoginAccountParams, LoginAccountRespon
 		} else if (findAccountResult.type === 'no_account_found') {
 			// There's no account, so create one.
 			const createAccountResult = await repos.account.create(username, password);
-			console.log('[loginMiddleware] createAccountResult', createAccountResult);
 			if (createAccountResult.ok) {
 				account = createAccountResult.value;
 			} else {
@@ -49,7 +46,6 @@ export const loginAccountService: Service<LoginAccountParams, LoginAccountRespon
 			return {ok: false, status: 500, message: findAccountResult.message};
 		}
 
-		console.log('[loginMiddleware] login', account.account_id); // TODO logging
 		const clientSessionResult = await repos.session.loadClientSession(account.account_id);
 
 		if (clientSessionResult.ok) {
