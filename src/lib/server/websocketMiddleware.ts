@@ -54,7 +54,7 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 
 		let result;
 
-		const authorizeResult = authorize(server, service, req);
+		const authorizeResult = authorize(req, service);
 		if (!authorizeResult.ok) {
 			result = {
 				ok: false,

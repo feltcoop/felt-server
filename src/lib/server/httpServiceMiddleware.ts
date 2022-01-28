@@ -44,7 +44,7 @@ export const toHttpServiceMiddleware =
 				return send(res, 500, {message: 'unimplemented service schema'});
 			}
 
-			const authorizeResult = authorize(server, service, req);
+			const authorizeResult = authorize(req, service);
 			if (!authorizeResult.ok) {
 				return send(res, 401, {message: authorizeResult.message});
 			}

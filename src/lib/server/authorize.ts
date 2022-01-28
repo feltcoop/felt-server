@@ -1,14 +1,13 @@
 import {type Result} from '@feltcoop/felt';
 
-import {type ApiServer, type ApiServerRequest} from '$lib/server/ApiServer.js';
+import {type ApiServerRequest} from '$lib/server/ApiServer.js';
 import {type Service} from '$lib/server/service';
 import {type WebsocketServerRequest} from '$lib/server/WebsocketServer';
 import {type ErrorResponse} from '$lib/util/error';
 
 export const authorize = (
-	_server: ApiServer,
-	service: Service<any, any>,
 	req: ApiServerRequest | WebsocketServerRequest,
+	service: Service<any, any>,
 ): Result<{}, ErrorResponse> => {
 	const requiresAuthorization = service.event.authorize ?? true;
 	console.log('service.event', requiresAuthorization, service.event);
