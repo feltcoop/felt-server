@@ -72,9 +72,6 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 		wss.on('error', (error) => {
 			console.log('[wss] error', error);
 		});
-		// wss.on('headers', (headers, req) => {
-		// 	console.log('[wss] req.url headers', req.url, headers);
-		// });
 	}
 
 	async close(): Promise<void> {
