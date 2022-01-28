@@ -3,7 +3,7 @@ import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 export const LoginAccount: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'LoginAccount',
-	authorize: false,
+	authenticate: false,
 	params: {
 		$id: 'https://felt.social/vocab/LoginAccountParams.json',
 		type: 'object',
@@ -36,9 +36,7 @@ export const LoginAccount: ServiceEventInfo = {
 export const LogoutAccount: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'LogoutAccount',
-	// TODO hack because logout doesn't work via websockets,
-	// maybe this should be a separate property like `websocket: false`?
-	authorize: false,
+	websockets: false,
 	params: {
 		$id: 'https://felt.social/vocab/LogoutAccountParams.json',
 		type: 'null',

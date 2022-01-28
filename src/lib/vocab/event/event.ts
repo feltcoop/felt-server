@@ -17,7 +17,8 @@ export interface ClientEventInfo {
 export interface ServiceEventInfo {
 	type: 'ServiceEvent';
 	name: string; // `snake_cased`
-	authorize?: boolean; // `true` by default
+	authenticate?: boolean; // `true` by default -- does this service require login?
+	websockets?: boolean; // `true` by default -- can this service be called via websockets?
 	params: SchemaObject;
 	response: SchemaObject;
 	returns: string;

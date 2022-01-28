@@ -114,10 +114,7 @@ export const updateCommunitySettingsService: Service<
 	UpdateCommunitySettingsResponseResult
 > = {
 	event: UpdateCommunitySettings,
-	perform: async ({repos, params, account_id}) => {
-		// TODO authorize `account_id` declaratively
-		account_id;
-
+	perform: async ({repos, params}) => {
 		const result = await repos.community.updateSettings(params.community_id, params.settings);
 		if (result.ok) {
 			return {ok: true, status: 200, value: null};

@@ -31,7 +31,7 @@ test__services('perform services', async ({db}) => {
 		const result = await service.perform({
 			repos: db.repos,
 			params,
-			account_id: service.event.authorize === false ? (null as any) : account.account_id,
+			account_id: service.event.authenticate === false ? (null as any) : account.account_id,
 			effects: new ServiceEffectsMock(),
 		});
 		if (!result.ok || !validateSchema(service.event.response!)(result.value)) {

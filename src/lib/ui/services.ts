@@ -10,5 +10,7 @@ export const findHttpService = (name: string): ServiceEventInfo | undefined =>
 export const findWebsocketService = (name: string): ServiceEventInfo | undefined => {
 	const serviceEventInfo = parseServiceEventInfo(eventInfoByName.get(name));
 	if (!serviceEventInfo) return undefined;
-	return serviceEventInfo.authorize === false ? undefined : serviceEventInfo;
+	return serviceEventInfo.authenticate === false || serviceEventInfo.websockets === false
+		? undefined
+		: serviceEventInfo;
 };
