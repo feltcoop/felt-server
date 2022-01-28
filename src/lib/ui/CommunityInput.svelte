@@ -20,13 +20,8 @@
 	let nameEl: HTMLInputElement;
 	let errorMessage: string | null = null;
 
-	// TODO this has a small bug because of component immutability,
-	// where whitespace characters appear in the input until a non-space character is entered,
-	// because the local `name` doesn't change, and so Svelte doens't update the input's value
-	const updateName = (updated: string) => {
-		// TODO formalize this (probably through the schema)
-		name = updated.replace(/\W/g, '');
-	};
+	// TODO formalize this (probably through the schema)
+	$: name = name.replace(/[^a-zA-Z0-9-]+/g, '');
 
 	const create = async (): Promise<void> => {
 		if (!name) {
@@ -65,8 +60,7 @@
 	<form>
 		<input
 			placeholder="> name"
-			value={name}
-			on:input={(e) => updateName(e.currentTarget.value)}
+			bind:value={name}
 			bind:this={nameEl}
 			use:autofocus
 			on:keydown={onKeydown}
