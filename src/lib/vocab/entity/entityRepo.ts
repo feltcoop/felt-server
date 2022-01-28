@@ -2,7 +2,7 @@ import type {Result} from '@feltcoop/felt';
 
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Database} from '$lib/db/Database';
-import type {EntityData} from './entityData';
+import type {EntityData} from '$lib/vocab/entity/entityData';
 
 export const entityRepo = (db: Database) => ({
 	create: async (

@@ -5,7 +5,7 @@ import type {ApiServer, HttpMiddleware} from '$lib/server/ApiServer.js';
 import type {Service} from '$lib/server/service';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {ServiceEffects} from '$lib/server/ServiceEffects';
-import {authorize} from './authorize';
+import {authorize} from '$lib/server/authorize';
 
 // Wraps a `Service` in an http `Middleware`
 export const toHttpServiceMiddleware =

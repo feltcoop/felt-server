@@ -6,7 +6,7 @@ import type {ApiServer} from '$lib/server/ApiServer';
 import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
 import {ServiceEffects} from '$lib/server/ServiceEffects';
 import type {WebsocketServerRequest} from '$lib/server/WebsocketServer';
-import {authorize} from './authorize';
+import {authorize} from '$lib/server/authorize';
 
 export interface WebsocketMiddleware {
 	(socket: ws, rawMessage: ws.Data, req: WebsocketServerRequest): Promise<void>;

@@ -2,7 +2,7 @@ import {type Result} from '@feltcoop/felt';
 
 import {type Database} from '$lib/db/Database';
 import {type ServiceEventInfo} from '$lib/vocab/event/event';
-import {type IServiceEffects} from './ServiceEffects';
+import {type IServiceEffects} from '$lib/server/ServiceEffects';
 
 export type ServiceMethod =
 	| 'GET'

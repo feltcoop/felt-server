@@ -5,7 +5,10 @@ import {unwrap} from '@feltcoop/felt';
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {toRandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
-import {createMembershipService, deleteMembershipService} from './membershipServices';
+import {
+	createMembershipService,
+	deleteMembershipService,
+} from '$lib/vocab/membership/membershipServices';
 import {ServiceEffectsMock} from '$lib/server/ServiceEffectsMock';
 
 /* test__membershipServices */

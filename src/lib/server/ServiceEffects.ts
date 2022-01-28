@@ -1,6 +1,6 @@
 // TODO rename this class?
 
-import type {ApiServerRequest} from './ApiServer';
+import type {ApiServerRequest} from '$lib/server/ApiServer';
 import type {WebsocketServerRequest} from '$lib/server/WebsocketServer';
 
 // TODO better name for this? is the first place we use this naming convention
