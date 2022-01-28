@@ -9,7 +9,7 @@ import {promisify} from 'util';
 import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.js';
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
-import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
+import {cookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import type {Service} from '$lib/server/service';
 import {toHttpServiceMiddleware} from '$lib/server/httpServiceMiddleware';
@@ -77,7 +77,7 @@ export class ApiServer {
 				});
 				next();
 			})
-			.use(toCookieSessionMiddleware())
+			.use(cookieSessionMiddleware)
 			.use(toAuthenticationMiddleware(this));
 
 		// Register services as http routes.

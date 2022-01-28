@@ -6,7 +6,7 @@ import {EventEmitter} from 'events';
 import type StrictEventEmitter from 'strict-event-emitter-types';
 
 import type {CookieSessionIncomingMessage} from '$lib/session/cookieSession';
-import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
+import {cookieSessionMiddleware} from '$lib/session/cookieSession';
 
 // Similar but not identical to `ApiServerRequest`.
 export interface WebsocketServerRequest extends CookieSessionIncomingMessage {
@@ -18,10 +18,8 @@ interface WebsocketServerEvents {
 	message: (socket: WebSocket, message: Data, req: WebsocketServerRequest) => void;
 }
 
-const cookieSessionMiddleware = toCookieSessionMiddleware();
-
 const REQUIRES_AUTHENTICATION_MESSAGE = JSON.stringify({
-	message: 'please log in before connecting via websockets',
+	message: 'please log in before connecting via websocket',
 });
 
 export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEmitter}) {
