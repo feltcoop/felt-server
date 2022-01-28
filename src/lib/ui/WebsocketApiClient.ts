@@ -47,7 +47,7 @@ export const toWebsocketApiClient = <
 	};
 
 	const client: WebsocketApiClient<TParamsMap, TResultMap> = {
-		has: (name) => !!findService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
+		find: (name) => findService(name),
 		invoke: async (name, params) => {
 			params = params ?? null!;
 			console.log('[ws] invoke', name, params);
