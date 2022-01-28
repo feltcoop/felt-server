@@ -16,8 +16,10 @@
 	$: ({selected} = ($contextmenu, entry));
 </script>
 
-<!-- TODO should be <a> ? but they don't have a `href` currently which is an a11y warning -- should they?
+<!-- TODO should be <a> ? But they don't have a `href` currently which is an a11y warning -- should they?
 https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.html
+or should they be <button> ? But then how do we deal with focus?
+(in Chrome/FF contextmenus, `Tab` doesn't work, but maybe it should here?)
 -->
 <li
 	class="menu-item"
