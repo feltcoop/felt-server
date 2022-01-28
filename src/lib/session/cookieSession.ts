@@ -28,5 +28,5 @@ export const toCookieSessionMiddleware = () =>
 		maxAge: 1000 * 60 * 60 * 24 * 7 * 4, // 4 weeks
 		httpOnly: true, // prevents JS from having access in browser
 		secure: !dev, // this makes cookies break in prod unless https! see letsencrypt
-		sameSite: 'lax',
+		sameSite: 'lax', // is the default for modern browsers: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
 	});
