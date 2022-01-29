@@ -53,7 +53,7 @@ export const events: EventInfo[] = [
 				Component: {type: 'object', tsType: 'typeof SvelteComponent'},
 				props: {type: 'object'},
 			},
-			required: ['component'],
+			required: ['Component'],
 			additionalProperties: false,
 		},
 		returns: 'void',
