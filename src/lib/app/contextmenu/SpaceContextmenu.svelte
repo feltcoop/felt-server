@@ -5,6 +5,7 @@
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
 	import {type Space} from '$lib/vocab/space/space';
+	import SpaceDelete from '$lib/ui/SpaceDelete.svelte';
 
 	const {dispatch} = getApp();
 
@@ -19,7 +20,7 @@
 		<ContextmenuEntry
 			action={() =>
 				dispatch('OpenDialog', {
-					name: 'SpaceDelete',
+					component: SpaceDelete,
 					props: {space, done: () => dispatch('CloseDialog')},
 				})}
 		>

@@ -6,6 +6,8 @@
 	import {type Persona} from '$lib/vocab/persona/persona';
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
+	import CommunityInput from '$lib/ui/CommunityInput.svelte';
+	import ManageMembershipForm from '$lib/ui/ManageMembershipForm.svelte';
 
 	const {dispatch} = getApp();
 
@@ -20,13 +22,13 @@
 		<ContextmenuEntry
 			action={() =>
 				dispatch('OpenDialog', {
-					name: 'CommunityInput',
+					component: CommunityInput,
 					props: {persona, done: () => dispatch('CloseDialog')},
 				})}
 		>
 			Create Community
 		</ContextmenuEntry>
-		<ContextmenuEntry action={() => dispatch('OpenDialog', {name: 'ManageMembershipForm'})}>
+		<ContextmenuEntry action={() => dispatch('OpenDialog', {component: ManageMembershipForm})}>
 			Manage Memberships
 		</ContextmenuEntry>
 	</svelte:fragment>

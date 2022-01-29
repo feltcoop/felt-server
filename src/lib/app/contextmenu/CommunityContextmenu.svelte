@@ -7,6 +7,8 @@
 	import {type Persona} from '$lib/vocab/persona/persona';
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
+	import SpaceInput from '$lib/ui/SpaceInput.svelte';
+	import MembershipInput from '$lib/ui/MembershipInput.svelte';
 
 	const {dispatch} = getApp();
 
@@ -22,7 +24,7 @@
 		<ContextmenuEntry
 			action={() =>
 				dispatch('OpenDialog', {
-					name: 'SpaceInput',
+					component: SpaceInput,
 					props: {persona, community, done: () => dispatch('CloseDialog')},
 				})}
 		>
@@ -31,7 +33,7 @@
 		<ContextmenuEntry
 			action={() =>
 				dispatch('OpenDialog', {
-					name: 'MembershipInput',
+					component: MembershipInput,
 					props: {community},
 				})}
 		>

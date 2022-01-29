@@ -1,6 +1,7 @@
-// TODO should this be a Svelte AST? JSON-LD blocks?
-// TODO duplicated from event schema
+import {type SvelteComponent} from 'svelte';
+
+// TODO duplicated from event schema, generate when vocab is generated
 export interface DialogState {
-	name: string;
+	component: typeof SvelteComponent;
 	props?: {[key: string]: any};
 }
