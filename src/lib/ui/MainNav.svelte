@@ -25,7 +25,7 @@
 
 	// TODO refactor once community data is normalized
 	$: selectedCommunitySpaces =
-		selectedCommunity && $spacesByCommunityId.get($selectedCommunity.community_id);
+		selectedCommunity && $spacesByCommunityId.get($selectedCommunity!.community_id);
 
 	// TODO refactor to some client view-model for the account
 	$: hue = randomHue(toName($selectedPersona));
