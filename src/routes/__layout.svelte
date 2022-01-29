@@ -199,7 +199,7 @@
 		{/if}
 	</main>
 	<DevmodeControls {devmode} />
-	<Dialogs {dialogs} />
+	<Dialogs {dialogs} on:close={() => dispatch('CloseDialog')} />
 	<Contextmenu {contextmenu} />
 	<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 </div>

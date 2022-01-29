@@ -3,11 +3,10 @@
 	import type {Readable} from 'svelte/store';
 
 	import type {DialogState} from '$lib/ui/dialog/dialog';
-	import {getApp} from '$lib/ui/app';
+
+	// TODO upstream to Felt
 
 	export let dialogs: Readable<DialogState[]>;
-
-	const {dispatch} = getApp();
 
 	let activeDialog: DialogState | undefined;
 	$: activeDialog = $dialogs[$dialogs.length - 1];
@@ -15,7 +14,7 @@
 
 {#if activeDialog}
 	<!-- TODO should 'CloseDialog' take the dialog object or an id? -->
-	<Dialog on:close={() => dispatch('CloseDialog')}>
-		<svelte:component this={activeDialog.component} {...activeDialog.props} />
+	<Dialog on:close>
+		<svelte:component this={activeDialog.Component} {...activeDialog.props} />
 	</Dialog>
 {/if}
