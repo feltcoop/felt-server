@@ -117,7 +117,7 @@ export const randomEventParams = async (
 			return randomBool();
 		}
 		case 'OpenDialog': {
-			return {component: ManageMembershipForm};
+			return {Component: ManageMembershipForm};
 		}
 		case 'CloseDialog': {
 			return undefined;

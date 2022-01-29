@@ -22,13 +22,13 @@
 		<ContextmenuEntry
 			action={() =>
 				dispatch('OpenDialog', {
-					component: CommunityInput,
+					Component: CommunityInput,
 					props: {persona, done: () => dispatch('CloseDialog')},
 				})}
 		>
 			Create Community
 		</ContextmenuEntry>
-		<ContextmenuEntry action={() => dispatch('OpenDialog', {component: ManageMembershipForm})}>
+		<ContextmenuEntry action={() => dispatch('OpenDialog', {Component: ManageMembershipForm})}>
 			Manage Memberships
 		</ContextmenuEntry>
 	</svelte:fragment>

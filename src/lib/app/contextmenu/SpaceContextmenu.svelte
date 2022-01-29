@@ -20,7 +20,7 @@
 		<ContextmenuEntry
 			action={() =>
 				dispatch('OpenDialog', {
-					component: SpaceDelete,
+					Component: SpaceDelete,
 					props: {space, done: () => dispatch('CloseDialog')},
 				})}
 		>

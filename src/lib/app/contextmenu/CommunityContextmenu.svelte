@@ -24,7 +24,7 @@
 		<ContextmenuEntry
 			action={() =>
 				dispatch('OpenDialog', {
-					component: SpaceInput,
+					Component: SpaceInput,
 					props: {persona, community, done: () => dispatch('CloseDialog')},
 				})}
 		>
@@ -33,7 +33,7 @@
 		<ContextmenuEntry
 			action={() =>
 				dispatch('OpenDialog', {
-					component: MembershipInput,
+					Component: MembershipInput,
 					props: {community},
 				})}
 		>
