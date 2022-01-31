@@ -1,5 +1,6 @@
 import {randomBool, randomItem} from '@feltcoop/felt/util/random.js';
 import {writable} from 'svelte/store';
+import {SvelteComponent} from 'svelte';
 
 import type {EventInfo} from '$lib/vocab/event/event';
 import {
@@ -11,7 +12,6 @@ import {
 } from '$lib/vocab/random';
 import {randomPersonaParams, randomCommunityParams, randomSpaceParams} from '$lib/vocab/random';
 import {randomHue} from '$lib/ui/color';
-import ManageMembershipForm from '$lib/ui/ManageMembershipForm.svelte';
 
 // TODO consider the pattern below where every `create` event creates all dependencies from scratch.
 // We may want to instead test things for both new and existing objects.
@@ -117,7 +117,7 @@ export const randomEventParams = async (
 			return randomBool();
 		}
 		case 'OpenDialog': {
-			return {Component: ManageMembershipForm};
+			return {Component: class SomeSvelteComponent extends SvelteComponent {}};
 		}
 		case 'CloseDialog': {
 			return undefined;
