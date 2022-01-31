@@ -10,6 +10,7 @@
 	import {browser} from '$app/env';
 	import type {Readable} from 'svelte/store';
 	import {get} from 'svelte/store';
+	import Dialogs from '@feltcoop/felt/ui/dialog/Dialogs.svelte';
 
 	import {setSocket, toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
@@ -29,7 +30,6 @@
 	import {goto} from '$app/navigation';
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
-	import Dialogs from '$lib/ui/dialog/Dialogs.svelte';
 	import {components} from '$lib/app/components';
 	import AppContextmenu from '$lib/app/contextmenu/AppContextmenu.svelte';
 	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
