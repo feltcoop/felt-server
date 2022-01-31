@@ -19,3 +19,5 @@ export const toTypeName = (name: string): string =>
 		.split('_')
 		.map((s) => s[0].toUpperCase() + s.substring(1))
 		.join('');
+
+export type JsonSchemaToTypeScriptOptions = Options;

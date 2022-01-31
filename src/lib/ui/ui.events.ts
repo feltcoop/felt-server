@@ -1,5 +1,3 @@
-import {DialogState} from '@feltcoop/felt/ui/dialog/dialog.schema.js';
-
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
 // TODO probably belongs elsewhere
@@ -49,8 +47,8 @@ export const events: EventInfo[] = [
 		type: 'ClientEvent',
 		name: 'OpenDialog',
 		params: {
-			...DialogState,
 			$id: 'https://felt.social/vocab/OpenDialogParams.json',
+			allOf: [{$ref: 'schemas/dialog.json'}],
 		},
 		returns: 'void',
 	},

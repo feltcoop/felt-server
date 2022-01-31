@@ -13,6 +13,9 @@ export const ajv = (): Ajv => {
 	ajvInstance.addKeyword('tsType').addKeyword('tsImport');
 	addFormats(ajvInstance);
 	for (const schema of schemas) {
+		if (schema.$id === 'https://felt.dev/schemas/dialog.json') {
+			schema.$id = 'https://felt.social/vocab/dialog.json';
+		}
 		ajvInstance.addSchema(schema);
 	}
 	return ajvInstance;
