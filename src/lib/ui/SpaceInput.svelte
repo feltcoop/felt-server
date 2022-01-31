@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
+	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
+	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
@@ -15,31 +17,39 @@
 	export let community: Readable<Community>;
 	export let done: (() => void) | undefined = undefined;
 
-	let newName = '';
-	let newType = availableViewTypes[0];
+	let name = '';
+	let type = availableViewTypes[0];
+
+	let pending = false;
 	let nameEl: HTMLInputElement;
-	let errorMessage: string | undefined;
+	let errorMessage: string | null = null;
+
+	// TODO formalize this (probably through the schema)
+	$: name = name.replace(/[^a-zA-Z0-9-]+/g, '');
 
 	const create = async () => {
-		if (!newName) {
+		if (!name) {
 			errorMessage = 'please enter a name for your new space';
 			nameEl.focus();
 			return;
 		}
+		if (pending) return;
+		pending = true;
+		errorMessage = null;
 		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
-		errorMessage = '';
-		const url = `/${newName}`;
+		const url = `/${name}`;
 		const result = await dispatch('CreateSpace', {
 			community_id: $community.community_id,
-			name: newName,
+			name,
 			url,
 			//TODO : add space type picker
 			media_type: 'application/fuz+json',
-			content: `{"type": "${newType}", "props": {"data": "/entities"}}`,
+			content: `{"type": "${type}", "props": {"data": "/entities"}}`,
 		});
+		pending = false;
 		if (result.ok) {
-			newName = '';
-			newType = availableViewTypes[0];
+			errorMessage = null;
+			name = '';
 			done?.();
 		} else {
 			errorMessage = result.message;
@@ -62,31 +72,29 @@
 		<Avatar name={$community.name} type="Community" />
 	</section>
 	<form>
-		<div class:error={!!errorMessage}>{errorMessage || ''}</div>
 		<input
 			placeholder="> name"
-			bind:value={newName}
-			use:autofocus
+			bind:value={name}
 			bind:this={nameEl}
+			use:autofocus
 			on:keydown={onKeydown}
 		/>
 		<label>
 			Select Type:
-			<select class="type-selector" bind:value={newType}>
+			<select class="type-selector" bind:value={type}>
 				{#each availableViewTypes as type (type)}
 					<option value={type}>{type}</option>
 				{/each}
 			</select>
 		</label>
-		<button type="button" on:click={create}> Create space </button>
+		<PendingButton type="button" on:click={create} {pending}>Create space</PendingButton>
+		{#if errorMessage}
+			<Message status="error">{errorMessage}</Message>
+		{/if}
 	</form>
 </div>
 
 <style>
-	.error {
-		font-weight: bold;
-		color: rgb(73, 84, 153);
-	}
 	.type-selector {
 		margin-left: var(--spacing_xs);
 	}

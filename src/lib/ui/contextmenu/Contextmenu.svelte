@@ -1,18 +1,20 @@
 <script lang="ts">
 	import {isEditable} from '@feltcoop/felt/util/dom.js';
-	import Message from '@feltcoop/felt/ui/Message.svelte';
+	import {type SvelteComponent} from 'svelte';
 
-	import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+	import {setContextmenu, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
-	import {getApp} from '$lib/ui/app';
-
-	const {
-		ui: {components},
-	} = getApp();
 
 	// TODO upstream to Felt
 
+	// The `contextmenu` prop cannot be changed because that's a rare corner case and
+	// it's easier to put the `contextmenu` directly in the context.
+	// If you need to change the contextmenu prop for some reason, use a `{#key contextmenu}` block:
+	// https://svelte.dev/docs#template-syntax-key
 	export let contextmenu: ContextmenuStore;
+	export let LinkContextmenu: typeof SvelteComponent;
+
+	setContextmenu(contextmenu);
 
 	let contextmenuEl: HTMLElement;
 
@@ -24,26 +26,38 @@
 		}
 	};
 
-	// TODO hook into a ui input system
 	const onWindowKeydown = (e: KeyboardEvent) => {
+		console.log('e.key', e.key);
 		if (e.key === 'Escape' && !(e.target instanceof HTMLElement && isEditable(e.target))) {
 			contextmenu.close();
 			e.stopPropagation();
-			e.preventDefault();
+		} else if (e.key === 'ArrowLeft') {
+			contextmenu.collapseSelected();
+			e.stopPropagation();
+		} else if (e.key === 'ArrowRight') {
+			contextmenu.expandSelected();
+			e.stopPropagation();
+		} else if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+			contextmenu.selectNext();
+			e.stopPropagation();
+		} else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+			contextmenu.selectPrevious();
+			e.stopPropagation();
+		} else if (e.key === 'Home') {
+			contextmenu.selectFirst();
+			e.stopPropagation();
+		} else if (e.key === 'End') {
+			contextmenu.selectLast();
+			e.stopPropagation();
+		} else if (e.key === ' ' || e.key === 'Enter') {
+			contextmenu.activateSelected();
+			e.stopPropagation();
 		}
 	};
 
-	// TODO hacky -- maybe check things like `role="button"`? also, upstream to Felt utils
-	const isInteractive = (el: Element): boolean =>
-		el.tagName === 'A' ||
-		el.tagName === 'BUTTON' ||
-		el.tagName === 'AREA' ||
-		!!el.closest('button,a');
+	const isInteractive = (el: Element): boolean => !!el.closest('button,a,area,[role=menuitem]');
 
 	const onClickContent = (e: MouseEvent) => {
-		// TODO this is hacky, but improves the behavior to let us select content on the contextmenu,
-		// but automatically closes if e.g. a button is clicked, and the button can `stopPropagation`
-		// to keep the contextmenu open, because it'll stop it before this handler runs
 		if (isInteractive(e.target as any)) {
 			contextmenu.close();
 		} else {
@@ -51,42 +65,35 @@
 		}
 	};
 
-	$: items = Object.entries($contextmenu.items);
-
-	const doContextmenu = onContextmenu(contextmenu);
+	$: console.log('$contextmenu', $contextmenu);
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
 <!-- TODO ensure `mousedown` works everywhere; might want to add `touchstart` or substitute `pointerdown` -->
 <!-- Capture keydown so it can handle the event before any dialogs. -->
 <svelte:window
-	on:contextmenu|capture={(e) => doContextmenu(e, contextmenuEl)}
+	on:contextmenu|capture={(e) => onContextmenu(e, contextmenu, contextmenuEl, LinkContextmenu)}
 	on:mousedown|capture={$contextmenu.open ? onWindowMousedown : undefined}
 	on:keydown|capture={$contextmenu.open ? onWindowKeydown : undefined}
 />
 
 <!-- TODO Maybe animate a subtle highlight around the contextmenu as it appears? -->
 {#if $contextmenu.open}
-	<div
+	<ul
 		class="contextmenu pane"
 		role="menu"
 		aria-modal
 		tabindex="-1"
 		bind:this={contextmenuEl}
 		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
+		on:click={onClickContent}
 	>
-		<div on:click={onClickContent}>
-			{#each items as [key, props] (key)}
-				{#if key in components}
-					<section class="panel-inset">
-						<svelte:component this={components[key]} {...props} />
-					</section>
-				{:else}
-					<Message status="error">unknown contextmenu "{key}"</Message>
-				{/if}
-			{/each}
-		</div>
-	</div>
+		{#each $contextmenu.items as [component, props] (component)}
+			<section>
+				<svelte:component this={component} {...props} />
+			</section>
+		{/each}
+	</ul>
 {/if}
 
 <style>

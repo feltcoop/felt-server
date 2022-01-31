@@ -15,18 +15,32 @@
 	export let done: (() => void) | undefined = undefined;
 
 	let name = '';
+
 	let pending = false;
+	let nameEl: HTMLInputElement;
 	let errorMessage: string | null = null;
 
+	// TODO formalize this (probably through the schema)
+	$: name = name.replace(/[^a-zA-Z0-9-]+/g, '');
+
 	const create = async (): Promise<void> => {
+		if (!name) {
+			errorMessage = 'please enter a name for your new community';
+			nameEl.focus();
+			return;
+		}
 		if (pending) return;
-		errorMessage = null;
 		pending = true;
+		errorMessage = null;
 		const result = await dispatch('CreateCommunity', {name, persona_id: $persona.persona_id});
 		pending = false;
-		errorMessage = result.ok ? null : result.message;
-		name = '';
-		done?.();
+		if (result.ok) {
+			errorMessage = null;
+			name = '';
+			done?.();
+		} else {
+			errorMessage = result.message;
+		}
 	};
 
 	const onKeydown = async (e: KeyboardEvent) => {
@@ -44,14 +58,18 @@
 		<Avatar name={toName($persona)} icon={toIcon($persona)} />
 	</section>
 	<form>
-		<input placeholder="> name" on:keydown={onKeydown} bind:value={name} use:autofocus />
-		<PendingButton type="button" on:click={() => create()} {pending}>
-			Create community
-		</PendingButton>
+		<input
+			placeholder="> name"
+			bind:value={name}
+			bind:this={nameEl}
+			use:autofocus
+			on:keydown={onKeydown}
+		/>
+		<PendingButton type="button" on:click={create} {pending}>Create community</PendingButton>
+		{#if errorMessage}
+			<Message status="error">{errorMessage}</Message>
+		{/if}
 	</form>
-	{#if errorMessage}
-		<Message status="error">{errorMessage}</Message>
-	{/if}
 </div>
 
 <style>

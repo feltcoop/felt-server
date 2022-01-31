@@ -1,5 +1,5 @@
 import send from '@polka/send-type';
-import {red} from '@feltcoop/felt/util/terminal.js';
+import {red} from 'kleur/colors';
 
 import type {ApiServer, Middleware} from '$lib/server/ApiServer.js';
 import type {Service} from '$lib/server/service';

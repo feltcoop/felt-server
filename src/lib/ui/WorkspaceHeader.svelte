@@ -17,11 +17,12 @@
 <ul class="workspace-header" class:expanded-nav={$expandMainNav}>
 	<li class="luggage-placeholder" />
 	<li class="breadcrumbs">
-		{community && $community.name} / {(space &&
+		{community && $community && $community.name} / {(space &&
+			$space &&
 			$space.url.split('/').filter(Boolean).join(' / ')) ||
 			''}
 	</li>
-	<li class="timestamp">created {space && format(new Date($space.created), 'P')}</li>
+	<li class="timestamp">created {space && $space && format(new Date($space.created), 'P')}</li>
 </ul>
 
 <style>

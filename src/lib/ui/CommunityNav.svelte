@@ -6,6 +6,7 @@
 	import CommunityNavButton from '$lib/ui/CommunityNavButton.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
+	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
 
 	const {
 		ui: {
@@ -29,7 +30,7 @@
 <nav class="community-nav">
 	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
 	{#each $sessionPersonas as persona (persona)}
-		<div class="persona-group" use:contextmenu.action={{ActingPersonaContextmenu: {persona}}}>
+		<div class="persona-group" use:contextmenu.action={[[ActingPersonaContextmenu, {persona}]]}>
 			<!-- TODO refactor this hacky usage of `get` -->
 			<CommunityNavButton
 				community={toPersonaCommunity(get(persona))}

@@ -11,6 +11,7 @@ import {
 } from '$lib/vocab/random';
 import {randomPersonaParams, randomCommunityParams, randomSpaceParams} from '$lib/vocab/random';
 import {randomHue} from '$lib/ui/color';
+import ManageMembershipForm from '$lib/ui/ManageMembershipForm.svelte';
 
 // TODO consider the pattern below where every `create` event creates all dependencies from scratch.
 // We may want to instead test things for both new and existing objects.
@@ -116,7 +117,7 @@ export const randomEventParams = async (
 			return randomBool();
 		}
 		case 'OpenDialog': {
-			return {name: 'ManageMembershipForm'};
+			return {Component: ManageMembershipForm};
 		}
 		case 'CloseDialog': {
 			return undefined;
