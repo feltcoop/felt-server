@@ -20,7 +20,9 @@
 	space; // TODO we're ignoring the space, but should probably mount its `content` as markup
 
 	$: communitySpaces = $spacesByCommunityId.get($community.community_id)!;
+
 	$: communityPersonas = $personasByCommunityId.get($community.community_id)!;
+	$: console.log('$$$$$$', communityPersonas);
 </script>
 
 <div class="markup">

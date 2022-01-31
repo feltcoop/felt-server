@@ -1,57 +1,29 @@
 <script lang="ts">
-	import {get} from 'svelte/store';
-
 	import {getApp} from '$lib/ui/app';
-	import {getCommunity} from '$lib/ui/ui';
 	import Avatar from '$lib/ui/Avatar.svelte';
+	import ManageMembershipItem from '$lib/ui/ManageMembershipItem.svelte';
 
 	const {
-		dispatch,
-		ui: {personaSelection, communities},
+		ui: {personaSelection, communitiesBySessionPersona},
 	} = getApp();
 
 	$: persona = $personaSelection!;
-
-	let errorMessage: string | undefined;
-
-	const leaveCommunity = async (community_id: number) => {
-		errorMessage = '';
-		const result = await dispatch('DeleteMembership', {
-			persona_id: $persona.persona_id,
-			community_id,
-		});
-		if (!result.ok) {
-			errorMessage = result.message;
-		}
-	};
+	$: communities = $communitiesBySessionPersona.get(persona)!;
 </script>
 
 <div class="markup">
 	<h1>Manage memberships</h1>
 	<div class="avatar"><Avatar name={$persona.name} /></div>
 	<form>
-		<div class:error={!!errorMessage}>{errorMessage || ''}</div>
 		<ul>
-			{#each $persona.community_ids as community_id (community_id)}
-				<li class="community-badge">
-					<button type="button" on:click={() => leaveCommunity(community_id)}> 👋 </button>
-					<!-- TODO refactor, probably extract a component -->
-					{get(getCommunity($communities, community_id)).name}
-				</li>
+			{#each communities as community (community)}
+				<ManageMembershipItem {persona} {community} />
 			{/each}
 		</ul>
 	</form>
 </div>
 
 <style>
-	.error {
-		font-weight: bold;
-		color: rgb(73, 84, 153);
-	}
-	.community-badge {
-		display: flex;
-		font-size: xx-large;
-	}
 	.markup {
 		display: flex;
 		flex-direction: column;
