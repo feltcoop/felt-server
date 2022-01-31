@@ -1,5 +1,4 @@
 import type {SvelteComponent} from 'svelte';
-import {contextmenuComponents} from '$lib/app/contextmenu/components';
 import {viewComponents} from '$lib/ui/view/components';
 
 // The collection of components that can be dynamically mounted by the app.
@@ -7,7 +6,4 @@ import {viewComponents} from '$lib/ui/view/components';
 // TODO refactor this to load these components on demand,
 // instead of preloading the entire component library
 
-export const components: {[key: string]: typeof SvelteComponent} = {
-	...contextmenuComponents,
-	...viewComponents,
-};
+export const components: {[key: string]: typeof SvelteComponent} = viewComponents;

@@ -1,11 +1,10 @@
 import {writable, type Readable} from 'svelte/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {last} from '@feltcoop/felt/util/array.js';
-import {getContext, onDestroy, setContext} from 'svelte';
+import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
 
-interface ContextmenuItems {
-	[key: string]: any; // TODO types
-}
+// Items with `undefined` props are ignored.
+export type ContextmenuItems = [typeof SvelteComponent, object | null | undefined][];
 
 export type ItemState = SubmenuState | EntryState;
 export interface EntryState {
@@ -37,6 +36,7 @@ export interface Contextmenu {
 }
 
 export interface ContextmenuStore extends Readable<Contextmenu> {
+	action: typeof contextmenuAction;
 	open(items: ContextmenuItems, x: number, y: number): void;
 	close(): void;
 	activateSelected(): void; // removes one
@@ -47,7 +47,6 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 	selectPrevious(): void; // removes one
 	selectFirst(): void; // advances to the next of the latest
 	selectLast(): void; // removes one
-	action: typeof contextmenuAction;
 	addEntry(action: ContextmenuAction): EntryState;
 	addSubmenu(): SubmenuState;
 	// These two properties are mutated internally.
@@ -70,7 +69,7 @@ export const createContextmenuStore = (): ContextmenuStore => {
 	const rootMenu: ContextmenuStore['rootMenu'] = {isMenu: true, menu: null, items: []};
 	const selections: ContextmenuStore['selections'] = [];
 
-	const {subscribe, update} = writable({open: false, items: {}, x: 0, y: 0});
+	const {subscribe, update} = writable<Contextmenu>({open: false, items: [], x: 0, y: 0});
 
 	const store: ContextmenuStore = {
 		subscribe,
@@ -162,10 +161,10 @@ export const createContextmenuStore = (): ContextmenuStore => {
 // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
 const CONTEXTMENU_DATASET_KEY = 'contextmenu';
 const CONTEXTMENU_DOM_QUERY = `[data-${CONTEXTMENU_DATASET_KEY}],a`;
-const contextmenuCache = new Map<string, any>();
+const contextmenuCache = new Map<string, ContextmenuItems>();
 let cacheKeyCounter = 0;
 
-const contextmenuAction = (el: HTMLElement | SVGElement, params: any): any => {
+const contextmenuAction = (el: HTMLElement | SVGElement, params: ContextmenuItems) => {
 	const key = cacheKeyCounter++ + '';
 	el.dataset[CONTEXTMENU_DATASET_KEY] = key;
 	contextmenuCache.set(key, params);
@@ -189,11 +188,12 @@ export const onContextmenu = (
 	e: MouseEvent,
 	contextmenu: ContextmenuStore,
 	excludeEl?: HTMLElement,
+	LinkContextmenu?: typeof SvelteComponent,
 ): void | false => {
 	if (e.shiftKey) return;
 	const target = e.target as HTMLElement;
 	if (isEditable(target) || excludeEl?.contains(target)) return;
-	const items = queryContextmenuItems(target);
+	const items = queryContextmenuItems(target, LinkContextmenu);
 	if (!items) return;
 	e.stopPropagation();
 	e.preventDefault();
@@ -202,25 +202,29 @@ export const onContextmenu = (
 	return false; // TODO remove this if it doesn't fix FF mobile (and update the `false` return value)
 };
 
-const queryContextmenuItems = (target: HTMLElement | SVGElement): null | ContextmenuItems => {
+const queryContextmenuItems = (
+	target: HTMLElement | SVGElement,
+	LinkContextmenu: typeof SvelteComponent | undefined,
+): null | ContextmenuItems => {
 	let items: null | ContextmenuItems = null;
 	let el: HTMLElement | SVGElement | null = target;
-	let cacheKey: any, cached: any, c: any;
+	let cacheKey: string, cached: ContextmenuItems;
 	while ((el = el && el.closest(CONTEXTMENU_DOM_QUERY))) {
-		if ((cacheKey = el.dataset[CONTEXTMENU_DATASET_KEY])) {
-			if (!items) items = {};
-			cached = contextmenuCache.get(cacheKey);
-			for (const key in cached) {
-				// preserve bubbling order and ignore `undefined` values
-				if (!(key in items)) {
-					c = cached[key];
-					if (c !== undefined) items[key] = c;
+		if ((cacheKey = el.dataset[CONTEXTMENU_DATASET_KEY]!)) {
+			if (!items) items = [];
+			cached = contextmenuCache.get(cacheKey)!;
+			for (const item of cached) {
+				// ignore `undefined` props to support conditional declarations, but keep `null` ones
+				if (item[1] === undefined) continue;
+				// preserve bubbling order
+				if (!items.some((i) => i[0] === item[0])) {
+					items.push(item);
 				}
 			}
 		}
-		if (el.tagName === 'A') {
-			if (!items) items = {};
-			items.LinkContextmenu = {href: (el as HTMLAnchorElement).href};
+		if (LinkContextmenu && el.tagName === 'A') {
+			if (!items) items = [];
+			items.push([LinkContextmenu, {href: (el as HTMLAnchorElement).href}]);
 		}
 		el = el.parentElement;
 	}

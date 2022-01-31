@@ -9,6 +9,7 @@
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
+	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 
 	const {
 		ui: {contextmenu, spaceSelection, spacesByCommunityId, personasById},
@@ -30,9 +31,9 @@
 		<ul>
 			{#each $community.memberPersonas as persona (persona.persona_id)}
 				<li
-					use:contextmenu.action={{
-						PersonaContextmenu: {persona: personasById.get(persona.persona_id)},
-					}}
+					use:contextmenu.action={[
+						[PersonaContextmenu, {persona: personasById.get(persona.persona_id)}],
+					]}
 				>
 					<Avatar name={toName(persona)} icon={toIcon(persona)} />
 				</li>
