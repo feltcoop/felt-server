@@ -1,10 +1,11 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {Space, SpaceView} from '$lib/vocab/space/space.js';
+import type {Space} from '$lib/vocab/space/space.js';
 import type {Database} from '$lib/db/Database';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import type {ErrorResponse} from '$lib/util/error';
 import type {Community} from '$lib/vocab/community/community';
+import type {ViewData} from '$lib/vocab/view/view';
 
 export const spaceRepo = (db: Database) => ({
 	findById: async (
@@ -61,7 +62,7 @@ export const spaceRepo = (db: Database) => ({
 	},
 	create: async (
 		name: string,
-		view: SpaceView,
+		view: ViewData,
 		media_type: string,
 		url: string,
 		community_id: number,

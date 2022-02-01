@@ -1,6 +1,6 @@
 import {unwrap} from '@feltcoop/felt';
 
-import type {Space, SpaceView} from '$lib/vocab/space/space';
+import type {Space} from '$lib/vocab/space/space';
 import type {Community} from '$lib/vocab/community/community';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 import type {Account, CreateAccountParams} from '$lib/vocab/account/account';
@@ -14,6 +14,7 @@ import type {
 } from '$lib/app/eventTypes';
 import type {Database} from '$lib/db/Database';
 import type {EntityData} from '$lib/vocab/entity/entityData';
+import type {ViewData} from './view/view';
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = () => Math.random().toString().slice(2);
@@ -23,7 +24,7 @@ export const randomPersonaName = randomString;
 export const randomCommunnityName = randomString;
 export const randomSpaceUrl = randomString;
 export const randomSpaceName = randomString;
-export const randomSpaceView = (): SpaceView => ({type: 'Room', props: {data: '/entities'}});
+export const randomViewData = (): ViewData => ({type: 'Room', props: {data: '/entities'}});
 export const randomEntityData = (): EntityData => ({type: 'Note', content: randomString()});
 export const randomAccountParams = (): CreateAccountParams => ({
 	name: randomAccountName(),
@@ -49,7 +50,7 @@ export const randomCommunityParams = (persona_id: number): CreateCommunityParams
 };
 export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 	community_id,
-	view: randomSpaceView(),
+	view: randomViewData(),
 	media_type: 'text/plain',
 	name: randomSpaceName(),
 	url: randomSpaceUrl(),
