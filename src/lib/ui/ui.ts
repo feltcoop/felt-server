@@ -137,13 +137,7 @@ export const toUi = (
 				const {community_id} = get(community);
 				for (const membership of $memberships) {
 					if (get(membership).community_id === community_id) {
-						// TODO this `if` statement is a hack to bandaid the problems caused
-						// by `memberships` containing personas of type `"community"` --
-						// there should never be a missing persona in `personasById`
-						const persona = personasById.get(get(membership).persona_id);
-						if (persona) {
-							communityPersonas.push(persona);
-						}
+						communityPersonas.push(personasById.get(get(membership).persona_id)!);
 					}
 				}
 				map.set(community_id, communityPersonas);
@@ -380,9 +374,8 @@ export const toUi = (
 			} else {
 				personaIdSelection.set(null);
 			}
-
-			communities.set(session.guest ? [] : session.communities.map((p) => writable(p)));
 			memberships.set(session.guest ? [] : session.memberships.map((s) => writable(s)));
+			communities.set(session.guest ? [] : session.communities.map((p) => writable(p)));
 			spaces.set(session.guest ? [] : session.spaces.map((s) => writable(s)));
 			communityIdByPersonaSelection.set(
 				// TODO copypasta from above
@@ -644,7 +637,11 @@ export const toUi = (
 const toInitialPersonas = (session: ClientSession): Persona[] =>
 	session.guest
 		? []
-		: session.personas.concat(session.allPersonas.filter((persona) => persona.type !== 'account'));
+		: session.personas.concat(
+				session.allPersonas.filter(
+					(p1) => !session.personas.find((p2) => p2.persona_id === p1.persona_id),
+				),
+		  );
 
 // TODO delete this and lookup from `communityById` map instead
 export const getCommunity = (

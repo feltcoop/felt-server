@@ -16,8 +16,12 @@
 	export let community: Readable<Community>;
 </script>
 
-<li
-	use:contextmenu.action={[[PersonaContextmenu, {persona: personasById.get($persona.persona_id)}]]}
->
-	<Avatar name={toName($persona)} icon={toIcon($persona)} />
-</li>
+{#if $persona.type === 'account'}
+	<li
+		use:contextmenu.action={[
+			[PersonaContextmenu, {persona: personasById.get($persona.persona_id)}],
+		]}
+	>
+		<Avatar name={toName($persona)} icon={toIcon($persona)} />
+	</li>
+{/if}

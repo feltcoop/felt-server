@@ -90,7 +90,7 @@ export const personaRepo = (db: Database) => ({
 	// TODO this type isn't `Persona`, it's a public subset of fields
 	getAll: async (): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 		const data = await db.sql<Persona[]>`
-			SELECT persona_id, name FROM personas WHERE type = 'account'
+			SELECT persona_id, name, type FROM personas
 		`;
 		return {ok: true, value: data};
 	},
