@@ -10,12 +10,12 @@
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 
 	const {
-		ui: {contextmenu, findPersonaById},
+		ui: {contextmenu, personaById},
 	} = getApp();
 
 	export let entity: Readable<Entity>;
 
-	$: persona = findPersonaById($entity.actor_id); // TODO should this be `Actor` and `actor`?
+	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
 
 	// TODO refactor to some client view-model for the actor
 	$: hue = randomHue($persona.name);

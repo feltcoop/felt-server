@@ -7,12 +7,12 @@
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 
 	const {
-		ui: {contextmenu, findPersonaById},
+		ui: {contextmenu, personaById},
 	} = getApp();
 
 	export let entity: Readable<Entity>;
 
-	$: persona = findPersonaById($entity.actor_id);
+	$: persona = personaById.get($entity.actor_id)!;
 </script>
 
 <li

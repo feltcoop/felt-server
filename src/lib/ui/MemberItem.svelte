@@ -9,7 +9,7 @@
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 
 	const {
-		ui: {contextmenu, personasById},
+		ui: {contextmenu, personaById},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -18,9 +18,7 @@
 
 {#if $persona.type === 'account'}
 	<li
-		use:contextmenu.action={[
-			[PersonaContextmenu, {persona: personasById.get($persona.persona_id)}],
-		]}
+		use:contextmenu.action={[[PersonaContextmenu, {persona: personaById.get($persona.persona_id)}]]}
 	>
 		<Avatar name={toName($persona)} icon={toIcon($persona)} />
 	</li>

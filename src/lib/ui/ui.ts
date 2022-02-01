@@ -38,20 +38,18 @@ export interface Ui extends Partial<UiHandlers> {
 	// db state and caches
 	account: Readable<AccountModel | null>;
 	personas: Readable<Readable<Persona>[]>;
-	personasById: Map<number, Readable<Persona>>; //TODO rename to singular
+	personaById: Map<number, Readable<Persona>>; //TODO rename to singular
 	sessionPersonas: Readable<Readable<Persona>[]>;
 	sessionPersonaIndices: Readable<Map<Readable<Persona>, number>>;
 	communities: Readable<Readable<Community>[]>;
 	spaces: Readable<Readable<Space>[]>;
 	memberships: Readable<Readable<Membership>[]>;
-	spacesById: Readable<Map<number, Readable<Space>>>;
-	//TODO maybe refactor to remove store around map? Like personasById
+	spaceById: Readable<Map<number, Readable<Space>>>;
+	//TODO maybe refactor to remove store around map? Like personaById
 	spacesByCommunityId: Readable<Map<number, Readable<Space>[]>>;
 	personasByCommunityId: Readable<Map<number, Readable<Persona>[]>>;
 	entitiesBySpace: Map<number, Readable<Readable<Entity>[]>>;
 	setSession: ($session: ClientSession) => void;
-	findPersonaById: (persona_id: number) => Readable<Persona>;
-	findSpaceById: (space_id: number) => Readable<Space>;
 	// view state
 	expandMainNav: Readable<boolean>;
 	expandMarquee: Readable<boolean>; // TODO name?
@@ -81,7 +79,7 @@ export const toUi = (
 	// Importantly, this only changes when items are added or removed from the collection,
 	// not when the items themselves change; each item is a store that can be subscribed to.
 	const personas = writable<Writable<Persona>[]>([]);
-	const personasById: Map<number, Writable<Persona>> = new Map();
+	const personaById: Map<number, Writable<Persona>> = new Map();
 	// not derived from session because the session has only the initial snapshot
 	// TODO these `Persona`s need additional data compared to every other `Persona`
 	const sessionPersonas = writable<Writable<Persona>[]>([]);
@@ -90,7 +88,7 @@ export const toUi = (
 	const spaces = writable<Writable<Space>[]>([]);
 	const memberships = writable<Writable<Membership>[]>([]);
 	// TODO do these maps more efficiently
-	const spacesById: Readable<Map<number, Writable<Space>>> = derived(
+	const spaceById: Readable<Map<number, Writable<Space>>> = derived(
 		spaces,
 		($spaces) => new Map($spaces.map((space) => [get(space).space_id, space])),
 	);
@@ -122,7 +120,7 @@ export const toUi = (
 				const {community_id} = get(community);
 				for (const membership of $memberships) {
 					if (get(membership).community_id === community_id) {
-						communityPersonas.push(personasById.get(get(membership).persona_id)!);
+						communityPersonas.push(personaById.get(get(membership).persona_id)!);
 					}
 				}
 				map.set(community_id, communityPersonas);
@@ -143,7 +141,7 @@ export const toUi = (
 	const personaSelection = derived(
 		[personaIdSelection],
 		([$personaIdSelection]) =>
-			($personaIdSelection && personasById.get($personaIdSelection)) || null,
+			($personaIdSelection && personaById.get($personaIdSelection)) || null,
 	);
 	const personaIndexSelection = derived(
 		[personaSelection, sessionPersonas],
@@ -183,19 +181,7 @@ export const toUi = (
 		);
 	// TODO should these be store references instead of ids?
 	// TODO maybe make this a lazy map, not a derived store?
-	const communityIdSelectionByPersonaId = writable<{[key: number]: number}>(
-		Object.fromEntries(
-			get(sessionPersonas)
-				.map((persona) => {
-					// TODO needs to be rethought, the `get` isn't reactive
-					const $persona = get(persona);
-					const communities = get(communitiesBySessionPersona).get(persona)!;
-					const firstCommunity = communities[0];
-					return firstCommunity ? [$persona.persona_id, get(firstCommunity).community_id] : null!;
-				})
-				.filter(Boolean),
-		),
-	);
+	const communityIdSelectionByPersonaId = writable<{[key: number]: number}>({});
 	const communityIdSelection = derived(
 		[personaIdSelection, communityIdSelectionByPersonaId],
 		([$personaIdSelection, $communityIdSelectionByPersonaId]) =>
@@ -206,15 +192,13 @@ export const toUi = (
 		([$communities, $communityIdSelection]) =>
 			$communityIdSelection === null ? null : getCommunity($communities, $communityIdSelection),
 	);
-	// TODO this should store the selected space by community+persona,
-	// possibly alongside additional UI state, maybe in a store or namespace of stores
 	// TODO consider making this the space store so we don't have to chase id references
 	const spaceIdSelectionByCommunityId = writable<{[key: number]: number | null}>({});
 	const spaceSelection = derived(
 		[communitySelection, spaceIdSelectionByCommunityId],
 		([$communitySelection, $spaceIdSelectionByCommunityId]) =>
 			($communitySelection &&
-				get(spacesById).get(
+				get(spaceById).get(
 					$spaceIdSelectionByCommunityId[get($communitySelection)!.community_id]!,
 				)) ||
 			null,
@@ -237,10 +221,10 @@ export const toUi = (
 			),
 		);
 
-		const $spacesById = get(spacesById);
+		const $spaceById = get(spaceById);
 		let spacesToAdd: Space[] | null = null;
 		for (const space of communitySpaces) {
-			if (!$spacesById.has(space.space_id)) {
+			if (!$spaceById.has(space.space_id)) {
 				(spacesToAdd || (spacesToAdd = [])).push(space);
 			}
 		}
@@ -265,8 +249,8 @@ export const toUi = (
 		spaces,
 		communities,
 		memberships,
-		personasById,
-		spacesById,
+		personaById,
+		spaceById,
 		spacesByCommunityId,
 		personasByCommunityId,
 		entitiesBySpace,
@@ -303,10 +287,10 @@ export const toUi = (
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
 			account.set($session.guest ? null : $session.account);
 			personas.set($session.guest ? [] : toInitialPersonas($session).map((p) => writable(p)));
-			personasById.clear();
-			get(personas).forEach((persona) => personasById.set(get(persona).persona_id, persona));
+			personaById.clear();
+			get(personas).forEach((persona) => personaById.set(get(persona).persona_id, persona));
 			sessionPersonas.set(
-				$session.guest ? [] : $session.personas.map((p) => personasById.get(p.persona_id)!),
+				$session.guest ? [] : $session.personas.map((p) => personaById.get(p.persona_id)!),
 			);
 			communities.set($session.guest ? [] : $session.communities.map((p) => writable(p)));
 			spaces.set($session.guest ? [] : $session.spaces.map((s) => writable(s)));
@@ -324,10 +308,10 @@ export const toUi = (
 						.map((persona) => {
 							// TODO needs to be rethought, the `get` isn't reactive
 							const $persona = get(persona);
-							const communities = get(communitiesBySessionPersona).get(persona)!;
-							const firstCommunity = communities[0];
-							return firstCommunity
-								? [$persona.persona_id, get(firstCommunity).community_id]
+							const $communities = get(communitiesBySessionPersona).get(persona)!;
+							const $firstCommunity = $communities[0];
+							return $firstCommunity
+								? [$persona.persona_id, get($firstCommunity).community_id]
 								: null!;
 						})
 						.filter(Boolean),
@@ -340,15 +324,9 @@ export const toUi = (
 					? {}
 					: Object.fromEntries(
 							$session.communities
-								.map((community) => {
-									const $spaces = $spacesByCommunityId.get(community.community_id);
-									console.log('community', $spaces, community);
-									// TODO why is this hack needed? somehow $spacesByCommunityId isn't in sync
-									if (!$spaces) return null as any;
-									return [
-										community.community_id,
-										get($spacesByCommunityId.get(community.community_id)![0]).space_id ?? null,
-									];
+								.map(($community) => {
+									const $firstSpace = $spacesByCommunityId.get($community.community_id)?.[0];
+									return $firstSpace ? [$community.community_id, get($firstSpace).space_id] : null!;
 								})
 								.filter(Boolean),
 					  ),
@@ -415,7 +393,7 @@ export const toUi = (
 			console.log('[ui.CreatePersona]', persona);
 			const personaStore = writable(persona);
 			personas.update(($personas) => $personas.concat(personaStore));
-			personasById.set(persona.persona_id, personaStore);
+			personaById.set(persona.persona_id, personaStore);
 			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
 			dispatch('SelectPersona', {persona_id: persona.persona_id});
 			addCommunity(community, persona.persona_id, spaces);
@@ -600,26 +578,12 @@ export const toUi = (
 		ToggleSecondaryNav: () => {
 			expandMarquee.update(($expandMarquee) => !$expandMarquee);
 		},
-		// TODO delete these after making them plain maps
-		findPersonaById: (persona_id: number): Readable<Persona> => {
-			const persona = personasById.get(persona_id);
-			if (!persona) throw Error(`Unknown persona ${persona_id}`);
-			return persona;
-		},
-		findSpaceById: (space_id: number): Readable<Space> => {
-			const space = get(spacesById).get(space_id);
-			if (!space) throw Error(`Unknown space ${space_id}`);
-			return space;
-		},
 	};
 
 	const unsubscribeSession = session.subscribe(($session) => {
 		// TODO why is this firing twice? Upgrade SvelteKit?
 		if (browser) console.log('$session changed', $session);
 		ui.setSession($session);
-	});
-	spacesByCommunityId.subscribe(($spacesByCommunityId) => {
-		console.log('$spacesByCommunityId', $spacesByCommunityId);
 	});
 
 	return ui;

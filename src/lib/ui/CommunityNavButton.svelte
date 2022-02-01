@@ -10,7 +10,7 @@
 
 	const {
 		dispatch,
-		ui: {contextmenu, spaceIdSelectionByCommunityId, findSpaceById, sessionPersonaIndices},
+		ui: {contextmenu, spaceIdSelectionByCommunityId, spaceById, sessionPersonaIndices},
 	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
@@ -21,7 +21,7 @@
 	export let selected: boolean = false;
 
 	$: spaceIdSelection = $spaceIdSelectionByCommunityId[$community.community_id];
-	$: selectedSpace = spaceIdSelection === null ? null : findSpaceById(spaceIdSelection);
+	$: selectedSpace = spaceIdSelection === null ? null : $spaceById.get(spaceIdSelection)!;
 
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
 
