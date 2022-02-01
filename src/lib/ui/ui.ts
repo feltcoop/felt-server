@@ -231,10 +231,10 @@ export const toUi = (
 		if (spacesToAdd) {
 			spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
 		}
-		spaceIdSelectionByCommunityId.update(($spaceIdSelectionByCommunityId) => {
-			$spaceIdSelectionByCommunityId[community.community_id] = communitySpaces[0].space_id;
-			return $spaceIdSelectionByCommunityId;
-		});
+		spaceIdSelectionByCommunityId.update(($v) => ({
+			...$v,
+			[community.community_id]: communitySpaces[0].space_id,
+		}));
 		const communityStore = writable(community);
 		communities.update(($communities) => $communities.concat(communityStore));
 	};
@@ -302,13 +302,15 @@ export const toUi = (
 			} else {
 				personaIdSelection.set(null);
 			}
+			const $communitiesBySessionPersona = get(communitiesBySessionPersona);
+			console.log('$communitiesBySessionPersona', $communitiesBySessionPersona);
 			communityIdSelectionByPersonaId.set(
 				Object.fromEntries(
 					get(sessionPersonas)
 						.map((persona) => {
 							// TODO needs to be rethought, the `get` isn't reactive
 							const $persona = get(persona);
-							const $communities = get(communitiesBySessionPersona).get(persona)!;
+							const $communities = $communitiesBySessionPersona.get(persona)!;
 							const $firstCommunity = $communities[0];
 							return $firstCommunity
 								? [$persona.persona_id, get($firstCommunity).community_id]
@@ -318,7 +320,7 @@ export const toUi = (
 				),
 			);
 			const $spacesByCommunityId = get(spacesByCommunityId);
-			console.log('spacesByCommunityId', $spacesByCommunityId);
+			console.log('$spacesByCommunityId', $spacesByCommunityId);
 			spaceIdSelectionByCommunityId.set(
 				$session.guest
 					? {}
@@ -584,6 +586,13 @@ export const toUi = (
 		// TODO why is this firing twice? Upgrade SvelteKit?
 		if (browser) console.log('$session changed', $session);
 		ui.setSession($session);
+	});
+
+	communityIdSelectionByPersonaId.subscribe(($communityIdSelectionByPersonaId) => {
+		console.log('CHANGED communityIdSelectionByPersonaId', $communityIdSelectionByPersonaId);
+	});
+	spaceIdSelectionByCommunityId.subscribe(($spaceIdSelectionByCommunityId) => {
+		console.log('CHANGED spaceIdSelectionByCommunityId', $spaceIdSelectionByCommunityId);
 	});
 
 	return ui;
