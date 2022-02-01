@@ -2,6 +2,7 @@ import {writable, derived, get, type Readable, type Writable} from 'svelte/store
 import {setContext, getContext, type SvelteComponent} from 'svelte';
 import {goto} from '$app/navigation';
 import {mutable, type Mutable} from '@feltcoop/svelte-mutable-store';
+import {browser} from '$app/env';
 
 import {type Community} from '$lib/vocab/community/community';
 import {type Space} from '$lib/vocab/space/space';
@@ -45,7 +46,7 @@ export interface Ui extends Partial<UiHandlers> {
 	spacesById: Readable<Map<number, Readable<Space>>>;
 	//TODO maybe refactor to remove store around map? Like personasById
 	spacesByCommunityId: Readable<Map<number, Readable<Space>[]>>;
-	personasByCommunityId: Readable<Map<number, Readable<Readable<Persona>[]>>>;
+	personasByCommunityId: Readable<Map<number, Readable<Persona>[]>>;
 	entitiesBySpace: Map<number, Readable<Readable<Entity>[]>>;
 	setSession: (session: ClientSession) => void;
 	findPersonaById: (persona_id: number) => Readable<Persona>;
@@ -112,7 +113,7 @@ export const toUi = (
 	const spacesByCommunityId: Readable<Map<number, Readable<Space>[]>> = derived(
 		[communities, spaces],
 		([$communities, $spaces]) => {
-			const map = new Map();
+			const map: Map<number, Readable<Space>[]> = new Map();
 			for (const community of $communities) {
 				const communitySpaces: Writable<Space>[] = [];
 				const {community_id} = get(community);
@@ -127,16 +128,22 @@ export const toUi = (
 		},
 	);
 
-	const personasByCommunityId: Readable<Map<number, Readable<Readable<Persona>[]>>> = derived(
+	const personasByCommunityId: Readable<Map<number, Readable<Persona>[]>> = derived(
 		[communities, memberships],
 		([$communities, $memberships]) => {
-			const map = new Map();
+			const map: Map<number, Readable<Persona>[]> = new Map();
 			for (const community of $communities) {
 				const communityPersonas: Writable<Persona>[] = [];
 				const {community_id} = get(community);
 				for (const membership of $memberships) {
 					if (get(membership).community_id === community_id) {
-						communityPersonas.push(personasById.get(get(membership).persona_id)!);
+						// TODO this `if` statement is a hack to bandaid the problems caused
+						// by `memberships` containing personas of type `"community"` --
+						// there should never be a missing persona in `personasById`
+						const persona = personasById.get(get(membership).persona_id);
+						if (persona) {
+							communityPersonas.push(persona);
+						}
 					}
 				}
 				map.set(community_id, communityPersonas);
@@ -172,10 +179,10 @@ export const toUi = (
 		derived(
 			[sessionPersonas, memberships, communities],
 			([$sessionPersonas, $memberships, $communities]) => {
-				const map = new Map();
+				const map: Map<Readable<Persona>, Readable<Community>[]> = new Map();
 				for (const sessionPersona of $sessionPersonas) {
 					const $sessionPersona = get(sessionPersona);
-					const sessionPersonaCommunities = [];
+					const sessionPersonaCommunities: Readable<Community>[] = [];
 					for (const community of $communities) {
 						const $community = get(community);
 						for (const membership of $memberships) {
@@ -356,7 +363,7 @@ export const toUi = (
 			}
 		},
 		setSession: (session) => {
-			console.log('[data.setSession]', session);
+			if (browser) console.log('[ui.setSession]', session);
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
 			account.set(session.guest ? null : session.account);
 			personas.set(session.guest ? [] : toInitialPersonas(session).map((p) => writable(p)));
@@ -375,7 +382,7 @@ export const toUi = (
 			}
 
 			communities.set(session.guest ? [] : session.communities.map((p) => writable(p)));
-			// TODO init memberships when they're added to the session
+			memberships.set(session.guest ? [] : session.memberships.map((s) => writable(s)));
 			spaces.set(session.guest ? [] : session.spaces.map((s) => writable(s)));
 			communityIdByPersonaSelection.set(
 				// TODO copypasta from above
@@ -425,7 +432,6 @@ export const toUi = (
 			const {persona_id} = params;
 			const {community, spaces} = result.value;
 			console.log('[ui.CreateCommunity]', community, persona_id);
-			// TODO how should `persona.community_ids` be modeled and kept up to date?
 			addCommunity(community, persona_id, spaces);
 			dispatch('SelectCommunity', {community_id: community.community_id});
 			return result;
@@ -638,11 +644,7 @@ export const toUi = (
 const toInitialPersonas = (session: ClientSession): Persona[] =>
 	session.guest
 		? []
-		: session.personas.concat(
-				session.allPersonas.filter(
-					(p1) => !session.personas.find((p2) => p2.persona_id === p1.persona_id),
-				),
-		  );
+		: session.personas.concat(session.allPersonas.filter((persona) => persona.type !== 'account'));
 
 // TODO delete this and lookup from `communityById` map instead
 export const getCommunity = (

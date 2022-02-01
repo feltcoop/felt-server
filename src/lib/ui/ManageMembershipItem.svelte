@@ -1,9 +1,10 @@
 <script lang="ts">
 	import Message from '@feltcoop/felt/ui/Message.svelte';
+	import type {Readable} from 'svelte/store';
+
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Persona} from '$lib/vocab/persona/persona';
-	import type {Readable} from 'svelte/store';
 
 	const {dispatch} = getApp();
 

@@ -11,7 +11,6 @@ import {
 } from '$lib/vocab/random';
 import {randomPersonaParams, randomCommunityParams, randomSpaceParams} from '$lib/vocab/random';
 import {randomHue} from '$lib/ui/color';
-import ManageMembershipForm from '$lib/ui/ManageMembershipForm.svelte';
 
 // TODO consider the pattern below where every `create` event creates all dependencies from scratch.
 // We may want to instead test things for both new and existing objects.
@@ -117,7 +116,13 @@ export const randomEventParams = async (
 			return randomBool();
 		}
 		case 'OpenDialog': {
-			return {Component: ManageMembershipForm};
+			// TODO should use the `instanceof` `ajv-keywords` extension for this:
+			// https://github.com/ajv-validator/ajv-keywords#instanceof
+			// using the single keyword directly:
+			// `require("ajv-keywords/dist/keywords/instanceof")(ajv, opts)`
+			// and this value should be:
+			// `class SomeComponent extends SvelteComponent {}`
+			return {Component: {}};
 		}
 		case 'CloseDialog': {
 			return undefined;

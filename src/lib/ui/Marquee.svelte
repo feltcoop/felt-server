@@ -27,7 +27,7 @@
 	<section>
 		<ul>
 			<!-- TODO probably want these to be sorted so the selected persona is always first -->
-			{#each $communityPersonas as persona (persona)}
+			{#each communityPersonas as persona (persona)}
 				<MemberItem {community} {persona} />
 			{/each}
 		</ul>

@@ -22,7 +22,6 @@
 	$: communitySpaces = $spacesByCommunityId.get($community.community_id)!;
 
 	$: communityPersonas = $personasByCommunityId.get($community.community_id)!;
-	$: console.log('$$$$$$', communityPersonas);
 </script>
 
 <div class="markup">
@@ -30,7 +29,7 @@
 		<h2>members</h2>
 		<!-- TODO display other meta info about the community -->
 		<ul>
-			{#each $communityPersonas as persona (persona)}
+			{#each communityPersonas as persona (persona)}
 				<MemberItem {persona} {community} />
 			{/each}
 		</ul>
