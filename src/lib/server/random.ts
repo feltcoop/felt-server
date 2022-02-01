@@ -1,6 +1,5 @@
 import {randomBool, randomItem} from '@feltcoop/felt/util/random.js';
 import {writable} from 'svelte/store';
-import {SvelteComponent} from 'svelte';
 
 import type {EventInfo} from '$lib/vocab/event/event';
 import {
@@ -117,7 +116,9 @@ export const randomEventParams = async (
 			return randomBool();
 		}
 		case 'OpenDialog': {
-			return {Component: class SomeSvelteComponent extends SvelteComponent {}};
+			// TODO what should this value be? schema type `object` fails with this valid value:
+			// `class SomeComponent extends SvelteComponent {}`
+			return {Component: {}};
 		}
 		case 'CloseDialog': {
 			return undefined;
