@@ -27,7 +27,7 @@ import type {ApiResult} from '$lib/server/api';
 import type {Community} from '$lib/vocab/community/community';
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {Membership} from '$lib/vocab/membership/membership';
-import type {Space} from '$lib/vocab/space/space';
+import type {Space, SpaceView, SpaceViewProperties} from '$lib/vocab/space/space';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {EntityData} from '$lib/vocab/entity/entityData';
 import type {ViewData} from '$lib/vocab/view/view';
