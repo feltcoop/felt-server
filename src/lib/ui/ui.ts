@@ -2,7 +2,7 @@ import {writable, derived, get, type Readable, type Writable} from 'svelte/store
 import {setContext, getContext, type SvelteComponent} from 'svelte';
 import {goto} from '$app/navigation';
 import {mutable, type Mutable} from '@feltcoop/svelte-mutable-store';
-import {type DialogState} from '@feltcoop/felt/ui/dialog/dialog.js';
+import {type DialogData} from '@feltcoop/felt/ui/dialog/dialog.js';
 
 import {type Community} from '$lib/vocab/community/community';
 import {type Space} from '$lib/vocab/space/space';
@@ -63,7 +63,7 @@ export interface Ui extends Partial<UiHandlers> {
 	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	mobile: Readable<boolean>;
 	contextmenu: ContextmenuStore;
-	dialogs: Writable<DialogState[]>;
+	dialogs: Writable<DialogData[]>;
 	viewBySpace: Mutable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
 }
 
@@ -125,7 +125,7 @@ export const toUi = (
 
 	const mobile = writable(initialMobile);
 	const contextmenu = createContextmenuStore();
-	const dialogs = writable<DialogState[]>([]);
+	const dialogs = writable<DialogData[]>([]);
 	const viewBySpace = mutable(new WeakMap());
 
 	// derived state

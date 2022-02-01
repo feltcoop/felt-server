@@ -1,5 +1,5 @@
 import type {SchemaObject} from 'ajv';
-import {DialogState} from '@feltcoop/felt/ui/dialog/dialog.schema.js';
+import {DialogDataSchema} from '@feltcoop/felt/ui/dialog/dialog.schema.js';
 
 import {eventInfos} from '$lib/app/events';
 import {entities} from '$lib/app/entities';
@@ -14,4 +14,4 @@ entities.push(
 		])
 		.filter(Boolean),
 );
-entities.push(DialogState);
+entities.push(DialogDataSchema);
