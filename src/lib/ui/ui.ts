@@ -113,7 +113,7 @@ export const toUi = (
 	const spacesByCommunityId: Readable<Map<number, Readable<Space>[]>> = derived(
 		[communities, spaces],
 		([$communities, $spaces]) => {
-			const map = new Map();
+			const map: Map<number, Readable<Space>[]> = new Map();
 			for (const community of $communities) {
 				const communitySpaces: Writable<Space>[] = [];
 				const {community_id} = get(community);
@@ -131,7 +131,7 @@ export const toUi = (
 	const personasByCommunityId: Readable<Map<number, Readable<Persona>[]>> = derived(
 		[communities, memberships],
 		([$communities, $memberships]) => {
-			const map = new Map();
+			const map: Map<number, Readable<Persona>[]> = new Map();
 			for (const community of $communities) {
 				const communityPersonas: Writable<Persona>[] = [];
 				const {community_id} = get(community);
@@ -179,10 +179,10 @@ export const toUi = (
 		derived(
 			[sessionPersonas, memberships, communities],
 			([$sessionPersonas, $memberships, $communities]) => {
-				const map = new Map();
+				const map: Map<Readable<Persona>, Readable<Community>[]> = new Map();
 				for (const sessionPersona of $sessionPersonas) {
 					const $sessionPersona = get(sessionPersona);
-					const sessionPersonaCommunities = [];
+					const sessionPersonaCommunities: Readable<Community>[] = [];
 					for (const community of $communities) {
 						const $community = get(community);
 						for (const membership of $memberships) {
