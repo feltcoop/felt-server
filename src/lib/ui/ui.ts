@@ -382,7 +382,7 @@ export const toUi = (
 			}
 
 			communities.set(session.guest ? [] : session.communities.map((p) => writable(p)));
-			// TODO init memberships when they're added to the session
+			memberships.set(session.guest ? [] : session.memberships.map((s) => writable(s)));
 			spaces.set(session.guest ? [] : session.spaces.map((s) => writable(s)));
 			communityIdByPersonaSelection.set(
 				// TODO copypasta from above
