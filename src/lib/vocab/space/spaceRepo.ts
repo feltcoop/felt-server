@@ -1,6 +1,6 @@
 import type {Result} from '@feltcoop/felt';
 
-import type {Space} from '$lib/vocab/space/space.js';
+import type {Space, SpaceView} from '$lib/vocab/space/space.js';
 import type {Database} from '$lib/db/Database';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import type {ErrorResponse} from '$lib/util/error';
@@ -12,7 +12,7 @@ export const spaceRepo = (db: Database) => ({
 	): Promise<Result<{value: Space}, {type: 'no_space_found'} & ErrorResponse>> => {
 		console.log(`[db] preparing to query for space id: ${space_id}`);
 		const data = await db.sql<Space[]>`
-			SELECT space_id, name, url, media_type, content, updated, created, community_id
+			SELECT space_id, name, url, media_type, view, updated, created, community_id
 			FROM spaces WHERE space_id = ${space_id}
     `;
 		console.log('[db] space data', data);
@@ -28,7 +28,7 @@ export const spaceRepo = (db: Database) => ({
 	filterByAccount: async (account_id: number): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 		console.log(`[spaceRepo] preparing to query for community spaces by account: ${account_id}`);
 		const data = await db.sql<Space[]>`
-		SELECT s.space_id, s.name, s.url, s.media_type, s.content, s.updated, s.created, s.community_id
+		SELECT s.space_id, s.name, s.url, s.media_type, s.view, s.updated, s.created, s.community_id
 		FROM spaces s JOIN (
 			SELECT DISTINCT m.community_id FROM personas p JOIN memberships m ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
 		) apc
@@ -39,7 +39,7 @@ export const spaceRepo = (db: Database) => ({
 	filterByCommunity: async (community_id: number): Promise<Result<{value: Space[]}>> => {
 		console.log(`[spaceRepo] preparing to query for community spaces: ${community_id}`);
 		const data = await db.sql<Space[]>`
-			SELECT space_id, name, url, media_type, content, updated, created, community_id
+			SELECT space_id, name, url, media_type, view, updated, created, community_id
 			FROM spaces WHERE community_id=${community_id}
 		`;
 		// console.log('[db] spaces data', data);
@@ -53,7 +53,7 @@ export const spaceRepo = (db: Database) => ({
 			`[spaceRepo] preparing to query for community space by url: ${community_id} ${url}`,
 		);
 		const data = await db.sql<Space[]>`
-			SELECT space_id, name, url, media_type, content, updated, created, community_id
+			SELECT space_id, name, url, media_type, view, updated, created, community_id
 			FROM spaces WHERE community_id=${community_id} AND url=${url}
 		`;
 		console.log('[spaceRepo] space data', data);
@@ -61,14 +61,14 @@ export const spaceRepo = (db: Database) => ({
 	},
 	create: async (
 		name: string,
-		content: string,
+		view: SpaceView,
 		media_type: string,
 		url: string,
 		community_id: number,
 	): Promise<Result<{value: Space}>> => {
 		const data = await db.sql<Space[]>`
-			INSERT INTO spaces (name, url, media_type, content, community_id) VALUES (
-				${name},${url},${media_type},${content},${community_id}
+			INSERT INTO spaces (name, url, media_type, view, community_id) VALUES (
+				${name},${url},${media_type},${db.sql.json(view)},${community_id}
 			) RETURNING *
 		`;
 		// console.log('[db] created communitySpace', communitySpace);
@@ -81,7 +81,7 @@ export const spaceRepo = (db: Database) => ({
 		for (const params of toDefaultSpaces(community)) {
 			const result = await db.repos.space.create(
 				params.name,
-				params.content,
+				params.view,
 				params.media_type,
 				params.url,
 				params.community_id,

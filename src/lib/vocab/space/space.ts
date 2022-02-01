@@ -13,7 +13,8 @@ export interface SpaceView {
 	props: SpaceViewProperties;
 }
 export interface SpaceViewProperties {
-	data: string;
+	data?: string;
+	url?: string;
 }
 export const SpaceSchema = {
 	$id: 'https://felt.social/vocab/Space.json',

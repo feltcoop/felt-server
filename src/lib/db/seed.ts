@@ -102,7 +102,7 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 	};
 
 	for (const space of spaces) {
-		const spaceContent = JSON.parse(space.content);
+		const spaceContent = space.view;
 		if (!(spaceContent.type in entitiesContents)) {
 			continue;
 		}

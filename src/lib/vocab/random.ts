@@ -1,6 +1,6 @@
 import {unwrap} from '@feltcoop/felt';
 
-import type {Space} from '$lib/vocab/space/space';
+import type {Space, SpaceView} from '$lib/vocab/space/space';
 import type {Community} from '$lib/vocab/community/community';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 import type {Account, CreateAccountParams} from '$lib/vocab/account/account';
@@ -23,6 +23,7 @@ export const randomPersonaName = randomString;
 export const randomCommunnityName = randomString;
 export const randomSpaceUrl = randomString;
 export const randomSpaceName = randomString;
+export const randomSpaceView = (): SpaceView => ({type: 'Room', props: {data: '/entities'}});
 export const randomEntityData = (): EntityData => ({type: 'Note', content: randomString()});
 export const randomAccountParams = (): CreateAccountParams => ({
 	name: randomAccountName(),
@@ -48,7 +49,7 @@ export const randomCommunityParams = (persona_id: number): CreateCommunityParams
 };
 export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 	community_id,
-	content: randomString(),
+	view: randomSpaceView(),
 	media_type: 'text/plain',
 	name: randomSpaceName(),
 	url: randomSpaceUrl(),
@@ -128,7 +129,7 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 			const space = unwrap(
 				await db.repos.space.create(
 					params.name,
-					params.content,
+					params.view,
 					params.media_type,
 					params.url,
 					params.community_id,

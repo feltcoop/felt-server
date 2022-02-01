@@ -70,7 +70,7 @@ test__repos('create, change, and delete some data from repos', async ({db}) => {
 	const space = unwrap(
 		await db.repos.space.create(
 			spaceParams.name,
-			spaceParams.content,
+			spaceParams.view,
 			spaceParams.media_type,
 			spaceParams.url,
 			spaceParams.community_id,
