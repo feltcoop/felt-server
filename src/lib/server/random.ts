@@ -116,7 +116,8 @@ export const randomEventParams = async (
 			return randomBool();
 		}
 		case 'OpenDialog': {
-			// TODO what should this value be? schema type `object` fails with this valid value:
+			// TODO should use the `instanceof` `ajv-keywords` extension for this:
+			// https://github.com/ajv-validator/ajv-keywords#instanceof
 			// `class SomeComponent extends SvelteComponent {}`
 			return {Component: {}};
 		}
