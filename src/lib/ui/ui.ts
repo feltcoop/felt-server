@@ -432,7 +432,6 @@ export const toUi = (
 			const {persona_id} = params;
 			const {community, spaces} = result.value;
 			console.log('[ui.CreateCommunity]', community, persona_id);
-			// TODO how should `persona.community_ids` be modeled and kept up to date?
 			addCommunity(community, persona_id, spaces);
 			dispatch('SelectCommunity', {community_id: community.community_id});
 			return result;

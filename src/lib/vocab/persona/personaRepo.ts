@@ -36,10 +36,7 @@ export const personaRepo = (db: Database) => ({
 			if (!createCommunityResult.ok) {
 				return {ok: false, message: 'failed to create initial persona community'};
 			}
-			// TODO this is a hack -- always adding/expecting `community_ids`
-			// like in `filterByAccount` below is probably not the best idea because of overfetching
 			const {community, spaces} = createCommunityResult.value;
-			// TODO another hack
 			await db.sql`
 				UPDATE personas SET community_id = ${community.community_id}
 					WHERE persona_id = ${persona.persona_id}
