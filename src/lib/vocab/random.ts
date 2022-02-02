@@ -14,7 +14,7 @@ import type {
 } from '$lib/app/eventTypes';
 import type {Database} from '$lib/db/Database';
 import type {EntityData} from '$lib/vocab/entity/entityData';
-import type {ViewData} from './view/view';
+import type {ViewData} from '#$lib/vocab/view/view';
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = () => Math.random().toString().slice(2);
