@@ -1,4 +1,4 @@
-import type {ViewData} from '../view/view';
+import type {ViewData} from '$lib/vocab/view/view';
 
 export interface Space {
 	space_id: number;
