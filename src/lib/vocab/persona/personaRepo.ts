@@ -36,18 +36,12 @@ export const personaRepo = (db: Database) => ({
 			if (!createCommunityResult.ok) {
 				return {ok: false, message: 'failed to create initial persona community'};
 			}
-			// TODO this is a hack -- always adding/expecting `community_ids`
-			// like in `filterByAccount` below is probably not the best idea because of overfetching
 			const {community, spaces} = createCommunityResult.value;
-			// TODO another hack
 			await db.sql`
 				UPDATE personas SET community_id = ${community.community_id}
 					WHERE persona_id = ${persona.persona_id}
 			`;
 			persona.community_id = community.community_id;
-			persona.community_ids = [community.community_id];
-			// TODO this is also a yucky hack
-			community.memberPersonas = [persona];
 			return {ok: true, value: {persona, community, spaces}};
 		} else {
 			// TODO this is a hack that can be removed when this code is moved into the service layer
@@ -59,15 +53,7 @@ export const personaRepo = (db: Database) => ({
 	): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 		console.log('[personaRepo] filtering by account', account_id);
 		const data = await db.sql<Persona[]>`
-			SELECT p.persona_id, p.type, p.name, p.account_id, p.community_id, p.created, p.updated,
-
-			(
-				SELECT array_to_json(coalesce(array_agg(d.community_id)))
-				FROM (
-					SELECT m.community_id FROM memberships m WHERE m.persona_id = p.persona_id
-				) d
-			) AS community_ids
-
+			SELECT p.persona_id, p.type, p.name, p.account_id, p.community_id, p.created, p.updated
 			FROM personas p WHERE p.account_id = ${account_id}
 		`;
 		return {ok: true, value: data};
@@ -104,7 +90,7 @@ export const personaRepo = (db: Database) => ({
 	// TODO this type isn't `Persona`, it's a public subset of fields
 	getAll: async (): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 		const data = await db.sql<Persona[]>`
-			SELECT persona_id, name FROM personas WHERE type = 'account'
+			SELECT persona_id, name, type FROM personas
 		`;
 		return {ok: true, value: data};
 	},

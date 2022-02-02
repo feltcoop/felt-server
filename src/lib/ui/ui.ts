@@ -2,6 +2,7 @@ import {writable, derived, get, type Readable, type Writable} from 'svelte/store
 import {setContext, getContext, type SvelteComponent} from 'svelte';
 import {goto} from '$app/navigation';
 import {mutable, type Mutable} from '@feltcoop/svelte-mutable-store';
+import {browser} from '$app/env';
 
 import {type Community} from '$lib/vocab/community/community';
 import {type Space} from '$lib/vocab/space/space';
@@ -36,14 +37,16 @@ export interface Ui extends Partial<UiHandlers> {
 	// db state and caches
 	account: Readable<AccountModel | null>;
 	personas: Readable<Readable<Persona>[]>;
-	personasById: Map<number, Readable<Persona>>;
+	personasById: Map<number, Readable<Persona>>; //TODO rename to singular
 	sessionPersonas: Readable<Readable<Persona>[]>;
 	sessionPersonaIndices: Readable<Map<Readable<Persona>, number>>;
 	communities: Readable<Readable<Community>[]>;
 	spaces: Readable<Readable<Space>[]>;
+	memberships: Readable<Readable<Membership>[]>;
 	spacesById: Readable<Map<number, Readable<Space>>>;
+	//TODO maybe refactor to remove store around map? Like personasById
 	spacesByCommunityId: Readable<Map<number, Readable<Space>[]>>;
-	memberships: Readable<Membership[]>; // TODO if no properties can change, then it shouldn't be a store? do we want to handle `null` for deletes?
+	personasByCommunityId: Readable<Map<number, Readable<Persona>[]>>;
 	entitiesBySpace: Map<number, Readable<Readable<Entity>[]>>;
 	setSession: (session: ClientSession) => void;
 	findPersonaById: (persona_id: number) => Readable<Persona>;
@@ -55,12 +58,12 @@ export interface Ui extends Partial<UiHandlers> {
 	personaIdSelection: Readable<number | null>;
 	personaSelection: Readable<Readable<Persona> | null>;
 	personaIndexSelection: Readable<number | null>;
+	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Readable<Community>[]>>;
 	communityIdByPersonaSelection: Readable<{[key: number]: number}>;
 	communityIdSelection: Readable<number | null>;
 	communitySelection: Readable<Readable<Community> | null>;
 	spaceIdByCommunitySelection: Readable<{[key: number]: number | null}>;
 	spaceSelection: Readable<Readable<Space> | null>;
-	communitiesByPersonaId: Readable<{[persona_id: number]: Readable<Community>[]}>; // TODO or name `personaCommunities`?
 	mobile: Readable<boolean>;
 	contextmenu: ContextmenuStore;
 	dialogs: Writable<DialogState[]>;
@@ -99,6 +102,9 @@ export const toUi = (
 	const spaces = writable<Writable<Space>[]>(
 		initialSession.guest ? [] : initialSession.spaces.map((s) => writable(s)),
 	);
+	const memberships = writable<Writable<Membership>[]>(
+		initialSession.guest ? [] : initialSession.memberships.map((s) => writable(s)),
+	);
 	// TODO do these maps more efficiently
 	const spacesById: Readable<Map<number, Writable<Space>>> = derived(
 		spaces,
@@ -106,9 +112,9 @@ export const toUi = (
 	);
 	const spacesByCommunityId: Readable<Map<number, Readable<Space>[]>> = derived(
 		[communities, spaces],
-		([$communites, $spaces]) => {
-			const map = new Map();
-			for (const community of $communites) {
+		([$communities, $spaces]) => {
+			const map: Map<number, Readable<Space>[]> = new Map();
+			for (const community of $communities) {
 				const communitySpaces: Writable<Space>[] = [];
 				const {community_id} = get(community);
 				for (const space of $spaces) {
@@ -121,7 +127,24 @@ export const toUi = (
 			return map;
 		},
 	);
-	const memberships = writable<Membership[]>([]); // TODO should be on the session:  initialSession.guest ? [] : [],
+
+	const personasByCommunityId: Readable<Map<number, Readable<Persona>[]>> = derived(
+		[communities, memberships],
+		([$communities, $memberships]) => {
+			const map: Map<number, Readable<Persona>[]> = new Map();
+			for (const community of $communities) {
+				const communityPersonas: Writable<Persona>[] = [];
+				const {community_id} = get(community);
+				for (const membership of $memberships) {
+					if (get(membership).community_id === community_id) {
+						communityPersonas.push(personasById.get(get(membership).persona_id)!);
+					}
+				}
+				map.set(community_id, communityPersonas);
+			}
+			return map;
+		},
+	);
 
 	const mobile = writable(initialMobile);
 	const contextmenu = createContextmenuStore();
@@ -146,16 +169,46 @@ export const toUi = (
 		[sessionPersonas],
 		([$sessionPersonas]) => new Map($sessionPersonas.map((p, i) => [p, i])),
 	);
+	const communitiesBySessionPersona: Readable<Map<Readable<Persona>, Readable<Community>[]>> =
+		derived(
+			[sessionPersonas, memberships, communities],
+			([$sessionPersonas, $memberships, $communities]) => {
+				const map: Map<Readable<Persona>, Readable<Community>[]> = new Map();
+				for (const sessionPersona of $sessionPersonas) {
+					const $sessionPersona = get(sessionPersona);
+					const sessionPersonaCommunities: Readable<Community>[] = [];
+					for (const community of $communities) {
+						const $community = get(community);
+						for (const membership of $memberships) {
+							const $membership = get(membership);
+							if (
+								$membership.community_id === $community.community_id &&
+								$membership.persona_id === $sessionPersona.persona_id
+							) {
+								sessionPersonaCommunities.push(community);
+								break;
+							}
+						}
+					}
 
+					map.set(sessionPersona, sessionPersonaCommunities);
+				}
+				return map;
+			},
+		);
 	// TODO should these be store references instead of ids?
 	// TODO maybe make this a lazy map, not a derived store?
 	const communityIdByPersonaSelection = writable<{[key: number]: number}>(
 		Object.fromEntries(
-			get(sessionPersonas).map((persona) => {
-				// TODO needs to be rethought, the `get` isn't reactive
-				const $persona = get(persona);
-				return [$persona.persona_id, ($persona.community_ids && $persona.community_ids[0]) ?? null];
-			}),
+			get(sessionPersonas)
+				.map((persona) => {
+					// TODO needs to be rethought, the `get` isn't reactive
+					const $persona = get(persona);
+					const communities = get(communitiesBySessionPersona).get(persona)!;
+					const firstCommunity = communities[0];
+					return firstCommunity ? [$persona.persona_id, get(firstCommunity).community_id] : null!;
+				})
+				.filter(Boolean),
 		),
 	);
 	const communityIdSelection = derived(
@@ -190,21 +243,6 @@ export const toUi = (
 				)) ||
 			null,
 	);
-	const communitiesByPersonaId = derived(
-		[communities, sessionPersonas],
-		([$communities, $sessionPersonas]) =>
-			$sessionPersonas.reduce((result, persona) => {
-				// TODO refactor this to be reactive
-				const $persona = get(persona);
-				// TODO speed up this lookup, probably with a map of all communities by id
-				result[$persona.persona_id] = $communities.filter(
-					(community) =>
-						// TODO why no `community_ids`?
-						$persona.community_ids && $persona.community_ids.includes(get(community).community_id),
-				);
-				return result;
-			}, {} as {[persona_id: number]: Readable<Community>[]}),
-	);
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const entitiesBySpace: Map<number, Writable<Writable<Entity>[]>> = new Map();
 
@@ -216,15 +254,13 @@ export const toUi = (
 		persona_id: number,
 		communitySpaces: Space[],
 	): void => {
-		const persona = personasById.get(persona_id)!;
-		const $persona = get(persona);
-		if (!$persona.community_ids.includes(community.community_id)) {
-			persona.update(($persona) => ({
-				...$persona,
-				community_ids: $persona.community_ids.concat(community.community_id),
-			}));
-			console.log('updated persona community ids', get(persona));
-		}
+		//TODO return membership object from server to put in here instead
+		memberships.update(($memberships) =>
+			$memberships.concat(
+				writable({community_id: community.community_id, persona_id} as Membership),
+			),
+		);
+
 		const $spacesById = get(spacesById);
 		let spacesToAdd: Space[] | null = null;
 		for (const space of communitySpaces) {
@@ -255,6 +291,7 @@ export const toUi = (
 		personasById,
 		spacesById,
 		spacesByCommunityId,
+		personasByCommunityId,
 		entitiesBySpace,
 		dispatch: (ctx) => {
 			const handler = (ui as any)[ctx.eventName];
@@ -279,7 +316,7 @@ export const toUi = (
 			return result;
 		},
 		setSession: (session) => {
-			console.log('[data.setSession]', session);
+			if (browser) console.log('[ui.setSession]', session);
 			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
 			account.set(session.guest ? null : session.account);
 			personas.set(session.guest ? [] : toInitialPersonas(session).map((p) => writable(p)));
@@ -296,21 +333,23 @@ export const toUi = (
 			} else {
 				personaIdSelection.set(null);
 			}
-
+			memberships.set(session.guest ? [] : session.memberships.map((s) => writable(s)));
 			communities.set(session.guest ? [] : session.communities.map((p) => writable(p)));
-			// TODO init memberships when they're added to the session
 			spaces.set(session.guest ? [] : session.spaces.map((s) => writable(s)));
 			communityIdByPersonaSelection.set(
 				// TODO copypasta from above
 				Object.fromEntries(
-					get(sessionPersonas).map((persona) => {
-						// TODO needs to be rethought, the `get` isn't reactive
-						const $persona = get(persona);
-						return [
-							$persona.persona_id,
-							($persona.community_ids && $persona.community_ids[0]) ?? null,
-						];
-					}),
+					get(sessionPersonas)
+						.map((persona) => {
+							// TODO needs to be rethought, the `get` isn't reactive
+							const $persona = get(persona);
+							const communities = get(communitiesBySessionPersona).get(persona)!;
+							const firstCommunity = communities[0];
+							return firstCommunity
+								? [$persona.persona_id, get(firstCommunity).community_id]
+								: null!;
+						})
+						.filter(Boolean),
 				),
 			);
 			spaceIdByCommunitySelection.set(
@@ -345,7 +384,6 @@ export const toUi = (
 			const {persona_id} = params;
 			const {community, spaces} = result.value;
 			console.log('[ui.CreateCommunity]', community, persona_id);
-			// TODO how should `persona.community_ids` be modeled and kept up to date?
 			addCommunity(community, persona_id, spaces);
 			dispatch('SelectCommunity', {community_id: community.community_id});
 			return result;
@@ -370,7 +408,7 @@ export const toUi = (
 			const {membership} = result.value;
 			console.log('[ui.CreateMembership]', membership);
 			// TODO also update `communities.personas`
-			memberships.update(($memberships) => $memberships.concat(membership));
+			memberships.update(($memberships) => $memberships.concat(writable(membership)));
 			return result;
 		},
 		DeleteMembership: async ({params, invoke}) => {
@@ -381,34 +419,10 @@ export const toUi = (
 			memberships.update(($memberships) =>
 				$memberships.filter(
 					(membership) =>
-						membership.persona_id !== params.persona_id ||
-						membership.community_id !== params.community_id,
+						get(membership).persona_id !== params.persona_id ||
+						get(membership).community_id !== params.community_id,
 				),
 			);
-
-			const persona = personasById.get(params.persona_id)!;
-			persona.update(($persona) => ({
-				...$persona,
-				community_ids: $persona.community_ids.filter((c) => c !== params.community_id),
-			}));
-
-			communities.update(($communities) => {
-				const community = $communities.find(
-					(community) => get(community).community_id === params.community_id,
-				)!;
-				community.update(($community) => ({
-					...$community,
-					memberPersonas: $community.memberPersonas.filter(
-						(p) => p.persona_id !== params.persona_id,
-					),
-				}));
-				const empty = !get(community).memberPersonas.length;
-				if (empty) {
-					return $communities.filter((c) => get(c).community_id !== params.community_id);
-				} else {
-					return $communities;
-				}
-			});
 
 			return result;
 		},
@@ -503,12 +517,12 @@ export const toUi = (
 		personaIdSelection,
 		personaSelection,
 		personaIndexSelection,
+		communitiesBySessionPersona,
 		communityIdByPersonaSelection,
 		communityIdSelection,
 		communitySelection,
 		spaceIdByCommunitySelection,
 		spaceSelection,
-		communitiesByPersonaId,
 		// methods
 		SetMobile: ({params}) => {
 			mobile.set(params);

@@ -1,6 +1,6 @@
 import {unwrap} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
-import {cyan} from '@feltcoop/felt/util/terminal.js';
+import {cyan} from 'kleur/colors';
 
 import type {Database} from '$lib/db/Database.js';
 import type {Account, CreateAccountParams} from '$lib/vocab/account/account.js';

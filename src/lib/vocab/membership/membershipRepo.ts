@@ -35,6 +35,21 @@ export const membershipRepo = (db: Database) => ({
 			message: 'no membership found',
 		};
 	},
+	filterByAccount: async (
+		account_id: number,
+	): Promise<Result<{value: Membership[]}, ErrorResponse>> => {
+		console.log(`[membershipRepo] preparing to query for memberships by account: ${account_id}`);
+		const data = await db.sql<Membership[]>`
+			SELECT m.persona_id, m.community_id, m.created, m.updated 
+			FROM memberships m JOIN (
+				SELECT DISTINCT m.community_id FROM personas p 
+				JOIN memberships m 
+				ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
+			) apc
+			ON m.community_id=apc.community_id;
+		`;
+		return {ok: true, value: data};
+	},
 	deleteById: async (
 		persona_id: number,
 		community_id: number,

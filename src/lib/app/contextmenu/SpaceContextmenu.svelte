@@ -2,38 +2,38 @@
 	import {type Readable} from 'svelte/store';
 
 	import {getApp} from '$lib/ui/app';
+	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
+	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
 	import {type Space} from '$lib/vocab/space/space';
+	import SpaceDelete from '$lib/ui/SpaceDelete.svelte';
 
 	const {dispatch} = getApp();
 
 	export let space: Readable<Space>;
 </script>
 
-<div class="markup">
-	<p>
+<ContextmenuSubmenu>
+	<svelte:fragment slot="entry">
 		{$space.name}
-	</p>
-</div>
-<button
-	type="button"
-	class="menu-button"
-	on:click={() =>
-		dispatch('OpenDialog', {
-			name: 'SpaceDelete',
-			props: {space, done: () => dispatch('CloseDialog')},
-		})}
->
-	Delete Space
-</button>
-
-<button
-	type="button"
-	class="menu-button"
-	on:click={() =>
-		dispatch('ViewSpace', {
-			space,
-			view: {type: 'EntityExplorer'},
-		})}
->
-	View with EntityExplorer
-</button>
+	</svelte:fragment>
+	<svelte:fragment slot="menu">
+		<ContextmenuEntry
+			action={() =>
+				dispatch('OpenDialog', {
+					Component: SpaceDelete,
+					props: {space, done: () => dispatch('CloseDialog')},
+				})}
+		>
+			Delete Space
+		</ContextmenuEntry>
+		<ContextmenuEntry
+			action={() =>
+				dispatch('ViewSpace', {
+					space,
+					view: {type: 'EntityExplorer'},
+				})}
+		>
+			View with EntityExplorer
+		</ContextmenuEntry>
+	</svelte:fragment>
+</ContextmenuSubmenu>

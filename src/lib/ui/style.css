@@ -31,10 +31,17 @@ main {
 	width: var(--navbar_size);
 	height: var(--navbar_size);
 }
+
 /* TODO refactor or upstream */
-.menu-button {
+.menu-item {
 	width: 100%;
-	justify-content: flex-start;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: var(--spacing_xs);
+}
+.menu-item.selected {
+	background-color: var(--tint_dark_2);
 }
 
 /* TODO upstream to Felt */
@@ -45,6 +52,19 @@ main {
 	to {
 		opacity: 1;
 	}
+}
+
+/* TODO change to SVG? or use CSS vars for size and color? rename to indicate it's facing right?
+maybe upstream to Felt? think about how to upstream without bloating bundles that don't use it */
+.chevron {
+	position: relative;
+	height: 10px;
+}
+.chevron::before {
+	display: block;
+	content: '';
+	border: 5px solid transparent;
+	border-left-color: #000;
 }
 
 /* TODO likely upstream to Felt */

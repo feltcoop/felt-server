@@ -50,10 +50,10 @@ export const events: EventInfo[] = [
 			$id: 'https://felt.social/vocab/OpenDialogParams.json',
 			type: 'object',
 			properties: {
-				name: {type: 'string'},
+				Component: {type: 'object', tsType: 'typeof SvelteComponent'},
 				props: {type: 'object'},
 			},
-			required: ['name'],
+			required: ['Component'],
 			additionalProperties: false,
 		},
 		returns: 'void',

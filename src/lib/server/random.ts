@@ -116,7 +116,13 @@ export const randomEventParams = async (
 			return randomBool();
 		}
 		case 'OpenDialog': {
-			return {name: 'ManageMembershipForm'};
+			// TODO should use the `instanceof` `ajv-keywords` extension for this:
+			// https://github.com/ajv-validator/ajv-keywords#instanceof
+			// using the single keyword directly:
+			// `require("ajv-keywords/dist/keywords/instanceof")(ajv, opts)`
+			// and this value should be:
+			// `class SomeComponent extends SvelteComponent {}`
+			return {Component: {}};
 		}
 		case 'CloseDialog': {
 			return undefined;

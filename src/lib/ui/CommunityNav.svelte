@@ -6,13 +6,14 @@
 	import CommunityNavButton from '$lib/ui/CommunityNavButton.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
+	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
 
 	const {
 		ui: {
 			sessionPersonas,
 			personaSelection,
 			communitySelection,
-			communitiesByPersonaId,
+			communitiesBySessionPersona,
 			contextmenu,
 		},
 	} = getApp();
@@ -22,22 +23,24 @@
 
 	// TODO improve the efficiency of this with better data structures and caching --
 	// probably `communitiesByPersona` (where the keys are the persona stores)
-	const toPersonaCommunity = (persona: Persona): Readable<Community> =>
-		$communitiesByPersonaId[persona.persona_id].find((c) => get(c).name === persona.name)!;
+	const toPersonaCommunity = (persona: Readable<Persona>): Readable<Community> =>
+		$communitiesBySessionPersona.get(persona)!.find((c) => get(c).type === 'personal')!;
+
+	const toStandardCommunities = (persona: Readable<Persona>): Readable<Community>[] =>
+		$communitiesBySessionPersona.get(persona)!.filter((c) => get(c).type !== 'personal')!;
 </script>
 
 <nav class="community-nav">
 	<!-- TODO maybe refactor this to be nested elements instead of a flat list -->
 	{#each $sessionPersonas as persona (persona)}
-		<div class="persona-group" use:contextmenu.action={{ActingPersonaContextmenu: {persona}}}>
+		<div class="persona-group" use:contextmenu.action={[[ActingPersonaContextmenu, {persona}]]}>
 			<!-- TODO refactor this hacky usage of `get` -->
 			<CommunityNavButton
-				community={toPersonaCommunity(get(persona))}
+				community={toPersonaCommunity(persona)}
 				{persona}
-				selected={persona === selectedPersona &&
-					toPersonaCommunity(get(persona)) === selectedCommunity}
+				selected={persona === selectedPersona && toPersonaCommunity(persona) === selectedCommunity}
 			/>
-			{#each $communitiesByPersonaId[get(persona).persona_id] as community (community)}
+			{#each toStandardCommunities(persona) as community (community)}
 				{#if get(community).name !== get(persona).name}
 					<CommunityNavButton
 						{community}

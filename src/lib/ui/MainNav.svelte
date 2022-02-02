@@ -6,6 +6,7 @@
 	import {randomHue} from '$lib/ui/color';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
+	import LuggageContextmenu from '$lib/app/contextmenu/LuggageContextmenu.svelte';
 
 	const {
 		dispatch,
@@ -25,7 +26,7 @@
 
 	// TODO refactor once community data is normalized
 	$: selectedCommunitySpaces =
-		selectedCommunity && $spacesByCommunityId.get($selectedCommunity.community_id);
+		selectedCommunity && $spacesByCommunityId.get($selectedCommunity!.community_id);
 
 	// TODO refactor to some client view-model for the account
 	$: hue = randomHue(toName($selectedPersona));
@@ -42,8 +43,8 @@
 			<!-- TODO or maybe `selectedPersona.id` ? can't be `$selectedPersona.persona_id` as a serial value -->
 			<button
 				class="explorer-button"
-				use:contextmenu.action={{LuggageContextmenu: null}}
-				on:click={onContextmenu(contextmenu)}
+				use:contextmenu.action={[[LuggageContextmenu, null]]}
+				on:click={(e) => onContextmenu(e, contextmenu)}
 			>
 				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
 			</button>
@@ -67,13 +68,13 @@
 		width: 0;
 	}
 	.main-nav-panel.expanded {
-		width: var(--column_width_min);
+		width: var(--column_width_sm);
 	}
 	.main-nav {
 		position: relative;
 		z-index: 2;
 		height: 100%;
-		width: var(--column_width_min);
+		width: var(--column_width_sm);
 		overflow: auto;
 		display: flex;
 		flex-direction: column;
@@ -91,10 +92,7 @@
 		z-index: 2;
 		display: none;
 		position: fixed;
-		width: 100%;
-		height: 100%;
-		left: 0;
-		top: 0;
+		inset: 0;
 		/* TODO from felt */
 		background-color: rgba(0, 0, 0, 0.4);
 	}
