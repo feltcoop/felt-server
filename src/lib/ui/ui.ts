@@ -292,12 +292,14 @@ export const toUi = (
 			communities.set($session.guest ? [] : $session.communities.map((p) => writable(p)));
 			spaces.set($session.guest ? [] : $session.spaces.map((s) => writable(s)));
 			memberships.set($session.guest ? [] : $session.memberships.map((s) => writable(s)));
+
+			// TODO fix this and the 2 below to use the URL to initialize the correct persona+community+space
 			const $firstSessionPersona = $session.guest ? null : $sessionPersonas[0];
 			personaIdSelection.set($firstSessionPersona?.persona_id ?? null);
 
 			// TODO these two selections are hacky because using the derived stores
 			// was causing various confusing issues, so they find stuff directly on the session objects
-			// instead of using derived stores like `sessionPersonas` and `spacesByCommunityId`
+			// instead of using derived stores like `sessionPersonas` and `spacesByCommunityId`.
 			communityIdSelectionByPersonaId.set(
 				$session.guest
 					? {}
