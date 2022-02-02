@@ -43,7 +43,6 @@
 			name,
 			url,
 			//TODO : add space type picker
-			media_type: 'application/fuz+json',
 			view: {type, props: {data: '/entities'}},
 		});
 		pending = false;

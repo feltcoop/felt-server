@@ -51,7 +51,6 @@ export const randomCommunityParams = (persona_id: number): CreateCommunityParams
 export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 	community_id,
 	view: randomViewData(),
-	media_type: 'text/plain',
 	name: randomSpaceName(),
 	url: randomSpaceUrl(),
 });
@@ -128,13 +127,7 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 			if (!community) community = await random.community(persona, account);
 			const params = randomSpaceParams(community.community_id);
 			const space = unwrap(
-				await db.repos.space.create(
-					params.name,
-					params.view,
-					params.media_type,
-					params.url,
-					params.community_id,
-				),
+				await db.repos.space.create(params.name, params.view, params.url, params.community_id),
 			);
 			random.spaces.push(space);
 			return space;

@@ -73,7 +73,6 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 		const createSpaceResult = await repos.space.create(
 			params.name,
 			params.view,
-			params.media_type,
 			params.url,
 			params.community_id,
 		);
