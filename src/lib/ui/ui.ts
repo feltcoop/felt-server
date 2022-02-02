@@ -106,7 +106,6 @@ export const toUi = (
 				}
 				map.set(community_id, communitySpaces);
 			}
-			console.log('CALCULATED spacesByCommunityId', map);
 			return map;
 		},
 	);
@@ -284,51 +283,48 @@ export const toUi = (
 		},
 		setSession: ($session) => {
 			if (browser) console.log('[ui.setSession]', $session);
-			// TODO these are duplicative and error prone, how to improve? helpers? recreate `ui`?
 			account.set($session.guest ? null : $session.account);
 			personas.set($session.guest ? [] : toInitialPersonas($session).map((p) => writable(p)));
 			personaById.clear();
 			get(personas).forEach((persona) => personaById.set(get(persona).persona_id, persona));
-			sessionPersonas.set(
-				$session.guest ? [] : $session.personas.map((p) => personaById.get(p.persona_id)!),
-			);
+			const $sessionPersonas = $session.guest ? [] : $session.personas;
+			sessionPersonas.set($sessionPersonas.map((p) => personaById.get(p.persona_id)!));
 			communities.set($session.guest ? [] : $session.communities.map((p) => writable(p)));
 			spaces.set($session.guest ? [] : $session.spaces.map((s) => writable(s)));
 			memberships.set($session.guest ? [] : $session.memberships.map((s) => writable(s)));
-			// TODO improve this
-			const initialSessionPersona = $session.guest ? null : get(sessionPersonas)[0];
-			if (initialSessionPersona) {
-				personaIdSelection.set(get(initialSessionPersona).persona_id);
-			} else {
-				personaIdSelection.set(null);
-			}
-			const $communitiesBySessionPersona = get(communitiesBySessionPersona);
-			console.log('$communitiesBySessionPersona', $communitiesBySessionPersona);
+			const $firstSessionPersona = $session.guest ? null : $sessionPersonas[0];
+			personaIdSelection.set($firstSessionPersona?.persona_id ?? null);
+
+			// TODO these two selections are hacky because using the derived stores
+			// was causing various confusing issues, so they find stuff directly on the session objects
+			// instead of using derived stores like `sessionPersonas` and `spacesByCommunityId`
 			communityIdSelectionByPersonaId.set(
-				Object.fromEntries(
-					get(sessionPersonas)
-						.map((persona) => {
-							// TODO needs to be rethought, the `get` isn't reactive
-							const $persona = get(persona);
-							const $communities = $communitiesBySessionPersona.get(persona)!;
-							const $firstCommunity = $communities[0];
-							return $firstCommunity
-								? [$persona.persona_id, get($firstCommunity).community_id]
-								: null!;
-						})
-						.filter(Boolean),
-				),
+				$session.guest
+					? {}
+					: Object.fromEntries(
+							$sessionPersonas
+								.map(($persona) => {
+									const $firstMembership = $session.memberships.find(
+										(m) => m.persona_id === $persona.persona_id,
+									);
+									const $firstCommunity = $session.communities.find(
+										(c) => c.community_id === $firstMembership?.community_id,
+									)!;
+									return [$persona.persona_id, $firstCommunity.community_id];
+								})
+								.filter(Boolean),
+					  ),
 			);
-			const $spacesByCommunityId = get(spacesByCommunityId);
-			console.log('$spacesByCommunityId', $spacesByCommunityId);
 			spaceIdSelectionByCommunityId.set(
 				$session.guest
 					? {}
 					: Object.fromEntries(
 							$session.communities
 								.map(($community) => {
-									const $firstSpace = $spacesByCommunityId.get($community.community_id)?.[0];
-									return $firstSpace ? [$community.community_id, get($firstSpace).space_id] : null!;
+									const $firstSpace = $session.spaces.find(
+										(s) => s.community_id === $community.community_id,
+									)!;
+									return [$community.community_id, $firstSpace.space_id];
 								})
 								.filter(Boolean),
 					  ),
@@ -392,7 +388,7 @@ export const toUi = (
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {persona, community, spaces} = result.value;
-			console.log('[ui.CreatePersona]', persona);
+			console.log('[ui.CreatePersona]', persona, community, spaces);
 			const personaStore = writable(persona);
 			personas.update(($personas) => $personas.concat(personaStore));
 			personaById.set(persona.persona_id, personaStore);
@@ -438,7 +434,6 @@ export const toUi = (
 		DeleteMembership: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
-			console.log('[ui.DeleteMembership]', params);
 			// TODO also update `communities.personas`
 			memberships.update(($memberships) =>
 				$memberships.filter(
@@ -530,11 +525,9 @@ export const toUi = (
 			dialogs.update(($dialogs) => $dialogs.slice(0, $dialogs.length - 1));
 		},
 		SelectPersona: ({params}) => {
-			console.log('[ui.SelectPersona] persona_id', params.persona_id);
 			personaIdSelection.set(params.persona_id);
 		},
 		SelectCommunity: ({params}) => {
-			console.log('[ui.SelectCommunity] community_id', params.community_id);
 			const $personaIdSelection = get(personaIdSelection); // TODO how to remove the `!`?
 			const {community_id} = params;
 			if (community_id && $personaIdSelection) {
@@ -545,7 +538,6 @@ export const toUi = (
 			}
 		},
 		SelectSpace: ({params}) => {
-			console.log('[ui.SelectSpace] community_id, space_id', params);
 			const {community_id, space_id} = params;
 			spaceIdSelectionByCommunityId.update(($spaceIdSelectionByCommunityId) => ({
 				...$spaceIdSelectionByCommunityId,
@@ -583,16 +575,7 @@ export const toUi = (
 	};
 
 	const unsubscribeSession = session.subscribe(($session) => {
-		// TODO why is this firing twice? Upgrade SvelteKit?
-		if (browser) console.log('$session changed', $session);
 		ui.setSession($session);
-	});
-
-	communityIdSelectionByPersonaId.subscribe(($communityIdSelectionByPersonaId) => {
-		console.log('CHANGED communityIdSelectionByPersonaId', $communityIdSelectionByPersonaId);
-	});
-	spaceIdSelectionByCommunityId.subscribe(($spaceIdSelectionByCommunityId) => {
-		console.log('CHANGED spaceIdSelectionByCommunityId', $spaceIdSelectionByCommunityId);
 	});
 
 	return ui;
