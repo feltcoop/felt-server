@@ -10,8 +10,8 @@ you can create them, invite other personas, and all the rest.
 ## `'personal'` communities
 
 Felt has a special kind of community called a **personal community**.
-It's a bit of a misnomer; it's more of a personal workspace than a community,
-but it inherits most of the qualities of `'standard'` communities,
+It's a bit of a misnomer; it's more of a personal workspace, a world scoped to a persona,
+than a community, but it inherits most of the qualities of `'standard'` communities,
 with some important differences:
 
 - a personal community is created automatically for every [`'account'` persona](./persona-types.md);
