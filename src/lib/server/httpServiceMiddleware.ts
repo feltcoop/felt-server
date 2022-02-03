@@ -4,7 +4,7 @@ import {red} from 'kleur/colors';
 import type {ApiServer, HttpMiddleware} from '$lib/server/ApiServer.js';
 import type {Service} from '$lib/server/service';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
-import {ServiceEffects} from '$lib/server/ServiceEffects';
+import {SessionApi} from '$lib/server/SessionApi';
 import {authorize} from '$lib/server/authorize';
 
 // Wraps a `Service` in an http `Middleware`
@@ -44,7 +44,7 @@ export const toHttpServiceMiddleware =
 				return send(res, 500, {message: 'unimplemented service schema'});
 			}
 
-			const authorizeResult = authorize(req, service);
+			const authorizeResult = authorize(req.account_id, service);
 			if (!authorizeResult.ok) {
 				return send(res, 401, {message: authorizeResult.message});
 			}
@@ -63,7 +63,7 @@ export const toHttpServiceMiddleware =
 				repos: server.db.repos,
 				params,
 				account_id: req.account_id!, // TODO how to handle this type for services that don't require an account_id?
-				effects: new ServiceEffects(req),
+				session: new SessionApi(req),
 			});
 
 			if (!result.ok) {

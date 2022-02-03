@@ -15,7 +15,7 @@ export interface WebsocketServerRequest extends CookieSessionIncomingMessage {
 
 type WebsocketServerEmitter = StrictEventEmitter<EventEmitter, WebsocketServerEvents>;
 interface WebsocketServerEvents {
-	message: (socket: WebSocket, message: Data, req: WebsocketServerRequest) => void;
+	message: (socket: WebSocket, message: Data, account_id: number) => void;
 }
 
 const REQUIRES_AUTHENTICATION_MESSAGE = JSON.stringify({
@@ -53,7 +53,7 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 
 			socket.on('message', async (data, isBinary) => {
 				const message = isBinary ? data : data.toString();
-				this.emit('message', socket, message, req);
+				this.emit('message', socket, message, account_id);
 			});
 			socket.on('open', () => {
 				console.log('[wss] open');

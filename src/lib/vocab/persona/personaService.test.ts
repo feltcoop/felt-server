@@ -7,7 +7,7 @@ import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {createPersonaService} from '$lib/vocab/persona/personaServices';
 import {randomEventParams} from '$lib/server/random';
 import {CreatePersona} from '$lib/vocab/persona/persona.events';
-import {ServiceEffectsMock} from '$lib/server/ServiceEffectsMock';
+import {SessionApiMock} from '$lib/server/SessionApiMock';
 
 // TODO this only depends on the database --
 // if we don't figure out a robust way to make a global reusable server,
@@ -31,7 +31,7 @@ test__personaService('create a persona & test collisions', async ({db}) => {
 		repos: db.repos,
 		params,
 		account_id: account.account_id,
-		effects: new ServiceEffectsMock(),
+		session: new SessionApiMock(),
 	});
 
 	assert.equal(result.ok, true);
@@ -40,7 +40,7 @@ test__personaService('create a persona & test collisions', async ({db}) => {
 		repos: db.repos,
 		params,
 		account_id: account.account_id,
-		effects: new ServiceEffectsMock(),
+		session: new SessionApiMock(),
 	});
 
 	assert.equal(result.ok, false);
@@ -50,7 +50,7 @@ test__personaService('create a persona & test collisions', async ({db}) => {
 		repos: db.repos,
 		params,
 		account_id: account.account_id,
-		effects: new ServiceEffectsMock(),
+		session: new SessionApiMock(),
 	});
 
 	assert.equal(result.ok, false);

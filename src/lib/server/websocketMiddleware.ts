@@ -4,12 +4,11 @@ import {red} from 'kleur/colors';
 import {type JsonRpcResponse, parseJsonRpcRequest} from '$lib/util/jsonRpc';
 import type {ApiServer} from '$lib/server/ApiServer';
 import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
-import {ServiceEffects} from '$lib/server/ServiceEffects';
-import type {WebsocketServerRequest} from '$lib/server/WebsocketServer';
+import {SessionApi} from '$lib/server/SessionApi';
 import {authorize} from '$lib/server/authorize';
 
 export interface WebsocketMiddleware {
-	(socket: ws, rawMessage: ws.Data, req: WebsocketServerRequest): Promise<void>;
+	(socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
 }
 
 //TODO clean this up
@@ -20,7 +19,7 @@ export interface BroadcastMessage {
 }
 
 export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
-	(server) => async (socket, messageData, req) => {
+	(server) => async (socket, messageData, account_id) => {
 		if (typeof messageData !== 'string') {
 			console.error(
 				'[websocketMiddleware] cannot handle websocket message; currently only supports strings',
@@ -51,10 +50,14 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 			console.error('[websocketMiddleware] unhandled request method', method);
 			return;
 		}
+		if (service.event.websockets === false) {
+			console.error('[websocketMiddleware] service cannot be called with websockets', method);
+			return;
+		}
 
 		let result;
 
-		const authorizeResult = authorize(req, service);
+		const authorizeResult = authorize(account_id, service);
 		if (!authorizeResult.ok) {
 			result = {
 				ok: false,
@@ -74,8 +77,8 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 				result = await service.perform({
 					repos: server.db.repos,
 					params,
-					account_id: req.account_id!,
-					effects: new ServiceEffects(req),
+					account_id,
+					session: new SessionApi(null),
 				});
 			}
 		}

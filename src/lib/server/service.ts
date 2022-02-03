@@ -2,7 +2,7 @@ import {type Result} from '@feltcoop/felt';
 
 import {type Database} from '$lib/db/Database';
 import {type ServiceEventInfo} from '$lib/vocab/event/event';
-import {type IServiceEffects} from '$lib/server/ServiceEffects';
+import {type ISessionApi} from '$lib/server/SessionApi';
 
 export type ServiceMethod =
 	| 'GET'
@@ -26,5 +26,5 @@ export interface ServiceRequest<TParams> {
 	repos: Database['repos'];
 	params: TParams;
 	account_id: number;
-	effects: IServiceEffects;
+	session: ISessionApi;
 }

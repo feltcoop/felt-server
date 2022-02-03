@@ -11,16 +11,19 @@ import type {
 
 export const loginAccountService: Service<LoginAccountParams, LoginAccountResponseResult> = {
 	event: LoginAccount,
-	perform: async ({repos, params, account_id, effects}) => {
+	perform: async ({repos, params, account_id, session}) => {
 		const {username, password} = params;
-		// TODO formalize and automate validation and normalization
-		if (!username) return {ok: false, status: 400, message: 'invalid username'};
-		if (!password) return {ok: false, status: 400, message: 'invalid password'};
-		// TODO there's a problem here where the user may have cookies that need be cleared,
-		// but the logout button never appears -- one way to fix this is
-		// to show a logout button if this specific error is detected
+
+		// If the browser session is out of sync with the server,
+		// the client may think it's logged out when the server sees a session.
+		// To avoid bugs and confusion, this logs out the user and asks them to try again.
 		if (account_id) {
-			return {ok: false, status: 400, message: 'already logged in'};
+			session.logout();
+			return {
+				ok: false,
+				status: 400,
+				message: 'something went wrong, please try again',
+			};
 		}
 
 		// First see if the account already exists.
@@ -49,14 +52,13 @@ export const loginAccountService: Service<LoginAccountParams, LoginAccountRespon
 		const clientSessionResult = await repos.session.loadClientSession(account.account_id);
 
 		if (clientSessionResult.ok) {
-			effects.login(account.account_id);
+			session.login(account.account_id);
 			return {
 				ok: true,
 				status: 200,
 				value: {session: clientSessionResult.value},
 			};
 		} else {
-			effects.logout();
 			return {
 				ok: false,
 				status: 500,
@@ -68,8 +70,8 @@ export const loginAccountService: Service<LoginAccountParams, LoginAccountRespon
 
 export const logoutAccountService: Service<LogoutAccountParams, LogoutAccountResponseResult> = {
 	event: LogoutAccount,
-	perform: async ({effects}) => {
-		effects.logout();
+	perform: async ({session}) => {
+		session.logout();
 		return {
 			ok: true,
 			status: 200,
