@@ -1,4 +1,4 @@
-/// <reference types="@sveltejs/kit" />
+import '@sveltejs/kit';
 
 // TODO delete this when uvu has its next release
 declare module 'uvu/assert' {
