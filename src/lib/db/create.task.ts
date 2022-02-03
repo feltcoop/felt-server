@@ -17,6 +17,6 @@ export const task: Task<TaskArgs> = {
 		await invokeTask('lib/db/destroy');
 		await invokeTask('lib/db/migrate');
 		if (seed) await invokeTask('lib/db/seed');
-		await unobtainDb();
+		unobtainDb();
 	},
 };
