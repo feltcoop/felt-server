@@ -17,7 +17,7 @@ import type {EntityData} from '$lib/vocab/entity/entityData';
 import type {ViewData} from '$lib/vocab/view/view';
 
 // TODO automate these from schemas, also use seeded rng
-export const randomString = () => Math.random().toString().slice(2);
+export const randomString = (): string => Math.random().toString().slice(2);
 export const randomAccountName = randomString;
 export const randomPassword = randomString;
 export const randomPersonaName = randomString;

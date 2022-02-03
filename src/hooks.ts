@@ -1,4 +1,5 @@
 import type {GetSession} from '@sveltejs/kit';
+import {noop} from '@feltcoop/felt/util/function.js';
 
 import type {ClientSession} from '$lib/session/clientSession.js';
 import type {CookieSessionRequest} from '$lib/session/cookieSession.js';
@@ -9,7 +10,7 @@ const cookieSessionMiddleware = toCookieSessionMiddleware();
 
 export const getSession: GetSession<CookieSessionRequest, ClientSession> = async (req) => {
 	console.log('[hooks] getSession');
-	cookieSessionMiddleware(req, {}, () => {});
+	cookieSessionMiddleware(req, {}, noop);
 	const request: CookieSessionRequest = req as any;
 	const account_id = request.session?.account_id;
 	if (account_id !== undefined) {

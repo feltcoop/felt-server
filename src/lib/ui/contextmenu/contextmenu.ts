@@ -37,18 +37,18 @@ export interface Contextmenu {
 
 export interface ContextmenuStore extends Readable<Contextmenu> {
 	action: typeof contextmenuAction;
-	open(items: ContextmenuItems, x: number, y: number): void;
-	close(): void;
-	activateSelected(): void; // removes one
-	selectItem(item: ItemState): void;
-	collapseSelected(): void; // removes one
-	expandSelected(): void; // opens the selected submenu
-	selectNext(): void; // advances to the next of the latest
-	selectPrevious(): void; // removes one
-	selectFirst(): void; // advances to the next of the latest
-	selectLast(): void; // removes one
-	addEntry(action: ContextmenuAction): EntryState;
-	addSubmenu(): SubmenuState;
+	open: (items: ContextmenuItems, x: number, y: number) => void;
+	close: () => void;
+	activateSelected: () => void; // removes one
+	selectItem: (item: ItemState) => void;
+	collapseSelected: () => void; // removes one
+	expandSelected: () => void; // opens the selected submenu
+	selectNext: () => void; // advances to the next of the latest
+	selectPrevious: () => void; // removes one
+	selectFirst: () => void; // advances to the next of the latest
+	selectLast: () => void; // removes one
+	addEntry: (action: ContextmenuAction) => EntryState;
+	addSubmenu: () => SubmenuState;
 	// These two properties are mutated internally.
 	// If you need reactivity, use `$contextmenu` in a reactive statement to react to all changes, and
 	// then access the mutable non-reactive  `contextmenu.rootMenu` and `contextmenu.selections`.
