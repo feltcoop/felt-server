@@ -61,5 +61,5 @@ declare module 'cookie-session' {
 		overwrite?: boolean;
 	}
 
-	export default (config: CookieSessionConfig) => Middleware;
+	export default (config: CookieSessionConfig): Middleware => Middleware;
 }

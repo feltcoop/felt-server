@@ -18,6 +18,6 @@ export const toAuthenticationMiddleware = (_server: ApiServer): Middleware => {
 		}
 		req.account_id = req.session.account_id;
 		console.log('[authenticationMiddleware]', req.account_id); // TODO logging
-		next();
+		return next();
 	};
 };

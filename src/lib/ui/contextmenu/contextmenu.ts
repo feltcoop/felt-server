@@ -4,7 +4,7 @@ import {last} from '@feltcoop/felt/util/array.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
 
 // Items with `undefined` props are ignored.
-export type ContextmenuItems = [typeof SvelteComponent, object | null | undefined][];
+export type ContextmenuItems = Array<[typeof SvelteComponent, object | null | undefined]>;
 
 export type ItemState = SubmenuState | EntryState;
 export interface EntryState {
@@ -135,7 +135,7 @@ export const createContextmenuStore = (): ContextmenuStore => {
 		selectFirst: () => store.selectItem((last(selections)?.menu || rootMenu).items[0]),
 		selectLast: () => store.selectItem(last((last(selections)?.menu || rootMenu).items)!),
 		addEntry: (action) => {
-			const menu = (getContext(CONTEXTMENU_STATE_KEY) as SubmenuState | undefined) || rootMenu;
+			const menu = getContext<SubmenuState | undefined>(CONTEXTMENU_STATE_KEY) || rootMenu;
 			const entry: EntryState = {isMenu: false, menu, selected: false, action};
 			menu.items.push(entry);
 			onDestroy(() => {
@@ -144,7 +144,7 @@ export const createContextmenuStore = (): ContextmenuStore => {
 			return entry;
 		},
 		addSubmenu: () => {
-			const menu = (getContext(CONTEXTMENU_STATE_KEY) as SubmenuState | undefined) || rootMenu;
+			const menu = getContext<SubmenuState | undefined>(CONTEXTMENU_STATE_KEY) || rootMenu;
 			const submenu: SubmenuState = {isMenu: true, menu, selected: false, items: []};
 			menu.items.push(submenu);
 			setContext(CONTEXTMENU_STATE_KEY, submenu);
@@ -189,7 +189,7 @@ export const onContextmenu = (
 	contextmenu: ContextmenuStore,
 	excludeEl?: HTMLElement,
 	LinkContextmenu?: typeof SvelteComponent,
-): void | false => {
+): undefined | false => {
 	if (e.shiftKey) return;
 	const target = e.target as HTMLElement;
 	if (isEditable(target) || excludeEl?.contains(target)) return;
@@ -207,9 +207,9 @@ const queryContextmenuItems = (
 	LinkContextmenu: typeof SvelteComponent | undefined,
 ): null | ContextmenuItems => {
 	let items: null | ContextmenuItems = null;
-	let el: HTMLElement | SVGElement | null = target;
+	let el: HTMLElement | SVGElement | null | undefined = target;
 	let cacheKey: string, cached: ContextmenuItems;
-	while ((el = el && el.closest(CONTEXTMENU_DOM_QUERY))) {
+	while ((el = el?.closest(CONTEXTMENU_DOM_QUERY))) {
 		if ((cacheKey = el.dataset[CONTEXTMENU_DATASET_KEY]!)) {
 			if (!items) items = [];
 			cached = contextmenuCache.get(cacheKey)!;

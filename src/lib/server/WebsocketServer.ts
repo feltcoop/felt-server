@@ -4,6 +4,7 @@ import type {Server as HttpServer} from 'http';
 import type {Server as HttpsServer} from 'https';
 import {EventEmitter} from 'events';
 import type StrictEventEmitter from 'strict-event-emitter-types';
+import {noop} from '@feltcoop/felt/util/function.js';
 
 import type {CookieSessionIncomingMessage} from '$lib/session/cookieSession';
 import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
@@ -27,10 +28,10 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 
 	async init(): Promise<void> {
 		const {wss} = this;
-		wss.on('connection', (socket, req: CookieSessionIncomingMessage) => {
+		wss.on('connection', async (socket, req: CookieSessionIncomingMessage) => {
 			console.log('[wss] connection req.url', req.url, wss.clients.size);
 			console.log('[wss] connection req.headers', req.headers);
-			cookieSessionMiddleware(req, {}, () => {});
+			await cookieSessionMiddleware(req, {}, noop);
 			const account_id = req.session?.account_id;
 			if (!account_id) {
 				console.log('[wss] request to open connection was unauthenticated');

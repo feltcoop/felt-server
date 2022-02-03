@@ -30,7 +30,7 @@
 		<!-- TODO display other meta info about the community -->
 		<ul>
 			{#each communityPersonas as persona (persona)}
-				<MemberItem {persona} {community} />
+				<MemberItem {persona} />
 			{/each}
 		</ul>
 	</section>

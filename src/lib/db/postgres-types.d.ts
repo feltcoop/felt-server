@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /*
 
 public domain (The Unlicense)

@@ -25,7 +25,7 @@ const log = new Logger([blue('[ApiServer]')]);
 export interface Request extends PolkaRequest, CookieSessionRequest {
 	account_id?: number;
 }
-export interface Middleware extends PolkaMiddleware<Request> {}
+export interface Middleware extends PolkaMiddleware<Request> {} // eslint-disable-line
 
 export interface Options {
 	server: HttpServer | HttpsServer;
@@ -79,7 +79,7 @@ export class ApiServer {
 					params: req.params,
 					body: req.body,
 				});
-				next();
+				return next();
 			})
 			.use(toCookieSessionMiddleware())
 			.use(toAuthenticationMiddleware(this))
@@ -93,8 +93,8 @@ export class ApiServer {
 		// Register services as http routes.
 		for (const service of this.services.values()) {
 			this.app.add(
-				service.event.route!.method,
-				service.event.route!.path,
+				service.event.route.method,
+				service.event.route.path,
 				toServiceMiddleware(this, service),
 			);
 		}

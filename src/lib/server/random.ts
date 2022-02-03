@@ -8,8 +8,10 @@ import {
 	randomString,
 	type RandomVocab,
 	type RandomVocabContext,
+	randomPersonaParams,
+	randomCommunityParams,
+	randomSpaceParams,
 } from '$lib/vocab/random';
-import {randomPersonaParams, randomCommunityParams, randomSpaceParams} from '$lib/vocab/random';
 import {randomHue} from '$lib/ui/color';
 
 // TODO consider the pattern below where every `create` event creates all dependencies from scratch.

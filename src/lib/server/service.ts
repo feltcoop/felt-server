@@ -16,7 +16,7 @@ export type ServiceMethod =
 // The generics are required to avoid mistakes with service definitions.
 export interface Service<TParams, TResponse> {
 	event: ServiceEventInfo;
-	perform(request: ServiceRequest<TParams>): Promise<TResponse>;
+	perform: (request: ServiceRequest<TParams>) => Promise<TResponse>;
 }
 
 export interface ServiceRequest<TParams> {

@@ -1,8 +1,7 @@
 import type {IncomingMessage} from 'http';
-import cookieSession from 'cookie-session';
-import type {
-	CookieSessionRequest as BaseCookieSessionRequest,
-	CookieSessionObject as BaseCookieSessionObject,
+import cookieSession, {
+	type CookieSessionRequest as BaseCookieSessionRequest,
+	type CookieSessionObject as BaseCookieSessionObject,
 } from 'cookie-session';
 
 import {fromEnv} from '$lib/server/env';
@@ -21,6 +20,7 @@ export interface CookieSessionObject extends BaseCookieSessionObject {
 
 const dev = process.env.NODE_ENV !== 'production';
 
+// TODO BLOCK set this to the new type added in the account services PR
 export const toCookieSessionMiddleware = () =>
 	cookieSession({
 		name: 'session_id',

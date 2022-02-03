@@ -27,7 +27,7 @@ export const toServiceMiddleware =
 			// Our HTTP API supports duplicating the route params in the body
 			// for convenience and consistency with the websocket API.
 			if (reqBody) {
-				for (var paramName in reqParams) {
+				for (const paramName in reqParams) {
 					if (paramName in reqBody) {
 						if (reqParams[paramName] !== reqBody[paramName]) {
 							return send(res, 400, {
