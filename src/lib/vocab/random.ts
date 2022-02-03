@@ -14,6 +14,7 @@ import type {
 } from '$lib/app/eventTypes';
 import type {Database} from '$lib/db/Database';
 import type {EntityData} from '$lib/vocab/entity/entityData';
+import type {ViewData} from '$lib/vocab/view/view';
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = () => Math.random().toString().slice(2);
@@ -23,6 +24,7 @@ export const randomPersonaName = randomString;
 export const randomCommunnityName = randomString;
 export const randomSpaceUrl = randomString;
 export const randomSpaceName = randomString;
+export const randomViewData = (): ViewData => ({type: 'Room', props: {data: '/entities'}});
 export const randomEntityData = (): EntityData => ({type: 'Note', content: randomString()});
 export const randomAccountParams = (): CreateAccountParams => ({
 	name: randomAccountName(),
@@ -48,8 +50,7 @@ export const randomCommunityParams = (persona_id: number): CreateCommunityParams
 };
 export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 	community_id,
-	content: randomString(),
-	media_type: 'text/plain',
+	view: randomViewData(),
 	name: randomSpaceName(),
 	url: randomSpaceUrl(),
 });
@@ -126,13 +127,7 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 			if (!community) community = await random.community(persona, account);
 			const params = randomSpaceParams(community.community_id);
 			const space = unwrap(
-				await db.repos.space.create(
-					params.name,
-					params.content,
-					params.media_type,
-					params.url,
-					params.community_id,
-				),
+				await db.repos.space.create(params.name, params.view, params.url, params.community_id),
 			);
 			random.spaces.push(space);
 			return space;

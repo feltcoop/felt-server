@@ -10,10 +10,6 @@ export const task: Task = {
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
 		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
 
-		await spawn('ssh', [
-			deployLogin,
-			`cd current_felt_server_deploy;
-			export NODE_ENV=production && pm2 start npm -- run start`,
-		]);
+		await spawn('ssh', [deployLogin, `pm2 restart default`]);
 	},
 };

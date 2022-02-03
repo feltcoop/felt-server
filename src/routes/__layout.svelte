@@ -92,12 +92,10 @@
 		personaIndexSelection,
 		communityIdSelection,
 		spacesByCommunityId,
-		spaceIdByCommunitySelection,
+		spaceIdSelectionByCommunityId,
 		personaSelection,
-		setSession,
 	} = ui;
 
-	$: setSession($session);
 	$: guest = $session.guest;
 	$: onboarding = !guest && !$sessionPersonas.length;
 
@@ -147,7 +145,7 @@
 			const space = $spacesByCommunityId.get(community_id)!.find((s) => get(s).url === spaceUrl);
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = get(space);
-			if (space_id !== $spaceIdByCommunitySelection[community_id]) {
+			if (space_id !== $spaceIdSelectionByCommunityId[community_id]) {
 				dispatch('SelectSpace', {community_id, space_id});
 			}
 		} else {
@@ -191,7 +189,7 @@
 	{/if}
 	<main>
 		{#if guest}
-			<div class="column markup">
+			<div class="account column markup">
 				<AccountForm {guest} />
 			</div>
 		{:else if onboarding}
@@ -223,5 +221,8 @@
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
+	}
+	.account {
+		align-items: center;
 	}
 </style>

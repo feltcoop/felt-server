@@ -33,7 +33,7 @@
     "prettier-plugin-svelte": "^2.5.1",
     "regexparam": "^2.0.0",
     "strict-event-emitter-types": "^2.0.0",
-    "svelte": "^3.44.2",
+    "svelte": "^3.46.3",
     "svelte-check": "^2.3.0",
     "svelte-preprocess-esbuild": "^2.0.0",
     "throttle-debounce": "^3.0.1",

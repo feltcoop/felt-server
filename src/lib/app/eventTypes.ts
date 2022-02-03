@@ -140,8 +140,7 @@ export interface CreateSpaceParams {
 	community_id: number;
 	name: string;
 	url: string;
-	media_type: string;
-	content: string;
+	view: ViewData;
 }
 export interface CreateSpaceResponse {
 	space: Space;
