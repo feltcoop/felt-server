@@ -291,14 +291,20 @@ export const toUi = (
 		setSession: ($session) => {
 			if (browser) console.log('[ui.setSession]', $session);
 			account.set($session.guest ? null : $session.account);
-			personas.set($session.guest ? [] : toInitialPersonas($session).map((p) => writable(p)));
+
+			const $personas = $session.guest ? [] : toInitialPersonas($session).map((p) => writable(p));
 			personaById.clear();
-			get(personas).forEach((p) => personaById.set(get(p).persona_id, p));
+			$personas.forEach((p) => personaById.set(get(p).persona_id, p));
+			personas.set($personas);
+
 			const $sessionPersonas = $session.guest ? [] : $session.personas;
 			sessionPersonas.set($sessionPersonas.map((p) => personaById.get(p.persona_id)!));
-			communities.set($session.guest ? [] : $session.communities.map((p) => writable(p)));
+
+			const $communities = $session.guest ? [] : $session.communities.map((p) => writable(p));
 			communityById.clear();
-			get(communities).forEach((c) => communityById.set(get(c).community_id, c));
+			$communities.forEach((c) => communityById.set(get(c).community_id, c));
+			communities.set($communities);
+
 			spaces.set($session.guest ? [] : $session.spaces.map((s) => writable(s)));
 			memberships.set($session.guest ? [] : $session.memberships.map((s) => writable(s)));
 
