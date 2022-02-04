@@ -33,7 +33,7 @@ test__eventInfos('dispatch random events in a client app', async ({db, app}) => 
 				);
 			}
 		} else if (
-			(eventInfo.type === 'ServiceEvent' || eventInfo.type === 'RemoteEvent') &&
+			eventInfo.type === 'ServiceEvent' &&
 			eventInfo.params !== null // allow void params
 		) {
 			throw Error(`Expected eventInfo to have a schema: ${eventInfo.name}`);

@@ -7,29 +7,25 @@ import {blue} from 'kleur/colors';
 import {promisify} from 'util';
 
 import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.js';
-import {toAuthorizationMiddleware} from '$lib/session/authorizationMiddleware.js';
-import {toLoginMiddleware} from '$lib/session/loginMiddleware.js';
-import {toLogoutMiddleware} from '$lib/session/logoutMiddleware.js';
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
-import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
+import {cookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import type {Service} from '$lib/server/service';
-import {toServiceMiddleware} from '$lib/server/serviceMiddleware';
-import {websocketHandler} from '$lib/server/websocketHandler';
+import {toHttpServiceMiddleware} from '$lib/server/httpServiceMiddleware';
+import {toWebsocketMiddleware} from '$lib/server/websocketMiddleware';
 
 const log = new Logger([blue('[ApiServer]')]);
 
-// TODO not sure what these types should look like in their final form,
-// there's currently some redundancy and weirdness
-export interface Request extends PolkaRequest, CookieSessionRequest {
+// Similar but not identical to `WebsocketServerRequest`.
+export interface ApiServerRequest extends PolkaRequest, CookieSessionRequest {
 	account_id?: number;
 }
-export interface Middleware extends PolkaMiddleware<Request> {}
+export interface HttpMiddleware extends PolkaMiddleware<ApiServerRequest> {}
 
 export interface Options {
 	server: HttpServer | HttpsServer;
-	app: Polka<Request>;
+	app: Polka<ApiServerRequest>;
 	websocketServer: WebsocketServer;
 	port: number;
 	db: Database;
@@ -38,13 +34,13 @@ export interface Options {
 
 export class ApiServer {
 	readonly server: HttpServer | HttpsServer;
-	readonly app: Polka<Request>;
+	readonly app: Polka<ApiServerRequest>;
 	readonly websocketServer: WebsocketServer;
 	readonly port: number;
 	readonly db: Database;
 	readonly services: Map<string, Service<any, any>>;
 
-	websocketListener = websocketHandler.bind(null, this);
+	websocketListener = toWebsocketMiddleware(this);
 
 	constructor(options: Options) {
 		this.server = options.server;
@@ -81,21 +77,15 @@ export class ApiServer {
 				});
 				next();
 			})
-			.use(toCookieSessionMiddleware())
-			.use(toAuthenticationMiddleware(this))
-			// API
-			.post('/api/v1/login', toLoginMiddleware(this)) // TODO wait shouldn't this fail in Polka's system??
-			// TODO we want to support unauthenticated routes so users can publish public content,
-			// but for now it's simple and secure to just require an authenticated account for everything
-			.use('/api', toAuthorizationMiddleware(this))
-			.post('/api/v1/logout', toLogoutMiddleware(this));
+			.use(cookieSessionMiddleware)
+			.use(toAuthenticationMiddleware(this));
 
 		// Register services as http routes.
 		for (const service of this.services.values()) {
 			this.app.add(
-				service.event.route!.method,
-				service.event.route!.path,
-				toServiceMiddleware(this, service),
+				service.event.route.method,
+				service.event.route.path,
+				toHttpServiceMiddleware(this, service),
 			);
 		}
 

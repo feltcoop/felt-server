@@ -1,5 +1,5 @@
 import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
-import type {EntityData} from './entityData';
+import type {EntityData} from '$lib/vocab/entity/entityData';
 
 export interface Entity {
 	entity_id: number;

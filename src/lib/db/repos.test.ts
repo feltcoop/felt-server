@@ -65,14 +65,12 @@ test__repos('create, change, and delete some data from repos', async ({db}) => {
 			communityParams.persona_id,
 		),
 	);
-	persona.community_ids.push(community.community_id); // TODO hacky
 
 	const spaceParams = randomSpaceParams(community.community_id);
 	const space = unwrap(
 		await db.repos.space.create(
 			spaceParams.name,
-			spaceParams.content,
-			spaceParams.media_type,
+			spaceParams.view,
 			spaceParams.url,
 			spaceParams.community_id,
 		),

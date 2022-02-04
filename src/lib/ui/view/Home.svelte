@@ -2,17 +2,15 @@
 	import type {Readable} from 'svelte/store';
 
 	import type {Space} from '$lib/vocab/space/space.js';
-	import Avatar from '$lib/ui/Avatar.svelte';
 	import CommunitySettingsHue from '$lib/ui/CommunitySettingsHue.svelte';
+	import MemberItem from '$lib/ui/MemberItem.svelte';
 	import SpaceInfo from '$lib/ui/SpaceInfo.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Persona} from '$lib/vocab/persona/persona';
-	import {toName, toIcon} from '$lib/vocab/entity/entity';
-	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 
 	const {
-		ui: {contextmenu, spaceSelection, spacesByCommunityId, personasById},
+		ui: {spaceSelection, spacesByCommunityId, personasByCommunityId},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -22,6 +20,8 @@
 	space; // TODO we're ignoring the space, but should probably mount its `content` as markup
 
 	$: communitySpaces = $spacesByCommunityId.get($community.community_id)!;
+
+	$: communityPersonas = $personasByCommunityId.get($community.community_id)!;
 </script>
 
 <div class="markup">
@@ -29,14 +29,8 @@
 		<h2>members</h2>
 		<!-- TODO display other meta info about the community -->
 		<ul>
-			{#each $community.memberPersonas as persona (persona.persona_id)}
-				<li
-					use:contextmenu.action={[
-						[PersonaContextmenu, {persona: personasById.get(persona.persona_id)}],
-					]}
-				>
-					<Avatar name={toName(persona)} icon={toIcon(persona)} />
-				</li>
+			{#each communityPersonas as persona (persona)}
+				<MemberItem {persona} {community} />
 			{/each}
 		</ul>
 	</section>

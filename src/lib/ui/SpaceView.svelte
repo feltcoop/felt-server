@@ -3,7 +3,6 @@
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import {type Space} from '$lib/vocab/space/space';
-	import {type ViewData} from '$lib/vocab/view/view';
 	import {type Community} from '$lib/vocab/community/community';
 	import {type Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
@@ -16,19 +15,7 @@
 	export let community: Readable<Community>;
 	export let space: Readable<Space>;
 
-	// TODO delete this once `view` is a JSON column of `Space`
-	const toViewData = (space: Space): ViewData => {
-		switch (space.media_type) {
-			case 'application/fuz+json': {
-				return JSON.parse(space.content);
-			}
-			default: {
-				throw Error(`Unhandled space media type ${space.media_type}`);
-			}
-		}
-	};
-
-	$: viewData = $viewBySpace.value.get(space) || toViewData($space);
+	$: viewData = $viewBySpace.value.get(space) || $space.view;
 	$: component = components[viewData.type];
 </script>
 

@@ -2,7 +2,7 @@ import type {SchemaObject} from 'ajv';
 
 import type {ServiceMethod} from '$lib/server/service';
 
-export type EventInfo = ClientEventInfo | ServiceEventInfo | RemoteEventInfo;
+export type EventInfo = ClientEventInfo | ServiceEventInfo;
 
 export interface ClientEventInfo {
 	type: 'ClientEvent';
@@ -17,6 +17,8 @@ export interface ClientEventInfo {
 export interface ServiceEventInfo {
 	type: 'ServiceEvent';
 	name: string; // `snake_cased`
+	authenticate?: boolean; // `true` by default -- does this service require login?
+	websockets?: boolean; // `true` by default -- can this service be called via websockets?
 	params: SchemaObject;
 	response: SchemaObject;
 	returns: string;
@@ -25,16 +27,6 @@ export interface ServiceEventInfo {
 		path: string; // e.g. '/api/v1/some/:neat/:path'
 		method: ServiceMethod; // supports each `trouter` http method: https://github.com/lukeed/trouter#method
 	};
-}
-
-// Remote events are external API calls that aren't services.
-export interface RemoteEventInfo {
-	type: 'RemoteEvent';
-	name: string; // `snake_cased`
-	params: SchemaObject | null;
-	response: SchemaObject;
-	returns: string;
-	// unlike services, these have no `route`
 }
 
 export const parseServiceEventInfo = (

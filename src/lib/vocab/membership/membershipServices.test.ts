@@ -5,7 +5,11 @@ import {unwrap} from '@feltcoop/felt';
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {toRandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
-import {createMembershipService, deleteMembershipService} from './membershipServices';
+import {
+	createMembershipService,
+	deleteMembershipService,
+} from '$lib/vocab/membership/membershipServices';
+import {SessionApiMock} from '$lib/server/SessionApiMock';
 
 /* test__membershipServices */
 const test__membershipServices = suite<TestDbContext & TestAppContext>('membershipServices');
@@ -23,6 +27,7 @@ test__membershipServices('disallow creating duplicate memberships', async ({db})
 		repos: db.repos,
 		account_id: account.account_id,
 		params: {community_id: community.community_id, persona_id: persona.persona_id},
+		session: new SessionApiMock(),
 	});
 	assert.ok(createMembershipResult.ok);
 
@@ -32,6 +37,7 @@ test__membershipServices('disallow creating duplicate memberships', async ({db})
 			repos: db.repos,
 			account_id: account.account_id,
 			params: {community_id: community.community_id, persona_id: persona.persona_id},
+			session: new SessionApiMock(),
 		});
 		errorMessage = createMembershipResult.ok ? 'failed' : createMembershipResult.message;
 	} catch (_err) {
@@ -52,6 +58,7 @@ test__membershipServices('disallow creating memberships for personal communities
 			community_id: community.community_id,
 			persona_id: (await random.persona()).persona_id,
 		},
+		session: new SessionApiMock(),
 	});
 	assert.ok(!createMembershipResult.ok);
 });
@@ -66,6 +73,7 @@ test__membershipServices('delete a membership in a community', async ({db}) => {
 		repos: db.repos,
 		params: {persona_id: persona.persona_id, community_id: community1.community_id},
 		account_id: account.account_id,
+		session: new SessionApiMock(),
 	});
 	assert.ok(deleteResult.ok);
 

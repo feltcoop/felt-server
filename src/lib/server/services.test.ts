@@ -7,6 +7,7 @@ import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {services} from '$lib/server/services';
 import {toRandomVocabContext} from '$lib/vocab/random';
 import {randomEventParams} from '$lib/server/random';
+import {SessionApiMock} from '$lib/server/SessionApiMock';
 
 /* test__services */
 const test__services = suite<TestDbContext>('services');
@@ -30,7 +31,8 @@ test__services('perform services', async ({db}) => {
 		const result = await service.perform({
 			repos: db.repos,
 			params,
-			account_id: account.account_id,
+			account_id: service.event.authenticate === false ? (null as any) : account.account_id,
+			session: new SessionApiMock(),
 		});
 		if (!result.ok || !validateSchema(service.event.response!)(result.value)) {
 			console.error(red(`failed to validate service response: ${service.event.name}`), result);

@@ -8,7 +8,7 @@ import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
 import type {JsonRpcId, JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
-import type {BroadcastMessage} from '$lib/server/websocketHandler';
+import type {BroadcastMessage} from '$lib/server/websocketMiddleware';
 
 const toId = toCounter();
 
@@ -47,10 +47,10 @@ export const toWebsocketApiClient = <
 	};
 
 	const client: WebsocketApiClient<TParamsMap, TResultMap> = {
-		has: (name) => !!findService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
+		find: (name) => findService(name),
 		invoke: async (name, params) => {
 			params = params ?? null!;
-			console.log('[websocket api client] invoke', name, params);
+			console.log('[ws] invoke', name, params);
 			const request: JsonRpcRequest<typeof name, TParamsMap> = {
 				jsonrpc: '2.0',
 				id: toId(),
@@ -63,7 +63,7 @@ export const toWebsocketApiClient = <
 		},
 		handle: (rawMessage, handleBroadcastMessage) => {
 			const message = parseSocketMessage(rawMessage);
-			console.log('[websocket api client] handle', message);
+			console.log('[ws] handle', message);
 			if (!message) return;
 			if ('jsonrpc' in message) {
 				const found = websocketRequests.get(message.id);
@@ -77,7 +77,7 @@ export const toWebsocketApiClient = <
 			} else if (message.type === 'broadcast') {
 				handleBroadcastMessage(message);
 			} else {
-				console.log('[websocket api client] unhandled message', message);
+				console.log('[ws] unhandled message', message);
 			}
 		},
 		close: () => {

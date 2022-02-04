@@ -76,13 +76,7 @@ export const communityRepo = (db: Database) => ({
 	): Promise<Result<{value: Community[]}, ErrorResponse>> => {
 		console.log(`[db] preparing to query for communities & spaces persona: ${account_id}`);
 		const data = await db.sql<Community[]>`
-			SELECT c.community_id, c.type, c.name, c.settings, c.created, c.updated,			
-				(
-					SELECT array_to_json(coalesce(array_agg(row_to_json(d)), '{}'))
-					FROM (
-						SELECT p.persona_id, p.name FROM personas p JOIN memberships m ON p.persona_id=m.persona_id AND m.community_id=c.community_id
-					) d
-				) as "memberPersonas"
+			SELECT c.community_id, c.type, c.name, c.settings, c.created, c.updated							
 			FROM communities c JOIN (
 				SELECT DISTINCT m.community_id FROM personas p JOIN memberships m ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
 			) apc

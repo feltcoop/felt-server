@@ -20,49 +20,50 @@ export const toHttpApiClient = <
 	fetch: typeof globalThis.fetch = globalThis.fetch,
 ): ApiClient<TParamsMap, TResultMap> => {
 	const client: ApiClient<TParamsMap, TResultMap> = {
-		has: (name) => !!findService(name), // TODO maybe change the API to return the service, and optionally accept it to `invoke`
+		find: (name) => findService(name),
 		invoke: async (name, params) => {
 			params = params ?? null!;
-			console.log('[http api client] invoke', name, params);
+			console.log('[http] invoke', name, params);
 			const service = findService(name);
 			if (!service) {
 				return {ok: false, status: 400, message: 'failed to invoke unknown service'};
 			}
 			const path = params ? inject(service.route.path, params) : service.route.path;
 			const {method} = service.route;
+			let res;
 			try {
-				const res = await fetch(path, {
+				res = await fetch(path, {
 					method,
 					headers: {'content-type': 'application/json'},
-					body: method === 'GET' || method === 'HEAD' ? null : JSON.stringify(params),
+					body: method === 'GET' || method === 'HEAD' ? null : JSON.stringify(params || {}),
 				});
-				let json;
-				try {
-					json = await res.json();
-				} catch (err) {
-					console.error('[http api client] parse error', err, res);
-					return {
-						ok: false,
-						status: null, // discard `res.status` because something else went wrong
-						message: 'failed to parse server response',
-					};
-				}
-				console.log('[http api client] result', res.ok, res.status, json);
-				if (res.ok) {
-					return {ok: true, status: res.status, value: json};
-				} else {
-					return {
-						ok: false,
-						status: res.status,
-						message: json.message || res.statusText || 'unknown error',
-					};
-				}
 			} catch (err) {
-				console.error('[http api client] fetch error', err);
+				console.error('[http] fetch error', err);
 				return {
 					ok: false,
 					status: null,
 					message: 'unknown error',
+				};
+			}
+			let json;
+			try {
+				json = await res.json();
+			} catch (err) {
+				console.error('[http] parse error', err, res);
+				return {
+					ok: false,
+					status: null, // discard `res.status` because something else went wrong
+					message: 'failed to parse server response',
+				};
+			}
+			console.log('[http] result', res.ok, res.status, json);
+			if (res.ok) {
+				return {ok: true, status: res.status, value: json};
+			} else {
+				return {
+					ok: false,
+					status: res.status,
+					message: json.message || res.statusText || 'unknown error',
 				};
 			}
 		},

@@ -7,7 +7,7 @@ export const Ping: ServiceEventInfo = {
 	params: {
 		$id: '/schemas/PingParams.json',
 		type: 'null',
-		tsType: 'void', // makes it so we don't need to explicitly pass `null` -- is there a better way to do this?
+		tsType: 'void',
 	},
 	response: {
 		$id: '/schemas/PingResponse.json',
