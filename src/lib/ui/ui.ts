@@ -38,12 +38,13 @@ export interface Ui extends Partial<UiHandlers> {
 	// db state and caches
 	account: Readable<AccountModel | null>;
 	personas: Readable<Readable<Persona>[]>;
-	personaById: Map<number, Readable<Persona>>; //TODO rename to singular
 	sessionPersonas: Readable<Readable<Persona>[]>;
 	sessionPersonaIndices: Readable<Map<Readable<Persona>, number>>;
 	communities: Readable<Readable<Community>[]>;
 	spaces: Readable<Readable<Space>[]>;
 	memberships: Readable<Readable<Membership>[]>;
+	personaById: Map<number, Readable<Persona>>;
+	communityById: Map<number, Readable<Community>>;
 	spaceById: Readable<Map<number, Readable<Space>>>;
 	//TODO maybe refactor to remove store around map? Like personaById
 	spacesByCommunityId: Readable<Map<number, Readable<Space>[]>>;
@@ -79,14 +80,14 @@ export const toUi = (
 	// Importantly, this only changes when items are added or removed from the collection,
 	// not when the items themselves change; each item is a store that can be subscribed to.
 	const personas = writable<Writable<Persona>[]>([]);
-	const personaById: Map<number, Writable<Persona>> = new Map();
 	// not derived from session because the session has only the initial snapshot
 	// TODO these `Persona`s need additional data compared to every other `Persona`
 	const sessionPersonas = writable<Writable<Persona>[]>([]);
 	const communities = writable<Writable<Community>[]>([]);
-	// TODO add `communityById` and delete `getCommunity`
 	const spaces = writable<Writable<Space>[]>([]);
 	const memberships = writable<Writable<Membership>[]>([]);
+	const personaById: Map<number, Writable<Persona>> = new Map();
+	const communityById: Map<number, Writable<Community>> = new Map();
 	// TODO do these maps more efficiently
 	const spaceById: Readable<Map<number, Writable<Space>>> = derived(
 		spaces,
@@ -186,10 +187,8 @@ export const toUi = (
 		([$personaIdSelection, $communityIdSelectionByPersonaId]) =>
 			$personaIdSelection && $communityIdSelectionByPersonaId[$personaIdSelection],
 	);
-	const communitySelection = derived(
-		[communities, communityIdSelection],
-		([$communities, $communityIdSelection]) =>
-			$communityIdSelection === null ? null : getCommunity($communities, $communityIdSelection),
+	const communitySelection = derived([communityIdSelection], ([$communityIdSelection]) =>
+		$communityIdSelection === null ? null : communityById.get($communityIdSelection)!,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
 	const spaceIdSelectionByCommunityId = writable<{[key: number]: number | null}>({});
@@ -209,33 +208,40 @@ export const toUi = (
 	const expandMarquee = writable(!initialMobile);
 
 	const addCommunity = (
-		community: Community,
+		$community: Community,
 		persona_id: number,
-		communitySpaces: Space[],
+		$communitySpaces: Space[],
 	): void => {
 		//TODO return membership object from server to put in here instead
 		memberships.update(($memberships) =>
 			$memberships.concat(
-				writable({community_id: community.community_id, persona_id} as Membership),
+				writable({community_id: $community.community_id, persona_id} as Membership),
 			),
 		);
 
+		// TODO what's the right order of updating `communities` and `spaces`?
+		// We may get circular derived dependencies that put things in a bad state if either one is
+		// updated first, in which case we may need something like deferred store transaction updates.
+
 		const $spaceById = get(spaceById);
-		let spacesToAdd: Space[] | null = null;
-		for (const space of communitySpaces) {
-			if (!$spaceById.has(space.space_id)) {
-				(spacesToAdd || (spacesToAdd = [])).push(space);
+		let $spacesToAdd: Space[] | null = null;
+		for (const $space of $communitySpaces) {
+			if (!$spaceById.has($space.space_id)) {
+				($spacesToAdd || ($spacesToAdd = [])).push($space);
 			}
 		}
-		if (spacesToAdd) {
-			spaces.update(($spaces) => $spaces.concat(spacesToAdd!.map((s) => writable(s))));
+		if ($spacesToAdd) {
+			spaces.update(($spaces) => $spaces.concat($spacesToAdd!.map((s) => writable(s))));
 		}
 		spaceIdSelectionByCommunityId.update(($v) => ({
 			...$v,
-			[community.community_id]: communitySpaces[0].space_id,
+			[$community.community_id]: $communitySpaces[0].space_id,
 		}));
-		const communityStore = writable(community);
-		communities.update(($communities) => $communities.concat(communityStore));
+		const community = writable($community);
+		// TODO this updates the map before the store array because it may be derived,
+		// but is the better implementation to use a `mutable` wrapping a map, no array?
+		communityById.set($community.community_id, community);
+		communities.update(($communities) => $communities.concat(community));
 	};
 
 	const ui: Ui = {
@@ -249,6 +255,7 @@ export const toUi = (
 		communities,
 		memberships,
 		personaById,
+		communityById,
 		spaceById,
 		spacesByCommunityId,
 		personasByCommunityId,
@@ -286,10 +293,12 @@ export const toUi = (
 			account.set($session.guest ? null : $session.account);
 			personas.set($session.guest ? [] : toInitialPersonas($session).map((p) => writable(p)));
 			personaById.clear();
-			get(personas).forEach((persona) => personaById.set(get(persona).persona_id, persona));
+			get(personas).forEach((p) => personaById.set(get(p).persona_id, p));
 			const $sessionPersonas = $session.guest ? [] : $session.personas;
 			sessionPersonas.set($sessionPersonas.map((p) => personaById.get(p.persona_id)!));
 			communities.set($session.guest ? [] : $session.communities.map((p) => writable(p)));
+			communityById.clear();
+			get(communities).forEach((c) => communityById.set(get(c).community_id, c));
 			spaces.set($session.guest ? [] : $session.spaces.map((s) => writable(s)));
 			memberships.set($session.guest ? [] : $session.memberships.map((s) => writable(s)));
 
@@ -348,30 +357,32 @@ export const toUi = (
 		CreatePersona: async ({invoke, dispatch}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
-			const {persona, community, spaces} = result.value;
-			console.log('[ui.CreatePersona]', persona, community, spaces);
-			const personaStore = writable(persona);
-			personas.update(($personas) => $personas.concat(personaStore));
-			personaById.set(persona.persona_id, personaStore);
-			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(personaStore));
-			dispatch('SelectPersona', {persona_id: persona.persona_id});
-			addCommunity(community, persona.persona_id, spaces);
-			dispatch('SelectCommunity', {community_id: community.community_id});
+			const {persona: $persona, community: $community, spaces: $spaces} = result.value;
+			console.log('[ui.CreatePersona]', $persona, $community, $spaces);
+			const persona = writable($persona);
+			// TODO this updates the map before the store array because it may be derived,
+			// but is the better implementation to use a `mutable` wrapping a map, no array?
+			personaById.set($persona.persona_id, persona);
+			personas.update(($personas) => $personas.concat(persona));
+			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(persona));
+			dispatch('SelectPersona', {persona_id: $persona.persona_id});
+			addCommunity($community, $persona.persona_id, $spaces);
+			dispatch('SelectCommunity', {community_id: $community.community_id});
 			return result;
 		},
 		CreateCommunity: async ({params, invoke, dispatch}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {persona_id} = params;
-			const {community, spaces} = result.value;
-			console.log('[ui.CreateCommunity]', community, persona_id);
-			addCommunity(community, persona_id, spaces);
-			dispatch('SelectCommunity', {community_id: community.community_id});
+			const {community: $community, spaces: $spaces} = result.value;
+			console.log('[ui.CreateCommunity]', $community, persona_id);
+			addCommunity($community, persona_id, $spaces);
+			dispatch('SelectCommunity', {community_id: $community.community_id});
 			return result;
 		},
 		UpdateCommunitySettings: async ({params, invoke}) => {
 			// optimistic update
-			const community = getCommunity(get(communities), params.community_id);
+			const community = communityById.get(params.community_id)!;
 			const originalSettings = get(community).settings;
 			community.update(($community) => ({
 				...$community,
@@ -523,7 +534,7 @@ export const toUi = (
 				selectedCommunity &&
 				$space.space_id !== get(spaceIdSelectionByCommunityId)[get(selectedCommunity).community_id]
 			) {
-				const $community = get(getCommunity(get(communities), $space.community_id));
+				const $community = get(communityById.get($space.community_id)!);
 				goto('/' + $community.name + $space.url + location.search, {replaceState: true});
 			}
 		},
@@ -555,12 +566,3 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 					(p1) => !session.personas.find((p2) => p2.persona_id === p1.persona_id),
 				),
 		  );
-
-// TODO delete this and lookup from `communityById` map instead
-export const getCommunity = (
-	communities: Readable<Community>[],
-	community_id: number,
-): Writable<Community> =>
-	// TODO typecast allows `Readable` input and `Writable` return value for usage in components,
-	// but this function will be deleted soon anyway (see the comment above)
-	communities.find((c) => get(c).community_id === community_id) as Writable<Community>;
