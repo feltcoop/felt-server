@@ -9,9 +9,6 @@ import {
 	type JsonSchemaToTypeScriptOptions,
 } from '$lib/util/jsonSchemaToTypescript';
 import {schemas} from '$lib/app/schemas';
-import {ajv} from '$lib/util/ajv';
-
-ajv();
 
 const toParamsName = (name: string): string => toTypeName(name + 'Params');
 const toResponseName = (name: string): string => toTypeName(name + 'Response');
