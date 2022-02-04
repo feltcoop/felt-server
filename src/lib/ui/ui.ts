@@ -397,10 +397,10 @@ export const toUi = (
 		CreateMembership: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
-			const {membership} = result.value;
-			console.log('[ui.CreateMembership]', membership);
+			const {membership: $membership} = result.value;
+			console.log('[ui.CreateMembership]', $membership);
 			// TODO also update `communities.personas`
-			memberships.update(($memberships) => $memberships.concat(writable(membership)));
+			memberships.update(($memberships) => $memberships.concat(writable($membership)));
 			return result;
 		},
 		DeleteMembership: async ({params, invoke}) => {
@@ -420,9 +420,9 @@ export const toUi = (
 		CreateSpace: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
-			const {space} = result.value;
-			console.log('[ui.CreateSpace]', space);
-			spaces.update(($spaces) => $spaces.concat(writable(space)));
+			const {space: $space} = result.value;
+			console.log('[ui.CreateSpace]', $space);
+			spaces.update(($spaces) => $spaces.concat(writable($space)));
 			return result;
 		},
 		DeleteSpace: async ({params, invoke}) => {
@@ -452,15 +452,15 @@ export const toUi = (
 		CreateEntity: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
-			const {entity} = result.value;
-			console.log('[ui.CreateEntity]', entity);
-			const entityStore = writable(entity);
-			const entities = entitiesBySpace.get(entity.space_id);
+			const {entity: $entity} = result.value;
+			console.log('[ui.CreateEntity]', $entity);
+			const entity = writable($entity);
+			const entities = entitiesBySpace.get($entity.space_id);
 			if (entities) {
 				// TODO check if it already exists -- maybe by getting `entityStore` from a `entityById` map
-				entities.update(($entities) => $entities.concat(entityStore));
+				entities.update(($entities) => $entities.concat(entity));
 			} else {
-				entitiesBySpace.set(entity.space_id, writable([entityStore]));
+				entitiesBySpace.set($entity.space_id, writable([entity]));
 			}
 			return result;
 		},
