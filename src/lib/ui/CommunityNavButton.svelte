@@ -21,7 +21,7 @@
 	export let selected: boolean = false;
 
 	$: spaceIdSelection = $spaceIdSelectionByCommunityId[$community.community_id];
-	$: selectedSpace = spaceIdSelection === null ? null : $spaceById.get(spaceIdSelection)!;
+	$: selectedSpace = spaceIdSelection === null ? null : spaceById.get(spaceIdSelection)!;
 
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
 
