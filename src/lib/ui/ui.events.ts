@@ -48,7 +48,7 @@ export const events: EventInfo[] = [
 		name: 'OpenDialog',
 		params: {
 			$id: 'https://felt.social/vocab/OpenDialogParams.json',
-			allOf: [{$ref: 'schemas/dialog.json'}],
+			allOf: [{$ref: '/schemas/DialogData.json'}],
 		},
 		returns: 'void',
 	},
