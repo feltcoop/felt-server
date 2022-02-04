@@ -201,12 +201,12 @@ export type ToggleSecondaryNavParams = void;
 
 export type SetMobileParams = boolean;
 
-export interface OpenDialogParams {
+export type OpenDialogParams = {
 	Component: typeof SvelteComponent;
 	props?: {
 		[k: string]: unknown;
 	};
-}
+};
 
 export type CloseDialogParams = void;
 

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import type {SchemaObject} from 'ajv';
 
-	import {toSchemaName} from '$lib/vocab/util';
-
 	export let schema: SchemaObject;
 
 	let properties: undefined | [string, SchemaObject][];
@@ -20,7 +18,7 @@
 	{:else}
 		<div class="title">
 			{#if schema.$id}
-				<code class="name">{toSchemaName(schema.$id)}</code>
+				<code class="name">{schema.$id}</code>
 			{/if}
 			<small class="type">{schema.type || 'unknown'}</small>
 		</div>

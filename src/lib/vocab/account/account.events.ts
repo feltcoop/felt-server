@@ -5,7 +5,7 @@ export const LoginAccount: ServiceEventInfo = {
 	name: 'LoginAccount',
 	authenticate: false,
 	params: {
-		$id: 'https://felt.social/vocab/LoginAccountParams.json',
+		$id: '/schemas/LoginAccountParams.json',
 		type: 'object',
 		properties: {
 			username: {type: 'string'},
@@ -15,7 +15,7 @@ export const LoginAccount: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/LoginAccountResponse.json',
+		$id: '/schemas/LoginAccountResponse.json',
 		type: 'object',
 		properties: {
 			// TODO this wasn't being used ?
@@ -38,12 +38,12 @@ export const LogoutAccount: ServiceEventInfo = {
 	name: 'LogoutAccount',
 	websockets: false,
 	params: {
-		$id: 'https://felt.social/vocab/LogoutAccountParams.json',
+		$id: '/schemas/LogoutAccountParams.json',
 		type: 'null',
 		tsType: 'void',
 	},
 	response: {
-		$id: 'https://felt.social/vocab/LogoutAccountResponse.json',
+		$id: '/schemas/LogoutAccountResponse.json',
 		type: 'null',
 	},
 	returns: 'Promise<LogoutAccountResponseResult>',

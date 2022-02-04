@@ -2,6 +2,7 @@ import {writable, derived, get, type Readable, type Writable} from 'svelte/store
 import {setContext, getContext, type SvelteComponent} from 'svelte';
 import {goto} from '$app/navigation';
 import {mutable, type Mutable} from '@feltcoop/svelte-mutable-store';
+import {type DialogData} from '@feltcoop/felt/ui/dialog/dialog.js';
 import {browser} from '$app/env';
 
 import {type Community} from '$lib/vocab/community/community';
@@ -15,7 +16,6 @@ import {type DispatchContext} from '$lib/app/dispatch';
 import {type UiHandlers} from '$lib/app/eventTypes';
 import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-import {type DialogState} from '$lib/ui/dialog/dialog';
 import {type ViewData} from '$lib/vocab/view/view';
 
 const KEY = Symbol();
@@ -66,7 +66,7 @@ export interface Ui extends Partial<UiHandlers> {
 	spaceSelection: Readable<Readable<Space> | null>;
 	mobile: Readable<boolean>;
 	contextmenu: ContextmenuStore;
-	dialogs: Writable<DialogState[]>;
+	dialogs: Writable<DialogData[]>;
 	viewBySpace: Mutable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
 }
 
@@ -131,7 +131,7 @@ export const toUi = (
 
 	const mobile = writable(initialMobile);
 	const contextmenu = createContextmenuStore();
-	const dialogs = writable<DialogState[]>([]);
+	const dialogs = writable<DialogData[]>([]);
 	const viewBySpace = mutable(new WeakMap());
 
 	// derived state

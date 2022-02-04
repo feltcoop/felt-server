@@ -6,7 +6,7 @@ export interface Account {
 	updated: Date | null;
 }
 export const AccountSchema = {
-	$id: 'https://felt.social/vocab/Account.json',
+	$id: '/schemas/Account.json',
 	type: 'object',
 	properties: {
 		account_id: {type: 'number'},
@@ -34,7 +34,7 @@ export interface AccountModel {
 }
 
 export const AccountModelSchema = {
-	$id: 'https://felt.social/vocab/AccountModel.json',
+	$id: '/schemas/AccountModel.json',
 	type: 'object',
 	properties: {
 		account_id: {type: 'number'},

@@ -5,12 +5,12 @@ export const Ping: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'Ping',
 	params: {
-		$id: 'https://felt.social/vocab/PingParams.json',
+		$id: '/schemas/PingParams.json',
 		type: 'null',
 		tsType: 'void',
 	},
 	response: {
-		$id: 'https://felt.social/vocab/PingResponse.json',
+		$id: '/schemas/PingResponse.json',
 		type: 'null',
 	},
 	returns: `Promise<ApiResult<null>>`,
@@ -38,7 +38,7 @@ export const events: EventInfo[] = [
 		type: 'ClientEvent',
 		name: 'SetMobile',
 		params: {
-			$id: 'https://felt.social/vocab/SetMobileParams.json',
+			$id: '/schemas/SetMobileParams.json',
 			type: 'boolean',
 		},
 		returns: 'void',
@@ -47,14 +47,8 @@ export const events: EventInfo[] = [
 		type: 'ClientEvent',
 		name: 'OpenDialog',
 		params: {
-			$id: 'https://felt.social/vocab/OpenDialogParams.json',
-			type: 'object',
-			properties: {
-				Component: {type: 'object', tsType: 'typeof SvelteComponent'},
-				props: {type: 'object'},
-			},
-			required: ['Component'],
-			additionalProperties: false,
+			$id: '/schemas/OpenDialogParams.json',
+			allOf: [{$ref: '/schemas/DialogData.json'}],
 		},
 		returns: 'void',
 	},
@@ -68,7 +62,7 @@ export const events: EventInfo[] = [
 		type: 'ClientEvent',
 		name: 'SelectPersona',
 		params: {
-			$id: 'https://felt.social/vocab/SelectPersonaParams.json',
+			$id: '/schemas/SelectPersonaParams.json',
 			type: 'object',
 			properties: {
 				persona_id: {type: 'number'},
@@ -82,7 +76,7 @@ export const events: EventInfo[] = [
 		type: 'ClientEvent',
 		name: 'SelectCommunity',
 		params: {
-			$id: 'https://felt.social/vocab/SelectCommunityParams.json',
+			$id: '/schemas/SelectCommunityParams.json',
 			type: 'object',
 			properties: {
 				community_id: {type: ['number', 'null']},
@@ -96,7 +90,7 @@ export const events: EventInfo[] = [
 		type: 'ClientEvent',
 		name: 'SelectSpace',
 		params: {
-			$id: 'https://felt.social/vocab/SelectSpaceParams.json',
+			$id: '/schemas/SelectSpaceParams.json',
 			type: 'object',
 			properties: {
 				community_id: {type: 'number'},
@@ -111,7 +105,7 @@ export const events: EventInfo[] = [
 		type: 'ClientEvent',
 		name: 'ViewSpace',
 		params: {
-			$id: 'https://felt.social/vocab/ViewSpaceParams.json',
+			$id: '/schemas/ViewSpaceParams.json',
 			type: 'object',
 			properties: {
 				space: {type: 'object', tsType: 'Readable<Space>'},

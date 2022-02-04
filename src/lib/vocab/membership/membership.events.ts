@@ -4,7 +4,7 @@ export const CreateMembership: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'CreateMembership',
 	params: {
-		$id: 'https://felt.social/vocab/CreateMembershipParams.json',
+		$id: '/schemas/CreateMembershipParams.json',
 		type: 'object',
 		properties: {
 			persona_id: {type: 'number'},
@@ -14,10 +14,10 @@ export const CreateMembership: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/CreateMembershipResponse.json',
+		$id: '/schemas/CreateMembershipResponse.json',
 		type: 'object',
 		properties: {
-			membership: {$ref: 'Membership.json', tsType: 'Membership'},
+			membership: {$ref: '/schemas/Membership.json', tsType: 'Membership'},
 		},
 		required: ['membership'],
 		additionalProperties: false,
@@ -33,7 +33,7 @@ export const DeleteMembership: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'DeleteMembership',
 	params: {
-		$id: 'https://felt.social/vocab/DeleteMembershipParams.json',
+		$id: '/schemas/DeleteMembershipParams.json',
 		type: 'object',
 		properties: {
 			persona_id: {type: 'number'},
@@ -43,7 +43,7 @@ export const DeleteMembership: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/DeleteMembershipResponse.json',
+		$id: '/schemas/DeleteMembershipResponse.json',
 		type: 'null',
 	},
 	returns: 'Promise<DeleteMembershipResponseResult>',
