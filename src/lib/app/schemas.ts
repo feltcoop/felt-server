@@ -14,4 +14,6 @@ entities.push(
 		])
 		.filter(Boolean),
 );
+
+// Include external schema dependencies.
 entities.push(DialogDataSchema);
