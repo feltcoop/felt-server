@@ -16,7 +16,7 @@ const toResponseResultName = (name: string): string => toTypeName(name + 'Respon
 const opts: Partial<JsonSchemaToTypeScriptOptions> = {
 	$refOptions: {
 		resolve: {
-			http: false,
+			http: false, // disable web resolution
 			file: {
 				canRead: true,
 				read: (file) => {
