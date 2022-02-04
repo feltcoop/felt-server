@@ -1,6 +1,6 @@
 import {type Gen} from '@feltcoop/gro';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
-import {resolve, basename} from 'path';
+import {resolve} from 'path';
 
 import {eventInfos} from '$lib/app/events';
 import {
@@ -9,25 +9,7 @@ import {
 	type JsonSchemaToTypeScriptOptions,
 } from '$lib/util/jsonSchemaToTypescript';
 import {schemas} from '$lib/app/schemas';
-import {ID_VOCAB_PREFIX} from '$lib/vocab/util';
 import {ajv} from '$lib/util/ajv';
-
-/*
-
-TODO so...
-
-should we register external schemas?
-or should we infer `https://felt.dev` to be automatically loaded?
-
-need good error messages for `read` below
-
-should the .json suffix be removed?
-
-should there be a schemas dir instead of vocab?
-
-should `gro gen` write schemas to `src/static/schemas`?
-
-*/
 
 ajv();
 
@@ -37,21 +19,22 @@ const toResponseResultName = (name: string): string => toTypeName(name + 'Respon
 
 // Outputs a file with event types that can be imported from anywhere with no runtime cost.
 export const gen: Gen = async ({originId}) => {
-	const schemaDir = resolve('src/lib/vocab');
-	const schemaMatcher = new RegExp(`^${schemaDir}/\\w+\\.json$`);
+	const schemaDir = resolve('src/static/schemas');
 
 	const opts: Partial<JsonSchemaToTypeScriptOptions> = {
 		cwd: schemaDir,
 		$refOptions: {
 			resolve: {
-				// http: false, // TODO maybe look at felt.dev ones and import?
+				http: false,
 				file: {
-					// canRead: schemaMatcher,
 					canRead: true,
 					read: (file) => {
-						const schemaTitle = ID_VOCAB_PREFIX + basename(file.url);
-						const schema = schemas.find((s) => s.$id === schemaTitle);
-						console.log('file', file, schemaTitle, !!schema);
+						const schema = schemas.find((s) => s.$id === file.url);
+						if (!schema)
+							throw Error(
+								`Unable to find schema: "${file.url}".` +
+									' Is it unregistered in $lib/app/schemas.ts, or a typo, or outdated?',
+							);
 						return JSON.stringify(schema);
 					},
 				},

@@ -6,7 +6,7 @@ export const LogIn: RemoteEventInfo = {
 	type: 'RemoteEvent',
 	name: 'LogIn',
 	params: {
-		$id: 'https://felt.social/vocab/LogInParams.json',
+		$id: '/schemas/LogInParams.json',
 		type: 'object',
 		properties: {
 			accountName: {type: 'string'},
@@ -16,7 +16,7 @@ export const LogIn: RemoteEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/LogInResponse.json',
+		$id: '/schemas/LogInResponse.json',
 		type: 'null',
 	},
 	returns: 'Promise<ApiResult<{session: ClientAccountSession}>>',
@@ -28,7 +28,7 @@ export const LogOut: RemoteEventInfo = {
 	name: 'LogOut',
 	params: null,
 	response: {
-		$id: 'https://felt.social/vocab/LogOutResponse.json',
+		$id: '/schemas/LogOutResponse.json',
 		type: 'object',
 		properties: {
 			message: {type: 'string'},

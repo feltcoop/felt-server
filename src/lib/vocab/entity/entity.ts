@@ -10,7 +10,7 @@ export interface Entity {
 	updated: Date | null;
 }
 export const EntitySchema = {
-	$id: 'https://felt.social/vocab/Entity.json',
+	$id: '/schemas/Entity.json',
 	type: 'object',
 	properties: {
 		entity_id: {type: 'number'},
