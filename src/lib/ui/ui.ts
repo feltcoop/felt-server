@@ -2,6 +2,7 @@ import {writable, derived, get, type Readable, type Writable} from 'svelte/store
 import {setContext, getContext, type SvelteComponent} from 'svelte';
 import {goto} from '$app/navigation';
 import {mutable, type Mutable} from '@feltcoop/svelte-mutable-store';
+import {type DialogData} from '@feltcoop/felt/ui/dialog/dialog.js';
 import {browser} from '$app/env';
 
 import {type Community} from '$lib/vocab/community/community';
@@ -15,7 +16,6 @@ import {type DispatchContext} from '$lib/app/dispatch';
 import {type UiHandlers} from '$lib/app/eventTypes';
 import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-import {type DialogState} from '$lib/ui/dialog/dialog';
 import {type ViewData} from '$lib/vocab/view/view';
 
 const KEY = Symbol();
@@ -66,7 +66,7 @@ export interface Ui extends Partial<UiHandlers> {
 	spaceSelection: Readable<Readable<Space> | null>;
 	mobile: Readable<boolean>;
 	contextmenu: ContextmenuStore;
-	dialogs: Writable<DialogState[]>;
+	dialogs: Writable<DialogData[]>;
 	viewBySpace: Mutable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
 }
 
@@ -128,7 +128,7 @@ export const toUi = (
 
 	const mobile = writable(initialMobile);
 	const contextmenu = createContextmenuStore();
-	const dialogs = writable<DialogState[]>([]);
+	const dialogs = writable<DialogData[]>([]);
 	const viewBySpace = mutable(new WeakMap());
 
 	// derived state
@@ -288,25 +288,25 @@ export const toUi = (
 			if (browser) console.log('[ui.setSession]', $session);
 			account.set($session.guest ? null : $session.account);
 
-			const $$personas = $session.guest ? [] : toInitialPersonas($session);
-			const $personas = $$personas.map((p) => writable(p));
+			const $personaArray = $session.guest ? [] : toInitialPersonas($session);
+			const $personas = $personaArray.map((p) => writable(p));
 			personaById.clear();
-			$personas.forEach((p, i) => personaById.set($$personas[i].persona_id, p));
+			$personas.forEach((p, i) => personaById.set($personaArray[i].persona_id, p));
 			personas.set($personas);
 
 			const $sessionPersonas = $session.guest ? [] : $session.personas;
 			sessionPersonas.set($sessionPersonas.map((p) => personaById.get(p.persona_id)!));
 
-			const $$communities = $session.guest ? [] : $session.communities;
-			const $communities = $$communities.map((p) => writable(p));
+			const $communityArray = $session.guest ? [] : $session.communities;
+			const $communities = $communityArray.map((p) => writable(p));
 			communityById.clear();
-			$communities.forEach((c, i) => communityById.set($$communities[i].community_id, c));
+			$communities.forEach((c, i) => communityById.set($communityArray[i].community_id, c));
 			communities.set($communities);
 
-			const $$spaces = $session.guest ? [] : $session.spaces;
-			const $spaces = $$spaces.map((s) => writable(s));
+			const $spaceArray = $session.guest ? [] : $session.spaces;
+			const $spaces = $spaceArray.map((s) => writable(s));
 			spaceById.clear();
-			$spaces.forEach((s, i) => spaceById.set($$spaces[i].space_id, s));
+			$spaces.forEach((s, i) => spaceById.set($spaceArray[i].space_id, s));
 			spaces.set($spaces);
 
 			memberships.set($session.guest ? [] : $session.memberships.map((s) => writable(s)));

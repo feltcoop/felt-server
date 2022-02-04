@@ -4,7 +4,7 @@ export const CreateEntity: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'CreateEntity',
 	params: {
-		$id: 'https://felt.social/vocab/CreateEntityParams.json',
+		$id: '/schemas/CreateEntityParams.json',
 		type: 'object',
 		properties: {
 			actor_id: {type: 'number'},
@@ -15,10 +15,10 @@ export const CreateEntity: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/CreateEntityResponse.json',
+		$id: '/schemas/CreateEntityResponse.json',
 		type: 'object',
 		properties: {
-			entity: {$ref: 'Entity.json', tsType: 'Entity'},
+			entity: {$ref: '/schemas/Entity.json', tsType: 'Entity'},
 		},
 		required: ['entity'],
 		additionalProperties: false,
@@ -34,7 +34,7 @@ export const ReadEntities: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'ReadEntities',
 	params: {
-		$id: 'https://felt.social/vocab/ReadEntitiesParams.json',
+		$id: '/schemas/ReadEntitiesParams.json',
 		type: 'object',
 		properties: {
 			space_id: {type: 'number'},
@@ -43,10 +43,10 @@ export const ReadEntities: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/ReadEntitiesResponse.json',
+		$id: '/schemas/ReadEntitiesResponse.json',
 		type: 'object',
 		properties: {
-			entities: {type: 'array', items: {$ref: 'Entity.json', tsType: 'Entity'}},
+			entities: {type: 'array', items: {$ref: '/schemas/Entity.json', tsType: 'Entity'}},
 		},
 		required: ['entities'],
 		additionalProperties: false,
@@ -67,11 +67,11 @@ export const QueryEntities: ClientEventInfo = {
 	name: 'QueryEntities',
 	// TODO this is saying "use `ReadEntities`'s params but for this event"
 	// but it's verbose and awkward. If the pattern should stay, we could write a helper like:
-	// `renameSchema(ReadEntities.params, 'https://felt.social/vocab/QueryEntitiesResponse.json')`
+	// `renameSchema(ReadEntities.params, '/schemas/QueryEntitiesResponse.json')`
 	// but that only handles extending the $id, which may not be the common case.
 	params: {
 		...ReadEntities.params,
-		$id: 'https://felt.social/vocab/QueryEntitiesResponse.json',
+		$id: '/schemas/QueryEntitiesResponse.json',
 	},
 	// TODO Can/should this compose the `ReadEntities` event info?
 	// Could make the `response` available.

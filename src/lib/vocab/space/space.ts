@@ -10,7 +10,7 @@ export interface Space {
 	community_id: number;
 }
 export const SpaceSchema = {
-	$id: 'https://felt.social/vocab/Space.json',
+	$id: '/schemas/Space.json',
 	type: 'object',
 	properties: {
 		space_id: {type: 'number'},
