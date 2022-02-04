@@ -18,7 +18,6 @@ const opts: Partial<JsonSchemaToTypeScriptOptions> = {
 		resolve: {
 			http: false, // disable web resolution
 			file: {
-				canRead: true,
 				read: (file) => {
 					const schema = schemas.find((s) => s.$id === file.url);
 					if (!schema)
