@@ -4,14 +4,13 @@ import {toRootPath} from '@feltcoop/gro/dist/paths.js';
 import {eventInfos} from '$lib/app/events';
 import {
 	jsonSchemaToTypescript,
-	toTypeName,
 	type JsonSchemaToTypeScriptOptions,
 } from '$lib/util/jsonSchemaToTypescript';
 import {schemas} from '$lib/app/schemas';
 
-const toParamsName = (name: string): string => toTypeName(name + 'Params');
-const toResponseName = (name: string): string => toTypeName(name + 'Response');
-const toResponseResultName = (name: string): string => toTypeName(name + 'ResponseResult');
+const toParamsName = (name: string): string => name + 'Params';
+const toResponseName = (name: string): string => name + 'Response';
+const toResponseResultName = (name: string): string => name + 'ResponseResult';
 
 const opts: Partial<JsonSchemaToTypeScriptOptions> = {
 	$refOptions: {
