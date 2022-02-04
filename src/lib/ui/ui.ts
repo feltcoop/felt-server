@@ -292,19 +292,19 @@ export const toUi = (
 			if (browser) console.log('[ui.setSession]', $session);
 			account.set($session.guest ? null : $session.account);
 
-			const $$personas = $session.guest ? [] : toInitialPersonas($session);
-			const $personas = $$personas.map((p) => writable(p));
+			const $personasArray = $session.guest ? [] : toInitialPersonas($session);
+			const $personas = $personasArray.map((p) => writable(p));
 			personaById.clear();
-			$personas.forEach((p, i) => personaById.set($$personas[i].persona_id, p));
+			$personas.forEach((p, i) => personaById.set($personasArray[i].persona_id, p));
 			personas.set($personas);
 
 			const $sessionPersonas = $session.guest ? [] : $session.personas;
 			sessionPersonas.set($sessionPersonas.map((p) => personaById.get(p.persona_id)!));
 
-			const $$communities = $session.guest ? [] : $session.communities;
-			const $communities = $$communities.map((p) => writable(p));
+			const $communitiesArray = $session.guest ? [] : $session.communities;
+			const $communities = $communitiesArray.map((p) => writable(p));
 			communityById.clear();
-			$communities.forEach((c, i) => communityById.set($$communities[i].community_id, c));
+			$communities.forEach((c, i) => communityById.set($communitiesArray[i].community_id, c));
 			communities.set($communities);
 
 			spaces.set($session.guest ? [] : $session.spaces.map((s) => writable(s)));
