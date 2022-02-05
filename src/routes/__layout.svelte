@@ -132,7 +132,7 @@
 		} // else already selected
 
 		// TODO speed this up with a map of communityByName
-		const communityStore = $communities.find((c) => get(c).name === params.community);
+		const communityStore = $communities.value.find((c) => get(c).name === params.community);
 		if (!communityStore) return; // occurs when a session routes to a community they can't access
 		const community = get(communityStore);
 		const {community_id} = community;
