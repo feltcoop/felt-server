@@ -21,7 +21,7 @@ const log = new Logger([blue('[ApiServer]')]);
 export interface ApiServerRequest extends PolkaRequest, CookieSessionRequest {
 	account_id?: number;
 }
-export interface HttpMiddleware extends PolkaMiddleware<ApiServerRequest> {}
+export interface HttpMiddleware extends PolkaMiddleware<ApiServerRequest> {} // eslint-disable-line @typescript-eslint/no-empty-interface
 
 export interface Options {
 	server: HttpServer | HttpsServer;

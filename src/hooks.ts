@@ -8,7 +8,7 @@ import {db} from '$lib/db/db';
 
 export const getSession: GetSession<CookieSessionRequest, ClientSession> = async (req) => {
 	console.log('[hooks] getSession');
-	cookieSessionMiddleware(req, {}, noop);
+	cookieSessionMiddleware(req as any, {} as any, noop); // eslint-disable-line @typescript-eslint/no-floating-promises
 	const request: CookieSessionRequest = req as any;
 	const account_id = request.session?.account_id;
 	if (account_id !== undefined) {
@@ -16,11 +16,9 @@ export const getSession: GetSession<CookieSessionRequest, ClientSession> = async
 		const result = await db.repos.session.loadClientSession(account_id);
 		if (result.ok) {
 			return result.value;
-		} else {
-			request.session = null!;
-			return {guest: true};
 		}
-	} else {
+		request.session = null!;
 		return {guest: true};
 	}
+	return {guest: true};
 };

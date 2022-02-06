@@ -9,9 +9,6 @@ import {noop} from '@feltcoop/felt/util/function.js';
 import type {CookieSessionIncomingMessage} from '$lib/session/cookieSession';
 import {cookieSessionMiddleware} from '$lib/session/cookieSession';
 
-// Similar but not identical to `ApiServerRequest`.
-export interface WebsocketServerRequest extends CookieSessionIncomingMessage {}
-
 type WebsocketServerEmitter = StrictEventEmitter<EventEmitter, WebsocketServerEvents>;
 interface WebsocketServerEvents {
 	message: (socket: WebSocket, message: Data, account_id: number) => void;
@@ -33,11 +30,11 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 
 	async init(): Promise<void> {
 		const {wss} = this;
-		wss.on('connection', (socket, req: WebsocketServerRequest) => {
+		wss.on('connection', (socket, req: CookieSessionIncomingMessage) => {
 			console.log('[wss] connection req.url', req.url, wss.clients.size);
 			console.log('[wss] connection req.headers', req.headers);
 
-			cookieSessionMiddleware(req, {}, noop);
+			cookieSessionMiddleware(req as any, {} as any, noop); // eslint-disable-line @typescript-eslint/no-floating-promises
 			const account_id = req.session?.account_id;
 			if (account_id == null) {
 				console.log('[wss] request to open connection was unauthenticated');
@@ -47,7 +44,7 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 			}
 
 			socket.on('message', async (data, isBinary) => {
-				const message = isBinary ? data : data.toString();
+				const message = isBinary ? data : data.toString(); // eslint-disable-line @typescript-eslint/no-base-to-string
 				this.emit('message', socket, message, account_id);
 			});
 			socket.on('open', () => {
