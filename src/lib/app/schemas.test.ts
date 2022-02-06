@@ -3,7 +3,6 @@ import * as assert from 'uvu/assert';
 import type {SchemaObject} from 'ajv';
 
 import {schemas} from '$lib/app/schemas';
-import {ID_VOCAB_PREFIX} from '$lib/vocab/util';
 
 const printSchema = (schema: SchemaObject) => ('$id' in schema ? schema.$id : 'AnonymousSchema');
 
@@ -14,7 +13,7 @@ for (const schema of schemas) {
 	test__schemas('validate entity schema: ' + printSchema(schema), async () => {
 		assert.ok(typeof schema !== 'boolean'); // compared to using `t.type`, this makes TypeScript understand
 		assert.ok(schema.$id);
-		assert.ok(schema.$id.startsWith(ID_VOCAB_PREFIX));
+		assert.ok(schema.$id.startsWith('/schemas/'));
 	});
 }
 

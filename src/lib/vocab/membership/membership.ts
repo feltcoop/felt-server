@@ -5,7 +5,7 @@ export interface Membership {
 	updated: Date | null;
 }
 export const MembershipSchema = {
-	$id: 'https://felt.social/vocab/Membership.json',
+	$id: '/schemas/Membership.json',
 	type: 'object',
 	properties: {
 		persona_id: {type: 'number'},

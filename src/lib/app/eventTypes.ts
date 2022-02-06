@@ -15,8 +15,8 @@ import type {ViewData} from '$lib/vocab/view/view';
 import type {DispatchContext} from '$lib/app/dispatch';
 
 export interface EventParamsByName {
-	LogIn: LogInParams;
-	LogOut: LogOutParams;
+	LoginAccount: LoginAccountParams;
+	LogoutAccount: LogoutAccountParams;
 	CreateCommunity: CreateCommunityParams;
 	ReadCommunity: ReadCommunityParams;
 	ReadCommunities: ReadCommunitiesParams;
@@ -43,8 +43,8 @@ export interface EventParamsByName {
 	ViewSpace: ViewSpaceParams;
 }
 export interface EventResponseByName {
-	LogIn: LogInResponse;
-	LogOut: LogOutResponse;
+	LoginAccount: LoginAccountResponse;
+	LogoutAccount: LogoutAccountResponse;
 	CreateCommunity: CreateCommunityResponse;
 	ReadCommunity: ReadCommunityResponse;
 	ReadCommunities: ReadCommunitiesResponse;
@@ -61,18 +61,18 @@ export interface EventResponseByName {
 	Ping: PingResponse;
 }
 
-export interface LogInParams {
-	accountName: string;
+export interface LoginAccountParams {
+	username: string;
 	password: string;
 }
-export type LogInResponse = null;
-export type LogInResponseResult = ApiResult<LogInResponse>;
-
-export type LogOutParams = void;
-export interface LogOutResponse {
-	message: string;
+export interface LoginAccountResponse {
+	session: ClientAccountSession;
 }
-export type LogOutResponseResult = ApiResult<LogOutResponse>;
+export type LoginAccountResponseResult = ApiResult<LoginAccountResponse>;
+
+export type LogoutAccountParams = void;
+export type LogoutAccountResponse = null;
+export type LogoutAccountResponseResult = ApiResult<LogoutAccountResponse>;
 
 export interface CreateCommunityParams {
 	name: string;
@@ -201,12 +201,12 @@ export type ToggleSecondaryNavParams = void;
 
 export type SetMobileParams = boolean;
 
-export interface OpenDialogParams {
+export type OpenDialogParams = {
 	Component: typeof SvelteComponent;
 	props?: {
 		[k: string]: unknown;
 	};
-}
+};
 
 export type CloseDialogParams = void;
 
@@ -229,8 +229,8 @@ export interface ViewSpaceParams {
 }
 
 export interface Dispatch {
-	(eventName: 'LogIn', params: LogInParams): Promise<ApiResult<{session: ClientAccountSession}>>;
-	(eventName: 'LogOut', params: LogOutParams): Promise<LogOutResponseResult>;
+	(eventName: 'LoginAccount', params: LoginAccountParams): Promise<LoginAccountResponseResult>;
+	(eventName: 'LogoutAccount', params: LogoutAccountParams): Promise<LogoutAccountResponseResult>;
 	(
 		eventName: 'CreateCommunity',
 		params: CreateCommunityParams,
@@ -273,12 +273,12 @@ export interface Dispatch {
 }
 
 export interface UiHandlers {
-	LogIn: (
-		ctx: DispatchContext<LogInParams, LogInResponseResult>,
-	) => Promise<ApiResult<{session: ClientAccountSession}>>;
-	LogOut: (
-		ctx: DispatchContext<LogOutParams, LogOutResponseResult>,
-	) => Promise<LogOutResponseResult>;
+	LoginAccount: (
+		ctx: DispatchContext<LoginAccountParams, LoginAccountResponseResult>,
+	) => Promise<LoginAccountResponseResult>;
+	LogoutAccount: (
+		ctx: DispatchContext<LogoutAccountParams, LogoutAccountResponseResult>,
+	) => Promise<LogoutAccountResponseResult>;
 	CreateCommunity: (
 		ctx: DispatchContext<CreateCommunityParams, CreateCommunityResponseResult>,
 	) => Promise<CreateCommunityResponseResult>;

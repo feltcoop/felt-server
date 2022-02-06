@@ -10,7 +10,7 @@
 
 	const {
 		dispatch,
-		ui: {contextmenu, spaceIdByCommunitySelection, findSpaceById, sessionPersonaIndices},
+		ui: {contextmenu, spaceIdSelectionByCommunityId, spaceById, sessionPersonaIndices},
 	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
@@ -20,9 +20,8 @@
 	export let community: Readable<Community>;
 	export let selected: boolean = false;
 
-	$: communitySelectionSpaceId = $spaceIdByCommunitySelection[$community.community_id];
-	$: communitySelectionSpace =
-		communitySelectionSpaceId === null ? null : findSpaceById(communitySelectionSpaceId);
+	$: spaceIdSelection = $spaceIdSelectionByCommunityId[$community.community_id];
+	$: selectedSpace = spaceIdSelection === null ? null : $spaceById.get(spaceIdSelection)!;
 
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
 
@@ -32,7 +31,7 @@
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
 <a
 	class="community"
-	href={toSpaceUrl(personaIndex, $community, communitySelectionSpace && $communitySelectionSpace)}
+	href={toSpaceUrl(personaIndex, $community, selectedSpace && $selectedSpace)}
 	class:selected
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {$community.settings.hue}"

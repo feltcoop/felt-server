@@ -4,7 +4,7 @@ export const CreatePersona: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'CreatePersona',
 	params: {
-		$id: 'https://felt.social/vocab/CreatePersonaParams.json',
+		$id: '/schemas/CreatePersonaParams.json',
 		type: 'object',
 		properties: {
 			name: {type: 'string'},
@@ -13,12 +13,12 @@ export const CreatePersona: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/CreatePersonaResponse.json',
+		$id: '/schemas/CreatePersonaResponse.json',
 		type: 'object',
 		properties: {
-			persona: {$ref: 'Persona.json', tsType: 'Persona'},
-			community: {$ref: 'Community.json', tsType: 'Community'},
-			spaces: {type: 'array', items: {$ref: 'Space.json', tsType: 'Space'}},
+			persona: {$ref: '/schemas/Persona.json', tsType: 'Persona'},
+			community: {$ref: '/schemas/Community.json', tsType: 'Community'},
+			spaces: {type: 'array', items: {$ref: '/schemas/Space.json', tsType: 'Space'}},
 		},
 		required: ['persona', 'community', 'spaces'],
 		additionalProperties: false,

@@ -10,6 +10,7 @@
 	import {browser} from '$app/env';
 	import type {Readable} from 'svelte/store';
 	import {get} from 'svelte/store';
+	import Dialogs from '@feltcoop/felt/ui/dialog/Dialogs.svelte';
 
 	import {setSocket, toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
@@ -22,14 +23,13 @@
 	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import {WEBSOCKET_URL} from '$lib/config';
 	import {toWebsocketApiClient} from '$lib/ui/WebsocketApiClient';
-	// import {toHttpApiClient} from '$lib/ui/HttpApiClient';
+	import {toHttpApiClient} from '$lib/ui/HttpApiClient';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
-	import {findService} from '$lib/ui/services';
+	import {findHttpService, findWebsocketService} from '$lib/ui/services';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {goto} from '$app/navigation';
 	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
-	import Dialogs from '$lib/ui/dialog/Dialogs.svelte';
 	import {components} from '$lib/app/components';
 	import AppContextmenu from '$lib/app/contextmenu/AppContextmenu.svelte';
 	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
@@ -51,7 +51,7 @@
 	const socket = setSocket(
 		toSocketStore(
 			(message) =>
-				apiClient.handle(message.data, (broadcastMessage) => {
+				websocketClient.handle(message.data, (broadcastMessage) => {
 					// TODO this is a hack to handle arbitrary messages from the server
 					// outside of the normal JSON RPC calls -- we'll want to rethink this
 					// so it's more structured and type safe
@@ -69,10 +69,11 @@
 	);
 	const ui = setUi(toUi(session, initialMobileValue, components));
 
-	const apiClient = toWebsocketApiClient(findService, socket.send); // TODO expose on `app`?
-	// alternative http client:
-	// const apiClient = toHttpApiClient(findService);
-	const dispatch = toDispatch(ui, apiClient);
+	const websocketClient = toWebsocketApiClient(findWebsocketService, socket.send); // TODO expose on `app`?
+	const httpClient = toHttpApiClient(findHttpService);
+	const dispatch = toDispatch(ui, (e) =>
+		websocketClient.find(e) ? websocketClient : httpClient.find(e) ? httpClient : null,
+	);
 	const app = setApp({ui, dispatch, devmode, socket});
 	if (browser) {
 		(window as any).app = app;
@@ -91,12 +92,10 @@
 		personaIndexSelection,
 		communityIdSelection,
 		spacesByCommunityId,
-		spaceIdByCommunitySelection,
+		spaceIdSelectionByCommunityId,
 		personaSelection,
-		setSession,
 	} = ui;
 
-	$: setSession($session);
 	$: guest = $session.guest;
 	$: onboarding = !guest && !$sessionPersonas.length;
 
@@ -146,7 +145,7 @@
 			const space = $spacesByCommunityId.get(community_id)!.find((s) => get(s).url === spaceUrl);
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = get(space);
-			if (space_id !== $spaceIdByCommunitySelection[community_id]) {
+			if (space_id !== $spaceIdSelectionByCommunityId[community_id]) {
 				dispatch('SelectSpace', {community_id, space_id});
 			}
 		} else {
@@ -190,7 +189,7 @@
 	{/if}
 	<main>
 		{#if guest}
-			<div class="column markup">
+			<div class="account column markup">
 				<AccountForm {guest} />
 			</div>
 		{:else if onboarding}
@@ -222,5 +221,8 @@
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
+	}
+	.account {
+		align-items: center;
 	}
 </style>

@@ -3,10 +3,8 @@ import {noop} from '@feltcoop/felt/util/function.js';
 
 import type {ClientSession} from '$lib/session/clientSession.js';
 import type {CookieSessionRequest} from '$lib/session/cookieSession.js';
-import {toCookieSessionMiddleware} from '$lib/session/cookieSession';
+import {cookieSessionMiddleware} from '$lib/session/cookieSession';
 import {db} from '$lib/db/db';
-
-const cookieSessionMiddleware = toCookieSessionMiddleware();
 
 export const getSession: GetSession<CookieSessionRequest, ClientSession> = async (req) => {
 	console.log('[hooks] getSession');

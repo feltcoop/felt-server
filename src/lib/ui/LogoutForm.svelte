@@ -16,11 +16,11 @@
 
 	$: disabled = !account;
 
-	const doLogOut = async () => {
+	const logout = async () => {
 		submitting = true;
 		errorMessage = '';
-		const result = await dispatch('LogOut');
-		console.log('<LogoutForm> LogOut result', result);
+		const result = await dispatch('LogoutAccount');
+		console.log('<LogoutForm> LogoutAccount result', result);
 		if (!result.ok) {
 			errorMessage = result.message;
 		}
@@ -29,7 +29,7 @@
 </script>
 
 <form>
-	<PendingButton pending={!!submitting} type="button" on:click={doLogOut} {disabled}>
+	<PendingButton pending={!!submitting} type="button" on:click={logout} {disabled}>
 		log out
 	</PendingButton>
 	{#if errorMessage}

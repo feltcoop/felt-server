@@ -5,7 +5,7 @@ export const CreateCommunity: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'CreateCommunity',
 	params: {
-		$id: 'https://felt.social/vocab/CreateCommunityParams.json',
+		$id: '/schemas/CreateCommunityParams.json',
 		type: 'object',
 		properties: {
 			name: {type: 'string'},
@@ -16,11 +16,11 @@ export const CreateCommunity: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/CreateCommunityResponse.json',
+		$id: '/schemas/CreateCommunityResponse.json',
 		type: 'object',
 		properties: {
-			community: {$ref: 'Community.json', tsType: 'Community'},
-			spaces: {type: 'array', items: {$ref: 'Space.json', tsType: 'Space'}},
+			community: {$ref: '/schemas/Community.json', tsType: 'Community'},
+			spaces: {type: 'array', items: {$ref: '/schemas/Space.json', tsType: 'Space'}},
 		},
 		required: ['community', 'spaces'],
 		additionalProperties: false,
@@ -36,7 +36,7 @@ export const ReadCommunity: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'ReadCommunity',
 	params: {
-		$id: 'https://felt.social/vocab/ReadCommunityParams.json',
+		$id: '/schemas/ReadCommunityParams.json',
 		type: 'object',
 		properties: {
 			community_id: {type: 'number'},
@@ -45,10 +45,10 @@ export const ReadCommunity: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/ReadCommunityResponse.json',
+		$id: '/schemas/ReadCommunityResponse.json',
 		type: 'object',
 		properties: {
-			community: {$ref: 'Community.json', tsType: 'Community'},
+			community: {$ref: '/schemas/Community.json', tsType: 'Community'},
 		},
 		required: ['community'],
 		additionalProperties: false,
@@ -64,17 +64,17 @@ export const ReadCommunities: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'ReadCommunities',
 	params: {
-		$id: 'https://felt.social/vocab/ReadCommunitiesParams.json',
+		$id: '/schemas/ReadCommunitiesParams.json',
 		type: 'object',
 		properties: {},
 		required: [],
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/ReadCommunitiesResponse.json',
+		$id: '/schemas/ReadCommunitiesResponse.json',
 		type: 'object',
 		properties: {
-			communities: {type: 'array', items: {$ref: 'Community.json', tsType: 'Community'}},
+			communities: {type: 'array', items: {$ref: '/schemas/Community.json', tsType: 'Community'}},
 		},
 		required: ['communities'],
 		additionalProperties: false,
@@ -90,7 +90,7 @@ export const UpdateCommunitySettings: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'UpdateCommunitySettings',
 	params: {
-		$id: 'https://felt.social/vocab/UpdateCommunitySettingsParams.json',
+		$id: '/schemas/UpdateCommunitySettingsParams.json',
 		type: 'object',
 		properties: {
 			community_id: {type: 'number'},
@@ -100,7 +100,7 @@ export const UpdateCommunitySettings: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: 'https://felt.social/vocab/UpdateCommunitySettingsResponse.json',
+		$id: '/schemas/UpdateCommunitySettingsResponse.json',
 		type: 'null',
 	},
 	returns: 'Promise<UpdateCommunitySettingsResponseResult>',
