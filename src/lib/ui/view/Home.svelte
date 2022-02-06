@@ -15,9 +15,7 @@
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
-	export let space: Readable<Space>;
-
-	space; // TODO we're ignoring the space, but should probably mount its `content` as markup
+	export const space: Readable<Space> = undefined as any;
 
 	$: communitySpaces = $spacesByCommunityId.get($community.community_id)!;
 

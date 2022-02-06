@@ -11,12 +11,9 @@
 
 	const {dispatch, socket} = getApp();
 
-	export let persona: Readable<Persona>;
-	export let community: Readable<Community>;
+	export const persona: Readable<Persona> = undefined as any;
+	export const community: Readable<Community> = undefined as any;
 	export let space: Readable<Space>;
-
-	persona; // silence unused prop warning
-	community; // silence unused prop warning
 
 	$: shouldLoadEntities = browser && $socket.open;
 	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;

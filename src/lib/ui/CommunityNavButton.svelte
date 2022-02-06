@@ -18,7 +18,7 @@
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
-	export let selected: boolean = false;
+	export let selected = false;
 
 	$: spaceIdSelection = $spaceIdSelectionByCommunityId[$community.community_id];
 	$: selectedSpace = spaceIdSelection === null ? null : $spaceById.get(spaceIdSelection)!;

@@ -26,7 +26,7 @@
 	const toPersonaCommunity = (persona: Readable<Persona>): Readable<Community> =>
 		$communitiesBySessionPersona.get(persona)!.find((c) => get(c).type === 'personal')!;
 
-	const toStandardCommunities = (persona: Readable<Persona>): Readable<Community>[] =>
+	const toStandardCommunities = (persona: Readable<Persona>): Array<Readable<Community>> =>
 		$communitiesBySessionPersona.get(persona)!.filter((c) => get(c).type !== 'personal')!;
 </script>
 

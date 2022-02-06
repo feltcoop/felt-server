@@ -13,7 +13,7 @@
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
-	export let spaces: Readable<Space>[];
+	export let spaces: Array<Readable<Space>>;
 	export let selectedSpace: Readable<Space>;
 </script>
 

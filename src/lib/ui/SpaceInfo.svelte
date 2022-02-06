@@ -16,7 +16,7 @@
 	export let persona: Readable<Persona>;
 	export let space: Readable<Space>;
 	export let community: Readable<Community>;
-	export let selected: boolean = false;
+	export let selected = false;
 
 	$: hue = randomHue($space.name); // TODO add custom setting on spaces
 

@@ -2,8 +2,8 @@
 	import {createEventDispatcher} from 'svelte';
 
 	// TODO upstream this component to Felt
-	export let hue: number = 180;
-	export let title: string = 'hue';
+	export let hue = 180;
+	export let title = 'hue';
 
 	let draggingMinimap = false;
 

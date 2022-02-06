@@ -3,7 +3,7 @@
 
 	export let schema: SchemaObject;
 
-	let properties: undefined | [string, SchemaObject][];
+	let properties: undefined | Array<[string, SchemaObject]>;
 	$: properties =
 		typeof schema !== 'boolean' &&
 		schema.properties &&
@@ -28,7 +28,7 @@
 					<span class="name">{propertyName}</span>
 					<small class="required">
 						<!-- TODO cache this on a viewmodel? -->
-						{#if schema.required && schema.required.includes(propertyName)}
+						{#if schema.required?.includes(propertyName)}
 							<!-- leave blank? -->
 						{:else}
 							<span title="{propertyName} is optional">?</span>

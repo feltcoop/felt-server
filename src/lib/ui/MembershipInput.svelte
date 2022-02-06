@@ -17,7 +17,7 @@
 	// TODO speed this up with a better cached data structures; the use of `get` is particularly bad
 	$: invitableMembers = $community
 		? $personas.filter(
-				(x) => !communityPersonas.some((y) => get(x).persona_id == get(y).persona_id),
+				(x) => !communityPersonas.some((y) => get(x).persona_id === get(y).persona_id),
 		  )
 		: [];
 </script>

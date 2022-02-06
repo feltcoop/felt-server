@@ -5,8 +5,7 @@
 	import DevmodeControls from '@feltcoop/felt/ui/DevmodeControls.svelte';
 	import FeltWindowHost from '@feltcoop/felt/ui/FeltWindowHost.svelte';
 	import {onMount} from 'svelte';
-	import {session} from '$app/stores';
-	import {page} from '$app/stores';
+	import {session, page} from '$app/stores';
 	import {browser} from '$app/env';
 	import type {Readable} from 'svelte/store';
 	import {get} from 'svelte/store';
@@ -119,6 +118,7 @@
 				console.warn(
 					`unable to find persona at index ${personaIndex}; falling back to index ${fallbackPersonaIndex}`,
 				);
+				// eslint-disable-next-line @typescript-eslint/no-floating-promises
 				goto(
 					location.pathname +
 						'?' +

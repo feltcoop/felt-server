@@ -43,9 +43,9 @@
 		}
 	};
 
-	const onKeypress = (e: KeyboardEvent) => {
+	const onKeypress = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			login();
+			await login();
 		}
 	};
 </script>

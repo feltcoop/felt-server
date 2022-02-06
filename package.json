@@ -70,6 +70,9 @@
     "parserOptions": {
       "project": [
         "./tsconfig.json"
+      ],
+      "extraFileExtensions": [
+        ".svelte"
       ]
     }
   },

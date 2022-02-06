@@ -12,11 +12,8 @@
 	const {dispatch, socket} = getApp();
 
 	export let persona: Readable<Persona>;
-	export let community: Readable<Community>;
+	export const community: Readable<Community> = undefined as any;
 	export let space: Readable<Space>;
-
-	persona; // silence unused prop warning
-	community; // silence unused prop warning
 
 	let text = '';
 
@@ -29,7 +26,7 @@
 		if (!content) return;
 		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
-			data: {type: 'Note', content: content},
+			data: {type: 'Note', content},
 			actor_id: $persona.persona_id,
 		});
 		text = '';

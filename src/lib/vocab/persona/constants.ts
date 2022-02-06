@@ -6,4 +6,5 @@
 export const GUEST_PERSONA_NAME = 'guest';
 
 // TODO is this any url?
-export const toUrl = (url: string | null): string => (url === null || url === '/' ? '' : url);
+export const toUrl = (url: string | null | undefined): string =>
+	url == null || url === '/' ? '' : url;

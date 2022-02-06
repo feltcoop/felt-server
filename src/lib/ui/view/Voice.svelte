@@ -5,9 +5,7 @@
 	import type {Community} from '$lib/vocab/community/community';
 
 	export let space: Readable<Space>;
-	export let community: Readable<Community>;
-
-	community;
+	export const community: Readable<Community> = undefined as any;
 </script>
 
 TODO voice -- {$space.name}

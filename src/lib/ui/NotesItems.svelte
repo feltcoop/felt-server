@@ -6,7 +6,7 @@
 
 	// TODO this should possibly be a generic component instead of this named one
 
-	export let entities: Readable<Readable<Entity>[]>;
+	export let entities: Readable<Array<Readable<Entity>>>;
 
 	$: notes = $entities.slice().reverse(); // TODO definitely not this
 </script>

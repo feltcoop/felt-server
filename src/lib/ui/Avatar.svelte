@@ -6,8 +6,8 @@
 
 	export let name: string = GUEST_PERSONA_NAME; // TODO should this handle "default" or "empty" or "blank" avatars?
 	export let icon: string | null = null;
-	export let showName: boolean = true;
-	export let showIcon: boolean = true;
+	export let showName = true;
+	export let showIcon = true;
 	export let type: EntityType = 'Persona';
 </script>
 

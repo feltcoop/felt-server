@@ -7,11 +7,8 @@
 	// TODO refactor this after upgrading SvelteKit to where `$page` has `url`
 	// TODO move or upstream? rename? `printUrl`
 	const formatUrl = (url: string): string => {
-		url = stripStart(stripStart(url, 'https://'), 'http://'); // TODO probably leave http but not locally
-		if (url.startsWith($page.host + '/')) {
-			url = stripStart(url, $page.host);
-		}
-		return url;
+		const formatted = stripStart(stripStart(url, 'https://'), 'http://'); // TODO probably leave http but not locally
+		return formatted.startsWith($page.host + '/') ? stripStart(formatted, $page.host) : formatted;
 	};
 </script>
 

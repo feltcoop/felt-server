@@ -23,7 +23,7 @@
 	<!-- TODO url extract helper -->
 	<a
 		class="avatars"
-		href="/{$community.name}{toUrl($space && $space.url)}"
+		href="/{$community.name}{toUrl($space?.url)}"
 		style="--hue: {randomHue($community.name)}"
 	>
 		<Avatar name={$community.name} showName={false} type="Community" />

@@ -21,7 +21,7 @@
 	let errorMessage: string | null = null;
 
 	// TODO formalize this (probably through the schema)
-	$: name = name.replace(/[^a-zA-Z0-9-]+/g, '');
+	$: name = name.replace(/[^a-zA-Z0-9-]+/gu, '');
 
 	const create = async (): Promise<void> => {
 		if (!name) {

@@ -2,8 +2,11 @@
 	import {isEditable} from '@feltcoop/felt/util/dom.js';
 	import {type SvelteComponent} from 'svelte';
 
-	import {setContextmenu, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
+	import {
+		setContextmenu,
+		onContextmenu,
+		type ContextmenuStore,
+	} from '$lib/ui/contextmenu/contextmenu';
 
 	// TODO upstream to Felt
 

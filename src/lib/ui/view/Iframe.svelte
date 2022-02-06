@@ -6,13 +6,10 @@
 	import type {Space} from '$lib/vocab/space/space.js';
 	import PendingAnimationOverlay from '$lib/ui/PendingAnimationOverlay.svelte';
 
-	export let persona: Readable<Persona>;
-	export let community: Readable<Community>;
+	export const persona: Readable<Persona> = undefined as any;
+	export const community: Readable<Community> = undefined as any;
 	export let space: Readable<Space>;
 	export let url: string; // TODO type
-
-	persona; // silence unused prop warning
-	community; // silence unused prop warning
 
 	let loaded = false;
 </script>
