@@ -14,7 +14,7 @@ import {
 } from '$lib/vocab/random';
 import {randomHue} from '$lib/ui/color';
 
-/* eslint-disable require-atomic-updates, no-param-reassign */
+/* eslint-disable no-param-reassign */
 
 // TODO consider the pattern below where every `create` event creates all dependencies from scratch.
 // We may want to instead test things for both new and existing objects.
