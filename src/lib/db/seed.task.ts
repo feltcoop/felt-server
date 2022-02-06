@@ -8,6 +8,6 @@ export const task: Task = {
 	run: async () => {
 		const [db, unobtainDb] = obtainDb();
 		await seed(db);
-		unobtainDb();
+		unobtainDb(); // eslint-disable-line @typescript-eslint/no-floating-promises
 	},
 };

@@ -98,9 +98,8 @@ export const toSocketStore = (
 		if (get(store).ws) {
 			store.disconnect();
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	};
 
 	const store: SocketStore = {

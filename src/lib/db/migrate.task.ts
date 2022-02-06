@@ -21,7 +21,7 @@ export const task: Task = {
 			config: defaultPostgresOptions as any,
 		});
 		log.info('the following migrations were successful:', successes);
-		if (successes.length != status.length) {
+		if (successes.length !== status.length) {
 			throw Error('not all pending migrations were applied, please double check');
 		}
 	},

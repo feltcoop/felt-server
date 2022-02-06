@@ -20,14 +20,13 @@ export const readSpaceService: Service<ReadSpaceParams, ReadSpaceResponseResult>
 		const findSpaceResult = await repos.space.findById(params.space_id);
 		if (findSpaceResult.ok) {
 			return {ok: true, status: 200, value: {space: findSpaceResult.value}};
-		} else {
-			console.log('[ReadSpace] no space found');
-			return {
-				ok: false,
-				status: findSpaceResult.type === 'no_space_found' ? 404 : 500,
-				message: findSpaceResult.message,
-			};
 		}
+		console.log('[ReadSpace] no space found');
+		return {
+			ok: false,
+			status: findSpaceResult.type === 'no_space_found' ? 404 : 500,
+			message: findSpaceResult.message,
+		};
 	},
 };
 
@@ -40,10 +39,9 @@ export const readSpacesService: Service<ReadSpacesParams, ReadSpacesResponseResu
 		const findSpacesResult = await repos.space.filterByCommunity(params.community_id);
 		if (findSpacesResult.ok) {
 			return {ok: true, status: 200, value: {spaces: findSpacesResult.value}};
-		} else {
-			console.log('[ReadSpaces] error searching for community spaces');
-			return {ok: false, status: 500, message: 'error searching for community spaces'};
 		}
+		console.log('[ReadSpaces] error searching for community spaces');
+		return {ok: false, status: 500, message: 'error searching for community spaces'};
 	},
 };
 
@@ -78,10 +76,9 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 		);
 		if (createSpaceResult.ok) {
 			return {ok: true, status: 200, value: {space: createSpaceResult.value}};
-		} else {
-			console.log('[CreateSpace] error searching for community spaces');
-			return {ok: false, status: 500, message: 'error searching for community spaces'};
 		}
+		console.log('[CreateSpace] error searching for community spaces');
+		return {ok: false, status: 500, message: 'error searching for community spaces'};
 	},
 };
 

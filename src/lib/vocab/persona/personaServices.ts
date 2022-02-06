@@ -28,9 +28,8 @@ export const createPersonaService: Service<CreatePersonaParams, CreatePersonaRes
 		const createPersonaResult = await repos.persona.create('account', name, account_id, null);
 		if (createPersonaResult.ok) {
 			return {ok: true, status: 200, value: createPersonaResult.value};
-		} else {
-			console.log('[CreatePersona] error searching for community personas');
-			return {ok: false, status: 500, message: 'error searching for community personas'};
 		}
+		console.log('[CreatePersona] error searching for community personas');
+		return {ok: false, status: 500, message: 'error searching for community personas'};
 	},
 };

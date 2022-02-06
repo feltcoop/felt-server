@@ -21,8 +21,7 @@ export const toHttpApiClient = <
 ): ApiClient<TParamsMap, TResultMap> => {
 	const client: ApiClient<TParamsMap, TResultMap> = {
 		find: (name) => findService(name),
-		invoke: async (name, params) => {
-			params = params ?? null!;
+		invoke: async (name, params = null!) => {
 			console.log('[http] invoke', name, params);
 			const service = findService(name);
 			if (!service) {
@@ -59,13 +58,12 @@ export const toHttpApiClient = <
 			console.log('[http] result', res.ok, res.status, json);
 			if (res.ok) {
 				return {ok: true, status: res.status, value: json};
-			} else {
-				return {
-					ok: false,
-					status: res.status,
-					message: json.message || res.statusText || 'unknown error',
-				};
 			}
+			return {
+				ok: false,
+				status: res.status,
+				message: json.message || res.statusText || 'unknown error',
+			};
 		},
 		close: () => {
 			// TODO ?

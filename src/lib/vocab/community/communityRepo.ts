@@ -89,7 +89,7 @@ export const communityRepo = (db: Database) =>
 		updateSettings: async (
 			community_id: number,
 			settings: Community['settings'],
-		): Promise<Result<{}, ErrorResponse>> => {
+		): Promise<Result<object, ErrorResponse>> => {
 			const data = await db.sql<any[]>`
 			UPDATE communities SET settings=${db.sql.json(settings)} WHERE community_id=${community_id}
 		`;

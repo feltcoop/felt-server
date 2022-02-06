@@ -1,5 +1,7 @@
 import '@sveltejs/kit';
 
+/* eslint-disable @typescript-eslint/ban-types */
+
 // TODO delete this when uvu has its next release
 declare module 'uvu/assert' {
 	type Types = 'string' | 'number' | 'boolean' | 'object' | 'undefined' | 'function';

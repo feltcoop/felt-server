@@ -8,7 +8,7 @@ import {type ErrorResponse} from '$lib/util/error';
 export const authorize = (
 	account_id: number | undefined,
 	service: Service<any, any>,
-): Result<{}, ErrorResponse> => {
+): Result<object, ErrorResponse> => {
 	// Authorize all services by default; each service can opt-out as needed.
 	const requiresAuthentication = service.event.authenticate ?? true;
 	if (!requiresAuthentication) {

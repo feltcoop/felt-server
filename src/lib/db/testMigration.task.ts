@@ -2,6 +2,8 @@ import type {Task} from '@feltcoop/gro';
 
 import {MIGRATIONS_DIR} from '$lib/db/migration';
 
+/* eslint-disable no-await-in-loop */
+
 interface Args {
 	checkpoint: boolean; // if `true`, does not run the `count` number of final migrations
 	count: number; // defaults to 1; number of migrations being tested; rarely might need more

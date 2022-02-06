@@ -58,13 +58,12 @@ export const loginAccountService: Service<LoginAccountParams, LoginAccountRespon
 				status: 200,
 				value: {session: clientSessionResult.value},
 			};
-		} else {
-			return {
-				ok: false,
-				status: 500,
-				message: 'failed to load client session',
-			};
 		}
+		return {
+			ok: false,
+			status: 500,
+			message: 'failed to load client session',
+		};
 	},
 };
 

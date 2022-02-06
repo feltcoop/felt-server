@@ -28,10 +28,9 @@ export const readCommunitiesService: Service<ReadCommunitiesParams, ReadCommunit
 			const findCommunitiesResult = await repos.community.filterByAccount(account_id);
 			if (findCommunitiesResult.ok) {
 				return {ok: true, status: 200, value: {communities: findCommunitiesResult.value}};
-			} else {
-				console.log('[ReadCommunities] error searching for communities');
-				return {ok: false, status: 500, message: 'error searching for communities'};
 			}
+			console.log('[ReadCommunities] error searching for communities');
+			return {ok: false, status: 500, message: 'error searching for communities'};
 		},
 	};
 
@@ -45,13 +44,12 @@ export const readCommunityService: Service<ReadCommunityParams, ReadCommunityRes
 		const findCommunityResult = await repos.community.findById(params.community_id);
 		if (findCommunityResult.ok) {
 			return {ok: true, status: 200, value: {community: findCommunityResult.value}};
-		} else {
-			return {
-				ok: false,
-				status: findCommunityResult.type === 'no_community_found' ? 404 : 500,
-				message: findCommunityResult.message,
-			};
 		}
+		return {
+			ok: false,
+			status: findCommunityResult.type === 'no_community_found' ? 404 : 500,
+			message: findCommunityResult.message,
+		};
 	},
 };
 
@@ -90,22 +88,20 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 							spaces,
 						},
 					}; // TODO API types
-				} else {
-					console.log('[CreateCommunity] error retrieving community data');
-					return {
-						ok: false,
-						status: 500,
-						message: 'error retrieving community data',
-					};
 				}
-			} else {
-				console.log('[CreateCommunity] error creating community');
+				console.log('[CreateCommunity] error retrieving community data');
 				return {
 					ok: false,
 					status: 500,
-					message: 'error creating community',
+					message: 'error retrieving community data',
 				};
 			}
+			console.log('[CreateCommunity] error creating community');
+			return {
+				ok: false,
+				status: 500,
+				message: 'error creating community',
+			};
 		},
 	};
 
@@ -118,9 +114,8 @@ export const updateCommunitySettingsService: Service<
 		const result = await repos.community.updateSettings(params.community_id, params.settings);
 		if (result.ok) {
 			return {ok: true, status: 200, value: null};
-		} else {
-			return {ok: false, status: 500, message: result.message || 'unknown error'};
 		}
+		return {ok: false, status: 500, message: result.message || 'unknown error'};
 	},
 };
 
@@ -140,9 +135,8 @@ export const createMembershipService: Service<
 		);
 		if (createMembershipResult.ok) {
 			return {ok: true, status: 200, value: {membership: createMembershipResult.value}};
-		} else {
-			console.log('[CreateMembership] error creating membership');
-			return {ok: false, status: 500, message: 'error creating membership'};
 		}
+		console.log('[CreateMembership] error creating membership');
+		return {ok: false, status: 500, message: 'error creating membership'};
 	},
 };

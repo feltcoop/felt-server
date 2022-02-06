@@ -82,6 +82,7 @@ export const spaceRepo = (db: Database) =>
 		): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 			const spaces: Space[] = [];
 			for (const params of toDefaultSpaces(community)) {
+				// eslint-disable-next-line no-await-in-loop
 				const result = await db.repos.space.create(
 					params.name,
 					params.view,

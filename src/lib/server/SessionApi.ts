@@ -1,8 +1,8 @@
 import type {ApiServerRequest} from '$lib/server/ApiServer';
 
 export interface ISessionApi {
-	login(account_id: number): void;
-	logout(): void;
+	login: (account_id: number) => void;
+	logout: () => void;
 }
 
 /**
@@ -14,7 +14,7 @@ export interface ISessionApi {
 export class SessionApi implements ISessionApi {
 	constructor(private readonly req: ApiServerRequest | null) {}
 
-	login(account_id: number) {
+	login(account_id: number): void {
 		if (!this.req) {
 			console.error('Expected "req". Was login called from a non-http service?');
 			return;
@@ -26,7 +26,7 @@ export class SessionApi implements ISessionApi {
 		this.req.session.account_id = account_id;
 	}
 
-	logout() {
+	logout(): void {
 		if (!this.req) {
 			console.error('Expected "req". Was logout called from a non-http service?');
 			return;

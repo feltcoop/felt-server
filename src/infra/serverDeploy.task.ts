@@ -18,9 +18,9 @@ export const task: Task = {
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
 		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
 
-		let timestamp = Date.now();
-		let artifactName = `felt_server_${timestamp}`;
-		let currentDeploy = `current_felt_server_deploy`;
+		const timestamp = Date.now();
+		const artifactName = `felt_server_${timestamp}`;
+		const currentDeploy = `current_felt_server_deploy`;
 		console.log(`Working with artifact: ${artifactName}`);
 		await spawn('tar', [
 			'-cvf',

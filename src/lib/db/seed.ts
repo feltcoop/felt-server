@@ -10,6 +10,8 @@ import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
 import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
 
+/* eslint-disable no-await-in-loop */
+
 // TODO extract seed helpers and db methods
 
 const log = new Logger([cyan('[seed]')]);

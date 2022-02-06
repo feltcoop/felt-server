@@ -14,10 +14,9 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 		const findEntitiesResult = await repos.entity.filterBySpace(params.space_id);
 		if (findEntitiesResult.ok) {
 			return {ok: true, status: 200, value: {entities: findEntitiesResult.value}}; // TODO API types
-		} else {
-			console.log('[ReadEntities] error searching for entities');
-			return {ok: false, status: 500, message: 'error searching for entities'};
 		}
+		console.log('[ReadEntities] error searching for entities');
+		return {ok: false, status: 500, message: 'error searching for entities'};
 	},
 };
 
@@ -33,9 +32,8 @@ export const createEntityService: Service<CreateEntityParams, CreateEntityRespon
 		);
 		if (insertEntitiesResult.ok) {
 			return {ok: true, status: 200, value: {entity: insertEntitiesResult.value}}; // TODO API types
-		} else {
-			console.log('[CreateEntity] error searching for entities');
-			return {ok: false, status: 500, message: 'failed to create entity'};
 		}
+		console.log('[CreateEntity] error searching for entities');
+		return {ok: false, status: 500, message: 'failed to create entity'};
 	},
 };

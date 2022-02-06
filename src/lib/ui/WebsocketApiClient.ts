@@ -48,8 +48,7 @@ export const toWebsocketApiClient = <
 
 	const client: WebsocketApiClient<TParamsMap, TResultMap> = {
 		find: (name) => findService(name),
-		invoke: async (name, params) => {
-			params = params ?? null!;
+		invoke: async (name, params = null!) => {
 			console.log('[ws] invoke', name, params);
 			const request: JsonRpcRequest<typeof name, TParamsMap> = {
 				jsonrpc: '2.0',
@@ -109,10 +108,9 @@ const parseSocketMessage = (rawMessage: any): JsonRpcResponse<any> | BroadcastMe
 			return null;
 		}
 		return response;
-	} else if (message.type == 'broadcast') {
+	} else if (message.type === 'broadcast') {
 		return message;
-	} else {
-		console.error('[parseSocketMessage] message data is unknown type', message);
-		return null;
 	}
+	console.error('[parseSocketMessage] message data is unknown type', message);
+	return null;
 };

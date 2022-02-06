@@ -15,7 +15,7 @@ export const setDispatch = (store: Dispatch): Dispatch => {
 };
 
 export interface DispatchContext<
-	TParams extends unknown = unknown, // TODO can be any json, but type currently doesn't work with our events
+	TParams = unknown, // TODO can be any json, but type currently doesn't work with our events
 	TResult extends ApiResult<unknown> | void = void,
 > {
 	eventName: string;

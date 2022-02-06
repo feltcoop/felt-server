@@ -10,6 +10,8 @@ import {randomEventParams} from '$lib/server/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {setupApp, teardownApp} from '$lib/util/testAppHelpers';
 
+/* eslint-disable no-await-in-loop */
+
 /* test__eventInfos */
 const test__eventInfos = suite<TestDbContext & TestAppContext>('eventInfos');
 

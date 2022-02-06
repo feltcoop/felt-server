@@ -3,7 +3,7 @@ import type {Server as HttpServer} from 'http';
 import type {Server as HttpsServer} from 'https';
 import {createServer as create_http_server} from 'http';
 import {createServer as create_https_server} from 'https';
-import fs from 'fs';
+import fs from 'fs'; // eslint-disable-line @typescript-eslint/no-restricted-imports
 
 import {ApiServer} from '$lib/server/ApiServer.js';
 import {WebsocketServer} from '$lib/server/WebsocketServer.js';
@@ -20,9 +20,8 @@ const create_server = (): HttpServer | HttpsServer => {
 			//cert: fs.readFileSync('localhost.crt'),
 			//key: fs.readFileSync('localhost.key'),
 		});
-	} else {
-		return create_http_server();
 	}
+	return create_http_server();
 };
 
 const server = create_server();

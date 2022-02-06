@@ -44,10 +44,9 @@ export const personaRepo = (db: Database) =>
 			`;
 				persona.community_id = community.community_id;
 				return {ok: true, value: {persona, community, spaces}};
-			} else {
-				// TODO this is a hack that can be removed when this code is moved into the service layer
-				return {ok: true, value: {persona, community: null as any, spaces: null as any}};
 			}
+			// TODO this is a hack that can be removed when this code is moved into the service layer
+			return {ok: true, value: {persona, community: null as any, spaces: null as any}};
 		},
 		filterByAccount: async (
 			account_id: number,

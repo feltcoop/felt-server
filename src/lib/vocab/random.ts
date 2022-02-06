@@ -80,6 +80,8 @@ export interface RandomVocabContext {
 	space: (persona?: Persona, account?: Account, community?: Community) => Promise<Space>;
 }
 
+/* eslint-disable no-param-reassign */
+
 // TODO generate from schema
 export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 	const random: RandomVocabContext = {

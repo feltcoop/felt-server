@@ -9,6 +9,8 @@ import {toRandomVocabContext} from '$lib/vocab/random';
 import {randomEventParams} from '$lib/server/random';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
 
+/* eslint-disable no-await-in-loop */
+
 /* test__services */
 const test__services = suite<TestDbContext>('services');
 

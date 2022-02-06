@@ -34,10 +34,9 @@ export const createMembershipService: Service<
 		);
 		if (createMembershipResult.ok) {
 			return {ok: true, status: 200, value: {membership: createMembershipResult.value}};
-		} else {
-			console.log('[CreateMembership] error creating membership');
-			return {ok: false, status: 500, message: 'error creating membership'};
 		}
+		console.log('[CreateMembership] error creating membership');
+		return {ok: false, status: 500, message: 'error creating membership'};
 	},
 };
 
