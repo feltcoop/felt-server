@@ -3,6 +3,7 @@ import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 export const CreateSpace: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'CreateSpace',
+	broadcast: true,
 	params: {
 		$id: '/schemas/CreateSpaceParams.json',
 		type: 'object',
