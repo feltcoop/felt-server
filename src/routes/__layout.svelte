@@ -50,27 +50,24 @@
 	const devmode = setDevmode();
 	const socket = setSocket(
 		toSocketStore(
-			(message) =>
-				websocketClient.handle(message.data, (broadcastMessage) => {
-					// TODO this is a hack to handle arbitrary messages from the server
-					// outside of the normal JSON RPC calls -- we'll want to rethink this
-					// so it's more structured and type safe
-					const handler = (ui as any)[broadcastMessage.method];
-					if (handler) {
-						handler({
-							params: broadcastMessage.params,
-							invoke: () => Promise.resolve(broadcastMessage.result),
-						});
-					} else {
-						console.warn('unhandled broadcast message', broadcastMessage, message.data);
-					}
-				}),
+			(message) => websocketClient.handle(message.data),
 			() => dispatch('Ping'),
 		),
 	);
 	const ui = setUi(toUi(session, initialMobileValue, components));
 
-	const websocketClient = toWebsocketApiClient(findWebsocketService, socket.send); // TODO expose on `app`?
+	const websocketClient = toWebsocketApiClient(findWebsocketService, socket.send, (message) => {
+		// TODO BLOCK refactor to use `dispatch`
+		const handler = (ui as any)[message.method];
+		if (handler) {
+			handler({
+				params: message.params,
+				invoke: () => Promise.resolve(message.result),
+			});
+		} else {
+			console.warn('unhandled broadcast message', message);
+		}
+	});
 	const httpClient = toHttpApiClient(findHttpService);
 	const dispatch = toDispatch(ui, (e) =>
 		websocketClient.find(e) ? websocketClient : httpClient.find(e) ? httpClient : null,
