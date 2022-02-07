@@ -196,6 +196,12 @@ test__repos('create, change, and delete some data from repos', async ({db}) => {
 	//
 	//
 	//
+	for (const space of filterSpacesValue) {
+		const result = await db.repos.space.deleteById(space.space_id);
+		assert.ok(result.ok);
+	}
+	const deltedSpaceResult = await db.repos.space.filterByCommunity(community.community_id);
+	assert.is(unwrap(deltedSpaceResult).length, 0);
 
 	// TODO implement
 	// const deleteFileResult = await db.repos.entity.delete(
