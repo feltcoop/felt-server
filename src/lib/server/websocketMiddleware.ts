@@ -112,7 +112,7 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 		// and some generic broadcast message type for everyone else.
 		socket.send(serializedResponse);
 
-		if (method === 'CreateEntity') {
+		if (method === 'CreateEntity' || method === 'UpdateCommunitySettings') {
 			console.log('[websocketMiddleware] broadcasting', responseMessage);
 			const broadcastMessage: BroadcastMessage = {
 				type: 'broadcast',

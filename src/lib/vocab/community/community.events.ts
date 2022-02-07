@@ -99,9 +99,16 @@ export const UpdateCommunitySettings: ServiceEventInfo = {
 		required: ['community_id', 'settings'],
 		additionalProperties: false,
 	},
+	//TODO we may need to decouple this service response from the broadcast response
 	response: {
 		$id: '/schemas/UpdateCommunitySettingsResponse.json',
-		type: 'null',
+		type: 'object',
+		properties: {
+			community_id: {type: 'number'},
+			settings: CommunitySettingsSchema,
+		},
+		required: ['community_id', 'settings'],
+		additionalProperties: false,
 	},
 	returns: 'Promise<UpdateCommunitySettingsResponseResult>',
 	route: {

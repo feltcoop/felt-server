@@ -107,7 +107,12 @@ export interface UpdateCommunitySettingsParams {
 		hue: number;
 	};
 }
-export type UpdateCommunitySettingsResponse = null;
+export interface UpdateCommunitySettingsResponse {
+	community_id: number;
+	settings: {
+		hue: number;
+	};
+}
 export type UpdateCommunitySettingsResponseResult = ApiResult<UpdateCommunitySettingsResponse>;
 
 export interface CreatePersonaParams {
