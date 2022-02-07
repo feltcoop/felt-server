@@ -8,7 +8,6 @@ export const ENV_PROD = '.env.production';
 export const ENV_DEV = '.env.development';
 
 const dev = import.meta?.env?.DEV ?? process.env.NODE_ENV !== 'production'; // TODO support in Gro and remove second half
-console.log('drawing env from dev', dev);
 
 const envs: {file: string; defaultFile: string}[] = [
 	{file: '.env', defaultFile: 'src/infra/.env.default'},
