@@ -461,9 +461,7 @@ export const toUi = (
 
 			const space = spaceById.get(space_id)!;
 			spaceById.delete(space_id);
-			console.log('$spaces.value before', get(spaces).value);
 			spaces.mutate(($spaces) => $spaces.splice($spaces.indexOf(space), 1));
-			console.log('$spaces.value after', get(spaces).value);
 
 			return result;
 		},
