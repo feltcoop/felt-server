@@ -389,7 +389,6 @@ export const toUi = (
 			return result;
 		},
 		UpdateCommunitySettings: async ({params, invoke}) => {
-			console.log('updatingCommunitySettings', params, invoke);
 			// optimistic update
 			const community = communityById.get(params.community_id)!;
 			const originalSettings = get(community).settings;
