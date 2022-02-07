@@ -3,6 +3,7 @@ import type {EventInfo, ClientEventInfo, ServiceEventInfo} from '$lib/vocab/even
 export const CreateEntity: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'CreateEntity',
+	broadcast: true,
 	params: {
 		$id: '/schemas/CreateEntityParams.json',
 		type: 'object',

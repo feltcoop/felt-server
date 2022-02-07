@@ -117,7 +117,7 @@ export const updateCommunitySettingsService: Service<
 	perform: async ({repos, params}) => {
 		const result = await repos.community.updateSettings(params.community_id, params.settings);
 		if (result.ok) {
-			return {ok: true, status: 200, value: params};
+			return {ok: true, status: 200, value: null};
 		} else {
 			return {ok: false, status: 500, message: result.message || 'unknown error'};
 		}

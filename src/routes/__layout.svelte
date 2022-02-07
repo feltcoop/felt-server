@@ -58,7 +58,7 @@
 					const handler = (ui as any)[broadcastMessage.method];
 					if (handler) {
 						handler({
-							params: broadcastMessage.result.value,
+							params: broadcastMessage.params,
 							invoke: () => Promise.resolve(broadcastMessage.result),
 						});
 					} else {

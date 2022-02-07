@@ -16,6 +16,7 @@ export interface BroadcastMessage {
 	type: 'broadcast';
 	method: string;
 	result: any;
+	params: any;
 }
 
 export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
@@ -65,6 +66,7 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 				message: authorizeResult.message,
 			};
 		} else {
+			//TODO parse/scrub params alongside validation
 			const validateParams = validateSchema(service.event.params);
 			if (!validateParams(params)) {
 				console.error('[websocketMiddleware] failed to validate params', validateParams.errors);
@@ -112,12 +114,13 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 		// and some generic broadcast message type for everyone else.
 		socket.send(serializedResponse);
 
-		if (method === 'CreateEntity' || method === 'UpdateCommunitySettings') {
+		if (service.event.broadcast) {
 			console.log('[websocketMiddleware] broadcasting', responseMessage);
 			const broadcastMessage: BroadcastMessage = {
 				type: 'broadcast',
 				method,
 				result,
+				params,
 			};
 			const serializedBroadcastMessage = JSON.stringify(broadcastMessage);
 

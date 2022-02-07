@@ -89,6 +89,7 @@ export const ReadCommunities: ServiceEventInfo = {
 export const UpdateCommunitySettings: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'UpdateCommunitySettings',
+	broadcast: true,
 	params: {
 		$id: '/schemas/UpdateCommunitySettingsParams.json',
 		type: 'object',
@@ -99,16 +100,9 @@ export const UpdateCommunitySettings: ServiceEventInfo = {
 		required: ['community_id', 'settings'],
 		additionalProperties: false,
 	},
-	//TODO we may need to decouple this service response from the broadcast response
 	response: {
 		$id: '/schemas/UpdateCommunitySettingsResponse.json',
-		type: 'object',
-		properties: {
-			community_id: {type: 'number'},
-			settings: CommunitySettingsSchema,
-		},
-		required: ['community_id', 'settings'],
-		additionalProperties: false,
+		type: 'null',
 	},
 	returns: 'Promise<UpdateCommunitySettingsResponseResult>',
 	route: {
