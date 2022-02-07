@@ -50,6 +50,19 @@ export const membershipRepo = (db: Database) => ({
 		`;
 		return {ok: true, value: data};
 	},
+	filterByCommunityId: async (
+		community_id: number,
+	): Promise<Result<{value: Membership[]}, ErrorResponse>> => {
+		console.log(
+			`[membershipRepo] preparing to query for memberships by community: ${community_id}`,
+		);
+		const data = await db.sql<Membership[]>`
+			SELECT m.persona_id, m.community_id, m.created, m.updated 
+			FROM memberships m 
+			WHERE m.community_id=${community_id};
+		`;
+		return {ok: true, value: data};
+	},
 	deleteById: async (
 		persona_id: number,
 		community_id: number,
