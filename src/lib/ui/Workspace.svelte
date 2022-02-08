@@ -36,7 +36,7 @@
 			on:click={() => ($expandMarquee ? dispatch('ToggleSecondaryNav') : null)}
 		/>
 	{/if}
-	<div class="column">
+	<div class="space column">
 		<!-- TODO pass stores here instead of dereferncing -->
 		<WorkspaceHeader space={selectedSpace} community={selectedCommunity} />
 		<div class="content">
@@ -69,7 +69,7 @@
 		display: flex;
 		flex-direction: column;
 	}
-	.column {
+	.space {
 		position: relative;
 		height: 100%;
 		display: flex;
