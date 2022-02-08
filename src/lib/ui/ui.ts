@@ -38,7 +38,7 @@ export interface Ui extends Partial<UiHandlers> {
 	// db state and caches
 	account: Readable<AccountModel | null>;
 	personas: Mutable<Readable<Persona>[]>;
-	sessionPersonas: Writable<Readable<Persona>[]>;
+	sessionPersonas: Readable<Readable<Persona>[]>;
 	sessionPersonaIndices: Readable<Map<Readable<Persona>, number>>;
 	communities: Mutable<Readable<Community>[]>;
 	spaces: Mutable<Readable<Space>[]>;
