@@ -1,9 +1,12 @@
-import type {Task} from '@feltcoop/gro';
+import {type Task} from '@feltcoop/gro';
 
 import {MIGRATIONS_DIR, toMigrationIndex} from '$lib/db/migration';
+import {type CheckTaskArgs} from './check';
+import {CheckTaskArgsSchema} from './check.schema';
 
-export const task: Task = {
+export const task: Task<CheckTaskArgs> = {
 	summary: 'runs gro check with additional checks for this repo',
+	args: CheckTaskArgsSchema,
 	run: async ({invokeTask, fs, args}) => {
 		const {migrations, ...restArgs} = args;
 
@@ -23,6 +26,6 @@ export const task: Task = {
 		}
 
 		// Perform default checks.
-		await invokeTask('gro/check', restArgs);
+		await invokeTask('gro/check', {_: [], ...restArgs});
 	},
 };
