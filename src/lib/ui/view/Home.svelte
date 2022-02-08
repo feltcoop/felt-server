@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
+	import {format} from 'date-fns';
 
 	import type {Space} from '$lib/vocab/space/space.js';
 	import CommunitySettingsHue from '$lib/ui/CommunitySettingsHue.svelte';
@@ -24,7 +25,7 @@
 	$: communityPersonas = $personasByCommunityId.get($community.community_id)!;
 </script>
 
-<div class="markup">
+<div class="home">
 	<section>
 		<h2>members</h2>
 		<!-- TODO display other meta info about the community -->
@@ -49,7 +50,7 @@
 	<section>
 		<!-- TODO this is just a stubbed out idea -->
 		<h2>activity</h2>
-		<div>This community was created at {$community.created}</div>
+		<div>This community was created on {format($community.created, 'Pp')}</div>
 		<code>TODO</code>
 	</section>
 	<section>
@@ -59,6 +60,9 @@
 </div>
 
 <style>
+	.home {
+		padding: var(--spacing_xl);
+	}
 	section {
 		margin: var(--spacing_xl4) 0;
 	}
