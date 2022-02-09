@@ -128,7 +128,7 @@ export const toUi = (
 	);
 
 	const mobile = writable(initialMobile);
-	const layout = writable({width: 0, height: 0}); // TODO will this initial value cause problems?
+	const layout = writable({width: 0, height: 0});
 	const contextmenu = createContextmenuStore(layout);
 	const dialogs = writable<DialogData[]>([]);
 	const viewBySpace = mutable(new WeakMap());
