@@ -36,6 +36,7 @@ export interface Contextmenu {
 }
 
 export interface ContextmenuStore extends Readable<Contextmenu> {
+	layout: Readable<{width: number; height: number}>;
 	action: typeof contextmenuAction;
 	open(items: ContextmenuItems, x: number, y: number): void;
 	close(): void;
@@ -65,7 +66,9 @@ const CONTEXTMENU_STATE_KEY = Symbol();
  * and for internal usage see `Contextmenu.svelte`.
  * @returns
  */
-export const createContextmenuStore = (): ContextmenuStore => {
+export const createContextmenuStore = (
+	layout: Readable<{width: number; height: number}>,
+): ContextmenuStore => {
 	const rootMenu: ContextmenuStore['rootMenu'] = {isMenu: true, menu: null, items: []};
 	const selections: ContextmenuStore['selections'] = [];
 
@@ -75,6 +78,7 @@ export const createContextmenuStore = (): ContextmenuStore => {
 		subscribe,
 		rootMenu,
 		selections,
+		layout,
 		action: contextmenuAction,
 		open: (items, x, y) => {
 			selections.length = 0;

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {isEditable} from '@feltcoop/felt/util/dom.js';
 	import {type SvelteComponent} from 'svelte';
-	import {type Readable} from 'svelte/store';
 
 	import {setContextmenu, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
@@ -14,16 +13,15 @@
 	// https://svelte.dev/docs#template-syntax-key
 	export let contextmenu: ContextmenuStore;
 	export let LinkContextmenu: typeof SvelteComponent;
-	export let layout: Readable<{width: number; height: number}>;
 
 	setContextmenu(contextmenu);
 
-	let contextmenuEl: HTMLElement;
+	let el: HTMLElement;
 
 	// This handler runs during the event's `capture` phase
 	// so that things like the Dialog don't eat the events and prevent the contextmenu from closing.
 	const onWindowMousedown = (e: MouseEvent) => {
-		if (!contextmenuEl.contains(e.target as any)) {
+		if (!el.contains(e.target as any)) {
 			contextmenu.close();
 		}
 	};
@@ -67,26 +65,27 @@
 		}
 	};
 
+	$: ({layout} = contextmenu);
 	$: ({open} = $contextmenu);
-
-	$: if (open && contextmenuEl) updateDimensions();
+	$: contextmenuX = $contextmenu.x; // pull off `contextmenu` to avoid unnecessary recalculations
+	$: contextmenuY = $contextmenu.y;
+	let width = 0;
+	let height = 0;
+	$: if (open && el) updateDimensions();
 	const updateDimensions = () => {
-		const rect = contextmenuEl.getBoundingClientRect();
+		const rect = el.getBoundingClientRect();
 		width = rect.width;
 		height = rect.height;
 	};
-
-	let width = 0;
-	let height = 0;
-	$: x = $contextmenu.x + Math.min(0, $layout.width - ($contextmenu.x + width));
-	$: y = $contextmenu.y + Math.min(0, $layout.height - ($contextmenu.y + height));
+	$: x = contextmenuX + Math.min(0, $layout.width - (contextmenuX + width));
+	$: y = contextmenuY + Math.min(0, $layout.height - (contextmenuY + height));
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
 <!-- TODO ensure `mousedown` works everywhere; might want to add `touchstart` or substitute `pointerdown` -->
 <!-- Capture keydown so it can handle the event before any dialogs. -->
 <svelte:window
-	on:contextmenu|capture={(e) => onContextmenu(e, contextmenu, contextmenuEl, LinkContextmenu)}
+	on:contextmenu|capture={(e) => onContextmenu(e, contextmenu, el, LinkContextmenu)}
 	on:mousedown|capture={open ? onWindowMousedown : undefined}
 	on:keydown|capture={open ? onWindowKeydown : undefined}
 />
@@ -98,14 +97,14 @@
 		role="menu"
 		aria-modal
 		tabindex="-1"
-		bind:this={contextmenuEl}
+		bind:this={el}
 		style="transform: translate3d({x}px, {y}px, 0);"
 		on:click={onClickContent}
 	>
 		{#each $contextmenu.items as [component, props] (component)}
-			<section>
+			<ul>
 				<svelte:component this={component} {...props} />
-			</section>
+			</ul>
 		{/each}
 	</div>
 {/if}
@@ -119,10 +118,10 @@
 		width: var(--contextmenu_width);
 		border: var(--border);
 	}
-	section {
+	ul {
 		border-bottom: var(--border);
 	}
-	section:last-child {
+	ul:last-child {
 		border-bottom: none;
 	}
 </style>
