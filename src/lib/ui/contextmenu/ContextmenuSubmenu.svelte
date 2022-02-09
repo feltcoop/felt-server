@@ -18,7 +18,6 @@
 
 	let el: HTMLElement;
 
-	// TODO BLOCK if it still doesn't fit onscreen, we need to choose the best side and clamp to the screen
 	// TODO BLOCK test with 3 levels deep
 	let translateX = '0px';
 	$: updatePosition(el, $layout);
@@ -32,16 +31,22 @@
 		}
 		const rect = el.getBoundingClientRect();
 		console.log('rect', rect);
-		// TODO change to reactive statements?
 		const parentWidth = 360; // TODO do we need the precise dimensions of the parent element or can we get away without them?
 		const {x, width} = rect;
-		// Does it fit onscreen to the right? If so just set x to 100%.
 		const overflowRight = x + width + parentWidth - $layout.width;
 		console.log('overflowRight', overflowRight);
 		if (overflowRight <= 0) {
 			translateX = '100%';
 		} else {
-			translateX = '-100%';
+			const overflowLeft = width - x;
+			console.log('overflowLeft', overflowLeft);
+			if (overflowLeft <= 0) {
+				translateX = '-100%';
+			} else if (overflowLeft > overflowRight) {
+				translateX = `calc(100% - ${overflowRight}px)`;
+			} else {
+				translateX = `calc(-100% + ${overflowLeft}px)`;
+			}
 		}
 	};
 </script>
@@ -79,6 +84,7 @@
 		padding-left: 5px;
 	}
 	.contextmenu-submenu {
+		z-index: 1;
 		position: absolute;
 		/* TODO this is a hack to avoid the pixel gap, probably change to 0 after adding transparent bg hitbox */
 		left: -1px;
