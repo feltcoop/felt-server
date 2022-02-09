@@ -17,7 +17,7 @@
 	import MainNav from '$lib/ui/MainNav.svelte';
 	import Onboard from '$lib/ui/Onboard.svelte';
 	import {setUi, toUi} from '$lib/ui/ui';
-	import {toDispatch} from '$lib/app/dispatch';
+	import {toDispatch, toDispatchBroadcastMessage} from '$lib/app/dispatch';
 	import {setApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
@@ -50,31 +50,21 @@
 	const devmode = setDevmode();
 	const socket = setSocket(
 		toSocketStore(
-			(message) =>
-				websocketClient.handle(message.data, (broadcastMessage) => {
-					// TODO this is a hack to handle arbitrary messages from the server
-					// outside of the normal JSON RPC calls -- we'll want to rethink this
-					// so it's more structured and type safe
-					const handler = (ui as any)[broadcastMessage.method];
-					if (handler) {
-						handler({
-							params: broadcastMessage.params,
-							invoke: () => Promise.resolve(broadcastMessage.result),
-						});
-					} else {
-						console.warn('unhandled broadcast message', broadcastMessage, message.data);
-					}
-				}),
+			(message) => websocketClient.handle(message.data),
 			() => dispatch('Ping'),
 		),
 	);
 	const ui = setUi(toUi(session, initialMobileValue, components));
 
-	const websocketClient = toWebsocketApiClient(findWebsocketService, socket.send); // TODO expose on `app`?
-	const httpClient = toHttpApiClient(findHttpService);
 	const dispatch = toDispatch(ui, (e) =>
 		websocketClient.find(e) ? websocketClient : httpClient.find(e) ? httpClient : null,
 	);
+	const websocketClient = toWebsocketApiClient(
+		findWebsocketService,
+		socket.send,
+		toDispatchBroadcastMessage(ui, dispatch),
+	);
+	const httpClient = toHttpApiClient(findHttpService);
 	const app = setApp({ui, dispatch, devmode, socket});
 	if (browser) {
 		(window as any).app = app;
