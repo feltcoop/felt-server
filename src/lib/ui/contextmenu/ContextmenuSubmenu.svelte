@@ -18,7 +18,7 @@
 
 	let el: HTMLElement;
 
-	// TODO BLOCK test with 3 levels deep
+	// TODO BLOCK clamp height
 	let translateX = '0px';
 	$: updatePosition(el, $layout);
 	const updatePosition = (
@@ -31,7 +31,9 @@
 		}
 		const rect = el.getBoundingClientRect();
 		console.log('rect', rect);
-		const parentWidth = 360; // TODO do we need the precise dimensions of the parent element or can we get away without them?
+		// TODO BLOCK get the precise dimensions of the parent element --
+		// in context or search the DOM and measure directly?
+		const parentWidth = 360;
 		const {x, width} = rect;
 		const overflowRight = x + width + parentWidth - $layout.width;
 		console.log('overflowRight', overflowRight);
