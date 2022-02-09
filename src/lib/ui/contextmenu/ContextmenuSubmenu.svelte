@@ -11,6 +11,8 @@
 		if (!selected) contextmenu.selectItem(submenu);
 	};
 
+	// TODO BLOCK how to make this stay onscreen? should there be store properties on `contextmenu`?
+
 	// the `$contextmenu` is needed because `submenu` is not reactive
 	$: ({selected} = ($contextmenu, submenu));
 </script>

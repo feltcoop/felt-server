@@ -191,12 +191,11 @@ export const onContextmenu = (
 	LinkContextmenu?: typeof SvelteComponent,
 ): void | false => {
 	if (e.shiftKey) return;
-	const target = e.target as HTMLElement;
-	if (isEditable(target) || excludeEl?.contains(target)) return;
-	const items = queryContextmenuItems(target, LinkContextmenu);
-	if (!items) return;
 	e.stopPropagation();
 	e.preventDefault();
+	const target = e.target as HTMLElement;
+	const items = queryContextmenuItems(target, LinkContextmenu);
+	if (!items || isEditable(target) || excludeEl?.contains(target)) return;
 	// TODO dispatch a UI event, like OpenContextmenu
 	contextmenu.open(items, e.clientX, e.clientY);
 	return false; // TODO remove this if it doesn't fix FF mobile (and update the `false` return value)

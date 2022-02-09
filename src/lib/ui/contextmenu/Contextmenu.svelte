@@ -67,14 +67,19 @@
 		}
 	};
 
-	$: console.log('$contextmenu', $contextmenu);
+	$: ({open} = $contextmenu);
 
-	// TODO how to get dimensions ahead of time? render hidden/invisible first?
-	// TODO how to position the submenus?
-	const contextmenuWidth = 400;
-	const contextmenuHeight = 400;
-	$: x = $contextmenu.x + Math.min(0, $layout.width - ($contextmenu.x + contextmenuWidth));
-	$: y = $contextmenu.y + Math.min(0, $layout.height - ($contextmenu.y + contextmenuHeight));
+	$: if (open && contextmenuEl) updateDimensions();
+	const updateDimensions = () => {
+		const rect = contextmenuEl.getBoundingClientRect();
+		width = rect.width;
+		height = rect.height;
+	};
+
+	let width = 0;
+	let height = 0;
+	$: x = $contextmenu.x + Math.min(0, $layout.width - ($contextmenu.x + width));
+	$: y = $contextmenu.y + Math.min(0, $layout.height - ($contextmenu.y + height));
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
@@ -82,13 +87,13 @@
 <!-- Capture keydown so it can handle the event before any dialogs. -->
 <svelte:window
 	on:contextmenu|capture={(e) => onContextmenu(e, contextmenu, contextmenuEl, LinkContextmenu)}
-	on:mousedown|capture={$contextmenu.open ? onWindowMousedown : undefined}
-	on:keydown|capture={$contextmenu.open ? onWindowKeydown : undefined}
+	on:mousedown|capture={open ? onWindowMousedown : undefined}
+	on:keydown|capture={open ? onWindowKeydown : undefined}
 />
 
 <!-- TODO Maybe animate a subtle highlight around the contextmenu as it appears? -->
-{#if $contextmenu.open}
-	<ul
+{#if open}
+	<div
 		class="contextmenu pane"
 		role="menu"
 		aria-modal
@@ -102,7 +107,7 @@
 				<svelte:component this={component} {...props} />
 			</section>
 		{/each}
-	</ul>
+	</div>
 {/if}
 
 <style>
