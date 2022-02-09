@@ -476,6 +476,16 @@ export const toUi = (
 			}
 			return result;
 		},
+		UpdateEntity: async ({invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
+			const {entity: updatedEntity} = result.value;
+			console.log('[ui.UpdateEntity]', updatedEntity.entity_id);
+			const entities = entitiesBySpace.get(updatedEntity.space_id);
+			const entity = get(entities!).find((e) => get(e).entity_id === updatedEntity.entity_id);
+			entity!.update((e) => (e = updatedEntity));
+			return result;
+		},
 		ReadEntities: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;

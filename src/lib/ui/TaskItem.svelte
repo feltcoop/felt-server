@@ -18,6 +18,7 @@
 	export let entity: Readable<Entity>;
 
 	let done = $entity.data.done;
+	$: console.log('checked', done);
 
 	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
 
@@ -25,8 +26,11 @@
 	$: hue = randomHue($persona.name);
 
 	const updateEntity = async () => {
+		$entity.data.done = !done; //TODO this event fires before svelte updates the "checked"
+		console.log('done', done);
 		await dispatch('UpdateEntity', {
-			entity: {...$entity, done},
+			entity_id: $entity.entity_id,
+			data: $entity.data,
 		});
 	};
 </script>
@@ -46,9 +50,14 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	<div class="markup formatted">
 		<div class="signature">
 			<Avatar name={toName($persona)} icon={toIcon($persona)} showIcon={false} />
-			{format(new Date($entity.created), 'Pp')}
+			{#if $entity.updated}
+				updated {format(new Date($entity.updated), 'Pp')}
+			{:else}
+				created {format(new Date($entity.created), 'Pp')}
+			{/if}
 		</div>
-		<div><input type="checkbox" bind:checked={done} /></div>
+		<!-- TODO checkbox not updated properly on event broadcast-->
+		<div><input type="checkbox" bind:checked={done} on:click={updateEntity} /></div>
 		<div>
 			{$entity.data.content}
 		</div>
