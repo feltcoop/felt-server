@@ -25,8 +25,8 @@
 	const parentDimensions = getContextmenuDimensions();
 	const dimensions = setContextmenuDimensions();
 
-	// TODO BLOCK clamp height
 	let translateX = 0;
+	let translateY = 0;
 	$: updatePosition(el, $layout, $parentDimensions);
 	const updatePosition = (
 		el: HTMLElement | undefined,
@@ -35,11 +35,11 @@
 	) => {
 		if (!el) {
 			translateX = 0;
+			translateY = 0;
 			return;
 		}
-		const rect = el.getBoundingClientRect();
-		$dimensions = {width: rect.width, height: rect.height};
-		const {x, width} = rect;
+		const {x, y, width, height} = el.getBoundingClientRect();
+		$dimensions = {width, height};
 		const overflowRight = x + width + $parentDimensions.width - $layout.width;
 		if (overflowRight <= 0) {
 			translateX = $parentDimensions.width;
@@ -53,6 +53,7 @@
 				translateX = overflowLeft - width;
 			}
 		}
+		translateY = Math.min(0, $layout.height - (y + height));
 	};
 </script>
 
@@ -74,7 +75,7 @@
 			bind:this={el}
 			class="contextmenu-submenu pane"
 			role="menu"
-			style="transform: translate3d({translateX}px, 0, 0)"
+			style="transform: translate3d({translateX}px, {translateY}px, 0)"
 		>
 			<slot name="menu" />
 		</ul>
