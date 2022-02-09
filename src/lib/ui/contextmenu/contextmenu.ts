@@ -1,4 +1,4 @@
-import {writable, type Readable} from 'svelte/store';
+import {writable, type Readable, type Writable} from 'svelte/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {last} from '@feltcoop/felt/util/array.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
@@ -238,3 +238,12 @@ const CONTEXTMENU_STORE_KEY = Symbol();
 export const setContextmenu = (contextmenu: ContextmenuStore): void =>
 	setContext(CONTEXTMENU_STORE_KEY, contextmenu);
 export const getContextmenu = (): ContextmenuStore => getContext(CONTEXTMENU_STORE_KEY);
+
+const CONTEXTMENU_DIMENSIONS_STORE_KEY = Symbol();
+export const setContextmenuDimensions = (): Writable<{width: number; height: number}> => {
+	const dimensions = writable({width: 0, height: 0});
+	setContext(CONTEXTMENU_DIMENSIONS_STORE_KEY, dimensions);
+	return dimensions;
+};
+export const getContextmenuDimensions = (): Writable<{width: number; height: number}> =>
+	getContext(CONTEXTMENU_DIMENSIONS_STORE_KEY);

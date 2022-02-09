@@ -1,5 +1,9 @@
 <script lang="ts">
-	import {getContextmenu} from '$lib/ui/contextmenu/contextmenu';
+	import {
+		getContextmenu,
+		getContextmenuDimensions,
+		setContextmenuDimensions,
+	} from '$lib/ui/contextmenu/contextmenu';
 
 	const contextmenu = getContextmenu();
 
@@ -18,36 +22,35 @@
 
 	let el: HTMLElement;
 
+	const parentDimensions = getContextmenuDimensions();
+	const dimensions = setContextmenuDimensions();
+
 	// TODO BLOCK clamp height
-	let translateX = '0px';
-	$: updatePosition(el, $layout);
+	let translateX = 0;
+	$: updatePosition(el, $layout, $parentDimensions);
 	const updatePosition = (
 		el: HTMLElement | undefined,
 		$layout: {width: number; height: number},
+		$parentDimensions: {width: number; height: number},
 	) => {
 		if (!el) {
-			translateX = '0px';
+			translateX = 0;
 			return;
 		}
 		const rect = el.getBoundingClientRect();
-		console.log('rect', rect);
-		// TODO BLOCK get the precise dimensions of the parent element --
-		// in context or search the DOM and measure directly?
-		const parentWidth = 360;
+		$dimensions = {width: rect.width, height: rect.height};
 		const {x, width} = rect;
-		const overflowRight = x + width + parentWidth - $layout.width;
-		console.log('overflowRight', overflowRight);
+		const overflowRight = x + width + $parentDimensions.width - $layout.width;
 		if (overflowRight <= 0) {
-			translateX = '100%';
+			translateX = $parentDimensions.width;
 		} else {
 			const overflowLeft = width - x;
-			console.log('overflowLeft', overflowLeft);
 			if (overflowLeft <= 0) {
-				translateX = '-100%';
+				translateX = -width;
 			} else if (overflowLeft > overflowRight) {
-				translateX = `calc(100% - ${overflowRight}px)`;
+				translateX = $parentDimensions.width - overflowRight;
 			} else {
-				translateX = `calc(-100% + ${overflowLeft}px)`;
+				translateX = overflowLeft - width;
 			}
 		}
 	};
@@ -71,7 +74,7 @@
 			bind:this={el}
 			class="contextmenu-submenu pane"
 			role="menu"
-			style="transform: translate3d({translateX}, 0, 0)"
+			style="transform: translate3d({translateX}px, 0, 0)"
 		>
 			<slot name="menu" />
 		</ul>

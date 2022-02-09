@@ -2,7 +2,11 @@
 	import {isEditable} from '@feltcoop/felt/util/dom.js';
 	import {type SvelteComponent} from 'svelte';
 
-	import {setContextmenu, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+	import {
+		setContextmenu,
+		setContextmenuDimensions,
+		type ContextmenuStore,
+	} from '$lib/ui/contextmenu/contextmenu';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
 	// TODO upstream to Felt
@@ -69,16 +73,14 @@
 	$: ({open} = $contextmenu);
 	$: contextmenuX = $contextmenu.x; // pull off `contextmenu` to avoid unnecessary recalculations
 	$: contextmenuY = $contextmenu.y;
-	let width = 0;
-	let height = 0;
+	const dimensions = setContextmenuDimensions();
 	$: if (open && el) updateDimensions();
 	const updateDimensions = () => {
 		const rect = el.getBoundingClientRect();
-		width = rect.width;
-		height = rect.height;
+		$dimensions = {width: rect.width, height: rect.height};
 	};
-	$: x = contextmenuX + Math.min(0, $layout.width - (contextmenuX + width));
-	$: y = contextmenuY + Math.min(0, $layout.height - (contextmenuY + height));
+	$: x = contextmenuX + Math.min(0, $layout.width - (contextmenuX + $dimensions.width));
+	$: y = contextmenuY + Math.min(0, $layout.height - (contextmenuY + $dimensions.height));
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
