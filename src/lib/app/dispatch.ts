@@ -40,22 +40,35 @@ export const toDispatch = (ui: Ui, toClient: ToDispatchClient): Dispatch => {
 			params === undefined ? '' : params, // print null but not undefined
 		);
 		const client = toClient(eventName);
-		const ctx: DispatchContext = {
+		return ui.dispatch({
 			eventName,
 			params,
 			dispatch,
 			invoke: client ? (p = params) => client.invoke(eventName, p) : null,
-		};
-		return ui.dispatch(ctx);
+		});
 	};
 	return dispatch;
 };
 
+export interface DispatchBroadcastMessage {
+	(message: BroadcastMessage): any;
+}
+
 export const toDispatchBroadcastMessage =
-	(ui: Ui, dispatch: Dispatch) => (message: BroadcastMessage) =>
-		ui.dispatch({
-			eventName: message.method,
-			params: message.params,
+	(ui: Ui, dispatch: Dispatch): DispatchBroadcastMessage =>
+	(message) => {
+		const {method: eventName, params} = message;
+		console.log(
+			'%c[broadcast.%c' + eventName + '%c]',
+			'color: gray',
+			'color: darkCyan',
+			'color: gray',
+			params === undefined ? '' : params, // print null but not undefined
+		);
+		return ui.dispatch({
+			eventName,
+			params,
 			dispatch,
 			invoke: () => Promise.resolve(message.result),
 		});
+	};
