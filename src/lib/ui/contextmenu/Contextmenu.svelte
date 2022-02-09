@@ -74,7 +74,7 @@
 	$: contextmenuX = $contextmenu.x; // pull off `contextmenu` to avoid unnecessary recalculations
 	$: contextmenuY = $contextmenu.y;
 	const dimensions = setContextmenuDimensions();
-	$: if (open && el) updateDimensions();
+	$: if (el) updateDimensions();
 	const updateDimensions = () => {
 		const rect = el.getBoundingClientRect();
 		$dimensions = {width: rect.width, height: rect.height};

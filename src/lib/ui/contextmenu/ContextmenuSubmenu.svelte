@@ -27,7 +27,7 @@
 
 	let translateX = 0;
 	let translateY = 0;
-	$: el && updatePosition(el, $layout, $parentDimensions);
+	$: if (el) updatePosition(el, $layout, $parentDimensions);
 	const updatePosition = (
 		el: HTMLElement,
 		$layout: {width: number; height: number},
