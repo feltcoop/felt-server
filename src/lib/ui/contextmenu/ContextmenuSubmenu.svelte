@@ -27,24 +27,21 @@
 
 	let translateX = 0;
 	let translateY = 0;
-	$: updatePosition(el, $layout, $parentDimensions);
+	$: el && updatePosition(el, $layout, $parentDimensions);
 	const updatePosition = (
-		el: HTMLElement | undefined,
+		el: HTMLElement,
 		$layout: {width: number; height: number},
 		$parentDimensions: {width: number; height: number},
 	) => {
-		if (!el) {
-			translateX = 0;
-			translateY = 0;
-			return;
-		}
 		const {x, y, width, height} = el.getBoundingClientRect();
 		$dimensions = {width, height};
-		const overflowRight = x + width + $parentDimensions.width - $layout.width;
+		const baseX = x - translateX;
+		const baseY = y - translateY;
+		const overflowRight = baseX + width + $parentDimensions.width - $layout.width;
 		if (overflowRight <= 0) {
 			translateX = $parentDimensions.width;
 		} else {
-			const overflowLeft = width - x;
+			const overflowLeft = width - baseX;
 			if (overflowLeft <= 0) {
 				translateX = -width;
 			} else if (overflowLeft > overflowRight) {
@@ -53,7 +50,7 @@
 				translateX = overflowLeft - width;
 			}
 		}
-		translateY = Math.min(0, $layout.height - (y + height));
+		translateY = Math.min(0, $layout.height - (baseY + height));
 	};
 </script>
 
