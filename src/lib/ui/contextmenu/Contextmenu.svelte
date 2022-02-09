@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {isEditable} from '@feltcoop/felt/util/dom.js';
 	import {type SvelteComponent} from 'svelte';
+	import {type Readable} from 'svelte/store';
 
 	import {setContextmenu, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
@@ -13,6 +14,7 @@
 	// https://svelte.dev/docs#template-syntax-key
 	export let contextmenu: ContextmenuStore;
 	export let LinkContextmenu: typeof SvelteComponent;
+	export let layout: Readable<{width: number; height: number}>;
 
 	setContextmenu(contextmenu);
 
@@ -66,6 +68,13 @@
 	};
 
 	$: console.log('$contextmenu', $contextmenu);
+
+	// TODO how to get dimensions ahead of time? render hidden/invisible first?
+	// TODO how to position the submenus?
+	const contextmenuWidth = 400;
+	const contextmenuHeight = 400;
+	$: x = $contextmenu.x + Math.min(0, $layout.width - ($contextmenu.x + contextmenuWidth));
+	$: y = $contextmenu.y + Math.min(0, $layout.height - ($contextmenu.y + contextmenuHeight));
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
@@ -85,7 +94,7 @@
 		aria-modal
 		tabindex="-1"
 		bind:this={contextmenuEl}
-		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
+		style="transform: translate3d({x}px, {y}px, 0);"
 		on:click={onClickContent}
 	>
 		{#each $contextmenu.items as [component, props] (component)}
