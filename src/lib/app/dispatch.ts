@@ -4,6 +4,7 @@ import type {Ui} from '$lib/ui/ui';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
 import type {Dispatch} from '$lib/app/eventTypes';
+import type {BroadcastMessage} from '$lib/server/websocketMiddleware';
 
 const KEY = Symbol();
 
@@ -16,7 +17,7 @@ export const setDispatch = (store: Dispatch): Dispatch => {
 
 export interface DispatchContext<
 	TParams extends unknown = unknown, // TODO can be any json, but type currently doesn't work with our events
-	TResult extends ApiResult<unknown> | void = void,
+	TResult extends ApiResult<unknown> | void = any,
 > {
 	eventName: string;
 	params: TParams;
@@ -43,9 +44,18 @@ export const toDispatch = (ui: Ui, toClient: ToDispatchClient): Dispatch => {
 			eventName,
 			params,
 			dispatch,
-			invoke: client ? (p = params) => client.invoke(eventName, p) : (null as any), // TODO fix typecast?
+			invoke: client ? (p = params) => client.invoke(eventName, p) : null,
 		};
 		return ui.dispatch(ctx);
 	};
 	return dispatch;
 };
+
+export const toDispatchBroadcastMessage =
+	(ui: Ui, dispatch: Dispatch) => (message: BroadcastMessage) =>
+		ui.dispatch({
+			eventName: message.method,
+			params: message.params,
+			dispatch,
+			invoke: () => Promise.resolve(message.result),
+		});

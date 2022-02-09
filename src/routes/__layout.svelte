@@ -17,7 +17,7 @@
 	import MainNav from '$lib/ui/MainNav.svelte';
 	import Onboard from '$lib/ui/Onboard.svelte';
 	import {setUi, toUi} from '$lib/ui/ui';
-	import {toDispatch} from '$lib/app/dispatch';
+	import {toDispatch, toDispatchBroadcastMessage} from '$lib/app/dispatch';
 	import {setApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
@@ -56,22 +56,15 @@
 	);
 	const ui = setUi(toUi(session, initialMobileValue, components));
 
-	const websocketClient = toWebsocketApiClient(findWebsocketService, socket.send, (message) => {
-		// TODO BLOCK refactor to use `dispatch`
-		const handler = (ui as any)[message.method];
-		if (handler) {
-			handler({
-				params: message.params,
-				invoke: () => Promise.resolve(message.result),
-			});
-		} else {
-			console.warn('unhandled broadcast message', message);
-		}
-	});
-	const httpClient = toHttpApiClient(findHttpService);
 	const dispatch = toDispatch(ui, (e) =>
 		websocketClient.find(e) ? websocketClient : httpClient.find(e) ? httpClient : null,
 	);
+	const websocketClient = toWebsocketApiClient(
+		findWebsocketService,
+		socket.send,
+		toDispatchBroadcastMessage(ui, dispatch),
+	);
+	const httpClient = toHttpApiClient(findHttpService);
 	const app = setApp({ui, dispatch, devmode, socket});
 	if (browser) {
 		(window as any).app = app;
