@@ -8,6 +8,7 @@ import Notes from '$lib/ui/view/Notes.svelte';
 import Iframe from '$lib/ui/view/Iframe.svelte';
 import Voice from '$lib/ui/view/Voice.svelte';
 import EntityExplorer from '$lib/ui/view/EntityExplorer.svelte';
+import Task from '$lib/ui/view/Task.svelte';
 
 export const viewComponents: Record<string, typeof SvelteComponent> = {
 	Home,
@@ -18,4 +19,5 @@ export const viewComponents: Record<string, typeof SvelteComponent> = {
 	Voice,
 	Iframe,
 	EntityExplorer,
+	Task,
 };
