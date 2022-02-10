@@ -17,8 +17,9 @@
 
 	export let entity: Readable<Entity>;
 
+	let pending = false;
+
 	$: ({checked = false} = $entity.data);
-	$: console.log('checked', checked);
 
 	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
 
@@ -29,12 +30,14 @@
 
 	const updateEntity = async (checked: boolean) => {
 		if ($entity.data.checked === checked) return;
-		//TODO BLOCK add pending
-		console.log('checked', checked);
+		pending = true;
+		console.log('pending start', pending);
 		await dispatch('UpdateEntity', {
 			entity_id: $entity.entity_id,
 			data: {...$entity.data, checked},
 		});
+		pending = false;
+		console.log('pending done', pending);
 	};
 </script>
 
@@ -60,7 +63,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			{/if}
 		</div>
 		<!-- TODO checkbox not updated properly on event broadcast-->
-		<div><input type="checkbox" bind:checked /></div>
+		<div><input type="checkbox" disabled={pending} bind:checked /></div>
 		<div>
 			{$entity.data.content}
 		</div>

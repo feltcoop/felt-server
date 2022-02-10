@@ -478,6 +478,7 @@ export const toUi = (
 		},
 		UpdateEntity: async ({invoke}) => {
 			const result = await invoke();
+			console.log('updateEnity result', result);
 			if (!result.ok) return result;
 			//TODO maybe return to $entity naming convention OR propagate this pattern?
 			const {entity: updatedEntity} = result.value;
