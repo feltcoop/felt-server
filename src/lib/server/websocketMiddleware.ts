@@ -62,7 +62,7 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 		if (!authorizeResult.ok) {
 			result = {
 				ok: false,
-				status: 401,
+				status: 403,
 				message: authorizeResult.message,
 			};
 		} else {

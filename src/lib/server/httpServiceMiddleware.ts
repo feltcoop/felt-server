@@ -46,7 +46,7 @@ export const toHttpServiceMiddleware =
 
 			const authorizeResult = authorize(req.account_id, service);
 			if (!authorizeResult.ok) {
-				return send(res, 401, {message: authorizeResult.message});
+				return send(res, 403, {message: authorizeResult.message});
 			}
 
 			const params = service.event.params.type === 'null' ? null : {...reqBody, ...reqParams};
