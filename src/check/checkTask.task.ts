@@ -1,14 +1,16 @@
 import {type Task} from '@feltcoop/gro';
 
 import {MIGRATIONS_DIR, toMigrationIndex} from '$lib/db/migration';
-import {type CheckTaskArgs} from './check';
-import {CheckTaskArgsSchema} from './check.schema';
+import {type CheckTaskArgs} from './checkTask';
+import {CheckTaskArgsSchema} from './checkTask.schema';
 
 export const task: Task<CheckTaskArgs> = {
 	summary: 'runs gro check with additional checks for this repo',
 	args: CheckTaskArgsSchema,
 	run: async ({invokeTask, fs, args}) => {
 		const {migrations, ...restArgs} = args;
+
+		throw Error('nm');
 
 		if (migrations) {
 			// Check migration files are properly numbered.

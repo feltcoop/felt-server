@@ -1,5 +1,5 @@
 import {type ArgsSchema} from '@feltcoop/gro/dist/task/task.js';
-import {CheckTaskArgsSchema as BaseSchema} from '@feltcoop/gro/dist/check.schema.js';
+import {CheckTaskArgsSchema as BaseSchema} from '@feltcoop/gro/dist/checkTask.schema.js';
 
 export const CheckTaskArgsSchema: ArgsSchema = {
 	$id: '/schemas/LocalCheckTaskArgs.json',
