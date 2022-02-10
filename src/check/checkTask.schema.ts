@@ -5,7 +5,7 @@ export const CheckTaskArgsSchema: ArgsSchema = {
 	$id: '/schemas/LocalCheckTaskArgs.json',
 	type: 'object',
 	properties: {
-		migrations: {type: 'boolean', default: true, description: ''},
+		migrations: {type: 'boolean', default: true},
 		'no-migrations': {
 			type: 'boolean',
 			default: false,
