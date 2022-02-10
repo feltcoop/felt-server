@@ -17,7 +17,7 @@
 
 	export let entity: Readable<Entity>;
 
-	let {checked = false} = $entity.data;
+	$: ({checked = false} = $entity.data);
 	$: console.log('checked', checked);
 
 	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
@@ -25,7 +25,11 @@
 	// TODO refactor to some client view-model for the actor
 	$: hue = randomHue($persona.name);
 
-	const updateEntity = async () => {
+	$: updateEntity(checked);
+
+	const updateEntity = async (checked: boolean) => {
+		if ($entity.data.checked === checked) return;
+		//TODO BLOCK add pending
 		console.log('checked', checked);
 		await dispatch('UpdateEntity', {
 			entity_id: $entity.entity_id,
@@ -56,7 +60,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			{/if}
 		</div>
 		<!-- TODO checkbox not updated properly on event broadcast-->
-		<div><input type="checkbox" bind:checked on:click={updateEntity} /></div>
+		<div><input type="checkbox" bind:checked /></div>
 		<div>
 			{$entity.data.content}
 		</div>
