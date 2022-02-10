@@ -64,7 +64,25 @@ export const personaRepo = (db: Database) => ({
 	): Promise<Result<{value: Persona}, {type: 'no_persona_found'} & ErrorResponse>> => {
 		console.log('[personaRepo] loading persona', persona_id);
 		const data = await db.sql<Persona[]>`
-			SELECT persona_id, type, name, account_id, community_id, created, updated FROM personas WHERE persona_id=${persona_id}
+			SELECT persona_id, type, name, account_id, community_id, created, updated 
+			FROM personas WHERE persona_id=${persona_id}
+		`;
+		if (data.length) {
+			return {ok: true, value: data[0]};
+		}
+		return {
+			ok: false,
+			type: 'no_persona_found',
+			message: 'no persona found',
+		};
+	},
+	findByCommunityId: async (
+		community_id: number,
+	): Promise<Result<{value: Persona}, {type: 'no_persona_found'} & ErrorResponse>> => {
+		console.log('[PersonaRepo] finding persona for community', community_id);
+		const data = await db.sql<Persona[]>`
+			SELECT persona_id, type, name, account_id, community_id, created, updated 
+			FROM personas WHERE community_id=${community_id}
 		`;
 		if (data.length) {
 			return {ok: true, value: data[0]};
@@ -78,7 +96,7 @@ export const personaRepo = (db: Database) => ({
 	findByName: async (
 		name: string,
 	): Promise<Result<{value: Persona | undefined}, ErrorResponse>> => {
-		console.log('[personaRepo] filtering by name', name);
+		console.log('[PersonaRepo] filtering by name', name);
 		const data = await db.sql<Persona[]>`
 			SELECT persona_id, type, name, account_id, community_id, created, updated
 			FROM personas WHERE LOWER(name) = LOWER(${name})
