@@ -100,7 +100,7 @@
 		aria-modal
 		tabindex="-1"
 		bind:this={el}
-		style="transform: translate3d({x}px, {y}px, 0);"
+		style:transform="translate3d({x}px, {y}px, 0)"
 		on:click={onClickContent}
 	>
 		{#each $contextmenu.items as [component, props] (component)}

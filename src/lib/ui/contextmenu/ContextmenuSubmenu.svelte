@@ -55,7 +55,7 @@
 </script>
 
 <!-- TODO what's the right structure for a11y? -->
-<li class="contextmenu-submenu-item">
+<li>
 	<div
 		class="menu-item"
 		role="menuitem"
@@ -70,9 +70,10 @@
 	{#if selected}
 		<ul
 			bind:this={el}
-			class="contextmenu-submenu pane"
+			class="pane"
 			role="menu"
-			style="transform: translate3d({translateX}px, {translateY}px, 0)"
+			style:transform="translate3d({translateX}px, {translateY}px, 0)"
+			style:max-height="{$layout.height}px"
 		>
 			<slot name="menu" />
 		</ul>
@@ -80,13 +81,13 @@
 </li>
 
 <style>
-	.contextmenu-submenu-item {
+	li {
 		position: relative;
 	}
 	.chevron {
 		padding-left: 5px;
 	}
-	.contextmenu-submenu {
+	ul {
 		z-index: 1;
 		position: absolute;
 		/* TODO this is a hack to avoid the pixel gap, probably change to 0 after adding transparent bg hitbox */
