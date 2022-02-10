@@ -55,6 +55,26 @@ export const deleteMembershipService: Service<
 			persona_id,
 			community_id,
 		);
+		const [personaResult, communityResult] = await Promise.all([
+			repos.persona.findById(persona_id),
+			repos.community.findById(community_id),
+		]);
+		if (!personaResult.ok) {
+			return {ok: false, status: 404, message: personaResult.message};
+		}
+		if (!communityResult.ok) {
+			return {ok: false, status: 404, message: communityResult.message};
+		}
+		if (communityResult.value.type === 'personal') {
+			return {ok: false, status: 405, message: 'cannot leave a personal community'};
+		}
+		if (
+			personaResult.value.type === 'community' &&
+			personaResult.value.community_id === community_id
+		) {
+			return {ok: false, status: 405, message: 'community persona cannot leave its community'};
+		}
+
 		const result = await repos.membership.deleteById(persona_id, community_id);
 		console.log(result);
 		if (!result.ok) {

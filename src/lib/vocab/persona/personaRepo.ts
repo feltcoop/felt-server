@@ -67,13 +67,12 @@ export const personaRepo = (db: Database) => ({
 			SELECT persona_id, type, name, account_id, community_id, created, updated FROM personas WHERE persona_id=${persona_id}
 		`;
 		if (data.length) {
-			console.log('[personaRepo] persona found, returning', persona_id);
 			return {ok: true, value: data[0]};
 		}
 		return {
 			ok: false,
 			type: 'no_persona_found',
-			message: `No persona found with persona_id: ${persona_id}`,
+			message: 'no persona found',
 		};
 	},
 	findByName: async (
