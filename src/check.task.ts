@@ -26,6 +26,6 @@ export const task: Task<CheckTaskArgs> = {
 		}
 
 		// Perform default checks.
-		await invokeTask('gro/check', {_: [], ...restArgs});
+		await invokeTask('gro/check', {_: [], ...restArgs}); // TODO remove the `[]` when Gro validates args and makes it no longer required
 	},
 };
