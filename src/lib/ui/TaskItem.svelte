@@ -26,7 +26,7 @@
 	$: hue = randomHue($persona.name);
 
 	const updateEntity = async () => {
-		console.log('done', checked);
+		console.log('checked', checked);
 		await dispatch('UpdateEntity', {
 			entity_id: $entity.entity_id,
 			data: {...$entity.data, checked},
