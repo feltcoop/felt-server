@@ -483,7 +483,7 @@ export const toUi = (
 			console.log('[ui.UpdateEntity]', updatedEntity.entity_id);
 			const entities = entitiesBySpace.get(updatedEntity.space_id);
 			const entity = get(entities!).find((e) => get(e).entity_id === updatedEntity.entity_id);
-			entity!.update((e) => (e = updatedEntity));
+			entity!.set(updatedEntity);
 			return result;
 		},
 		ReadEntities: async ({params, invoke}) => {
