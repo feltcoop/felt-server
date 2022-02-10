@@ -29,7 +29,7 @@
 		if (!content) return;
 		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
-			data: {type: 'Task', content: content, done: false},
+			data: {type: 'Note', content, checked: false},
 			actor_id: $persona.persona_id,
 		});
 		text = '';

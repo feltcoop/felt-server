@@ -1,21 +1,15 @@
-export type EntityData = NoteEntityData | ArticleEntityData | TaskEntityData;
+export type EntityData = NoteEntityData | ArticleEntityData;
 
 export interface BaseEntityData {
 	type: string;
 	content?: string;
 	name?: string;
+	checked?: boolean;
 }
 
 export interface NoteEntityData extends BaseEntityData {
 	type: 'Note';
 	content: string;
-}
-
-export interface TaskEntityData extends BaseEntityData {
-	type: 'Task';
-	content: string;
-	name: string;
-	done: boolean;
 }
 
 export interface ArticleEntityData extends BaseEntityData {
