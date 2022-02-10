@@ -1,14 +1,12 @@
 import type {Task} from '@feltcoop/gro';
 
+import {DbTestMigrationTaskArgsSchema} from '$lib/db/testMigration/testMigrationTask.schema';
+import {type DbTestMigrationTaskArgs} from '$lib/db/testMigration/testMigrationTask';
 import {MIGRATIONS_DIR} from '$lib/db/migration';
 
-interface Args {
-	checkpoint: boolean; // if `true`, does not run the `count` number of final migrations
-	count: number; // defaults to 1; number of migrations being tested; rarely might need more
-}
-
-export const task: Task<Args> = {
+export const task: Task<DbTestMigrationTaskArgs> = {
 	summary: 'tests the most recent mogration file against the seeded database',
+	args: DbTestMigrationTaskArgsSchema,
 	run: async ({invokeTask, fs, args}) => {
 		const {checkpoint = false, count = 1} = args;
 

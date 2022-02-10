@@ -7,12 +7,11 @@ import {CheckTaskArgsSchema} from './checkTask.schema';
 export const task: Task<CheckTaskArgs> = {
 	summary: 'runs gro check with additional checks for this repo',
 	args: CheckTaskArgsSchema,
-	run: async ({invokeTask, fs, args}) => {
-		const {migrations, ...restArgs} = args;
-
-		throw Error('nm');
+	run: async ({invokeTask, fs, args, log}) => {
+		const {migrations = true, ...restArgs} = args;
 
 		if (migrations) {
+			log.info('checking migrations');
 			// Check migration files are properly numbered.
 			const migrationFiles = (await fs.readDir(MIGRATIONS_DIR)).sort();
 			for (let i = 0; i < migrationFiles.length; i++) {
