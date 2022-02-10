@@ -30,7 +30,7 @@
     "@types/ws": "^8.2.2",
     "ley": "^0.7.1",
     "prettier": "^2.5.1",
-    "prettier-plugin-svelte": "^2.5.1",
+    "prettier-plugin-svelte": "^2.6.0",
     "regexparam": "^2.0.0",
     "strict-event-emitter-types": "^2.0.0",
     "svelte": "^3.46.3",
