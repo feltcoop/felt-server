@@ -56,7 +56,7 @@ export const UpdateEntity: ServiceEventInfo = {
 	},
 	returns: 'Promise<UpdateEntityResponseResult>',
 	route: {
-		path: '/api/v1/spaces/:space_id/entities/:entity_id',
+		path: '/api/v1/entities/:entity_id',
 		method: 'POST',
 	},
 };
