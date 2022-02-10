@@ -6,7 +6,7 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
-	import TaskItems from '$lib/ui/TaskItems.svelte';
+	import TodoItems from '$lib/ui/TodoItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
 	const {dispatch, socket} = getApp();
@@ -45,7 +45,7 @@
 <div class="room">
 	<div class="entities">
 		{#if entities}
-			<TaskItems {entities} />
+			<TodoItems {entities} />
 		{:else}
 			<PendingAnimation />
 		{/if}
