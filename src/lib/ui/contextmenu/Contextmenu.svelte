@@ -4,9 +4,10 @@
 
 	import {
 		setContextmenu,
-		onContextmenu,
+		setContextmenuDimensions,
 		type ContextmenuStore,
 	} from '$lib/ui/contextmenu/contextmenu';
+	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
 	// TODO upstream to Felt
 
@@ -19,12 +20,12 @@
 
 	setContextmenu(contextmenu);
 
-	let contextmenuEl: HTMLElement;
+	let el: HTMLElement;
 
 	// This handler runs during the event's `capture` phase
 	// so that things like the Dialog don't eat the events and prevent the contextmenu from closing.
 	const onWindowMousedown = (e: MouseEvent) => {
-		if (!contextmenuEl.contains(e.target as any)) {
+		if (!el.contains(e.target as any)) {
 			contextmenu.close();
 		}
 	};
@@ -68,35 +69,46 @@
 		}
 	};
 
-	$: console.log('$contextmenu', $contextmenu);
+	$: ({layout} = contextmenu);
+	$: ({open} = $contextmenu);
+	$: contextmenuX = $contextmenu.x; // pull off `contextmenu` to avoid unnecessary recalculations
+	$: contextmenuY = $contextmenu.y;
+	const dimensions = setContextmenuDimensions();
+	$: if (el) updateDimensions();
+	const updateDimensions = () => {
+		const rect = el.getBoundingClientRect();
+		$dimensions = {width: rect.width, height: rect.height};
+	};
+	$: x = contextmenuX + Math.min(0, $layout.width - (contextmenuX + $dimensions.width));
+	$: y = contextmenuY + Math.min(0, $layout.height - (contextmenuY + $dimensions.height));
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
 <!-- TODO ensure `mousedown` works everywhere; might want to add `touchstart` or substitute `pointerdown` -->
 <!-- Capture keydown so it can handle the event before any dialogs. -->
 <svelte:window
-	on:contextmenu|capture={(e) => onContextmenu(e, contextmenu, contextmenuEl, LinkContextmenu)}
-	on:mousedown|capture={$contextmenu.open ? onWindowMousedown : undefined}
-	on:keydown|capture={$contextmenu.open ? onWindowKeydown : undefined}
+	on:contextmenu|capture={(e) => onContextmenu(e, contextmenu, el, LinkContextmenu)}
+	on:mousedown|capture={open ? onWindowMousedown : undefined}
+	on:keydown|capture={open ? onWindowKeydown : undefined}
 />
 
 <!-- TODO Maybe animate a subtle highlight around the contextmenu as it appears? -->
-{#if $contextmenu.open}
-	<ul
+{#if open}
+	<div
 		class="contextmenu pane"
 		role="menu"
 		aria-modal
 		tabindex="-1"
-		bind:this={contextmenuEl}
-		style="transform: translate3d({$contextmenu.x}px, {$contextmenu.y}px, 0);"
+		bind:this={el}
+		style:transform="translate3d({x}px, {y}px, 0)"
 		on:click={onClickContent}
 	>
 		{#each $contextmenu.items as [component, props] (component)}
-			<section>
+			<ul>
 				<svelte:component this={component} {...props} />
-			</section>
+			</ul>
 		{/each}
-	</ul>
+	</div>
 {/if}
 
 <style>
@@ -108,10 +120,10 @@
 		width: var(--contextmenu_width);
 		border: var(--border);
 	}
-	section {
+	ul {
 		border-bottom: var(--border);
 	}
-	section:last-child {
+	ul:last-child {
 		border-bottom: none;
 	}
 </style>

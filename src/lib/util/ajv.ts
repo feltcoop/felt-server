@@ -1,15 +1,14 @@
-import Ajv from 'ajv';
+import Ajv, {type Options, type ErrorObject, type ValidateFunction, type SchemaObject} from 'ajv';
 import addFormats from 'ajv-formats';
-import type {ErrorObject, ValidateFunction, SchemaObject} from 'ajv';
 
 import {schemas} from '$lib/app/schemas';
 
 let ajvInstance: Ajv | null = null;
 
-// TODO maybe accept options, and store `ajv` references by each?
-export const ajv = (): Ajv => {
+// TODO only one instance is created, which may be surprising in rare cases
+export const ajv = (opts?: Options): Ajv => {
 	if (ajvInstance) return ajvInstance;
-	ajvInstance = new Ajv();
+	ajvInstance = new Ajv(opts);
 	ajvInstance.addKeyword('tsType').addKeyword('tsImport');
 	addFormats(ajvInstance);
 	for (const schema of schemas) {

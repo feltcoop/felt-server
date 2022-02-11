@@ -36,15 +36,17 @@
 			on:click={() => ($expandMarquee ? dispatch('ToggleSecondaryNav') : null)}
 		/>
 	{/if}
-	<div class="column">
+	<div class="space column">
 		<!-- TODO pass stores here instead of dereferncing -->
 		<WorkspaceHeader space={selectedSpace} community={selectedCommunity} />
-		{#if selectedPersona && selectedCommunity && selectedSpace}
-			<SpaceView persona={selectedPersona} community={selectedCommunity} space={selectedSpace} />
-		{:else if selectedPersona && selectedCommunity}
-			<!-- TODO this should be the form, not dialog trigger -- fix after refactoring dialogs -->
-			<SpaceInput persona={selectedPersona} community={selectedCommunity} />
-		{/if}
+		<div class="content">
+			{#if selectedPersona && selectedCommunity && selectedSpace}
+				<SpaceView persona={selectedPersona} community={selectedCommunity} space={selectedSpace} />
+			{:else if selectedPersona && selectedCommunity}
+				<!-- TODO this should be the form, not dialog trigger -- fix after refactoring dialogs -->
+				<SpaceInput persona={selectedPersona} community={selectedCommunity} />
+			{/if}
+		</div>
 		<MarqueeButton />
 	</div>
 	<!-- TODO extract to some shared abstractions with the `Luggage` probably -->
@@ -61,7 +63,13 @@
 		width: 100%;
 		display: flex;
 	}
-	.column {
+	.content {
+		overflow: auto;
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+	.space {
 		position: relative;
 		height: 100%;
 		display: flex;

@@ -192,18 +192,40 @@ test__repos('create, change, and delete some data from repos', async ({db}) => {
 	//
 	//
 
-	// delete everything
-	//
-	//
-	//
-
-	// TODO implement
+	// TODO implement for entities
 	// const deleteFileResult = await db.repos.entity.delete(
 	// 	account.account_id,
 	// 	space.space_id,
 	// 	content,
 	// );
 	// assert.ok(deleteFileResult.ok);
+
+	for (const space of filterSpacesValue) {
+		const result = await db.repos.space.deleteById(space.space_id);
+		assert.ok(result.ok);
+	}
+	const deletedSpaceResult = await db.repos.space.filterByCommunity(community.community_id);
+	assert.is(unwrap(deletedSpaceResult).length, 0);
+
+	assert.is(
+		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
+		2,
+	);
+	const deletedMembershipResult = await db.repos.membership.deleteById(
+		persona.persona_id,
+		community.community_id,
+	);
+	assert.ok(deletedMembershipResult.ok);
+	assert.is(
+		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
+		1,
+	);
+
+	// TODO delete communities here
+
+	// TODO delete personas here
+
+	// TODO delete accounts here
 
 	// TODO check to be sure the database has the same # rows in each table as when this test started --
 	// maybe do this with before/after hooks so it's easily reused?

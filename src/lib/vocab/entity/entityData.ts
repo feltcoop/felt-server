@@ -4,6 +4,7 @@ export interface BaseEntityData {
 	type: string;
 	content?: string;
 	name?: string;
+	checked?: boolean;
 }
 
 export interface NoteEntityData extends BaseEntityData {

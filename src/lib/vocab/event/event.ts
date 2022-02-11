@@ -19,6 +19,7 @@ export interface ServiceEventInfo {
 	name: string; // `snake_cased`
 	authenticate?: boolean; // `true` by default -- does this service require login?
 	websockets?: boolean; // `true` by default -- can this service be called via websockets?
+	broadcast?: boolean; // `false` by default -- does this service event rebroadcast to other community clients
 	params: SchemaObject;
 	response: SchemaObject;
 	returns: string;

@@ -15,6 +15,7 @@ import type {
 import type {Database} from '$lib/db/Database';
 import type {EntityData} from '$lib/vocab/entity/entityData';
 import type {ViewData} from '$lib/vocab/view/view';
+import type {Entity} from '$lib/vocab/entity/entity';
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = (): string => Math.random().toString().slice(2);
@@ -66,6 +67,7 @@ export interface RandomVocab {
 	persona?: Persona;
 	community?: Community;
 	space?: Space;
+	entity?: Entity;
 }
 
 // TODO maybe compute in relation to `RandomVocab`
@@ -74,10 +76,17 @@ export interface RandomVocabContext {
 	personas: Persona[];
 	communities: Community[];
 	spaces: Space[];
+	entities: Entity[];
 	account: () => Promise<Account>;
 	persona: (account?: Account) => Promise<Persona>;
 	community: (persona?: Persona, account?: Account) => Promise<Community>;
 	space: (persona?: Persona, account?: Account, community?: Community) => Promise<Space>;
+	entity: (
+		persona?: Persona,
+		account?: Account,
+		community?: Community,
+		space?: Space,
+	) => Promise<Entity>;
 }
 
 /* eslint-disable no-param-reassign */
@@ -89,6 +98,7 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 		personas: [],
 		communities: [],
 		spaces: [],
+		entities: [],
 		account: async () => {
 			const params = randomAccountParams();
 			const account = unwrap(await db.repos.account.create(params.name, params.password));
@@ -133,6 +143,18 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 			);
 			random.spaces.push(space);
 			return space;
+		},
+		entity: async (persona, account, community, space) => {
+			if (!account) account = await random.account();
+			if (!persona) persona = await random.persona(account);
+			if (!community) community = await random.community(persona, account);
+			if (!space) space = await random.space(persona, account, community);
+			const params = randomEntityParams(persona.persona_id, space.space_id);
+			const entity = unwrap(
+				await db.repos.entity.create(params.actor_id, params.space_id, params.data),
+			);
+			random.entities.push(entity);
+			return entity;
 		},
 	};
 	return random;

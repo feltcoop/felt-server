@@ -37,19 +37,19 @@ export interface Ui extends Partial<UiHandlers> {
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
-	personas: Readable<Readable<Persona>[]>;
+	personas: Mutable<Readable<Persona>[]>;
 	sessionPersonas: Readable<Readable<Persona>[]>;
 	sessionPersonaIndices: Readable<Map<Readable<Persona>, number>>;
-	communities: Readable<Readable<Community>[]>;
-	spaces: Readable<Readable<Space>[]>;
-	memberships: Readable<Readable<Membership>[]>;
+	communities: Mutable<Readable<Community>[]>;
+	spaces: Mutable<Readable<Space>[]>;
+	memberships: Mutable<Readable<Membership>[]>;
 	personaById: Map<number, Readable<Persona>>;
 	communityById: Map<number, Readable<Community>>;
-	spaceById: Readable<Map<number, Readable<Space>>>;
+	spaceById: Map<number, Readable<Space>>;
 	//TODO maybe refactor to remove store around map? Like personaById
 	spacesByCommunityId: Readable<Map<number, Readable<Space>[]>>;
 	personasByCommunityId: Readable<Map<number, Readable<Persona>[]>>;
-	entitiesBySpace: Map<number, Readable<Readable<Entity>[]>>;
+	entitiesBySpace: Map<number, Readable<Readable<Entity>[]>>; // TODO mutable inner store
 	setSession: ($session: ClientSession) => void;
 	// view state
 	expandMainNav: Readable<boolean>;
@@ -65,6 +65,7 @@ export interface Ui extends Partial<UiHandlers> {
 	spaceIdSelectionByCommunityId: Readable<{[key: number]: number | null}>;
 	spaceSelection: Readable<Readable<Space> | null>;
 	mobile: Readable<boolean>;
+	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
 	dialogs: Writable<DialogData[]>;
 	viewBySpace: Mutable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
@@ -79,28 +80,25 @@ export const toUi = (
 	const account = writable<AccountModel | null>(null);
 	// Importantly, this only changes when items are added or removed from the collection,
 	// not when the items themselves change; each item is a store that can be subscribed to.
-	const personas = writable<Writable<Persona>[]>([]);
+	const personas = mutable<Writable<Persona>[]>([]);
 	// not derived from session because the session has only the initial snapshot
 	// TODO these `Persona`s need additional data compared to every other `Persona`
 	const sessionPersonas = writable<Writable<Persona>[]>([]);
-	const communities = writable<Writable<Community>[]>([]);
-	const spaces = writable<Writable<Space>[]>([]);
-	const memberships = writable<Writable<Membership>[]>([]);
+	const communities = mutable<Writable<Community>[]>([]);
+	const spaces = mutable<Writable<Space>[]>([]);
+	const memberships = mutable<Writable<Membership>[]>([]);
 	const personaById: Map<number, Writable<Persona>> = new Map();
 	const communityById: Map<number, Writable<Community>> = new Map();
+	const spaceById: Map<number, Writable<Space>> = new Map();
 	// TODO do these maps more efficiently
-	const spaceById: Readable<Map<number, Writable<Space>>> = derived(
-		spaces,
-		($spaces) => new Map($spaces.map((space) => [get(space).space_id, space])),
-	);
 	const spacesByCommunityId: Readable<Map<number, Readable<Space>[]>> = derived(
 		[communities, spaces],
 		([$communities, $spaces]) => {
 			const map: Map<number, Readable<Space>[]> = new Map();
-			for (const community of $communities) {
+			for (const community of $communities.value) {
 				const communitySpaces: Writable<Space>[] = [];
 				const {community_id} = get(community);
-				for (const space of $spaces) {
+				for (const space of $spaces.value) {
 					if (get(space).community_id === community_id) {
 						communitySpaces.push(space!);
 					}
@@ -115,10 +113,10 @@ export const toUi = (
 		[communities, memberships],
 		([$communities, $memberships]) => {
 			const map: Map<number, Readable<Persona>[]> = new Map();
-			for (const community of $communities) {
+			for (const community of $communities.value) {
 				const communityPersonas: Writable<Persona>[] = [];
 				const {community_id} = get(community);
-				for (const membership of $memberships) {
+				for (const membership of $memberships.value) {
 					if (get(membership).community_id === community_id) {
 						communityPersonas.push(personaById.get(get(membership).persona_id)!);
 					}
@@ -130,7 +128,8 @@ export const toUi = (
 	);
 
 	const mobile = writable(initialMobile);
-	const contextmenu = createContextmenuStore();
+	const layout = writable({width: 0, height: 0});
+	const contextmenu = createContextmenuStore(layout);
 	const dialogs = writable<DialogData[]>([]);
 	const viewBySpace = mutable(new WeakMap());
 
@@ -160,9 +159,9 @@ export const toUi = (
 				for (const sessionPersona of $sessionPersonas) {
 					const $sessionPersona = get(sessionPersona);
 					const sessionPersonaCommunities: Readable<Community>[] = [];
-					for (const community of $communities) {
+					for (const community of $communities.value) {
 						const $community = get(community);
-						for (const membership of $memberships) {
+						for (const membership of $memberships.value) {
 							const $membership = get(membership);
 							if (
 								$membership.community_id === $community.community_id &&
@@ -196,9 +195,7 @@ export const toUi = (
 		[communitySelection, spaceIdSelectionByCommunityId],
 		([$communitySelection, $spaceIdSelectionByCommunityId]) =>
 			($communitySelection &&
-				get(spaceById).get(
-					$spaceIdSelectionByCommunityId[get($communitySelection)!.community_id]!,
-				)) ||
+				spaceById.get($spaceIdSelectionByCommunityId[get($communitySelection)!.community_id]!)) ||
 			null,
 	);
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
@@ -213,8 +210,8 @@ export const toUi = (
 		$communitySpaces: Space[],
 	): void => {
 		//TODO return membership object from server to put in here instead
-		memberships.update(($memberships) =>
-			$memberships.concat(
+		memberships.mutate(($memberships) =>
+			$memberships.push(
 				writable({community_id: $community.community_id, persona_id} as Membership),
 			),
 		);
@@ -223,15 +220,16 @@ export const toUi = (
 		// We may get circular derived dependencies that put things in a bad state if either one is
 		// updated first, in which case we may need something like deferred store transaction updates.
 
-		const $spaceById = get(spaceById);
 		let $spacesToAdd: Space[] | null = null;
 		for (const $space of $communitySpaces) {
-			if (!$spaceById.has($space.space_id)) {
+			if (!spaceById.has($space.space_id)) {
 				($spacesToAdd || ($spacesToAdd = [])).push($space);
 			}
 		}
 		if ($spacesToAdd) {
-			spaces.update(($spaces) => $spaces.concat($spacesToAdd!.map((s) => writable(s))));
+			const spacesToAdd = $spacesToAdd.map((s) => writable(s));
+			spacesToAdd.forEach((s, i) => spaceById.set($spacesToAdd![i].space_id, s));
+			spaces.mutate(($spaces) => $spaces.push(...spacesToAdd));
 		}
 		spaceIdSelectionByCommunityId.update(($v) => ({
 			...$v,
@@ -241,7 +239,7 @@ export const toUi = (
 		// TODO this updates the map before the store array because it may be derived,
 		// but is the better implementation to use a `mutable` wrapping a map, no array?
 		communityById.set($community.community_id, community);
-		communities.update(($communities) => $communities.concat(community));
+		communities.mutate(($communities) => $communities.push(community));
 	};
 
 	const ui: Ui = {
@@ -263,6 +261,7 @@ export const toUi = (
 		communitiesBySessionPersona,
 		// view state
 		mobile,
+		layout,
 		expandMainNav,
 		expandMarquee,
 		contextmenu,
@@ -292,23 +291,28 @@ export const toUi = (
 			if (browser) console.log('[ui.setSession]', $session);
 			account.set($session.guest ? null : $session.account);
 
-			const $personasArray = $session.guest ? [] : toInitialPersonas($session);
-			const $personas = $personasArray.map((p) => writable(p));
+			const $personaArray = $session.guest ? [] : toInitialPersonas($session);
+			const $personas = $personaArray.map((p) => writable(p));
 			personaById.clear();
-			$personas.forEach((p, i) => personaById.set($personasArray[i].persona_id, p));
-			personas.set($personas);
+			$personas.forEach((p, i) => personaById.set($personaArray[i].persona_id, p));
+			personas.swap($personas);
 
 			const $sessionPersonas = $session.guest ? [] : $session.personas;
 			sessionPersonas.set($sessionPersonas.map((p) => personaById.get(p.persona_id)!));
 
-			const $communitiesArray = $session.guest ? [] : $session.communities;
-			const $communities = $communitiesArray.map((p) => writable(p));
+			const $communityArray = $session.guest ? [] : $session.communities;
+			const $communities = $communityArray.map((p) => writable(p));
 			communityById.clear();
-			$communities.forEach((c, i) => communityById.set($communitiesArray[i].community_id, c));
-			communities.set($communities);
+			$communities.forEach((c, i) => communityById.set($communityArray[i].community_id, c));
+			communities.swap($communities);
 
-			spaces.set($session.guest ? [] : $session.spaces.map((s) => writable(s)));
-			memberships.set($session.guest ? [] : $session.memberships.map((s) => writable(s)));
+			const $spaceArray = $session.guest ? [] : $session.spaces;
+			const $spaces = $spaceArray.map((s) => writable(s));
+			spaceById.clear();
+			$spaces.forEach((s, i) => spaceById.set($spaceArray[i].space_id, s));
+			spaces.swap($spaces);
+
+			memberships.swap($session.guest ? [] : $session.memberships.map((s) => writable(s)));
 
 			// TODO fix this and the 2 below to use the URL to initialize the correct persona+community+space
 			const $firstSessionPersona = $session.guest ? null : $sessionPersonas[0];
@@ -371,7 +375,7 @@ export const toUi = (
 			// TODO this updates the map before the store array because it may be derived,
 			// but is the better implementation to use a `mutable` wrapping a map, no array?
 			personaById.set($persona.persona_id, persona);
-			personas.update(($personas) => $personas.concat(persona));
+			personas.mutate(($personas) => $personas.push(persona));
 			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(persona));
 			dispatch('SelectPersona', {persona_id: $persona.persona_id});
 			addCommunity($community, $persona.persona_id, $spaces);
@@ -408,18 +412,21 @@ export const toUi = (
 			const {membership: $membership} = result.value;
 			console.log('[ui.CreateMembership]', $membership);
 			// TODO also update `communities.personas`
-			memberships.update(($memberships) => $memberships.concat(writable($membership)));
+			memberships.mutate(($memberships) => $memberships.push(writable($membership)));
 			return result;
 		},
 		DeleteMembership: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			// TODO also update `communities.personas`
-			memberships.update(($memberships) =>
-				$memberships.filter(
-					(membership) =>
-						get(membership).persona_id !== params.persona_id ||
-						get(membership).community_id !== params.community_id,
+			memberships.mutate(($memberships) =>
+				$memberships.splice(
+					$memberships.findIndex(
+						(membership) =>
+							get(membership).persona_id !== params.persona_id ||
+							get(membership).community_id !== params.community_id,
+					),
+					1,
 				),
 			);
 
@@ -430,7 +437,9 @@ export const toUi = (
 			if (!result.ok) return result;
 			const {space: $space} = result.value;
 			console.log('[ui.CreateSpace]', $space);
-			spaces.update(($spaces) => $spaces.concat(writable($space)));
+			const space = writable($space);
+			spaceById.set($space.space_id, space);
+			spaces.mutate(($spaces) => $spaces.push(space));
 			return result;
 		},
 		DeleteSpace: async ({params, invoke}) => {
@@ -438,7 +447,7 @@ export const toUi = (
 			if (!result.ok) return result;
 			//update state here
 			const {space_id} = params;
-			get(communities).forEach((community) => {
+			get(communities).value.forEach((community) => {
 				// TODO maybe make a nav helper or event?
 				const $community = get(community);
 				// TODO this should only nav for the active community, otherwise update just update the spaceIdSelectionByCommunityId
@@ -453,7 +462,9 @@ export const toUi = (
 				}
 			});
 
-			spaces.update(($spaces) => $spaces.filter((space) => get(space).space_id !== space_id));
+			const space = spaceById.get(space_id)!;
+			spaceById.delete(space_id);
+			spaces.mutate(($spaces) => $spaces.splice($spaces.indexOf(space), 1));
 
 			return result;
 		},
@@ -463,37 +474,49 @@ export const toUi = (
 			const {entity: $entity} = result.value;
 			console.log('[ui.CreateEntity]', $entity);
 			const entity = writable($entity);
-			const entities = entitiesBySpace.get($entity.space_id);
-			if (entities) {
+			const spaceEntities = entitiesBySpace.get($entity.space_id);
+			if (spaceEntities) {
 				// TODO check if it already exists -- maybe by getting `entityStore` from a `entityById` map
-				entities.update(($entities) => $entities.concat(entity));
+				spaceEntities.update(($entities) => $entities.concat(entity));
 			} else {
 				entitiesBySpace.set($entity.space_id, writable([entity]));
 			}
+			return result;
+		},
+		UpdateEntity: async ({invoke}) => {
+			const result = await invoke();
+			console.log('updateEnity result', result);
+			if (!result.ok) return result;
+			//TODO maybe return to $entity naming convention OR propagate this pattern?
+			const {entity: updatedEntity} = result.value;
+			console.log('[ui.UpdateEntity]', updatedEntity.entity_id);
+			const entities = entitiesBySpace.get(updatedEntity.space_id);
+			const entity = get(entities!).find((e) => get(e).entity_id === updatedEntity.entity_id);
+			entity!.set(updatedEntity);
 			return result;
 		},
 		ReadEntities: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {space_id} = params;
-			const existingEntities = entitiesBySpace.get(space_id);
+			const existingSpaceEntities = entitiesBySpace.get(space_id);
 			// TODO probably check to make sure they don't already exist
 			const newFiles = result ? result.value.entities.map((f) => writable(f)) : [];
 			console.log('[ui.ReadEntities]', newFiles);
-			if (existingEntities) {
-				existingEntities.set(newFiles);
+			if (existingSpaceEntities) {
+				existingSpaceEntities.set(newFiles);
 			} else {
 				entitiesBySpace.set(space_id, writable(newFiles));
 			}
 			return result;
 		},
 		QueryEntities: ({params, dispatch}) => {
-			let entities = entitiesBySpace.get(params.space_id);
-			if (!entities) {
-				entitiesBySpace.set(params.space_id, (entities = writable([])));
+			let spaceEntities = entitiesBySpace.get(params.space_id);
+			if (!spaceEntities) {
+				entitiesBySpace.set(params.space_id, (spaceEntities = writable([])));
 				dispatch('ReadEntities', params);
 			}
-			return entities;
+			return spaceEntities;
 		},
 		SetMobile: ({params}) => {
 			mobile.set(params);

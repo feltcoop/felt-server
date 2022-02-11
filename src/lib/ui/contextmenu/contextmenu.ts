@@ -1,4 +1,4 @@
-import {writable, type Readable} from 'svelte/store';
+import {writable, type Readable, type Writable} from 'svelte/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {last} from '@feltcoop/felt/util/array.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
@@ -36,6 +36,7 @@ export interface Contextmenu {
 }
 
 export interface ContextmenuStore extends Readable<Contextmenu> {
+	layout: Readable<{width: number; height: number}>;
 	action: typeof contextmenuAction;
 	open: (items: ContextmenuItems, x: number, y: number) => void;
 	close: () => void;
@@ -65,7 +66,9 @@ const CONTEXTMENU_STATE_KEY = Symbol();
  * and for internal usage see `Contextmenu.svelte`.
  * @returns
  */
-export const createContextmenuStore = (): ContextmenuStore => {
+export const createContextmenuStore = (
+	layout: Readable<{width: number; height: number}>,
+): ContextmenuStore => {
 	const rootMenu: ContextmenuStore['rootMenu'] = {isMenu: true, menu: null, items: []};
 	const selections: ContextmenuStore['selections'] = [];
 
@@ -75,6 +78,7 @@ export const createContextmenuStore = (): ContextmenuStore => {
 		subscribe,
 		rootMenu,
 		selections,
+		layout,
 		action: contextmenuAction,
 		open: (items, x, y) => {
 			selections.length = 0;
@@ -191,12 +195,11 @@ export const onContextmenu = (
 	LinkContextmenu?: typeof SvelteComponent,
 ): undefined | false => {
 	if (e.shiftKey) return;
-	const target = e.target as HTMLElement;
-	if (isEditable(target) || excludeEl?.contains(target)) return;
-	const items = queryContextmenuItems(target, LinkContextmenu);
-	if (!items) return;
 	e.stopPropagation();
 	e.preventDefault();
+	const target = e.target as HTMLElement;
+	const items = queryContextmenuItems(target, LinkContextmenu);
+	if (!items || isEditable(target) || excludeEl?.contains(target)) return;
 	// TODO dispatch a UI event, like OpenContextmenu
 	contextmenu.open(items, e.clientX, e.clientY);
 	return false; // TODO remove this if it doesn't fix FF mobile (and update the `false` return value)
@@ -235,3 +238,12 @@ const CONTEXTMENU_STORE_KEY = Symbol();
 export const setContextmenu = (contextmenu: ContextmenuStore): void =>
 	setContext(CONTEXTMENU_STORE_KEY, contextmenu);
 export const getContextmenu = (): ContextmenuStore => getContext(CONTEXTMENU_STORE_KEY);
+
+const CONTEXTMENU_DIMENSIONS_STORE_KEY = Symbol();
+export const setContextmenuDimensions = (): Writable<{width: number; height: number}> => {
+	const dimensions = writable({width: 0, height: 0});
+	setContext(CONTEXTMENU_DIMENSIONS_STORE_KEY, dimensions);
+	return dimensions;
+};
+export const getContextmenuDimensions = (): Writable<{width: number; height: number}> =>
+	getContext(CONTEXTMENU_DIMENSIONS_STORE_KEY);
