@@ -1,4 +1,4 @@
-import {type ArgsSchema} from '@feltcoop/gro/dist/task/task.js';
+import {type ArgsSchema} from '@feltcoop/gro';
 
 export const DbCreateTaskArgsSchema: ArgsSchema = {
 	$id: '/schemas/DbCreateTaskArgs.json',
