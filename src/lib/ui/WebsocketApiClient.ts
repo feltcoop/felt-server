@@ -19,7 +19,7 @@ export interface WebsocketApiClient<
 	TParamsMap extends Record<string, any>,
 	TResultMap extends Record<string, any>,
 > extends ApiClient<TParamsMap, TResultMap> {
-	handle: (rawMessage: any, handleBroadcastMessage: (message: BroadcastMessage) => void) => void;
+	handle: (rawMessage: any) => void;
 }
 
 interface WebsocketRequest<T = any> {
@@ -34,6 +34,7 @@ export const toWebsocketApiClient = <
 >(
 	findService: (name: string) => ServiceEventInfo | undefined,
 	send: (request: JsonRpcRequest) => void,
+	handleBroadcastMessage: (message: BroadcastMessage) => void,
 ): WebsocketApiClient<TParamsMap, TResultMap> => {
 	// TODO maybe extract a `WebsocketRequests` interface, with `add`/`remove` functions (and `pending` items?)
 	const websocketRequests: Map<JsonRpcId, WebsocketRequest> = new Map();
@@ -61,7 +62,7 @@ export const toWebsocketApiClient = <
 			send(request);
 			return websocketRequest.promise;
 		},
-		handle: (rawMessage, handleBroadcastMessage) => {
+		handle: (rawMessage) => {
 			const message = parseSocketMessage(rawMessage);
 			console.log('[ws] handle', message);
 			if (!message) return;

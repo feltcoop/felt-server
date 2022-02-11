@@ -3,6 +3,7 @@ import type {Result} from '@feltcoop/felt';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Database} from '$lib/db/Database';
 import type {EntityData} from '$lib/vocab/entity/entityData';
+import type {ErrorResponse} from '$lib/util/error';
 
 export const entityRepo = (db: Database) => ({
 	create: async (
@@ -27,5 +28,20 @@ export const entityRepo = (db: Database) => ({
 		`;
 		console.log('[db] space entities', entities);
 		return {ok: true, value: entities};
+	},
+	updateEntityData: async (
+		entity_id: number,
+		data: EntityData,
+	): Promise<Result<{value: Entity}, ErrorResponse>> => {
+		console.log(`[db] updating data for entity: ${entity_id}`);
+		const result = await db.sql<Entity[]>`
+			UPDATE entities SET data=${db.sql.json(data)}, updated=NOW()
+			WHERE entity_id= ${entity_id}
+			RETURNING *
+		`;
+		if (!result.count) {
+			return {ok: false, message: 'failed to update entity data'};
+		}
+		return {ok: true, value: result[0]};
 	},
 });

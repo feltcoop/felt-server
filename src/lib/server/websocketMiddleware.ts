@@ -76,12 +76,21 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 					message: 'invalid params: ' + toValidationErrorMessage(validateParams.errors![0]),
 				};
 			} else {
-				result = await service.perform({
-					repos: server.db.repos,
-					params,
-					account_id,
-					session: new SessionApi(null),
-				});
+				try {
+					result = await service.perform({
+						repos: server.db.repos,
+						params,
+						account_id,
+						session: new SessionApi(null),
+					});
+				} catch (err) {
+					console.error(err);
+					result = {
+						ok: false,
+						status: 500,
+						message: 'unknown server error',
+					};
+				}
 			}
 		}
 

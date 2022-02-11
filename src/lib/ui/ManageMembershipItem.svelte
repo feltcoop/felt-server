@@ -25,16 +25,18 @@
 	};
 </script>
 
-<li>
-	<div class="community-badge">
-		<button type="button" on:click={() => leaveCommunity($community.community_id)}> 👋 </button>
-		<!-- TODO refactor, probably extract a component -->
-		{$community.name}
-	</div>
-	{#if errorMessage}
-		<Message status="error">{errorMessage}</Message>
-	{/if}
-</li>
+{#if $community.type !== 'personal' && !($persona.type === 'community' && $persona.community_id === $community.community_id)}
+	<li>
+		<div class="community-badge">
+			<button type="button" on:click={() => leaveCommunity($community.community_id)}> 👋 </button>
+			<!-- TODO refactor, probably extract a component -->
+			{$community.name}
+		</div>
+		{#if errorMessage}
+			<Message status="error">{errorMessage}</Message>
+		{/if}
+	</li>
+{/if}
 
 <style>
 	.community-badge {

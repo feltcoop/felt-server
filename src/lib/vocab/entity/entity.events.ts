@@ -31,6 +31,36 @@ export const CreateEntity: ServiceEventInfo = {
 	},
 };
 
+export const UpdateEntity: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'UpdateEntity',
+	broadcast: true,
+	params: {
+		$id: '/schemas/UpdateEntityParams.json',
+		type: 'object',
+		properties: {
+			entity_id: {type: 'number'},
+			data: {type: 'object', tsType: 'EntityData'},
+		},
+		required: ['entity_id', 'data'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: '/schemas/UpdateEntityResponse.json',
+		type: 'object',
+		properties: {
+			entity: {$ref: '/schemas/Entity.json', tsType: 'Entity'},
+		},
+		required: ['entity'],
+		additionalProperties: false,
+	},
+	returns: 'Promise<UpdateEntityResponseResult>',
+	route: {
+		path: '/api/v1/entities/:entity_id',
+		method: 'POST',
+	},
+};
+
 export const ReadEntities: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'ReadEntities',
@@ -79,4 +109,4 @@ export const QueryEntities: ClientEventInfo = {
 	returns: 'Readable<Readable<Entity>[]>',
 };
 
-export const events: EventInfo[] = [CreateEntity, ReadEntities, QueryEntities];
+export const events: EventInfo[] = [CreateEntity, ReadEntities, UpdateEntity, QueryEntities];

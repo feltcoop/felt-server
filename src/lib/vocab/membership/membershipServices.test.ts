@@ -67,11 +67,11 @@ test__membershipServices('delete a membership in a community', async ({db}) => {
 	const random = toRandomVocabContext(db);
 	const account = await random.account();
 	const persona = await random.persona(account);
-	const community1 = await random.community(persona);
+	const community = await random.community(persona);
 
 	const deleteResult = await deleteMembershipService.perform({
 		repos: db.repos,
-		params: {persona_id: persona.persona_id, community_id: community1.community_id},
+		params: {persona_id: persona.persona_id, community_id: community.community_id},
 		account_id: account.account_id,
 		session: new SessionApiMock(),
 	});
@@ -79,9 +79,50 @@ test__membershipServices('delete a membership in a community', async ({db}) => {
 
 	const findSpaceResult = await db.repos.membership.findById(
 		persona.persona_id,
-		community1.community_id,
+		community.community_id,
 	);
 	assert.ok(!findSpaceResult.ok);
+});
+
+test__membershipServices('fail to delete a personal membership', async ({db}) => {
+	const random = toRandomVocabContext(db);
+	const account = await random.account();
+	const persona = await random.persona(account);
+
+	const deleteResult = await deleteMembershipService.perform({
+		repos: db.repos,
+		params: {persona_id: persona.persona_id, community_id: persona.community_id},
+		account_id: account.account_id,
+		session: new SessionApiMock(),
+	});
+	assert.ok(!deleteResult.ok);
+
+	const findSpaceResult = await db.repos.membership.findById(
+		persona.persona_id,
+		persona.community_id,
+	);
+	assert.ok(findSpaceResult.ok);
+});
+
+test__membershipServices('fail to delete a community persona membership', async ({db}) => {
+	const random = toRandomVocabContext(db);
+	const account = await random.account();
+	const community = await random.community(undefined, account);
+	const communityPersona = unwrap(await db.repos.persona.findByCommunityId(community.community_id));
+
+	const deleteResult = await deleteMembershipService.perform({
+		repos: db.repos,
+		params: {persona_id: communityPersona.persona_id, community_id: community.community_id},
+		account_id: account.account_id,
+		session: new SessionApiMock(),
+	});
+	assert.ok(!deleteResult.ok);
+
+	const findSpaceResult = await db.repos.membership.findById(
+		communityPersona.persona_id,
+		community.community_id,
+	);
+	assert.ok(findSpaceResult.ok);
 });
 
 test__membershipServices.run();

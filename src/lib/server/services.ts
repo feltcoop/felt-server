@@ -12,7 +12,11 @@ import {
 	createMembershipService,
 	deleteMembershipService,
 } from '$lib/vocab/membership/membershipServices';
-import {readEntitiesService, createEntityService} from '$lib/vocab/entity/entityServices';
+import {
+	readEntitiesService,
+	createEntityService,
+	updateEntityService,
+} from '$lib/vocab/entity/entityServices';
 import {
 	readSpaceService,
 	readSpacesService,
@@ -31,6 +35,7 @@ export const services: Map<string, Service<any, any>> = new Map(
 		deleteMembershipService,
 		createSpaceService,
 		createEntityService,
+		updateEntityService,
 		readCommunityService,
 		readCommunitiesService,
 		updateCommunitySettingsService,
