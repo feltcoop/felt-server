@@ -6,7 +6,7 @@ export interface DbTestMigrationTaskArgs {
 	 */
 	checkpoint?: boolean;
 	/**
-	 * number of migrations being tested; rarely might need more
+	 * number of migrations being tested; rarely might need more than 1
 	 */
 	count?: number;
 }

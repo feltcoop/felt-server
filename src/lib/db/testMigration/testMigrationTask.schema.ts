@@ -12,7 +12,7 @@ export const DbTestMigrationTaskArgsSchema: ArgsSchema = {
 		count: {
 			type: 'number',
 			default: 1,
-			description: 'number of migrations being tested; rarely might need more',
+			description: 'number of migrations being tested; rarely might need more than 1',
 		},
 	},
 	additionalProperties: false,
