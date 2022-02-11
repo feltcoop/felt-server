@@ -6,8 +6,8 @@
 		setContextmenu,
 		setContextmenuDimensions,
 		type ContextmenuStore,
+		onContextmenu
 	} from '$lib/ui/contextmenu/contextmenu';
-	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
 	// TODO upstream to Felt
 

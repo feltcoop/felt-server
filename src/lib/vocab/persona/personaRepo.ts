@@ -21,10 +21,10 @@ export const personaRepo = (db: Database) =>
 			Result<{value: {persona: Persona; community: Community; spaces: Space[]}}, ErrorResponse>
 		> => {
 			const data = await db.sql<Persona[]>`
-			INSERT INTO personas (type, name, account_id, community_id) VALUES (
-				${type}, ${name}, ${account_id}, ${community_id}
-			) RETURNING *
-		`;
+				INSERT INTO personas (type, name, account_id, community_id) VALUES (
+					${type}, ${name}, ${account_id}, ${community_id}
+				) RETURNING *
+			`;
 			const persona = data[0];
 			console.log('[db] created persona', persona);
 			if (type === 'account') {
@@ -39,9 +39,9 @@ export const personaRepo = (db: Database) =>
 				}
 				const {community, spaces} = createCommunityResult.value;
 				await db.sql`
-				UPDATE personas SET community_id = ${community.community_id}
+					UPDATE personas SET community_id = ${community.community_id}
 					WHERE persona_id = ${persona.persona_id}
-			`;
+				`;
 				persona.community_id = community.community_id;
 				return {ok: true, value: {persona, community, spaces}};
 			}
@@ -53,9 +53,9 @@ export const personaRepo = (db: Database) =>
 		): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 			console.log('[personaRepo] filtering by account', account_id);
 			const data = await db.sql<Persona[]>`
-			SELECT p.persona_id, p.type, p.name, p.account_id, p.community_id, p.created, p.updated
-			FROM personas p WHERE p.account_id = ${account_id}
-		`;
+				SELECT p.persona_id, p.type, p.name, p.account_id, p.community_id, p.created, p.updated
+				FROM personas p WHERE p.account_id = ${account_id}
+			`;
 			return {ok: true, value: data};
 		},
 		// TODO `findById` could be constructed by a generic function with id/columns params
@@ -64,9 +64,9 @@ export const personaRepo = (db: Database) =>
 		): Promise<Result<{value: Persona}, {type: 'no_persona_found'} & ErrorResponse>> => {
 			console.log('[personaRepo] loading persona', persona_id);
 			const data = await db.sql<Persona[]>`
-			SELECT persona_id, type, name, account_id, community_id, created, updated 
-			FROM personas WHERE persona_id=${persona_id}
-		`;
+				SELECT persona_id, type, name, account_id, community_id, created, updated 
+				FROM personas WHERE persona_id=${persona_id}
+			`;
 			if (data.length) {
 				return {ok: true, value: data[0]};
 			}
@@ -81,9 +81,9 @@ export const personaRepo = (db: Database) =>
 		): Promise<Result<{value: Persona}, {type: 'no_persona_found'} & ErrorResponse>> => {
 			console.log('[PersonaRepo] finding persona for community', community_id);
 			const data = await db.sql<Persona[]>`
-			SELECT persona_id, type, name, account_id, community_id, created, updated 
-			FROM personas WHERE community_id=${community_id}
-		`;
+				SELECT persona_id, type, name, account_id, community_id, created, updated 
+				FROM personas WHERE community_id=${community_id}
+			`;
 			if (data.length) {
 				return {ok: true, value: data[0]};
 			}
@@ -98,17 +98,17 @@ export const personaRepo = (db: Database) =>
 		): Promise<Result<{value: Persona | undefined}, ErrorResponse>> => {
 			console.log('[PersonaRepo] filtering by name', name);
 			const data = await db.sql<Persona[]>`
-			SELECT persona_id, type, name, account_id, community_id, created, updated
-			FROM personas WHERE LOWER(name) = LOWER(${name})
-		`;
+				SELECT persona_id, type, name, account_id, community_id, created, updated
+				FROM personas WHERE LOWER(name) = LOWER(${name})
+			`;
 			return {ok: true, value: data[0]};
 		},
 		// TODO needs to be a subset just for the session, maybe either `community_ids` or `account_id` as a param
 		// TODO this type isn't `Persona`, it's a public subset of fields
 		getAll: async (): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
 			const data = await db.sql<Persona[]>`
-			SELECT persona_id, name, type FROM personas
-		`;
+				SELECT persona_id, name, type FROM personas
+			`;
 			return {ok: true, value: data};
 		},
 	} as const);

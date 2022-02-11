@@ -16,7 +16,7 @@ export const setDispatch = (store: Dispatch): Dispatch => {
 };
 
 export interface DispatchContext<
-	TParams extends unknown = unknown,
+	TParams = unknown,
 	TResult extends ApiResult<unknown> | void = any,
 > {
 	eventName: string;

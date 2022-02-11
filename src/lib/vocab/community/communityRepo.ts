@@ -14,10 +14,10 @@ export const communityRepo = (db: Database) =>
 			persona_id: number,
 		): Promise<Result<{value: {community: Community; spaces: Space[]}}, ErrorResponse>> => {
 			const data = await db.sql<Community[]>`
-			INSERT INTO communities (type, name, settings) VALUES (
-				${type}, ${name}, ${db.sql.json(settings)}
-			) RETURNING *
-		`;
+				INSERT INTO communities (type, name, settings) VALUES (
+					${type}, ${name}, ${db.sql.json(settings)}
+				) RETURNING *
+			`;
 			console.log('[db] created community', data[0], {persona_id});
 			const community = data[0];
 			const {community_id} = community;
@@ -49,9 +49,9 @@ export const communityRepo = (db: Database) =>
 		): Promise<Result<{value: Community}, {type: 'no_community_found'} & ErrorResponse>> => {
 			console.log(`[db] preparing to query for community id: ${community_id}`);
 			const data = await db.sql<Community[]>`
-			SELECT community_id, type, name, settings, created, updated
+				SELECT community_id, type, name, settings, created, updated
 				FROM communities WHERE community_id=${community_id}
-		`;
+			`;
 			// console.log('[db.findById]', data);
 			if (data.length) {
 				return {ok: true, value: data[0]};
@@ -67,9 +67,9 @@ export const communityRepo = (db: Database) =>
 		): Promise<Result<{value: Community | undefined}, ErrorResponse>> => {
 			console.log('[communityRepo] finding by name', name);
 			const data = await db.sql<Community[]>`
-			SELECT community_id, type, name, settings, created, updated
+				SELECT community_id, type, name, settings, created, updated
 				FROM communities WHERE LOWER(name) = LOWER(${name})
-		`;
+			`;
 			return {ok: true, value: data[0]};
 		},
 		filterByAccount: async (
@@ -77,12 +77,12 @@ export const communityRepo = (db: Database) =>
 		): Promise<Result<{value: Community[]}, ErrorResponse>> => {
 			console.log(`[db] preparing to query for communities & spaces persona: ${account_id}`);
 			const data = await db.sql<Community[]>`
-			SELECT c.community_id, c.type, c.name, c.settings, c.created, c.updated							
-			FROM communities c JOIN (
-				SELECT DISTINCT m.community_id FROM personas p JOIN memberships m ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
-			) apc
-			ON c.community_id=apc.community_id;
-		`;
+				SELECT c.community_id, c.type, c.name, c.settings, c.created, c.updated							
+				FROM communities c JOIN (
+					SELECT DISTINCT m.community_id FROM personas p JOIN memberships m ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
+				) apc
+				ON c.community_id=apc.community_id;
+			`;
 			console.log('[db.filterByAccount]', data.length);
 			return {ok: true, value: data};
 		},
@@ -91,8 +91,8 @@ export const communityRepo = (db: Database) =>
 			settings: Community['settings'],
 		): Promise<Result<object, ErrorResponse>> => {
 			const data = await db.sql<any[]>`
-			UPDATE communities SET settings=${db.sql.json(settings)} WHERE community_id=${community_id}
-		`;
+				UPDATE communities SET settings=${db.sql.json(settings)} WHERE community_id=${community_id}
+			`;
 			if (!data.count) {
 				return {ok: false, message: 'failed to update settings'};
 			}

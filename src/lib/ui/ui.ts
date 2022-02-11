@@ -14,8 +14,7 @@ import {type Entity} from '$lib/vocab/entity/entity';
 import {type Membership} from '$lib/vocab/membership/membership';
 import {type DispatchContext} from '$lib/app/dispatch';
 import {type UiHandlers} from '$lib/app/eventTypes';
-import {type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-import {createContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
+import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {type ViewData} from '$lib/vocab/view/view';
 
 const KEY = Symbol();
@@ -37,19 +36,19 @@ export interface Ui extends Partial<UiHandlers> {
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
-	personas: Mutable<Readable<Persona>[]>;
-	sessionPersonas: Readable<Readable<Persona>[]>;
+	personas: Mutable<Array<Readable<Persona>>>;
+	sessionPersonas: Readable<Array<Readable<Persona>>>;
 	sessionPersonaIndices: Readable<Map<Readable<Persona>, number>>;
-	communities: Mutable<Readable<Community>[]>;
-	spaces: Mutable<Readable<Space>[]>;
-	memberships: Mutable<Readable<Membership>[]>;
+	communities: Mutable<Array<Readable<Community>>>;
+	spaces: Mutable<Array<Readable<Space>>>;
+	memberships: Mutable<Array<Readable<Membership>>>;
 	personaById: Map<number, Readable<Persona>>;
 	communityById: Map<number, Readable<Community>>;
 	spaceById: Map<number, Readable<Space>>;
 	//TODO maybe refactor to remove store around map? Like personaById
-	spacesByCommunityId: Readable<Map<number, Readable<Space>[]>>;
-	personasByCommunityId: Readable<Map<number, Readable<Persona>[]>>;
-	entitiesBySpace: Map<number, Readable<Readable<Entity>[]>>; // TODO mutable inner store
+	spacesByCommunityId: Readable<Map<number, Array<Readable<Space>>>>;
+	personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>>;
+	entitiesBySpace: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
 	setSession: ($session: ClientSession) => void;
 	// view state
 	expandMainNav: Readable<boolean>;
@@ -58,7 +57,7 @@ export interface Ui extends Partial<UiHandlers> {
 	personaIdSelection: Readable<number | null>;
 	personaSelection: Readable<Readable<Persona> | null>;
 	personaIndexSelection: Readable<number | null>;
-	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Readable<Community>[]>>;
+	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Readable<Community>>>>;
 	communityIdSelectionByPersonaId: Readable<{[key: number]: number}>;
 	communityIdSelection: Readable<number | null>;
 	communitySelection: Readable<Readable<Community> | null>;
@@ -80,27 +79,27 @@ export const toUi = (
 	const account = writable<AccountModel | null>(null);
 	// Importantly, this only changes when items are added or removed from the collection,
 	// not when the items themselves change; each item is a store that can be subscribed to.
-	const personas = mutable<Writable<Persona>[]>([]);
+	const personas = mutable<Array<Writable<Persona>>>([]);
 	// not derived from session because the session has only the initial snapshot
 	// TODO these `Persona`s need additional data compared to every other `Persona`
-	const sessionPersonas = writable<Writable<Persona>[]>([]);
-	const communities = mutable<Writable<Community>[]>([]);
-	const spaces = mutable<Writable<Space>[]>([]);
-	const memberships = mutable<Writable<Membership>[]>([]);
+	const sessionPersonas = writable<Array<Writable<Persona>>>([]);
+	const communities = mutable<Array<Writable<Community>>>([]);
+	const spaces = mutable<Array<Writable<Space>>>([]);
+	const memberships = mutable<Array<Writable<Membership>>>([]);
 	const personaById: Map<number, Writable<Persona>> = new Map();
 	const communityById: Map<number, Writable<Community>> = new Map();
 	const spaceById: Map<number, Writable<Space>> = new Map();
 	// TODO do these maps more efficiently
-	const spacesByCommunityId: Readable<Map<number, Readable<Space>[]>> = derived(
+	const spacesByCommunityId: Readable<Map<number, Array<Readable<Space>>>> = derived(
 		[communities, spaces],
 		([$communities, $spaces]) => {
-			const map: Map<number, Readable<Space>[]> = new Map();
+			const map: Map<number, Array<Readable<Space>>> = new Map();
 			for (const community of $communities.value) {
-				const communitySpaces: Writable<Space>[] = [];
+				const communitySpaces: Array<Writable<Space>> = [];
 				const {community_id} = get(community);
 				for (const space of $spaces.value) {
 					if (get(space).community_id === community_id) {
-						communitySpaces.push(space!);
+						communitySpaces.push(space);
 					}
 				}
 				map.set(community_id, communitySpaces);
@@ -109,12 +108,12 @@ export const toUi = (
 		},
 	);
 
-	const personasByCommunityId: Readable<Map<number, Readable<Persona>[]>> = derived(
+	const personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>> = derived(
 		[communities, memberships],
 		([$communities, $memberships]) => {
-			const map: Map<number, Readable<Persona>[]> = new Map();
+			const map: Map<number, Array<Readable<Persona>>> = new Map();
 			for (const community of $communities.value) {
-				const communityPersonas: Writable<Persona>[] = [];
+				const communityPersonas: Array<Writable<Persona>> = [];
 				const {community_id} = get(community);
 				for (const membership of $memberships.value) {
 					if (get(membership).community_id === community_id) {
@@ -151,14 +150,14 @@ export const toUi = (
 		[sessionPersonas],
 		([$sessionPersonas]) => new Map($sessionPersonas.map((p, i) => [p, i])),
 	);
-	const communitiesBySessionPersona: Readable<Map<Readable<Persona>, Readable<Community>[]>> =
+	const communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Readable<Community>>>> =
 		derived(
 			[sessionPersonas, memberships, communities],
 			([$sessionPersonas, $memberships, $communities]) => {
-				const map: Map<Readable<Persona>, Readable<Community>[]> = new Map();
+				const map: Map<Readable<Persona>, Array<Readable<Community>>> = new Map();
 				for (const sessionPersona of $sessionPersonas) {
 					const $sessionPersona = get(sessionPersona);
-					const sessionPersonaCommunities: Readable<Community>[] = [];
+					const sessionPersonaCommunities: Array<Readable<Community>> = [];
 					for (const community of $communities.value) {
 						const $community = get(community);
 						for (const membership of $memberships.value) {
@@ -199,7 +198,7 @@ export const toUi = (
 			null,
 	);
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
-	const entitiesBySpace: Map<number, Writable<Writable<Entity>[]>> = new Map();
+	const entitiesBySpace: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
 
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
@@ -283,9 +282,8 @@ export const toUi = (
 			// const handler = handlers.get(eventName); // TODO ? would make it easy to do external registration
 			if (handler) {
 				return handler(ctx);
-			} else {
-				console.warn('[ui] ignoring unhandled event', ctx);
 			}
+			console.warn('[ui] ignoring unhandled event', ctx);
 		},
 		setSession: ($session) => {
 			if (browser) console.log('[ui.setSession]', $session);
@@ -452,6 +450,7 @@ export const toUi = (
 				const $community = get(community);
 				// TODO this should only nav for the active community, otherwise update just update the spaceIdSelectionByCommunityId
 				if (space_id === get(spaceIdSelectionByCommunityId)[$community.community_id]) {
+					// eslint-disable-next-line @typescript-eslint/no-floating-promises
 					goto(
 						'/' +
 							$community.name +
@@ -514,7 +513,7 @@ export const toUi = (
 			let spaceEntities = entitiesBySpace.get(params.space_id);
 			if (!spaceEntities) {
 				entitiesBySpace.set(params.space_id, (spaceEntities = writable([])));
-				dispatch('ReadEntities', params);
+				dispatch('ReadEntities', params); // eslint-disable-line @typescript-eslint/no-floating-promises
 			}
 			return spaceEntities;
 		},
@@ -547,7 +546,7 @@ export const toUi = (
 				[community_id]: space_id,
 			}));
 		},
-		ViewSpace: ({params: {space, view}}) => {
+		ViewSpace: async ({params: {space, view}}) => {
 			viewBySpace.mutate(($viewBySpace) => {
 				if (view) {
 					$viewBySpace.set(space, view);
@@ -566,7 +565,7 @@ export const toUi = (
 				$space.space_id !== get(spaceIdSelectionByCommunityId)[get(selectedCommunity).community_id]
 			) {
 				const $community = get(communityById.get($space.community_id)!);
-				goto('/' + $community.name + $space.url + location.search, {replaceState: true});
+				await goto('/' + $community.name + $space.url + location.search, {replaceState: true});
 			}
 		},
 		ToggleMainNav: () => {

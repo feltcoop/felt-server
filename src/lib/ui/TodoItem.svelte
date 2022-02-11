@@ -26,7 +26,7 @@
 	// TODO refactor to some client view-model for the actor
 	$: hue = randomHue($persona.name);
 
-	$: updateEntity(checked);
+	$: updateEntity(checked); // eslint-disable-line @typescript-eslint/no-floating-promises
 
 	const updateEntity = async (checked: boolean) => {
 		if ($entity.data.checked === checked) return;

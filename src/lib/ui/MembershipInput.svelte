@@ -1,5 +1,4 @@
 <script lang="ts">
-	import {get} from 'svelte/store';
 	import type {Readable} from 'svelte/store';
 
 	import type {Community} from '$lib/vocab/community/community.js';
@@ -14,11 +13,9 @@
 
 	$: communityPersonas = $personasByCommunityId.get($community.community_id)!;
 
-	// TODO speed this up with a better cached data structures; the use of `get` is particularly bad
+	// TODO speed this up with a better cached data structures
 	$: invitableMembers = $community
-		? $personas.value.filter(
-				(x) => !communityPersonas.some((y) => get(x).persona_id == get(y).persona_id),
-		  )
+		? $personas.value.filter((p) => !communityPersonas.includes(p))
 		: [];
 </script>
 

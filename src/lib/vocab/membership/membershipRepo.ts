@@ -11,10 +11,10 @@ export const membershipRepo = (db: Database) =>
 			community_id: number,
 		): Promise<Result<{value: Membership}, ErrorResponse>> => {
 			const data = await db.sql<Membership[]>`
-			INSERT INTO memberships (persona_id, community_id) VALUES (
-				${persona_id},${community_id}
-			) RETURNING *
-		`;
+				INSERT INTO memberships (persona_id, community_id) VALUES (
+					${persona_id},${community_id}
+				) RETURNING *
+			`;
 			console.log('[db] created membership', data[0]);
 			return {ok: true, value: data[0]};
 		},
@@ -23,10 +23,10 @@ export const membershipRepo = (db: Database) =>
 			community_id: number,
 		): Promise<Result<{value: Membership}, {type: 'query_error'} & ErrorResponse>> => {
 			const data = await db.sql<Membership[]>`
-			SELECT persona_id, community_id, created, updated
-			FROM memberships
-			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
-		`;
+				SELECT persona_id, community_id, created, updated
+				FROM memberships
+				WHERE ${persona_id}=persona_id AND ${community_id}=community_id
+			`;
 			if (data.length) {
 				return {ok: true, value: data[0]};
 			}
@@ -41,14 +41,14 @@ export const membershipRepo = (db: Database) =>
 		): Promise<Result<{value: Membership[]}, ErrorResponse>> => {
 			console.log(`[membershipRepo] preparing to query for memberships by account: ${account_id}`);
 			const data = await db.sql<Membership[]>`
-			SELECT m.persona_id, m.community_id, m.created, m.updated 
-			FROM memberships m JOIN (
-				SELECT DISTINCT m.community_id FROM personas p 
-				JOIN memberships m 
-				ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
-			) apc
-			ON m.community_id=apc.community_id;
-		`;
+				SELECT m.persona_id, m.community_id, m.created, m.updated 
+				FROM memberships m JOIN (
+					SELECT DISTINCT m.community_id FROM personas p 
+					JOIN memberships m 
+					ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
+				) apc
+				ON m.community_id=apc.community_id;
+			`;
 			return {ok: true, value: data};
 		},
 		filterByCommunityId: async (
@@ -58,10 +58,10 @@ export const membershipRepo = (db: Database) =>
 				`[membershipRepo] preparing to query for memberships by community: ${community_id}`,
 			);
 			const data = await db.sql<Membership[]>`
-			SELECT m.persona_id, m.community_id, m.created, m.updated 
-			FROM memberships m 
-			WHERE m.community_id=${community_id};
-		`;
+				SELECT m.persona_id, m.community_id, m.created, m.updated 
+				FROM memberships m 
+				WHERE m.community_id=${community_id};
+			`;
 			return {ok: true, value: data};
 		},
 		deleteById: async (
@@ -69,10 +69,9 @@ export const membershipRepo = (db: Database) =>
 			community_id: number,
 		): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {
 			const data = await db.sql<any[]>`
-			DELETE FROM memberships 
-			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
-		`;
-
+				DELETE FROM memberships 
+				WHERE ${persona_id}=persona_id AND ${community_id}=community_id
+			`;
 			if (data.count !== 1) {
 				return {
 					ok: false,
@@ -80,7 +79,6 @@ export const membershipRepo = (db: Database) =>
 					message: 'failed to delete membership',
 				};
 			}
-
 			return {ok: true, value: data};
 		},
 	} as const);

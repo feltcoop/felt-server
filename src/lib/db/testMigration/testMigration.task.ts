@@ -15,9 +15,11 @@ export const task: Task<DbTestMigrationTaskArgs> = {
 		const TEMP_PATH = 'src/lib/db';
 		const migrationFiles = (await fs.readDir(MIGRATIONS_DIR)).sort();
 		const migrationFilesToSkip = migrationFiles.slice(-1 * count);
-		for (const file of migrationFilesToSkip) {
-			await fs.move(`${MIGRATIONS_DIR}/${file}`, `${TEMP_PATH}/${file}`);
-		}
+		await Promise.all(
+			migrationFilesToSkip.map((file) =>
+				fs.move(`${MIGRATIONS_DIR}/${file}`, `${TEMP_PATH}/${file}`),
+			),
+		);
 
 		let err;
 		try {
@@ -27,9 +29,11 @@ export const task: Task<DbTestMigrationTaskArgs> = {
 		}
 
 		// Move the files back.
-		for (const file of migrationFilesToSkip) {
-			await fs.move(`${TEMP_PATH}/${file}`, `${MIGRATIONS_DIR}/${file}`);
-		}
+		await Promise.all(
+			migrationFilesToSkip.map((file) =>
+				fs.move(`${TEMP_PATH}/${file}`, `${MIGRATIONS_DIR}/${file}`),
+			),
+		);
 
 		// Throw any error that occurred, but only after moving the file back.
 		if (err) throw err;

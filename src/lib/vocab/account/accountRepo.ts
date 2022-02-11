@@ -13,10 +13,10 @@ export const accountRepo = (db: Database) =>
 		): Promise<Result<{value: Account}, ErrorResponse>> => {
 			const passwordKey = await toPasswordKey(password);
 			const data = await db.sql<Account[]>`
-			INSERT INTO accounts (name, password) VALUES (
-				${name}, ${passwordKey}
-			) RETURNING *
-		`;
+				INSERT INTO accounts (name, password) VALUES (
+					${name}, ${passwordKey}
+				) RETURNING *
+			`;
 			console.log('[db] created account', data[0]);
 			const account = data[0];
 			return {ok: true, value: account};
@@ -26,8 +26,8 @@ export const accountRepo = (db: Database) =>
 		): Promise<Result<{value: AccountModel}, {type: 'no_account_found'} & ErrorResponse>> => {
 			console.log('[accountRepo] loading account', account_id);
 			const data = await db.sql<AccountModel[]>`
-			SELECT account_id, name, created, updated FROM accounts WHERE account_id = ${account_id}
-		`;
+				SELECT account_id, name, created, updated FROM accounts WHERE account_id = ${account_id}
+			`;
 			if (data.length) {
 				console.log('[accountRepo] account found, returning', account_id);
 				return {ok: true, value: data[0]};
@@ -42,8 +42,8 @@ export const accountRepo = (db: Database) =>
 			name: string,
 		): Promise<Result<{value: Account}, {type: 'no_account_found'} & ErrorResponse>> => {
 			const data = await db.sql<Account[]>`
-			SELECT account_id, name, password, created, updated FROM accounts WHERE name = ${name}
-		`;
+				SELECT account_id, name, password, created, updated FROM accounts WHERE name = ${name}
+			`;
 			if (data.length) {
 				return {ok: true, value: data[0]};
 			}
