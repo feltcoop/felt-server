@@ -8,7 +8,7 @@ export const task: Task<CheckTaskArgs> = {
 	summary: 'runs gro check with additional checks for this repo',
 	args: CheckTaskArgsSchema,
 	run: async ({invokeTask, fs, args, log}) => {
-		const {migrations = true, ...restArgs} = args;
+		const {migrations = true, 'no-migrations': noMigrations, ...restArgs} = args;
 
 		if (migrations) {
 			log.info('checking migrations');
@@ -27,6 +27,6 @@ export const task: Task<CheckTaskArgs> = {
 		}
 
 		// Perform default checks.
-		await invokeTask('gro/check', {_: [], ...restArgs}); // TODO remove the `[]` when Gro validates args and makes it no longer required
+		await invokeTask('gro/check', restArgs);
 	},
 };
