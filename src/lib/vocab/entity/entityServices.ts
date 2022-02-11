@@ -4,8 +4,10 @@ import type {
 	CreateEntityResponseResult,
 	ReadEntitiesParams,
 	ReadEntitiesResponseResult,
+	UpdateEntityParams,
+	UpdateEntityResponseResult,
 } from '$lib/app/eventTypes';
-import {ReadEntities, CreateEntity} from '$lib/vocab/entity/entity.events';
+import {ReadEntities, UpdateEntity, CreateEntity} from '$lib/vocab/entity/entity.events';
 
 // TODO rename to `getEntities`? `loadEntities`?
 export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesResponseResult> = {
@@ -36,6 +38,21 @@ export const createEntityService: Service<CreateEntityParams, CreateEntityRespon
 		} else {
 			console.log('[CreateEntity] error searching for entities');
 			return {ok: false, status: 500, message: 'failed to create entity'};
+		}
+	},
+};
+
+export const updateEntityService: Service<UpdateEntityParams, UpdateEntityResponseResult> = {
+	event: UpdateEntity,
+	perform: async ({repos, params}) => {
+		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
+		// server.db.repos.account.validatePersona(account_id, actor_id);
+		const updateEntitiesResult = await repos.entity.updateEntityData(params.entity_id, params.data);
+		if (updateEntitiesResult.ok) {
+			return {ok: true, status: 200, value: {entity: updateEntitiesResult.value}}; // TODO API types
+		} else {
+			console.log('[UpdateEntity] error updating entity');
+			return {ok: false, status: 500, message: 'failed to update entity'};
 		}
 	},
 };

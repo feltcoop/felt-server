@@ -3,6 +3,7 @@ import {writable} from 'svelte/store';
 
 import type {EventInfo} from '$lib/vocab/event/event';
 import {
+	randomEntityData,
 	randomEntityParams,
 	randomMembershipParams,
 	randomString,
@@ -102,6 +103,14 @@ export const randomEventParams = async (
 			return {
 				space_id: (randomItem(random.spaces) || (await random.space(persona, account, community)))
 					.space_id,
+			};
+		}
+		case 'UpdateEntity': {
+			return {
+				entity_id: (
+					randomItem(random.entities) || (await random.entity(persona, account, community, space))
+				).entity_id,
+				data: randomEntityData(),
 			};
 		}
 		// TODO instead of randomizing, use existing ones from the arrays?

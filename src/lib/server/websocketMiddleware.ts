@@ -16,6 +16,7 @@ export interface BroadcastMessage {
 	type: 'broadcast';
 	method: string;
 	result: any;
+	params: any;
 }
 
 export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
@@ -65,6 +66,7 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 				message: authorizeResult.message,
 			};
 		} else {
+			//TODO parse/scrub params alongside validation
 			const validateParams = validateSchema(service.event.params);
 			if (!validateParams(params)) {
 				console.error('[websocketMiddleware] failed to validate params', validateParams.errors);
@@ -74,12 +76,21 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 					message: 'invalid params: ' + toValidationErrorMessage(validateParams.errors![0]),
 				};
 			} else {
-				result = await service.perform({
-					repos: server.db.repos,
-					params,
-					account_id,
-					session: new SessionApi(null),
-				});
+				try {
+					result = await service.perform({
+						repos: server.db.repos,
+						params,
+						account_id,
+						session: new SessionApi(null),
+					});
+				} catch (err) {
+					console.error(err);
+					result = {
+						ok: false,
+						status: 500,
+						message: 'unknown server error',
+					};
+				}
 			}
 		}
 
@@ -112,12 +123,13 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 		// and some generic broadcast message type for everyone else.
 		socket.send(serializedResponse);
 
-		if (method === 'CreateEntity') {
+		if (service.event.broadcast) {
 			console.log('[websocketMiddleware] broadcasting', responseMessage);
 			const broadcastMessage: BroadcastMessage = {
 				type: 'broadcast',
 				method,
 				result,
+				params,
 			};
 			const serializedBroadcastMessage = JSON.stringify(broadcastMessage);
 

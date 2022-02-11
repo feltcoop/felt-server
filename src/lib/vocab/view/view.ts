@@ -17,4 +17,5 @@ export const availableViewTypes: string[] = [
 	'Voice',
 	'Iframe',
 	'EntityExplorer',
+	'Todo',
 ];

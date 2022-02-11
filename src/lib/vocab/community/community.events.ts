@@ -89,6 +89,7 @@ export const ReadCommunities: ServiceEventInfo = {
 export const UpdateCommunitySettings: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'UpdateCommunitySettings',
+	broadcast: true,
 	params: {
 		$id: '/schemas/UpdateCommunitySettingsParams.json',
 		type: 'object',
