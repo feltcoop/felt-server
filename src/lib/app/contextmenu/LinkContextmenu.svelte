@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {page} from '$app/stores';
+	import UnicodeIcon from '$lib/ui/UnicodeIcon.svelte';
 	import {stripStart} from '@feltcoop/felt/util/string.js';
 
 	export let href: string;
@@ -16,7 +17,7 @@
 <!-- TODO if it's an external link, add `target="_blank" rel="noreferrer"` -->
 <li role="none">
 	<a {href}>
-		<span class="icon">🔗</span>
+		<UnicodeIcon icon="🔗" />
 		<span class="text">{formatUrl(href)}</span>
 	</a>
 </li>
@@ -27,10 +28,6 @@
 		align-items: center;
 		width: 100%;
 		padding: var(--spacing_sm);
-	}
-	.icon {
-		display: flex;
-		font-size: var(--icon_size_sm);
 	}
 	.text {
 		padding-left: var(--spacing_sm);

@@ -26,10 +26,10 @@
 					props: {persona, done: () => dispatch('CloseDialog')},
 				})}
 		>
-			Create Community
+			<span class="title">Create Community</span>
 		</ContextmenuEntry>
 		<ContextmenuEntry action={() => dispatch('OpenDialog', {Component: ManageMembershipForm})}>
-			Manage Memberships
+			<span class="title">Manage Memberships</span>
 		</ContextmenuEntry>
 	</svelte:fragment>
 </ContextmenuSubmenu>
