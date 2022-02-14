@@ -7,6 +7,7 @@
 	import {toSpaceUrl} from '$lib/ui/url';
 	import {getApp} from '$lib/ui/app';
 	import SpaceContextmenu from '$lib/app/contextmenu/SpaceContextmenu.svelte';
+	import SpaceIcon from '$lib/ui/SpaceIcon.svelte';
 
 	const {
 		dispatch,
@@ -35,12 +36,16 @@
 		if ($mobile && $expandMainNav) dispatch('ToggleMainNav');
 	}}
 >
+	<SpaceIcon {space} />
 	{$space.name}
 </a>
 
 <style>
 	a {
+		display: flex;
+		align-items: center;
 		padding: var(--spacing_xs) var(--spacing_sm);
+		text-decoration: none;
 	}
 	a:hover {
 		/* TODO update Felt and use `--tint_light_N` */

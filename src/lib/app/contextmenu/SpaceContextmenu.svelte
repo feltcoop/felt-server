@@ -6,6 +6,7 @@
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
 	import {type Space} from '$lib/vocab/space/space';
 	import SpaceDelete from '$lib/ui/SpaceDelete.svelte';
+	import SpaceIcon from '$lib/ui/SpaceIcon.svelte';
 
 	const {dispatch} = getApp();
 
@@ -14,7 +15,10 @@
 
 <ContextmenuSubmenu>
 	<svelte:fragment slot="entry">
-		{$space.name}
+		<span class="entry">
+			<SpaceIcon {space} />
+			{$space.name}
+		</span>
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
@@ -37,3 +41,9 @@
 		</ContextmenuEntry>
 	</svelte:fragment>
 </ContextmenuSubmenu>
+
+<style>
+	.entry {
+		display: flex;
+	}
+</style>
