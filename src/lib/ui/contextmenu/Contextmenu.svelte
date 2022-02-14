@@ -113,6 +113,7 @@
 
 <style>
 	.contextmenu {
+		--icon_size: var(--icon_size_sm);
 		position: fixed;
 		left: 0;
 		top: 0;
