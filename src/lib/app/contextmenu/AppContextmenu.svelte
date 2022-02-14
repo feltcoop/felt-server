@@ -5,6 +5,8 @@
 	import PersonaInput from '$lib/ui/PersonaInput.svelte';
 	import UnicodeIcon from '$lib/ui/UnicodeIcon.svelte';
 	import About from '$lib/ui/About.svelte';
+	import {session} from '$app/stores';
+	import AccountForm from '$lib/ui/AccountForm.svelte';
 
 	const {dispatch} = getApp();
 </script>
@@ -33,5 +35,8 @@
 		>
 			<span class="title">About</span>
 		</ContextmenuEntry>
+		<li role="none">
+			<AccountForm guest={$session.guest} />
+		</li>
 	</svelte:fragment>
 </ContextmenuSubmenu>

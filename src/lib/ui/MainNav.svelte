@@ -6,7 +6,6 @@
 	import {randomHue} from '$lib/ui/color';
 	import {toName, toIcon} from '$lib/vocab/entity/entity';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
-	import LuggageContextmenu from '$lib/app/contextmenu/LuggageContextmenu.svelte';
 
 	const {
 		dispatch,
@@ -41,11 +40,7 @@
 			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
 			<!-- TODO or maybe `selectedPersona.id` ? can't be `$selectedPersona.persona_id` as a serial value -->
-			<button
-				class="explorer-button"
-				use:contextmenu.action={[[LuggageContextmenu, null]]}
-				on:click={(e) => onContextmenu(e, contextmenu)}
-			>
+			<button class="explorer-button" on:click={(e) => onContextmenu(e, contextmenu)}>
 				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
 			</button>
 		</div>
