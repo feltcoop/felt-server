@@ -2,8 +2,9 @@ import {unwrap} from '@feltcoop/felt';
 
 import type {Space} from '$lib/vocab/space/space';
 import type {Community} from '$lib/vocab/community/community';
-import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
-import type {Account, CreateAccountParams} from '$lib/vocab/account/account';
+import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
+import type {Account} from '$lib/vocab/account/account';
+import type {CreateAccountParams} from '$lib/vocab/account/account.schema';
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {
 	CreateCommunityParams,

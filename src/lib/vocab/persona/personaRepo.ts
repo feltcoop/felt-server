@@ -5,7 +5,7 @@ import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
-import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
+import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 
 export const personaRepo = (db: Database) =>
 	({

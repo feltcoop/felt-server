@@ -5,7 +5,7 @@
 
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
-	import {toName, toIcon} from '$lib/vocab/entity/entity';
+	import {toName, toIcon} from '$lib/vocab/entity/entityHelpers';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 

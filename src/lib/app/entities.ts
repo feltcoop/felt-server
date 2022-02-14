@@ -1,11 +1,11 @@
 import type {SchemaObject} from 'ajv';
 
-import {AccountSchema} from '$lib/vocab/account/account';
-import {PersonaSchema} from '$lib/vocab/persona/persona';
-import {CommunitySchema} from '$lib/vocab/community/community';
-import {MembershipSchema} from '$lib/vocab/membership/membership';
+import {AccountSchema} from '$lib/vocab/account/account.schema';
+import {PersonaSchema} from '$lib/vocab/persona/persona.schema';
+import {CommunitySchema} from '$lib/vocab/community/community.schema';
+import {MembershipSchema} from '$lib/vocab/membership/membership.schema';
 import {SpaceSchema} from '$lib/vocab/space/space.schema';
-import {EntitySchema} from '$lib/vocab/entity/entity';
+import {EntitySchema} from '$lib/vocab/entity/entity.schema';
 
 // TODO generate this file?
 

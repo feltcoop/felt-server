@@ -3,10 +3,11 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 import {cyan} from 'kleur/colors';
 
 import type {Database} from '$lib/db/Database.js';
-import type {Account, CreateAccountParams} from '$lib/vocab/account/account.js';
+import type {Account} from '$lib/vocab/account/account.js';
+import type {CreateAccountParams} from '$lib/vocab/account/account.schema.js';
 import type {Space} from '$lib/vocab/space/space.js';
 import type {Community} from '$lib/vocab/community/community';
-import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
+import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
 
