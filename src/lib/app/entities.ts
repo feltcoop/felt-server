@@ -6,6 +6,7 @@ import {CommunitySchema} from '$lib/vocab/community/community.schema';
 import {MembershipSchema} from '$lib/vocab/membership/membership.schema';
 import {SpaceSchema} from '$lib/vocab/space/space.schema';
 import {EntitySchema} from '$lib/vocab/entity/entity.schema';
+import {TieSchema} from '$lib/vocab/tie/tie.schema';
 
 // TODO generate this file?
 
@@ -16,4 +17,5 @@ export const entities: SchemaObject[] = [
 	MembershipSchema,
 	SpaceSchema,
 	EntitySchema,
+	TieSchema,
 ];
