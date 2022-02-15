@@ -23,7 +23,7 @@ export const CreateTie: ServiceEventInfo = {
 		required: ['tie'],
 		additionalProperties: false,
 	},
-	returns: 'Promise<CreateCommunityResponseResult>',
+	returns: 'Promise<CreateTieResponseResult>',
 	route: {
 		path: '/api/v1/communities',
 		method: 'POST',
