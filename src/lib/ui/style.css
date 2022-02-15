@@ -33,6 +33,9 @@ main {
 }
 
 /* TODO refactor or upstream */
+[role='menuitem'] {
+	cursor: pointer;
+}
 .menu-item {
 	width: 100%;
 	display: flex;
