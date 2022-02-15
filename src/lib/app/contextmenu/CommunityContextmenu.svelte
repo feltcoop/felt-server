@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {type Readable} from 'svelte/store';
 
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {type Community} from '$lib/vocab/community/community';
 	import {type Persona} from '$lib/vocab/persona/persona';
@@ -18,7 +18,7 @@
 
 <ContextmenuSubmenu>
 	<svelte:fragment slot="entry">
-		<Avatar name={$community.name} type="Community" />
+		<CommunityAvatar {community} />
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry

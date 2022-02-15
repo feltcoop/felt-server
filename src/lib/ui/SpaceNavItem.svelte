@@ -25,7 +25,7 @@
 <a
 	href={toSpaceUrl(personaIndex, $community, $space)}
 	class:selected
-	use:contextmenu.action={[[SpaceContextmenu, {space}]]}
+	use:contextmenu.action={[[SpaceContextmenu, {persona, community, space}]]}
 	on:click={() => {
 		// TODO Should this be a click handler or react to UI system events/changes?
 		// Might make more UX sense to make it react to any state changes,
