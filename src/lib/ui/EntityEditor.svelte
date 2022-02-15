@@ -74,12 +74,13 @@
 </script>
 
 <div class="markup column">
-	<h2>Edit entity</h2>
+	<h2>Edit Entity</h2>
+	<h3>creator</h3>
 	<section style:--icon_size="var(--icon_size_sm)">
 		<p><Avatar name={toName($persona)} icon={toIcon($persona)} /></p>
-		<p>created {format(new Date($entity.created), 'Pp')}</p>
+		<p>created {format(new Date($entity.created), 'PPPPp')}</p>
 		{#if $entity.updated !== null}
-			<p>updated {format(new Date($entity.updated), 'Pp')}</p>
+			<p>updated {format(new Date($entity.updated), 'PPPPp')}</p>
 		{/if}
 	</section>
 	<!-- TODO add entity property contextmenu actions to this -->
@@ -137,11 +138,5 @@
 	}
 	.side-by-side > * {
 		flex: 1;
-	}
-	/* TODO extract? */
-	.buttons {
-		width: 100%;
-		display: flex;
-		justify-content: space-between;
 	}
 </style>
