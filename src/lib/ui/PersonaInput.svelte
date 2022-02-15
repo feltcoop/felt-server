@@ -7,21 +7,33 @@
 
 	const {dispatch} = getApp();
 
+	export let done: (() => void) | undefined = undefined;
+
 	let name = '';
 	let status: AsyncStatus = 'initial'; // TODO refactor
-	let inputEl: HTMLInputElement;
+	let nameEl: HTMLInputElement;
+	let errorMessage: string | null = null;
 
 	// TODO add initial hue!
 
 	const create = async () => {
+		//TODO validate inputs
+		name = name.trim();
 		if (!name) {
-			inputEl.focus();
+			errorMessage = 'please enter a name for your new persona';
+			nameEl.focus();
 			return;
 		}
 		status = 'pending';
-		await dispatch('CreatePersona', {name});
+		const result = await dispatch('CreatePersona', {name});
 		status = 'success'; // TODO handle failure (also refactor to be generic)
-		name = '';
+		if (result.ok) {
+			errorMessage = null;
+			name = '';
+			done?.();
+		} else {
+			errorMessage = result.message;
+		}
 	};
 
 	const onKeydown = async (e: KeyboardEvent) => {
@@ -37,19 +49,20 @@
 	<form>
 		<input
 			placeholder="> name"
-			bind:this={inputEl}
+			bind:this={nameEl}
 			bind:value={name}
 			use:autofocus
 			disabled={status === 'pending'}
 			on:keydown={onKeydown}
 		/>
+		{#if errorMessage}
+			<Message status="error">{errorMessage}</Message>
+		{/if}
 		<button type="button" on:click={create} disabled={status === 'pending'}>
 			Create persona
 		</button>
 	</form>
-</div>
-<div class="centered-block">
-	<div>
+	<div class="centered-block">
 		<Message icon="‼">your persona name is visible to others</Message>
 	</div>
 </div>

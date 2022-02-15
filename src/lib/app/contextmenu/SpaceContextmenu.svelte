@@ -15,9 +15,9 @@
 
 <ContextmenuSubmenu>
 	<svelte:fragment slot="entry">
-		<span class="entry">
+		<span class="menu-item-entry">
 			<SpaceIcon {space} />
-			{$space.name}
+			<span class="title">{$space.name}</span>
 		</span>
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
@@ -28,7 +28,7 @@
 					props: {space, done: () => dispatch('CloseDialog')},
 				})}
 		>
-			Delete Space
+			<span class="title"> Delete Space </span>
 		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>
@@ -37,13 +37,7 @@
 					view: {type: 'EntityExplorer'},
 				})}
 		>
-			View with EntityExplorer
+			<span class="title">View with EntityExplorer</span>
 		</ContextmenuEntry>
 	</svelte:fragment>
 </ContextmenuSubmenu>
-
-<style>
-	.entry {
-		display: flex;
-	}
-</style>

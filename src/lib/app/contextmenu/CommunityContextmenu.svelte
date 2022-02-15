@@ -28,7 +28,7 @@
 					props: {persona, community, done: () => dispatch('CloseDialog')},
 				})}
 		>
-			Create Space
+			<span class="title">Create Space</span>
 		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>
@@ -37,7 +37,7 @@
 					props: {community},
 				})}
 		>
-			Invite Members
+			<span class="title">Invite Members</span>
 		</ContextmenuEntry>
 	</svelte:fragment>
 </ContextmenuSubmenu>

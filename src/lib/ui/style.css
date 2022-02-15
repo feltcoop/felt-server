@@ -38,10 +38,16 @@ main {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: var(--spacing_xs);
 }
 .menu-item.selected {
 	background-color: var(--tint_dark_2);
+}
+.menu-item-entry {
+	display: flex;
+	align-items: center;
+}
+.menu-item .title {
+	padding: var(--spacing_xs);
 }
 
 /* TODO upstream to Felt */

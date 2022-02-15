@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
 	import type {Space} from '$lib/vocab/space/space.js';
+	import UnicodeIcon from '$lib/ui/UnicodeIcon.svelte';
 
 	export let space: Readable<Space>;
 
@@ -8,7 +9,7 @@
 	const spaceTypeIcons: Record<string, string> = {
 		Home: '🏠',
 		Room: '🗨',
-		Board: '	📚',
+		Board: '📚',
 		Forum: '📋',
 		Notes: '🏷',
 		Voice: '🎙',
@@ -21,14 +22,4 @@
 	$: icon = spaceTypeIcons[$space.view.type] ?? defaultIcon;
 </script>
 
-<span>{icon}</span>
-
-<style>
-	span {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding-right: var(--spacing_xs);
-		width: var(--icon_size_sm);
-	}
-</style>
+<UnicodeIcon {icon} />
