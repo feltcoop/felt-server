@@ -12,7 +12,7 @@
 </script>
 
 <div class="markup">
-	<h1>Manage memberships</h1>
+	<h1>Manage Memberships</h1>
 	<div class="avatar"><Avatar name={$persona.name} /></div>
 	<form>
 		<ul>

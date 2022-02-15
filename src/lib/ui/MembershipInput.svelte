@@ -4,12 +4,16 @@
 	import type {Community} from '$lib/vocab/community/community.js';
 	import MembershipInputItem from '$lib/ui/MembershipInputItem.svelte';
 	import {getApp} from '$lib/ui/app';
+	import Avatar from '$lib/ui/Avatar.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 
 	const {
-		ui: {personas, personasByCommunityId},
+		ui: {personas, personaSelection, personasByCommunityId},
 	} = getApp();
 
 	export let community: Readable<Community>;
+
+	$: selectedPersona = $personaSelection;
 
 	$: communityPersonas = $personasByCommunityId.get($community.community_id)!;
 
@@ -20,10 +24,31 @@
 </script>
 
 <div class="markup">
-	<h1>Invite users to {$community.name}</h1>
+	<h1>Invite Members</h1>
+	<section>
+		{#if selectedPersona}
+			<em>as</em> <PersonaAvatar persona={selectedPersona} />
+		{:else}
+			<div>(no persona selected)</div>
+		{/if}
+	</section>
+	<section>
+		<em>to</em>
+		<Avatar name={$community.name} type="Community" />
+	</section>
 	{#each invitableMembers as persona (persona)}
 		<MembershipInputItem {persona} {community} />
 	{:else}
 		<p>There's no one new to invite</p>
 	{/each}
 </div>
+
+<style>
+	section {
+		display: flex;
+		align-items: center;
+	}
+	section em {
+		padding-right: var(--spacing_lg);
+	}
+</style>

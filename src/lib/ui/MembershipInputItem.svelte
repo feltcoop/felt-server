@@ -4,6 +4,7 @@
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {getApp} from '$lib/ui/app';
 	import type {Persona} from '$lib/vocab/persona/persona';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 
 	const {dispatch} = getApp();
 
@@ -21,6 +22,6 @@
 				persona_id: $persona.persona_id,
 			})}
 	>
-		{$persona.name}
+		<PersonaAvatar {persona} />
 	</button>
 </p>
