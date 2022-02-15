@@ -3,7 +3,7 @@
 </script>
 
 <div class="markup">
-	<h1>About this instance</h1>
+	<h1>About this Instance</h1>
 	<p class="title">
 		💚
 		<a href="https://github.com/feltcoop/felt-server" target="_blank" rel="noreferrer"

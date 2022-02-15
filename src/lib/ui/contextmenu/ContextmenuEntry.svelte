@@ -25,7 +25,7 @@ or should they be <button> ? But then how do we deal with focus?
 	class="menu-item"
 	role="menuitem"
 	class:selected
-	on:click={() => action()}
+	on:click={(e) => action(e)}
 	on:mousemove={select}
 >
 	<slot />
