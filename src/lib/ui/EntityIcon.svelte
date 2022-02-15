@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {EntityType} from '$lib/vocab/entity/entity';
+	import {type EntityType} from '$lib/vocab/entity/entity.schema';
 
 	export let name: string;
 	export let icon: string | null = null;

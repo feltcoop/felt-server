@@ -7,7 +7,7 @@
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
 	import {availableViewTypes} from '$lib/vocab/view/view';
-	import {toName, toIcon} from '$lib/vocab/entity/entity';
+	import {toName, toIcon} from '$lib/vocab/entity/entityHelpers';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 
@@ -64,7 +64,7 @@
 </script>
 
 <div class="markup">
-	<h1>Create a new space</h1>
+	<h1>Create a new Space</h1>
 	<section>
 		<!-- TODO likely make these a `select` or picker -->
 		<Avatar name={toName($persona)} icon={toIcon($persona)} />

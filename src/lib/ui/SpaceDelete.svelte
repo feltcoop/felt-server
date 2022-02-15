@@ -3,6 +3,7 @@
 
 	import {getApp} from '$lib/ui/app';
 	import type {Space} from '$lib/vocab/space/space';
+	import SpaceName from '$lib/ui/SpaceName.svelte';
 
 	const {dispatch} = getApp();
 
@@ -32,7 +33,14 @@
 </script>
 
 <div class="markup">
-	<h1>Delete {$space.name} space?</h1>
+	<h1>Delete Space?</h1>
+	<section class="space">
+		<SpaceName {space} />
+		<!-- TODO `PersonaAvatar` and `CommunityAvatar`
+			<Avatar name={toName($persona)} icon={toIcon($persona)} />
+			<Avatar name={$community.name} type="Community" />
+		-->
+	</section>
 	<form>
 		<div class:error={!!errorMessage}>{errorMessage || ''}</div>
 		<button type="button" on:click={deleteSpace} on:keydown={onKeydown}> Delete space </button>
@@ -43,5 +51,10 @@
 	.error {
 		font-weight: bold;
 		color: rgb(73, 84, 153);
+	}
+	.space {
+		display: flex;
+		align-items: center;
+		font-size: var(--font_size_xl);
 	}
 </style>

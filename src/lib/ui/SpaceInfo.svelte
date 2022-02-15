@@ -8,6 +8,7 @@
 	import {toSpaceUrl} from '$lib/ui/url';
 	import {getApp} from '$lib/ui/app';
 	import SpaceContextmenu from '$lib/app/contextmenu/SpaceContextmenu.svelte';
+	import SpaceName from '$lib/ui/SpaceName.svelte';
 
 	const {
 		ui: {contextmenu, sessionPersonaIndices},
@@ -30,7 +31,7 @@
 	style="--hue: {hue}"
 	use:contextmenu.action={[[SpaceContextmenu, {space}]]}
 >
-	<div class="name">{$space.name}</div>
+	<div class="name"><SpaceName {space} /></div>
 	<div>
 		{$space.url}
 	</div>
@@ -45,5 +46,7 @@
 	}
 	.name {
 		font-size: var(--font_size_xl);
+		display: flex;
+		align-items: center;
 	}
 </style>
