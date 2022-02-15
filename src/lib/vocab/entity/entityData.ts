@@ -20,6 +20,5 @@ export interface ArticleEntityData extends BaseEntityData {
 
 export interface CollectionEntityData extends BaseEntityData {
 	type: 'Collection';
-	content: string;
 	name: string;
 }

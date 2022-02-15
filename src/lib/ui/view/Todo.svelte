@@ -27,12 +27,9 @@
 
 		if (!content) return;
 
-		let data: EntityData;
-		if (list) {
-			data = {type: 'Collection', content, name: content};
-		} else {
-			data = {type: 'Note', content, name: content, checked: false};
-		}
+		const data: EntityData = list
+			? {type: 'Collection', name: content}
+			: {type: 'Note', content, checked: false};
 
 		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
