@@ -25,6 +25,7 @@
 
 <style>
 	.space-nav {
+		--icon_size: var(--icon_size_sm);
 		flex: 1;
 		display: flex;
 		flex-direction: column;

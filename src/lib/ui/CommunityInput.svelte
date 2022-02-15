@@ -52,7 +52,7 @@
 </script>
 
 <div class="markup">
-	<h1>Create a new community</h1>
+	<h1>Create a new Community</h1>
 	<section>
 		<!-- TODO likely make this a `select` or picker -->
 		<Avatar name={toName($persona)} icon={toIcon($persona)} />

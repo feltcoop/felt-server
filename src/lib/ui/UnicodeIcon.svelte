@@ -9,7 +9,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: var(--icon_size_sm);
-		height: var(--icon_size_sm);
+		width: var(--icon_size);
+		height: var(--icon_size);
 	}
 </style>

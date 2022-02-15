@@ -64,7 +64,7 @@
 </script>
 
 <div class="markup">
-	<h1>Create a new space</h1>
+	<h1>Create a new Space</h1>
 	<section>
 		<!-- TODO likely make these a `select` or picker -->
 		<Avatar name={toName($persona)} icon={toIcon($persona)} />
