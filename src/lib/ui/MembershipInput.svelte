@@ -25,15 +25,15 @@
 
 <div class="markup">
 	<h1>Invite Members</h1>
-	<section>
+	<section class="row">
 		{#if selectedPersona}
-			<em>as</em> <PersonaAvatar persona={selectedPersona} />
+			<em class="spaced">as</em> <PersonaAvatar persona={selectedPersona} />
 		{:else}
 			<div>(no persona selected)</div>
 		{/if}
 	</section>
-	<section>
-		<em>to</em>
+	<section class="row">
+		<em class="spaced">to</em>
 		<Avatar name={$community.name} type="Community" />
 	</section>
 	{#each invitableMembers as persona (persona)}
@@ -42,13 +42,3 @@
 		<p>There's no one new to invite</p>
 	{/each}
 </div>
-
-<style>
-	section {
-		display: flex;
-		align-items: center;
-	}
-	section em {
-		padding-right: var(--spacing_lg);
-	}
-</style>

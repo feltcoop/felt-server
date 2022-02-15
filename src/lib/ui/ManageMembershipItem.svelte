@@ -5,6 +5,7 @@
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Persona} from '$lib/vocab/persona/persona';
+	import Avatar from '$lib/ui/Avatar.svelte';
 
 	const {dispatch} = getApp();
 
@@ -26,12 +27,13 @@
 </script>
 
 <li>
-	<div class="community-badge">
-		{#if $community.type !== 'personal' && !($persona.type === 'community' && $persona.community_id === $community.community_id)}
+	<div class="row">
+		<Avatar name={$community.name} type="Community" />
+		{#if $community.type === 'personal'}
+			<button type="button" disabled>🏠</button>
+		{:else}
 			<button type="button" on:click={() => leaveCommunity($community.community_id)}> 👋 </button>
 		{/if}
-		<!-- TODO refactor, probably extract a component -->
-		{$community.name}
 	</div>
 	{#if errorMessage}
 		<Message status="error">{errorMessage}</Message>
@@ -39,8 +41,8 @@
 </li>
 
 <style>
-	.community-badge {
-		display: flex;
-		font-size: xx-large;
+	.row {
+		font-size: var(--font_size_xl);
+		justify-content: space-between;
 	}
 </style>

@@ -5,8 +5,7 @@
 
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
-	import {toName, toIcon} from '$lib/vocab/entity/entityHelpers';
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 
 	const {dispatch} = getApp();
@@ -53,9 +52,9 @@
 
 <div class="markup">
 	<h1>Create a new Community</h1>
-	<section>
-		<!-- TODO likely make this a `select` or picker -->
-		<Avatar name={toName($persona)} icon={toIcon($persona)} />
+	<section class="row">
+		<em class="spaced">as</em>
+		<PersonaAvatar {persona} />
 	</section>
 	<form>
 		<input
@@ -71,11 +70,3 @@
 		{/if}
 	</form>
 </div>
-
-<style>
-	section {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
-</style>
