@@ -3,10 +3,12 @@
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import {type Readable} from 'svelte/store';
 	import {format} from 'date-fns';
+	import {scale} from 'svelte/transition';
 
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
 	import Avatar from '$lib/ui/Avatar.svelte';
+	import EntityTable from '$lib/ui/EntityTable.svelte';
 	import {toName, toIcon, type Entity} from '$lib/vocab/entity/entity';
 
 	// TODO clearly display when the thing has changed, and prominently show a save button
@@ -23,14 +25,24 @@
 
 	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
 
-	let content = $entity.data.content;
+	let content: string; // initialized by `reset`
 	let status: AsyncStatus = 'initial'; // TODO refactor
 	let contentEl: HTMLTextAreaElement;
 	let errorMessage: string | null = null;
 
 	// TODO add initial hue!
 
-	const create = async () => {
+	// TODO granular
+	const reset = () => {
+		content = $entity.data.content;
+	};
+	reset();
+
+	const edit = () => {
+		contentEl.focus();
+	};
+
+	const save = async () => {
 		//TODO validate inputs
 		if (content.length > 100000) {
 			errorMessage = 'too much content'; // TODO proper schema-based validation
@@ -54,21 +66,39 @@
 	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
 			e.preventDefault();
-			await create();
+			await save();
 		}
 	};
 
-	$: properties = Object.entries($entity);
+	$: changed = content !== $entity.data.content; // TODO hacky
 </script>
 
 <div class="markup column">
 	<h2>Edit entity</h2>
 	<section style:--icon_size="var(--icon_size_sm)">
-		<Avatar name={toName($persona)} icon={toIcon($persona)} />
-		created {format(new Date($entity.created), 'Pp')}
+		<p><Avatar name={toName($persona)} icon={toIcon($persona)} /></p>
+		<p>created {format(new Date($entity.created), 'Pp')}</p>
+		{#if $entity.updated !== null}
+			<p>updated {format(new Date($entity.updated), 'Pp')}</p>
+		{/if}
 	</section>
+	<!-- TODO add entity property contextmenu actions to this -->
+	<h3>content</h3>
 	<form>
-		<label>
+		<!-- TODO think this through -->
+		<div class="side-by-side">
+			<div>
+				<div class="markup panel-inset">
+					<p>{$entity.data.content}</p>
+				</div>
+				<div class="markup panel-outset">
+					<p>
+						{#if content === $entity.data.content}
+							<button type="button" on:click={edit}>edit</button>
+						{:else if content}{content}{:else}<em>(empty)</em>{/if}
+					</p>
+				</div>
+			</div>
 			<textarea
 				placeholder="> content"
 				bind:this={contentEl}
@@ -77,32 +107,23 @@
 				disabled={status === 'pending'}
 				on:keydown={onKeydown}
 			/>
-			content
-		</label>
-		{#if errorMessage}
-			<Message status="error">{errorMessage}</Message>
+			{#if errorMessage}
+				<Message status="error">{errorMessage}</Message>
+			{/if}
+		</div>
+		{#if changed}
+			<div class="buttons" in:scale>
+				<button type="button" on:click={reset}> Reset </button>
+				<button type="button" on:click={save} disabled={status === 'pending' || !changed}>
+					Save
+				</button>
+			</div>
 		{/if}
-		<button type="button" on:click={create} disabled={status === 'pending'}>
-			Update entity data
-		</button>
 	</form>
 	{#if $devmode}
 		<hr />
 		<section>
-			<table>
-				<thead>
-					{#each properties as [key] (key)}
-						<td>{key}</td>
-					{/each}
-				</thead>
-				<tbody>
-					<tr>
-						{#each properties as [key, value] (key)}
-							<td>{JSON.stringify(value)}</td>
-						{/each}
-					</tr>
-				</tbody>
-			</table>
+			<EntityTable {entity} />
 		</section>
 	{/if}
 </div>
@@ -111,19 +132,16 @@
 	h2 {
 		text-align: center;
 	}
-	/* TODO refactor reusable form stuff */
-	label {
-		flex-direction: column;
-		/* TODO upstream to .markup or form in Felt */
-		margin-bottom: var(--spacing_lg);
+	.side-by-side {
+		display: flex;
 	}
-	label textarea {
-		margin-bottom: 0;
+	.side-by-side > * {
+		flex: 1;
 	}
-	thead {
-		font-weight: 700;
-	}
-	thead td {
-		padding-right: var(--spacing_lg);
+	/* TODO extract? */
+	.buttons {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
 	}
 </style>
