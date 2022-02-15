@@ -1,5 +1,5 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
-import {CommunitySettingsSchema} from '$lib/vocab/community/community';
+import {CommunitySettingsSchema} from '$lib/vocab/community/community.schema';
 
 export const CreateCommunity: ServiceEventInfo = {
 	type: 'ServiceEvent',

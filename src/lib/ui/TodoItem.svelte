@@ -5,7 +5,7 @@
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {randomHue} from '$lib/ui/color';
-	import {toIcon, toName} from '$lib/vocab/entity/entity';
+	import {toIcon, toName} from '$lib/vocab/entity/entityHelpers';
 	import {getApp} from '$lib/ui/app';
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';

@@ -2,7 +2,7 @@
 	import EntityIcon from '$lib/ui/EntityIcon.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
-	import type {EntityType} from '$lib/vocab/entity/entity';
+	import type {EntityType} from '$lib/vocab/entity/entity.schema';
 
 	export let name: string = GUEST_PERSONA_NAME; // TODO should this handle "default" or "empty" or "blank" avatars?
 	export let icon: string | null = null;
