@@ -5,6 +5,8 @@
 	import type {Community} from '$lib/vocab/community/community';
 	import {getApp} from '$lib/ui/app';
 	import {format} from 'date-fns';
+	import Avatar from '$lib/ui/Avatar.svelte';
+	import SpaceIcon from './SpaceIcon.svelte';
 
 	const {
 		ui: {expandMainNav, expandMarquee},
@@ -21,10 +23,12 @@
 >
 	<li class="luggage-placeholder" />
 	<li class="breadcrumbs">
-		{community && $community && $community.name} / {(space &&
-			$space &&
-			$space.url.split('/').filter(Boolean).join(' / ')) ||
-			''}
+		{#if community && $community}<Avatar
+				name={$community.name}
+				showName={false}
+				type="Community"
+			/><span class="title">{$community.name}</span>{/if}{#if space}<SpaceIcon {space} />
+			<span class="title">{$space?.url.split('/').filter(Boolean).join(' / ') || ''}</span>{/if}
 	</li>
 	<li class="timestamp">created {space && $space && format(new Date($space.created), 'P')}</li>
 	<li class="marquee-button-placeholder" />
@@ -41,7 +45,8 @@
 		font-size: var(--font_size_xl);
 	}
 	.breadcrumbs {
-		padding: 0 var(--spacing_lg);
+		display: flex;
+		align-items: center;
 	}
 	.timestamp {
 		font-size: var(--font_size_md);
@@ -62,5 +67,8 @@
 	:global(.mobile) .workspace-header .luggage-placeholder,
 	:global(.mobile) .workspace-header .marquee-button-placeholder {
 		display: block;
+	}
+	.title {
+		padding: 0 var(--spacing_xs);
 	}
 </style>
