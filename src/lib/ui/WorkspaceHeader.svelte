@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
+	import {format} from 'date-fns';
 
 	import type {Space} from '$lib/vocab/space/space';
 	import type {Community} from '$lib/vocab/community/community';
 	import {getApp} from '$lib/ui/app';
-	import {format} from 'date-fns';
 
 	const {
 		ui: {expandMainNav, expandMarquee},
