@@ -23,11 +23,7 @@
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
-			action={() =>
-				dispatch('OpenDialog', {
-					Component: SpaceEditor,
-					props: {space, done: () => dispatch('CloseDialog')},
-				})}
+			action={() => dispatch('OpenDialog', {Component: SpaceEditor, props: {space}})}
 		>
 			<span class="title"> Edit Space </span>
 		</ContextmenuEntry>
