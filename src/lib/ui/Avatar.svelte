@@ -10,7 +10,7 @@
 	export let showName = true;
 	export let showIcon = true;
 	export let type: EntityType = 'Persona';
-	export let contextmenuAction: any | undefined;
+	export let contextmenuAction: any | undefined = undefined;
 
 	const {
 		ui: {contextmenu},
