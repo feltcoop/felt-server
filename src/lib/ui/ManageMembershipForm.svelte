@@ -19,16 +19,14 @@
 		<PersonaAvatar {persona} />
 	</section>
 </div>
-<form>
-	<ul>
-		{#each communities as community (community)}
-			<ManageMembershipItem {persona} {community} />
-		{/each}
-	</ul>
-</form>
+<ul>
+	{#each communities as community (community)}
+		<ManageMembershipItem {persona} {community} />
+	{/each}
+</ul>
 
 <style>
-	form {
-		padding-bottom: var(--spacing_xl);
+	ul {
+		padding: var(--spacing_xl);
 	}
 </style>
