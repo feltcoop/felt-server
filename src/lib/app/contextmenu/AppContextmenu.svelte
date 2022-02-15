@@ -33,10 +33,7 @@
 				<!-- TODO support store param? only? -->
 				<ContextmenuEntry
 					action={(e) => {
-						if (e) {
-							e.stopPropagation();
-							e.preventDefault();
-						}
+						e?.stopPropagation();
 						dispatch('SelectPersona', {persona_id: get(sessionPersona).persona_id});
 					}}
 				>
