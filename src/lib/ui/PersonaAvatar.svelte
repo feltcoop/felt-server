@@ -6,6 +6,8 @@
 	import {type Persona} from '$lib/vocab/persona/persona';
 
 	export let persona: Readable<Persona>;
+	export let showName = true;
+	export let showIcon = true;
 </script>
 
-<Avatar name={toName($persona)} icon={toIcon($persona)} />
+<Avatar name={toName($persona)} icon={toIcon($persona)} {showName} {showIcon} />
