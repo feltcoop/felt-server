@@ -25,7 +25,7 @@ export const CreateTie: ServiceEventInfo = {
 	},
 	returns: 'Promise<CreateTieResponseResult>',
 	route: {
-		path: '/api/v1/communities',
+		path: '/api/v1/ties',
 		method: 'POST',
 	},
 };

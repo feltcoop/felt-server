@@ -22,13 +22,12 @@ export const createTieService: Service<CreateTieParams, CreateTieResponseResult>
 				status: 200,
 				value: {tie: createTieResult.value},
 			}; // TODO API types
-		} else {
-			console.log('[CreateTie] error creating tie');
-			return {
-				ok: false,
-				status: 500,
-				message: 'error creating tie',
-			};
 		}
+		console.log('[CreateTie] error creating tie');
+		return {
+			ok: false,
+			status: 500,
+			message: 'error creating tie',
+		};
 	},
 };
