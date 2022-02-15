@@ -17,19 +17,15 @@
 
 	export let community: Readable<Community>;
 	export let space: Readable<Space | null>;
+
+	$: href = `/${$community.name}${toUrl($space?.url)}`;
 </script>
 
 <div class="marquee-nav">
 	<!-- TODO url extract helper -->
-	<a
-		class="avatars"
-		href="/{$community.name}{toUrl($space?.url)}"
-		style="--hue: {randomHue($community.name)}"
-	>
+	<a class="avatars" {href} style="--hue: {randomHue($community.name)}">
 		<Avatar name={$community.name} showName={false} type="Community" />
-		{#if $space}
-			<Avatar name={$space.name} showIcon={false} />
-		{/if}
+		<span class="url">{href}</span>
 	</a>
 </div>
 
@@ -46,5 +42,8 @@
 		display: flex;
 		align-items: center;
 		height: 100%;
+	}
+	.url {
+		padding: 0 var(--spacing_xs);
 	}
 </style>

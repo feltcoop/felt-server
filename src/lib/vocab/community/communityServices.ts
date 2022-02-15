@@ -18,7 +18,7 @@ import {
 	UpdateCommunitySettings,
 } from '$lib/vocab/community/community.events';
 import {CreateMembership} from '$lib/vocab/membership/membership.events';
-import {toDefaultCommunitySettings} from '$lib/vocab/community/community';
+import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 
 // Returns a list of community objects
 export const readCommunitiesService: Service<ReadCommunitiesParams, ReadCommunitiesResponseResult> =

@@ -4,7 +4,7 @@
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
-	import {toName, toIcon} from '$lib/vocab/entity/entity';
+	import {toName, toIcon} from '$lib/vocab/entity/entityHelpers';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
 	const {

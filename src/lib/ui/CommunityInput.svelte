@@ -5,7 +5,7 @@
 
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
-	import {toName, toIcon} from '$lib/vocab/entity/entity';
+	import {toName, toIcon} from '$lib/vocab/entity/entityHelpers';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 
@@ -52,7 +52,7 @@
 </script>
 
 <div class="markup">
-	<h1>Create a new community</h1>
+	<h1>Create a new Community</h1>
 	<section>
 		<!-- TODO likely make this a `select` or picker -->
 		<Avatar name={toName($persona)} icon={toIcon($persona)} />
