@@ -15,7 +15,7 @@
 
 <ContextmenuSubmenu>
 	<svelte:fragment slot="entry">
-		<span class="menu-item-entry"><UnicodeIcon icon="❇" /><span class="title">Entity</span></span>
+		<span class="menu-item-entry"><UnicodeIcon icon="☉" /><span class="title">Entity</span></span>
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry

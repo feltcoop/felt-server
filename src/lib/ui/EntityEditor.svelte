@@ -114,9 +114,9 @@
 		</div>
 		{#if changed}
 			<div class="buttons" in:scale>
-				<button type="button" on:click={reset}> Reset </button>
+				<button type="button" on:click={reset}> reset </button>
 				<button type="button" on:click={save} disabled={status === 'pending' || !changed}>
-					Save
+					save
 				</button>
 			</div>
 		{/if}
