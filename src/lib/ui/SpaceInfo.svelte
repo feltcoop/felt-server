@@ -29,7 +29,7 @@
 	class:selected
 	class="space-info"
 	style="--hue: {hue}"
-	use:contextmenu.action={[[SpaceContextmenu, {space}]]}
+	use:contextmenu.action={[[SpaceContextmenu, {space, community}]]}
 >
 	<div class="name"><SpaceName {space} /></div>
 	<div>

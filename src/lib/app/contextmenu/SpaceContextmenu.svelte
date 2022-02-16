@@ -5,6 +5,7 @@
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
 	import {type Space} from '$lib/vocab/space/space';
+	import {type Community} from '$lib/vocab/community/community';
 	import SpaceDelete from '$lib/ui/SpaceDelete.svelte';
 	import SpaceIcon from '$lib/ui/SpaceIcon.svelte';
 	import SpaceEditor from '$lib/ui/SpaceEditor.svelte';
@@ -12,6 +13,7 @@
 	const {dispatch} = getApp();
 
 	export let space: Readable<Space>;
+	export let community: Readable<Community>;
 </script>
 
 <ContextmenuSubmenu>
@@ -23,7 +25,7 @@
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
-			action={() => dispatch('OpenDialog', {Component: SpaceEditor, props: {space}})}
+			action={() => dispatch('OpenDialog', {Component: SpaceEditor, props: {space, community}})}
 		>
 			<span class="title"> Edit Space </span>
 		</ContextmenuEntry>

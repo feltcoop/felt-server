@@ -8,12 +8,14 @@
 	import {getApp} from '$lib/ui/app';
 	import EntityTable from '$lib/ui/EntityTable.svelte';
 	import {type Space} from '$lib/vocab/space/space';
+	import {type Community} from '$lib/vocab/community/community';
 	import SpaceIcon from '$lib/ui/SpaceIcon.svelte';
 
 	// TODO clearly display when the thing has changed, and prominently show a save button
 	// along with a "save all" button at the bottom (and for large forms, at the top too)
 
 	export let space: Readable<Space>;
+	export let community: Readable<Community>;
 
 	const {dispatch, devmode} = getApp();
 
@@ -55,7 +57,7 @@
 			return;
 		}
 		pending = true;
-		// TODO BLOCK not implemented
+		// TODO BLOCK not implemented -- should it be `UpdateSpaceView`?
 		const result = await dispatch('UpdateSpace', {
 			space_id: $space.space_id,
 			view: updatedView,
@@ -74,13 +76,20 @@
 	$: changed = view !== JSON.stringify($space.view); // TODO hacky
 
 	// TODO BLOCK use `SpaceName` over `SpaceIcon` when merged
+	// TODO BLOCK use the new CommunityAvatar
 </script>
 
 <div class="markup column">
 	<h2>Edit Space</h2>
-	<h3>creator</h3>
-	<section>
+	<section class="row">
 		<p style="display: flex"><SpaceIcon {space} /> {$space.name}</p>
+	</section>
+	<section class="row">
+		<em class="spaced">in</em>
+		{$community.name}
+		<!-- <CommunityAvatar {community} /> -->
+	</section>
+	<section>
 		<p>created {format(new Date($space.created), 'PPPPp')}</p>
 		{#if $space.updated !== null}
 			<p>updated {format(new Date($space.updated), 'PPPPp')}</p>
