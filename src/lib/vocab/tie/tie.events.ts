@@ -30,4 +30,32 @@ export const CreateTie: ServiceEventInfo = {
 	},
 };
 
-export const events: EventInfo[] = [CreateTie];
+export const ReadTies: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'ReadTies',
+	params: {
+		$id: '/schemas/ReadTiesParams.json',
+		type: 'object',
+		properties: {
+			space_id: {type: 'number'},
+		},
+		required: ['space_id'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: '/schemas/ReadTiesResponse.json',
+		type: 'object',
+		properties: {
+			ties: {type: 'array', items: {$ref: '/schemas/Tie.json', tsType: 'Tie'}},
+		},
+		required: ['ties'],
+		additionalProperties: false,
+	},
+	returns: 'Promise<ReadTiesResponseResult>',
+	route: {
+		path: '/api/v1/spaces/:space_id/ties',
+		method: 'GET',
+	},
+};
+
+export const events: EventInfo[] = [CreateTie, ReadTies];

@@ -9,6 +9,7 @@
 	import type {EntityData} from '$lib/vocab/entity/entityData';
 	import TodoItems from '$lib/ui/TodoItems.svelte';
 	import {getApp} from '$lib/ui/app';
+	import type {Tie} from '$lib/vocab/tie/tie';
 
 	const {dispatch, socket} = getApp();
 
@@ -21,6 +22,13 @@
 
 	$: shouldLoadEntities = browser && $socket.open;
 	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
+	$: tiesResult = shouldLoadEntities ? dispatch('ReadTies', {space_id: $space.space_id}) : null;
+	let ties: Tie[];
+	$: tiesResult?.then((data) => {
+		if (data.ok) {
+			ties = data.value.ties;
+		}
+	});
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
@@ -49,7 +57,7 @@
 <div class="room">
 	<div class="entities">
 		{#if entities}
-			<TodoItems {entities} />
+			<TodoItems {entities} {ties} />
 		{:else}
 			<PendingAnimation />
 		{/if}

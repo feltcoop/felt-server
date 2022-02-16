@@ -3,6 +3,7 @@
 	import {format} from 'date-fns';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
+	import type {Tie} from '$lib/vocab/tie/tie';
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import {toIcon, toName} from '$lib/vocab/entity/entityHelpers';
@@ -16,6 +17,8 @@
 	} = getApp();
 
 	export let entity: Readable<Entity>;
+	export let ties: Tie[];
+	const selectedList = null;
 
 	let pending = false;
 
@@ -39,40 +42,60 @@
 		pending = false;
 		console.log('pending done', pending);
 	};
+
+	const renderEntity = (entity: Entity, ties: Tie[]): boolean => {
+		const type = entity.data.type;
+		//1) Only render Collections or Notes
+		if (!(type === 'Collection' || type === 'Note')) return false;
+		//2) If in default view only show Collections or untied Notes
+		if (selectedList === null) {
+			if (type === 'Collection') return true;
+			for (const tie of ties) {
+				if (tie.destination_id === entity.entity_id && tie.type === 'Item') return false;
+			}
+		}
+		return true;
+	};
 </script>
 
 <!-- TODO delete `PersonaContextmenu` ? should that be handled by the entity contextmenu?
 And then PersonaContextmenu would be only for *session* personas? `SessionPersonaContextmenu` -->
-<li
-	style="--hue: {hue}"
-	use:contextmenu.action={[
-		[PersonaContextmenu, {persona}],
-		[EntityContextmenu, {entity}],
-	]}
->
-	<div class="signature">
-		{#if $entity.data.type === 'Collection'}
-			📝
-		{:else}
-			<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
-		{/if}
-	</div>
-	<div class="markup formatted">
+{#if renderEntity($entity, ties)}
+	<li
+		style="--hue: {hue}"
+		use:contextmenu.action={[
+			[PersonaContextmenu, {persona}],
+			[EntityContextmenu, {entity}],
+		]}
+	>
 		<div class="signature">
-			<Avatar name={toName($persona)} icon={toIcon($persona)} showIcon={false} />
-			{#if $entity.updated}
-				updated {format(new Date($entity.updated), 'Pp')}
+			{#if $entity.data.type === 'Collection'}
+				📝
 			{:else}
-				created {format(new Date($entity.created), 'Pp')}
+				<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
 			{/if}
 		</div>
-		<!-- TODO checkbox not updated properly on event broadcast-->
-		<div><input type="checkbox" disabled={pending} bind:checked /></div>
-		<div>
-			{$entity.data.content}
+		<div class="markup formatted">
+			<div class="signature">
+				<Avatar name={toName($persona)} icon={toIcon($persona)} showIcon={false} />
+				{#if $entity.updated}
+					updated {format(new Date($entity.updated), 'Pp')}
+				{:else}
+					created {format(new Date($entity.created), 'Pp')}
+				{/if}
+			</div>
+			<!-- TODO checkbox not updated properly on event broadcast-->
+			<div>
+				{#if $entity.data.type === 'Note'}
+					<input type="checkbox" disabled={pending} bind:checked />
+				{/if}
+			</div>
+			<div>
+				{$entity.data.content}
+			</div>
 		</div>
-	</div>
-</li>
+	</li>
+{/if}
 
 <style>
 	li {
