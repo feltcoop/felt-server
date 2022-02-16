@@ -55,10 +55,12 @@
 		>
 			<span class="title">About</span>
 		</ContextmenuEntry>
-		<li role="none" on:click|stopPropagation>
-			<div>
-				<AccountForm guest={$session.guest} />
-			</div>
-		</li>
+		{#if !$session.guest}
+			<li role="none">
+				<div>
+					<AccountForm guest={$session.guest} />
+				</div>
+			</li>
+		{/if}
 	</svelte:fragment>
 </ContextmenuSubmenu>
