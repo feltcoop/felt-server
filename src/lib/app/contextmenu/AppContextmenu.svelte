@@ -32,10 +32,7 @@
 			{:else}
 				<!-- TODO support store param? only? -->
 				<ContextmenuEntry
-					action={(e) => {
-						e?.stopPropagation();
-						dispatch('SelectPersona', {persona_id: get(sessionPersona).persona_id});
-					}}
+					action={() => dispatch('SelectPersona', {persona_id: get(sessionPersona).persona_id})}
 				>
 					<PersonaAvatar persona={sessionPersona} />
 				</ContextmenuEntry>

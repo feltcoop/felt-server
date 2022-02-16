@@ -64,8 +64,6 @@
 	const onClickContent = (e: MouseEvent) => {
 		if (isInteractive(e.target as any)) {
 			contextmenu.close();
-		} else {
-			e.stopPropagation();
 		}
 	};
 
