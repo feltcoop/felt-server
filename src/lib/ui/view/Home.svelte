@@ -48,7 +48,7 @@
 	<section>
 		<!-- TODO this is just a stubbed out idea -->
 		<h2>activity</h2>
-		<div>This community was created on {format($community.created, 'Pp')}</div>
+		<div>This community was created on {format(new Date($community.created), 'PPPPp')}</div>
 		<code>TODO</code>
 	</section>
 	<section>
