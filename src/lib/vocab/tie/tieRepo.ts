@@ -7,12 +7,12 @@ export const tieRepo = (db: Database) =>
 	({
 		create: async (
 			source_id: number,
-			destination_id: number,
+			dest_id: number,
 			type: string,
 		): Promise<Result<{value: Tie}>> => {
 			const tie = await db.sql<Tie[]>`
-			INSERT INTO ties (source_id, destination_id, type) VALUES (
-				${source_id},${destination_id},${type}
+			INSERT INTO ties (source_id, dest_id, type) VALUES (
+				${source_id},${dest_id},${type}
 			) RETURNING *
 		`;
 			// console.log('[db] create entity', data);

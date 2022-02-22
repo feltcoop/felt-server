@@ -8,10 +8,10 @@ export const CreateTie: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			source_id: {type: 'number'},
-			destination_id: {type: 'number'},
+			dest_id: {type: 'number'},
 			type: {type: 'string'},
 		},
-		required: ['source_id', 'destination_id', 'type'],
+		required: ['source_id', 'dest_id', 'type'],
 		additionalProperties: false,
 	},
 	response: {

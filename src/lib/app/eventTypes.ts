@@ -246,7 +246,7 @@ export interface ViewSpaceParams {
 
 export interface CreateTieParams {
 	source_id: number;
-	destination_id: number;
+	dest_id: number;
 	type: string;
 }
 export interface CreateTieResponse {
