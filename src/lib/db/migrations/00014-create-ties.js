@@ -12,6 +12,6 @@ export const up = async (sql) => {
 
 	await sql`
 		CREATE
-		INDEX ON ties (LOWER(type));
+		INDEX ON ties (type);
 	`;
 };
