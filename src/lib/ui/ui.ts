@@ -526,6 +526,7 @@ export const toUi = (
 		ReadTies: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
+			console.log('ReadTies response', result);
 			//TODO figure out front end state for Ties
 			return result;
 		},

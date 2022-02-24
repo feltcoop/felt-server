@@ -21,6 +21,7 @@
 	const selectedList = null;
 
 	let pending = false;
+	let source_id = '';
 
 	$: ({checked = false} = $entity.data);
 
@@ -30,6 +31,8 @@
 	$: hue = randomHue($persona.name);
 
 	$: updateEntity(checked); // eslint-disable-line @typescript-eslint/no-floating-promises
+
+	$: console.log('TodoItem ties', ties);
 
 	const updateEntity = async (checked: boolean) => {
 		if ($entity.data.checked === checked) return;
@@ -51,10 +54,21 @@
 		if (selectedList === null) {
 			if (type === 'Collection') return true;
 			for (const tie of ties) {
-				if (tie.dest_id === entity.entity_id && tie.type === 'Item') return false;
+				if (tie.dest_id === entity.entity_id && tie.type === 'HasItem') return false;
 			}
 		}
 		return true;
+	};
+
+	const addToCollection = async () => {
+		const id = Number(source_id);
+		if (!id) return;
+		console.log(source_id);
+		await dispatch('CreateTie', {
+			source_id: id,
+			dest_id: $entity.entity_id,
+			type: 'HasItem',
+		});
 	};
 </script>
 
@@ -73,6 +87,11 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 				📝
 			{:else}
 				<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
+				<form>
+					<input bind:value={source_id} /><button type="button" on:click={addToCollection}
+						>Add to collection</button
+					>
+				</form>
 			{/if}
 		</div>
 		<div class="markup formatted">
@@ -91,7 +110,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 				{/if}
 			</div>
 			<div>
-				{$entity.data.content}
+				{$entity.data.content}::{$entity.entity_id}
 			</div>
 		</div>
 	</li>

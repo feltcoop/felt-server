@@ -26,11 +26,12 @@ export const tieRepo = (db: Database) =>
 			SELECT source_id,dest_id,type,created 
 			FROM ties t 
 			JOIN (SELECT entity_id FROM entities WHERE space_id=${space_id}) as e 
-			ON e.entity_id = t.source_id;
+			ON e.entity_id = t.source_id OR e.entity_id = t.dest_id;
 			`;
-			console.log('[db] space entities', ties);
+			console.log('[db] space ties', ties);
 			return {ok: true, value: ties};
 		},
+		//TODO BLOCK add test that checks this
 		navigateTies: async (directory_id: number): Promise<Result<{value: Tie[]}>> => {
 			console.log(`[db] preparing to walk graph starting with directory: ${directory_id}`);
 			const ties = await db.sql<Tie[]>`

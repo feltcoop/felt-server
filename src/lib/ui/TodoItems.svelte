@@ -7,7 +7,7 @@
 
 	export let entities: Readable<Array<Readable<Entity>>>;
 	//TODO properly wrap in reactive store
-	export let ties: Array<Tie>;
+	export let ties: Tie[];
 </script>
 
 <!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->

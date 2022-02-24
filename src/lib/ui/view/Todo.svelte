@@ -23,7 +23,8 @@
 	$: shouldLoadEntities = browser && $socket.open;
 	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
 	$: tiesResult = shouldLoadEntities ? dispatch('ReadTies', {space_id: $space.space_id}) : null;
-	let ties: Tie[];
+	let ties: Tie[] | undefined;
+	//TODO figure out how best to get everything on screen
 	$: tiesResult?.then((data) => {
 		if (data.ok) {
 			ties = data.value.ties;
@@ -56,7 +57,7 @@
 
 <div class="room">
 	<div class="entities">
-		{#if entities}
+		{#if entities && ties}
 			<TodoItems {entities} {ties} />
 		{:else}
 			<PendingAnimation />
