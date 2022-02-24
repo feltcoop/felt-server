@@ -122,10 +122,10 @@ export const randomEventParams = async (
 				source_id: (
 					randomItem(random.entities) || (await random.entity(persona, account, community, space))
 				).entity_id,
-				destination_id: (
+				dest_id: (
 					randomItem(random.entities) || (await random.entity(persona, account, community, space))
 				).entity_id,
-				type: 'Reply',
+				type: 'HasReply',
 			};
 		}
 		// TODO instead of randomizing, use existing ones from the arrays?

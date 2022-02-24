@@ -2,7 +2,7 @@
 
 export interface Tie {
 	source_id: number;
-	destination_id: number;
+	dest_id: number;
 	type: string;
 	created: Date;
 	updated: Date | null;

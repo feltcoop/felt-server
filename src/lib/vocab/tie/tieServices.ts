@@ -15,11 +15,7 @@ export const createTieService: Service<CreateTieParams, CreateTieResponseResult>
 	perform: async ({repos, params}) => {
 		console.log('created tie', params);
 		// TODO validate that `account_id` is `persona_id`
-		const createTieResult = await repos.tie.create(
-			params.source_id,
-			params.destination_id,
-			params.type,
-		);
+		const createTieResult = await repos.tie.create(params.source_id, params.dest_id, params.type);
 		console.log('createTieResult', createTieResult);
 		if (createTieResult.ok) {
 			return {

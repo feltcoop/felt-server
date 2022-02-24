@@ -51,7 +51,7 @@
 		if (selectedList === null) {
 			if (type === 'Collection') return true;
 			for (const tie of ties) {
-				if (tie.destination_id === entity.entity_id && tie.type === 'Item') return false;
+				if (tie.dest_id === entity.entity_id && tie.type === 'Item') return false;
 			}
 		}
 		return true;
