@@ -51,7 +51,11 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	]}
 >
 	<div class="signature">
-		<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
+		{#if $entity.data.type === 'Collection'}
+			📝
+		{:else}
+			<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
+		{/if}
 	</div>
 	<div class="markup formatted">
 		<div class="signature">

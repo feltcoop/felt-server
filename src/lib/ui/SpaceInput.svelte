@@ -65,9 +65,13 @@
 
 <div class="markup">
 	<h1>Create a new Space</h1>
-	<section>
+	<section class="row">
 		<!-- TODO likely make these a `select` or picker -->
+		<em class="spaced">as</em>
 		<Avatar name={toName($persona)} icon={toIcon($persona)} />
+	</section>
+	<section class="row">
+		<em class="spaced">in</em>
 		<Avatar name={$community.name} type="Community" />
 	</section>
 	<form>
@@ -96,10 +100,5 @@
 <style>
 	.type-selector {
 		margin-left: var(--spacing_xs);
-	}
-	section {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
 	}
 </style>

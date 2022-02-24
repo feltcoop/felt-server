@@ -45,7 +45,7 @@
 </script>
 
 <div class="markup">
-	<h2>Create a persona</h2>
+	<h1>Create a Persona</h1>
 	<form>
 		<input
 			placeholder="> name"
@@ -68,10 +68,6 @@
 </div>
 
 <style>
-	h2 {
-		text-align: center;
-	}
-
 	.centered-block {
 		display: flex;
 		justify-content: center;

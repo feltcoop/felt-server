@@ -168,7 +168,8 @@ const CONTEXTMENU_DOM_QUERY = `[data-${CONTEXTMENU_DATASET_KEY}],a`;
 const contextmenuCache = new Map<string, ContextmenuItems>();
 let cacheKeyCounter = 0;
 
-const contextmenuAction = (el: HTMLElement | SVGElement, params: ContextmenuItems) => {
+const contextmenuAction = (el: HTMLElement | SVGElement, params: ContextmenuItems | undefined) => {
+	if (!params) return;
 	const key = cacheKeyCounter++ + '';
 	el.dataset[CONTEXTMENU_DATASET_KEY] = key;
 	contextmenuCache.set(key, params);

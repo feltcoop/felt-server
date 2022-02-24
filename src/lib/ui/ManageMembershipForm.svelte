@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {getApp} from '$lib/ui/app';
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import ManageMembershipItem from '$lib/ui/ManageMembershipItem.svelte';
 
 	const {
@@ -12,21 +12,21 @@
 </script>
 
 <div class="markup">
-	<h1>Manage memberships</h1>
-	<div class="avatar"><Avatar name={$persona.name} /></div>
-	<form>
-		<ul>
-			{#each communities as community (community)}
-				<ManageMembershipItem {persona} {community} />
-			{/each}
-		</ul>
-	</form>
+	<h1>Manage Memberships</h1>
+	<section class="row">
+		<!-- TODO likely make these a `select` or picker -->
+		<em class="spaced">for</em>
+		<PersonaAvatar {persona} />
+	</section>
 </div>
+<ul>
+	{#each communities as community (community)}
+		<ManageMembershipItem {persona} {community} />
+	{/each}
+</ul>
 
 <style>
-	.markup {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
+	ul {
+		padding: var(--spacing_xl);
 	}
 </style>

@@ -26,6 +26,17 @@ main {
 	width: 100%;
 }
 
+/* TODO upstream to Felt? what about other simple layout helpers? */
+.row {
+	width: 100%;
+	display: flex;
+	align-items: center;
+}
+/* TODO not sure about this */
+.spaced {
+	padding-right: var(--spacing_lg);
+}
+
 /* TODO refactor or upstream -- `navbar_size` maybe should be `input_height` */
 .icon-button {
 	width: var(--navbar_size);
@@ -39,6 +50,9 @@ main {
 }
 
 /* TODO refactor or upstream */
+[role='menuitem'] {
+	cursor: pointer;
+}
 .menu-item {
 	width: 100%;
 	display: flex;

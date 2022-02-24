@@ -6,6 +6,7 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Space} from '$lib/vocab/space/space.js';
+	import type {EntityData} from '$lib/vocab/entity/entityData';
 	import TodoItems from '$lib/ui/TodoItems.svelte';
 	import {getApp} from '$lib/ui/app';
 
@@ -16,6 +17,7 @@
 	export let space: Readable<Space>;
 
 	let text = '';
+	let list = false;
 
 	$: shouldLoadEntities = browser && $socket.open;
 	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
@@ -24,9 +26,14 @@
 		const content = text.trim(); // TODO parse to trim? regularize step?
 
 		if (!content) return;
+
+		const data: EntityData = list
+			? {type: 'Collection', name: content}
+			: {type: 'Note', content, checked: false};
+
 		await dispatch('CreateEntity', {
 			space_id: $space.space_id,
-			data: {type: 'Note', content, checked: false},
+			data,
 			actor_id: $persona.persona_id,
 		});
 		text = '';
@@ -47,7 +54,12 @@
 			<PendingAnimation />
 		{/if}
 	</div>
-	<input placeholder="> chat" on:keydown={onKeydown} bind:value={text} />
+	<input type="checkbox" bind:checked={list} />
+	{#if list}
+		<input placeholder="> create new list" on:keydown={onKeydown} bind:value={text} />
+	{:else}
+		<input placeholder="> create new todo" on:keydown={onKeydown} bind:value={text} />
+	{/if}
 </div>
 
 <style>

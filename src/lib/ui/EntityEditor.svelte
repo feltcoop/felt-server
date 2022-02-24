@@ -35,7 +35,7 @@
 
 	// TODO granular
 	const reset = () => {
-		content = $entity.data.content;
+		content = $entity.data.content || '';
 	};
 	reset();
 

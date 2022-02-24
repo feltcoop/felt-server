@@ -1,4 +1,6 @@
 <script lang="ts">
+	import {get} from 'svelte/store';
+
 	import {getApp} from '$lib/ui/app';
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
@@ -7,8 +9,12 @@
 	import About from '$lib/ui/About.svelte';
 	import {session} from '$app/stores';
 	import AccountForm from '$lib/ui/AccountForm.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 
-	const {dispatch} = getApp();
+	const {
+		dispatch,
+		ui: {sessionPersonas, personaSelection},
+	} = getApp();
 </script>
 
 <ContextmenuSubmenu>
@@ -18,6 +24,20 @@
 		>
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
+		{#each $sessionPersonas as sessionPersona (sessionPersona)}
+			{#if $personaSelection === sessionPersona}
+				<li class="menu-item panel-inset" role="none">
+					<PersonaAvatar persona={sessionPersona} />
+				</li>
+			{:else}
+				<!-- TODO support store param? only? -->
+				<ContextmenuEntry
+					action={() => dispatch('SelectPersona', {persona_id: get(sessionPersona).persona_id})}
+				>
+					<PersonaAvatar persona={sessionPersona} />
+				</ContextmenuEntry>
+			{/if}
+		{/each}
 		<ContextmenuEntry
 			action={() =>
 				dispatch('OpenDialog', {
@@ -35,8 +55,12 @@
 		>
 			<span class="title">About</span>
 		</ContextmenuEntry>
-		<li role="none">
-			<AccountForm guest={$session.guest} />
-		</li>
+		{#if !$session.guest}
+			<li role="none">
+				<div>
+					<AccountForm guest={$session.guest} />
+				</div>
+			</li>
+		{/if}
 	</svelte:fragment>
 </ContextmenuSubmenu>

@@ -5,6 +5,7 @@ import {events as personaEvents} from '$lib/vocab/persona/persona.events';
 import {events as membershipEvents} from '$lib/vocab/membership/membership.events';
 import {events as spaceEvents} from '$lib/vocab/space/space.events';
 import {events as fileEvents} from '$lib/vocab/entity/entity.events';
+import {events as tieEvents} from '$lib/vocab/tie/tie.events';
 import type {EventInfo} from '$lib/vocab/event/event';
 
 export const eventInfos: EventInfo[] = accountEvents.concat(
@@ -14,6 +15,7 @@ export const eventInfos: EventInfo[] = accountEvents.concat(
 	spaceEvents,
 	fileEvents,
 	uiEvents,
+	tieEvents,
 );
 
 export const eventInfoByName: Map<string, EventInfo> = new Map(eventInfos.map((e) => [e.name, e]));

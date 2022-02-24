@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
+	import {type Readable} from 'svelte/store';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import TodoItem from '$lib/ui/TodoItem.svelte';

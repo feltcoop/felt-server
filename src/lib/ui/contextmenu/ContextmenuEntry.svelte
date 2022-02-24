@@ -21,11 +21,15 @@ https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.
 or should they be <button> ? But then how do we deal with focus?
 (in Chrome/FF contextmenus, `Tab` doesn't work, but maybe it should here?)
 -->
+<!-- TODO This calls `action` after a tick to let event handlers react
+	to the current DOM before the action's changes are applied,
+	but it won't work if we need to forward the event to handlers.
+-->
 <li
 	class="menu-item"
 	role="menuitem"
 	class:selected
-	on:click={() => action()}
+	on:click={() => setTimeout(() => action())}
 	on:mousemove={select}
 >
 	<slot />

@@ -26,6 +26,7 @@ export const entityRepo = (db: Database) =>
 			const entities = await db.sql<Entity[]>`
 				SELECT entity_id, data, actor_id, space_id, created, updated 
 				FROM entities WHERE space_id= ${space_id}
+				ORDER BY created ASC
 			`;
 			console.log('[db] space entities', entities);
 			return {ok: true, value: entities};
