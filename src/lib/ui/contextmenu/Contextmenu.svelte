@@ -59,13 +59,11 @@
 		}
 	};
 
-	const isInteractive = (el: Element): boolean => !!el.closest('button,a,area,[role=menuitem]');
+	const isInteractive = (el: Element): boolean => !!el.closest("button,a,area,[role='menuitem']");
 
 	const onClickContent = (e: MouseEvent) => {
 		if (isInteractive(e.target as any)) {
 			contextmenu.close();
-		} else {
-			e.stopPropagation();
 		}
 	};
 

@@ -32,13 +32,7 @@
 			{:else}
 				<!-- TODO support store param? only? -->
 				<ContextmenuEntry
-					action={(e) => {
-						if (e) {
-							e.stopPropagation();
-							e.preventDefault();
-						}
-						dispatch('SelectPersona', {persona_id: get(sessionPersona).persona_id});
-					}}
+					action={() => dispatch('SelectPersona', {persona_id: get(sessionPersona).persona_id})}
 				>
 					<PersonaAvatar persona={sessionPersona} />
 				</ContextmenuEntry>
@@ -61,10 +55,12 @@
 		>
 			<span class="title">About</span>
 		</ContextmenuEntry>
-		<li role="none" on:click|stopPropagation>
-			<div>
-				<AccountForm guest={$session.guest} />
-			</div>
-		</li>
+		{#if !$session.guest}
+			<li role="none">
+				<div>
+					<AccountForm guest={$session.guest} />
+				</div>
+			</li>
+		{/if}
 	</svelte:fragment>
 </ContextmenuSubmenu>

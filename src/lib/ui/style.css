@@ -43,6 +43,12 @@ main {
 	height: var(--navbar_size);
 }
 
+.buttons {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+}
+
 /* TODO refactor or upstream */
 [role='menuitem'] {
 	cursor: pointer;

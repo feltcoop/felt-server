@@ -14,6 +14,7 @@
 <div class="markup">
 	<h1>Manage Memberships</h1>
 	<section class="row">
+		<!-- TODO likely make these a `select` or picker -->
 		<em class="spaced">for</em>
 		<PersonaAvatar {persona} />
 	</section>

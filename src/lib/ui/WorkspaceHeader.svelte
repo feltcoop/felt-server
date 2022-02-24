@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
+	import {format} from 'date-fns';
 
 	import type {Space} from '$lib/vocab/space/space';
 	import type {Community} from '$lib/vocab/community/community';
 	import {getApp} from '$lib/ui/app';
-	import {format} from 'date-fns';
 	import Avatar from '$lib/ui/Avatar.svelte';
-	import SpaceIcon from './SpaceIcon.svelte';
+	import SpaceIcon from '$lib/ui/SpaceIcon.svelte';
 
 	const {
 		ui: {expandMainNav, expandMarquee},

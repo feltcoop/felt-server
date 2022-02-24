@@ -6,6 +6,7 @@ import {membershipRepo} from '$lib/vocab/membership/membershipRepo';
 import {communityRepo} from '$lib/vocab/community/communityRepo';
 import {spaceRepo} from '$lib/vocab/space/spaceRepo';
 import {entityRepo} from '$lib/vocab/entity/entityRepo';
+import {tieRepo} from '$lib/vocab/tie/tieRepo';
 
 export interface Options {
 	sql: PostgresSql;
@@ -33,5 +34,6 @@ export class Database {
 		community: communityRepo(this),
 		space: spaceRepo(this),
 		entity: entityRepo(this),
+		tie: tieRepo(this),
 	};
 }
