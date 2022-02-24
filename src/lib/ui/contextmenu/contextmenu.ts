@@ -25,7 +25,7 @@ export interface RootMenuState {
 	items: ItemState[];
 }
 export interface ContextmenuAction {
-	(e?: Event): void;
+	(): void;
 }
 
 export interface Contextmenu {
