@@ -23,7 +23,7 @@ export const tieRepo = (db: Database) =>
 		filterBySpace: async (space_id: number): Promise<Result<{value: Tie[]}>> => {
 			console.log(`[db] preparing to query for space ties: ${space_id}`);
 			const ties = await db.sql<Tie[]>`
-			SELECT source_id,destination_id,type,created 
+			SELECT source_id,dest_id,type,created 
 			FROM ties t 
 			JOIN (SELECT entity_id FROM entities WHERE space_id=${space_id}) as e 
 			ON e.entity_id = t.source_id;
@@ -34,14 +34,14 @@ export const tieRepo = (db: Database) =>
 		navigateTies: async (directory_id: number): Promise<Result<{value: Tie[]}>> => {
 			console.log(`[db] preparing to walk graph starting with directory: ${directory_id}`);
 			const ties = await db.sql<Tie[]>`
-			WITH RECURSIVE paths (source_id, destination_id, type, created, path) AS (
-        	SELECT t.source_id, t.destination_id, t.type, t.created, ARRAY[t.source_id, t.destination_id]
+			WITH RECURSIVE paths (source_id, dest_id, type, created, path) AS (
+        	SELECT t.source_id, t.dest_id, t.type, t.created, ARRAY[t.source_id, t.dest_id]
         	FROM ties t WHERE source_id=${directory_id}
     		UNION ALL
-        	SELECT t.source_id, t.destination_id, t.type,t.created, p.path || ARRAY[t.destination_id]
+        	SELECT t.source_id, t.dest_id, t.type,t.created, p.path || ARRAY[t.dest_id]
         	FROM paths p
         	JOIN ties t
-        	ON p.destination_id = t.source_id AND t.destination_id != ALL(p.path)
+        	ON p.dest_id = t.source_id AND t.dest_id != ALL(p.path)
 				)
 			SELECT * FROM paths;
 			`;
