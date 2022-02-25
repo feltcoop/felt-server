@@ -96,11 +96,7 @@ export const spaceRepo = (db: Database) =>
 		},
 		update: async (
 			space_id: number,
-			partial: {
-				name: Space['name'] | undefined;
-				url: Space['url'] | undefined;
-				view: Space['view'] | undefined;
-			},
+			partial: Partial<Pick<Space, 'name' | 'url' | 'view'>>,
 		): Promise<Result<{value: Space}, ErrorResponse>> => {
 			console.log(`[db] updating data for space: ${space_id}`);
 			// TODO what's the best sql statement here? why the typecase?

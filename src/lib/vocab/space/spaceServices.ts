@@ -93,11 +93,8 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 export const updateSpaceService: Service<UpdateSpaceParams, UpdateSpaceResponseResult> = {
 	event: UpdateSpace,
 	perform: async ({repos, params}) => {
-		const updateEntitiesResult = await repos.space.update(params.space_id, {
-			name: params.name,
-			url: params.url,
-			view: params.view,
-		});
+		const {space_id, ...partial} = params;
+		const updateEntitiesResult = await repos.space.update(space_id, partial);
 		if (updateEntitiesResult.ok) {
 			return {ok: true, status: 200, value: {space: updateEntitiesResult.value}}; // TODO API types
 		}
