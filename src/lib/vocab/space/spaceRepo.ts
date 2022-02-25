@@ -99,9 +99,15 @@ export const spaceRepo = (db: Database) =>
 			partial: Partial<Pick<Space, 'name' | 'url' | 'view'>>,
 		): Promise<Result<{value: Space}, ErrorResponse>> => {
 			console.log(`[db] updating data for space: ${space_id}`);
-			// TODO what's the best sql statement here? why the typecase?
+			// TODO hacky, fix when `postgres` v2 is out with dynamic queries
+			const updated: Record<string, any> = {};
+			for (const [key, value] of Object.entries(partial)) {
+				updated[key] = value && typeof value === 'object' ? JSON.stringify(value) : value;
+			}
+			console.log(`updated`, updated);
 			const result = await db.sql<Space[]>`
-				UPDATE spaces SET ${db.sql(partial as any, 'name', 'url', 'view')}, updated=NOW()
+				UPDATE spaces
+				SET updated=NOW(), ${db.sql(updated, ...Object.keys(updated))}
 				WHERE space_id= ${space_id}
 				RETURNING *
 			`;
