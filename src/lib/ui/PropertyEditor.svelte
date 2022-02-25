@@ -1,8 +1,6 @@
 <script lang="ts" context="module">
-	const resultIdentity = (value: any): Result<{value: any}, {message: string}> => ({
-		ok: true,
-		value,
-	});
+	// TODO delete after upgrading @feltcoop/felt@0.22.1
+	const ok = (value: any): Result<{value: any}, {message: string}> => ({ok: true, value});
 </script>
 
 <script lang="ts">
@@ -22,7 +20,7 @@
 		field: string,
 		$value: any,
 	) => Promise<Result<any, {message: string}>>; // TODO type
-	export let parse: (updated: any) => Result<{value: any}, {message: string}> = resultIdentity; // TODO type
+	export let parse: (updated: any) => Result<{value: any}, {message: string}> = ok; // TODO type
 	export let serialize: (raw: any, print?: boolean) => any = identity; // TODO type
 
 	let editing = false;

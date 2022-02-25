@@ -2,7 +2,7 @@
 	import {type Readable} from 'svelte/store';
 	import {format} from 'date-fns';
 
-	import UpdatableField from '$lib/ui/UpdatableField.svelte';
+	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';
 	import EntityTable from '$lib/ui/EntityTable.svelte';
 	import {type Space} from '$lib/vocab/space/space';
 	import {type Community} from '$lib/vocab/community/community';
@@ -46,13 +46,13 @@
 	<form>
 		<ul>
 			<li>
-				<UpdatableField value={space} field="name" update={updateSpace} />
+				<PropertyEditor value={space} field="name" update={updateSpace} />
 			</li>
 			<li>
-				<UpdatableField value={space} field="url" update={updateSpace} />
+				<PropertyEditor value={space} field="url" update={updateSpace} />
 			</li>
 			<li>
-				<UpdatableField
+				<PropertyEditor
 					value={space}
 					field="view"
 					update={updateSpace}

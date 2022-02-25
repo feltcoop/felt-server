@@ -8,7 +8,7 @@
 	import {toName, toIcon} from '$lib/vocab/entity/entityHelpers';
 	import {type Entity} from '$lib/vocab/entity/entity';
 	import {parseJson, serializeJson} from '$lib/util/json';
-	import UpdatableField from '$lib/ui/UpdatableField.svelte';
+	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';
 
 	export let entity: Readable<Entity>;
 
@@ -41,7 +41,7 @@
 	</section>
 	<!-- TODO add entity property contextmenu actions to this -->
 	<form>
-		<UpdatableField
+		<PropertyEditor
 			value={entity}
 			field="data"
 			update={updateEntityData}
