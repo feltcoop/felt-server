@@ -2,7 +2,7 @@
 	import {type Readable} from 'svelte/store';
 	import {format} from 'date-fns';
 
-	import EditableField from '$lib/ui/EditableField.svelte';
+	import UpdatableField from '$lib/ui/UpdatableField.svelte';
 	import EntityTable from '$lib/ui/EntityTable.svelte';
 	import {type Space} from '$lib/vocab/space/space';
 	import {type Community} from '$lib/vocab/community/community';
@@ -43,9 +43,9 @@
 	</section>
 	<!-- TODO add entity property contextmenu actions to this -->
 	<form>
-		<EditableField value={space} field="name" update={updateSpace} />
-		<EditableField value={space} field="url" update={updateSpace} />
-		<EditableField
+		<UpdatableField value={space} field="name" update={updateSpace} />
+		<UpdatableField value={space} field="url" update={updateSpace} />
+		<UpdatableField
 			value={space}
 			field="view"
 			update={updateSpace}

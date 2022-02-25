@@ -79,7 +79,7 @@
 </script>
 
 <div class="field">{field}</div>
-<div>
+<div class="row">
 	<div class="markup panel-inset">
 		<pre>{serialize($value[field], true)}</pre>
 	</div>
