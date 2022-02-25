@@ -25,33 +25,42 @@
 		});
 </script>
 
-<div class="markup column">
-	<h2>Edit Space</h2>
-	<section class="row">
-		<p style="display: flex"><SpaceIcon {space} /> {$space.name}</p>
-	</section>
-	<section class="row">
-		<em class="spaced">in</em>
-		{$community.name}
-		<!-- <CommunityAvatar {community} /> -->
-	</section>
-	<section>
-		<p>created {format(new Date($space.created), 'PPPPp')}</p>
-		{#if $space.updated !== null}
-			<p>updated {format(new Date($space.updated), 'PPPPp')}</p>
-		{/if}
-	</section>
-	<!-- TODO add entity property contextmenu actions to this -->
+<div class="editor column">
+	<div class="markup">
+		<h2>Edit Space</h2>
+		<section class="row">
+			<p style="display: flex"><SpaceIcon {space} /> {$space.name}</p>
+		</section>
+		<section class="row">
+			<em class="spaced">in</em>
+			{$community.name}
+			<!-- <CommunityAvatar {community} /> -->
+		</section>
+		<section>
+			<p>created {format(new Date($space.created), 'PPPPp')}</p>
+			{#if $space.updated !== null}
+				<p>updated {format(new Date($space.updated), 'PPPPp')}</p>
+			{/if}
+		</section>
+	</div>
 	<form>
-		<UpdatableField value={space} field="name" update={updateSpace} />
-		<UpdatableField value={space} field="url" update={updateSpace} />
-		<UpdatableField
-			value={space}
-			field="view"
-			update={updateSpace}
-			parse={parseJson}
-			serialize={serializeJson}
-		/>
+		<ul>
+			<li>
+				<UpdatableField value={space} field="name" update={updateSpace} />
+			</li>
+			<li>
+				<UpdatableField value={space} field="url" update={updateSpace} />
+			</li>
+			<li>
+				<UpdatableField
+					value={space}
+					field="view"
+					update={updateSpace}
+					parse={parseJson}
+					serialize={serializeJson}
+				/>
+			</li>
+		</ul>
 	</form>
 	{#if $devmode}
 		<hr />
@@ -63,7 +72,16 @@
 </div>
 
 <style>
+	.editor {
+		display: flex;
+		flex-direction: column;
+		padding: var(--spacing_xl);
+	}
 	h2 {
 		text-align: center;
+	}
+	form li {
+		flex-direction: column;
+		padding: var(--spacing_xl) 0;
 	}
 </style>

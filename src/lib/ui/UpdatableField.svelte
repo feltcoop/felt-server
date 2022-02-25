@@ -8,7 +8,6 @@
 <script lang="ts">
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import {type Readable} from 'svelte/store';
-	import {scale} from 'svelte/transition';
 	import {identity} from '@feltcoop/felt/util/function.js';
 	import {type Result} from '@feltcoop/felt';
 
@@ -25,6 +24,8 @@
 	) => Promise<Result<any, {message: string}>>; // TODO type
 	export let parse: (updated: any) => Result<{value: any}, {message: string}> = resultIdentity; // TODO type
 	export let serialize: (raw: any, print?: boolean) => any = identity; // TODO type
+
+	let editing = false;
 
 	let fieldValue: any; // initialized by `reset`
 	let raw: any;
@@ -51,7 +52,11 @@
 	reset();
 
 	const edit = () => {
-		fieldValueEl.focus();
+		editing = true;
+		setTimeout(() => fieldValueEl.focus());
+	};
+	const cancel = () => {
+		editing = false;
 	};
 
 	const save = async () => {
@@ -65,7 +70,11 @@
 		pending = true;
 		const result = await update(parsed.value, field, $value);
 		pending = false;
-		if (!result.ok) errorMessage = result.message;
+		if (result.ok) {
+			cancel();
+		} else {
+			errorMessage = result.message;
+		}
 	};
 
 	const onKeydown = async (e: KeyboardEvent) => {
@@ -83,30 +92,34 @@
 	<div class="markup panel-inset">
 		<pre>{serialize($value[field], true)}</pre>
 	</div>
-	<div class="markup panel-outset">
-		<p>
-			{#if !changed}
-				<button type="button" on:click={edit}>edit</button>
-			{:else if fieldValue}<pre>{serialized}</pre>{:else}<em>(empty)</em>{/if}
-		</p>
-	</div>
 </div>
-<textarea
-	placeholder="> fieldValue"
-	bind:this={fieldValueEl}
-	bind:value={fieldValue}
-	use:autofocus
-	disabled={pending}
-	on:keydown={onKeydown}
-/>
-{#if errorMessage}
-	<Message status="error">{errorMessage}</Message>
-{/if}
-{#if changed}
-	<div class="buttons" in:scale>
-		<button type="button" on:click={reset}> reset </button>
-		<button type="button" on:click={save} disabled={pending || !changed}> save </button>
-	</div>
+{#if editing}
+	<textarea
+		placeholder="> fieldValue"
+		bind:this={fieldValueEl}
+		bind:value={fieldValue}
+		use:autofocus
+		disabled={pending}
+		on:keydown={onKeydown}
+	/>
+	{#if errorMessage}
+		<Message status="error">{errorMessage}</Message>
+	{/if}
+	{#if changed}
+		<div class="buttons">
+			<button type="button" on:click={reset}> reset </button>
+			<button type="button" on:click={save} disabled={pending || !changed}> save </button>
+		</div>
+		<div class="markup panel-outset">
+			<p>
+				{#if fieldValue}<pre>{serialized}</pre>{:else}<em>(empty)</em>{/if}
+			</p>
+		</div>
+	{:else}
+		<button type="button" on:click={cancel}>cancel</button>
+	{/if}
+{:else}
+	<button type="button" on:click={edit}>edit</button>
 {/if}
 
 <style>
