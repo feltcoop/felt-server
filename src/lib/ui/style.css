@@ -49,6 +49,11 @@ main {
 	justify-content: space-between;
 }
 
+/* TODO upstream? */
+form ul {
+	width: 100%;
+}
+
 /* TODO refactor or upstream */
 [role='menuitem'] {
 	cursor: pointer;

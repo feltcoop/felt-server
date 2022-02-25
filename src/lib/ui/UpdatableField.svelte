@@ -89,11 +89,22 @@
 
 <div class="field">{field}</div>
 <div class="row">
-	<div class="markup panel-inset">
+	<div class="preview markup panel-inset">
 		<pre>{serialize($value[field], true)}</pre>
 	</div>
 </div>
 {#if editing}
+	{#if changed}
+		<div class="buttons">
+			<button type="button" on:click={reset}> reset </button>
+			<button type="button" on:click={save} disabled={pending || !changed}> save </button>
+		</div>
+	{:else}
+		<button type="button" on:click={cancel}>cancel</button>
+	{/if}
+	{#if errorMessage}
+		<Message status="error">{errorMessage}</Message>
+	{/if}
 	<textarea
 		placeholder="> fieldValue"
 		bind:this={fieldValueEl}
@@ -102,21 +113,12 @@
 		disabled={pending}
 		on:keydown={onKeydown}
 	/>
-	{#if errorMessage}
-		<Message status="error">{errorMessage}</Message>
-	{/if}
 	{#if changed}
-		<div class="buttons">
-			<button type="button" on:click={reset}> reset </button>
-			<button type="button" on:click={save} disabled={pending || !changed}> save </button>
-		</div>
-		<div class="markup panel-outset">
+		<div class="preview markup panel-outset">
 			<p>
 				{#if fieldValue}<pre>{serialized}</pre>{:else}<em>(empty)</em>{/if}
 			</p>
 		</div>
-	{:else}
-		<button type="button" on:click={cancel}>cancel</button>
 	{/if}
 {:else}
 	<button type="button" on:click={edit}>edit</button>
@@ -126,5 +128,8 @@
 	.field {
 		font-size: var(--font_size_lg);
 		font-weight: 700;
+	}
+	.preview {
+		overflow: auto;
 	}
 </style>
