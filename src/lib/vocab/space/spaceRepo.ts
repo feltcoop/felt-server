@@ -94,6 +94,26 @@ export const spaceRepo = (db: Database) =>
 			}
 			return {ok: true, value: spaces};
 		},
+		update: async (
+			space_id: number,
+			partial: {
+				name: Space['name'] | undefined;
+				url: Space['url'] | undefined;
+				view: Space['view'] | undefined;
+			},
+		): Promise<Result<{value: Space}, ErrorResponse>> => {
+			console.log(`[db] updating data for space: ${space_id}`);
+			// TODO what's the best sql statement here? why the typecase?
+			const result = await db.sql<Space[]>`
+				UPDATE spaces SET ${db.sql(partial as any, 'name', 'url', 'view')}, updated=NOW()
+				WHERE space_id= ${space_id}
+				RETURNING *
+			`;
+			if (!result.count) {
+				return {ok: false, message: 'failed to update space'};
+			}
+			return {ok: true, value: result[0]};
+		},
 		deleteById: async (
 			space_id: number,
 		): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {

@@ -57,7 +57,6 @@
 			return;
 		}
 		pending = true;
-		// TODO BLOCK not implemented -- should it be `UpdateSpaceView`?
 		const result = await dispatch('UpdateSpace', {
 			space_id: $space.space_id,
 			view: updatedView,

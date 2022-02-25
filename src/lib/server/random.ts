@@ -12,6 +12,7 @@ import {
 	randomPersonaParams,
 	randomCommunityParams,
 	randomSpaceParams,
+	randomSpaceName,
 } from '$lib/vocab/random';
 import {randomHue} from '$lib/ui/color';
 
@@ -75,6 +76,10 @@ export const randomEventParams = async (
 		case 'CreateSpace': {
 			if (!community) community = await random.community(persona, account);
 			return randomSpaceParams(community.community_id);
+		}
+		case 'UpdateSpace': {
+			if (!space) space = await random.space(persona, account, community);
+			return {space_id: space.space_id, name: randomSpaceName()};
 		}
 		case 'DeleteSpace': {
 			if (!space) space = await random.space(persona, account, community);
