@@ -56,6 +56,8 @@
 	<!-- TODO add entity property contextmenu actions to this -->
 	<h3>view</h3>
 	<form>
+		<EditableField value={space} field="name" update={updateSpace} />
+		<EditableField value={space} field="url" update={updateSpace} />
 		<EditableField
 			value={space}
 			field="view"

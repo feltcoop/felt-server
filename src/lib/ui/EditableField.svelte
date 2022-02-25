@@ -1,3 +1,10 @@
+<script lang="ts" context="module">
+	const resultIdentity = (value: any): Result<{value: any}, {message: string}> => ({
+		ok: true,
+		value,
+	});
+</script>
+
 <script lang="ts">
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import {type Readable} from 'svelte/store';
@@ -16,7 +23,7 @@
 		field: string,
 		$value: any,
 	) => Promise<Result<any, {message: string}>>; // TODO type
-	export let parse: (updated: any) => Result<{value: any}, {message: string}> = identity; // TODO type
+	export let parse: (updated: any) => Result<{value: any}, {message: string}> = resultIdentity; // TODO type
 	export let serialize: (raw: any, print?: boolean) => any = identity; // TODO type
 
 	let fieldValue: any; // initialized by `reset`
