@@ -5,6 +5,7 @@
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
 	import {type Space} from '$lib/vocab/space/space';
+	import {type Persona} from '$lib/vocab/persona/persona';
 	import {type Community} from '$lib/vocab/community/community';
 	import SpaceDelete from '$lib/ui/SpaceDelete.svelte';
 	import SpaceIcon from '$lib/ui/SpaceIcon.svelte';
@@ -12,8 +13,9 @@
 
 	const {dispatch} = getApp();
 
-	export let space: Readable<Space>;
+	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
+	export let space: Readable<Space>;
 </script>
 
 <ContextmenuSubmenu>
@@ -33,7 +35,7 @@
 			action={() =>
 				dispatch('OpenDialog', {
 					Component: SpaceDelete,
-					props: {space, done: () => dispatch('CloseDialog')},
+					props: {persona, community, space, done: () => dispatch('CloseDialog')},
 				})}
 		>
 			<span class="title"> Delete Space </span>

@@ -23,7 +23,9 @@
 	use:contextmenu.action={[
 		[
 			SpaceContextmenu,
-			selectedSpace ? {space: selectedSpace, community: selectedCommunity} : undefined,
+			selectedSpace
+				? {persona: selectedPersona, community: selectedCommunity, space: selectedSpace}
+				: undefined,
 		],
 		[
 			CommunityContextmenu,

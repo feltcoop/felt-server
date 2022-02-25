@@ -5,7 +5,7 @@
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Persona} from '$lib/vocab/persona/persona';
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 
 	const {dispatch} = getApp();
 
@@ -28,7 +28,7 @@
 
 <li>
 	<div class="row">
-		<Avatar name={$community.name} type="Community" />
+		<CommunityAvatar {community} />
 		{#if $community.type === 'personal'}
 			<button type="button" disabled>🏠</button>
 		{:else}

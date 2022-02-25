@@ -3,8 +3,7 @@
 
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import {randomHue} from '$lib/ui/color';
-	import Avatar from '$lib/ui/Avatar.svelte';
-	import {toName, toIcon} from '$lib/vocab/entity/entityHelpers';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import {getApp} from '$lib/ui/app';
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
@@ -33,7 +32,7 @@
 			{$entity.data.content}
 		</p>
 	</div>
-	<Avatar name={toName($persona)} icon={toIcon($persona)} />
+	<PersonaAvatar {persona} />
 </li>
 
 <style>
