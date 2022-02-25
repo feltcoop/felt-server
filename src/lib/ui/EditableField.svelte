@@ -78,6 +78,7 @@
 	$: changed = fieldValue !== serialize($value[field]); // TODO hacky
 </script>
 
+<div class="field">{field}</div>
 <div>
 	<div class="markup panel-inset">
 		<pre>{serialize($value[field], true)}</pre>
@@ -107,3 +108,10 @@
 		<button type="button" on:click={save} disabled={pending || !changed}> save </button>
 	</div>
 {/if}
+
+<style>
+	.field {
+		font-size: var(--font_size_lg);
+		font-weight: 700;
+	}
+</style>
