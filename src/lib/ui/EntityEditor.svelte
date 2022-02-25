@@ -12,9 +12,6 @@
 	import {toName, toIcon} from '$lib/vocab/entity/entityHelpers';
 	import {type Entity} from '$lib/vocab/entity/entity';
 
-	// TODO clearly display when the thing has changed, and prominently show a save button
-	// along with a "save all" button at the bottom (and for large forms, at the top too)
-
 	export let done: (() => void) | undefined = undefined;
 	export let entity: Readable<Entity>;
 

@@ -1,81 +1,40 @@
 <script lang="ts">
-	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import {type Readable} from 'svelte/store';
 	import {format} from 'date-fns';
-	import {scale} from 'svelte/transition';
+	import {type Result} from '@feltcoop/felt';
 
-	import {autofocus} from '$lib/ui/actions';
-	import {getApp} from '$lib/ui/app';
+	import EditableField from '$lib/ui/EditableField.svelte';
 	import EntityTable from '$lib/ui/EntityTable.svelte';
 	import {type Space} from '$lib/vocab/space/space';
 	import {type Community} from '$lib/vocab/community/community';
 	import SpaceIcon from '$lib/ui/SpaceIcon.svelte';
-
-	// TODO clearly display when the thing has changed, and prominently show a save button
-	// along with a "save all" button at the bottom (and for large forms, at the top too)
+	import {getApp} from '$lib/ui/app';
 
 	export let space: Readable<Space>;
 	export let community: Readable<Community>;
 
 	const {dispatch, devmode} = getApp();
 
-	let view: string; // initialized by `reset`
-	let viewData: any;
-	let viewPrinted: string | undefined;
-	$: {
-		try {
-			viewData = JSON.parse(view);
-			viewPrinted = JSON.stringify(viewData, null, 2);
-		} catch (err) {
-			viewPrinted = view;
-		}
-	}
-	let pending = false;
-	let viewEl: HTMLTextAreaElement;
-	let errorMessage: string | null = null;
-
-	// TODO add initial hue!
-
-	// TODO granular
-	const reset = () => {
-		view = JSON.stringify($space.view);
-	};
-	reset();
-
-	const edit = () => {
-		viewEl.focus();
-	};
-
-	const save = async () => {
-		errorMessage = null;
-		if (!changed) return;
-		let updatedView: typeof $space['view'];
-		try {
-			updatedView = JSON.parse(view!);
-		} catch (err) {
-			errorMessage = 'invalid json';
-			return;
-		}
-		pending = true;
-		const result = await dispatch('UpdateSpace', {
-			space_id: $space.space_id,
-			view: updatedView,
-		});
-		pending = false;
-		if (!result.ok) errorMessage = result.message;
-	};
-
-	const onKeydown = async (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			e.preventDefault();
-			await save();
-		}
-	};
-
-	$: changed = view !== JSON.stringify($space.view); // TODO hacky
-
 	// TODO BLOCK use `SpaceName` over `SpaceIcon` when merged
 	// TODO BLOCK use the new CommunityAvatar
+
+	const updateSpace = async (updated: object, field: string, $value: Space) =>
+		dispatch('UpdateSpace', {
+			space_id: $value.space_id,
+			[field]: updated,
+		});
+
+	const parseJson = (value: string): Result<{value: object}, {message: string}> => {
+		try {
+			const parsed = JSON.parse(value);
+			return {ok: true, value: parsed};
+		} catch (err) {
+			return {ok: false, message: 'invalid json'};
+		}
+	};
+
+	const serializeJson = (raw: any, print?: boolean) =>
+		print ? JSON.stringify(raw, null, 2) : JSON.stringify(raw);
 </script>
 
 <div class="markup column">
@@ -97,36 +56,13 @@
 	<!-- TODO add entity property contextmenu actions to this -->
 	<h3>view</h3>
 	<form>
-		<!-- TODO think this through -->
-		<div>
-			<div class="markup panel-inset">
-				<pre>{JSON.stringify($space.view, null, 2)}</pre>
-			</div>
-			<div class="markup panel-outset">
-				<p>
-					{#if !changed}
-						<button type="button" on:click={edit}>edit</button>
-					{:else if view}<pre>{viewPrinted}</pre>{:else}<em>(empty)</em>{/if}
-				</p>
-			</div>
-		</div>
-		<textarea
-			placeholder="> view"
-			bind:this={viewEl}
-			bind:value={view}
-			use:autofocus
-			disabled={pending}
-			on:keydown={onKeydown}
+		<EditableField
+			value={space}
+			field="view"
+			update={updateSpace}
+			parse={parseJson}
+			serialize={serializeJson}
 		/>
-		{#if errorMessage}
-			<Message status="error">{errorMessage}</Message>
-		{/if}
-		{#if changed}
-			<div class="buttons" in:scale>
-				<button type="button" on:click={reset}> reset </button>
-				<button type="button" on:click={save} disabled={pending || !changed}> save </button>
-			</div>
-		{/if}
 	</form>
 	{#if $devmode}
 		<hr />
