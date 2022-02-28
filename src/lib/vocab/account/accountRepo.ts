@@ -1,9 +1,13 @@
 import type {Result} from '@feltcoop/felt';
+import {Logger} from '@feltcoop/felt/util/log.js';
+import {blue, gray} from 'kleur/colors';
 
 import type {Account, AccountModel} from '$lib/vocab/account/account.js';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 import {toPasswordKey} from '$lib/util/password';
+
+const log = new Logger(gray('[') + blue('accountRepo') + gray(']'));
 
 export const accountRepo = (db: Database) =>
 	({
@@ -17,19 +21,19 @@ export const accountRepo = (db: Database) =>
 					${name}, ${passwordKey}
 				) RETURNING *
 			`;
-			console.log('[db] created account', data[0]);
+			log.trace('created account', data[0]);
 			const account = data[0];
 			return {ok: true, value: account};
 		},
 		findById: async (
 			account_id: number,
 		): Promise<Result<{value: AccountModel}, {type: 'no_account_found'} & ErrorResponse>> => {
-			console.log('[accountRepo] loading account', account_id);
+			log.trace('loading account', account_id);
 			const data = await db.sql<AccountModel[]>`
 				SELECT account_id, name, created, updated FROM accounts WHERE account_id = ${account_id}
 			`;
 			if (data.length) {
-				console.log('[accountRepo] account found, returning', account_id);
+				log.trace('account found, returning', account_id);
 				return {ok: true, value: data[0]};
 			}
 			return {

@@ -1,13 +1,17 @@
 import type {GetSession} from '@sveltejs/kit';
 import {noop} from '@feltcoop/felt/util/function.js';
+import {Logger} from '@feltcoop/felt/util/log.js';
+import {blue, gray} from 'kleur/colors';
 
 import type {ClientSession} from '$lib/session/clientSession.js';
 import type {CookieSessionRequest} from '$lib/session/cookieSession.js';
 import {cookieSessionMiddleware} from '$lib/session/cookieSession';
 import {db} from '$lib/db/db';
 
+const log = new Logger(gray('[') + blue('hooks') + gray(']'));
+
 export const getSession: GetSession<CookieSessionRequest, ClientSession> = async (req) => {
-	console.log('[hooks] getSession');
+	log.trace('getSession');
 	cookieSessionMiddleware(req as any, {} as any, noop); // eslint-disable-line @typescript-eslint/no-floating-promises
 	const request: CookieSessionRequest = req as any;
 	const account_id = request.session?.account_id;

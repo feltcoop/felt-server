@@ -1,8 +1,12 @@
 import type {Result} from '@feltcoop/felt';
+import {Logger} from '@feltcoop/felt/util/log.js';
+import {blue, gray} from 'kleur/colors';
 
 import type {Membership} from '$lib/vocab/membership/membership.js';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
+
+const log = new Logger(gray('[') + blue('membershipRepo') + gray(']'));
 
 export const membershipRepo = (db: Database) =>
 	({
@@ -15,7 +19,7 @@ export const membershipRepo = (db: Database) =>
 					${persona_id},${community_id}
 				) RETURNING *
 			`;
-			console.log('[db] created membership', data[0]);
+			log.trace('created membership', data[0]);
 			return {ok: true, value: data[0]};
 		},
 		findById: async (
@@ -39,7 +43,7 @@ export const membershipRepo = (db: Database) =>
 		filterByAccount: async (
 			account_id: number,
 		): Promise<Result<{value: Membership[]}, ErrorResponse>> => {
-			console.log(`[membershipRepo] preparing to query for memberships by account: ${account_id}`);
+			log.trace(`[filterByAccount] ${account_id}`);
 			const data = await db.sql<Membership[]>`
 				SELECT m.persona_id, m.community_id, m.created, m.updated 
 				FROM memberships m JOIN (
@@ -54,9 +58,7 @@ export const membershipRepo = (db: Database) =>
 		filterByCommunityId: async (
 			community_id: number,
 		): Promise<Result<{value: Membership[]}, ErrorResponse>> => {
-			console.log(
-				`[membershipRepo] preparing to query for memberships by community: ${community_id}`,
-			);
+			log.trace(`[filterByCommunityId] ${community_id}`);
 			const data = await db.sql<Membership[]>`
 				SELECT m.persona_id, m.community_id, m.created, m.updated 
 				FROM memberships m 

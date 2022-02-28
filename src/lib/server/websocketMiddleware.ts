@@ -1,11 +1,14 @@
 import type ws from 'ws';
-import {red} from 'kleur/colors';
+import {red, blue, gray} from 'kleur/colors';
+import {Logger} from '@feltcoop/felt/util/log.js';
 
 import {type JsonRpcResponse, parseJsonRpcRequest} from '$lib/util/jsonRpc';
 import type {ApiServer} from '$lib/server/ApiServer';
 import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
 import {SessionApi} from '$lib/server/SessionApi';
 import {authorize} from '$lib/server/authorize';
+
+const log = new Logger(gray('[') + blue('websocketMiddleware') + gray(']'));
 
 export interface WebsocketMiddleware {
 	(socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
@@ -22,9 +25,7 @@ export interface BroadcastMessage {
 export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 	(server) => async (socket, messageData, account_id) => {
 		if (typeof messageData !== 'string') {
-			console.error(
-				'[websocketMiddleware] cannot handle websocket message; currently only supports strings',
-			);
+			log.error('cannot handle websocket message; currently only supports strings');
 			return;
 		}
 
@@ -32,27 +33,27 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 		try {
 			rawMessage = JSON.parse(messageData);
 		} catch (err) {
-			console.error('[websocketMiddleware] failed to parse message', err);
+			log.error('failed to parse message', err);
 			return;
 		}
-		console.log('[websocketMiddleware]', rawMessage);
+		log.trace('incoming', rawMessage);
 
 		// TODO possibly call into `websocketServiceMiddleware` at this point?
 		// That way we could separate any other kind of websocket messages
 		// and handle services in their own module.
 		const message = parseJsonRpcRequest(rawMessage);
 		if (!message) {
-			console.error('[websocketMiddleware] invalid message', rawMessage);
+			log.error('invalid message', rawMessage);
 			return;
 		}
 		const {method, params} = message;
 		const service = server.services.get(method);
 		if (!service) {
-			console.error('[websocketMiddleware] unhandled request method', method);
+			log.error('unhandled request method', method);
 			return;
 		}
 		if (service.event.websockets === false) {
-			console.error('[websocketMiddleware] service cannot be called with websockets', method);
+			log.error('service cannot be called with websockets', method);
 			return;
 		}
 
@@ -69,7 +70,7 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 			//TODO parse/scrub params alongside validation
 			const validateParams = validateSchema(service.event.params);
 			if (!validateParams(params)) {
-				console.error('[websocketMiddleware] failed to validate params', validateParams.errors);
+				log.error('failed to validate params', validateParams.errors);
 				result = {
 					ok: false,
 					status: 400,
@@ -84,7 +85,7 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 						session: new SessionApi(null),
 					});
 				} catch (err) {
-					console.error(err);
+					log.error('service.perform failed', err);
 					result = {
 						ok: false,
 						status: 500,
@@ -109,7 +110,7 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 		if (process.env.NODE_ENV !== 'production') {
 			const validateResponse = validateSchema(service.event.response);
 			if (!validateResponse(result.value)) {
-				console.error(
+				log.error(
 					red(`failed to validate service response: ${service.event.name}`),
 					result,
 					validateResponse.errors,
@@ -124,7 +125,7 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 		socket.send(serializedResponse);
 
 		if (service.event.broadcast) {
-			console.log('[websocketMiddleware] broadcasting', responseMessage);
+			log.trace('broadcasting', responseMessage);
 			const broadcastMessage: BroadcastMessage = {
 				type: 'broadcast',
 				method,

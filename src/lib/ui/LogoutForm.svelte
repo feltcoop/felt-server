@@ -20,7 +20,6 @@
 		submitting = true;
 		errorMessage = '';
 		const result = await dispatch('LogoutAccount');
-		console.log('<LogoutForm> LogoutAccount result', result);
 		if (!result.ok) {
 			errorMessage = result.message;
 		}

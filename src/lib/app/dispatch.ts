@@ -1,10 +1,15 @@
 import {setContext, getContext} from 'svelte';
+import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {Ui} from '$lib/ui/ui';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
 import type {Dispatch} from '$lib/app/eventTypes';
 import type {BroadcastMessage} from '$lib/server/websocketMiddleware';
+
+// TODO BLOCK gray('[') + blue('dispatch') + gray(']')
+// import {blue, gray} from 'kleur/colors';
+const log = new Logger();
 
 const KEY = Symbol();
 
@@ -32,7 +37,7 @@ export interface ToDispatchClient {
 export const toDispatch = (ui: Ui, toClient: ToDispatchClient): Dispatch => {
 	// TODO validate the params here to improve UX, but for now we're safe letting the server validate
 	const dispatch: Dispatch = (eventName, params) => {
-		console.log(
+		log.plain(
 			'%c[dispatch.%c' + eventName + '%c]',
 			'color: gray',
 			'color: blue',
@@ -58,7 +63,7 @@ export const toDispatchBroadcastMessage =
 	(ui: Ui, dispatch: Dispatch): DispatchBroadcastMessage =>
 	(message) => {
 		const {method: eventName, params} = message;
-		console.log(
+		log.plain(
 			'%c[broadcast.%c' + eventName + '%c]',
 			'color: gray',
 			'color: darkCyan',

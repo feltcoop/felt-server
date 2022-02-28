@@ -4,6 +4,8 @@ import {goto} from '$app/navigation';
 import {mutable, type Mutable} from '@feltcoop/svelte-mutable-store';
 import {type DialogData} from '@feltcoop/felt/ui/dialog/dialog.js';
 import {browser} from '$app/env';
+import {blue, gray} from 'kleur/colors';
+import {Logger} from '@feltcoop/felt/util/log.js';
 
 import {type Community} from '$lib/vocab/community/community';
 import {type Space} from '$lib/vocab/space/space';
@@ -16,6 +18,8 @@ import {type DispatchContext} from '$lib/app/dispatch';
 import {type UiHandlers} from '$lib/app/eventTypes';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {type ViewData} from '$lib/vocab/view/view';
+
+const log = new Logger(gray('[') + blue('ui') + gray(']'));
 
 const KEY = Symbol();
 
@@ -283,10 +287,10 @@ export const toUi = (
 			if (handler) {
 				return handler(ctx);
 			}
-			console.warn('[ui] ignoring unhandled event', ctx);
+			log.warn('[dispatch] ignoring unhandled event', ctx);
 		},
 		setSession: ($session) => {
-			if (browser) console.log('[ui.setSession]', $session);
+			if (browser) log.trace('[setSession]', $session);
 			account.set($session.guest ? null : $session.account);
 
 			const $personaArray = $session.guest ? [] : toInitialPersonas($session);
@@ -368,7 +372,7 @@ export const toUi = (
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {persona: $persona, community: $community, spaces: $spaces} = result.value;
-			console.log('[ui.CreatePersona]', $persona, $community, $spaces);
+			log.trace('[CreatePersona]', $persona, $community, $spaces);
 			const persona = writable($persona);
 			// TODO this updates the map before the store array because it may be derived,
 			// but is the better implementation to use a `mutable` wrapping a map, no array?
@@ -385,7 +389,7 @@ export const toUi = (
 			if (!result.ok) return result;
 			const {persona_id} = params;
 			const {community: $community, spaces: $spaces} = result.value;
-			console.log('[ui.CreateCommunity]', $community, persona_id);
+			log.trace('[CreateCommunity]', $community, persona_id);
 			addCommunity($community, persona_id, $spaces);
 			dispatch('SelectCommunity', {community_id: $community.community_id});
 			return result;
@@ -408,7 +412,7 @@ export const toUi = (
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {membership: $membership} = result.value;
-			console.log('[ui.CreateMembership]', $membership);
+			log.trace('[CreateMembership]', $membership);
 			// TODO also update `communities.personas`
 			memberships.mutate(($memberships) => $memberships.push(writable($membership)));
 			return result;
@@ -434,7 +438,7 @@ export const toUi = (
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {space: $space} = result.value;
-			console.log('[ui.CreateSpace]', $space);
+			log.trace('[CreateSpace]', $space);
 			const space = writable($space);
 			spaceById.set($space.space_id, space);
 			spaces.mutate(($spaces) => $spaces.push(space));
@@ -471,7 +475,7 @@ export const toUi = (
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {entity: $entity} = result.value;
-			console.log('[ui.CreateEntity]', $entity);
+			log.trace('[CreateEntity]', $entity);
 			const entity = writable($entity);
 			const spaceEntities = entitiesBySpace.get($entity.space_id);
 			if (spaceEntities) {
@@ -484,11 +488,11 @@ export const toUi = (
 		},
 		UpdateEntity: async ({invoke}) => {
 			const result = await invoke();
-			console.log('updateEnity result', result);
+			log.trace('[UpdateEnity] result', result);
 			if (!result.ok) return result;
 			//TODO maybe return to $entity naming convention OR propagate this pattern?
 			const {entity: updatedEntity} = result.value;
-			console.log('[ui.UpdateEntity]', updatedEntity.entity_id);
+			log.trace('[UpdateEntity]', updatedEntity.entity_id);
 			const entities = entitiesBySpace.get(updatedEntity.space_id);
 			const entity = get(entities!).find((e) => get(e).entity_id === updatedEntity.entity_id);
 			entity!.set(updatedEntity);
@@ -501,7 +505,7 @@ export const toUi = (
 			const existingSpaceEntities = entitiesBySpace.get(space_id);
 			// TODO probably check to make sure they don't already exist
 			const newFiles = result ? result.value.entities.map((f) => writable(f)) : [];
-			console.log('[ui.ReadEntities]', newFiles);
+			log.trace('[ReadEntities]', newFiles);
 			if (existingSpaceEntities) {
 				existingSpaceEntities.set(newFiles);
 			} else {

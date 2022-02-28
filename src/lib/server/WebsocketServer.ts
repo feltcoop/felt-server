@@ -5,9 +5,13 @@ import type {Server as HttpsServer} from 'https';
 import {EventEmitter} from 'events';
 import type StrictEventEmitter from 'strict-event-emitter-types';
 import {noop} from '@feltcoop/felt/util/function.js';
+import {blue, gray} from 'kleur/colors';
+import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {CookieSessionIncomingMessage} from '$lib/session/cookieSession';
 import {cookieSessionMiddleware} from '$lib/session/cookieSession';
+
+const log = new Logger(gray('[') + blue('wss') + gray(']'));
 
 type WebsocketServerEmitter = StrictEventEmitter<EventEmitter, WebsocketServerEvents>;
 interface WebsocketServerEvents {
@@ -31,13 +35,13 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 	async init(): Promise<void> {
 		const {wss} = this;
 		wss.on('connection', (socket, req: CookieSessionIncomingMessage) => {
-			console.log('[wss] connection req.url', req.url, wss.clients.size);
-			console.log('[wss] connection req.headers', req.headers);
+			log.trace('connection req.url', req.url, wss.clients.size);
+			log.trace('connection req.headers', req.headers);
 
 			cookieSessionMiddleware(req as any, {} as any, noop); // eslint-disable-line @typescript-eslint/no-floating-promises
 			const account_id = req.session?.account_id;
 			if (account_id == null) {
-				console.log('[wss] request to open connection was unauthenticated');
+				log.trace('request to open connection was unauthenticated');
 				socket.send(REQUIRES_AUTHENTICATION_MESSAGE);
 				socket.close();
 				return;
@@ -48,21 +52,21 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 				this.emit('message', socket, message, account_id);
 			});
 			socket.on('open', () => {
-				console.log('[wss] open');
+				log.trace('open');
 			});
 			socket.on('close', (code, data) => {
 				const reason = data.toString();
-				console.log('[wss] close', code, reason);
+				log.trace('close', code, reason);
 			});
 			socket.on('error', (err) => {
-				console.error('[wss] error', err);
+				log.error('error', err);
 			});
 		});
 		wss.on('close', () => {
-			console.log('[wss] close');
+			log.trace('close');
 		});
 		wss.on('error', (error) => {
-			console.log('[wss] error', error);
+			log.trace('error', error);
 		});
 	}
 

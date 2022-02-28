@@ -1,3 +1,6 @@
+import {blue, gray} from 'kleur/colors';
+import {Logger} from '@feltcoop/felt/util/log.js';
+
 import type {Service} from '$lib/server/service';
 import type {
 	CreateCommunityParams,
@@ -8,8 +11,6 @@ import type {
 	ReadCommunitiesResponseResult,
 	UpdateCommunitySettingsParams,
 	UpdateCommunitySettingsResponseResult,
-	CreateMembershipParams,
-	CreateMembershipResponseResult,
 } from '$lib/app/eventTypes';
 import {
 	CreateCommunity,
@@ -17,8 +18,9 @@ import {
 	ReadCommunity,
 	UpdateCommunitySettings,
 } from '$lib/vocab/community/community.events';
-import {CreateMembership} from '$lib/vocab/membership/membership.events';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
+
+const log = new Logger(gray('[') + blue('communityServices') + gray(']'));
 
 // Returns a list of community objects
 export const readCommunitiesService: Service<ReadCommunitiesParams, ReadCommunitiesResponseResult> =
@@ -29,7 +31,7 @@ export const readCommunitiesService: Service<ReadCommunitiesParams, ReadCommunit
 			if (findCommunitiesResult.ok) {
 				return {ok: true, status: 200, value: {communities: findCommunitiesResult.value}};
 			}
-			console.log('[ReadCommunities] error searching for communities');
+			log.trace('[ReadCommunities] error searching for communities');
 			return {ok: false, status: 500, message: 'error searching for communities'};
 		},
 	};
@@ -38,8 +40,8 @@ export const readCommunitiesService: Service<ReadCommunitiesParams, ReadCommunit
 export const readCommunityService: Service<ReadCommunityParams, ReadCommunityResponseResult> = {
 	event: ReadCommunity,
 	perform: async ({repos, params, account_id}) => {
-		console.log('[ReadCommunity] account', account_id); // TODO logging
-		console.log('[ReadCommunity] community', params.community_id);
+		log.trace('[ReadCommunity] account', account_id); // TODO logging
+		log.trace('[ReadCommunity] community', params.community_id);
 
 		const findCommunityResult = await repos.community.findById(params.community_id);
 		if (findCommunityResult.ok) {
@@ -60,7 +62,7 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 	{
 		event: CreateCommunity,
 		perform: async ({repos, params, account_id}) => {
-			console.log('created community account_id', account_id);
+			log.trace('created community account_id', account_id);
 			// TODO validate that `account_id` is `persona_id`
 			const createCommunityResult = await repos.community.create(
 				'standard',
@@ -68,7 +70,7 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 				params.settings || toDefaultCommunitySettings(params.name),
 				params.persona_id,
 			);
-			console.log('createCommunityResult', createCommunityResult);
+			log.trace('[CreateCommunity] result', createCommunityResult);
 			if (createCommunityResult.ok) {
 				// TODO optimize this to return `createCommunityResult.value` instead of making another db call,
 				// needs to populate members, but we probably want to normalize the data, returning only ids
@@ -78,8 +80,8 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 						community: {community_id},
 						spaces,
 					} = createCommunityResult.value;
-					console.log('community_id', community_id);
-					console.log('communityData', communityData);
+					log.trace('[CreateCommunity] community_id', community_id);
+					log.trace('[CreateCommunity] communityData', communityData);
 					return {
 						ok: true,
 						status: 200,
@@ -89,14 +91,14 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 						},
 					}; // TODO API types
 				}
-				console.log('[CreateCommunity] error retrieving community data');
+				log.trace('[CreateCommunity] error retrieving community data');
 				return {
 					ok: false,
 					status: 500,
 					message: 'error retrieving community data',
 				};
 			}
-			console.log('[CreateCommunity] error creating community');
+			log.trace('[CreateCommunity] error creating community');
 			return {
 				ok: false,
 				status: 500,
@@ -116,27 +118,5 @@ export const updateCommunitySettingsService: Service<
 			return {ok: true, status: 200, value: null};
 		}
 		return {ok: false, status: 500, message: result.message || 'unknown error'};
-	},
-};
-
-// TODO move to `$lib/vocab/member`
-//Creates a new member relation for a community
-export const createMembershipService: Service<
-	CreateMembershipParams,
-	CreateMembershipResponseResult
-> = {
-	event: CreateMembership,
-	perform: async ({repos, params}) => {
-		console.log('[CreateMembership] creating membership', params.persona_id, params.community_id);
-
-		const createMembershipResult = await repos.membership.create(
-			params.persona_id,
-			params.community_id,
-		);
-		if (createMembershipResult.ok) {
-			return {ok: true, status: 200, value: {membership: createMembershipResult.value}};
-		}
-		console.log('[CreateMembership] error creating membership');
-		return {ok: false, status: 500, message: 'error creating membership'};
 	},
 };

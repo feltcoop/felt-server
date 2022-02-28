@@ -31,13 +31,11 @@
 	const updateEntity = async (checked: boolean) => {
 		if ($entity.data.checked === checked) return;
 		pending = true;
-		console.log('pending start', pending);
 		await dispatch('UpdateEntity', {
 			entity_id: $entity.entity_id,
 			data: {...$entity.data, checked},
 		});
 		pending = false;
-		console.log('pending done', pending);
 	};
 </script>
 
