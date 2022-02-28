@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {browser} from '$app/env';
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
-	import type {Readable} from 'svelte/store';
+	import {get, type Readable} from 'svelte/store';
 
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
@@ -10,6 +10,7 @@
 	import TodoItems from '$lib/ui/TodoItems.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Tie} from '$lib/vocab/tie/tie';
+	import type {Entity} from '$lib/vocab/entity/entity';
 
 	const {dispatch, socket} = getApp();
 
@@ -30,6 +31,30 @@
 			ties = data.value.ties;
 		}
 	});
+
+	$: itemsByEntity = $entities && ties ? toItemsByEntity($entities, ties) : null;
+
+	let entityById: Map<number, Readable<Entity>> | null = null;
+	$: entityById = $entities && new Map($entities.map((e) => [get(e).entity_id, e]));
+
+	//TODO do caching here
+	const toItemsByEntity = (
+		entities: Array<Readable<Entity>>,
+		ties: Tie[],
+	): Map<Readable<Entity>, Array<Readable<Entity>>> => {
+		const map: Map<Readable<Entity>, Array<Readable<Entity>>> = new Map();
+		for (const tie of ties) {
+			if (tie.type !== 'HasItem') continue;
+			const source = entities.find((e) => get(e).entity_id === tie.source_id)!;
+			const dest = entities.find((e) => get(e).entity_id === tie.dest_id)!;
+			let items = map.get(source);
+			if (!items) {
+				map.set(source, (items = []));
+			}
+			items.push(dest);
+		}
+		return map;
+	};
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
@@ -57,8 +82,9 @@
 
 <div class="room">
 	<div class="entities">
-		{#if entities && ties}
-			<TodoItems {entities} {ties} />
+		<!-- TODO handle failures here-->
+		{#if entities && ties && itemsByEntity && entityById}
+			<TodoItems {entities} {ties} {itemsByEntity} {entityById} />
 		{:else}
 			<PendingAnimation />
 		{/if}

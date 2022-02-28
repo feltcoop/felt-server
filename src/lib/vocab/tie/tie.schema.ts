@@ -6,8 +6,7 @@ export const TieSchema = {
 		dest_id: {type: 'number'},
 		type: {type: 'string'},
 		created: {type: 'object', format: 'date-time', tsType: 'Date'},
-		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 	},
-	required: ['source_id', 'dest_id', 'type', 'created', 'updated'],
+	required: ['source_id', 'dest_id', 'type', 'created'],
 	additionalProperties: false,
 };

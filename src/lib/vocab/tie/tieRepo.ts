@@ -23,7 +23,7 @@ export const tieRepo = (db: Database) =>
 		filterBySpace: async (space_id: number): Promise<Result<{value: Tie[]}>> => {
 			console.log(`[db] preparing to query for space ties: ${space_id}`);
 			const ties = await db.sql<Tie[]>`
-			SELECT source_id,dest_id,type,created 
+			SELECT DISTINCT source_id,dest_id,type,created 
 			FROM ties t 
 			JOIN (SELECT entity_id FROM entities WHERE space_id=${space_id}) as e 
 			ON e.entity_id = t.source_id OR e.entity_id = t.dest_id;
@@ -32,6 +32,7 @@ export const tieRepo = (db: Database) =>
 			return {ok: true, value: ties};
 		},
 		//TODO BLOCK add test that checks this
+		//TODO BLOCK add migration unique constraint on ties & indexes
 		navigateTies: async (directory_id: number): Promise<Result<{value: Tie[]}>> => {
 			console.log(`[db] preparing to walk graph starting with directory: ${directory_id}`);
 			const ties = await db.sql<Tie[]>`

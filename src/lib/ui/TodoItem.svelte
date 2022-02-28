@@ -18,10 +18,13 @@
 
 	export let entity: Readable<Entity>;
 	export let ties: Tie[];
-	const selectedList = null;
+	export let itemsByEntity: Map<Readable<Entity>, Array<Readable<Entity>>>;
+	export let entityById: Map<number, Readable<Entity>>;
 
 	let pending = false;
 	let source_id = '';
+
+	$: items = itemsByEntity.get(entity);
 
 	$: ({checked = false} = $entity.data);
 
@@ -46,17 +49,10 @@
 		console.log('pending done', pending);
 	};
 
-	const renderEntity = (entity: Entity, ties: Tie[]): boolean => {
+	const renderEntity = (entity: Entity): boolean => {
 		const type = entity.data.type;
 		//1) Only render Collections or Notes
 		if (!(type === 'Collection' || type === 'Note')) return false;
-		//2) If in default view only show Collections or untied Notes
-		if (selectedList === null) {
-			if (type === 'Collection') return true;
-			for (const tie of ties) {
-				if (tie.dest_id === entity.entity_id && tie.type === 'HasItem') return false;
-			}
-		}
 		return true;
 	};
 
@@ -74,7 +70,7 @@
 
 <!-- TODO delete `PersonaContextmenu` ? should that be handled by the entity contextmenu?
 And then PersonaContextmenu would be only for *session* personas? `SessionPersonaContextmenu` -->
-{#if renderEntity($entity, ties)}
+{#if renderEntity($entity)}
 	<li
 		style="--hue: {hue}"
 		use:contextmenu.action={[
@@ -83,16 +79,12 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		]}
 	>
 		<div class="signature">
-			{#if $entity.data.type === 'Collection'}
-				📝
-			{:else}
-				<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
-				<form>
-					<input bind:value={source_id} /><button type="button" on:click={addToCollection}
-						>Add to collection</button
-					>
-				</form>
-			{/if}
+			<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
+			<form>
+				<input bind:value={source_id} /><button type="button" on:click={addToCollection}
+					>Add to collection</button
+				>
+			</form>
 		</div>
 		<div class="markup formatted">
 			<div class="signature">
@@ -113,13 +105,24 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 				{$entity.data.content}::{$entity.entity_id}
 			</div>
 		</div>
+		{#if items}
+			<div>
+				<h2>📝</h2>
+				<ul>
+					{#each items as item (item)}
+						<svelte:self entity={item} {ties} {itemsByEntity} {entityById} />
+					{/each}
+				</ul>
+			</div>
+		{/if}
 	</li>
 {/if}
 
 <style>
 	li {
 		align-items: flex-start;
-		padding: var(--spacing_xs);
+		flex-direction: column;
+		padding: var(--spacing_xl3);
 		/* TODO experiment with a border color instead of bg */
 		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
 	}
