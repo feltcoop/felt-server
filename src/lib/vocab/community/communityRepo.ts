@@ -22,7 +22,7 @@ export const communityRepo = (db: Database) =>
 					${type}, ${name}, ${db.sql.json(settings)}
 				) RETURNING *
 			`;
-			log.info('created community', data[0], {persona_id});
+			log.trace('created community', data[0], {persona_id});
 			const community = data[0];
 			const {community_id} = community;
 			// TODO move this code into the service layer
@@ -51,12 +51,12 @@ export const communityRepo = (db: Database) =>
 		findById: async (
 			community_id: number,
 		): Promise<Result<{value: Community}, {type: 'no_community_found'} & ErrorResponse>> => {
-			log.info(`[findById] ${community_id}`);
+			log.trace(`[findById] ${community_id}`);
 			const data = await db.sql<Community[]>`
 				SELECT community_id, type, name, settings, created, updated
 				FROM communities WHERE community_id=${community_id}
 			`;
-			// log.info('[findById]', data);
+			// log.trace('[findById]', data);
 			if (data.length) {
 				return {ok: true, value: data[0]};
 			}
@@ -69,7 +69,7 @@ export const communityRepo = (db: Database) =>
 		findByName: async (
 			name: string,
 		): Promise<Result<{value: Community | undefined}, ErrorResponse>> => {
-			log.info('[findByName]', name);
+			log.trace('[findByName]', name);
 			const data = await db.sql<Community[]>`
 				SELECT community_id, type, name, settings, created, updated
 				FROM communities WHERE LOWER(name) = LOWER(${name})
@@ -79,7 +79,7 @@ export const communityRepo = (db: Database) =>
 		filterByAccount: async (
 			account_id: number,
 		): Promise<Result<{value: Community[]}, ErrorResponse>> => {
-			log.info(`[filterByAccount] ${account_id}`);
+			log.trace(`[filterByAccount] ${account_id}`);
 			const data = await db.sql<Community[]>`
 				SELECT c.community_id, c.type, c.name, c.settings, c.created, c.updated							
 				FROM communities c JOIN (
@@ -87,7 +87,7 @@ export const communityRepo = (db: Database) =>
 				) apc
 				ON c.community_id=apc.community_id;
 			`;
-			log.info('[filterByAccount]', data.length);
+			log.trace('[filterByAccount]', data.length);
 			return {ok: true, value: data};
 		},
 		updateSettings: async (
