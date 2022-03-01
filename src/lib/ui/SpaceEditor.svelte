@@ -26,7 +26,7 @@
 <div class="editor column">
 	<div class="markup">
 		<h2>Edit Space</h2>
-		<section class="row">
+		<section class="row" style:font-size="var(--font_size_xl)">
 			<SpaceName {space} />
 		</section>
 		<section class="row">
