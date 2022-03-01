@@ -32,7 +32,7 @@ export const tieRepo = (db: Database) =>
 			return {ok: true, value: ties};
 		},
 
-		navigateTies: async (directory_id: number): Promise<Result<{value: Tie[]}>> => {
+		filterBySourceId: async (directory_id: number): Promise<Result<{value: Tie[]}>> => {
 			console.log(`[db] preparing to walk graph starting with directory: ${directory_id}`);
 			const ties = await db.sql<Tie[]>`
 			WITH RECURSIVE paths (source_id, dest_id, type, created, path) AS (

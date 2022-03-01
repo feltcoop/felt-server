@@ -11,7 +11,7 @@ const test__tieRepo = suite<TestDbContext & TestAppContext>('tieRepo');
 test__tieRepo.before(setupDb);
 test__tieRepo.after(teardownDb);
 
-test__tieRepo('navigateTies', async ({db}) => {
+test__tieRepo('check tie queries', async ({db}) => {
 	//Gen space
 	//Gen dir entity -> thread entity -> post -> reply
 	const random = toRandomVocabContext(db);
@@ -50,7 +50,7 @@ test__tieRepo('navigateTies', async ({db}) => {
 	assert.equal(query1.value.length, 3);
 	assert.equal(query1.value, [result1.value, result2.value, result3.value]);
 
-	const query2 = await db.repos.tie.navigateTies(entityDir.entity_id);
+	const query2 = await db.repos.tie.filterBySourceId(entityDir.entity_id);
 	assert.ok(query2.ok);
 	assert.equal(query2.value.length, 3);
 	assert.equal(
