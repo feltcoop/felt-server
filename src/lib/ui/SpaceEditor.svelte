@@ -6,17 +6,15 @@
 	import EntityTable from '$lib/ui/EntityTable.svelte';
 	import {type Space} from '$lib/vocab/space/space';
 	import {type Community} from '$lib/vocab/community/community';
-	import SpaceIcon from '$lib/ui/SpaceIcon.svelte';
+	import SpaceName from '$lib/ui/SpaceName.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {parseJson, serializeJson} from '$lib/util/json';
+	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 
 	export let space: Readable<Space>;
 	export let community: Readable<Community>;
 
 	const {dispatch, devmode} = getApp();
-
-	// TODO BLOCK use `SpaceName` over `SpaceIcon` when merged
-	// TODO BLOCK use the new CommunityAvatar
 
 	const updateSpace = async (updated: object, field: string, $value: Space) =>
 		dispatch('UpdateSpace', {
@@ -29,12 +27,11 @@
 	<div class="markup">
 		<h2>Edit Space</h2>
 		<section class="row">
-			<p style="display: flex"><SpaceIcon {space} /> {$space.name}</p>
+			<SpaceName {space} />
 		</section>
 		<section class="row">
 			<em class="spaced">in</em>
-			{$community.name}
-			<!-- <CommunityAvatar {community} /> -->
+			<CommunityAvatar {community} />
 		</section>
 		<section>
 			<p>created {format(new Date($space.created), 'PPPPp')}</p>
