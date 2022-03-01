@@ -63,7 +63,7 @@
 	{#if $devmode}
 		<hr />
 		<section>
-			<!-- TODO does this work? -->
+			<!-- TODO need equivalent that works for spaces -->
 			<!-- <EntityTable entity={space} /> -->
 		</section>
 	{/if}
