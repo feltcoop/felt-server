@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-	// TODO BLOCK delete after upgrading @feltcoop/felt@0.22.1
+	// TODO  delete after upgrading @feltcoop/felt@0.22.1
 	const ok = (value: any): Result<{value: any}, {message: string}> => ({ok: true, value});
 </script>
 
