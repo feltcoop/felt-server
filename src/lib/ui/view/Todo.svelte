@@ -25,7 +25,8 @@
 	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
 	$: tiesResult = shouldLoadEntities ? dispatch('ReadTies', {space_id: $space.space_id}) : null;
 	let ties: Tie[] | undefined;
-	//TODO figure out how best to get everything on screen
+	//TODO move this call to the UI to get arch & caching
+	// eslint-disable-next-line @typescript-eslint/no-floating-promises
 	$: tiesResult?.then((data) => {
 		if (data.ok) {
 			ties = data.value.ties;
