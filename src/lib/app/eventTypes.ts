@@ -235,6 +235,9 @@ export type OpenDialogParams = {
 	props?: {
 		[k: string]: unknown;
 	};
+	dialogProps?: {
+		[k: string]: unknown;
+	};
 };
 
 export type CloseDialogParams = void;

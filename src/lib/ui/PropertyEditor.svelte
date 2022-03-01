@@ -1,13 +1,8 @@
-<script lang="ts" context="module">
-	// TODO  delete after upgrading @feltcoop/felt@0.22.1
-	const ok = (value: any): Result<{value: any}, {message: string}> => ({ok: true, value});
-</script>
-
 <script lang="ts">
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import {type Readable} from 'svelte/store';
 	import {identity} from '@feltcoop/felt/util/function.js';
-	import {type Result} from '@feltcoop/felt';
+	import {type Result, ok} from '@feltcoop/felt';
 
 	import {autofocus} from '$lib/ui/actions';
 

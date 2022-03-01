@@ -63,6 +63,7 @@
 	{#if $devmode}
 		<hr />
 		<section>
+			TODO table editor for the space and its entities
 			<!-- TODO need equivalent that works for spaces -->
 			<!-- <EntityTable entity={space} /> -->
 		</section>
