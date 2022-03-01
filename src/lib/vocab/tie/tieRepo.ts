@@ -13,7 +13,7 @@ export const tieRepo = (db: Database) =>
 			const tie = await db.sql<Tie[]>`
 			INSERT INTO ties (source_id, dest_id, type) VALUES (
 				${source_id},${dest_id},${type}
-			) RETURNING *
+			) RETURNING source_id,dest_id,type,created
 		`;
 			// console.log('[db] create entity', data);
 			return {ok: true, value: tie[0]};
@@ -45,7 +45,7 @@ export const tieRepo = (db: Database) =>
         	JOIN ties t
         	ON p.dest_id = t.source_id AND t.dest_id != ALL(p.path)
 				)
-			SELECT * FROM paths;
+			SELECT DISTINCT source_id, dest_id, type, created FROM paths;
 			`;
 			console.log('[db] directory ties', ties);
 			return {ok: true, value: ties};
