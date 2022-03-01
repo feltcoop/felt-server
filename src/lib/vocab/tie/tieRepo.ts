@@ -31,8 +31,7 @@ export const tieRepo = (db: Database) =>
 			console.log('[db] space ties', ties);
 			return {ok: true, value: ties};
 		},
-		//TODO BLOCK add test that checks this
-		//TODO BLOCK add migration unique constraint on ties & indexes
+
 		navigateTies: async (directory_id: number): Promise<Result<{value: Tie[]}>> => {
 			console.log(`[db] preparing to walk graph starting with directory: ${directory_id}`);
 			const ties = await db.sql<Tie[]>`
