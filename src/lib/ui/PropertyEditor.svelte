@@ -41,9 +41,6 @@
 	let fieldValueEl: HTMLTextAreaElement;
 	let errorMessage: string | null = null;
 
-	// TODO add initial hue!
-
-	// TODO granular
 	const reset = () => {
 		fieldValue = serialize($value[field]);
 	};
