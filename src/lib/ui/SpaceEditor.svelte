@@ -3,7 +3,8 @@
 	import {format} from 'date-fns';
 
 	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';
-	import EntityTable from '$lib/ui/EntityTable.svelte';
+	// TODO devmode support
+	// import EntityTable from '$lib/ui/EntityTable.svelte';
 	import {type Space} from '$lib/vocab/space/space';
 	import {type Community} from '$lib/vocab/community/community';
 	import SpaceName from '$lib/ui/SpaceName.svelte';
@@ -63,7 +64,7 @@
 		<hr />
 		<section>
 			<!-- TODO does this work? -->
-			<EntityTable entity={space} />
+			<!-- <EntityTable entity={space} /> -->
 		</section>
 	{/if}
 </div>
