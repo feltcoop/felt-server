@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
-	import {format} from 'date-fns';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import type {Tie} from '$lib/vocab/tie/tie';
@@ -26,14 +25,17 @@
 
 	$: items = itemsByEntity.get(entity);
 
-	$: ({checked = false} = $entity.data);
+	$: ({checked} = $entity.data);
 
 	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
 
 	// TODO refactor to some client view-model for the actor
 	$: hue = randomHue($persona.name);
 
-	$: updateEntity(checked); // eslint-disable-line @typescript-eslint/no-floating-promises
+	$: checked !== undefined && updateEntity(checked); // eslint-disable-line @typescript-eslint/no-floating-promises
+
+	$: hasItems = items !== undefined || $entity.data.type === 'Collection';
+	$: hasChecked = checked !== undefined || $entity.data.type === 'Note';
 
 	$: console.log('TodoItem ties', ties);
 
@@ -78,36 +80,32 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			[EntityContextmenu, {entity}],
 		]}
 	>
-		<div class="signature">
-			<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
+		<div class="entity markup formatted">
+			{#if hasItems}
+				<div class="icon-button">📝</div>
+			{/if}
+			{#if hasChecked}
+				<!-- TODO checkbox not updated properly on event broadcast-->
+				<!-- TODO maybe use Felt checkbox component when available-->
+				<input type="checkbox" disabled={pending} bind:checked />
+			{/if}
+			<div class="signature">
+				<Avatar name={toName($persona)} icon={toIcon($persona)} />
+			</div>
+			<div>
+				{$entity.data.content}::{$entity.entity_id}
+			</div>
+			<!-- TODO replace this form with context driven actions-->
+			<!-- TODO 1 type of picker to pick a collection-->
+			<!-- TODO Another type of picker to pick items-->
 			<form>
 				<input bind:value={source_id} /><button type="button" on:click={addToCollection}
 					>Add to collection</button
 				>
 			</form>
 		</div>
-		<div class="markup formatted">
-			<div class="signature">
-				<Avatar name={toName($persona)} icon={toIcon($persona)} showIcon={false} />
-				{#if $entity.updated}
-					updated {format(new Date($entity.updated), 'Pp')}
-				{:else}
-					created {format(new Date($entity.created), 'Pp')}
-				{/if}
-			</div>
-			<!-- TODO checkbox not updated properly on event broadcast-->
-			<div>
-				{#if $entity.data.type === 'Note'}
-					<input type="checkbox" disabled={pending} bind:checked />
-				{/if}
-			</div>
-			<div>
-				{$entity.data.content}::{$entity.entity_id}
-			</div>
-		</div>
 		{#if items}
-			<div>
-				<h2>📝</h2>
+			<div class="items panel-inset">
 				<ul>
 					{#each items as item (item)}
 						<svelte:self entity={item} {ties} {itemsByEntity} {entityById} />
@@ -122,16 +120,39 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	li {
 		align-items: flex-start;
 		flex-direction: column;
-		padding: var(--spacing_xl3);
-		/* TODO experiment with a border color instead of bg */
-		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
+		padding: var(--spacing_xs);
+		padding-left: var(--spacing_xl3);
 	}
 	.signature {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 	}
+	.entity {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	.entity form {
+		display: flex;
+		flex-direction: row;
+	}
+	.entity form input {
+		width: 50px;
+		min-width: auto;
+	}
+	.items {
+		width: 100%;
+	}
 	.markup {
 		padding: 0 0 0 var(--spacing_md);
+	}
+	.icon-button {
+		font-size: var(--font_size_xl);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		line-height: 0;
+		text-align: center;
 	}
 </style>

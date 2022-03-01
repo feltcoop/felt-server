@@ -89,6 +89,7 @@
 			<PendingAnimation />
 		{/if}
 	</div>
+	<!-- TODO replace this checkbox with modal -->
 	<input type="checkbox" bind:checked={list} />
 	{#if list}
 		<input placeholder="> create new list" on:keydown={onKeydown} bind:value={text} />
