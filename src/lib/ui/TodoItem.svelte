@@ -74,7 +74,7 @@
 And then PersonaContextmenu would be only for *session* personas? `SessionPersonaContextmenu` -->
 {#if renderEntity($entity)}
 	<li
-		style="--hue: {hue}"
+		style:--hue={hue}
 		use:contextmenu.action={[
 			[PersonaContextmenu, {persona}],
 			[EntityContextmenu, {entity}],
