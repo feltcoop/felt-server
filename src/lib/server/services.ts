@@ -21,6 +21,7 @@ import {
 	readSpaceService,
 	readSpacesService,
 	createSpaceService,
+	updateSpaceService,
 	deleteSpaceService,
 } from '$lib/vocab/space/spaceServices';
 import {createTieService} from '$lib/vocab/tie/tieServices';
@@ -43,6 +44,7 @@ export const services: Map<string, Service<any, any>> = new Map(
 		readSpaceService,
 		readSpacesService,
 		readEntitiesService,
+		updateSpaceService,
 		deleteSpaceService,
 		createTieService,
 	].map((s) => [s.event.name, s]),

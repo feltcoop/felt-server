@@ -1,13 +1,20 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
+	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import {getApp} from '$lib/ui/app';
 	import type {Space} from '$lib/vocab/space/space';
 	import SpaceName from '$lib/ui/SpaceName.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
+	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
+	import {type Community} from '$lib/vocab/community/community';
+	import {type Persona} from '$lib/vocab/persona/persona';
 
 	const {dispatch} = getApp();
 
 	export let space: Readable<Space>;
+	export let community: Readable<Community>;
+	export let persona: Readable<Persona>;
 	export let done: (() => void) | undefined = undefined;
 
 	let errorMessage: string | undefined;
@@ -34,27 +41,21 @@
 
 <div class="markup">
 	<h1>Delete Space?</h1>
-	<section class="space">
+	<section class="row" style:font-size="var(--font_size_xl)">
 		<SpaceName {space} />
-		<!-- TODO `PersonaAvatar` and `CommunityAvatar`
-			<Avatar name={toName($persona)} icon={toIcon($persona)} />
-			<Avatar name={$community.name} type="Community" />
-		-->
+	</section>
+	<section class="row">
+		<em class="spaced">in</em>
+		<CommunityAvatar {community} />
+	</section>
+	<section class="row">
+		<em class="spaced">as</em>
+		<PersonaAvatar {persona} />
 	</section>
 	<form>
-		<div class:error={!!errorMessage}>{errorMessage || ''}</div>
+		{#if errorMessage}
+			<Message status="error">{errorMessage}</Message>
+		{/if}
 		<button type="button" on:click={deleteSpace} on:keydown={onKeydown}> Delete space </button>
 	</form>
 </div>
-
-<style>
-	.error {
-		font-weight: bold;
-		color: rgb(73, 84, 153);
-	}
-	.space {
-		display: flex;
-		align-items: center;
-		font-size: var(--font_size_xl);
-	}
-</style>

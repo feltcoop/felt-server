@@ -21,7 +21,12 @@
 <div
 	class="workspace"
 	use:contextmenu.action={[
-		[SpaceContextmenu, selectedSpace ? {space: selectedSpace} : undefined],
+		[
+			SpaceContextmenu,
+			selectedSpace
+				? {persona: selectedPersona, community: selectedCommunity, space: selectedSpace}
+				: undefined,
+		],
 		[
 			CommunityContextmenu,
 			selectedCommunity && selectedPersona

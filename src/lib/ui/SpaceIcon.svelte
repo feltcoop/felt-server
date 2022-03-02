@@ -17,9 +17,11 @@
 		Todo: '🗒',
 	};
 
-	const defaultIcon = '🖊';
+	const DEFAULT_ICON = '🖊';
+	const DEFAULT_LABEL = 'Space';
 
-	$: icon = spaceTypeIcons[$space.view.type] ?? defaultIcon;
+	$: icon = spaceTypeIcons[$space.view.type] ?? DEFAULT_ICON;
+	$: label = icon === DEFAULT_ICON ? DEFAULT_LABEL : $space.view.type;
 </script>
 
-<UnicodeIcon {icon} />
+<UnicodeIcon {icon} {label} />

@@ -9,10 +9,18 @@ import type {
 	ReadSpaceResponseResult,
 	ReadSpacesParams,
 	ReadSpacesResponseResult,
+	UpdateSpaceParams,
+	UpdateSpaceResponseResult,
 	DeleteSpaceParams,
 	DeleteSpaceResponseResult,
 } from '$lib/app/eventTypes';
-import {CreateSpace, ReadSpace, ReadSpaces, DeleteSpace} from '$lib/vocab/space/space.events';
+import {
+	CreateSpace,
+	ReadSpace,
+	ReadSpaces,
+	UpdateSpace,
+	DeleteSpace,
+} from '$lib/vocab/space/space.events';
 
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
@@ -84,6 +92,19 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 		}
 		log.trace('[CreateSpace] error searching for community spaces');
 		return {ok: false, status: 500, message: 'error searching for community spaces'};
+	},
+};
+
+export const updateSpaceService: Service<UpdateSpaceParams, UpdateSpaceResponseResult> = {
+	event: UpdateSpace,
+	perform: async ({repos, params}) => {
+		const {space_id, ...partial} = params;
+		const updateEntitiesResult = await repos.space.update(space_id, partial);
+		if (updateEntitiesResult.ok) {
+			return {ok: true, status: 200, value: {space: updateEntitiesResult.value}}; // TODO API types
+		}
+		console.log('[UpdateSpace] error updating space');
+		return {ok: false, status: 500, message: 'failed to update space'};
 	},
 };
 

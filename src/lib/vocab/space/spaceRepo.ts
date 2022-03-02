@@ -96,6 +96,28 @@ export const spaceRepo = (db: Database) =>
 			}
 			return {ok: true, value: spaces};
 		},
+		update: async (
+			space_id: number,
+			partial: Partial<Pick<Space, 'name' | 'url' | 'view'>>,
+		): Promise<Result<{value: Space}, ErrorResponse>> => {
+			console.log(`[db] updating data for space: ${space_id}`);
+			// TODO hacky, fix when `postgres` v2 is out with dynamic queries
+			const updated: Record<string, any> = {};
+			for (const [key, value] of Object.entries(partial)) {
+				updated[key] = value && typeof value === 'object' ? JSON.stringify(value) : value;
+			}
+			console.log(`updated`, updated);
+			const result = await db.sql<Space[]>`
+				UPDATE spaces
+				SET updated=NOW(), ${db.sql(updated, ...Object.keys(updated))}
+				WHERE space_id= ${space_id}
+				RETURNING *
+			`;
+			if (!result.count) {
+				return {ok: false, message: 'failed to update space'};
+			}
+			return {ok: true, value: result[0]};
+		},
 		deleteById: async (
 			space_id: number,
 		): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {

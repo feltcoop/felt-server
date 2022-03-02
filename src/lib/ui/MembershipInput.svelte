@@ -4,7 +4,7 @@
 	import type {Community} from '$lib/vocab/community/community.js';
 	import MembershipInputItem from '$lib/ui/MembershipInputItem.svelte';
 	import {getApp} from '$lib/ui/app';
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 
 	const {
@@ -26,15 +26,15 @@
 <div class="markup">
 	<h1>Invite Members</h1>
 	<section class="row">
+		<em class="spaced">to</em>
+		<CommunityAvatar {community} />
+	</section>
+	<section class="row">
 		{#if selectedPersona}
 			<em class="spaced">as</em> <PersonaAvatar persona={selectedPersona} />
 		{:else}
 			<div>(no persona selected)</div>
 		{/if}
-	</section>
-	<section class="row">
-		<em class="spaced">to</em>
-		<Avatar name={$community.name} type="Community" />
 	</section>
 	{#each invitableMembers as persona (persona)}
 		<MembershipInputItem {persona} {community} />

@@ -88,9 +88,42 @@ export const ReadSpaces: ServiceEventInfo = {
 	},
 };
 
+export const UpdateSpace: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'UpdateSpace',
+	broadcast: true,
+	params: {
+		$id: '/schemas/UpdateSpaceParams.json',
+		type: 'object',
+		properties: {
+			space_id: {type: 'number'},
+			name: {type: 'string'},
+			url: {type: 'string'},
+			view: {type: 'object', tsType: 'ViewData'},
+		},
+		required: ['space_id'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: '/schemas/UpdateSpaceResponse.json',
+		type: 'object',
+		properties: {
+			space: {$ref: '/schemas/Space.json', tsType: 'Space'},
+		},
+		required: ['space'],
+		additionalProperties: false,
+	},
+	returns: 'Promise<UpdateSpaceResponseResult>',
+	route: {
+		path: '/api/v1/spaces/:space_id',
+		method: 'POST',
+	},
+};
+
 export const DeleteSpace: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'DeleteSpace',
+	broadcast: true,
 	params: {
 		$id: '/schemas/DeleteSpaceParams.json',
 		type: 'object',
@@ -111,4 +144,4 @@ export const DeleteSpace: ServiceEventInfo = {
 	},
 };
 
-export const events: EventInfo[] = [CreateSpace, ReadSpace, ReadSpaces, DeleteSpace];
+export const events: EventInfo[] = [CreateSpace, ReadSpace, ReadSpaces, UpdateSpace, DeleteSpace];

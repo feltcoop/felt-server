@@ -7,8 +7,8 @@
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
 	import {availableViewTypes} from '$lib/vocab/view/view';
-	import {toName, toIcon} from '$lib/vocab/entity/entityHelpers';
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
+	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 
 	const {dispatch} = getApp();
@@ -66,13 +66,12 @@
 <div class="markup">
 	<h1>Create a new Space</h1>
 	<section class="row">
-		<!-- TODO likely make these a `select` or picker -->
-		<em class="spaced">as</em>
-		<Avatar name={toName($persona)} icon={toIcon($persona)} />
+		<em class="spaced">in</em>
+		<CommunityAvatar {community} />
 	</section>
 	<section class="row">
-		<em class="spaced">in</em>
-		<Avatar name={$community.name} type="Community" />
+		<em class="spaced">as</em>
+		<PersonaAvatar {persona} />
 	</section>
 	<form>
 		<input

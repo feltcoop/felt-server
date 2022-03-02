@@ -14,7 +14,7 @@
 	$: value = ($entity as any)[propertyName];
 
 	const serialize = (propertyName: string, $entity: Entity) =>
-		propertyName === 'data' ? JSON.stringify($entity.data) : undefined;
+		propertyName === 'data' || propertyName === 'view' ? JSON.stringify($entity.data) : undefined;
 
 	$: serialized = serialize(propertyName, $entity); // TODO
 	let updated = serialize(propertyName, $entity);
@@ -47,7 +47,9 @@
 {#if propertyName.endsWith('_id')}
 	<!-- TODO  propertyName === 'actor_id' etc -->
 	{value}
-{:else if propertyName === 'data'}<textarea bind:value={updated} />{:else}
+{:else if propertyName === 'data' || propertyName === 'view'}<textarea
+		bind:value={updated}
+	/>{:else}
 	{value}
 {/if}
 {#if changed}

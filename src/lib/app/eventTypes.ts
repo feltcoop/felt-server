@@ -30,6 +30,7 @@ export interface EventParamsByName {
 	CreateSpace: CreateSpaceParams;
 	ReadSpace: ReadSpaceParams;
 	ReadSpaces: ReadSpacesParams;
+	UpdateSpace: UpdateSpaceParams;
 	DeleteSpace: DeleteSpaceParams;
 	CreateEntity: CreateEntityParams;
 	ReadEntities: ReadEntitiesParams;
@@ -60,6 +61,7 @@ export interface EventResponseByName {
 	CreateSpace: CreateSpaceResponse;
 	ReadSpace: ReadSpaceResponse;
 	ReadSpaces: ReadSpacesResponse;
+	UpdateSpace: UpdateSpaceResponse;
 	DeleteSpace: DeleteSpaceResponse;
 	CreateEntity: CreateEntityResponse;
 	ReadEntities: ReadEntitiesResponse;
@@ -170,6 +172,17 @@ export interface ReadSpacesResponse {
 }
 export type ReadSpacesResponseResult = ApiResult<ReadSpacesResponse>;
 
+export interface UpdateSpaceParams {
+	space_id: number;
+	name?: string;
+	url?: string;
+	view?: ViewData;
+}
+export interface UpdateSpaceResponse {
+	space: Space;
+}
+export type UpdateSpaceResponseResult = ApiResult<UpdateSpaceResponse>;
+
 export interface DeleteSpaceParams {
 	space_id: number;
 }
@@ -220,6 +233,9 @@ export type SetMobileParams = boolean;
 export type OpenDialogParams = {
 	Component: typeof SvelteComponent;
 	props?: {
+		[k: string]: unknown;
+	};
+	dialogProps?: {
 		[k: string]: unknown;
 	};
 };
@@ -282,6 +298,7 @@ export interface Dispatch {
 	(eventName: 'CreateSpace', params: CreateSpaceParams): Promise<CreateSpaceResponseResult>;
 	(eventName: 'ReadSpace', params: ReadSpaceParams): Promise<ReadSpaceResponseResult>;
 	(eventName: 'ReadSpaces', params: ReadSpacesParams): Promise<ReadSpacesResponseResult>;
+	(eventName: 'UpdateSpace', params: UpdateSpaceParams): Promise<UpdateSpaceResponseResult>;
 	(eventName: 'DeleteSpace', params: DeleteSpaceParams): Promise<DeleteSpaceResponseResult>;
 	(eventName: 'CreateEntity', params: CreateEntityParams): Promise<CreateEntityResponseResult>;
 	(eventName: 'ReadEntities', params: ReadEntitiesParams): Promise<ReadEntitiesResponseResult>;
@@ -337,6 +354,9 @@ export interface UiHandlers {
 	ReadSpaces: (
 		ctx: DispatchContext<ReadSpacesParams, ReadSpacesResponseResult>,
 	) => Promise<ReadSpacesResponseResult>;
+	UpdateSpace: (
+		ctx: DispatchContext<UpdateSpaceParams, UpdateSpaceResponseResult>,
+	) => Promise<UpdateSpaceResponseResult>;
 	DeleteSpace: (
 		ctx: DispatchContext<DeleteSpaceParams, DeleteSpaceResponseResult>,
 	) => Promise<DeleteSpaceResponseResult>;
