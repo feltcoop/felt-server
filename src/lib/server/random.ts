@@ -60,7 +60,7 @@ export const randomEventParams = async (
 		case 'ReadCommunities': {
 			return {};
 		}
-		case 'CreatePersona': {
+		case 'CreateAccountPersona': {
 			return randomPersonaParams();
 		}
 		case 'CreateMembership': {

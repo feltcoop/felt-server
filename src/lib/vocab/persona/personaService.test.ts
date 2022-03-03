@@ -6,7 +6,7 @@ import {toRandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {createPersonaService} from '$lib/vocab/persona/personaServices';
 import {randomEventParams} from '$lib/server/random';
-import {CreatePersona} from '$lib/vocab/persona/persona.events';
+import {CreateAccountPersona} from '$lib/vocab/persona/persona.events';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
 
 // TODO this only depends on the database --
@@ -24,7 +24,7 @@ test__personaService('create a persona & test collisions', async ({db}) => {
 	//STEP 1: get a server, account, and event context lined up
 	const random = toRandomVocabContext(db);
 	const account = await random.account();
-	const params = await randomEventParams(CreatePersona, random);
+	const params = await randomEventParams(CreateAccountPersona, random);
 	params.name = params.name.toLowerCase();
 
 	let result = await createPersonaService.perform({

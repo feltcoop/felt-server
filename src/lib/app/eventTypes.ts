@@ -24,7 +24,7 @@ export interface EventParamsByName {
 	ReadCommunity: ReadCommunityParams;
 	ReadCommunities: ReadCommunitiesParams;
 	UpdateCommunitySettings: UpdateCommunitySettingsParams;
-	CreatePersona: CreatePersonaParams;
+	CreateAccountPersona: CreateAccountPersonaParams;
 	CreateMembership: CreateMembershipParams;
 	DeleteMembership: DeleteMembershipParams;
 	CreateSpace: CreateSpaceParams;
@@ -56,7 +56,7 @@ export interface EventResponseByName {
 	ReadCommunity: ReadCommunityResponse;
 	ReadCommunities: ReadCommunitiesResponse;
 	UpdateCommunitySettings: UpdateCommunitySettingsResponse;
-	CreatePersona: CreatePersonaResponse;
+	CreateAccountPersona: CreateAccountPersonaResponse;
 	CreateMembership: CreateMembershipResponse;
 	DeleteMembership: DeleteMembershipResponse;
 	CreateSpace: CreateSpaceResponse;
@@ -95,6 +95,8 @@ export interface CreateCommunityParams {
 export interface CreateCommunityResponse {
 	community: Community;
 	spaces: Space[];
+	memberships: Membership[];
+	communityPersona: Persona;
 }
 export type CreateCommunityResponseResult = ApiResult<CreateCommunityResponse>;
 
@@ -121,15 +123,16 @@ export interface UpdateCommunitySettingsParams {
 export type UpdateCommunitySettingsResponse = null;
 export type UpdateCommunitySettingsResponseResult = ApiResult<UpdateCommunitySettingsResponse>;
 
-export interface CreatePersonaParams {
+export interface CreateAccountPersonaParams {
 	name: string;
 }
-export interface CreatePersonaResponse {
+export interface CreateAccountPersonaResponse {
 	persona: Persona;
 	community: Community;
 	spaces: Space[];
+	membership: Membership;
 }
-export type CreatePersonaResponseResult = ApiResult<CreatePersonaResponse>;
+export type CreateAccountPersonaResponseResult = ApiResult<CreateAccountPersonaResponse>;
 
 export interface CreateMembershipParams {
 	persona_id: number;
@@ -296,7 +299,10 @@ export interface Dispatch {
 		eventName: 'UpdateCommunitySettings',
 		params: UpdateCommunitySettingsParams,
 	): Promise<UpdateCommunitySettingsResponseResult>;
-	(eventName: 'CreatePersona', params: CreatePersonaParams): Promise<CreatePersonaResponseResult>;
+	(
+		eventName: 'CreateAccountPersona',
+		params: CreateAccountPersonaParams,
+	): Promise<CreateAccountPersonaResponseResult>;
 	(
 		eventName: 'CreateMembership',
 		params: CreateMembershipParams,
@@ -347,9 +353,9 @@ export interface UiHandlers {
 	UpdateCommunitySettings: (
 		ctx: DispatchContext<UpdateCommunitySettingsParams, UpdateCommunitySettingsResponseResult>,
 	) => Promise<UpdateCommunitySettingsResponseResult>;
-	CreatePersona: (
-		ctx: DispatchContext<CreatePersonaParams, CreatePersonaResponseResult>,
-	) => Promise<CreatePersonaResponseResult>;
+	CreateAccountPersona: (
+		ctx: DispatchContext<CreateAccountPersonaParams, CreateAccountPersonaResponseResult>,
+	) => Promise<CreateAccountPersonaResponseResult>;
 	CreateMembership: (
 		ctx: DispatchContext<CreateMembershipParams, CreateMembershipResponseResult>,
 	) => Promise<CreateMembershipResponseResult>;

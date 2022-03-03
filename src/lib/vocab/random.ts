@@ -8,7 +8,7 @@ import type {CreateAccountParams} from '$lib/vocab/account/account.schema';
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {
 	CreateCommunityParams,
-	CreatePersonaParams,
+	CreateAccountPersonaParams,
 	CreateEntityParams,
 	CreateSpaceParams,
 	CreateMembershipParams,
@@ -32,7 +32,7 @@ export const randomAccountParams = (): CreateAccountParams => ({
 	name: randomAccountName(),
 	password: randomPassword(),
 });
-export const randomPersonaParams = (): CreatePersonaParams => ({
+export const randomPersonaParams = (): CreateAccountPersonaParams => ({
 	name: randomPersonaName(),
 });
 export const randomMembershipParams = (

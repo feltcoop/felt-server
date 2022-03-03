@@ -3,9 +3,6 @@ import type {Result} from '@feltcoop/felt';
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
-import type {Community} from '$lib/vocab/community/community';
-import type {Space} from '$lib/vocab/space/space';
-import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 
 export const personaRepo = (db: Database) =>
 	({
@@ -14,12 +11,8 @@ export const personaRepo = (db: Database) =>
 			type: Persona['type'],
 			name: string,
 			account_id: number | null,
-			// TODO clean up when logic is moved to services:
-			// `community_id` is `null` for `account` personas, gets set after creating personal community
-			community_id: number | null,
-		): Promise<
-			Result<{value: {persona: Persona; community: Community; spaces: Space[]}}, ErrorResponse>
-		> => {
+			community_id: number,
+		): Promise<Result<{value: Persona}, ErrorResponse>> => {
 			const data = await db.sql<Persona[]>`
 				INSERT INTO personas (type, name, account_id, community_id) VALUES (
 					${type}, ${name}, ${account_id}, ${community_id}
@@ -27,26 +20,7 @@ export const personaRepo = (db: Database) =>
 			`;
 			const persona = data[0];
 			console.log('[db] created persona', persona);
-			if (type === 'account') {
-				const createCommunityResult = await db.repos.community.create(
-					'personal',
-					name,
-					toDefaultCommunitySettings(name),
-					persona.persona_id,
-				);
-				if (!createCommunityResult.ok) {
-					return {ok: false, message: 'failed to create initial persona community'};
-				}
-				const {community, spaces} = createCommunityResult.value;
-				await db.sql`
-					UPDATE personas SET community_id = ${community.community_id}
-					WHERE persona_id = ${persona.persona_id}
-				`;
-				persona.community_id = community.community_id;
-				return {ok: true, value: {persona, community, spaces}};
-			}
-			// TODO this is a hack that can be removed when this code is moved into the service layer
-			return {ok: true, value: {persona, community: null as any, spaces: null as any}};
+			return {ok: true, value: persona};
 		},
 		filterByAccount: async (
 			account_id: number,

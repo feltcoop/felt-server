@@ -66,42 +66,69 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 				'standard',
 				params.name,
 				params.settings || toDefaultCommunitySettings(params.name),
-				params.persona_id,
 			);
 			console.log('createCommunityResult', createCommunityResult);
-			if (createCommunityResult.ok) {
-				// TODO optimize this to return `createCommunityResult.value` instead of making another db call,
-				// needs to populate members, but we probably want to normalize the data, returning only ids
-				const communityData = await repos.community.filterByAccount(account_id);
-				if (communityData.ok) {
-					const {
-						community: {community_id},
-						spaces,
-					} = createCommunityResult.value;
-					console.log('community_id', community_id);
-					console.log('communityData', communityData);
-					return {
-						ok: true,
-						status: 200,
-						value: {
-							community: communityData.value.find((c) => c.community_id === community_id)!,
-							spaces,
-						},
-					}; // TODO API types
-				}
-				console.log('[CreateCommunity] error retrieving community data');
+
+			if (!createCommunityResult.ok) {
+				console.log('[CreateCommunity] error creating community');
 				return {
 					ok: false,
 					status: 500,
-					message: 'error retrieving community data',
+					message: 'error creating community',
 				};
 			}
-			console.log('[CreateCommunity] error creating community');
+			const {community, spaces} = createCommunityResult.value;
+			//TODO maybe trim down returned Persona data?
+			const communityPersonaResult = await repos.persona.create(
+				'community',
+				community.name,
+				null,
+				community.community_id,
+			);
+			if (!communityPersonaResult.ok) {
+				console.log('[CreateCommunity] error creating community persona');
+				return {
+					ok: false,
+					status: 500,
+					message: 'error creating community persona',
+				};
+			}
+			const communityPersona = communityPersonaResult.value;
+			const communityPersonaMembershipResult = await repos.membership.create(
+				communityPersona.persona_id,
+				community.community_id,
+			);
+
+			if (!communityPersonaMembershipResult.ok) {
+				console.log('[CreateCommunity] error creating community persona membership');
+				return {
+					ok: false,
+					status: 500,
+					message: 'error creating community persona membership',
+				};
+			}
+			const creatorMembershipResult = await repos.membership.create(
+				params.persona_id,
+				community.community_id,
+			);
+			if (!creatorMembershipResult.ok) {
+				console.log('[CreateCommunity] error making creator membership');
+				return {
+					ok: false,
+					status: 500,
+					message: 'error making creator membership',
+				};
+			}
 			return {
-				ok: false,
-				status: 500,
-				message: 'error creating community',
-			};
+				ok: true,
+				status: 200,
+				value: {
+					community,
+					spaces,
+					communityPersona,
+					memberships: [communityPersonaMembershipResult.value, creatorMembershipResult.value],
+				},
+			}; // TODO API types
 		},
 	};
 
