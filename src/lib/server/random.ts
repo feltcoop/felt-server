@@ -122,6 +122,13 @@ export const randomEventParams = async (
 				data: randomEntityData(),
 			};
 		}
+		case 'DeleteEntity': {
+			return {
+				entity_id: (
+					randomItem(random.entities) || (await random.entity(persona, account, community, space))
+				).entity_id,
+			};
+		}
 		case 'CreateTie': {
 			return {
 				source_id: (

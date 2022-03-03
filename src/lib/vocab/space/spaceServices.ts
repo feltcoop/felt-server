@@ -103,7 +103,7 @@ export const updateSpaceService: Service<UpdateSpaceParams, UpdateSpaceResponseR
 	},
 };
 
-//deletes a single space and returns the id of the deleted spaces
+//deletes a single space
 export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseResult> = {
 	event: DeleteSpace,
 	perform: async ({repos, params}) => {

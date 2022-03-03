@@ -6,8 +6,15 @@ import type {
 	ReadEntitiesResponseResult,
 	UpdateEntityParams,
 	UpdateEntityResponseResult,
+	DeleteEntityParams,
+	DeleteEntityResponseResult,
 } from '$lib/app/eventTypes';
-import {ReadEntities, UpdateEntity, CreateEntity} from '$lib/vocab/entity/entity.events';
+import {
+	ReadEntities,
+	UpdateEntity,
+	CreateEntity,
+	DeleteEntity,
+} from '$lib/vocab/entity/entity.events';
 
 // TODO rename to `getEntities`? `loadEntities`?
 export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesResponseResult> = {
@@ -51,5 +58,20 @@ export const updateEntityService: Service<UpdateEntityParams, UpdateEntityRespon
 		}
 		console.log('[UpdateEntity] error updating entity');
 		return {ok: false, status: 500, message: 'failed to update entity'};
+	},
+};
+
+//deletes a single entity
+export const deleteEntityService: Service<DeleteEntityParams, DeleteEntityResponseResult> = {
+	event: DeleteEntity,
+	perform: async ({repos, params}) => {
+		console.log('[DeleteEntity] deleting entity with id:', params.entity_id);
+		const result = await repos.entity.deleteById(params.entity_id);
+		console.log(result);
+		if (!result.ok) {
+			console.log('[DeleteEntity] error removing entity: ', params.entity_id);
+			return {ok: false, status: 500, message: result.message};
+		}
+		return {ok: true, status: 200, value: null};
 	},
 };
