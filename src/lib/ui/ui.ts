@@ -495,7 +495,7 @@ export const toUi = (
 		},
 		UpdateEntity: async ({invoke}) => {
 			const result = await invoke();
-			console.log('updateEnity result', result);
+			console.log('updateEntity result', result);
 			if (!result.ok) return result;
 			//TODO maybe return to $entity naming convention OR propagate this pattern?
 			const {entity: updatedEntity} = result.value;
@@ -503,6 +503,14 @@ export const toUi = (
 			const entities = entitiesBySpace.get(updatedEntity.space_id);
 			const entity = get(entities!).find((e) => get(e).entity_id === updatedEntity.entity_id);
 			entity!.set(updatedEntity);
+			return result;
+		},
+		DeleteEntity: async ({params, invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
+			//update state here
+			const {entity_id} = params;
+			//TODO add store updates once new entity/tie stores are in place
 			return result;
 		},
 		ReadEntities: async ({params, invoke}) => {
