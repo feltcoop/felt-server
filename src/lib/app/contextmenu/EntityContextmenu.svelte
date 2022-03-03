@@ -23,5 +23,8 @@
 		>
 			<span class="title">Edit Entity</span>
 		</ContextmenuEntry>
+		<ContextmenuEntry action={() => dispatch('DeleteEntity', {entity_id: $entity.entity_id})}>
+			<span class="title">Delete Entity</span>
+		</ContextmenuEntry>
 	</svelte:fragment>
 </ContextmenuSubmenu>
