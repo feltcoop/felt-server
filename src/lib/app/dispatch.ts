@@ -35,7 +35,7 @@ export interface ToDispatchClient {
 export const toDispatch = (ui: Ui, toClient: ToDispatchClient): Dispatch => {
 	// TODO validate the params here to improve UX, but for now we're safe letting the server validate
 	const dispatch: Dispatch = (eventName, params) => {
-		log.plain(
+		log.trace(
 			'%c[dispatch.%c' + eventName + '%c]',
 			'color: gray',
 			'color: blue',
@@ -61,7 +61,7 @@ export const toDispatchBroadcastMessage =
 	(ui: Ui, dispatch: Dispatch): DispatchBroadcastMessage =>
 	(message) => {
 		const {method: eventName, params} = message;
-		log.plain(
+		log.trace(
 			'%c[broadcast.%c' + eventName + '%c]',
 			'color: gray',
 			'color: darkCyan',
