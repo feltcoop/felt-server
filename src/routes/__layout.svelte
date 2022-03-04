@@ -10,6 +10,7 @@
 	import type {Readable} from 'svelte/store';
 	import {get} from 'svelte/store';
 	import Dialogs from '@feltcoop/felt/ui/dialog/Dialogs.svelte';
+	import {Logger} from '@feltcoop/felt/util/log.js';
 
 	import {setSocket, toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
@@ -33,6 +34,8 @@
 	import AppContextmenu from '$lib/app/contextmenu/AppContextmenu.svelte';
 	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
 	import LinkContextmenu from '$lib/app/contextmenu/LinkContextmenu.svelte';
+
+	const log = new Logger('[layout]');
 
 	let initialMobileValue = false; // TODO this hardcoded value causes mobile view to change on load -- detect for SSR via User-Agent?
 	const MOBILE_WIDTH = '50rem'; // treats anything less than 800px width as mobile
@@ -68,9 +71,9 @@
 	if (browser) {
 		(window as any).app = app;
 		Object.assign(window, app);
-		console.log('app', app);
+		log.trace('app', app);
 	}
-	$: browser && console.log('$session', $session);
+	$: browser && log.trace('$session', $session);
 
 	const {
 		mobile,
@@ -107,7 +110,7 @@
 		if (!persona) {
 			if (browser) {
 				const fallbackPersonaIndex = 0;
-				console.warn(
+				log.warn(
 					`unable to find persona at index ${personaIndex}; falling back to index ${fallbackPersonaIndex}`,
 				);
 				// eslint-disable-next-line @typescript-eslint/no-floating-promises

@@ -1,11 +1,14 @@
 import send from '@polka/send-type';
-import {red} from 'kleur/colors';
+import {red, blue, gray} from 'kleur/colors';
+import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {ApiServer, HttpMiddleware} from '$lib/server/ApiServer.js';
 import type {Service} from '$lib/server/service';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {SessionApi} from '$lib/server/SessionApi';
 import {authorize} from '$lib/server/authorize';
+
+const log = new Logger(gray('[') + blue('httpServiceMiddleware') + gray(']'));
 
 // Wraps a `Service` in an http `Middleware`
 export const toHttpServiceMiddleware =
@@ -54,7 +57,7 @@ export const toHttpServiceMiddleware =
 			const validateParams = validateSchema(service.event.params);
 			if (!validateParams(params)) {
 				// TODO handle multiple errors instead of just the first
-				console.error('validation failed:', params, validateParams.errors);
+				log.error('validation failed:', params, validateParams.errors);
 				const validationError = validateParams.errors![0];
 				return send(res, 400, {message: toValidationErrorMessage(validationError)});
 			}
@@ -73,13 +76,13 @@ export const toHttpServiceMiddleware =
 			if (process.env.NODE_ENV !== 'production') {
 				const validateResponse = validateSchema(service.event.response);
 				if (!validateResponse(result.value)) {
-					console.error(red('validation failed:'), result, validateResponse.errors);
+					log.error(red('validation failed:'), result, validateResponse.errors);
 				}
 			}
-			console.log('[serviceMiddleware] result.status', result.status);
+			log.trace('result.status', result.status);
 			send(res, result.status, result.value); // TODO consider returning the entire `result` for convenience (but it's less efficient)
 		} catch (err) {
-			console.error(err);
+			log.error(err);
 			send(res, 500, {message: 'unknown server error'});
 		}
 	};

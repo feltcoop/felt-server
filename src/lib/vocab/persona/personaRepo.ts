@@ -1,4 +1,6 @@
 import type {Result} from '@feltcoop/felt';
+import {Logger} from '@feltcoop/felt/util/log.js';
+import {blue, gray} from 'kleur/colors';
 
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {Database} from '$lib/db/Database';
@@ -6,6 +8,8 @@ import type {ErrorResponse} from '$lib/util/error';
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
+
+const log = new Logger(gray('[') + blue('personaRepo') + gray(']'));
 
 export const personaRepo = (db: Database) =>
 	({
@@ -26,7 +30,7 @@ export const personaRepo = (db: Database) =>
 				) RETURNING *
 			`;
 			const persona = data[0];
-			console.log('[db] created persona', persona);
+			log.trace('created persona', persona);
 			if (type === 'account') {
 				const createCommunityResult = await db.repos.community.create(
 					'personal',
@@ -51,7 +55,7 @@ export const personaRepo = (db: Database) =>
 		filterByAccount: async (
 			account_id: number,
 		): Promise<Result<{value: Persona[]}, ErrorResponse>> => {
-			console.log('[personaRepo] filtering by account', account_id);
+			log.trace('[filterByAccount]', account_id);
 			const data = await db.sql<Persona[]>`
 				SELECT p.persona_id, p.type, p.name, p.account_id, p.community_id, p.created, p.updated
 				FROM personas p WHERE p.account_id = ${account_id}
@@ -62,7 +66,7 @@ export const personaRepo = (db: Database) =>
 		findById: async (
 			persona_id: number,
 		): Promise<Result<{value: Persona}, {type: 'no_persona_found'} & ErrorResponse>> => {
-			console.log('[personaRepo] loading persona', persona_id);
+			log.trace('[findById]', persona_id);
 			const data = await db.sql<Persona[]>`
 				SELECT persona_id, type, name, account_id, community_id, created, updated 
 				FROM personas WHERE persona_id=${persona_id}
@@ -79,7 +83,7 @@ export const personaRepo = (db: Database) =>
 		findByCommunityId: async (
 			community_id: number,
 		): Promise<Result<{value: Persona}, {type: 'no_persona_found'} & ErrorResponse>> => {
-			console.log('[PersonaRepo] finding persona for community', community_id);
+			log.trace('[findByCommunityId]', community_id);
 			const data = await db.sql<Persona[]>`
 				SELECT persona_id, type, name, account_id, community_id, created, updated 
 				FROM personas WHERE community_id=${community_id}
@@ -96,7 +100,7 @@ export const personaRepo = (db: Database) =>
 		findByName: async (
 			name: string,
 		): Promise<Result<{value: Persona | undefined}, ErrorResponse>> => {
-			console.log('[PersonaRepo] filtering by name', name);
+			log.trace('[findByName]', name);
 			const data = await db.sql<Persona[]>`
 				SELECT persona_id, type, name, account_id, community_id, created, updated
 				FROM personas WHERE LOWER(name) = LOWER(${name})

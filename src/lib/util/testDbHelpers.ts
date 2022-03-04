@@ -2,7 +2,7 @@ import postgres from 'postgres';
 
 import {Database} from '$lib/db/Database';
 import {defaultPostgresOptions} from '$lib/db/postgres';
-import {installSourceMaps} from '$lib/util/testHelpers';
+import {installSourceMaps, log} from '$lib/util/testHelpers';
 
 installSourceMaps();
 
@@ -24,6 +24,6 @@ export const teardownDb = async (context: TestDbContext): Promise<void> => {
 	try {
 		await db.close();
 	} catch (err) {
-		console.error('error closing db', err);
+		log.error('error closing db', err);
 	}
 };

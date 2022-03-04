@@ -57,9 +57,9 @@ test__eventInfos('dispatch random events in a client app', async ({db, app}) => 
 		} else {
 			// TODO can't make remote calls yet -- need to use either `node-fetch` or mock
 			// if (!result.ok) {
-			// 	console.error(red(`dispatch failed: ${eventInfo.name}`), result);
+			// 	log.error(`dispatch failed: ${eventInfo.name}`, result);
 			// } else if (!validateSchema(eventInfo.response!)(result.value)) {
-			// 	console.error(red(`failed to validate service response: ${eventInfo.name}`), result);
+			// 	log.error(`failed to validate service response: ${eventInfo.name}`, result);
 			// 	throw new Error(
 			// 		`Failed to validate response for service ${eventInfo.name}: ${toValidationErrorMessage(
 			// 			validateSchema(eventInfo.response!).errors![0],

@@ -36,6 +36,7 @@ export interface EventParamsByName {
 	ReadEntities: ReadEntitiesParams;
 	UpdateEntity: UpdateEntityParams;
 	QueryEntities: QueryEntitiesParams;
+	DeleteEntity: DeleteEntityParams;
 	Ping: PingParams;
 	ToggleMainNav: ToggleMainNavParams;
 	ToggleSecondaryNav: ToggleSecondaryNavParams;
@@ -67,6 +68,7 @@ export interface EventResponseByName {
 	CreateEntity: CreateEntityResponse;
 	ReadEntities: ReadEntitiesResponse;
 	UpdateEntity: UpdateEntityResponse;
+	DeleteEntity: DeleteEntityResponse;
 	Ping: PingResponse;
 	CreateTie: CreateTieResponse;
 	ReadTies: ReadTiesResponse;
@@ -222,6 +224,12 @@ export interface QueryEntitiesParams {
 	space_id: number;
 }
 
+export interface DeleteEntityParams {
+	entity_id: number;
+}
+export type DeleteEntityResponse = null;
+export type DeleteEntityResponseResult = ApiResult<DeleteEntityResponse>;
+
 export type PingParams = void;
 export type PingResponse = null;
 export type PingResponseResult = ApiResult<PingResponse>;
@@ -314,6 +322,7 @@ export interface Dispatch {
 	(eventName: 'ReadEntities', params: ReadEntitiesParams): Promise<ReadEntitiesResponseResult>;
 	(eventName: 'UpdateEntity', params: UpdateEntityParams): Promise<UpdateEntityResponseResult>;
 	(eventName: 'QueryEntities', params: QueryEntitiesParams): Readable<Readable<Entity>[]>;
+	(eventName: 'DeleteEntity', params: DeleteEntityParams): Promise<DeleteEntityResponseResult>;
 	(eventName: 'Ping', params: PingParams): Promise<ApiResult<null>>;
 	(eventName: 'ToggleMainNav', params: ToggleMainNavParams): void;
 	(eventName: 'ToggleSecondaryNav', params: ToggleSecondaryNavParams): void;
@@ -381,6 +390,9 @@ export interface UiHandlers {
 		ctx: DispatchContext<UpdateEntityParams, UpdateEntityResponseResult>,
 	) => Promise<UpdateEntityResponseResult>;
 	QueryEntities: (ctx: DispatchContext<QueryEntitiesParams, void>) => Readable<Readable<Entity>[]>;
+	DeleteEntity: (
+		ctx: DispatchContext<DeleteEntityParams, DeleteEntityResponseResult>,
+	) => Promise<DeleteEntityResponseResult>;
 	Ping: (ctx: DispatchContext<PingParams, PingResponseResult>) => Promise<ApiResult<null>>;
 	ToggleMainNav: (ctx: DispatchContext<ToggleMainNavParams, void>) => void;
 	ToggleSecondaryNav: (ctx: DispatchContext<ToggleSecondaryNavParams, void>) => void;

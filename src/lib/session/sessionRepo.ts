@@ -1,8 +1,12 @@
 import type {Result} from '@feltcoop/felt';
+import {Logger} from '@feltcoop/felt/util/log.js';
+import {blue, gray} from 'kleur/colors';
 
 import type {Database} from '$lib/db/Database';
 import type {ClientAccountSession} from '$lib/session/clientSession.js';
 import type {ErrorResponse} from '$lib/util/error';
+
+const log = new Logger(gray('[') + blue('sessionRepo') + gray(']'));
 
 export const sessionRepo = (db: Database) =>
 	({
@@ -11,7 +15,7 @@ export const sessionRepo = (db: Database) =>
 		): Promise<
 			Result<{value: ClientAccountSession}, {type?: 'no_account_found'} & ErrorResponse>
 		> => {
-			console.log('[db] loadClientSession', account_id);
+			log.trace('loadClientSession', account_id);
 			const accountResult = await db.repos.account.findById(account_id);
 			if (!accountResult.ok) return accountResult;
 			const account = accountResult.value;

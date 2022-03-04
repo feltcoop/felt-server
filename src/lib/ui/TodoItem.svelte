@@ -37,18 +37,14 @@
 	$: hasItems = items !== undefined || $entity.data.type === 'Collection';
 	$: hasChecked = checked !== undefined || $entity.data.type === 'Note';
 
-	$: console.log('TodoItem ties', ties);
-
 	const updateEntity = async (checked: boolean) => {
 		if ($entity.data.checked === checked) return;
 		pending = true;
-		console.log('pending start', pending);
 		await dispatch('UpdateEntity', {
 			entity_id: $entity.entity_id,
 			data: {...$entity.data, checked},
 		});
 		pending = false;
-		console.log('pending done', pending);
 	};
 
 	const renderEntity = (entity: Entity): boolean => {
@@ -61,7 +57,6 @@
 	const addToCollection = async () => {
 		const id = Number(source_id);
 		if (!id) return;
-		console.log(source_id);
 		await dispatch('CreateTie', {
 			source_id: id,
 			dest_id: $entity.entity_id,

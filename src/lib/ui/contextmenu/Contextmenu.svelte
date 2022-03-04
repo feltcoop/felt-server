@@ -31,7 +31,6 @@
 	};
 
 	const onWindowKeydown = (e: KeyboardEvent) => {
-		console.log('e.key', e.key);
 		if (e.key === 'Escape' && !(e.target instanceof HTMLElement && isEditable(e.target))) {
 			contextmenu.close();
 			e.stopPropagation();
