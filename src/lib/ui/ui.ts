@@ -505,11 +505,11 @@ export const toUi = (
 			entity!.set(updatedEntity);
 			return result;
 		},
-		DeleteEntity: async ({params, invoke}) => {
+		DeleteEntity: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			//update state here
-			const {entity_id} = params;
+
 			//TODO add store updates once new entity/tie stores are in place
 			return result;
 		},
