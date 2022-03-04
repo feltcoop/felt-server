@@ -1,14 +1,13 @@
 import type {GetSession} from '@sveltejs/kit';
 import {noop} from '@feltcoop/felt/util/function.js';
 import {Logger} from '@feltcoop/felt/util/log.js';
-import {blue, gray} from 'kleur/colors';
 
 import type {ClientSession} from '$lib/session/clientSession.js';
 import type {CookieSessionRequest} from '$lib/session/cookieSession.js';
 import {cookieSessionMiddleware} from '$lib/session/cookieSession';
 import {db} from '$lib/db/db';
 
-const log = new Logger(gray('[') + blue('hooks') + gray(']'));
+const log = new Logger('[hooks]');
 
 export const getSession: GetSession<CookieSessionRequest, ClientSession> = async (req) => {
 	log.trace('getSession');
