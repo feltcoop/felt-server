@@ -109,4 +109,34 @@ export const QueryEntities: ClientEventInfo = {
 	returns: 'Readable<Readable<Entity>[]>',
 };
 
-export const events: EventInfo[] = [CreateEntity, ReadEntities, UpdateEntity, QueryEntities];
+export const DeleteEntity: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'DeleteEntity',
+	broadcast: true,
+	params: {
+		$id: '/schemas/DeleteEntityParams.json',
+		type: 'object',
+		properties: {
+			entity_id: {type: 'number'},
+		},
+		required: ['entity_id'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: '/schemas/DeleteEntityResponse.json',
+		type: 'null',
+	},
+	returns: 'Promise<DeleteEntityResponseResult>',
+	route: {
+		path: '/api/v1/entities/:entity_id',
+		method: 'DELETE',
+	},
+};
+
+export const events: EventInfo[] = [
+	CreateEntity,
+	ReadEntities,
+	UpdateEntity,
+	QueryEntities,
+	DeleteEntity,
+];

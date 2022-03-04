@@ -511,6 +511,14 @@ export const toUi = (
 			entity!.set(updatedEntity);
 			return result;
 		},
+		DeleteEntity: async ({invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
+			//update state here
+
+			//TODO add store updates once new entity/tie stores are in place
+			return result;
+		},
 		ReadEntities: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
