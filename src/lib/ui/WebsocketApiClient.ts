@@ -3,7 +3,6 @@
 // using JSON-RPC 2.0: https://www.jsonrpc.org/specification
 
 import {toCounter} from '@feltcoop/felt/util/counter.js';
-import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
@@ -12,7 +11,7 @@ import type {JsonRpcId, JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 import type {BroadcastMessage} from '$lib/server/websocketMiddleware';
 
-const log = new Logger(gray('[') + blue('ws') + gray(']'));
+const log = new Logger('[ws]');
 
 const toId = toCounter();
 

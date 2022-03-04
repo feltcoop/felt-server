@@ -6,13 +6,12 @@
 // https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md
 
 import {inject} from 'regexparam';
-import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
 
-const log = new Logger(gray('[') + blue('http') + gray(']'));
+const log = new Logger('[http]');
 
 // TODO make `fetch` a parameter once the client isn't created for SSR
 // fetch: typeof window.fetch,

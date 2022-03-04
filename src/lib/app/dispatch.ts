@@ -7,8 +7,6 @@ import type {ApiResult} from '$lib/server/api';
 import type {Dispatch} from '$lib/app/eventTypes';
 import type {BroadcastMessage} from '$lib/server/websocketMiddleware';
 
-// TODO BLOCK gray('[') + blue('dispatch') + gray(']')
-// import {blue, gray} from 'kleur/colors';
 const log = new Logger();
 
 const KEY = Symbol();

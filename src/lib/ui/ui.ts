@@ -4,7 +4,6 @@ import {goto} from '$app/navigation';
 import {mutable, type Mutable} from '@feltcoop/svelte-mutable-store';
 import {type DialogData} from '@feltcoop/felt/ui/dialog/dialog.js';
 import {browser} from '$app/env';
-import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import {type Community} from '$lib/vocab/community/community';
@@ -18,8 +17,11 @@ import {type DispatchContext} from '$lib/app/dispatch';
 import {type UiHandlers} from '$lib/app/eventTypes';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {type ViewData} from '$lib/vocab/view/view';
+import {initBrowser} from '$lib/ui/init';
 
-const log = new Logger(gray('[') + blue('ui') + gray(']'));
+if (browser) initBrowser();
+
+const log = new Logger('[ui]');
 
 const KEY = Symbol();
 

@@ -1,7 +1,7 @@
 import sourcemapSupport from 'source-map-support';
-import {Logger, LogLevel} from '@feltcoop/felt/util/log.js';
+import {configureLogLevel, LogLevel} from '@feltcoop/felt/util/log.js';
 
-Logger.level = LogLevel.Info;
+configureLogLevel(LogLevel.Info);
 
 let installed = false;
 

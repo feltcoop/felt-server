@@ -2,10 +2,10 @@ import type {AsyncStatus} from '@feltcoop/felt';
 import {get, writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
-import {blue, gray} from 'kleur/colors';
+
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-const log = new Logger(gray('[') + blue('httpServiceMiddleware') + gray(']'));
+const log = new Logger('[socket]');
 
 const KEY = Symbol();
 
