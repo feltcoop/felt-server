@@ -100,13 +100,13 @@ export const spaceRepo = (db: Database) =>
 			space_id: number,
 			partial: Partial<Pick<Space, 'name' | 'url' | 'view'>>,
 		): Promise<Result<{value: Space}, ErrorResponse>> => {
-			console.log(`[db] updating data for space: ${space_id}`);
+			log.trace(`updating data for space: ${space_id}`);
 			// TODO hacky, fix when `postgres` v2 is out with dynamic queries
 			const updated: Record<string, any> = {};
 			for (const [key, value] of Object.entries(partial)) {
 				updated[key] = value && typeof value === 'object' ? JSON.stringify(value) : value;
 			}
-			console.log(`updated`, updated);
+			log.trace(`updated`, updated);
 			const result = await db.sql<Space[]>`
 				UPDATE spaces
 				SET updated=NOW(), ${db.sql(updated, ...Object.keys(updated))}

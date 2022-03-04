@@ -45,7 +45,7 @@ export const readTiesService: Service<ReadTiesParams, ReadTiesResponseResult> = 
 		if (findTiesResult.ok) {
 			return {ok: true, status: 200, value: {ties: findTiesResult.value}}; // TODO API types
 		}
-		console.log('[ReadEntities] error searching for entities');
+		log.trace('[ReadEntities] error searching for entities');
 		return {ok: false, status: 500, message: 'error searching for entities'};
 	},
 };

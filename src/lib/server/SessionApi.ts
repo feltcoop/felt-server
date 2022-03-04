@@ -1,4 +1,7 @@
 import type {ApiServerRequest} from '$lib/server/ApiServer';
+import {Logger} from '@feltcoop/felt/util/log.js';
+
+const log = new Logger('[SessionApi]');
 
 export interface ISessionApi {
 	login: (account_id: number) => void;
@@ -16,11 +19,11 @@ export class SessionApi implements ISessionApi {
 
 	login(account_id: number): void {
 		if (!this.req) {
-			console.error('Expected "req". Was login called from a non-http service?');
+			log.error('Expected "req". Was login called from a non-http service?');
 			return;
 		}
 		if (!this.req.session) {
-			console.error('Expected "req.session". The authentication middleware may be misconfigured.');
+			log.error('Expected "req.session". The authentication middleware may be misconfigured.');
 			return;
 		}
 		this.req.session.account_id = account_id;
@@ -28,7 +31,7 @@ export class SessionApi implements ISessionApi {
 
 	logout(): void {
 		if (!this.req) {
-			console.error('Expected "req". Was logout called from a non-http service?');
+			log.error('Expected "req". Was logout called from a non-http service?');
 			return;
 		}
 		this.req.account_id = undefined!;

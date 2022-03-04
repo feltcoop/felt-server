@@ -475,11 +475,11 @@ export const toUi = (
 		},
 		UpdateSpace: async ({invoke, params}) => {
 			const result = await invoke();
-			console.log('updateEnity result', result);
+			log.trace('[UpdateSpace] result', result);
 			if (!result.ok) return result;
 			//TODO maybe return to $entity naming convention OR propagate this pattern?
 			const {space: updatedSpace} = result.value;
-			console.log('[ui.UpdateSpace]', updatedSpace.space_id);
+			log.trace('[UpdateSpace]', updatedSpace.space_id);
 			const space = spaceById.get(params.space_id);
 			space!.set(updatedSpace);
 			return result;
@@ -543,7 +543,7 @@ export const toUi = (
 		ReadTies: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
-			console.log('ReadTies response', result);
+			log.trace('[ReadTies] result', result);
 			//TODO figure out front end state for Ties
 			return result;
 		},

@@ -7,7 +7,7 @@ import {Database} from '$lib/db/Database';
 import {defaultPostgresOptions} from '$lib/db/postgres';
 import {WebsocketServer} from '$lib/server/WebsocketServer';
 import {services} from '$lib/server/services';
-import {installSourceMaps} from '$lib/util/testHelpers';
+import {installSourceMaps, log} from '$lib/util/testHelpers';
 
 installSourceMaps();
 
@@ -40,6 +40,6 @@ export const teardownServer = async (context: TestServerContext): Promise<void> 
 	try {
 		await server.close();
 	} catch (err) {
-		console.error('error closing server', err);
+		log.error('error closing server', err);
 	}
 };

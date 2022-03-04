@@ -37,8 +37,6 @@
 	$: hasItems = items !== undefined || $entity.data.type === 'Collection';
 	$: hasChecked = checked !== undefined || $entity.data.type === 'Note';
 
-	$: console.log('TodoItem ties', ties);
-
 	const updateEntity = async (checked: boolean) => {
 		if ($entity.data.checked === checked) return;
 		pending = true;
@@ -59,7 +57,6 @@
 	const addToCollection = async () => {
 		const id = Number(source_id);
 		if (!id) return;
-		console.log(source_id);
 		await dispatch('CreateTie', {
 			source_id: id,
 			dest_id: $entity.entity_id,

@@ -103,7 +103,7 @@ export const updateSpaceService: Service<UpdateSpaceParams, UpdateSpaceResponseR
 		if (updateEntitiesResult.ok) {
 			return {ok: true, status: 200, value: {space: updateEntitiesResult.value}}; // TODO API types
 		}
-		console.log('[UpdateSpace] error updating space');
+		log.trace('[UpdateSpace] error updating space');
 		return {ok: false, status: 500, message: 'failed to update space'};
 	},
 };
