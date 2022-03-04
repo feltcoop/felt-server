@@ -62,11 +62,8 @@ export const updateEntityService: Service<UpdateEntityParams, UpdateEntityRespon
 export const deleteEntityService: Service<DeleteEntityParams, DeleteEntityResponseResult> = {
 	event: DeleteEntity,
 	perform: async ({repos, params}) => {
-		console.log('[DeleteEntity] deleting entity with id:', params.entity_id);
 		const result = await repos.entity.deleteById(params.entity_id);
-		console.log(result);
 		if (!result.ok) {
-			console.log('[DeleteEntity] error removing entity: ', params.entity_id);
 			return {ok: false, status: 500, message: result.message};
 		}
 		return {ok: true, status: 200, value: null};

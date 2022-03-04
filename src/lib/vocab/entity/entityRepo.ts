@@ -16,6 +16,7 @@ export const entityRepo = (db: Database) =>
 			space_id: number,
 			data: EntityData,
 		): Promise<Result<{value: Entity}>> => {
+			log.trace('[create]', space_id, actor_id);
 			const entity = await db.sql<Entity[]>`
 				INSERT INTO entities (actor_id, space_id, data) VALUES (
 					${actor_id},${space_id},${db.sql.json(data)}
@@ -26,7 +27,7 @@ export const entityRepo = (db: Database) =>
 		},
 		// TODO maybe `EntityQuery`?
 		filterBySpace: async (space_id: number): Promise<Result<{value: Entity[]}>> => {
-			log.trace(`[filterBySpace] ${space_id}`);
+			log.trace('[filterBySpace]', space_id);
 			const entities = await db.sql<Entity[]>`
 				SELECT entity_id, data, actor_id, space_id, created, updated 
 				FROM entities WHERE space_id= ${space_id}
@@ -39,7 +40,7 @@ export const entityRepo = (db: Database) =>
 			entity_id: number,
 			data: EntityData,
 		): Promise<Result<{value: Entity}, ErrorResponse>> => {
-			log.trace(`[updateEntityData] ${entity_id}`);
+			log.trace('[updateEntityData]', entity_id);
 			const result = await db.sql<Entity[]>`
 				UPDATE entities SET data=${db.sql.json(data)}, updated=NOW()
 				WHERE entity_id= ${entity_id}
@@ -54,7 +55,7 @@ export const entityRepo = (db: Database) =>
 		deleteById: async (
 			entity_id: number,
 		): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {
-			console.log('[entityRepo] deleting space :', entity_id);
+			log.trace('[deleteById]', entity_id);
 			const data = await db.sql<any[]>`
 				UPDATE entities
 				SET data = jsonb_build_object('type','Tombstone','formerType',data->'type','deleted',NOW())
@@ -73,7 +74,7 @@ export const entityRepo = (db: Database) =>
 		hardDeleteById: async (
 			entity_id: number,
 		): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {
-			console.log('[entityRepo] deleting space :', entity_id);
+			log.trace('[hardDeleteById]', entity_id);
 			const data = await db.sql<any[]>`
 				DELETE FROM entities WHERE ${entity_id}=entity_id
 			`;
