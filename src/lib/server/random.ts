@@ -133,6 +133,12 @@ export const randomEventParams = async (
 				type: 'HasReply',
 			};
 		}
+		case 'ReadTies': {
+			if (!space) {
+				space = randomItem(random.spaces) || (await random.space(persona, account, community));
+			}
+			return {space_id: space.space_id};
+		}
 		// TODO instead of randomizing, use existing ones from the arrays?
 		// what's the best way to do that?
 		case 'ToggleMainNav': {

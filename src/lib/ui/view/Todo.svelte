@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {browser} from '$app/env';
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
-	import type {Readable} from 'svelte/store';
+	import {get, type Readable} from 'svelte/store';
 
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import type {Community} from '$lib/vocab/community/community';
@@ -9,6 +9,8 @@
 	import type {EntityData} from '$lib/vocab/entity/entityData';
 	import TodoItems from '$lib/ui/TodoItems.svelte';
 	import {getApp} from '$lib/ui/app';
+	import type {Tie} from '$lib/vocab/tie/tie';
+	import type {Entity} from '$lib/vocab/entity/entity';
 
 	const {dispatch, socket} = getApp();
 
@@ -21,6 +23,39 @@
 
 	$: shouldLoadEntities = browser && $socket.open;
 	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
+	$: tiesResult = shouldLoadEntities ? dispatch('ReadTies', {space_id: $space.space_id}) : null;
+	let ties: Tie[] | undefined;
+	//TODO move this call to the UI to get arch & caching
+	// eslint-disable-next-line @typescript-eslint/no-floating-promises
+	$: tiesResult?.then((data) => {
+		if (data.ok) {
+			ties = data.value.ties;
+		}
+	});
+
+	$: itemsByEntity = $entities && ties ? toItemsByEntity($entities, ties) : null;
+
+	let entityById: Map<number, Readable<Entity>> | null = null;
+	$: entityById = $entities && new Map($entities.map((e) => [get(e).entity_id, e]));
+
+	//TODO do caching here
+	const toItemsByEntity = (
+		entities: Array<Readable<Entity>>,
+		ties: Tie[],
+	): Map<Readable<Entity>, Array<Readable<Entity>>> => {
+		const map: Map<Readable<Entity>, Array<Readable<Entity>>> = new Map();
+		for (const tie of ties) {
+			if (tie.type !== 'HasItem') continue;
+			const source = entities.find((e) => get(e).entity_id === tie.source_id)!;
+			const dest = entities.find((e) => get(e).entity_id === tie.dest_id)!;
+			let items = map.get(source);
+			if (!items) {
+				map.set(source, (items = []));
+			}
+			items.push(dest);
+		}
+		return map;
+	};
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
@@ -48,12 +83,14 @@
 
 <div class="room">
 	<div class="entities">
-		{#if entities}
-			<TodoItems {entities} />
+		<!-- TODO handle failures here-->
+		{#if entities && ties && itemsByEntity && entityById}
+			<TodoItems {entities} {ties} {itemsByEntity} {entityById} />
 		{:else}
 			<PendingAnimation />
 		{/if}
 	</div>
+	<!-- TODO replace this checkbox with modal -->
 	<input type="checkbox" bind:checked={list} />
 	{#if list}
 		<input placeholder="> create new list" on:keydown={onKeydown} bind:value={text} />
