@@ -1,5 +1,6 @@
 /** @param {import('postgres').Sql<any>} sql */
 export const up = async (sql) => {
+	// TODO BLOCK these lack some of the properties required by the type
 	await sql`
     UPDATE spaces
     SET view = jsonb_build_object(
