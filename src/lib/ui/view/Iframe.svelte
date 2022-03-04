@@ -9,7 +9,7 @@
 	export const persona: Readable<Persona> = undefined as any;
 	export const community: Readable<Community> = undefined as any;
 	export let space: Readable<Space>;
-	export let url: string; // TODO type
+	export let src: string;
 
 	let loaded = false;
 </script>
@@ -21,7 +21,7 @@
 		sandbox="allow-scripts allow-pointer-lock"
 		frameborder="0"
 		title={$space.name}
-		src={url}
+		{src}
 		on:load={() => (loaded = true)}
 	/>
 	{#if !loaded}

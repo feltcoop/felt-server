@@ -10,6 +10,7 @@ import type {Community} from '$lib/vocab/community/community';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
+import {toViewType} from '$lib/vocab/space/spaceHelpers';
 
 /* eslint-disable no-await-in-loop */
 
@@ -83,20 +84,6 @@ export const seed = async (db: Database): Promise<void> => {
 };
 
 const createDefaultEntities = async (db: Database, spaces: Space[], personas: Persona[]) => {
-	const entitiesContents: {[key: string]: string[]} = {
-		Room: ['Those who know do not speak.', 'Those who speak do not know.'],
-		Board: ["All the world's a stage.", 'And all the men and women merely players.'],
-		Forum: [
-			'If the evidence says you’re wrong, you don’t have the right theory.',
-			'You change the theory, not the evidence.',
-		],
-		Notes: [
-			'We have no guarantee about the future',
-			'but we exist in the hope of something better.',
-			'The 14th Dalai Lama',
-		],
-	};
-
 	let personaIndex = -1;
 	const nextPersona = (): Persona => {
 		personaIndex++;
@@ -105,11 +92,11 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 	};
 
 	for (const space of spaces) {
-		const spaceContent = space.view;
-		if (!(spaceContent.type in entitiesContents)) {
+		const viewType = toViewType(space.view);
+		if (!viewType || !(viewType in entitiesContents)) {
 			continue;
 		}
-		const entityContents = entitiesContents[spaceContent.type];
+		const entityContents = entitiesContents[viewType];
 		for (const entityContent of entityContents) {
 			await db.repos.entity.create(nextPersona().persona_id, space.space_id, {
 				type: 'Note',
@@ -117,4 +104,18 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 			});
 		}
 	}
+};
+
+const entitiesContents: {[key: string]: string[]} = {
+	Room: ['Those who know do not speak.', 'Those who speak do not know.'],
+	Board: ["All the world's a stage.", 'And all the men and women merely players.'],
+	Forum: [
+		'If the evidence says you’re wrong, you don’t have the right theory.',
+		'You change the theory, not the evidence.',
+	],
+	Notes: [
+		'We have no guarantee about the future',
+		'but we exist in the hope of something better.',
+		'The 14th Dalai Lama',
+	],
 };

@@ -1,4 +1,5 @@
 import {unwrap} from '@feltcoop/felt';
+import {parse} from 'svelte-parse';
 
 import type {Space} from '$lib/vocab/space/space';
 import type {Community} from '$lib/vocab/community/community';
@@ -26,7 +27,7 @@ export const randomPersonaName = randomString;
 export const randomCommunnityName = randomString;
 export const randomSpaceUrl = randomString;
 export const randomSpaceName = randomString;
-export const randomViewData = (): ViewData => ({type: 'Room', props: {data: '/entities'}});
+export const randomViewData = (): ViewData => parse({value: '<Room />', generatePositions: false});
 export const randomEntityData = (): EntityData => ({type: 'Note', content: randomString()});
 export const randomAccountParams = (): CreateAccountParams => ({
 	name: randomAccountName(),

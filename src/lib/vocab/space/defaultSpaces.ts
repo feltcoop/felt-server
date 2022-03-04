@@ -1,3 +1,5 @@
+import {parse} from 'svelte-parse';
+
 import type {CreateSpaceParams} from '$lib/app/eventTypes';
 import type {Community} from '$lib/vocab/community/community';
 
@@ -6,48 +8,54 @@ export const toDefaultSpaces = ({community_id, name}: Community): CreateSpacePar
 		community_id,
 		name,
 		url: '/',
-		view: {type: 'Home', props: {data: '/entities'}},
+		view: parse({value: '<Home />', generatePositions: false}),
 	},
 	{
 		community_id,
 		name: 'room',
 		url: '/room',
-		view: {type: 'Room', props: {data: '/entities'}},
+		view: parse({value: '<Room />', generatePositions: false}),
 	},
 	{
 		community_id,
 		name: 'board',
 		url: '/board',
-		view: {type: 'Board', props: {data: '/entities'}},
+		view: parse({value: '<Board />', generatePositions: false}),
 	},
 	{
 		community_id,
 		name: 'forum',
 		url: '/forum',
-		view: {type: 'Forum', props: {data: '/entities'}},
+		view: parse({value: '<Forum />', generatePositions: false}),
 	},
 	{
 		community_id,
 		name: 'notes',
 		url: '/notes',
-		view: {type: 'Notes', props: {data: '/entities'}},
+		view: parse({value: '<Notes />', generatePositions: false}),
 	},
 	{
 		community_id,
 		name: 'voice',
 		url: '/voice',
-		view: {type: 'Voice', props: {data: '/entities'}},
+		view: parse({value: '<Voice />', generatePositions: false}),
 	},
 	{
 		community_id,
 		name: 'felt library',
 		url: '/library',
-		view: {type: 'Iframe', props: {url: 'https://www.felt.dev/sketch/library'}},
+		view: parse({
+			value: '<Iframe src="https://www.felt.dev/sketch/library" />',
+			generatePositions: false,
+		}),
 	},
 	{
 		community_id,
 		name: 'dealt: tar',
 		url: '/tar',
-		view: {type: 'Iframe', props: {url: 'https://www.dealt.dev/tar'}},
+		view: parse({
+			value: '<Iframe src="https://www.dealt.dev/tar" /><Notes />',
+			generatePositions: false,
+		}),
 	},
 ];
