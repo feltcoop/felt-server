@@ -12,6 +12,8 @@
 	} = getApp();
 
 	export let view: ViewData;
+
+	// TODO BLOCK should these be in context, totally decoupled from the SvastView? pretty sure yes
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
 	export let space: Readable<Space>;
@@ -26,5 +28,5 @@
 {:else if view.type === 'svelteComponent' && view.tagName in components}
 	<svelte:component this={components[view.tagName]} {persona} {community} {space} {...props} />
 {:else}
-	view: {JSON.stringify(view)}
+	unrendered SvastView: {JSON.stringify(view)}
 {/if}
