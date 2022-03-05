@@ -2,7 +2,7 @@
 	import type {Readable} from 'svelte/store';
 	import type {Space} from '$lib/vocab/space/space.js';
 	import UnicodeIcon from '$lib/ui/UnicodeIcon.svelte';
-	import {toViewType} from '$lib/vocab/space/spaceHelpers';
+	import {toViewType} from '$lib/vocab/view/view';
 
 	export let space: Readable<Space>;
 

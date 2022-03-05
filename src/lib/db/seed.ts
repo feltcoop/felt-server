@@ -10,7 +10,7 @@ import type {Community} from '$lib/vocab/community/community';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
-import {toViewType} from '$lib/vocab/space/spaceHelpers';
+import {toViewType} from '$lib/vocab/view/view';
 
 /* eslint-disable no-await-in-loop */
 

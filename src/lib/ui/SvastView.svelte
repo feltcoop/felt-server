@@ -5,7 +5,7 @@
 	import {type Community} from '$lib/vocab/community/community';
 	import {type Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
-	import {type ViewData} from '$lib/vocab/view/view';
+	import {type ViewData, toViewProps} from '$lib/vocab/view/view';
 
 	const {
 		ui: {components},
@@ -16,7 +16,7 @@
 	export let community: Readable<Community>;
 	export let space: Readable<Space>;
 
-	$: props = view.tagName === 'Iframe' ? {src: view.properties[0].value[0].value} : undefined;
+	$: props = toViewProps(view);
 </script>
 
 {#if view.type === 'root'}
