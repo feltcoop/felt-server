@@ -45,15 +45,16 @@
 			previewSerialized = rawSerialized;
 			previewTransformed = undefined;
 		}
-		// TODO BLOCK set current transformed -- but is this the same as reactively setting the code?
+		rawTransformed = previewTransformed;
 	};
 	const setTransformed = (rawTransformed: string): void => {
 		console.log('setTransformed');
 		const a = rawSerialized;
-		const parsed = untransform(rawTransformed);
-		rawSerialized = serialize(parsed);
-		setSerialized(rawSerialized);
+		const untransformed = untransform(rawTransformed);
+		rawSerialized = serialize(untransformed);
 		console.log(`rawSerialized changed`, a !== rawSerialized);
+		// TODO BLOCK why isn't this reactively called automatically?
+		if (a !== rawSerialized) setSerialized(rawSerialized);
 	};
 
 	const reset = () => {
