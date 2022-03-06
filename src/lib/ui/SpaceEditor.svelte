@@ -3,6 +3,7 @@
 	import {format} from 'date-fns';
 
 	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';
+	import SvastPropertyEditor from '$lib/ui/SvastPropertyEditor.svelte';
 	// TODO devmode support
 	// import EntityTable from '$lib/ui/EntityTable.svelte';
 	import {type Space} from '$lib/vocab/space/space';
@@ -17,9 +18,9 @@
 
 	const {dispatch, devmode} = getApp();
 
-	const updateSpace = async (updated: object, field: string, $value: Space) =>
+	const updateSpace = async (updated: object, field: string) =>
 		dispatch('UpdateSpace', {
-			space_id: $value.space_id,
+			space_id: $space.space_id,
 			[field]: updated,
 		});
 </script>
@@ -44,14 +45,14 @@
 	<form>
 		<ul>
 			<li>
-				<PropertyEditor value={space} field="name" update={updateSpace} />
+				<PropertyEditor value={$space.name} field="name" update={updateSpace} />
 			</li>
 			<li>
-				<PropertyEditor value={space} field="url" update={updateSpace} />
+				<PropertyEditor value={$space.url} field="url" update={updateSpace} />
 			</li>
 			<li>
-				<PropertyEditor
-					value={space}
+				<SvastPropertyEditor
+					value={$space.view}
 					field="view"
 					update={updateSpace}
 					parse={parseJson}

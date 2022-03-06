@@ -39,6 +39,7 @@
     "regexparam": "^2.0.0",
     "strict-event-emitter-types": "^2.0.0",
     "svast": "^0.2.0",
+    "svast-stringify": "^0.1.0",
     "svelte": "^3.46.4",
     "svelte-check": "^2.3.0",
     "svelte-parse": "^0.1.0",

@@ -1,6 +1,6 @@
 import type {Root, SvelteParent, SvelteChild, Node} from 'svast';
 
-// TODO BLOCK what should this type be?
+// TODO BLOCK what should this type be? `Root` only maybe? (bc `compile`)
 export type ViewData = Root | SvelteParent | SvelteChild | Node<any>;
 
 /**
