@@ -2,8 +2,8 @@
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import {identity} from '@feltcoop/felt/util/function.js';
 	import {type Result, ok} from '@feltcoop/felt';
-	import {compile} from 'svast-stringify';
-	import {parse as parseSvelte} from 'svelte-parse';
+	import {compile as stringifySvast} from 'svast-stringify';
+	import {parse as parseSvast} from 'svelte-parse';
 
 	import {autofocus} from '$lib/ui/actions';
 	import {type ViewData} from '$lib/vocab/view/view';
@@ -16,39 +16,49 @@
 	export let parse: (updated: any) => Result<{value: any}, {message: string}> = ok; // TODO type
 	export let serialize: (raw: any, print?: boolean) => any = identity; // TODO type
 
+	// TODO types
+	const transform = (value: any): any => stringifySvast(value);
+	const untransform = (value: any): any => parseSvast({value, generatePositions: false});
+
 	let editing = false;
 
 	let rawSerialized: any; // initialized by `reset`
 	let rawTransformed: any; // initialized by `reset`
 	let previewSerialized: string | undefined;
 	let previewTransformed: string | undefined;
-	$: {
-		console.log('UPDATING PREVIEW');
-		const parsed = parse(rawSerialized);
-		if (parsed.ok) {
-			previewSerialized = serialize(parsed.value, true);
-			previewTransformed = compile(parsed.value);
-		} else {
-			previewSerialized = rawSerialized;
-			previewTransformed = undefined;
-		}
-	}
-	$: updateTransformed(rawTransformed);
+	$: setSerialized(rawSerialized);
+	$: setTransformed(rawTransformed);
 	let pending = false;
 	let rawSerializedEl: HTMLTextAreaElement;
 	let errorMessage: string | null = null;
 
-	$: rawSerializedValue = serialize(value, true);
-	$: rawTransformedValue = compile(value);
+	$: currentSerialized = serialize(value, true);
+	$: currentTransformed = transform(value);
 
-	const updateTransformed = (rawTransformed: string): void => {
-		const parsed = parseSvelte({value: rawTransformed, generatePositions: false});
+	const setSerialized = (rawSerialized: string): void => {
+		console.log('setSerialized');
+		const parsed = parse(rawSerialized);
+		if (parsed.ok) {
+			previewSerialized = serialize(parsed.value, true);
+			previewTransformed = transform(parsed.value);
+		} else {
+			previewSerialized = rawSerialized;
+			previewTransformed = undefined;
+		}
+		// set current transformed -- but is this the same as reactively setting the code?
+	};
+	const setTransformed = (rawTransformed: string): void => {
+		console.log('setTransformed');
+		const a = rawSerialized;
+		const parsed = untransform(rawTransformed);
 		rawSerialized = serialize(parsed);
+		setSerialized(rawSerialized);
+		console.log(`rawSerialized changed`, a !== rawSerialized);
 	};
 
 	const reset = () => {
 		rawSerialized = serialize(value);
-		rawTransformed = compile(value);
+		rawTransformed = transform(value);
 	};
 	reset();
 
@@ -90,10 +100,10 @@
 
 <div class="field">{field}</div>
 <div class="preview markup panel-inset">
-	<pre>{rawSerializedValue}</pre>
+	<pre>{currentSerialized}</pre>
 </div>
 <div class="preview markup panel-outset">
-	<pre>{rawTransformedValue}</pre>
+	<pre>{currentTransformed}</pre>
 </div>
 {#if editing}
 	{#if changed}
@@ -123,14 +133,15 @@
 	/>
 	{#if changed}
 		<div class="preview markup panel-outset">
+			<!-- TODO needs better error reporting -->
+			{#if previewTransformed !== undefined}<pre>{previewTransformed}</pre>{:else}<em
+					>(parse failed)</em
+				>{/if}
+		</div>
+		<div class="preview markup panel-outset">
 			<p>
 				{#if rawSerialized}<pre>{previewSerialized}</pre>{:else}<em>(empty)</em>{/if}
 			</p>
-		</div>
-		<div class="preview markup panel-outset">
-			<!-- TODO seems wrong -->
-			{#if previewTransformed !== undefined}<pre>{previewTransformed}</pre>{:else}<em>(failed)</em
-				>{/if}
 		</div>
 	{/if}
 {:else}
