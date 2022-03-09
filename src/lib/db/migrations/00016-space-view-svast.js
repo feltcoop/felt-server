@@ -4,15 +4,13 @@ export const up = async (sql) => {
     UPDATE spaces
     SET view = jsonb_build_object(
       'type', 'root',
-      'children', jsonb_build_array(
-        jsonb_build_object(
-          'type', 'svelteComponent',
-          'tagName', view ->> 'type',
-          'properties', json_build_array(),
-          'selfClosing', 'true'::boolean,
-          'children', json_build_array()
-        )
-      )
+      'children', jsonb_build_array(jsonb_build_object(
+        'type', 'svelteComponent',
+        'tagName', view ->> 'type',
+        'properties', json_build_array(),
+        'selfClosing', 'true'::boolean,
+        'children', json_build_array()
+      ))
     )
     WHERE view ->> 'type' <> 'Iframe';
   `;
