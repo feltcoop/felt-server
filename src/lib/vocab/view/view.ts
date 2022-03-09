@@ -62,6 +62,6 @@ export const toComponentViewData = (tagName: string): ViewData => ({
 			properties: [],
 			selfClosing: true,
 			children: [],
-		} as Node<any>, // TODO this cast is needed because the Svast types have an issue
+		} as Node<any>, // TODO this cast is needed because the Svast types have an issue with a PR: https://github.com/pngwn/MDsveX/pull/436
 	],
 });
