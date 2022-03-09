@@ -13,8 +13,8 @@
 
 	// TODO make this work with other kinds of inputs, starting with numbers
 
-	export let value: ViewData; // TODO generic type
-	export let field: string; // TODO type keyof typeof T
+	export let value: ViewData;
+	export let field: string;
 	export let update: (updated: any, field: string) => Promise<Result<any, {message: string}>>; // TODO type
 	export let parse: (updated: any) => Result<{value: any}, {message: string}> = ok; // TODO type
 	export let serialize: (raw: any, print?: boolean) => any = identity; // TODO type
@@ -38,7 +38,6 @@
 	$: currentTransformed = transform(value);
 
 	const setSerialized = (rawSerialized: string): void => {
-		console.log('setSerialized');
 		const parsed = parse(rawSerialized);
 		if (parsed.ok) {
 			previewSerialized = serialize(parsed.value, true);
@@ -50,12 +49,11 @@
 		rawTransformed = previewTransformed;
 	};
 	const setTransformed = (rawTransformed: string): void => {
-		const a = rawSerialized;
+		const prev = rawSerialized;
 		const untransformed = untransform(rawTransformed);
 		rawSerialized = serialize(untransformed);
-		console.log(`rawSerialized changed`, a !== rawSerialized);
-		// TODO BLOCK why isn't this reactively called automatically?
-		if (a !== rawSerialized) setSerialized(rawSerialized);
+		// TODO why isn't this reactively called automatically?
+		if (prev !== rawSerialized) setSerialized(rawSerialized);
 	};
 
 	const reset = () => {

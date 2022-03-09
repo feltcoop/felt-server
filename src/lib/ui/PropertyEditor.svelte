@@ -8,7 +8,7 @@
 	// TODO make this work with other kinds of inputs, starting with numbers
 
 	export let value: any; // TODO generic type
-	export let field: string; // TODO type keyof typeof T
+	export let field: string;
 	export let update: (updated: any, field: string) => Promise<Result<any, {message: string}>>; // TODO type
 	export let parse: (updated: any) => Result<{value: any}, {message: string}> = ok; // TODO type
 	export let serialize: (raw: any, print?: boolean) => any = identity; // TODO type
