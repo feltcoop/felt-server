@@ -2,11 +2,13 @@ import type {Root, SvelteParent, SvelteChild, Node} from 'svast';
 
 export type ViewData = Root | SvelteParent | SvelteChild | Node<any>;
 
+// TODO add icon to `viewTemplates` and move `spaceTypeIcons` from `SpaceIcon.svelte` to here
+
 /**
  * The views available for users to create in a community, in order of appearance.
  */
 export const viewTemplates: Array<{type: string; view: string}> = [
-	{type: 'Room', view: '<Room />'}, // TODO add icon
+	{type: 'Room', view: '<Room />'},
 	{type: 'Board', view: '<Board />'},
 	{type: 'Forum', view: '<Forum />'},
 	{type: 'Notes', view: '<Notes />'},
@@ -35,8 +37,6 @@ export const toViewProps = (view: ViewData): Record<string, any> | undefined => 
 	}
 	return props;
 };
-
-// TODO BLOCK -- icon would be set at creation
 
 // Returns the first Svelte component's tag name.
 export const toViewType = (view: ViewData): string | undefined => {
