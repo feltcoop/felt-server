@@ -85,7 +85,7 @@
 			Select Type:
 			<select class="type-selector" bind:value={selectedViewTemplate}>
 				{#each viewTemplates as viewTemplate}
-					<option value={viewTemplate}>{viewTemplate.type}</option>
+					<option value={viewTemplate}>{viewTemplate.name}</option>
 				{/each}
 			</select>
 		</label>

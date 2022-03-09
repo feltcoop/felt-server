@@ -92,7 +92,7 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 	};
 
 	for (const space of spaces) {
-		const viewType = toViewType(space.view);
+		const viewType = toViewType(space.view); // TODO refactor to not need `toViewType`
 		if (!viewType || !(viewType in entitiesContents)) {
 			continue;
 		}

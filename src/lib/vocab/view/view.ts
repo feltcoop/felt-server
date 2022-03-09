@@ -1,21 +1,23 @@
 import type {Root, SvelteParent, SvelteChild, Node} from 'svast';
 
-export type ViewData = Root | SvelteParent | SvelteChild | Node<any>;
+export type ViewData = Root;
+
+export type ViewNode = Root | SvelteParent | SvelteChild | Node<any>;
 
 // TODO add icon to `viewTemplates` and move `spaceTypeIcons` from `SpaceIcon.svelte` to here
 
 /**
  * The views available for users to create in a community, in order of appearance.
  */
-export const viewTemplates: Array<{type: string; view: string}> = [
-	{type: 'Room', view: '<Room />'},
-	{type: 'Board', view: '<Board />'},
-	{type: 'Forum', view: '<Forum />'},
-	{type: 'Notes', view: '<Notes />'},
-	{type: 'Voice', view: '<Voice />'},
-	{type: 'Iframe', view: '<Iframe />'},
-	{type: 'EntityExplorer', view: '<EntityExplorer />'},
-	{type: 'Todo', view: '<Todo />'},
+export const viewTemplates: Array<{name: string; view: string}> = [
+	{name: 'Room', view: '<Room />'},
+	{name: 'Board', view: '<Board />'},
+	{name: 'Forum', view: '<Forum />'},
+	{name: 'Notes', view: '<Notes />'},
+	{name: 'Voice', view: '<Voice />'},
+	{name: 'Iframe', view: '<Iframe />'},
+	{name: 'EntityExplorer', view: '<EntityExplorer />'},
+	{name: 'Todo', view: '<Todo />'},
 ];
 
 /**
@@ -24,7 +26,7 @@ export const viewTemplates: Array<{type: string; view: string}> = [
  * @param view
  * @returns Props object that can be splatted into a Svelte component.
  */
-export const toViewProps = (view: ViewData): Record<string, any> | undefined => {
+export const toViewProps = (view: ViewNode): Record<string, any> | undefined => {
 	let props: Record<string, any> | undefined;
 	if ('properties' in view) {
 		for (const prop of view.properties) {
@@ -38,8 +40,9 @@ export const toViewProps = (view: ViewData): Record<string, any> | undefined => 
 	return props;
 };
 
+// TODO delete this after adding icon to view templates (see also the above TODO)
 // Returns the first Svelte component's tag name.
-export const toViewType = (view: ViewData): string | undefined => {
+export const toViewType = (view: ViewNode): string | undefined => {
 	if (view.type === 'svelteComponent' && 'tagName' in view) return view.tagName;
 	if ('children' in view) {
 		for (const child of view.children) {
