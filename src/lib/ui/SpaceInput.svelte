@@ -42,6 +42,7 @@
 			community_id: $community.community_id,
 			name,
 			url,
+			icon,
 			view: parseView(selectedViewTemplate.template),
 		});
 		pending = false;

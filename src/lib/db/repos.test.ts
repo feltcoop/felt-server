@@ -72,6 +72,7 @@ test__repos('create, change, and delete some data from repos', async ({db}) => {
 			spaceParams.name,
 			spaceParams.view,
 			spaceParams.url,
+			spaceParams.icon,
 			spaceParams.community_id,
 		),
 	);

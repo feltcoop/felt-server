@@ -11,9 +11,10 @@ export const CreateSpace: ServiceEventInfo = {
 			community_id: {type: 'number'},
 			name: {type: 'string'},
 			url: {type: 'string'},
+			icon: {type: 'string'},
 			view: {type: 'object', tsType: 'ViewData'},
 		},
-		required: ['community_id', 'name', 'url', 'view'],
+		required: ['community_id', 'name', 'url', 'icon', 'view'],
 		additionalProperties: false,
 	},
 	response: {

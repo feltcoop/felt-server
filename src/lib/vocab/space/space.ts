@@ -6,6 +6,7 @@ export interface Space {
 	space_id: number;
 	name: string;
 	url: string;
+	icon: string;
 	view: ViewData;
 	created: Date;
 	updated: Date | null;

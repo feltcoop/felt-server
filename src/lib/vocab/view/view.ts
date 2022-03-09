@@ -1,4 +1,4 @@
-import type {Root, SvelteChild, Node} from 'svast';
+import type {Root, SvelteChild} from 'svast';
 import {compile as stringifySvast} from 'svast-stringify';
 import {parse as parseSvast} from 'svelte-parse';
 import {setContext, getContext} from 'svelte';
@@ -18,15 +18,16 @@ export type ViewNode = Root | SvelteChild; // TODO does this technically need to
 /**
  * The views available for users to create in a community, in order of appearance.
  */
-export const viewTemplates: Array<{name: string; template: string}> = [
-	{name: 'Room', template: '<Room />'},
-	{name: 'Board', template: '<Board />'},
-	{name: 'Forum', template: '<Forum />'},
-	{name: 'Notes', template: '<Notes />'},
-	{name: 'Voice', template: '<Voice />'},
-	{name: 'Iframe', template: '<Iframe />'},
-	{name: 'EntityExplorer', template: '<EntityExplorer />'},
-	{name: 'Todo', template: '<Todo />'},
+export const viewTemplates: Array<{name: string; template: string; icon: string}> = [
+	// TODO BLOCK  Home: '🏠',
+	{name: 'Room', template: '<Room />', icon: '🗨'},
+	{name: 'Board', template: '<Board />', icon: '📚'},
+	{name: 'Forum', template: '<Forum />', icon: '📋'},
+	{name: 'Notes', template: '<Notes />', icon: '🏷'},
+	{name: 'Voice', template: '<Voice />', icon: '🎙'},
+	{name: 'Iframe', template: '<Iframe />', icon: '💻'},
+	{name: 'EntityExplorer', template: '<EntityExplorer />', icon: '✏️'},
+	{name: 'Todo', template: '<Todo />', icon: '🗒'},
 ];
 
 /**
@@ -46,19 +47,6 @@ export const toViewProps = (view: ViewNode): Record<string, any> | undefined => 
 		}
 	}
 	return props;
-};
-
-// TODO delete this after adding icon to view templates (see also the above TODO)
-// Returns the first Svelte component's tag name.
-export const toViewType = (view: ViewNode | Node): string | undefined => {
-	if (view.type === 'svelteComponent' && 'tagName' in view) return view.tagName;
-	if ('children' in view) {
-		for (const child of view.children) {
-			const type = toViewType(child);
-			if (type) return type;
-		}
-	}
-	return undefined;
 };
 
 export const toComponentViewData = (tagName: string): ViewData => ({

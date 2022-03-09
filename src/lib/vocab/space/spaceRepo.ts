@@ -18,7 +18,7 @@ export const spaceRepo = (db: Database) =>
 		): Promise<Result<{value: Space}, {type: 'no_space_found'} & ErrorResponse>> => {
 			log.trace(`[findById] ${space_id}`);
 			const data = await db.sql<Space[]>`
-				SELECT space_id, name, url, view, updated, created, community_id
+				SELECT space_id, name, url, icon, view, updated, created, community_id
 				FROM spaces WHERE space_id = ${space_id}
 			`;
 			log.trace('[findById] result', data);
@@ -36,7 +36,7 @@ export const spaceRepo = (db: Database) =>
 		): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 			log.trace('[filterByAccount]', account_id);
 			const data = await db.sql<Space[]>`
-				SELECT s.space_id, s.name, s.url, s.view, s.updated, s.created, s.community_id
+				SELECT s.space_id, s.name, s.url, icon, s.view, s.updated, s.created, s.community_id
 				FROM spaces s JOIN (
 					SELECT DISTINCT m.community_id FROM personas p JOIN memberships m ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
 				) apc
@@ -47,7 +47,7 @@ export const spaceRepo = (db: Database) =>
 		filterByCommunity: async (community_id: number): Promise<Result<{value: Space[]}>> => {
 			log.trace('[filterByCommunity]', community_id);
 			const data = await db.sql<Space[]>`
-				SELECT space_id, name, url, view, updated, created, community_id
+				SELECT space_id, name, url, icon, view, updated, created, community_id
 				FROM spaces WHERE community_id=${community_id}
 			`;
 			return {ok: true, value: data};
@@ -58,7 +58,7 @@ export const spaceRepo = (db: Database) =>
 		): Promise<Result<{value: Space | undefined}>> => {
 			log.trace('[findByCommunityUrl]', community_id, url);
 			const data = await db.sql<Space[]>`
-				SELECT space_id, name, url, view, updated, created, community_id
+				SELECT space_id, name, icon, url, view, updated, created, community_id
 				FROM spaces WHERE community_id=${community_id} AND url=${url}
 			`;
 			log.trace('[findByCommunityUrl] result', data);
@@ -68,11 +68,12 @@ export const spaceRepo = (db: Database) =>
 			name: string,
 			view: ViewData,
 			url: string,
+			icon: string,
 			community_id: number,
 		): Promise<Result<{value: Space}>> => {
 			const data = await db.sql<Space[]>`
-				INSERT INTO spaces (name, url, view, community_id) VALUES (
-					${name},${url},${db.sql.json(view)},${community_id}
+				INSERT INTO spaces (name, icon, url, view, community_id) VALUES (
+					${name},${url},${icon},${db.sql.json(view)},${community_id}
 				) RETURNING *
 			`;
 			return {ok: true, value: data[0]};
@@ -89,6 +90,7 @@ export const spaceRepo = (db: Database) =>
 					params.name,
 					params.view,
 					params.url,
+					params.icon,
 					params.community_id,
 				);
 				if (!result.ok) return {ok: false, message: 'failed to create default spaces'};

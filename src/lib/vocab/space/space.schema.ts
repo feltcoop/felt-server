@@ -5,6 +5,7 @@ export const SpaceSchema = {
 		space_id: {type: 'number'},
 		name: {type: 'string'},
 		url: {type: 'string'},
+		icon: {type: 'string'},
 		view: {
 			type: 'object',
 			tsType: 'ViewData',
@@ -14,6 +15,6 @@ export const SpaceSchema = {
 		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
 		community_id: {type: 'number'},
 	},
-	required: ['space_id', 'name', 'url', 'view', 'created', 'updated', 'community_id'],
+	required: ['space_id', 'name', 'url', 'icon', 'view', 'created', 'updated', 'community_id'],
 	additionalProperties: false,
 };
