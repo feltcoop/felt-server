@@ -146,6 +146,16 @@ export const randomEventParams = async (
 			}
 			return {space_id: space.space_id};
 		}
+		case 'DeleteTie': {
+			return {
+				source_id: (
+					randomItem(random.entities) || (await random.entity(persona, account, community, space))
+				).entity_id,
+				dest_id: (
+					randomItem(random.entities) || (await random.entity(persona, account, community, space))
+				).entity_id,
+			};
+		}
 		// TODO instead of randomizing, use existing ones from the arrays?
 		// what's the best way to do that?
 		case 'ToggleMainNav': {
