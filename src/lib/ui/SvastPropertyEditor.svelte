@@ -7,6 +7,9 @@
 
 	import {autofocus} from '$lib/ui/actions';
 	import {type ViewData} from '$lib/vocab/view/view';
+	import {getApp} from '$lib/ui/app';
+
+	const {devmode} = getApp();
 
 	// TODO make this work with other kinds of inputs, starting with numbers
 
@@ -29,7 +32,6 @@
 	$: setSerialized(rawSerialized);
 	$: setTransformed(rawTransformed);
 	let pending = false;
-	let rawSerializedEl: HTMLTextAreaElement;
 	let errorMessage: string | null = null;
 
 	$: currentSerialized = serialize(value, true);
@@ -48,7 +50,6 @@
 		rawTransformed = previewTransformed;
 	};
 	const setTransformed = (rawTransformed: string): void => {
-		console.log('setTransformed');
 		const a = rawSerialized;
 		const untransformed = untransform(rawTransformed);
 		rawSerialized = serialize(untransformed);
@@ -65,7 +66,6 @@
 
 	const edit = () => {
 		editing = true;
-		setTimeout(() => rawSerializedEl.focus());
 	};
 	const cancel = () => {
 		editing = false;
@@ -96,13 +96,16 @@
 		}
 	};
 
+	// TODO this is `true` initially
 	$: changed = rawSerialized !== serialize(value); // TODO hacky
 </script>
 
 <div class="field">{field}</div>
-<div class="preview markup panel-inset">
-	<pre>{currentSerialized}</pre>
-</div>
+{#if $devmode}
+	<div class="preview markup panel-inset">
+		<pre>{currentSerialized}</pre>
+	</div>
+{/if}
 <div class="preview markup panel-outset">
 	<pre>{currentTransformed}</pre>
 </div>
@@ -118,16 +121,17 @@
 	{#if errorMessage}
 		<Message status="error">{errorMessage}</Message>
 	{/if}
-	<textarea
-		placeholder="> value"
-		bind:this={rawSerializedEl}
-		bind:value={rawSerialized}
-		use:autofocus
-		disabled={pending}
-		on:keydown={onKeydown}
-	/>
+	{#if $devmode}
+		<textarea
+			placeholder="> value"
+			bind:value={rawSerialized}
+			disabled={pending}
+			on:keydown={onKeydown}
+		/>
+	{/if}
 	<textarea
 		placeholder="> transformed"
+		use:autofocus
 		bind:value={rawTransformed}
 		disabled={pending}
 		on:keydown={onKeydown}
@@ -139,11 +143,13 @@
 					>(parse failed)</em
 				>{/if}
 		</div>
-		<div class="preview markup panel-outset">
-			<p>
-				{#if rawSerialized}<pre>{previewSerialized}</pre>{:else}<em>(empty)</em>{/if}
-			</p>
-		</div>
+		{#if $devmode}
+			<div class="preview markup panel-outset">
+				<p>
+					{#if rawSerialized}<pre>{previewSerialized}</pre>{:else}<em>(empty)</em>{/if}
+				</p>
+			</div>
+		{/if}
 	{/if}
 {:else}
 	<button type="button" on:click={edit}>edit</button>
