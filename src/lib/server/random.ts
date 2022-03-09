@@ -147,13 +147,11 @@ export const randomEventParams = async (
 			return {space_id: space.space_id};
 		}
 		case 'DeleteTie': {
+			const tie = randomItem(random.ties) || (await random.tie());
 			return {
-				source_id: (
-					randomItem(random.entities) || (await random.entity(persona, account, community, space))
-				).entity_id,
-				dest_id: (
-					randomItem(random.entities) || (await random.entity(persona, account, community, space))
-				).entity_id,
+				source_id: tie.source_id,
+				dest_id: tie.dest_id,
+				type: tie.type,
 			};
 		}
 		// TODO instead of randomizing, use existing ones from the arrays?

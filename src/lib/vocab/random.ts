@@ -17,6 +17,7 @@ import type {Database} from '$lib/db/Database';
 import type {EntityData} from '$lib/vocab/entity/entityData';
 import type {ViewData} from '$lib/vocab/view/view';
 import type {Entity} from '$lib/vocab/entity/entity';
+import type {Tie} from '$lib/vocab/tie/tie';
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = (): string => Math.random().toString().slice(2);
@@ -78,6 +79,7 @@ export interface RandomVocabContext {
 	communities: Community[];
 	spaces: Space[];
 	entities: Entity[];
+	ties: Tie[];
 	account: () => Promise<Account>;
 	persona: (account?: Account) => Promise<Persona>;
 	community: (persona?: Persona, account?: Account) => Promise<Community>;
@@ -88,6 +90,7 @@ export interface RandomVocabContext {
 		community?: Community,
 		space?: Space,
 	) => Promise<Entity>;
+	tie: (entity1?: Entity, entity2?: Entity) => Promise<Tie>;
 }
 
 /* eslint-disable no-param-reassign */
@@ -100,6 +103,7 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 		communities: [],
 		spaces: [],
 		entities: [],
+		ties: [],
 		account: async () => {
 			const params = randomAccountParams();
 			const account = unwrap(await db.repos.account.create(params.name, params.password));
@@ -156,6 +160,16 @@ export const toRandomVocabContext = (db: Database): RandomVocabContext => {
 			);
 			random.entities.push(entity);
 			return entity;
+		},
+		tie: async (entity1, entity2) => {
+			if (!entity1) entity1 = await random.entity();
+			if (!entity2) entity2 = await random.entity();
+
+			const tie = unwrap(
+				await db.repos.tie.create(entity1.entity_id, entity2.entity_id, 'HasItem'),
+			);
+			random.ties.push(tie);
+			return tie;
 		},
 	};
 	return random;
