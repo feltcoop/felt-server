@@ -24,7 +24,7 @@ export const viewTemplates: Array<{
 	icon: string;
 	creatable?: boolean;
 }> = [
-	{name: 'Home', template: '<Home />', icon: '🏠', creatable: false},
+	{name: 'Home', template: '<Home />', icon: '🏠', creatable: false}, // TODO better name?
 	{name: 'Room', template: '<Room />', icon: '🗨'},
 	{name: 'Board', template: '<Board />', icon: '📚'},
 	{name: 'Forum', template: '<Forum />', icon: '📋'},

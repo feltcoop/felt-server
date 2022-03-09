@@ -11,6 +11,9 @@
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 
+	// TODO does this belong in `view`?
+	const creatableViewTemplates = viewTemplates.filter((v) => v.creatable !== false);
+
 	const {dispatch} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -18,7 +21,7 @@
 	export let done: (() => void) | undefined = undefined;
 
 	let name = '';
-	let selectedViewTemplate = viewTemplates[0];
+	let selectedViewTemplate = creatableViewTemplates[0];
 	$: ({icon} = selectedViewTemplate);
 
 	let pending = false;
@@ -97,7 +100,7 @@
 		<label>
 			Select Type:
 			<select class="type-selector" bind:value={selectedViewTemplate}>
-				{#each viewTemplates as viewTemplate}
+				{#each creatableViewTemplates as viewTemplate}
 					<option value={viewTemplate}>{viewTemplate.name}</option>
 				{/each}
 			</select>
