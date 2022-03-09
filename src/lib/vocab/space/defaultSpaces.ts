@@ -49,6 +49,6 @@ export const toDefaultSpaces = ({community_id, name}: Community): CreateSpacePar
 		community_id,
 		name: 'dealt: tar',
 		url: '/tar',
-		view: parseView('<Iframe src="https://www.dealt.dev/tar" /><Notes />'),
+		view: parseView('<Iframe src="https://www.dealt.dev/tar" />'),
 	},
 ];
