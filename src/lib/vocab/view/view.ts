@@ -52,3 +52,16 @@ export const toViewType = (view: ViewNode): string | undefined => {
 	}
 	return undefined;
 };
+
+export const toComponentViewData = (tagName: string): ViewData => ({
+	type: 'root',
+	children: [
+		{
+			type: 'svelteComponent',
+			tagName,
+			properties: [],
+			selfClosing: true,
+			children: [],
+		} as Node<any>, // TODO this cast is needed because the Svast types have an issue
+	],
+});
