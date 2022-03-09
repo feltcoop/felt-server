@@ -555,6 +555,13 @@ export const toUi = (
 			//TODO figure out front end state for Ties
 			return result;
 		},
+		DeleteTie: async ({invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
+			log.trace('[DeleteTie] result', result);
+			//TODO figure out front end state for Ties
+			return result;
+		},
 		SetMobile: ({params}) => {
 			mobile.set(params);
 		},

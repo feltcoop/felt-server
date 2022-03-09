@@ -293,6 +293,7 @@ export type ReadTiesResponseResult = ApiResult<ReadTiesResponse>;
 export interface DeleteTieParams {
 	source_id: number;
 	dest_id: number;
+	type: string;
 }
 export type DeleteTieResponse = null;
 export type DeleteTieResponseResult = ApiResult<DeleteTieResponse>;

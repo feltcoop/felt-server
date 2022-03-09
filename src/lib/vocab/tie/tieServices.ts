@@ -57,7 +57,7 @@ export const deleteTieService: Service<DeleteTieParams, DeleteTieResponseResult>
 	event: DeleteTie,
 	perform: async ({repos, params}) => {
 		log.trace('[DeleteTie] deleting tie with ids:', params.source_id, params.dest_id);
-		const result = await repos.tie.deleteTie(params.source_id, params.dest_id);
+		const result = await repos.tie.deleteTie(params.source_id, params.dest_id, params.type);
 		log.trace('[DeleteTie] result', result);
 		if (!result.ok) {
 			log.trace('[DeleteTie] error removing tie: ', params.source_id, params.dest_id);

@@ -55,10 +55,11 @@ export const tieRepo = (db: Database) =>
 		deleteTie: async (
 			source_id: number,
 			dest_id: number,
+			type: string,
 		): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {
 			log.trace('[deleteTie]', source_id, dest_id);
 			const data = await db.sql<any[]>`
-				DELETE FROM ties WHERE ${source_id}=source_id AND ${dest_id}=dest_id
+				DELETE FROM ties WHERE ${source_id}=source_id AND ${dest_id}=dest_id AND ${type}=type
 			`;
 			if (data.count !== 1) {
 				return {

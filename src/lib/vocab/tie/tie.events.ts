@@ -68,8 +68,9 @@ export const DeleteTie: ServiceEventInfo = {
 		properties: {
 			source_id: {type: 'number'},
 			dest_id: {type: 'number'},
+			type: {type: 'string'},
 		},
-		required: ['source_id', 'dest_id'],
+		required: ['source_id', 'dest_id', 'type'],
 		additionalProperties: false,
 	},
 	response: {
@@ -78,7 +79,7 @@ export const DeleteTie: ServiceEventInfo = {
 	},
 	returns: 'Promise<DeleteTieResponseResult>',
 	route: {
-		path: '/api/v1/spaces/:space_id/ties',
+		path: '/api/v1/ties',
 		method: 'DELETE',
 	},
 };
