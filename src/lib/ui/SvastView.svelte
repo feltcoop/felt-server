@@ -1,9 +1,6 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import {EMPTY_OBJECT} from '@feltcoop/felt/util/object.js';
 
-	import {type Space} from '$lib/vocab/space/space';
-	import {type Community} from '$lib/vocab/community/community';
-	import {type Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 	import {type ViewNode, toViewProps} from '$lib/vocab/view/view';
 
@@ -13,19 +10,17 @@
 
 	export let view: ViewNode;
 
-	// TODO BLOCK should these be in context, totally decoupled from the SvastView? pretty sure yes
-	export let persona: Readable<Persona>;
-	export let community: Readable<Community>;
-	export let space: Readable<Space>;
-
-	$: props = toViewProps(view);
+	$: props = toViewProps(view) || EMPTY_OBJECT;
 </script>
 
 {#if view.type === 'root'}
 	{#each view.children as childView (childView)}
-		<svelte:self view={childView} {persona} {community} {space} />
+		<svelte:self view={childView} />
 	{/each}
 {:else if view.type === 'svelteComponent' && view.tagName in components}
-	<!-- TODO render children -->
-	<svelte:component this={components[view.tagName]} {persona} {community} {space} {...props} />
+	<svelte:component this={components[view.tagName]} {...props}>
+		{#each view.children as childView (childView)}
+			<svelte:self view={childView} />
+		{/each}
+	</svelte:component>
 {/if}
