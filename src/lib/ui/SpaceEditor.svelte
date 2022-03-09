@@ -3,25 +3,24 @@
 	import {format} from 'date-fns';
 
 	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';
-	import SvastPropertyEditor from '$lib/ui/SvastPropertyEditor.svelte';
 	// TODO devmode support
 	// import EntityTable from '$lib/ui/EntityTable.svelte';
 	import {type Space} from '$lib/vocab/space/space';
 	import {type Community} from '$lib/vocab/community/community';
 	import SpaceName from '$lib/ui/SpaceName.svelte';
 	import {getApp} from '$lib/ui/app';
-	import {parseJson, serializeJson} from '$lib/util/json';
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
+	import {parseView, parseViewString, serializeView} from '$lib/vocab/view/view';
 
 	export let space: Readable<Space>;
 	export let community: Readable<Community>;
 
 	const {dispatch, devmode} = getApp();
 
-	const updateSpace = async (updated: object, field: string) =>
+	const updateSpace = async (updated: string, field: string) =>
 		dispatch('UpdateSpace', {
 			space_id: $space.space_id,
-			[field]: updated,
+			[field]: parseView(updated),
 		});
 </script>
 
@@ -51,12 +50,11 @@
 				<PropertyEditor value={$space.url} field="url" update={updateSpace} />
 			</li>
 			<li>
-				<SvastPropertyEditor
-					value={$space.view}
+				<PropertyEditor
+					value={serializeView($space.view)}
 					field="view"
 					update={updateSpace}
-					parse={parseJson}
-					serialize={serializeJson}
+					parse={parseViewString}
 				/>
 			</li>
 		</ul>

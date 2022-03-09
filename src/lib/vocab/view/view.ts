@@ -1,6 +1,9 @@
 import type {Root, SvelteChild, Node} from 'svast';
+import {compile as stringifySvast} from 'svast-stringify';
+import {parse as parseSvast} from 'svelte-parse';
 import {setContext, getContext} from 'svelte';
 import {type Readable} from 'svelte/store';
+import {type Result} from '@feltcoop/felt';
 
 import {type Space} from '$lib/vocab/space/space';
 import {type Community} from '$lib/vocab/community/community';
@@ -15,15 +18,15 @@ export type ViewNode = Root | SvelteChild; // TODO does this technically need to
 /**
  * The views available for users to create in a community, in order of appearance.
  */
-export const viewTemplates: Array<{name: string; view: string}> = [
-	{name: 'Room', view: '<Room />'},
-	{name: 'Board', view: '<Board />'},
-	{name: 'Forum', view: '<Forum />'},
-	{name: 'Notes', view: '<Notes />'},
-	{name: 'Voice', view: '<Voice />'},
-	{name: 'Iframe', view: '<Iframe />'},
-	{name: 'EntityExplorer', view: '<EntityExplorer />'},
-	{name: 'Todo', view: '<Todo />'},
+export const viewTemplates: Array<{name: string; template: string}> = [
+	{name: 'Room', template: '<Room />'},
+	{name: 'Board', template: '<Board />'},
+	{name: 'Forum', template: '<Forum />'},
+	{name: 'Notes', template: '<Notes />'},
+	{name: 'Voice', template: '<Voice />'},
+	{name: 'Iframe', template: '<Iframe />'},
+	{name: 'EntityExplorer', template: '<EntityExplorer />'},
+	{name: 'Todo', template: '<Todo />'},
 ];
 
 /**
@@ -80,3 +83,17 @@ export interface ViewContext {
 const KEY = Symbol();
 export const getViewContext = (): Readable<ViewContext> => getContext(KEY);
 export const setViewContext = (ctx: Readable<ViewContext>): void => setContext(KEY, ctx);
+
+export const parseView = (value: string, generatePositions = false): ViewData =>
+	parseSvast({value, generatePositions});
+
+export const parseViewString = (value: string): Result<{value: string}, {message: string}> => {
+	try {
+		const parsed = parseView(value);
+		return {ok: true, value: stringifySvast(parsed)};
+	} catch (err) {
+		return {ok: false, message: 'failed to parse'};
+	}
+};
+
+export const serializeView = stringifySvast;

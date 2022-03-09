@@ -18,7 +18,7 @@
 
 	const viewContext = writable({persona, community, space});
 	setViewContext(viewContext);
-	let ready = false; // used to skip setting `viewContext` twice on mount
+	let ready = false; // avoids a wasteful `viewContext` change on mount
 	$: if (ready) {
 		viewContext.set({persona, community, space});
 	} else {

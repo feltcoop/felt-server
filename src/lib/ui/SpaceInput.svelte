@@ -2,12 +2,11 @@
 	import type {Readable} from 'svelte/store';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
-	import {parse as parseSvast} from 'svelte-parse';
 
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
-	import {viewTemplates} from '$lib/vocab/view/view';
+	import {viewTemplates, parseView} from '$lib/vocab/view/view';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
@@ -43,7 +42,7 @@
 			community_id: $community.community_id,
 			name,
 			url,
-			view: parseSvast({value: selectedViewTemplate.view, generatePositions: false}),
+			view: parseView(selectedViewTemplate.template),
 		});
 		pending = false;
 		if (result.ok) {

@@ -7,24 +7,31 @@
 
 	// TODO make this work with other kinds of inputs, starting with numbers
 
-	export let value: any; // TODO generic type
+	type TValue = $$Generic<any>;
+
+	export let value: TValue; // TODO generic type
 	export let field: string;
-	export let update: (updated: any, field: string) => Promise<Result<any, {message: string}>>; // TODO type
-	export let parse: (updated: any) => Result<{value: any}, {message: string}> = ok; // TODO type
-	export let serialize: (raw: any, print?: boolean) => any = identity; // TODO type
+	export let update: (
+		updated: TValue,
+		field: string,
+	) => Promise<Result<unknown, {message: string}>>;
+	export let parse: (serialized: string) => Result<{value: TValue}, {message: string}> = ok as any; // TODO type
+	export let serialize: (raw: TValue, print?: boolean) => string = identity as any; // TODO type
 
 	let editing = false;
 
 	let fieldValue: any; // initialized by `reset`
-	let raw: any;
+	let raw: TValue;
 	let serialized: string | undefined;
 	$: {
 		const parsed = parse(fieldValue);
 		if (parsed.ok) {
 			raw = parsed.value;
 			serialized = serialize(raw, true);
+			errorMessage = null;
 		} else {
 			serialized = fieldValue;
+			errorMessage = parsed.message;
 		}
 	}
 	let pending = false;
@@ -40,7 +47,7 @@
 		editing = true;
 		setTimeout(() => fieldValueEl.focus());
 	};
-	const cancel = () => {
+	const stopEditing = () => {
 		editing = false;
 	};
 
@@ -56,7 +63,7 @@
 		const result = await update(parsed.value, field);
 		pending = false;
 		if (result.ok) {
-			cancel();
+			stopEditing();
 		} else {
 			errorMessage = result.message;
 		}
@@ -69,7 +76,7 @@
 		}
 	};
 
-	$: changed = fieldValue !== serialize(value); // TODO hacky
+	$: changed = fieldValue !== serialize(value); // TODO hacky, causes wasted work
 </script>
 
 <div class="field">{field}</div>
@@ -80,13 +87,10 @@
 	{#if changed}
 		<div class="buttons">
 			<button type="button" on:click={reset}> reset </button>
-			<button type="button" on:click={save} disabled={pending || !changed}> save </button>
+			<button type="button" on:click={save} disabled={pending || !!errorMessage}> save </button>
 		</div>
 	{:else}
-		<button type="button" on:click={cancel}>cancel</button>
-	{/if}
-	{#if errorMessage}
-		<Message status="error">{errorMessage}</Message>
+		<button type="button" on:click={stopEditing}>cancel</button>
 	{/if}
 	<textarea
 		placeholder="> value"
@@ -96,7 +100,9 @@
 		disabled={pending}
 		on:keydown={onKeydown}
 	/>
-	{#if changed}
+	{#if errorMessage}
+		<Message status="error">{errorMessage}</Message>
+	{:else if changed}
 		<div class="preview markup panel-outset">
 			<p>
 				{#if fieldValue}<pre>{serialized}</pre>{:else}<em>(empty)</em>{/if}

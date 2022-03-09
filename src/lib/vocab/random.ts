@@ -1,5 +1,4 @@
 import {unwrap} from '@feltcoop/felt';
-import {parse} from 'svelte-parse';
 
 import type {Space} from '$lib/vocab/space/space';
 import type {Community} from '$lib/vocab/community/community';
@@ -16,7 +15,7 @@ import type {
 } from '$lib/app/eventTypes';
 import type {Database} from '$lib/db/Database';
 import type {EntityData} from '$lib/vocab/entity/entityData';
-import type {ViewData} from '$lib/vocab/view/view';
+import {parseView, type ViewData} from '$lib/vocab/view/view';
 import type {Entity} from '$lib/vocab/entity/entity';
 
 // TODO automate these from schemas, also use seeded rng
@@ -27,7 +26,7 @@ export const randomPersonaName = randomString;
 export const randomCommunnityName = randomString;
 export const randomSpaceUrl = randomString;
 export const randomSpaceName = randomString;
-export const randomViewData = (): ViewData => parse({value: '<Room />', generatePositions: false});
+export const randomViewData = (): ViewData => parseView('<Room />');
 export const randomEntityData = (): EntityData => ({type: 'Note', content: randomString()});
 export const randomAccountParams = (): CreateAccountParams => ({
 	name: randomAccountName(),

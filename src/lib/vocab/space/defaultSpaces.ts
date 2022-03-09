@@ -1,5 +1,4 @@
-import {parse} from 'svelte-parse';
-
+import {parseView} from '$lib/vocab/view/view';
 import type {CreateSpaceParams} from '$lib/app/eventTypes';
 import type {Community} from '$lib/vocab/community/community';
 
@@ -8,54 +7,48 @@ export const toDefaultSpaces = ({community_id, name}: Community): CreateSpacePar
 		community_id,
 		name,
 		url: '/',
-		view: parse({value: '<Home />', generatePositions: false}),
+		view: parseView('<Home />'),
 	},
 	{
 		community_id,
 		name: 'room',
 		url: '/room',
-		view: parse({value: '<Room />', generatePositions: false}),
+		view: parseView('<Room />'),
 	},
 	{
 		community_id,
 		name: 'board',
 		url: '/board',
-		view: parse({value: '<Board />', generatePositions: false}),
+		view: parseView('<Board />'),
 	},
 	{
 		community_id,
 		name: 'forum',
 		url: '/forum',
-		view: parse({value: '<Forum />', generatePositions: false}),
+		view: parseView('<Forum />'),
 	},
 	{
 		community_id,
 		name: 'notes',
 		url: '/notes',
-		view: parse({value: '<Notes />', generatePositions: false}),
+		view: parseView('<Notes />'),
 	},
 	{
 		community_id,
 		name: 'voice',
 		url: '/voice',
-		view: parse({value: '<Voice />', generatePositions: false}),
+		view: parseView('<Voice />'),
 	},
 	{
 		community_id,
 		name: 'felt library',
 		url: '/library',
-		view: parse({
-			value: '<Iframe src="https://www.felt.dev/sketch/library" />',
-			generatePositions: false,
-		}),
+		view: parseView('<Iframe src="https://www.felt.dev/sketch/library" />'),
 	},
 	{
 		community_id,
 		name: 'dealt: tar',
 		url: '/tar',
-		view: parse({
-			value: '<Iframe src="https://www.dealt.dev/tar" /><Notes />',
-			generatePositions: false,
-		}),
+		view: parseView('<Iframe src="https://www.dealt.dev/tar" /><Notes />'),
 	},
 ];
