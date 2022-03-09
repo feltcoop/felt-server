@@ -28,6 +28,4 @@
 {:else if view.type === 'svelteComponent' && view.tagName in components}
 	<!-- TODO render children -->
 	<svelte:component this={components[view.tagName]} {persona} {community} {space} {...props} />
-{:else}
-	unrendered SvastView: {JSON.stringify(view)}
 {/if}
