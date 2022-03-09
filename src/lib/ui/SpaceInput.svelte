@@ -19,9 +19,11 @@
 
 	let name = '';
 	let selectedViewTemplate = viewTemplates[0];
+	$: ({icon} = selectedViewTemplate);
 
 	let pending = false;
 	let nameEl: HTMLInputElement;
+	let iconEl: HTMLInputElement;
 	let errorMessage: string | null = null;
 
 	// TODO formalize this (probably through the schema)
@@ -31,6 +33,16 @@
 		if (!name) {
 			errorMessage = 'please enter a name for your new space';
 			nameEl.focus();
+			return;
+		}
+		const iconLength = [...icon].length; // TODO util function? `str.length` doesn't work as expected with emoji
+		if (iconLength !== 1) {
+			if (iconLength === 0) {
+				errorMessage = 'please add an icon, any character including emoji';
+			} else {
+				errorMessage = 'icon must be exactly 1 character';
+			}
+			iconEl.focus();
 			return;
 		}
 		if (pending) return;
@@ -81,6 +93,7 @@
 			use:autofocus
 			on:keydown={onKeydown}
 		/>
+		<input placeholder="> icon" bind:this={iconEl} bind:value={icon} on:keydown={onKeydown} />
 		<label>
 			Select Type:
 			<select class="type-selector" bind:value={selectedViewTemplate}>

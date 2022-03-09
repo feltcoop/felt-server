@@ -18,14 +18,19 @@ export type ViewNode = Root | SvelteChild; // TODO does this technically need to
 /**
  * The views available for users to create in a community, in order of appearance.
  */
-export const viewTemplates: Array<{name: string; template: string; icon: string}> = [
-	// TODO BLOCK  Home: '🏠',
+export const viewTemplates: Array<{
+	name: string;
+	template: string;
+	icon: string;
+	creatable?: boolean;
+}> = [
+	{name: 'Home', template: '<Home />', icon: '🏠', creatable: false},
 	{name: 'Room', template: '<Room />', icon: '🗨'},
 	{name: 'Board', template: '<Board />', icon: '📚'},
 	{name: 'Forum', template: '<Forum />', icon: '📋'},
 	{name: 'Notes', template: '<Notes />', icon: '🏷'},
 	{name: 'Voice', template: '<Voice />', icon: '🎙'},
-	{name: 'Iframe', template: '<Iframe />', icon: '💻'},
+	{name: 'Iframe', template: '<Iframe />', icon: '💻'}, // TODO does this need a default `src`?
 	{name: 'EntityExplorer', template: '<EntityExplorer />', icon: '✏️'},
 	{name: 'Todo', template: '<Todo />', icon: '🗒'},
 ];
