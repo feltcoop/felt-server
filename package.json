@@ -75,6 +75,9 @@
       "extraFileExtensions": [
         ".svelte"
       ]
+    },
+    "rules": {
+      "no-console": 1
     }
   },
   "prettier": {
