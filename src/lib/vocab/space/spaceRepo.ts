@@ -58,7 +58,7 @@ export const spaceRepo = (db: Database) =>
 		): Promise<Result<{value: Space | undefined}>> => {
 			log.trace('[findByCommunityUrl]', community_id, url);
 			const data = await db.sql<Space[]>`
-				SELECT space_id, name, icon, url, view, updated, created, community_id
+				SELECT space_id, name, url, icon, view, updated, created, community_id
 				FROM spaces WHERE community_id=${community_id} AND url=${url}
 			`;
 			log.trace('[findByCommunityUrl] result', data);
@@ -72,7 +72,7 @@ export const spaceRepo = (db: Database) =>
 			community_id: number,
 		): Promise<Result<{value: Space}>> => {
 			const data = await db.sql<Space[]>`
-				INSERT INTO spaces (name, icon, url, view, community_id) VALUES (
+				INSERT INTO spaces (name, url, icon, view, community_id) VALUES (
 					${name},${url},${icon},${db.sql.json(view)},${community_id}
 				) RETURNING *
 			`;
@@ -100,7 +100,7 @@ export const spaceRepo = (db: Database) =>
 		},
 		update: async (
 			space_id: number,
-			partial: Partial<Pick<Space, 'name' | 'url' | 'view'>>,
+			partial: Partial<Pick<Space, 'name' | 'url' | 'icon' | 'view'>>,
 		): Promise<Result<{value: Space}, ErrorResponse>> => {
 			log.trace(`updating data for space: ${space_id}`);
 			// TODO hacky, fix when `postgres` v2 is out with dynamic queries
