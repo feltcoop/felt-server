@@ -10,6 +10,7 @@
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
+	import {parseSpaceIcon} from '$lib/vocab/space/spaceHelpers';
 
 	// TODO does this belong in `view`?
 	const creatableViewTemplates = viewTemplates.filter((v) => v.creatable !== false);
@@ -38,13 +39,9 @@
 			nameEl.focus();
 			return;
 		}
-		const iconLength = [...icon].length; // TODO util function? `str.length` doesn't work as expected with emoji
-		if (iconLength !== 1) {
-			if (iconLength === 0) {
-				errorMessage = 'please add an icon, any character including emoji';
-			} else {
-				errorMessage = 'icon must be exactly 1 character';
-			}
+		const iconResult = parseSpaceIcon(icon);
+		if (!iconResult.ok) {
+			errorMessage = iconResult.message;
 			iconEl.focus();
 			return;
 		}
@@ -57,7 +54,7 @@
 			community_id: $community.community_id,
 			name,
 			url,
-			icon,
+			icon: iconResult.value,
 			view: parseView(selectedViewTemplate.template),
 		});
 		pending = false;
