@@ -16,7 +16,7 @@ export const CreateAccountPersona: ServiceEventInfo = {
 		$id: '/schemas/CreateAccountPersonaResponse.json',
 		type: 'object',
 		properties: {
-			persona: {$ref: '/schemas/Persona.json', tsType: 'Persona'},
+			persona: {$ref: '/schemas/AccountPersona.json', tsType: 'AccountPersona'},
 			community: {$ref: '/schemas/Community.json', tsType: 'Community'},
 			spaces: {type: 'array', items: {$ref: '/schemas/Space.json', tsType: 'Space'}},
 			membership: {$ref: '/schemas/Membership.json', tsType: 'Membership'},

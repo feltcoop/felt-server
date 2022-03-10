@@ -2,7 +2,7 @@ import type {Result} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue, gray} from 'kleur/colors';
 
-import type {Persona} from '$lib/vocab/persona/persona';
+import type {AccountPersona, CommunityPersona, Persona} from '$lib/vocab/persona/persona';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
 
@@ -11,15 +11,27 @@ const log = new Logger(gray('[') + blue('personaRepo') + gray(']'));
 export const personaRepo = (db: Database) =>
 	({
 		// TODO instead of these null values, probably want a type union strongly typed for each persona type
-		create: async (
-			type: Persona['type'],
+		createAccountPersona: async (
 			name: string,
-			account_id: number | null,
+			account_id: number,
 			community_id: number,
-		): Promise<Result<{value: Persona}, ErrorResponse>> => {
-			const data = await db.sql<Persona[]>`
+		): Promise<Result<{value: AccountPersona}, ErrorResponse>> => {
+			const data = await db.sql<AccountPersona[]>`
 				INSERT INTO personas (type, name, account_id, community_id) VALUES (
-					${type}, ${name}, ${account_id}, ${community_id}
+					'account', ${name}, ${account_id}, ${community_id}
+				) RETURNING *
+			`;
+			const persona = data[0];
+			log.trace('[db] created persona', persona);
+			return {ok: true, value: persona};
+		},
+		createCommunityPersona: async (
+			name: string,
+			community_id: number,
+		): Promise<Result<{value: CommunityPersona}, ErrorResponse>> => {
+			const data = await db.sql<CommunityPersona[]>`
+				INSERT INTO personas (type, name, community_id) VALUES (
+					'community', ${name}, ${community_id}
 				) RETURNING *
 			`;
 			const persona = data[0];

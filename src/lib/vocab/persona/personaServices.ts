@@ -47,8 +47,7 @@ export const createAccountPersonaService: Service<
 		const {community, spaces} = createCommunityResult.value;
 		log.trace('[CreateAccountPersona] creating persona', name);
 
-		const createPersonaResult = await repos.persona.create(
-			'account',
+		const createPersonaResult = await repos.persona.createAccountPersona(
 			name,
 			account_id,
 			community.community_id,

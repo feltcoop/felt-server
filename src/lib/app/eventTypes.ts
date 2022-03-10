@@ -6,7 +6,7 @@ import type {Readable} from 'svelte/store';
 import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ApiResult} from '$lib/server/api';
 import type {Community} from '$lib/vocab/community/community';
-import type {Persona} from '$lib/vocab/persona/persona';
+import type {Persona, AccountPersona} from '$lib/vocab/persona/persona';
 import type {Membership} from '$lib/vocab/membership/membership';
 import type {Space} from '$lib/vocab/space/space';
 import type {Entity} from '$lib/vocab/entity/entity';
@@ -131,7 +131,7 @@ export interface CreateAccountPersonaParams {
 	name: string;
 }
 export interface CreateAccountPersonaResponse {
-	persona: Persona;
+	persona: AccountPersona;
 	community: Community;
 	spaces: Space[];
 	membership: Membership;

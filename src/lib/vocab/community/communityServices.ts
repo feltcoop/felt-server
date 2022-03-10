@@ -81,10 +81,8 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 			}
 			const {community, spaces} = createCommunityResult.value;
 			//TODO maybe trim down returned Persona data?
-			const communityPersonaResult = await repos.persona.create(
-				'community',
+			const communityPersonaResult = await repos.persona.createCommunityPersona(
 				community.name,
-				null,
 				community.community_id,
 			);
 			if (!communityPersonaResult.ok) {

@@ -1,7 +1,11 @@
 import type {SchemaObject} from 'ajv';
 
 import {AccountSchema} from '$lib/vocab/account/account.schema';
-import {PersonaSchema} from '$lib/vocab/persona/persona.schema';
+import {
+	AccountPersonaSchema,
+	CommunityPersonaSchema,
+	PersonaSchema,
+} from '$lib/vocab/persona/persona.schema';
 import {CommunitySchema} from '$lib/vocab/community/community.schema';
 import {MembershipSchema} from '$lib/vocab/membership/membership.schema';
 import {SpaceSchema} from '$lib/vocab/space/space.schema';
@@ -12,6 +16,8 @@ import {TieSchema} from '$lib/vocab/tie/tie.schema';
 
 export const entities: SchemaObject[] = [
 	AccountSchema,
+	AccountPersonaSchema,
+	CommunityPersonaSchema,
 	PersonaSchema,
 	CommunitySchema,
 	MembershipSchema,
