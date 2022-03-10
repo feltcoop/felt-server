@@ -31,7 +31,7 @@
 			<SpaceName {space} />
 		</section>
 		<section class="row">
-			<em class="spaced">in</em>
+			<span class="spaced">in</span>
 			<CommunityAvatar {community} />
 		</section>
 		<section>

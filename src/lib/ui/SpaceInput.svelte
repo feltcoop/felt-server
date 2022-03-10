@@ -65,11 +65,11 @@
 <div class="markup">
 	<h1>Create a new Space</h1>
 	<section class="row">
-		<em class="spaced">in</em>
+		<span class="spaced">in</span>
 		<CommunityAvatar {community} />
 	</section>
 	<section class="row">
-		<em class="spaced">as</em>
+		<span class="spaced">as</span>
 		<PersonaAvatar {persona} />
 	</section>
 	<form>

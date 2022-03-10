@@ -26,12 +26,12 @@
 <div class="markup">
 	<h1>Invite Members</h1>
 	<section class="row">
-		<em class="spaced">to</em>
+		<span class="spaced">to</span>
 		<CommunityAvatar {community} />
 	</section>
 	<section class="row">
 		{#if selectedPersona}
-			<em class="spaced">as</em> <PersonaAvatar persona={selectedPersona} />
+			<span class="spaced">as</span> <PersonaAvatar persona={selectedPersona} />
 		{:else}
 			<div>(no persona selected)</div>
 		{/if}
