@@ -3,6 +3,7 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {Tie} from '$lib/vocab/tie/tie';
 import type {Database} from '$lib/db/Database';
+import type {ErrorResponse} from '$lib/util/error';
 
 const log = new Logger('[tieRepo]');
 
@@ -34,7 +35,6 @@ export const tieRepo = (db: Database) =>
 			log.trace('space ties', ties);
 			return {ok: true, value: ties};
 		},
-
 		filterBySourceId: async (directory_id: number): Promise<Result<{value: Tie[]}>> => {
 			log.trace(`preparing to walk graph starting with directory: ${directory_id}`);
 			const ties = await db.sql<Tie[]>`
@@ -51,5 +51,23 @@ export const tieRepo = (db: Database) =>
 			`;
 			log.trace('directory ties', ties);
 			return {ok: true, value: ties};
+		},
+		deleteTie: async (
+			source_id: number,
+			dest_id: number,
+			type: string,
+		): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {
+			log.trace('[deleteTie]', source_id, dest_id);
+			const data = await db.sql<any[]>`
+				DELETE FROM ties WHERE ${source_id}=source_id AND ${dest_id}=dest_id AND ${type}=type
+			`;
+			if (data.count !== 1) {
+				return {
+					ok: false,
+					type: 'deletion_error',
+					message: 'failed to delete tie',
+				};
+			}
+			return {ok: true, value: data};
 		},
 	} as const);

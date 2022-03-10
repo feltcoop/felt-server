@@ -17,6 +17,7 @@ import type {Database} from '$lib/db/Database';
 import type {EntityData} from '$lib/vocab/entity/entityData';
 import type {ViewData} from '$lib/vocab/view/view';
 import type {Entity} from '$lib/vocab/entity/entity';
+import type {Tie} from '$lib/vocab/tie/tie';
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = (): string => Math.random().toString().slice(2);
@@ -82,6 +83,7 @@ export class RandomVocabContext {
 	communities: Community[] = [];
 	spaces: Space[] = [];
 	entities: Entity[] = [];
+	ties: Tie[] = [];
 
 	async account(): Promise<Account> {
 		const params = randomAccountParams();
@@ -148,5 +150,15 @@ export class RandomVocabContext {
 		);
 		this.entities.push(entity);
 		return entity;
+	}
+
+	async tie(sourceEntity?: Entity, destEntity?: Entity): Promise<Tie> {
+		if (!sourceEntity) sourceEntity = await this.entity();
+		if (!destEntity) destEntity = await this.entity();
+		const tie = unwrap(
+			await this.db.repos.tie.create(sourceEntity.entity_id, destEntity.entity_id, 'HasItem'),
+		);
+		this.ties.push(tie);
+		return tie;
 	}
 }
