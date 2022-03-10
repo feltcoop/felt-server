@@ -16,7 +16,7 @@
 		field: string,
 	) => Promise<Result<unknown, {message: string}>>;
 	export let parse: (serialized: string) => Result<{value: TValue}, {message: string}> = ok as any; // TODO type
-	export let serialize: (raw: TValue, print?: boolean) => string = identity as any; // TODO type
+	export let serialize: (value: TValue, print?: boolean) => string = identity as any; // TODO type
 
 	let editing = false;
 
