@@ -33,7 +33,6 @@
 		buttonEl.focus();
 		submitting = true;
 		errorMessage = '';
-		console.log('logging in with username', username);
 		const result = await dispatch('LoginAccount', {username, password});
 		submitting = false;
 		if (!result.ok) {

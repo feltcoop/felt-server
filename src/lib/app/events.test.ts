@@ -5,7 +5,7 @@ import {noop} from '@feltcoop/felt/util/function.js';
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {eventInfos} from '$lib/app/events';
-import {toRandomVocabContext} from '$lib/vocab/random';
+import {RandomVocabContext} from '$lib/vocab/random';
 import {randomEventParams} from '$lib/server/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {setupApp, teardownApp} from '$lib/util/testAppHelpers';
@@ -21,7 +21,7 @@ test__eventInfos.before(setupApp(noop as any)); // TODO either use `node-fetch` 
 test__eventInfos.after(teardownApp);
 
 test__eventInfos('dispatch random events in a client app', async ({db, app}) => {
-	const random = toRandomVocabContext(db);
+	const random = new RandomVocabContext(db);
 
 	for (const eventInfo of eventInfos.values()) {
 		const account = await random.account();
@@ -43,7 +43,7 @@ test__eventInfos('dispatch random events in a client app', async ({db, app}) => 
 		}
 
 		// TODO can't make remote calls yet -- either use `node-fetch` or mock
-		if (eventInfo.type !== 'ClientEvent') {
+		if (eventInfo.type !== 'ClientEvent' || eventInfo.name === 'QueryEntities') {
 			continue;
 		}
 
@@ -57,9 +57,9 @@ test__eventInfos('dispatch random events in a client app', async ({db, app}) => 
 		} else {
 			// TODO can't make remote calls yet -- need to use either `node-fetch` or mock
 			// if (!result.ok) {
-			// 	console.error(red(`dispatch failed: ${eventInfo.name}`), result);
+			// 	log.error(`dispatch failed: ${eventInfo.name}`, result);
 			// } else if (!validateSchema(eventInfo.response!)(result.value)) {
-			// 	console.error(red(`failed to validate service response: ${eventInfo.name}`), result);
+			// 	log.error(`failed to validate service response: ${eventInfo.name}`, result);
 			// 	throw new Error(
 			// 		`Failed to validate response for service ${eventInfo.name}: ${toValidationErrorMessage(
 			// 			validateSchema(eventInfo.response!).errors![0],

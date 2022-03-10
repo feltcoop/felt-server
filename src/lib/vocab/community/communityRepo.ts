@@ -1,9 +1,13 @@
 import type {Result} from '@feltcoop/felt';
+import {Logger} from '@feltcoop/felt/util/log.js';
+import {blue, gray} from 'kleur/colors';
 
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
+
+const log = new Logger(gray('[') + blue('communityRepo') + gray(']'));
 
 export const communityRepo = (db: Database) =>
 	({
@@ -17,7 +21,7 @@ export const communityRepo = (db: Database) =>
 					${type}, ${name}, ${db.sql.json(settings)}
 				) RETURNING *
 			`;
-			console.log('[db] created community', data[0]);
+			log.trace('[db] created community', data[0]);
 			const community = data[0];
 			// TODO more robust error handling or condense into single query
 			const spacesResult = await db.repos.space.createDefaultSpaces(community); // TODO should this work happen elsewhere?
@@ -28,12 +32,12 @@ export const communityRepo = (db: Database) =>
 		findById: async (
 			community_id: number,
 		): Promise<Result<{value: Community}, {type: 'no_community_found'} & ErrorResponse>> => {
-			console.log(`[db] preparing to query for community id: ${community_id}`);
+			log.trace(`[findById] ${community_id}`);
 			const data = await db.sql<Community[]>`
 				SELECT community_id, type, name, settings, created, updated
 				FROM communities WHERE community_id=${community_id}
 			`;
-			// console.log('[db.findById]', data);
+			// log.trace('[findById]', data);
 			if (data.length) {
 				return {ok: true, value: data[0]};
 			}
@@ -46,7 +50,7 @@ export const communityRepo = (db: Database) =>
 		findByName: async (
 			name: string,
 		): Promise<Result<{value: Community | undefined}, ErrorResponse>> => {
-			console.log('[communityRepo] finding by name', name);
+			log.trace('[findByName]', name);
 			const data = await db.sql<Community[]>`
 				SELECT community_id, type, name, settings, created, updated
 				FROM communities WHERE LOWER(name) = LOWER(${name})
@@ -56,7 +60,7 @@ export const communityRepo = (db: Database) =>
 		filterByAccount: async (
 			account_id: number,
 		): Promise<Result<{value: Community[]}, ErrorResponse>> => {
-			console.log(`[db] preparing to query for communities & spaces persona: ${account_id}`);
+			log.trace(`[filterByAccount] ${account_id}`);
 			const data = await db.sql<Community[]>`
 				SELECT c.community_id, c.type, c.name, c.settings, c.created, c.updated							
 				FROM communities c JOIN (
@@ -64,7 +68,7 @@ export const communityRepo = (db: Database) =>
 				) apc
 				ON c.community_id=apc.community_id;
 			`;
-			console.log('[db.filterByAccount]', data.length);
+			log.trace('[filterByAccount]', data.length);
 			return {ok: true, value: data};
 		},
 		updateSettings: async (

@@ -3,9 +3,10 @@ import * as assert from 'uvu/assert';
 import {red} from 'kleur/colors';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
+import {log} from '$lib/util/testHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {services} from '$lib/server/services';
-import {toRandomVocabContext} from '$lib/vocab/random';
+import {RandomVocabContext} from '$lib/vocab/random';
 import {randomEventParams} from '$lib/server/random';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
 
@@ -18,7 +19,7 @@ test__services.before(setupDb);
 test__services.after(teardownDb);
 
 test__services('perform services', async ({db}) => {
-	const random = toRandomVocabContext(db);
+	const random = new RandomVocabContext(db);
 
 	for (const service of services.values()) {
 		const account = await random.account();
@@ -37,7 +38,7 @@ test__services('perform services', async ({db}) => {
 			session: new SessionApiMock(),
 		});
 		if (!result.ok || !validateSchema(service.event.response)(result.value)) {
-			console.error(red(`failed to validate service response: ${service.event.name}`), result);
+			log.error(red(`failed to validate service response: ${service.event.name}`), result);
 			throw new Error(
 				`Failed to validate response for service ${service.event.name}: ${toValidationErrorMessage(
 					validateSchema(service.event.response).errors![0],

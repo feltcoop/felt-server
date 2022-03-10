@@ -4,12 +4,15 @@ import type {Server as HttpsServer} from 'https';
 import {createServer as create_http_server} from 'http';
 import {createServer as create_https_server} from 'https';
 import fs from 'fs'; // eslint-disable-line @typescript-eslint/no-restricted-imports
+import {Logger} from '@feltcoop/felt/util/log.js';
 
 import {ApiServer} from '$lib/server/ApiServer.js';
 import {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import {services} from '$lib/server/services';
 import {db} from '$lib/db/db';
 import {API_SERVER_PORT, VITE_DEPLOY_SERVER_HOST} from '$lib/config';
+
+const log = new Logger('[server]');
 
 const create_server = (): HttpServer | HttpsServer => {
 	if (process.env.NODE_ENV === 'production') {
@@ -36,6 +39,6 @@ export const apiServer: ApiServer = new ApiServer({
 });
 
 apiServer.init().catch((err) => {
-	console.error('server.init() failed', err);
+	log.error('server.init() failed', err);
 	throw err;
 });

@@ -1,4 +1,6 @@
 import type {Result} from '@feltcoop/felt';
+import {Logger} from '@feltcoop/felt/util/log.js';
+import {blue, gray} from 'kleur/colors';
 
 import type {Space} from '$lib/vocab/space/space.js';
 import type {Database} from '$lib/db/Database';
@@ -7,17 +9,19 @@ import type {ErrorResponse} from '$lib/util/error';
 import type {Community} from '$lib/vocab/community/community';
 import type {ViewData} from '$lib/vocab/view/view';
 
+const log = new Logger(gray('[') + blue('spaceRepo') + gray(']'));
+
 export const spaceRepo = (db: Database) =>
 	({
 		findById: async (
 			space_id: number,
 		): Promise<Result<{value: Space}, {type: 'no_space_found'} & ErrorResponse>> => {
-			console.log(`[db] preparing to query for space id: ${space_id}`);
+			log.trace(`[findById] ${space_id}`);
 			const data = await db.sql<Space[]>`
 				SELECT space_id, name, url, view, updated, created, community_id
 				FROM spaces WHERE space_id = ${space_id}
 			`;
-			console.log('[db] space data', data);
+			log.trace('[findById] result', data);
 			if (data.length) {
 				return {ok: true, value: data[0]};
 			}
@@ -30,7 +34,7 @@ export const spaceRepo = (db: Database) =>
 		filterByAccount: async (
 			account_id: number,
 		): Promise<Result<{value: Space[]}, ErrorResponse>> => {
-			console.log(`[spaceRepo] preparing to query for community spaces by account: ${account_id}`);
+			log.trace('[filterByAccount]', account_id);
 			const data = await db.sql<Space[]>`
 				SELECT s.space_id, s.name, s.url, s.view, s.updated, s.created, s.community_id
 				FROM spaces s JOIN (
@@ -41,7 +45,7 @@ export const spaceRepo = (db: Database) =>
 			return {ok: true, value: data};
 		},
 		filterByCommunity: async (community_id: number): Promise<Result<{value: Space[]}>> => {
-			console.log(`[spaceRepo] preparing to query for community spaces: ${community_id}`);
+			log.trace('[filterByCommunity]', community_id);
 			const data = await db.sql<Space[]>`
 				SELECT space_id, name, url, view, updated, created, community_id
 				FROM spaces WHERE community_id=${community_id}
@@ -52,14 +56,12 @@ export const spaceRepo = (db: Database) =>
 			community_id: number,
 			url: string,
 		): Promise<Result<{value: Space | undefined}>> => {
-			console.log(
-				`[spaceRepo] preparing to query for community space by url: ${community_id} ${url}`,
-			);
+			log.trace('[findByCommunityUrl]', community_id, url);
 			const data = await db.sql<Space[]>`
 				SELECT space_id, name, url, view, updated, created, community_id
 				FROM spaces WHERE community_id=${community_id} AND url=${url}
 			`;
-			console.log('[spaceRepo] space data', data);
+			log.trace('[findByCommunityUrl] result', data);
 			return {ok: true, value: data[0]};
 		},
 		create: async (
@@ -98,13 +100,13 @@ export const spaceRepo = (db: Database) =>
 			space_id: number,
 			partial: Partial<Pick<Space, 'name' | 'url' | 'view'>>,
 		): Promise<Result<{value: Space}, ErrorResponse>> => {
-			console.log(`[db] updating data for space: ${space_id}`);
+			log.trace(`updating data for space: ${space_id}`);
 			// TODO hacky, fix when `postgres` v2 is out with dynamic queries
 			const updated: Record<string, any> = {};
 			for (const [key, value] of Object.entries(partial)) {
 				updated[key] = value && typeof value === 'object' ? JSON.stringify(value) : value;
 			}
-			console.log(`updated`, updated);
+			log.trace(`updated`, updated);
 			const result = await db.sql<Space[]>`
 				UPDATE spaces
 				SET updated=NOW(), ${db.sql(updated, ...Object.keys(updated))}
@@ -119,7 +121,7 @@ export const spaceRepo = (db: Database) =>
 		deleteById: async (
 			space_id: number,
 		): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {
-			console.log('[spaceRepo] deleting space :', space_id);
+			log.trace('[deleteById]', space_id);
 			const data = await db.sql<any[]>`
 				DELETE FROM spaces WHERE ${space_id}=space_id
 			`;

@@ -30,14 +30,16 @@
 		>
 			<span class="title">Create Space</span>
 		</ContextmenuEntry>
-		<ContextmenuEntry
-			action={() =>
-				dispatch('OpenDialog', {
-					Component: MembershipInput,
-					props: {community},
-				})}
-		>
-			<span class="title">Invite Members</span>
-		</ContextmenuEntry>
+		{#if $community.type !== 'personal'}
+			<ContextmenuEntry
+				action={() =>
+					dispatch('OpenDialog', {
+						Component: MembershipInput,
+						props: {community},
+					})}
+			>
+				<span class="title">Invite Members</span>
+			</ContextmenuEntry>
+		{/if}
 	</svelte:fragment>
 </ContextmenuSubmenu>

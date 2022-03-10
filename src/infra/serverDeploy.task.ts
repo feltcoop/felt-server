@@ -6,7 +6,7 @@ import {ENV_PROD, fromEnv} from '$lib/server/env';
 export const task: Task = {
 	summary: 'deploy felt server to prod',
 	production: true,
-	run: async ({invokeTask}) => {
+	run: async ({invokeTask, log}) => {
 		await invokeTask('infra/updateEnv');
 
 		//build the actual tar deployment artifact,
@@ -21,7 +21,7 @@ export const task: Task = {
 		const timestamp = Date.now();
 		const artifactName = `felt_server_${timestamp}`;
 		const currentDeploy = `current_felt_server_deploy`;
-		console.log(`Working with artifact: ${artifactName}`);
+		log.info(`Working with artifact: ${artifactName}`);
 		await spawn('tar', [
 			'-cvf',
 			`${artifactName}.tar`,

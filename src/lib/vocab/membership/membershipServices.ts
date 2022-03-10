@@ -1,3 +1,6 @@
+import {blue, gray} from 'kleur/colors';
+import {Logger} from '@feltcoop/felt/util/log.js';
+
 import type {Service} from '$lib/server/service';
 import type {
 	CreateMembershipParams,
@@ -7,6 +10,8 @@ import type {
 } from '$lib/app/eventTypes';
 import {CreateMembership, DeleteMembership} from '$lib/vocab/membership/membership.events';
 
+const log = new Logger(gray('[') + blue('membershipServices') + gray(']'));
+
 //Creates a new member relation for a community
 export const createMembershipService: Service<
 	CreateMembershipParams,
@@ -14,7 +19,7 @@ export const createMembershipService: Service<
 > = {
 	event: CreateMembership,
 	perform: async ({repos, params}) => {
-		console.log('[CreateMembership] creating membership', params.persona_id, params.community_id);
+		log.trace('[CreateMembership] creating membership', params.persona_id, params.community_id);
 
 		// Personal communities disallow memberships as a hard rule.
 		const communityResult = await repos.community.findById(params.community_id);
@@ -35,7 +40,7 @@ export const createMembershipService: Service<
 		if (createMembershipResult.ok) {
 			return {ok: true, status: 200, value: {membership: createMembershipResult.value}};
 		}
-		console.log('[CreateMembership] error creating membership');
+		log.trace('[CreateMembership] error creating membership');
 		return {ok: false, status: 500, message: 'error creating membership'};
 	},
 };
@@ -49,7 +54,7 @@ export const deleteMembershipService: Service<
 	event: DeleteMembership,
 	perform: async ({repos, params}) => {
 		const {persona_id, community_id} = params;
-		console.log(
+		log.trace(
 			'[DeleteSpace] deleting membership for persona in community',
 			persona_id,
 			community_id,
@@ -75,9 +80,9 @@ export const deleteMembershipService: Service<
 		}
 
 		const result = await repos.membership.deleteById(persona_id, community_id);
-		console.log(result);
+		log.trace('[DeleteSpace] result', result);
 		if (!result.ok) {
-			console.log('[DeleteSpace] error removing membership: ', persona_id, community_id);
+			log.trace('[DeleteSpace] error removing membership: ', persona_id, community_id);
 			return {ok: false, status: 500, message: result.message};
 		}
 		return {ok: true, status: 200, value: null};

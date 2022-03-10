@@ -6,9 +6,12 @@
 // https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md
 
 import {inject} from 'regexparam';
+import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
+
+const log = new Logger('[http]');
 
 // TODO make `fetch` a parameter once the client isn't created for SSR
 // fetch: typeof window.fetch,
@@ -22,7 +25,7 @@ export const toHttpApiClient = <
 	const client: ApiClient<TParamsMap, TResultMap> = {
 		find: (name) => findService(name),
 		invoke: async (name, params = null!) => {
-			console.log('[http] invoke', name, params);
+			log.trace('invoke', name, params);
 			const service = findService(name);
 			if (!service) {
 				return {ok: false, status: 400, message: 'failed to invoke unknown service'};
@@ -37,7 +40,7 @@ export const toHttpApiClient = <
 					body: method === 'GET' || method === 'HEAD' ? null : JSON.stringify(params || {}),
 				});
 			} catch (err) {
-				console.error('[http] fetch error', err);
+				log.error('fetch error', err);
 				return {
 					ok: false,
 					status: null,
@@ -48,14 +51,14 @@ export const toHttpApiClient = <
 			try {
 				json = await res.json();
 			} catch (err) {
-				console.error('[http] parse error', err, res);
+				log.error('parse error', err, res);
 				return {
 					ok: false,
 					status: null, // discard `res.status` because something else went wrong
 					message: 'failed to parse server response',
 				};
 			}
-			console.log('[http] result', res.ok, res.status, json);
+			log.trace('result', res.ok, res.status, json);
 			if (res.ok) {
 				return {ok: true, status: res.status, value: json};
 			}

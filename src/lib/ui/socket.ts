@@ -3,6 +3,10 @@ import {get, writable} from 'svelte/store';
 import type {Readable} from 'svelte/store';
 import {setContext, getContext} from 'svelte';
 
+import {Logger} from '@feltcoop/felt/util/log.js';
+
+const log = new Logger('[socket]');
+
 const KEY = Symbol();
 
 export const HEARTBEAT_INTERVAL = 300000;
@@ -59,14 +63,14 @@ export const toSocketStore = (
 	const {subscribe, update} = writable<SocketState>(toDefaultSocketState());
 
 	const onWsOpen = () => {
-		console.log('[socket] open');
+		log.info('open');
 		cancelReconnect(); // resets the count but is not expected to be needed to clear the timeout
 		update(($socket) => ({...$socket, status: 'success', open: true}));
 	};
 	// This handler gets called when the websocket closes unexpectedly or when it fails to connect.
 	// It's not called when the websocket closes due to a `disconnect` call.
 	const onWsCloseUnexpectedly = () => {
-		console.log('[socket] close');
+		log.info('close');
 		if (get(store).open) {
 			update(($socket) => ({...$socket, open: false}));
 		}
@@ -107,7 +111,7 @@ export const toSocketStore = (
 		connect: (url) => {
 			tryToDisconnect();
 			update(($socket) => {
-				console.log('[socket] connect', $socket);
+				log.info('connect', $socket);
 				const ws = createWebSocket(url, handleMessage, sendHeartbeat, heartbeatInterval);
 				ws.addEventListener('open', onWsOpen);
 				ws.addEventListener('close', onWsCloseUnexpectedly);
@@ -118,7 +122,7 @@ export const toSocketStore = (
 			if (!get(store).ws) return;
 			cancelReconnect();
 			update(($socket) => {
-				console.log('[socket] disconnect', code, $socket);
+				log.info('disconnect', code, $socket);
 				const ws = $socket.ws!;
 				ws.removeEventListener('open', onWsOpen);
 				ws.removeEventListener('close', onWsCloseUnexpectedly);
@@ -136,13 +140,13 @@ export const toSocketStore = (
 		},
 		send: (data) => {
 			const $socket = get(store);
-			// console.log('[ws] send', data, $socket);
+			// log.trace('send', data, $socket);
 			if (!$socket.ws) {
-				console.error('[ws] cannot send because the socket is disconnected', data, $socket);
+				log.error('[ws] cannot send because the socket is disconnected', data, $socket);
 				return false;
 			}
 			if (!$socket.open) {
-				console.error('[ws] cannot send because the websocket is not open', data, $socket);
+				log.error('[ws] cannot send because the websocket is not open', data, $socket);
 				return false;
 			}
 			$socket.ws.send(JSON.stringify(data));

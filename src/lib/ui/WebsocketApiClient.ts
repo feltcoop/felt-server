@@ -3,12 +3,15 @@
 // using JSON-RPC 2.0: https://www.jsonrpc.org/specification
 
 import {toCounter} from '@feltcoop/felt/util/counter.js';
+import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
 import type {JsonRpcId, JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 import type {BroadcastMessage} from '$lib/server/websocketMiddleware';
+
+const log = new Logger('[ws]');
 
 const toId = toCounter();
 
@@ -50,7 +53,7 @@ export const toWebsocketApiClient = <
 	const client: WebsocketApiClient<TParamsMap, TResultMap> = {
 		find: (name) => findService(name),
 		invoke: async (name, params = null!) => {
-			console.log('[ws] invoke', name, params);
+			log.trace('invoke', name, params);
 			const request: JsonRpcRequest<typeof name, TParamsMap> = {
 				jsonrpc: '2.0',
 				id: toId(),
@@ -63,12 +66,12 @@ export const toWebsocketApiClient = <
 		},
 		handle: (rawMessage) => {
 			const message = parseSocketMessage(rawMessage);
-			console.log('[ws] handle', message);
+			log.trace('handle', message);
 			if (!message) return;
 			if ('jsonrpc' in message) {
 				const found = websocketRequests.get(message.id);
 				if (!found) {
-					console.error(`Unable to find message with id ${message.id}`);
+					log.error(`Unable to find message with id ${message.id}`);
 					return;
 				}
 				websocketRequests.delete(message.id);
@@ -77,7 +80,7 @@ export const toWebsocketApiClient = <
 			} else if (message.type === 'broadcast') {
 				handleBroadcastMessage(message);
 			} else {
-				console.log('[ws] unhandled message', message);
+				log.trace('unhandled message', message);
 			}
 		},
 		close: () => {
@@ -90,7 +93,7 @@ export const toWebsocketApiClient = <
 // TODO do we need to support another type of message, the non-response kind?
 const parseSocketMessage = (rawMessage: any): JsonRpcResponse<any> | BroadcastMessage | null => {
 	if (typeof rawMessage !== 'string') {
-		console.error(
+		log.error(
 			'[parseSocketMessage] cannot parse websocket message; currently only supports strings',
 		);
 		return null;
@@ -99,19 +102,19 @@ const parseSocketMessage = (rawMessage: any): JsonRpcResponse<any> | BroadcastMe
 	try {
 		message = JSON.parse(rawMessage);
 	} catch (err) {
-		console.error('[parseSocketMessage] message data is not valid JSON', rawMessage, err);
+		log.error('[parseSocketMessage] message data is not valid JSON', rawMessage, err);
 		return null;
 	}
 	if ('jsonrpc' in message) {
 		const response = parseJsonRpcResponse(message);
 		if (!response) {
-			console.error('[parseSocketMessage] message data is not valid JSON-RPC 2.0', message);
+			log.error('[parseSocketMessage] message data is not valid JSON-RPC 2.0', message);
 			return null;
 		}
 		return response;
 	} else if (message.type === 'broadcast') {
 		return message;
 	}
-	console.error('[parseSocketMessage] message data is unknown type', message);
+	log.error('[parseSocketMessage] message data is unknown type', message);
 	return null;
 };

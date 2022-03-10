@@ -7,6 +7,8 @@ import {communityRepo} from '$lib/vocab/community/communityRepo';
 import {spaceRepo} from '$lib/vocab/space/spaceRepo';
 import {entityRepo} from '$lib/vocab/entity/entityRepo';
 import {tieRepo} from '$lib/vocab/tie/tieRepo';
+import {Logger} from '@feltcoop/felt/util/log.js';
+import {blue, gray} from 'kleur/colors';
 
 export interface Options {
 	sql: PostgresSql;
@@ -15,13 +17,15 @@ export interface Options {
 export class Database {
 	sql: PostgresSql;
 
+	log = new Logger(gray('[') + blue('db') + gray(']'));
+
 	constructor({sql}: Options) {
-		console.log('[db] create');
+		this.log.info('create');
 		this.sql = sql;
 	}
 
 	async close(): Promise<void> {
-		console.log('[db] close');
+		this.log.info('close');
 		await this.sql.end();
 	}
 
