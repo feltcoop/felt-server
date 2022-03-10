@@ -20,13 +20,17 @@
 
 	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
 
-	// TODO granular data properties like `content`
-	// how? should there be a keypath that's null?
-	const updateEntityData = async (updated: any, field: string) =>
+	const updateEntityDataProperty = async (updated: any, field: string) =>
 		dispatch('UpdateEntity', {
 			entity_id: $entity.entity_id,
-			[field]: updated,
-		} as any); // TODO typecast
+			data: {...$entity.data, [field]: updated},
+		});
+
+	const updateEntityData = async (updated: any) =>
+		dispatch('UpdateEntity', {
+			entity_id: $entity.entity_id,
+			data: updated,
+		});
 </script>
 
 <div class="markup column">
@@ -41,13 +45,16 @@
 	</section>
 	<!-- TODO add entity property contextmenu actions to this -->
 	<form>
-		<PropertyEditor
-			value={$entity.data}
-			field="data"
-			update={updateEntityData}
-			parse={parseJson}
-			serialize={serializeJson}
-		/>
+		<PropertyEditor value={$entity.data.content} field="view" update={updateEntityDataProperty} />
+		{#if $devmode}
+			<PropertyEditor
+				value={$entity.data}
+				field="data"
+				update={updateEntityData}
+				parse={parseJson}
+				serialize={serializeJson}
+			/>
+		{/if}
 	</form>
 	{#if $devmode}
 		<hr />

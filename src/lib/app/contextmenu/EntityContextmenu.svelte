@@ -19,7 +19,12 @@
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
-			action={() => dispatch('OpenDialog', {Component: EntityEditor, props: {entity}})}
+			action={() =>
+				dispatch('OpenDialog', {
+					Component: EntityEditor,
+					props: {entity},
+					dialogProps: {layout: 'page'},
+				})}
 		>
 			<span class="title">Edit Entity</span>
 		</ContextmenuEntry>
