@@ -21,15 +21,14 @@
 	let editing = false;
 
 	let fieldValue: any; // initialized by `reset`
-	let raw: TValue;
 	let serialized: string | undefined;
 	$: {
 		const parsed = parse(fieldValue);
 		if (parsed.ok) {
-			raw = parsed.value;
-			serialized = serialize(raw, true);
+			serialized = serialize(parsed.value, true);
 			errorMessage = null;
 		} else {
+			serialized = '';
 			errorMessage = parsed.message;
 		}
 	}

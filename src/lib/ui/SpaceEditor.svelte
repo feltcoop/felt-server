@@ -20,7 +20,7 @@
 	const updateSpace = async (updated: string, field: string) =>
 		dispatch('UpdateSpace', {
 			space_id: $space.space_id,
-			[field]: parseView(updated),
+			[field]: field === 'view' ? parseView(updated) : updated,
 		});
 </script>
 
