@@ -17,10 +17,10 @@
 
 	const {dispatch, devmode} = getApp();
 
-	const updateSpace = async (updated: string, field: string) =>
+	const updateSpace = async (updated: any, field: string) =>
 		dispatch('UpdateSpace', {
 			space_id: $space.space_id,
-			[field]: parseView(updated),
+			[field]: field === 'view' ? parseView(updated) : updated,
 		});
 </script>
 

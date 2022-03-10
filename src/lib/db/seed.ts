@@ -83,6 +83,20 @@ export const seed = async (db: Database): Promise<void> => {
 };
 
 const createDefaultEntities = async (db: Database, spaces: Space[], personas: Persona[]) => {
+	const entitiesContents: {[key: string]: string[]} = {
+		Room: ['Those who know do not speak.', 'Those who speak do not know.'],
+		Board: ["All the world's a stage.", 'And all the men and women merely players.'],
+		Forum: [
+			'If the evidence says you’re wrong, you don’t have the right theory.',
+			'You change the theory, not the evidence.',
+		],
+		Notes: [
+			'We have no guarantee about the future',
+			'but we exist in the hope of something better.',
+			'The 14th Dalai Lama',
+		],
+	};
+
 	let personaIndex = -1;
 	const nextPersona = (): Persona => {
 		personaIndex++;
@@ -103,18 +117,4 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 			});
 		}
 	}
-};
-
-const entitiesContents: {[key: string]: string[]} = {
-	Room: ['Those who know do not speak.', 'Those who speak do not know.'],
-	Board: ["All the world's a stage.", 'And all the men and women merely players.'],
-	Forum: [
-		'If the evidence says you’re wrong, you don’t have the right theory.',
-		'You change the theory, not the evidence.',
-	],
-	Notes: [
-		'We have no guarantee about the future',
-		'but we exist in the hope of something better.',
-		'The 14th Dalai Lama',
-	],
 };

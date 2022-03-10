@@ -7,30 +7,28 @@
 
 	// TODO make this work with other kinds of inputs, starting with numbers
 
-	type TValue = $$Generic<any>;
+	type TValue = $$Generic;
 
-	export let value: TValue; // TODO generic type
+	export let value: TValue;
 	export let field: string;
 	export let update: (
 		updated: TValue,
 		field: string,
 	) => Promise<Result<unknown, {message: string}>>;
 	export let parse: (serialized: string) => Result<{value: TValue}, {message: string}> = ok as any; // TODO type
-	export let serialize: (raw: TValue, print?: boolean) => string = identity as any; // TODO type
+	export let serialize: (value: TValue, print?: boolean) => string = identity as any; // TODO type
 
 	let editing = false;
 
 	let fieldValue: any; // initialized by `reset`
-	let raw: TValue;
 	let serialized: string | undefined;
 	$: {
 		const parsed = parse(fieldValue);
 		if (parsed.ok) {
-			raw = parsed.value;
-			serialized = serialize(raw, true);
+			serialized = serialize(parsed.value, true);
 			errorMessage = null;
 		} else {
-			serialized = fieldValue;
+			serialized = '';
 			errorMessage = parsed.message;
 		}
 	}
@@ -76,12 +74,13 @@
 		}
 	};
 
-	$: changed = fieldValue !== serialize(value); // TODO hacky, causes wasted work
+	$: currentSerialized = serialize(value, true);
+	$: changed = serialized !== currentSerialized;
 </script>
 
 <div class="field">{field}</div>
 <div class="preview markup panel-inset">
-	<pre>{serialize(value, true)}</pre>
+	<pre>{currentSerialized}</pre>
 </div>
 {#if editing}
 	{#if changed}
