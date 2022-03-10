@@ -13,10 +13,8 @@
 	export let persona: Readable<Persona>;
 </script>
 
-{#if $persona.type === 'account'}
-	<li
-		use:contextmenu.action={[[PersonaContextmenu, {persona: personaById.get($persona.persona_id)}]]}
-	>
-		<PersonaAvatar {persona} />
-	</li>
-{/if}
+<li
+	use:contextmenu.action={[[PersonaContextmenu, {persona: personaById.get($persona.persona_id)}]]}
+>
+	<PersonaAvatar {persona} />
+</li>

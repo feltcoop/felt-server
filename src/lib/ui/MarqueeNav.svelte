@@ -1,4 +1,12 @@
-<div class="marquee-nav">Members</div>
+<script lang="ts">
+	import type {Readable} from 'svelte/store';
+
+	import type {Persona} from '$lib/vocab/persona/persona';
+
+	export let communityPersonas: Array<Readable<Persona>>;
+</script>
+
+<div class="marquee-nav">Members — {communityPersonas.length}</div>
 
 <style>
 	.marquee-nav {
