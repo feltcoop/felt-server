@@ -9,7 +9,7 @@
 
 	type TValue = $$Generic<any>;
 
-	export let value: TValue; // TODO generic type
+	export let value: TValue;
 	export let field: string;
 	export let update: (
 		updated: TValue,
