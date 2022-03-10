@@ -22,7 +22,7 @@
 	$: communityPersonas = $personasByCommunityId.get($community.community_id)!;
 </script>
 
-<MarqueeNav {community} {space} />
+<MarqueeNav />
 
 <!-- TODO display other meta info about the community -->
 {#if $expandMarquee}
