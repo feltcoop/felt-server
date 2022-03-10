@@ -181,6 +181,7 @@ export interface UpdateSpaceParams {
 	space_id: number;
 	name?: string;
 	url?: string;
+	icon?: string;
 	view?: ViewData;
 }
 export interface UpdateSpaceResponse {
