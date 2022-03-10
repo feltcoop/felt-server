@@ -7,7 +7,7 @@
 
 	// TODO make this work with other kinds of inputs, starting with numbers
 
-	type TValue = $$Generic<any>;
+	type TValue = $$Generic;
 
 	export let value: TValue;
 	export let field: string;
@@ -30,7 +30,6 @@
 			serialized = serialize(raw, true);
 			errorMessage = null;
 		} else {
-			serialized = fieldValue;
 			errorMessage = parsed.message;
 		}
 	}
@@ -76,12 +75,13 @@
 		}
 	};
 
-	$: changed = fieldValue !== serialize(value); // TODO hacky, causes wasted work
+	$: currentSerialized = serialize(value, true);
+	$: changed = serialized !== currentSerialized;
 </script>
 
 <div class="field">{field}</div>
 <div class="preview markup panel-inset">
-	<pre>{serialize(value, true)}</pre>
+	<pre>{currentSerialized}</pre>
 </div>
 {#if editing}
 	{#if changed}
