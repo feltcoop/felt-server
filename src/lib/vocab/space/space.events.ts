@@ -100,6 +100,7 @@ export const UpdateSpace: ServiceEventInfo = {
 			space_id: {type: 'number'},
 			name: {type: 'string'},
 			url: {type: 'string'},
+			icon: {type: 'string'},
 			view: {type: 'object', tsType: 'ViewData'},
 		},
 		required: ['space_id'],

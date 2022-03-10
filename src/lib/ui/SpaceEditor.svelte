@@ -50,6 +50,9 @@
 				<PropertyEditor value={$space.url} field="url" update={updateSpace} />
 			</li>
 			<li>
+				<PropertyEditor value={$space.icon} field="icon" update={updateSpace} />
+			</li>
+			<li>
 				<PropertyEditor
 					value={serializeView($space.view)}
 					field="view"
