@@ -2,7 +2,7 @@ import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {toRandomVocabContext} from '$lib/vocab/random';
+import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 
 /* test__communityRepo */
@@ -12,7 +12,7 @@ test__communityRepo.before(setupDb);
 test__communityRepo.after(teardownDb);
 
 test__communityRepo('updateSettings', async ({db}) => {
-	const random = toRandomVocabContext(db);
+	const random = new RandomVocabContext(db);
 	const community = await random.community();
 	assert.type(community.settings, 'object');
 	assert.type(community.settings.hue, 'number');

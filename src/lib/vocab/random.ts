@@ -71,92 +71,82 @@ export interface RandomVocab {
 	entity?: Entity;
 }
 
-// TODO maybe compute in relation to `RandomVocab`
-export interface RandomVocabContext {
-	accounts: Account[];
-	personas: Persona[];
-	communities: Community[];
-	spaces: Space[];
-	entities: Entity[];
-	account: () => Promise<Account>;
-	persona: (account?: Account) => Promise<Persona>;
-	community: (persona?: Persona, account?: Account) => Promise<Community>;
-	space: (persona?: Persona, account?: Account, community?: Community) => Promise<Space>;
-	entity: (
+/* eslint-disable no-param-reassign */
+
+// TODO generate from schema
+export class RandomVocabContext {
+	constructor(private db: Database) {}
+
+	accounts: Account[] = [];
+	personas: Persona[] = [];
+	communities: Community[] = [];
+	spaces: Space[] = [];
+	entities: Entity[] = [];
+
+	async account(): Promise<Account> {
+		const params = randomAccountParams();
+		const account = unwrap(await this.db.repos.account.create(params.name, params.password));
+		this.accounts.push(account);
+		return account;
+	}
+
+	async persona(account?: Account): Promise<Persona> {
+		if (!account) account = await this.account();
+		const {community, persona} = unwrap(
+			await this.db.repos.persona.create(
+				'account',
+				randomPersonaParams().name,
+				account.account_id,
+				null,
+			),
+		);
+		this.communities.push(community);
+		this.personas.push(persona);
+		return persona;
+	}
+
+	async community(persona?: Persona, account?: Account): Promise<Community> {
+		if (!persona) persona = await this.persona(account);
+		const params = randomCommunityParams(persona.persona_id);
+		const {community} = unwrap(
+			await this.db.repos.community.create(
+				'standard',
+				params.name,
+				params.settings!,
+				params.persona_id,
+			),
+		);
+		this.communities.push(community);
+		return community;
+	}
+
+	async space(persona?: Persona, account?: Account, community?: Community): Promise<Space> {
+		if (!account) account = await this.account();
+		if (!persona) persona = await this.persona(account);
+		if (!community) community = await this.community(persona, account);
+		const params = randomSpaceParams(community.community_id);
+		const space = unwrap(
+			await this.db.repos.space.create(params.name, params.view, params.url, params.community_id),
+		);
+		this.spaces.push(space);
+		return space;
+	}
+
+	async entity(
 		persona?: Persona,
 		account?: Account,
 		community?: Community,
 		space?: Space,
-	) => Promise<Entity>;
+	): Promise<Entity> {
+		if (!account) account = await this.account();
+		if (!persona) persona = await this.persona(account);
+		if (!community) community = await this.community(persona, account);
+		if (!space) space = await this.space(persona, account, community);
+		const params = randomEntityParams(persona.persona_id, space.space_id);
+		const entity = unwrap(
+			await this.db.repos.entity.create(params.actor_id, params.space_id, params.data),
+		);
+		this.entities.push(entity);
+		return entity;
+	}
 }
-
-/* eslint-disable no-param-reassign */
-
-// TODO generate from schema
-export const toRandomVocabContext = (db: Database): RandomVocabContext => {
-	const random: RandomVocabContext = {
-		accounts: [],
-		personas: [],
-		communities: [],
-		spaces: [],
-		entities: [],
-		account: async () => {
-			const params = randomAccountParams();
-			const account = unwrap(await db.repos.account.create(params.name, params.password));
-			random.accounts.push(account);
-			return account;
-		},
-		persona: async (account) => {
-			if (!account) account = await random.account();
-			const {community, persona} = unwrap(
-				await db.repos.persona.create(
-					'account',
-					randomPersonaParams().name,
-					account.account_id,
-					null,
-				),
-			);
-			random.communities.push(community);
-			random.personas.push(persona);
-			return persona;
-		},
-		community: async (persona, account) => {
-			if (!persona) persona = await random.persona(account);
-			const params = randomCommunityParams(persona.persona_id);
-			const {community} = unwrap(
-				await db.repos.community.create(
-					'standard',
-					params.name,
-					params.settings!,
-					params.persona_id,
-				),
-			);
-			random.communities.push(community);
-			return community;
-		},
-		space: async (persona, account, community) => {
-			if (!account) account = await random.account();
-			if (!persona) persona = await random.persona(account);
-			if (!community) community = await random.community(persona, account);
-			const params = randomSpaceParams(community.community_id);
-			const space = unwrap(
-				await db.repos.space.create(params.name, params.view, params.url, params.community_id),
-			);
-			random.spaces.push(space);
-			return space;
-		},
-		entity: async (persona, account, community, space) => {
-			if (!account) account = await random.account();
-			if (!persona) persona = await random.persona(account);
-			if (!community) community = await random.community(persona, account);
-			if (!space) space = await random.space(persona, account, community);
-			const params = randomEntityParams(persona.persona_id, space.space_id);
-			const entity = unwrap(
-				await db.repos.entity.create(params.actor_id, params.space_id, params.data),
-			);
-			random.entities.push(entity);
-			return entity;
-		},
-	};
-	return random;
-};

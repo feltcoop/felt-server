@@ -5,7 +5,7 @@ import {noop} from '@feltcoop/felt/util/function.js';
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {eventInfos} from '$lib/app/events';
-import {toRandomVocabContext} from '$lib/vocab/random';
+import {RandomVocabContext} from '$lib/vocab/random';
 import {randomEventParams} from '$lib/server/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {setupApp, teardownApp} from '$lib/util/testAppHelpers';
@@ -21,7 +21,7 @@ test__eventInfos.before(setupApp(noop as any)); // TODO either use `node-fetch` 
 test__eventInfos.after(teardownApp);
 
 test__eventInfos('dispatch random events in a client app', async ({db, app}) => {
-	const random = toRandomVocabContext(db);
+	const random = new RandomVocabContext(db);
 
 	for (const eventInfo of eventInfos.values()) {
 		const account = await random.account();
