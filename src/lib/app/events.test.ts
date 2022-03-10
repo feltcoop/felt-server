@@ -43,7 +43,7 @@ test__eventInfos('dispatch random events in a client app', async ({db, app}) => 
 		}
 
 		// TODO can't make remote calls yet -- either use `node-fetch` or mock
-		if (eventInfo.type !== 'ClientEvent') {
+		if (eventInfo.type !== 'ClientEvent' || eventInfo.name === 'QueryEntities') {
 			continue;
 		}
 
