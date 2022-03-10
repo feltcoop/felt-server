@@ -85,6 +85,7 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 			params.name,
 			params.view,
 			params.url,
+			params.icon,
 			params.community_id,
 		);
 		if (createSpaceResult.ok) {
