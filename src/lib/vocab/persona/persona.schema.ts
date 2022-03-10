@@ -34,17 +34,5 @@ export const CommunityPersonaSchema = {
 export const PersonaSchema = {
 	$id: '/schemas/Persona.json',
 	anyOf: [AccountPersonaSchema, CommunityPersonaSchema],
+	tsType: 'AccountPersona | CommunityPersona',
 };
-
-export const PersonaParamsSchema = {
-	$id: '/schemas/PersonaParams.json',
-	type: 'object',
-	properties: {
-		name: {type: 'string'},
-	},
-	required: ['name'],
-	additionalProperties: false,
-};
-
-//TODO
-//2.5: Render active persona

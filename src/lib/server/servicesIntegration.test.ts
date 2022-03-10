@@ -9,7 +9,6 @@ import {validateSpace} from '$lib/vocab/space/validateSpace';
 import {toValidationErrorMessage} from '$lib/util/ajv';
 import {validateAccount, validateAccountModel} from '$lib/vocab/account/validateAccount';
 import {validateCommunity} from '$lib/vocab/community/validateCommunity';
-import {validatePersona} from '$lib/vocab/persona/validatePersona';
 import type {Entity} from '$lib/vocab/entity/entity';
 import {
 	randomAccountParams,
@@ -50,11 +49,6 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 			session,
 		}),
 	);
-	if (!validatePersona()(persona)) {
-		throw new Error(
-			`Failed to validate persona: ${toValidationErrorMessage(validatePersona().errors![0])}`,
-		);
-	}
 	assert.ok(personaHomeCommunity);
 	if (!validateCommunity()(personaHomeCommunity)) {
 		throw new Error(
@@ -170,13 +164,6 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	const filterPersonasValue = unwrap(await db.repos.persona.filterByAccount(account.account_id));
 	assert.is(filterPersonasValue.length, 1);
 	assert.equal(filterPersonasValue, [persona]);
-	filterPersonasValue.forEach((p) => {
-		if (!validatePersona()(p)) {
-			throw new Error(
-				`Failed to validate persona: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
-			);
-		}
-	});
 
 	const findAccountByIdValue = unwrap(await db.repos.account.findById(account.account_id));
 	assert.is(findAccountByIdValue.name, account.name); // TODO do a better check
