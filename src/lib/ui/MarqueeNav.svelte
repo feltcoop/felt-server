@@ -1,49 +1,22 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
 
-	import type {Space} from '$lib/vocab/space/space';
-	import type {Community} from '$lib/vocab/community/community';
-	import Avatar from '$lib/ui/Avatar.svelte';
-	import {toUrl} from '$lib/vocab/persona/constants';
-	import {randomHue} from '$lib/ui/color';
+	import type {Persona} from '$lib/vocab/persona/persona';
 
-	/* 
-  
-  TODO design
-  
-  - maybe show only icons for the persona+community?
-
-  */
-
-	export let community: Readable<Community>;
-	export let space: Readable<Space | null>;
-
-	$: href = `/${$community.name}${toUrl($space?.url)}`;
+	export let communityPersonas: Array<Readable<Persona>>;
 </script>
 
-<div class="marquee-nav">
-	<!-- TODO url extract helper -->
-	<a class="avatars" {href} style="--hue: {randomHue($community.name)}">
-		<Avatar name={$community.name} showName={false} type="Community" />
-		<span class="url">{href}</span>
-	</a>
-</div>
+<div class="marquee-nav">Members — {communityPersonas.length}</div>
 
 <style>
 	.marquee-nav {
 		position: relative;
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 		height: var(--navbar_size);
 		background-color: var(--tint_dark_1);
 		padding-right: var(--navbar_size); /* placeholder for button, which is rendered elsewhere */
-	}
-	.avatars {
-		display: flex;
-		align-items: center;
-		height: 100%;
-	}
-	.url {
-		padding: 0 var(--spacing_xs);
+		padding-left: var(--spacing_lg);
 	}
 </style>

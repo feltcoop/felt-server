@@ -123,7 +123,9 @@ export const toUi = (
 				const {community_id} = get(community);
 				for (const membership of $memberships.value) {
 					if (get(membership).community_id === community_id) {
-						communityPersonas.push(personaById.get(get(membership).persona_id)!);
+						const persona = personaById.get(get(membership).persona_id)!;
+						if (get(persona).type !== 'account') continue;
+						communityPersonas.push(persona);
 					}
 				}
 				map.set(community_id, communityPersonas);
