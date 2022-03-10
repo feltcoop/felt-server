@@ -41,8 +41,9 @@
 		align-items: center;
 		height: var(--navbar_size);
 		width: 100%;
+		overflow: hidden;
 		background-color: var(--tint_dark_1);
-		font-size: var(--font_size_xl);
+		font-size: var(--font_size_lg);
 	}
 	.breadcrumbs {
 		display: flex;
@@ -58,6 +59,7 @@
 	.luggage-placeholder,
 	.marquee-button-placeholder {
 		width: var(--luggage_size);
+		min-width: var(--luggage_size);
 		height: var(--luggage_size);
 	}
 	.expanded-nav .luggage-placeholder,
@@ -70,5 +72,6 @@
 	}
 	.title {
 		padding: 0 var(--spacing_xs);
+		white-space: nowrap;
 	}
 </style>
