@@ -1,7 +1,7 @@
 import type {Service} from '$lib/server/service';
 import {pingService} from '$lib/server/pingService';
 import {loginAccountService, logoutAccountService} from '$lib/vocab/account/accountServices';
-import {createPersonaService} from '$lib/vocab/persona/personaServices';
+import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {
 	readCommunityService,
 	readCommunitiesService,
@@ -32,7 +32,7 @@ export const services: Map<string, Service<any, any>> = new Map(
 		pingService,
 		loginAccountService,
 		logoutAccountService,
-		createPersonaService,
+		createAccountPersonaService,
 		createCommunityService,
 		createMembershipService,
 		deleteMembershipService,

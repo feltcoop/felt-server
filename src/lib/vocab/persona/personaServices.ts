@@ -12,7 +12,7 @@ import {toDefaultCommunitySettings} from '../community/community.schema';
 const log = new Logger(gray('[') + blue('personaServices') + gray(']'));
 
 //Creates a new persona
-export const createPersonaService: Service<
+export const createAccountPersonaService: Service<
 	CreateAccountPersonaParams,
 	CreateAccountPersonaResponseResult
 > = {

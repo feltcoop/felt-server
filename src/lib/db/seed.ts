@@ -7,15 +7,19 @@ import type {Account} from '$lib/vocab/account/account.js';
 import type {CreateAccountParams} from '$lib/vocab/account/account.schema.js';
 import type {Space} from '$lib/vocab/space/space.js';
 import type {Community} from '$lib/vocab/community/community';
-import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
+import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
+import {SessionApi} from '$lib/server/SessionApi';
+import {createCommunityService} from '$lib/vocab/community/communityServices';
 
 /* eslint-disable no-await-in-loop */
 
 // TODO extract seed helpers and db methods
 
 const log = new Logger([cyan('[seed]')]);
+
+const session = new SessionApi(null);
 
 export const seed = async (db: Database): Promise<void> => {
 	const {sql} = db;
@@ -38,23 +42,31 @@ export const seed = async (db: Database): Promise<void> => {
 		a: ['alice', 'andy'],
 		b: ['betty', 'billy'],
 	};
+	const accounts: Account[] = [];
 	const personas: Persona[] = [];
 	for (const accountParams of accountsParams) {
 		const account = unwrap(
 			await db.repos.account.create(accountParams.name, accountParams.password),
 		);
 		log.trace('created account', account);
+		accounts.push(account);
 		for (const personaName of personasParams[account.name]) {
-			const {persona, community} = unwrap(
-				await db.repos.persona.create('account', personaName, account.account_id, null),
+			const {persona, spaces} = unwrap(
+				await createAccountPersonaService.perform({
+					params: {name: personaName},
+					account_id: account.account_id,
+					repos: db.repos,
+					session,
+				}),
 			);
+
 			log.trace('created persona', persona);
 			personas.push(persona);
-			const spaces = unwrap(await db.repos.space.filterByCommunity(community.community_id));
 			await createDefaultEntities(db, spaces, [persona]);
 		}
 	}
 
+	const mainAccountCreator = accounts[0];
 	const mainPersonaCreator = personas[0];
 	const otherPersonas = personas.slice(1);
 
@@ -67,12 +79,12 @@ export const seed = async (db: Database): Promise<void> => {
 
 	for (const communityParams of communitiesParams) {
 		const {community, spaces} = unwrap(
-			await db.repos.community.create(
-				'standard',
-				communityParams.name,
-				toDefaultCommunitySettings(communityParams.name),
-				communityParams.persona_id,
-			),
+			await createCommunityService.perform({
+				params: {name: communityParams.name, persona_id: communityParams.persona_id},
+				account_id: mainAccountCreator.account_id,
+				repos: db.repos,
+				session,
+			}),
 		);
 		communities.push(community);
 		for (const persona of otherPersonas) {

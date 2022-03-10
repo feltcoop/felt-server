@@ -18,6 +18,11 @@ import type {EntityData} from '$lib/vocab/entity/entityData';
 import type {ViewData} from '$lib/vocab/view/view';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
+import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
+import {SessionApi} from '$lib/server/SessionApi';
+import {createCommunityService} from '$lib/vocab/community/communityServices';
+
+const session = new SessionApi(null);
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = (): string => Math.random().toString().slice(2);
@@ -75,6 +80,7 @@ export interface RandomVocab {
 /* eslint-disable no-param-reassign */
 
 // TODO generate from schema
+// TODO replace db.repos calls w/ service calls (see persona/community creation)
 export class RandomVocabContext {
 	constructor(private db: Database) {}
 
@@ -95,12 +101,12 @@ export class RandomVocabContext {
 	async persona(account?: Account): Promise<Persona> {
 		if (!account) account = await this.account();
 		const {community, persona} = unwrap(
-			await this.db.repos.persona.create(
-				'account',
-				randomPersonaParams().name,
-				account.account_id,
-				null,
-			),
+			await createAccountPersonaService.perform({
+				params: {name: randomPersonaParams().name},
+				account_id: account.account_id,
+				repos: this.db.repos,
+				session,
+			}),
 		);
 		this.communities.push(community);
 		this.personas.push(persona);
@@ -108,15 +114,16 @@ export class RandomVocabContext {
 	}
 
 	async community(persona?: Persona, account?: Account): Promise<Community> {
+		if (!account) account = await this.account();
 		if (!persona) persona = await this.persona(account);
 		const params = randomCommunityParams(persona.persona_id);
 		const {community} = unwrap(
-			await this.db.repos.community.create(
-				'standard',
-				params.name,
-				params.settings!,
-				params.persona_id,
-			),
+			await createCommunityService.perform({
+				params,
+				account_id: account.account_id,
+				repos: this.db.repos,
+				session,
+			}),
 		);
 		this.communities.push(community);
 		return community;
