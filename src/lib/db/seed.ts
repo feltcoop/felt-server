@@ -1,6 +1,7 @@
 import {unwrap} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {cyan} from 'kleur/colors';
+import {traverse} from '@feltcoop/felt/util/object.js';
 
 import type {Database} from '$lib/db/Database.js';
 import type {Account} from '$lib/vocab/account/account.js';
@@ -10,6 +11,7 @@ import type {Community} from '$lib/vocab/community/community';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
+import type {ViewData} from '$lib/vocab/view/view';
 
 /* eslint-disable no-await-in-loop */
 
@@ -83,20 +85,6 @@ export const seed = async (db: Database): Promise<void> => {
 };
 
 const createDefaultEntities = async (db: Database, spaces: Space[], personas: Persona[]) => {
-	const entitiesContents: {[key: string]: string[]} = {
-		Room: ['Those who know do not speak.', 'Those who speak do not know.'],
-		Board: ["All the world's a stage.", 'And all the men and women merely players.'],
-		Forum: [
-			'If the evidence says you’re wrong, you don’t have the right theory.',
-			'You change the theory, not the evidence.',
-		],
-		Notes: [
-			'We have no guarantee about the future',
-			'but we exist in the hope of something better.',
-			'The 14th Dalai Lama',
-		],
-	};
-
 	let personaIndex = -1;
 	const nextPersona = (): Persona => {
 		personaIndex++;
@@ -105,11 +93,12 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 	};
 
 	for (const space of spaces) {
-		const viewType = toViewType(space.view); // TODO refactor to not need `toViewType`
-		if (!viewType || !(viewType in entitiesContents)) {
+		const componentName = findFirstComponentName(space.view);
+		console.log(`componentName`, componentName);
+		if (!componentName || !(componentName in entitiesContents)) {
 			continue;
 		}
-		const entityContents = entitiesContents[viewType];
+		const entityContents = entitiesContents[componentName];
 		for (const entityContent of entityContents) {
 			await db.repos.entity.create(nextPersona().persona_id, space.space_id, {
 				type: 'Note',
@@ -117,4 +106,29 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 			});
 		}
 	}
+};
+
+const entitiesContents: Record<string, string[]> = {
+	Room: ['Those who know do not speak.', 'Those who speak do not know.'],
+	Board: ["All the world's a stage.", 'And all the men and women merely players.'],
+	Forum: [
+		'If the evidence says you’re wrong, you don’t have the right theory.',
+		'You change the theory, not the evidence.',
+	],
+	Notes: [
+		'We have no guarantee about the future',
+		'but we exist in the hope of something better.',
+		'The 14th Dalai Lama',
+	],
+};
+
+const findFirstComponentName = (view: ViewData): string | undefined => {
+	let result: string | undefined;
+	traverse(view, (key, value, obj) => {
+		if (result) return; // TODO change this by adding a `stop` method? or a different helper?
+		if (key === 'type' && value === 'svelteComponent') {
+			result = obj.tagName;
+		}
+	});
+	return result;
 };
