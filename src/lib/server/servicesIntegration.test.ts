@@ -3,7 +3,6 @@ import * as assert from 'uvu/assert';
 import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {toValidationErrorMessage} from '$lib/util/ajv';
 import {
 	randomAccountParams,
 	randomCommunityParams,
@@ -14,11 +13,17 @@ import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import {type NoteEntityData} from '$lib/vocab/entity/entityData';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {SessionApi} from '$lib/server/SessionApi';
-import {createCommunityService} from '$lib/vocab/community/communityServices';
-import {createSpaceService} from '$lib/vocab/space/spaceServices';
-import {createEntityService} from '$lib/vocab/entity/entityServices';
-
-const session = new SessionApi(null);
+import {
+	createCommunityService,
+	readCommunitiesService,
+	readCommunityService,
+} from '$lib/vocab/community/communityServices';
+import {
+	createSpaceService,
+	readSpaceService,
+	readSpacesService,
+} from '$lib/vocab/space/spaceServices';
+import {createEntityService, readEntitiesService} from '$lib/vocab/entity/entityServices';
 
 /* test_servicesIntegration */
 const test_servicesIntegration = suite<TestDbContext>('repos');
@@ -34,14 +39,19 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	const accountParams = randomAccountParams();
 	const account = unwrap(await db.repos.account.create(accountParams.name, accountParams.password));
 
+	// This is a reusable request context for all `service.perform` calls.
+	const serviceRequest = {
+		account_id: account.account_id,
+		repos: db.repos,
+		session: new SessionApi(null),
+	};
+
 	// TODO create 2 personas
 	const personaParams = randomPersonaParams();
 	const {persona, community: personaHomeCommunity} = unwrap(
 		await createAccountPersonaService.perform({
 			params: {name: personaParams.name},
-			account_id: account.account_id,
-			repos: db.repos,
-			session,
+			...serviceRequest,
 		}),
 	);
 	assert.ok(personaHomeCommunity);
@@ -50,9 +60,7 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	const {community} = unwrap(
 		await createCommunityService.perform({
 			params: {name: communityParams.name, persona_id: communityParams.persona_id},
-			account_id: account.account_id,
-			repos: db.repos,
-			session,
+			...serviceRequest,
 		}),
 	);
 
@@ -60,9 +68,7 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	const {space} = unwrap(
 		await createSpaceService.perform({
 			params: spaceParams,
-			account_id: account.account_id,
-			repos: db.repos,
-			session,
+			...serviceRequest,
 		}),
 	);
 	const spaceCount = 1;
@@ -74,17 +80,13 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	const {entity: entity1} = unwrap(
 		await createEntityService.perform({
 			params: {actor_id: persona.persona_id, space_id: space.space_id, data: entityData1},
-			account_id: account.account_id,
-			repos: db.repos,
-			session,
+			...serviceRequest,
 		}),
 	);
 	const {entity: entity2} = unwrap(
 		await createEntityService.perform({
 			params: {actor_id: persona.persona_id, space_id: space.space_id, data: entityData2},
-			account_id: account.account_id,
-			repos: db.repos,
-			session,
+			...serviceRequest,
 		}),
 	);
 	assert.is(entity1.actor_id, persona.persona_id);
@@ -99,71 +101,53 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	//
 	//
 
-	const filterFilesValue = unwrap(await db.repos.entity.filterBySpace(space.space_id));
+	const {entities: filterFilesValue} = unwrap(
+		await readEntitiesService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
+	);
 	assert.is(filterFilesValue.length, 2);
-	filterFilesValue.forEach((f) => {
-		if (!validateEntity()(f)) {
-			throw new Error(
-				`Failed to validate entity: ${toValidationErrorMessage(validateEntity().errors![0])}`,
-			);
-		}
-	});
 	assert.equal(filterFilesValue, [entity1, entity2]);
 
-	const findSpaceValue = unwrap(await db.repos.space.findById(space.space_id));
-	assert.equal(findSpaceValue, space);
-	if (!validateSpace()(findSpaceValue)) {
-		throw new Error(
-			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
-		);
-	}
-	const filterSpacesValue = unwrap(await db.repos.space.filterByCommunity(community.community_id));
-	assert.equal(filterSpacesValue.length, spaceCount + defaultSpaceCount);
-	filterSpacesValue.forEach((s) => {
-		if (!validateSpace()(s)) {
-			throw new Error(
-				`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
-			);
-		}
-	});
-
-	const findCommunityValue = unwrap(await db.repos.community.findById(community.community_id));
-	assert.is(findCommunityValue.name, community.name); // TODO do a better check
-	if (!validateCommunity()(findCommunityValue)) {
-		throw new Error(
-			`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
-		);
-	}
-	const filterCommunitiesValue = unwrap(
-		await db.repos.community.filterByAccount(account.account_id),
+	const {space: findSpaceValue} = unwrap(
+		await readSpaceService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
 	);
-	assert.equal(filterCommunitiesValue.length, 2); // TODO do a better check
-	filterCommunitiesValue.forEach((s) => {
-		if (!validateCommunity()(s)) {
-			throw new Error(
-				`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
-			);
-		}
-	});
+	assert.equal(findSpaceValue, space);
 
+	const {spaces: filterSpacesValue} = unwrap(
+		await readSpacesService.perform({
+			params: {community_id: community.community_id},
+			...serviceRequest,
+		}),
+	);
+	assert.equal(filterSpacesValue.length, spaceCount + defaultSpaceCount);
+
+	const {community: findCommunityValue} = unwrap(
+		await readCommunityService.perform({
+			params: {community_id: community.community_id},
+			...serviceRequest,
+		}),
+	);
+	assert.is(findCommunityValue.name, community.name);
+
+	const {communities: filterCommunitiesValue} = unwrap(
+		await readCommunitiesService.perform({
+			params: {account_id: account.account_id},
+			...serviceRequest,
+		}),
+	);
+	assert.equal(filterCommunitiesValue.length, 2);
+
+	// TODO add a service event?
 	const filterPersonasValue = unwrap(await db.repos.persona.filterByAccount(account.account_id));
 	assert.is(filterPersonasValue.length, 1);
 	assert.equal(filterPersonasValue, [persona]);
 
+	// TODO add a service event?
 	const findAccountByIdValue = unwrap(await db.repos.account.findById(account.account_id));
-	assert.is(findAccountByIdValue.name, account.name); // TODO do a better check
-	if (!validateAccountModel()(findAccountByIdValue)) {
-		throw new Error(
-			`Failed to validate account: ${toValidationErrorMessage(validateAccountModel().errors![0])}`,
-		);
-	}
+	assert.is(findAccountByIdValue.name, account.name);
+
+	// TODO add a service event?
 	const findAccountByNameValue = unwrap(await db.repos.account.findByName(account.name));
-	assert.is(findAccountByNameValue.name, account.name); // TODO do a better check
-	if (!validateAccount()(findAccountByNameValue)) {
-		throw new Error(
-			`Failed to validate account: ${toValidationErrorMessage(validateAccount().errors![0])}`,
-		);
-	}
+	assert.is(findAccountByNameValue.name, account.name);
 
 	// do changes
 	//
