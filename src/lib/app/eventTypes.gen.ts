@@ -1,6 +1,6 @@
 import {type Gen} from '@feltcoop/gro';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
-import {toVocabSchemaResolver} from '@feltcoop/gro/dist/schema.js';
+import {toVocabSchemaResolver} from '@feltcoop/gro/dist/utils/schema.js';
 
 import {eventInfos} from '$lib/app/events';
 import {

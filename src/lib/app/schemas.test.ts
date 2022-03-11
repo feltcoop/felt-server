@@ -1,10 +1,10 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
-import type {SchemaObject} from 'ajv';
+import {type VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
 
 import {schemas} from '$lib/app/schemas';
 
-const printSchema = (schema: SchemaObject) => ('$id' in schema ? schema.$id : 'AnonymousSchema');
+const printSchema = (schema: VocabSchema) => ('$id' in schema ? schema.$id : 'AnonymousSchema');
 
 /* test__schemas */
 const test__schemas = suite('schemas');

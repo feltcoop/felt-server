@@ -1,8 +1,23 @@
 import {randomHue} from '$lib/ui/color';
-import {type Community} from '$lib/vocab/community/community';
+import {type CommunitySettings} from '$lib/vocab/community/community';
 
-// TODO generate types: export interface CommunitySettings
+export const CommunitySchema = {
+	$id: '/schemas/Community.json',
+	type: 'object',
+	properties: {
+		community_id: {type: 'number'},
+		type: {type: 'string', enum: ['standard', 'personal']},
+		name: {type: 'string'},
+		settings: {$ref: '/schemas/CommunitySettings.json'},
+		created: {type: 'object', format: 'date-time', tsType: 'Date'},
+		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
+	},
+	required: ['community_id', 'type', 'name', 'settings', 'created', 'updated'],
+	additionalProperties: false,
+};
+
 export const CommunitySettingsSchema = {
+	$id: '/schemas/CommunitySettings.json',
 	type: 'object',
 	properties: {
 		hue: {type: 'number'},
@@ -11,23 +26,6 @@ export const CommunitySettingsSchema = {
 	additionalProperties: false,
 };
 
-export const toDefaultCommunitySettings = (name: string): Community['settings'] => ({
+export const toDefaultCommunitySettings = (name: string): CommunitySettings => ({
 	hue: randomHue(name),
 });
-
-// TODO fix this type to infer `Community` like with the other schemas --
-// need to handle the various kinds of `Community` doc variations we return from the database
-export const CommunitySchema = {
-	$id: '/schemas/Community.json',
-	type: 'object',
-	properties: {
-		community_id: {type: 'number'},
-		type: {type: 'string', enum: ['standard', 'personal']},
-		name: {type: 'string'},
-		settings: CommunitySettingsSchema,
-		created: {type: 'object', format: 'date-time', tsType: 'Date'},
-		updated: {type: ['object', 'null'], format: 'date-time', tsType: 'Date | null'},
-	},
-	required: ['community_id', 'type', 'name', 'settings', 'created', 'updated'],
-	additionalProperties: false,
-};

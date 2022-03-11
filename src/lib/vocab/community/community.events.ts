@@ -1,5 +1,6 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 import {CommunitySettingsSchema} from '$lib/vocab/community/community.schema';
+import {type VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
 
 export const CreateCommunity: ServiceEventInfo = {
 	type: 'ServiceEvent',
@@ -10,7 +11,7 @@ export const CreateCommunity: ServiceEventInfo = {
 		properties: {
 			name: {type: 'string'},
 			persona_id: {type: 'number'},
-			settings: CommunitySettingsSchema,
+			settings: CommunitySettingsSchema as VocabSchema,
 		},
 		required: ['name', 'persona_id'],
 		additionalProperties: false,
@@ -97,7 +98,7 @@ export const UpdateCommunitySettings: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			community_id: {type: 'number'},
-			settings: CommunitySettingsSchema,
+			settings: CommunitySettingsSchema as VocabSchema,
 		},
 		required: ['community_id', 'settings'],
 		additionalProperties: false,

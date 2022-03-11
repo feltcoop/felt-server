@@ -1,8 +1,8 @@
-import type {SchemaObject} from 'ajv';
+import {type VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
 import {compile, type Options} from '@ryanatkn/json-schema-to-typescript';
 
 export const jsonSchemaToTypescript = (
-	schema: SchemaObject | null,
+	schema: VocabSchema | null,
 	name: string,
 	options?: Partial<Options> | undefined,
 ): string | Promise<string> => {
