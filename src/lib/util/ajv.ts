@@ -1,5 +1,6 @@
 import Ajv, {type Options, type ErrorObject, type ValidateFunction, type SchemaObject} from 'ajv';
 import addFormats from 'ajv-formats';
+import {traverse} from '@feltcoop/felt/util/object.js';
 
 import {schemas} from '$lib/app/schemas';
 
@@ -11,14 +12,15 @@ export const ajv = (opts?: Options): Ajv => {
 	ajvInstance = new Ajv(opts);
 	ajvInstance.addKeyword('tsType').addKeyword('tsImport');
 	addFormats(ajvInstance);
+	const addedSchemas = new Set<string>();
 	for (const schema of schemas) {
-		ajvInstance.addSchema(schema);
-		//TODO BIG HACK HERE; should use references in anyOf
-		if (schema.allOf) {
-			for (const s of schema.allOf) {
-				ajvInstance.addSchema(s);
+		//TODO BIG HACK HERE; should use references in anyOf, and then call `addSchema` with only `schema`
+		traverse(schema, (key, value, obj) => {
+			if (key === '$id' && !addedSchemas.has(value)) {
+				addedSchemas.add(value);
+				ajvInstance!.addSchema(obj);
 			}
-		}
+		});
 	}
 	return ajvInstance;
 };
