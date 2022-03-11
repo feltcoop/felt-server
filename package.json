@@ -49,7 +49,7 @@
     "@feltcoop/felt": "^0.22.1",
     "@polka/send-type": "^0.5.2",
     "@ryanatkn/json-schema-to-typescript": "^11.1.2",
-    "ajv": "^8.8.2",
+    "ajv": "^8.10.0",
     "ajv-formats": "^2.1.1",
     "body-parser": "^1.19.1",
     "cookie-session": "^2.0.0",
