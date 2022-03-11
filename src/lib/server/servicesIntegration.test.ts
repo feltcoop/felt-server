@@ -1,11 +1,9 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
-import type {Result} from '@feltcoop/felt';
 import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {toValidationErrorMessage} from '$lib/util/ajv';
-import type {Entity} from '$lib/vocab/entity/entity';
 import {
 	randomAccountParams,
 	randomCommunityParams,
@@ -17,6 +15,8 @@ import {type NoteEntityData} from '$lib/vocab/entity/entityData';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {SessionApi} from '$lib/server/SessionApi';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
+import {createSpaceService} from '$lib/vocab/space/spaceServices';
+import {createEntityService} from '$lib/vocab/entity/entityServices';
 
 const session = new SessionApi(null);
 
@@ -31,7 +31,6 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	//
 	//
 	//
-	//TODO replace db.repos calls w/ service calls (see persona/community creation)
 	const accountParams = randomAccountParams();
 	const account = unwrap(await db.repos.account.create(accountParams.name, accountParams.password));
 
@@ -58,40 +57,35 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	);
 
 	const spaceParams = randomSpaceParams(community.community_id);
-	const space = unwrap(
-		await db.repos.space.create(
-			spaceParams.name,
-			spaceParams.view,
-			spaceParams.url,
-			spaceParams.community_id,
-		),
+	const {space} = unwrap(
+		await createSpaceService.perform({
+			params: spaceParams,
+			account_id: account.account_id,
+			repos: db.repos,
+			session,
+		}),
 	);
-	if (!validateSpace()(space)) {
-		throw new Error(
-			`Failed to validate space: ${toValidationErrorMessage(validateSpace().errors![0])}`,
-		);
-	}
 	const spaceCount = 1;
 	const defaultSpaces = toDefaultSpaces(community);
 	const defaultSpaceCount = defaultSpaces.length;
 
-	const unwrapEntity = async (promise: Promise<Result<{value: Entity}>>): Promise<Entity> => {
-		const entity = unwrap(await promise);
-		if (!validateEntity()(entity)) {
-			throw new Error(
-				`Failed to validate entity: ${toValidationErrorMessage(validateEntity().errors![0])}`,
-			);
-		}
-		return entity;
-	};
-
 	const entityData1: NoteEntityData = {type: 'Note', content: 'this is entity 1'};
 	const entityData2: NoteEntityData = {type: 'Note', content: 'entity: 2'};
-	const entity1 = await unwrapEntity(
-		db.repos.entity.create(persona.persona_id, space.space_id, entityData1),
+	const {entity: entity1} = unwrap(
+		await createEntityService.perform({
+			params: {actor_id: persona.persona_id, space_id: space.space_id, data: entityData1},
+			account_id: account.account_id,
+			repos: db.repos,
+			session,
+		}),
 	);
-	const entity2 = await unwrapEntity(
-		db.repos.entity.create(persona.persona_id, space.space_id, entityData2),
+	const {entity: entity2} = unwrap(
+		await createEntityService.perform({
+			params: {actor_id: persona.persona_id, space_id: space.space_id, data: entityData2},
+			account_id: account.account_id,
+			repos: db.repos,
+			session,
+		}),
 	);
 	assert.is(entity1.actor_id, persona.persona_id);
 	assert.is(entity2.actor_id, persona.persona_id);
