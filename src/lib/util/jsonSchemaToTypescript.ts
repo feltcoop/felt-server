@@ -1,4 +1,4 @@
-import {type VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
+import type {VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
 import {compile, type Options} from '@ryanatkn/json-schema-to-typescript';
 
 export const jsonSchemaToTypescript = (

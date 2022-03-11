@@ -1,6 +1,6 @@
 import Ajv, {type Options, type ErrorObject, type ValidateFunction, type SchemaObject} from 'ajv';
 import addFormats from 'ajv-formats';
-import {type VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
+import type {VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
 
 import {schemas} from '$lib/app/schemas';
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import {type VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
-	import {type JSONSchema} from '@ryanatkn/json-schema-to-typescript';
+	import type {VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
+	import type {JSONSchema} from '@ryanatkn/json-schema-to-typescript';
 
 	export let schema: VocabSchema;
 

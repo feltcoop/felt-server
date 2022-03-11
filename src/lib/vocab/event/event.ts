@@ -1,4 +1,4 @@
-import {type VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
+import type {VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
 
 import type {ServiceMethod} from '$lib/server/service';
 

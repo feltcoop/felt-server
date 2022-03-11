@@ -1,6 +1,6 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
-import {type VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
+import type {VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
 
 import {schemas} from '$lib/app/schemas';
 
