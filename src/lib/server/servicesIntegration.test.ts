@@ -66,10 +66,7 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 
 	const spaceParams = randomSpaceParams(community.community_id);
 	const {space} = unwrap(
-		await createSpaceService.perform({
-			params: spaceParams,
-			...serviceRequest,
-		}),
+		await createSpaceService.perform({params: spaceParams, ...serviceRequest}),
 	);
 	const spaceCount = 1;
 	const defaultSpaces = toDefaultSpaces(community);
