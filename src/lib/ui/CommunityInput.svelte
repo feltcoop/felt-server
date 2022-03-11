@@ -25,8 +25,6 @@
 	let nameEl: HTMLInputElement;
 	let errorMessage: string | null = null;
 
-	let customize = false;
-
 	// TODO formalize this (probably through the schema)
 	$: name = name.replace(/[^a-zA-Z0-9-]+/gu, '');
 
@@ -89,7 +87,7 @@
 		<section>
 			<Avatar {name} type="Community" {hue} />
 		</section>
-		<details bind:open={customize}>
+		<details>
 			<summary>Customize</summary>
 			<div class="customize">
 				<HueInput {hue} on:input={(e) => (chosenHue = e.detail)} />
