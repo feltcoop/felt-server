@@ -30,7 +30,7 @@
 	// TODO formalize this (probably through the schema)
 	$: name = name.replace(/[^a-zA-Z0-9-]+/gu, '');
 
-	$: name, (errorMessage = null);
+	$: if (name) errorMessage = null;
 
 	const create = async (): Promise<void> => {
 		if (!name) {
