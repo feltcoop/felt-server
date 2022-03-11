@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
 	import {throttle} from 'throttle-debounce';
+	import HueInput from '@feltcoop/felt/ui/HueInput.svelte';
 
 	import EntityIcon from '$lib/ui/EntityIcon.svelte';
-	import HueInput from '$lib/ui/HueInput.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
 

@@ -24,6 +24,7 @@
 				dispatch('OpenDialog', {
 					Component: CommunityInput,
 					props: {persona, done: () => dispatch('CloseDialog')},
+					dialogProps: {layout: 'page'},
 				})}
 		>
 			<span class="title">Create Community</span>

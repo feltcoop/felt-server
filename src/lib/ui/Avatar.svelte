@@ -7,10 +7,13 @@
 
 	export let name: string = GUEST_PERSONA_NAME; // TODO should this handle "default" or "empty" or "blank" avatars?
 	export let icon: string | null = null;
+	export let hue: number | undefined = undefined;
 	export let showName = true;
 	export let showIcon = true;
 	export let type: EntityType = 'Persona';
 	export let contextmenuAction: any | undefined = undefined;
+
+	$: finalHue = hue ?? randomHue(name);
 
 	const {
 		ui: {contextmenu},
@@ -19,7 +22,7 @@
 
 <!-- TODO add link option? -->
 
-<div class="avatar" style="--hue: {randomHue(name)}" use:contextmenu.action={contextmenuAction}>
+<div class="avatar" style="--hue: {finalHue}" use:contextmenu.action={contextmenuAction}>
 	{#if showIcon}
 		<EntityIcon {name} {icon} {type} />
 	{/if}

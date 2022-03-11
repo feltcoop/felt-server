@@ -2,11 +2,14 @@
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import type {Readable} from 'svelte/store';
+	import HueInput from '@feltcoop/felt/ui/HueInput.svelte';
 
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
+	import Avatar from '$lib/ui/Avatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
+	import {randomHue} from '$lib/ui/color';
 
 	const {dispatch} = getApp();
 
@@ -15,12 +18,19 @@
 
 	let name = '';
 
+	let chosenHue: number | undefined;
+	$: hue = chosenHue ?? randomHue(name);
+
 	let pending = false;
 	let nameEl: HTMLInputElement;
 	let errorMessage: string | null = null;
 
+	let customize = false;
+
 	// TODO formalize this (probably through the schema)
 	$: name = name.replace(/[^a-zA-Z0-9-]+/gu, '');
+
+	$: name, (errorMessage = null);
 
 	const create = async (): Promise<void> => {
 		if (!name) {
@@ -31,7 +41,11 @@
 		if (pending) return;
 		pending = true;
 		errorMessage = null;
-		const result = await dispatch('CreateCommunity', {name, persona_id: $persona.persona_id});
+		const result = await dispatch('CreateCommunity', {
+			name,
+			persona_id: $persona.persona_id,
+			settings: {hue},
+		});
 		pending = false;
 		if (result.ok) {
 			errorMessage = null;
@@ -56,17 +70,39 @@
 		<em class="spaced">as</em>
 		<PersonaAvatar {persona} />
 	</section>
-	<form>
-		<input
-			placeholder="> name"
-			bind:value={name}
-			bind:this={nameEl}
-			use:autofocus
-			on:keydown={onKeydown}
-		/>
-		<PendingButton type="button" on:click={create} {pending}>Create community</PendingButton>
-		{#if errorMessage}
-			<Message status="error">{errorMessage}</Message>
-		{/if}
-	</form>
+	<section>
+		<form>
+			<input
+				placeholder="> name"
+				bind:value={name}
+				bind:this={nameEl}
+				use:autofocus
+				on:keydown={onKeydown}
+			/>
+			<PendingButton type="button" on:click={create} {pending}>Create community</PendingButton>
+			{#if errorMessage}
+				<Message status="error">{errorMessage}</Message>
+			{/if}
+		</form>
+	</section>
+	{#if name}
+		<section>
+			<Avatar {name} type="Community" {hue} />
+		</section>
+		<details bind:open={customize}>
+			<summary>Customize</summary>
+			<div class="customize">
+				<HueInput {hue} on:input={(e) => (chosenHue = e.detail)} />
+			</div>
+		</details>
+	{/if}
 </div>
+
+<style>
+	details {
+		font-size: var(--font_size_lg);
+	}
+	.customize {
+		margin-top: var(--spacing_lg);
+	}
+</style>
