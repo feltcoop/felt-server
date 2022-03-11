@@ -1,3 +1,9 @@
+export const PersonaSchema = {
+	$id: '/schemas/Persona.json',
+	anyOf: [{$ref: '/schemas/AccountPersona.json'}, {$ref: '/schemas/CommunityPersona.json'}],
+	tsType: 'AccountPersona | CommunityPersona',
+};
+
 export const AccountPersonaSchema = {
 	$id: '/schemas/AccountPersona.json',
 	type: 'object',
@@ -14,6 +20,7 @@ export const AccountPersonaSchema = {
 	required: ['persona_id', 'account_id', 'community_id', 'type', 'name', 'created', 'updated'],
 	additionalProperties: false,
 };
+
 export const CommunityPersonaSchema = {
 	$id: '/schemas/CommunityPersona.json',
 	type: 'object',
@@ -29,10 +36,4 @@ export const CommunityPersonaSchema = {
 	},
 	required: ['persona_id', 'community_id', 'type', 'name', 'created', 'updated'],
 	additionalProperties: false,
-};
-//TODO BIG HACK HERE; should use references in anyOf
-export const PersonaSchema = {
-	$id: '/schemas/Persona.json',
-	anyOf: [AccountPersonaSchema, CommunityPersonaSchema],
-	tsType: 'AccountPersona | CommunityPersona',
 };

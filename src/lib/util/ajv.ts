@@ -13,12 +13,6 @@ export const ajv = (opts?: Options): Ajv => {
 	addFormats(ajvInstance);
 	for (const schema of schemas) {
 		ajvInstance.addSchema(schema);
-		//TODO BIG HACK HERE; should use references in anyOf
-		if (schema.allOf) {
-			for (const s of schema.allOf) {
-				ajvInstance.addSchema(s);
-			}
-		}
 	}
 	return ajvInstance;
 };
