@@ -4,11 +4,7 @@ import type {Result} from '@feltcoop/felt';
 import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {validateEntity} from '$lib/vocab/entity/validateEntity';
-import {validateSpace} from '$lib/vocab/space/validateSpace';
 import {toValidationErrorMessage} from '$lib/util/ajv';
-import {validateAccount, validateAccountModel} from '$lib/vocab/account/validateAccount';
-import {validateCommunity} from '$lib/vocab/community/validateCommunity';
 import type {Entity} from '$lib/vocab/entity/entity';
 import {
 	randomAccountParams,
@@ -50,11 +46,6 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 		}),
 	);
 	assert.ok(personaHomeCommunity);
-	if (!validateCommunity()(personaHomeCommunity)) {
-		throw new Error(
-			`Failed to validate community: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
-		);
-	}
 
 	const communityParams = randomCommunityParams(persona.persona_id);
 	const {community} = unwrap(
