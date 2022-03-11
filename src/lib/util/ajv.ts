@@ -12,12 +12,12 @@ export const ajv = (opts?: Options): Ajv => {
 	ajvInstance = new Ajv(opts);
 	ajvInstance.addKeyword('tsType').addKeyword('tsImport');
 	addFormats(ajvInstance);
-	const addedSchemas = new Set<string>();
+	const registered = new Set<string>();
 	for (const schema of schemas) {
 		//TODO BIG HACK HERE; should use references in anyOf, and then call `addSchema` with only `schema`
 		traverse(schema, (key, value, obj) => {
-			if (key === '$id' && !addedSchemas.has(value)) {
-				addedSchemas.add(value);
+			if (key === '$id' && !registered.has(value)) {
+				registered.add(value);
 				ajvInstance!.addSchema(obj);
 			}
 		});
