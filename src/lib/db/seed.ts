@@ -136,7 +136,7 @@ const entitiesContents: Record<string, string[]> = {
 const findFirstComponentName = (view: ViewData): string | undefined => {
 	let result: string | undefined;
 	traverse(view, (key, value, obj) => {
-		if (result) return; // TODO change this by adding a `stop` method? or a different helper?
+		if (result) return; // TODO maybe change the `traverse` API to allow stopping?
 		if (key === 'type' && value === 'svelteComponent') {
 			result = obj.tagName;
 		}
