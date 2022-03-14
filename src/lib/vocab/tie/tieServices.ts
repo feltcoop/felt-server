@@ -7,8 +7,10 @@ import type {
 	CreateTieResponseResult,
 	ReadTiesParams,
 	ReadTiesResponseResult,
+	DeleteTieParams,
+	DeleteTieResponseResult,
 } from '$lib/app/eventTypes';
-import {CreateTie, ReadTies} from '$lib/vocab/tie/tie.events';
+import {CreateTie, ReadTies, DeleteTie} from '$lib/vocab/tie/tie.events';
 
 const log = new Logger(gray('[') + blue('CreateTie') + gray(']'));
 
@@ -47,5 +49,20 @@ export const readTiesService: Service<ReadTiesParams, ReadTiesResponseResult> = 
 		}
 		log.trace('[ReadEntities] error searching for entities');
 		return {ok: false, status: 500, message: 'error searching for entities'};
+	},
+};
+
+//deletes a single tie
+export const deleteTieService: Service<DeleteTieParams, DeleteTieResponseResult> = {
+	event: DeleteTie,
+	perform: async ({repos, params}) => {
+		log.trace('[DeleteTie] deleting tie with ids:', params.source_id, params.dest_id);
+		const result = await repos.tie.deleteTie(params.source_id, params.dest_id, params.type);
+		log.trace('[DeleteTie] result', result);
+		if (!result.ok) {
+			log.trace('[DeleteTie] error removing tie: ', params.source_id, params.dest_id);
+			return {ok: false, status: 500, message: result.message};
+		}
+		return {ok: true, status: 200, value: null};
 	},
 };

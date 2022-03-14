@@ -2,7 +2,7 @@ import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {toRandomVocabContext} from '$lib/vocab/random';
+import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 
 /* test__tieRepo */
@@ -14,7 +14,7 @@ test__tieRepo.after(teardownDb);
 test__tieRepo('check tie queries', async ({db}) => {
 	//Gen space
 	//Gen dir entity -> thread entity -> post -> reply
-	const random = toRandomVocabContext(db);
+	const random = new RandomVocabContext(db);
 	const account = await random.account();
 	const persona = await random.persona(account);
 	const community = await random.community(persona, account);

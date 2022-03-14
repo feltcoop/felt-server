@@ -9,7 +9,6 @@ import {validateSpace} from '$lib/vocab/space/validateSpace';
 import {toValidationErrorMessage} from '$lib/util/ajv';
 import {validateAccount, validateAccountModel} from '$lib/vocab/account/validateAccount';
 import {validateCommunity} from '$lib/vocab/community/validateCommunity';
-import {validatePersona} from '$lib/vocab/persona/validatePersona';
 import type {Entity} from '$lib/vocab/entity/entity';
 import {
 	randomAccountParams,
@@ -19,36 +18,37 @@ import {
 } from '$lib/vocab/random';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import {type NoteEntityData} from '$lib/vocab/entity/entityData';
+import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
+import {SessionApi} from '$lib/server/SessionApi';
+import {createCommunityService} from '$lib/vocab/community/communityServices';
 
-// TODO this only depends on the database --
-// if we don't figure out a robust way to make a global reusable server,
-// then change this module to setup and teardown only a `db` instance
-// instead of the whole server
+const session = new SessionApi(null);
 
-/* test__repos */
-const test__repos = suite<TestDbContext>('repos');
+/* test_servicesIntegration */
+const test_servicesIntegration = suite<TestDbContext>('repos');
 
-test__repos.before(setupDb);
-test__repos.after(teardownDb);
+test_servicesIntegration.before(setupDb);
+test_servicesIntegration.after(teardownDb);
 
-test__repos('create, change, and delete some data from repos', async ({db}) => {
+test_servicesIntegration('create, change, and delete some data from repos', async ({db}) => {
 	// create everything
 	//
 	//
 	//
+	//TODO replace db.repos calls w/ service calls (see persona/community creation)
 	const accountParams = randomAccountParams();
 	const account = unwrap(await db.repos.account.create(accountParams.name, accountParams.password));
 
 	// TODO create 2 personas
 	const personaParams = randomPersonaParams();
 	const {persona, community: personaHomeCommunity} = unwrap(
-		await db.repos.persona.create('account', personaParams.name, account.account_id, null),
+		await createAccountPersonaService.perform({
+			params: {name: personaParams.name},
+			account_id: account.account_id,
+			repos: db.repos,
+			session,
+		}),
 	);
-	if (!validatePersona()(persona)) {
-		throw new Error(
-			`Failed to validate persona: ${toValidationErrorMessage(validatePersona().errors![0])}`,
-		);
-	}
 	assert.ok(personaHomeCommunity);
 	if (!validateCommunity()(personaHomeCommunity)) {
 		throw new Error(
@@ -58,12 +58,12 @@ test__repos('create, change, and delete some data from repos', async ({db}) => {
 
 	const communityParams = randomCommunityParams(persona.persona_id);
 	const {community} = unwrap(
-		await db.repos.community.create(
-			'standard',
-			communityParams.name,
-			communityParams.settings!,
-			communityParams.persona_id,
-		),
+		await createCommunityService.perform({
+			params: {name: communityParams.name, persona_id: communityParams.persona_id},
+			account_id: account.account_id,
+			repos: db.repos,
+			session,
+		}),
 	);
 
 	const spaceParams = randomSpaceParams(community.community_id);
@@ -164,13 +164,6 @@ test__repos('create, change, and delete some data from repos', async ({db}) => {
 	const filterPersonasValue = unwrap(await db.repos.persona.filterByAccount(account.account_id));
 	assert.is(filterPersonasValue.length, 1);
 	assert.equal(filterPersonasValue, [persona]);
-	filterPersonasValue.forEach((p) => {
-		if (!validatePersona()(p)) {
-			throw new Error(
-				`Failed to validate persona: ${toValidationErrorMessage(validateCommunity().errors![0])}`,
-			);
-		}
-	});
 
 	const findAccountByIdValue = unwrap(await db.repos.account.findById(account.account_id));
 	assert.is(findAccountByIdValue.name, account.name); // TODO do a better check
@@ -230,5 +223,5 @@ test__repos('create, change, and delete some data from repos', async ({db}) => {
 	// maybe do this with before/after hooks so it's easily reused?
 });
 
-test__repos.run();
-/* test__repos */
+test_servicesIntegration.run();
+/* test_servicesIntegration */

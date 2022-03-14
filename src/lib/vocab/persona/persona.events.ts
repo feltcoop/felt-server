@@ -1,10 +1,10 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
-export const CreatePersona: ServiceEventInfo = {
+export const CreateAccountPersona: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'CreatePersona',
+	name: 'CreateAccountPersona',
 	params: {
-		$id: '/schemas/CreatePersonaParams.json',
+		$id: '/schemas/CreateAccountPersonaParams.json',
 		type: 'object',
 		properties: {
 			name: {type: 'string'},
@@ -13,21 +13,22 @@ export const CreatePersona: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: '/schemas/CreatePersonaResponse.json',
+		$id: '/schemas/CreateAccountPersonaResponse.json',
 		type: 'object',
 		properties: {
-			persona: {$ref: '/schemas/Persona.json', tsType: 'Persona'},
+			persona: {$ref: '/schemas/AccountPersona.json', tsType: 'AccountPersona'},
 			community: {$ref: '/schemas/Community.json', tsType: 'Community'},
 			spaces: {type: 'array', items: {$ref: '/schemas/Space.json', tsType: 'Space'}},
+			membership: {$ref: '/schemas/Membership.json', tsType: 'Membership'},
 		},
-		required: ['persona', 'community', 'spaces'],
+		required: ['persona', 'community', 'spaces', 'membership'],
 		additionalProperties: false,
 	},
-	returns: 'Promise<CreatePersonaResponseResult>',
+	returns: 'Promise<CreateAccountPersonaResponseResult>',
 	route: {
 		path: '/api/v1/personas',
 		method: 'POST',
 	},
 };
 
-export const events: EventInfo[] = [CreatePersona];
+export const events: EventInfo[] = [CreateAccountPersona];

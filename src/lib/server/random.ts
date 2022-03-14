@@ -60,7 +60,7 @@ export const randomEventParams = async (
 		case 'ReadCommunities': {
 			return {};
 		}
-		case 'CreatePersona': {
+		case 'CreateAccountPersona': {
 			return randomPersonaParams();
 		}
 		case 'CreateMembership': {
@@ -145,6 +145,14 @@ export const randomEventParams = async (
 				space = randomItem(random.spaces) || (await random.space(persona, account, community));
 			}
 			return {space_id: space.space_id};
+		}
+		case 'DeleteTie': {
+			const tie = randomItem(random.ties) || (await random.tie());
+			return {
+				source_id: tie.source_id,
+				dest_id: tie.dest_id,
+				type: tie.type,
+			};
 		}
 		// TODO instead of randomizing, use existing ones from the arrays?
 		// what's the best way to do that?

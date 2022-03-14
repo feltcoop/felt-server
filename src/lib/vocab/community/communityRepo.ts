@@ -15,34 +15,15 @@ export const communityRepo = (db: Database) =>
 			type: Community['type'],
 			name: string,
 			settings: Community['settings'],
-			persona_id: number,
 		): Promise<Result<{value: {community: Community; spaces: Space[]}}, ErrorResponse>> => {
 			const data = await db.sql<Community[]>`
 				INSERT INTO communities (type, name, settings) VALUES (
 					${type}, ${name}, ${db.sql.json(settings)}
 				) RETURNING *
 			`;
-			log.trace('created community', data[0], {persona_id});
+			log.trace('[db] created community', data[0]);
 			const community = data[0];
-			const {community_id} = community;
-			// TODO move this code into the service layer
-			if (type === 'standard') {
-				const personaResult = await db.repos.persona.create(
-					'community',
-					community.name,
-					null,
-					community_id,
-				);
-				if (!personaResult.ok) return personaResult;
-				const membershipResult = await db.repos.membership.create(
-					personaResult.value.persona.persona_id,
-					community_id,
-				);
-				if (!membershipResult.ok) return membershipResult;
-			}
 			// TODO more robust error handling or condense into single query
-			const membershipResult = await db.repos.membership.create(persona_id, community_id);
-			if (!membershipResult.ok) return membershipResult;
 			const spacesResult = await db.repos.space.createDefaultSpaces(community); // TODO should this work happen elsewhere?
 			if (!spacesResult.ok) return spacesResult;
 			const spaces = spacesResult.value;

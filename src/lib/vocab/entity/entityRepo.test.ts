@@ -2,7 +2,7 @@ import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {toRandomVocabContext} from '$lib/vocab/random';
+import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 
 /* test__entityRepo */
@@ -12,7 +12,7 @@ test__entityRepo.before(setupDb);
 test__entityRepo.after(teardownDb);
 
 test__entityRepo('entites return sorted by created', async ({db}) => {
-	const random = toRandomVocabContext(db);
+	const random = new RandomVocabContext(db);
 	const space = await random.space();
 	const entity0 = await random.entity(undefined, undefined, undefined, space);
 	const entity1 = await random.entity(undefined, undefined, undefined, space);

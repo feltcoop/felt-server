@@ -3,7 +3,7 @@ import * as assert from 'uvu/assert';
 import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {toRandomVocabContext} from '$lib/vocab/random';
+import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {
 	createMembershipService,
@@ -18,7 +18,7 @@ test__membershipServices.before(setupDb);
 test__membershipServices.after(teardownDb);
 
 test__membershipServices('disallow creating duplicate memberships', async ({db}) => {
-	const random = toRandomVocabContext(db);
+	const random = new RandomVocabContext(db);
 	const account = await random.account();
 	const persona = await random.persona();
 	const community = await random.community();
@@ -47,7 +47,7 @@ test__membershipServices('disallow creating duplicate memberships', async ({db})
 });
 
 test__membershipServices('disallow creating memberships for personal communities', async ({db}) => {
-	const random = toRandomVocabContext(db);
+	const random = new RandomVocabContext(db);
 	const account = await random.account();
 	const persona = await random.persona();
 	const community = unwrap(await db.repos.community.findByName(persona.name))!;
@@ -64,7 +64,7 @@ test__membershipServices('disallow creating memberships for personal communities
 });
 
 test__membershipServices('delete a membership in a community', async ({db}) => {
-	const random = toRandomVocabContext(db);
+	const random = new RandomVocabContext(db);
 	const account = await random.account();
 	const persona = await random.persona(account);
 	const community = await random.community(persona);
@@ -85,7 +85,7 @@ test__membershipServices('delete a membership in a community', async ({db}) => {
 });
 
 test__membershipServices('fail to delete a personal membership', async ({db}) => {
-	const random = toRandomVocabContext(db);
+	const random = new RandomVocabContext(db);
 	const account = await random.account();
 	const persona = await random.persona(account);
 
@@ -105,7 +105,7 @@ test__membershipServices('fail to delete a personal membership', async ({db}) =>
 });
 
 test__membershipServices('fail to delete a community persona membership', async ({db}) => {
-	const random = toRandomVocabContext(db);
+	const random = new RandomVocabContext(db);
 	const account = await random.account();
 	const community = await random.community(undefined, account);
 	const communityPersona = unwrap(await db.repos.persona.findByCommunityId(community.community_id));
