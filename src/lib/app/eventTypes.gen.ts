@@ -1,5 +1,6 @@
 import {type Gen} from '@feltcoop/gro';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
+import {toVocabSchemaResolver} from '@feltcoop/gro/dist/utils/schema.js';
 
 import {eventInfos} from '$lib/app/events';
 import {
@@ -16,17 +17,7 @@ const opts: Partial<JsonSchemaToTypeScriptOptions> = {
 	$refOptions: {
 		resolve: {
 			http: false, // disable web resolution
-			file: {
-				read: (file) => {
-					const schema = schemas.find((s) => s.$id === file.url);
-					if (!schema)
-						throw Error(
-							`Unable to find schema: "${file.url}".` +
-								' Is it unregistered in $lib/app/schemas.ts, or a typo, or outdated?',
-						);
-					return JSON.stringify(schema);
-				},
-			},
+			vocab: toVocabSchemaResolver(schemas),
 		},
 	},
 };
@@ -42,7 +33,7 @@ import type {Readable} from 'svelte/store';
 import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ApiResult} from '$lib/server/api';
 import type {Community} from '$lib/vocab/community/community';
-import type {Persona} from '$lib/vocab/persona/persona';
+import type {Persona, AccountPersona} from '$lib/vocab/persona/persona';
 import type {Membership} from '$lib/vocab/membership/membership';
 import type {Space} from '$lib/vocab/space/space';
 import type {Entity} from '$lib/vocab/entity/entity';

@@ -2,7 +2,7 @@ import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {toRandomVocabContext} from '$lib/vocab/random';
+import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {deleteSpaceService} from '$lib/vocab/space/spaceServices';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
@@ -14,7 +14,7 @@ test__spaceServices.before(setupDb);
 test__spaceServices.after(teardownDb);
 
 test__spaceServices('delete a space in multiple communities', async ({db}) => {
-	const random = toRandomVocabContext(db);
+	const random = new RandomVocabContext(db);
 	const account = await random.account();
 	const community1 = await random.community();
 	const space = await random.space(undefined, account, community1);

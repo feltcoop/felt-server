@@ -1,7 +1,7 @@
 import type {Service} from '$lib/server/service';
 import {pingService} from '$lib/server/pingService';
 import {loginAccountService, logoutAccountService} from '$lib/vocab/account/accountServices';
-import {createPersonaService} from '$lib/vocab/persona/personaServices';
+import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {
 	readCommunityService,
 	readCommunitiesService,
@@ -25,14 +25,14 @@ import {
 	updateSpaceService,
 	deleteSpaceService,
 } from '$lib/vocab/space/spaceServices';
-import {createTieService, readTiesService} from '$lib/vocab/tie/tieServices';
+import {createTieService, readTiesService, deleteTieService} from '$lib/vocab/tie/tieServices';
 
 export const services: Map<string, Service<any, any>> = new Map(
 	[
 		pingService,
 		loginAccountService,
 		logoutAccountService,
-		createPersonaService,
+		createAccountPersonaService,
 		createCommunityService,
 		createMembershipService,
 		deleteMembershipService,
@@ -50,5 +50,6 @@ export const services: Map<string, Service<any, any>> = new Map(
 		deleteSpaceService,
 		createTieService,
 		readTiesService,
+		deleteTieService,
 	].map((s) => [s.event.name, s]),
 );

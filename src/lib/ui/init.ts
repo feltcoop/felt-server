@@ -1,4 +1,5 @@
 import {Logger} from '@feltcoop/felt/util/log.js';
+/* eslint-disable no-console */
 
 export const initBrowser = (): void => {
 	// TODO hacky -- need to change the upstream Logger to be more usable on the client
