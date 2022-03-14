@@ -123,7 +123,9 @@ export const toUi = (
 				const {community_id} = get(community);
 				for (const membership of $memberships.value) {
 					if (get(membership).community_id === community_id) {
-						communityPersonas.push(personaById.get(get(membership).persona_id)!);
+						const persona = personaById.get(get(membership).persona_id)!;
+						if (get(persona).type !== 'account') continue;
+						communityPersonas.push(persona);
 					}
 				}
 				map.set(community_id, communityPersonas);
@@ -211,15 +213,10 @@ export const toUi = (
 
 	const addCommunity = (
 		$community: Community,
-		persona_id: number,
 		$communitySpaces: Space[],
+		$memberships: Membership[],
 	): void => {
-		//TODO return membership object from server to put in here instead
-		memberships.mutate(($memberships) =>
-			$memberships.push(
-				writable({community_id: $community.community_id, persona_id} as Membership),
-			),
-		);
+		memberships.mutate(($ms) => $ms.push(...$memberships.map(($m) => writable($m))));
 
 		// TODO what's the right order of updating `communities` and `spaces`?
 		// We may get circular derived dependencies that put things in a bad state if either one is
@@ -245,6 +242,14 @@ export const toUi = (
 		// but is the better implementation to use a `mutable` wrapping a map, no array?
 		communityById.set($community.community_id, community);
 		communities.mutate(($communities) => $communities.push(community));
+	};
+
+	const addPersona = ($persona: Persona): void => {
+		const persona = writable($persona);
+		personaById.set($persona.persona_id, persona);
+		personas.mutate(($personas) => $personas.push(persona));
+		if ($persona.account_id)
+			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(persona));
 	};
 
 	const ui: Ui = {
@@ -370,19 +375,19 @@ export const toUi = (
 			session.set({guest: true});
 			return result;
 		},
-		CreatePersona: async ({invoke, dispatch}) => {
+		CreateAccountPersona: async ({invoke, dispatch}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
-			const {persona: $persona, community: $community, spaces: $spaces} = result.value;
+			const {
+				persona: $persona,
+				community: $community,
+				spaces: $spaces,
+				membership: $membership,
+			} = result.value;
 			log.trace('[CreatePersona]', $persona, $community, $spaces);
-			const persona = writable($persona);
-			// TODO this updates the map before the store array because it may be derived,
-			// but is the better implementation to use a `mutable` wrapping a map, no array?
-			personaById.set($persona.persona_id, persona);
-			personas.mutate(($personas) => $personas.push(persona));
-			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(persona));
+			addPersona($persona);
+			addCommunity($community, $spaces, [$membership]);
 			dispatch('SelectPersona', {persona_id: $persona.persona_id});
-			addCommunity($community, $persona.persona_id, $spaces);
 			dispatch('SelectCommunity', {community_id: $community.community_id});
 			return result;
 		},
@@ -390,9 +395,15 @@ export const toUi = (
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {persona_id} = params;
-			const {community: $community, spaces: $spaces} = result.value;
-			log.trace('[CreateCommunity]', $community, persona_id);
-			addCommunity($community, persona_id, $spaces);
+			const {
+				community: $community,
+				spaces: $spaces,
+				memberships: $memberships,
+				communityPersona: $persona,
+			} = result.value;
+			log.trace('[ui.CreateCommunity]', $community, persona_id);
+			addPersona($persona);
+			addCommunity($community, $spaces, $memberships);
 			dispatch('SelectCommunity', {community_id: $community.community_id});
 			return result;
 		},
@@ -552,6 +563,13 @@ export const toUi = (
 			const result = await invoke();
 			if (!result.ok) return result;
 			log.trace('[ReadTies] result', result);
+			//TODO figure out front end state for Ties
+			return result;
+		},
+		DeleteTie: async ({invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
+			log.trace('[DeleteTie] result', result);
 			//TODO figure out front end state for Ties
 			return result;
 		},

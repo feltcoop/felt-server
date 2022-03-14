@@ -32,7 +32,6 @@ export const createEntityService: Service<CreateEntityParams, CreateEntityRespon
 	event: CreateEntity,
 	perform: async ({repos, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
-		// server.db.repos.account.validatePersona(account_id, actor_id);
 		const insertEntitiesResult = await repos.entity.create(
 			params.actor_id,
 			params.space_id,
@@ -49,7 +48,6 @@ export const updateEntityService: Service<UpdateEntityParams, UpdateEntityRespon
 	event: UpdateEntity,
 	perform: async ({repos, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
-		// server.db.repos.account.validatePersona(account_id, actor_id);
 		const updateEntitiesResult = await repos.entity.updateEntityData(params.entity_id, params.data);
 		if (updateEntitiesResult.ok) {
 			return {ok: true, status: 200, value: {entity: updateEntitiesResult.value}}; // TODO API types

@@ -2,55 +2,41 @@ import type {Result} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue, gray} from 'kleur/colors';
 
-import type {Persona} from '$lib/vocab/persona/persona';
+import type {AccountPersona, CommunityPersona, Persona} from '$lib/vocab/persona/persona';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';
-import type {Community} from '$lib/vocab/community/community';
-import type {Space} from '$lib/vocab/space/space';
-import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 
 const log = new Logger(gray('[') + blue('personaRepo') + gray(']'));
 
 export const personaRepo = (db: Database) =>
 	({
 		// TODO instead of these null values, probably want a type union strongly typed for each persona type
-		create: async (
-			type: Persona['type'],
+		createAccountPersona: async (
 			name: string,
-			account_id: number | null,
-			// TODO clean up when logic is moved to services:
-			// `community_id` is `null` for `account` personas, gets set after creating personal community
-			community_id: number | null,
-		): Promise<
-			Result<{value: {persona: Persona; community: Community; spaces: Space[]}}, ErrorResponse>
-		> => {
-			const data = await db.sql<Persona[]>`
+			account_id: number,
+			community_id: number,
+		): Promise<Result<{value: AccountPersona}, ErrorResponse>> => {
+			const data = await db.sql<AccountPersona[]>`
 				INSERT INTO personas (type, name, account_id, community_id) VALUES (
-					${type}, ${name}, ${account_id}, ${community_id}
+					'account', ${name}, ${account_id}, ${community_id}
 				) RETURNING *
 			`;
 			const persona = data[0];
-			log.trace('created persona', persona);
-			if (type === 'account') {
-				const createCommunityResult = await db.repos.community.create(
-					'personal',
-					name,
-					toDefaultCommunitySettings(name),
-					persona.persona_id,
-				);
-				if (!createCommunityResult.ok) {
-					return {ok: false, message: 'failed to create initial persona community'};
-				}
-				const {community, spaces} = createCommunityResult.value;
-				await db.sql`
-					UPDATE personas SET community_id = ${community.community_id}
-					WHERE persona_id = ${persona.persona_id}
-				`;
-				persona.community_id = community.community_id;
-				return {ok: true, value: {persona, community, spaces}};
-			}
-			// TODO this is a hack that can be removed when this code is moved into the service layer
-			return {ok: true, value: {persona, community: null as any, spaces: null as any}};
+			log.trace('[db] created persona', persona);
+			return {ok: true, value: persona};
+		},
+		createCommunityPersona: async (
+			name: string,
+			community_id: number,
+		): Promise<Result<{value: CommunityPersona}, ErrorResponse>> => {
+			const data = await db.sql<CommunityPersona[]>`
+				INSERT INTO personas (type, name, community_id) VALUES (
+					'community', ${name}, ${community_id}
+				) RETURNING *
+			`;
+			const persona = data[0];
+			log.trace('[db] created persona', persona);
+			return {ok: true, value: persona};
 		},
 		filterByAccount: async (
 			account_id: number,
