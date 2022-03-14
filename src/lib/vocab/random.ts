@@ -15,7 +15,7 @@ import type {
 } from '$lib/app/eventTypes';
 import type {Database} from '$lib/db/Database';
 import type {EntityData} from '$lib/vocab/entity/entityData';
-import type {ViewData} from '$lib/vocab/view/view';
+import {parseView, type ViewData} from '$lib/vocab/view/view';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
@@ -32,7 +32,7 @@ export const randomPersonaName = randomString;
 export const randomCommunnityName = randomString;
 export const randomSpaceUrl = randomString;
 export const randomSpaceName = randomString;
-export const randomViewData = (): ViewData => ({type: 'Room', props: {data: '/entities'}});
+export const randomViewData = (): ViewData => parseView('<Room />');
 export const randomEntityData = (): EntityData => ({type: 'Note', content: randomString()});
 export const randomAccountParams = (): CreateAccountParams => ({
 	name: randomAccountName(),

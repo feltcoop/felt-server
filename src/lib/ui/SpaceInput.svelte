@@ -6,7 +6,7 @@
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
-	import {availableViewTypes} from '$lib/vocab/view/view';
+	import {viewTemplates, parseView} from '$lib/vocab/view/view';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
@@ -18,7 +18,7 @@
 	export let done: (() => void) | undefined = undefined;
 
 	let name = '';
-	let type = availableViewTypes[0];
+	let selectedViewTemplate = viewTemplates[0];
 
 	let pending = false;
 	let nameEl: HTMLInputElement;
@@ -42,8 +42,7 @@
 			community_id: $community.community_id,
 			name,
 			url,
-			//TODO : add space type picker
-			view: {type, props: {data: '/entities'}},
+			view: parseView(selectedViewTemplate.template),
 		});
 		pending = false;
 		if (result.ok) {
@@ -83,9 +82,9 @@
 		/>
 		<label>
 			Select Type:
-			<select class="type-selector" bind:value={type}>
-				{#each availableViewTypes as type (type)}
-					<option value={type}>{type}</option>
+			<select class="type-selector" bind:value={selectedViewTemplate}>
+				{#each viewTemplates as viewTemplate}
+					<option value={viewTemplate}>{viewTemplate.name}</option>
 				{/each}
 			</select>
 		</label>

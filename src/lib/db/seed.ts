@@ -9,6 +9,7 @@ import type {Space} from '$lib/vocab/space/space.js';
 import type {Community} from '$lib/vocab/community/community';
 import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
+import {toViewType} from '$lib/vocab/view/view';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {SessionApi} from '$lib/server/SessionApi';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
@@ -117,11 +118,11 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 	};
 
 	for (const space of spaces) {
-		const spaceContent = space.view;
-		if (!(spaceContent.type in entitiesContents)) {
+		const viewType = toViewType(space.view); // TODO refactor to not need `toViewType`
+		if (!viewType || !(viewType in entitiesContents)) {
 			continue;
 		}
-		const entityContents = entitiesContents[spaceContent.type];
+		const entityContents = entitiesContents[viewType];
 		for (const entityContent of entityContents) {
 			await db.repos.entity.create(nextPersona().persona_id, space.space_id, {
 				type: 'Note',

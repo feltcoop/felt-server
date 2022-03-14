@@ -22,9 +22,9 @@
 
 	// TODO granular data properties like `content`
 	// how? should there be a keypath that's null?
-	const updateEntityData = async (updated: any, field: string, $value: Entity) =>
+	const updateEntityData = async (updated: any, field: string) =>
 		dispatch('UpdateEntity', {
-			entity_id: $value.entity_id,
+			entity_id: $entity.entity_id,
 			[field]: updated,
 		} as any); // TODO typecast
 </script>
@@ -42,7 +42,7 @@
 	<!-- TODO add entity property contextmenu actions to this -->
 	<form>
 		<PropertyEditor
-			value={entity}
+			value={$entity.data}
 			field="data"
 			update={updateEntityData}
 			parse={parseJson}

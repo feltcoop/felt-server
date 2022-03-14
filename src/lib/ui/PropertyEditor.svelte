@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Message from '@feltcoop/felt/ui/Message.svelte';
-	import {type Readable} from 'svelte/store';
 	import {identity} from '@feltcoop/felt/util/function.js';
 	import {type Result, ok} from '@feltcoop/felt';
 
@@ -8,28 +7,29 @@
 
 	// TODO make this work with other kinds of inputs, starting with numbers
 
-	export let value: Readable<Record<string, any>>; // TODO generic type
-	export let field: string; // TODO type keyof typeof T
+	type TValue = $$Generic;
+
+	export let value: TValue;
+	export let field: string;
 	export let update: (
-		updated: any,
+		updated: TValue,
 		field: string,
-		$value: any,
-	) => Promise<Result<any, {message: string}>>; // TODO type
-	export let parse: (updated: any) => Result<{value: any}, {message: string}> = ok; // TODO type
-	export let serialize: (raw: any, print?: boolean) => any = identity; // TODO type
+	) => Promise<Result<unknown, {message: string}>>;
+	export let parse: (serialized: string) => Result<{value: TValue}, {message: string}> = ok as any; // TODO type
+	export let serialize: (value: TValue, print?: boolean) => string = identity as any; // TODO type
 
 	let editing = false;
 
 	let fieldValue: any; // initialized by `reset`
-	let raw: any;
 	let serialized: string | undefined;
 	$: {
 		const parsed = parse(fieldValue);
 		if (parsed.ok) {
-			raw = parsed.value;
-			serialized = serialize(raw, true);
+			serialized = serialize(parsed.value, true);
+			errorMessage = null;
 		} else {
-			serialized = fieldValue;
+			serialized = '';
+			errorMessage = parsed.message;
 		}
 	}
 	let pending = false;
@@ -37,7 +37,7 @@
 	let errorMessage: string | null = null;
 
 	const reset = () => {
-		fieldValue = serialize($value[field]);
+		fieldValue = serialize(value);
 	};
 	reset();
 
@@ -45,7 +45,7 @@
 		editing = true;
 		setTimeout(() => fieldValueEl.focus());
 	};
-	const cancel = () => {
+	const stopEditing = () => {
 		editing = false;
 	};
 
@@ -58,10 +58,10 @@
 			return;
 		}
 		pending = true;
-		const result = await update(parsed.value, field, $value);
+		const result = await update(parsed.value, field);
 		pending = false;
 		if (result.ok) {
-			cancel();
+			stopEditing();
 		} else {
 			errorMessage = result.message;
 		}
@@ -74,36 +74,34 @@
 		}
 	};
 
-	$: changed = fieldValue !== serialize($value[field]); // TODO hacky
+	$: currentSerialized = serialize(value, true);
+	$: changed = serialized !== currentSerialized;
 </script>
 
 <div class="field">{field}</div>
-<div class="row">
-	<div class="preview markup panel-inset">
-		<pre>{serialize($value[field], true)}</pre>
-	</div>
+<div class="preview markup panel-inset">
+	<pre>{currentSerialized}</pre>
 </div>
 {#if editing}
 	{#if changed}
 		<div class="buttons">
 			<button type="button" on:click={reset}> reset </button>
-			<button type="button" on:click={save} disabled={pending || !changed}> save </button>
+			<button type="button" on:click={save} disabled={pending || !!errorMessage}> save </button>
 		</div>
 	{:else}
-		<button type="button" on:click={cancel}>cancel</button>
-	{/if}
-	{#if errorMessage}
-		<Message status="error">{errorMessage}</Message>
+		<button type="button" on:click={stopEditing}>cancel</button>
 	{/if}
 	<textarea
-		placeholder="> fieldValue"
+		placeholder="> value"
 		bind:this={fieldValueEl}
 		bind:value={fieldValue}
 		use:autofocus
 		disabled={pending}
 		on:keydown={onKeydown}
 	/>
-	{#if changed}
+	{#if errorMessage}
+		<Message status="error">{errorMessage}</Message>
+	{:else if changed}
 		<div class="preview markup panel-outset">
 			<p>
 				{#if fieldValue}<pre>{serialized}</pre>{:else}<em>(empty)</em>{/if}

@@ -1,13 +1,11 @@
 <script lang="ts">
-	import type {SchemaObject} from 'ajv';
+	import type {VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
+	import type {JSONSchema} from '@ryanatkn/json-schema-to-typescript';
 
-	export let schema: SchemaObject;
+	export let schema: VocabSchema;
 
-	let properties: undefined | Array<[string, SchemaObject]>;
-	$: properties =
-		typeof schema !== 'boolean' &&
-		schema.properties &&
-		Array.from(Object.entries(schema.properties));
+	let properties: undefined | Array<[string, JSONSchema]>;
+	$: properties = schema.properties && Array.from(Object.entries(schema.properties));
 </script>
 
 <div>
@@ -28,7 +26,7 @@
 					<span class="name">{propertyName}</span>
 					<small class="required">
 						<!-- TODO cache this on a viewmodel? -->
-						{#if schema.required?.includes(propertyName)}
+						{#if Array.isArray(schema.required) && schema.required.includes(propertyName)}
 							<!-- leave blank? -->
 						{:else}
 							<span title="{propertyName} is optional">?</span>

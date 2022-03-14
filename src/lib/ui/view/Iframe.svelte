@@ -1,15 +1,11 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
-
-	import type {Persona} from '$lib/vocab/persona/persona';
-	import type {Community} from '$lib/vocab/community/community';
-	import type {Space} from '$lib/vocab/space/space.js';
 	import PendingAnimationOverlay from '$lib/ui/PendingAnimationOverlay.svelte';
+	import {getViewContext} from '$lib/vocab/view/view';
 
-	export const persona: Readable<Persona> = undefined as any;
-	export const community: Readable<Community> = undefined as any;
-	export let space: Readable<Space>;
-	export let url: string; // TODO type
+	const viewContext = getViewContext();
+	$: ({space} = $viewContext);
+
+	export let src: string;
 
 	let loaded = false;
 </script>
@@ -21,7 +17,7 @@
 		sandbox="allow-scripts allow-pointer-lock"
 		frameborder="0"
 		title={$space.name}
-		src={url}
+		{src}
 		on:load={() => (loaded = true)}
 	/>
 	{#if !loaded}

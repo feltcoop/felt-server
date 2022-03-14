@@ -1,5 +1,4 @@
 import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
-import {CommunitySettingsSchema} from '$lib/vocab/community/community.schema';
 
 export const CreateCommunity: ServiceEventInfo = {
 	type: 'ServiceEvent',
@@ -10,7 +9,7 @@ export const CreateCommunity: ServiceEventInfo = {
 		properties: {
 			name: {type: 'string'},
 			persona_id: {type: 'number'},
-			settings: CommunitySettingsSchema,
+			settings: {$ref: '/schemas/CommunitySettings.json'},
 		},
 		required: ['name', 'persona_id'],
 		additionalProperties: false,
@@ -97,7 +96,7 @@ export const UpdateCommunitySettings: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			community_id: {type: 'number'},
-			settings: CommunitySettingsSchema,
+			settings: {$ref: '/schemas/CommunitySettings.json'},
 		},
 		required: ['community_id', 'settings'],
 		additionalProperties: false,

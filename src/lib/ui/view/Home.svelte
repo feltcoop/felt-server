@@ -1,22 +1,18 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
 	import {format} from 'date-fns';
 
-	import type {Space} from '$lib/vocab/space/space.js';
 	import CommunitySettingsHue from '$lib/ui/CommunitySettingsHue.svelte';
 	import MemberItem from '$lib/ui/MemberItem.svelte';
 	import SpaceInfo from '$lib/ui/SpaceInfo.svelte';
 	import {getApp} from '$lib/ui/app';
-	import type {Community} from '$lib/vocab/community/community';
-	import type {Persona} from '$lib/vocab/persona/persona';
+	import {getViewContext} from '$lib/vocab/view/view';
+
+	const viewContext = getViewContext();
+	$: ({persona, community} = $viewContext);
 
 	const {
 		ui: {spaceSelection, spacesByCommunityId, personasByCommunityId},
 	} = getApp();
-
-	export let persona: Readable<Persona>;
-	export let community: Readable<Community>;
-	export const space: Readable<Space> = undefined as any;
 
 	$: communitySpaces = $spacesByCommunityId.get($community.community_id)!;
 

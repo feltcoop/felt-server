@@ -1,5 +1,6 @@
 import {type Gen} from '@feltcoop/gro';
 import {toRootPath} from '@feltcoop/gro/dist/paths.js';
+import {toVocabSchemaResolver} from '@feltcoop/gro/dist/utils/schema.js';
 
 import {eventInfos} from '$lib/app/events';
 import {
@@ -16,17 +17,7 @@ const opts: Partial<JsonSchemaToTypeScriptOptions> = {
 	$refOptions: {
 		resolve: {
 			http: false, // disable web resolution
-			file: {
-				read: (file) => {
-					const schema = schemas.find((s) => s.$id === file.url);
-					if (!schema)
-						throw Error(
-							`Unable to find schema: "${file.url}".` +
-								' Is it unregistered in $lib/app/schemas.ts, or a typo, or outdated?',
-						);
-					return JSON.stringify(schema);
-				},
-			},
+			vocab: toVocabSchemaResolver(schemas),
 		},
 	},
 };

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SchemaInfo from '$lib/ui/SchemaInfo.svelte';
 	import {eventInfos} from '$lib/app/events';
-	import {entities} from '$lib/app/entities';
+	import {schemas} from '$lib/app/schemas';
 
 	const title = 'docs';
 </script>
@@ -20,7 +20,7 @@
 			<h2 id="vocab">vocab</h2>
 		</div>
 		<ul>
-			{#each entities as schema (schema)}
+			{#each schemas as schema (schema)}
 				<li>
 					<SchemaInfo {schema} />
 				</li>

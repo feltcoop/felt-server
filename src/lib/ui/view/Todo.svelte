@@ -3,20 +3,17 @@
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 	import {get, type Readable} from 'svelte/store';
 
-	import type {Persona} from '$lib/vocab/persona/persona';
-	import type {Community} from '$lib/vocab/community/community';
-	import type {Space} from '$lib/vocab/space/space.js';
 	import type {EntityData} from '$lib/vocab/entity/entityData';
 	import TodoItems from '$lib/ui/TodoItems.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Tie} from '$lib/vocab/tie/tie';
 	import type {Entity} from '$lib/vocab/entity/entity';
+	import {getViewContext} from '$lib/vocab/view/view';
+
+	const viewContext = getViewContext();
+	$: ({persona, space} = $viewContext);
 
 	const {dispatch, socket} = getApp();
-
-	export let persona: Readable<Persona>;
-	export const community: Readable<Community> = undefined as any;
-	export let space: Readable<Space>;
 
 	let text = '';
 	let list = false;

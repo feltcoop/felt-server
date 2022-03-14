@@ -9,18 +9,18 @@
 	import {type Community} from '$lib/vocab/community/community';
 	import SpaceName from '$lib/ui/SpaceName.svelte';
 	import {getApp} from '$lib/ui/app';
-	import {parseJson, serializeJson} from '$lib/util/json';
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
+	import {parseView, parseViewString, serializeView} from '$lib/vocab/view/view';
 
 	export let space: Readable<Space>;
 	export let community: Readable<Community>;
 
 	const {dispatch, devmode} = getApp();
 
-	const updateSpace = async (updated: object, field: string, $value: Space) =>
+	const updateSpace = async (updated: any, field: string) =>
 		dispatch('UpdateSpace', {
-			space_id: $value.space_id,
-			[field]: updated,
+			space_id: $space.space_id,
+			[field]: field === 'view' ? parseView(updated) : updated,
 		});
 </script>
 
@@ -44,18 +44,17 @@
 	<form>
 		<ul>
 			<li>
-				<PropertyEditor value={space} field="name" update={updateSpace} />
+				<PropertyEditor value={$space.name} field="name" update={updateSpace} />
 			</li>
 			<li>
-				<PropertyEditor value={space} field="url" update={updateSpace} />
+				<PropertyEditor value={$space.url} field="url" update={updateSpace} />
 			</li>
 			<li>
 				<PropertyEditor
-					value={space}
+					value={serializeView($space.view)}
 					field="view"
 					update={updateSpace}
-					parse={parseJson}
-					serialize={serializeJson}
+					parse={parseViewString}
 				/>
 			</li>
 		</ul>
