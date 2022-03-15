@@ -36,7 +36,8 @@ export interface EventParamsByName {
 	ReadEntities: ReadEntitiesParams;
 	UpdateEntity: UpdateEntityParams;
 	QueryEntities: QueryEntitiesParams;
-	DeleteEntity: DeleteEntityParams;
+	SoftDeleteEntity: SoftDeleteEntityParams;
+	HardDeleteEntity: HardDeleteEntityParams;
 	Ping: PingParams;
 	ToggleMainNav: ToggleMainNavParams;
 	ToggleSecondaryNav: ToggleSecondaryNavParams;
@@ -69,7 +70,8 @@ export interface EventResponseByName {
 	CreateEntity: CreateEntityResponse;
 	ReadEntities: ReadEntitiesResponse;
 	UpdateEntity: UpdateEntityResponse;
-	DeleteEntity: DeleteEntityResponse;
+	SoftDeleteEntity: SoftDeleteEntityResponse;
+	HardDeleteEntity: HardDeleteEntityResponse;
 	Ping: PingResponse;
 	CreateTie: CreateTieResponse;
 	ReadTies: ReadTiesResponse;
@@ -231,11 +233,17 @@ export interface QueryEntitiesParams {
 	space_id: number;
 }
 
-export interface DeleteEntityParams {
+export interface SoftDeleteEntityParams {
 	entity_id: number;
 }
-export type DeleteEntityResponse = null;
-export type DeleteEntityResponseResult = ApiResult<DeleteEntityResponse>;
+export type SoftDeleteEntityResponse = null;
+export type SoftDeleteEntityResponseResult = ApiResult<SoftDeleteEntityResponse>;
+
+export interface HardDeleteEntityParams {
+	entity_id: number;
+}
+export type HardDeleteEntityResponse = null;
+export type HardDeleteEntityResponseResult = ApiResult<HardDeleteEntityResponse>;
 
 export type PingParams = void;
 export type PingResponse = null;
@@ -340,7 +348,14 @@ export interface Dispatch {
 	(eventName: 'ReadEntities', params: ReadEntitiesParams): Promise<ReadEntitiesResponseResult>;
 	(eventName: 'UpdateEntity', params: UpdateEntityParams): Promise<UpdateEntityResponseResult>;
 	(eventName: 'QueryEntities', params: QueryEntitiesParams): Readable<Readable<Entity>[]>;
-	(eventName: 'DeleteEntity', params: DeleteEntityParams): Promise<DeleteEntityResponseResult>;
+	(
+		eventName: 'SoftDeleteEntity',
+		params: SoftDeleteEntityParams,
+	): Promise<SoftDeleteEntityResponseResult>;
+	(
+		eventName: 'HardDeleteEntity',
+		params: HardDeleteEntityParams,
+	): Promise<HardDeleteEntityResponseResult>;
 	(eventName: 'Ping', params: PingParams): Promise<ApiResult<null>>;
 	(eventName: 'ToggleMainNav', params: ToggleMainNavParams): void;
 	(eventName: 'ToggleSecondaryNav', params: ToggleSecondaryNavParams): void;
@@ -409,9 +424,12 @@ export interface UiHandlers {
 		ctx: DispatchContext<UpdateEntityParams, UpdateEntityResponseResult>,
 	) => Promise<UpdateEntityResponseResult>;
 	QueryEntities: (ctx: DispatchContext<QueryEntitiesParams, void>) => Readable<Readable<Entity>[]>;
-	DeleteEntity: (
-		ctx: DispatchContext<DeleteEntityParams, DeleteEntityResponseResult>,
-	) => Promise<DeleteEntityResponseResult>;
+	SoftDeleteEntity: (
+		ctx: DispatchContext<SoftDeleteEntityParams, SoftDeleteEntityResponseResult>,
+	) => Promise<SoftDeleteEntityResponseResult>;
+	HardDeleteEntity: (
+		ctx: DispatchContext<HardDeleteEntityParams, HardDeleteEntityResponseResult>,
+	) => Promise<HardDeleteEntityResponseResult>;
 	Ping: (ctx: DispatchContext<PingParams, PingResponseResult>) => Promise<ApiResult<null>>;
 	ToggleMainNav: (ctx: DispatchContext<ToggleMainNavParams, void>) => void;
 	ToggleSecondaryNav: (ctx: DispatchContext<ToggleSecondaryNavParams, void>) => void;

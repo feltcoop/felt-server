@@ -52,7 +52,7 @@ export const entityRepo = (db: Database) =>
 			return {ok: true, value: result[0]};
 		},
 		//This function is a idempotent soft delete, that leaves behind a Tombstone entity per Activity-Streams spec
-		deleteById: async (
+		softDeleteById: async (
 			entity_id: number,
 		): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {
 			log.trace('[deleteById]', entity_id);

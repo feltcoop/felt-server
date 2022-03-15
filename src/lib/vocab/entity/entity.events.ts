@@ -109,12 +109,12 @@ export const QueryEntities: ClientEventInfo = {
 	returns: 'Readable<Readable<Entity>[]>',
 };
 
-export const DeleteEntity: ServiceEventInfo = {
+export const SoftDeleteEntity: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'DeleteEntity',
+	name: 'SoftDeleteEntity',
 	broadcast: true,
 	params: {
-		$id: '/schemas/DeleteEntityParams.json',
+		$id: '/schemas/SoftDeleteEntityParams.json',
 		type: 'object',
 		properties: {
 			entity_id: {type: 'number'},
@@ -123,12 +123,36 @@ export const DeleteEntity: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: '/schemas/DeleteEntityResponse.json',
+		$id: '/schemas/SoftDeleteEntityResponse.json',
 		type: 'null',
 	},
-	returns: 'Promise<DeleteEntityResponseResult>',
+	returns: 'Promise<SoftDeleteEntityResponseResult>',
 	route: {
-		path: '/api/v1/entities/:entity_id',
+		path: '/api/v1/entities/:entity_id/soft',
+		method: 'DELETE',
+	},
+};
+
+export const HardDeleteEntity: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'HardDeleteEntity',
+	broadcast: true,
+	params: {
+		$id: '/schemas/HardDeleteEntityParams.json',
+		type: 'object',
+		properties: {
+			entity_id: {type: 'number'},
+		},
+		required: ['entity_id'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: '/schemas/HardDeleteEntityResponse.json',
+		type: 'null',
+	},
+	returns: 'Promise<HardDeleteEntityResponseResult>',
+	route: {
+		path: '/api/v1/entities/:entity_id/hard',
 		method: 'DELETE',
 	},
 };
@@ -138,5 +162,6 @@ export const events: EventInfo[] = [
 	ReadEntities,
 	UpdateEntity,
 	QueryEntities,
-	DeleteEntity,
+	SoftDeleteEntity,
+	HardDeleteEntity,
 ];
