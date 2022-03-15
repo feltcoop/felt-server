@@ -89,7 +89,7 @@
 		</section>
 		<details>
 			<summary>Customize</summary>
-			<div class="customize">
+			<div>
 				<HueInput {hue} on:input={(e) => (chosenHue = e.detail)} />
 			</div>
 		</details>
@@ -99,8 +99,5 @@
 <style>
 	details {
 		font-size: var(--font_size_lg);
-	}
-	.customize {
-		margin-top: var(--spacing_lg);
 	}
 </style>
