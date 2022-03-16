@@ -1,4 +1,4 @@
-import type {GetSession} from '@sveltejs/kit';
+import type {RequestHandler} from '@sveltejs/kit';
 import {noop} from '@feltcoop/felt/util/function.js';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
@@ -9,19 +9,24 @@ import {db} from '$lib/db/db';
 
 const log = new Logger('[hooks]');
 
-export const getSession: GetSession<CookieSessionRequest, ClientSession> = async (req) => {
+// TODO The type signature and return values are messy because the SvelteKit `JSONValue` type
+// requires an index signature with `any` values.
+export const getSession: RequestHandler<any, ClientSession & Record<string, any>> = async (
+	requestEvent,
+) => {
 	log.trace('getSession');
-	cookieSessionMiddleware(req as any, {} as any, noop); // eslint-disable-line @typescript-eslint/no-floating-promises
-	const request: CookieSessionRequest = req as any;
+	const request = requestEvent.request as CookieSessionRequest;
+	cookieSessionMiddleware(request, {} as any, noop); // eslint-disable-line @typescript-eslint/no-floating-promises
 	const account_id = request.session?.account_id;
 	if (account_id !== undefined) {
-		// TODO this swallows errors
 		const result = await db.repos.session.loadClientSession(account_id);
 		if (result.ok) {
-			return result.value;
+			const body: ClientSession = result.value;
+			return {status: 200, body};
 		}
+		log.error('failed to load session', result.message);
 		request.session = null!;
-		return {guest: true};
 	}
-	return {guest: true};
+	const body: ClientSession = {guest: true};
+	return {status: 200, body};
 };

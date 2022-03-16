@@ -3,10 +3,9 @@
 // and add a bunch of unwanted deps, because they import `express` types.
 // https://www.npmjs.com/package/cookie-session
 declare module 'cookie-session' {
-	import type {Middleware} from 'polka';
-	import type {Request} from '@sveltejs/kit';
+	import type {NextHandler} from 'polka';
 
-	export interface CookieSessionRequest {
+	export interface CookieSessionRequest extends Request {
 		session: CookieSessionObject;
 	}
 
@@ -60,6 +59,12 @@ declare module 'cookie-session' {
 		// are filtered out of the Set-Cookie header when setting this cookie.
 		overwrite?: boolean;
 	}
+
+	type Middleware = <T = object>(
+		req: T & Request,
+		res: Response,
+		next: NextHandler,
+	) => Promise<void> | void;
 
 	export default (config: CookieSessionConfig): Middleware => Middleware;
 }
