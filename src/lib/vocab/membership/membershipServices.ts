@@ -91,6 +91,7 @@ export const deleteMembershipService: Service<
 	},
 };
 
+//TODO BLOCK add a test for this use case
 const cleanOrphanCommunities = async (community_id: number, repos: Database['repos']) => {
 	log.trace('[membershipServices] checking if community is orphaned', community_id);
 	const result = await repos.membership.filterByCommunityId(community_id);
@@ -99,10 +100,8 @@ const cleanOrphanCommunities = async (community_id: number, repos: Database['rep
 		const cleanupResult = await repos.community.deleteById(community_id);
 		if (cleanupResult.ok) {
 			log.trace('[membershipServices] orphan community successfully removed', community_id);
-			//TODO BLOCK broadcast this action
 		} else {
 			log.trace('[membershipServices] issue deleting orphaned community', community_id);
 		}
 	}
-	//TODO BLOCK resolve response form for this helper function
 };
