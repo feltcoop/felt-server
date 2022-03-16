@@ -15,6 +15,7 @@ export default {
 	kit: {
 		adapter: node(),
 		files: {assets: 'src/static'},
+		prerender: {default: true},
 		vite: {
 			server: {
 				proxy: {
@@ -23,9 +24,6 @@ export default {
 			},
 			ssr: {
 				noExternal: ['@feltcoop/felt'],
-			},
-			optimizeDeps: {
-				exclude: ['@feltcoop/felt'],
 			},
 		},
 	},
