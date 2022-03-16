@@ -40,7 +40,11 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			{format(new Date($entity.created), 'Pp')}
 		</div>
 		<div>
-			{$entity.data.content}
+			{#if $entity.data.type !== 'Tombstone'}
+				{$entity.data.content}
+			{:else}
+				<i>This message was deleted</i>
+			{/if}
 		</div>
 	</div>
 </li>
