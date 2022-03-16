@@ -1,7 +1,7 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 
-	import {type Entity} from '$lib/vocab/entity/entity';
+	import type {Entity} from '$lib/vocab/entity/entity';
 	import EntityCell from '$lib/ui/EntityCell.svelte';
 
 	export let entity: Readable<Entity>;

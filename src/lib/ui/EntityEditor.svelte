@@ -1,10 +1,10 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 	import {format} from 'date-fns';
 
 	import {getApp} from '$lib/ui/app';
 	import EntityTable from '$lib/ui/EntityTable.svelte';
-	import {type Entity} from '$lib/vocab/entity/entity';
+	import type {Entity} from '$lib/vocab/entity/entity';
 	import {parseJson, serializeJson} from '$lib/util/json';
 	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';

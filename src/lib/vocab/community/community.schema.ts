@@ -1,5 +1,5 @@
 import {randomHue} from '$lib/ui/color';
-import {type CommunitySettings} from '$lib/vocab/community/community';
+import type {CommunitySettings} from '$lib/vocab/community/community';
 
 export const CommunitySchema = {
 	$id: '/schemas/Community.json',

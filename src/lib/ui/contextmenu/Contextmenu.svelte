@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {isEditable} from '@feltcoop/felt/util/dom.js';
-	import {type SvelteComponent} from 'svelte';
+	import type {SvelteComponent} from 'svelte';
 
 	import {
 		setContextmenu,

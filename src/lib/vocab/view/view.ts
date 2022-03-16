@@ -2,12 +2,12 @@ import type {Root, SvelteChild} from 'svast';
 import {compile as stringifySvast} from 'svast-stringify';
 import {parse as parseSvast} from 'svelte-parse';
 import {setContext, getContext} from 'svelte';
-import {type Readable} from 'svelte/store';
-import {type Result} from '@feltcoop/felt';
+import type {Readable} from 'svelte/store';
+import type {Result} from '@feltcoop/felt';
 
-import {type Space} from '$lib/vocab/space/space';
-import {type Community} from '$lib/vocab/community/community';
-import {type Persona} from '$lib/vocab/persona/persona';
+import type {Space} from '$lib/vocab/space/space';
+import type {Community} from '$lib/vocab/community/community';
+import type {Persona} from '$lib/vocab/persona/persona';
 
 export type ViewData = Root;
 

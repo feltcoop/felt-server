@@ -1,9 +1,9 @@
 <script lang="ts">
 	import {writable, type Readable} from 'svelte/store';
 
-	import {type Space} from '$lib/vocab/space/space';
-	import {type Community} from '$lib/vocab/community/community';
-	import {type Persona} from '$lib/vocab/persona/persona';
+	import type {Space} from '$lib/vocab/space/space';
+	import type {Community} from '$lib/vocab/community/community';
+	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 	import SvastView from '$lib/ui/SvastView.svelte';
 	import {setViewContext} from '$lib/vocab/view/view';

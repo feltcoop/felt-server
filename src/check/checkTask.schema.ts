@@ -1,4 +1,4 @@
-import {type ArgsSchema} from '@feltcoop/gro';
+import type {ArgsSchema} from '@feltcoop/gro';
 import {CheckTaskArgsSchema as BaseSchema} from '@feltcoop/gro/dist/checkTask.schema.js';
 
 export const CheckTaskArgsSchema: ArgsSchema = {

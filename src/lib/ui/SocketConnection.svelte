@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {type SocketStore} from '$lib/ui/socket';
+	import type {SocketStore} from '$lib/ui/socket';
 
 	export let socket: SocketStore;
 

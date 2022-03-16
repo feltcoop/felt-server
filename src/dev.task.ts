@@ -1,5 +1,5 @@
 import type {Task} from '@feltcoop/gro';
-import {type DevTaskArgs} from '@feltcoop/gro/dist/devTask.js';
+import type {DevTaskArgs} from '@feltcoop/gro/dist/devTask.js';
 import {DevTaskArgsSchema} from '@feltcoop/gro/dist/devTask.schema.js';
 
 export const task: Task<DevTaskArgs> = {
