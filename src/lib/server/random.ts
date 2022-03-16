@@ -57,6 +57,12 @@ export const randomEventParams = async (
 			}
 			return {community_id: community.community_id};
 		}
+		case 'DeleteCommunity': {
+			if (!community) {
+				community = randomItem(random.communities) || (await random.community(persona, account));
+			}
+			return {community_id: community.community_id};
+		}
 		case 'ReadCommunities': {
 			return {};
 		}

@@ -11,12 +11,15 @@ import type {
 	ReadCommunitiesResponseResult,
 	UpdateCommunitySettingsParams,
 	UpdateCommunitySettingsResponseResult,
+	DeleteCommunityParams,
+	DeleteCommunityResponseResult,
 } from '$lib/app/eventTypes';
 import {
 	CreateCommunity,
 	ReadCommunities,
 	ReadCommunity,
 	UpdateCommunitySettings,
+	DeleteCommunity,
 } from '$lib/vocab/community/community.events';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 
@@ -145,3 +148,15 @@ export const updateCommunitySettingsService: Service<
 		return {ok: false, status: 500, message: result.message || 'unknown error'};
 	},
 };
+
+export const deleteCommunityService: Service<DeleteCommunityParams, DeleteCommunityResponseResult> =
+	{
+		event: DeleteCommunity,
+		perform: async ({repos, params}) => {
+			const deleteResult = await repos.community.deleteById(params.community_id);
+			if (!deleteResult.ok) {
+				return {ok: false, status: 500, message: deleteResult.message || 'unknown error'};
+			}
+			return {ok: true, status: 200, value: null};
+		},
+	};

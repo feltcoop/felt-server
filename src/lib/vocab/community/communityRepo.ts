@@ -83,4 +83,20 @@ export const communityRepo = (db: Database) =>
 			}
 			return {ok: true};
 		},
+		deleteById: async (
+			community_id: number,
+		): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> => {
+			log.trace('[deleteById]', community_id);
+			const data = await db.sql<any[]>`
+				DELETE FROM communities WHERE ${community_id}=community_id
+			`;
+			if (data.count !== 1) {
+				return {
+					ok: false,
+					type: 'deletion_error',
+					message: 'failed to hard delete entity',
+				};
+			}
+			return {ok: true, value: data};
+		},
 	} as const);
