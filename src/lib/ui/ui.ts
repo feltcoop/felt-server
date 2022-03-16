@@ -421,6 +421,15 @@ export const toUi = (
 			}
 			return result;
 		},
+		DeleteCommunity: async ({params, invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
+			//update state here
+			const community = communityById.get(params.community_id)!;
+			communityById.delete(params.community_id);
+			communities.mutate(($communites) => $communites.splice($communites.indexOf(community), 1));
+			return result;
+		},
 		CreateMembership: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
