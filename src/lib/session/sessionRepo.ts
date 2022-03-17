@@ -3,7 +3,6 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue, gray} from 'kleur/colors';
 
 import type {Database} from '$lib/db/Database';
-import type {ClientAccountSession} from '$lib/session/clientSession.js';
 import type {ErrorResponse} from '$lib/util/error';
 
 const log = new Logger(gray('[') + blue('sessionRepo') + gray(']'));

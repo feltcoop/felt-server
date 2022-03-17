@@ -9,7 +9,6 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
 import type {Persona} from '$lib/vocab/persona/persona';
-import type {ClientSession} from '$lib/session/clientSession';
 import type {AccountModel} from '$lib/vocab/account/account';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Membership} from '$lib/vocab/membership/membership';
@@ -297,7 +296,6 @@ export const toUi = (
 			log.warn('[dispatch] ignoring unhandled event', ctx);
 		},
 		setSession: ($session) => {
-			console.log(`$session`, $session);
 			if (browser) log.trace('[setSession]', $session);
 			account.set($session.guest ? null : $session.account);
 
