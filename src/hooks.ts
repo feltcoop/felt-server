@@ -1,6 +1,7 @@
-import type {GetSession} from '@sveltejs/kit';
+import type {GetSession, Handle} from '@sveltejs/kit';
 import {noop} from '@feltcoop/felt/util/function.js';
 import {Logger} from '@feltcoop/felt/util/log.js';
+import cookie from 'cookie';
 
 import type {CookieSessionRequest} from '$lib/session/cookieSession.js';
 import {cookieSessionMiddleware} from '$lib/session/cookieSession';
@@ -11,8 +12,6 @@ const log = new Logger('[hooks]');
 export const getSession: GetSession = async (requestEvent) => {
 	log.trace('getSession');
 	const request = requestEvent.request as CookieSessionRequest & Request; // TODO BLOCK type
-	// TODO BLOCK move this to `handle`?
-	cookieSessionMiddleware(request as any, {} as any, noop); // eslint-disable-line @typescript-eslint/no-floating-promises
 	const account_id = request.session?.account_id;
 	if (account_id !== undefined) {
 		const result = await db.repos.session.loadClientSession(account_id);
@@ -31,25 +30,27 @@ export const getSession: GetSession = async (requestEvent) => {
 // import {v4 as uuid} from '@lukeed/uuid';
 // import type {Handle} from '@sveltejs/kit';
 
-// export const handle: Handle = async ({event, resolve}) => {
-// 	const cookies = cookie.parse(event.request.headers.get('cookie') || '');
-// 	event.locals.userid = cookies.userid || uuid();
-// TODO BLOCK do this here instead of in the middleware (import db directly?)
-// event.locals.user = await getUserInformation(event.request.headers.get('cookie'));
+export const handle: Handle = async ({event, resolve}) => {
+	const cookies = cookie.parse(event.request.headers.get('cookie') || '');
+	cookieSessionMiddleware(request as any, {} as any, noop); // eslint-disable-line @typescript-eslint/no-floating-promises
+	event.locals.account_id = cookies.account_id;
+	// TODO BLOCK do this here instead of in the middleware (import db directly?)
+	// event.locals.user = await getUserInformation(event.request.headers.get('cookie'));
 
-// 	const response = await resolve(event);
+	const response = await resolve(event);
 
-// 	if (!cookies.userid) {
-// 		// if this is the first time the user has visited this app,
-// 		// set a cookie so that we recognise them when they return
-// 		response.headers.set(
-// 			'set-cookie',
-// 			cookie.serialize('userid', event.locals.userid, {
-// 				path: '/',
-// 				httpOnly: true,
-// 			}),
-// 		);
-// 	}
+	// TODO block session middleware
+	if (!cookies.account_id) {
+		// if this is the first time the user has visited this app,
+		// set a cookie so that we recognise them when they return
+		response.headers.set(
+			'set-cookie',
+			cookie.serialize('account_id', event.locals.account_id, {
+				path: '/',
+				httpOnly: true,
+			}),
+		);
+	}
 
-// 	return response;
-// };
+	return response;
+};
