@@ -8,7 +8,8 @@ import type {Membership} from '$lib/vocab/membership/membership';
 // https://github.com/sveltejs/kit/discussions/3772
 // using `declare global` does not work for `type Session = ClientSession`
 // after importing it. (though it *does* work if `ClientSession` is a property of `Session`)
-// This appears to be a quirk of TypeScript to not allow re-export of top-level types.
+// This appears to be a quirk of TypeScript
+// to not allow re-export of imported non-global types in ambient contexts.
 
 declare global {
 	type ClientSession = ClientAccountSession | ClientGuestSession;

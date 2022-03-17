@@ -3,7 +3,7 @@ declare namespace App {
 
 	// interface Platform {}
 
-	type Session = ClientSession;
+	type Session = ClientSession; // see `ClientSession` for why it's global
 
 	// interface Stuff {}
 }
