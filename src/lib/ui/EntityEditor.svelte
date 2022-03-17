@@ -34,7 +34,7 @@
 
 <div class="entity-editor column">
 	<div class="markup">
-		<h2>Edit Entity</h2>
+		<h1>Edit Entity</h1>
 		<section class="row">
 			<span class="spaced">created by</span>
 			<PersonaAvatar {persona} />
@@ -81,7 +81,7 @@
 	.entity-editor {
 		padding: var(--spacing_xl);
 	}
-	h2 {
+	h1 {
 		text-align: center;
 	}
 	form li {

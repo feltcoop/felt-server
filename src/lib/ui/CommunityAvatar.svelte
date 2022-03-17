@@ -13,6 +13,7 @@
 <Avatar
 	name={$community.name}
 	type="Community"
+	hue={$community.settings.hue}
 	{showName}
 	{showIcon}
 	contextmenuAction={[[CommunityContextmenu, {community}]]}

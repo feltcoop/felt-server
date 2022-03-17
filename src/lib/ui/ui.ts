@@ -214,7 +214,7 @@ export const toUi = (
 		$community: Community,
 		$communitySpaces: Space[],
 		$memberships: Membership[],
-	): void => {
+	): Writable<Community> => {
 		memberships.mutate(($ms) => $ms.push(...$memberships.map(($m) => writable($m))));
 
 		// TODO what's the right order of updating `communities` and `spaces`?
@@ -241,14 +241,17 @@ export const toUi = (
 		// but is the better implementation to use a `mutable` wrapping a map, no array?
 		communityById.set($community.community_id, community);
 		communities.mutate(($communities) => $communities.push(community));
+		return community;
 	};
 
-	const addPersona = ($persona: Persona): void => {
+	const addPersona = ($persona: Persona): Writable<Persona> => {
 		const persona = writable($persona);
 		personaById.set($persona.persona_id, persona);
 		personas.mutate(($personas) => $personas.push(persona));
-		if ($persona.account_id)
+		if ($persona.account_id) {
 			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(persona));
+		}
+		return persona;
 	};
 
 	const ui: Ui = {
@@ -374,7 +377,7 @@ export const toUi = (
 			session.set({guest: true});
 			return result;
 		},
-		CreateAccountPersona: async ({invoke, dispatch}) => {
+		CreateAccountPersona: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {
@@ -384,13 +387,14 @@ export const toUi = (
 				membership: $membership,
 			} = result.value;
 			log.trace('[CreatePersona]', $persona, $community, $spaces);
-			addPersona($persona);
+			const persona = addPersona($persona);
 			addCommunity($community, $spaces, [$membership]);
-			dispatch('SelectPersona', {persona_id: $persona.persona_id});
-			dispatch('SelectCommunity', {community_id: $community.community_id});
+			// TODO extract a helper after upgrading SvelteKit and using
+			// `$page`'s `URLSearchParams` instead of constructing the search like this
+			await goto('/' + $community.name + `?persona=${get(sessionPersonaIndices).get(persona)}`);
 			return result;
 		},
-		CreateCommunity: async ({params, invoke, dispatch}) => {
+		CreateCommunity: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {persona_id} = params;
@@ -403,7 +407,13 @@ export const toUi = (
 			log.trace('[ui.CreateCommunity]', $community, persona_id);
 			addPersona($persona);
 			addCommunity($community, $spaces, $memberships);
-			dispatch('SelectCommunity', {community_id: $community.community_id});
+			// TODO extract a helper after upgrading SvelteKit and using
+			// `$page`'s `URLSearchParams` instead of constructing the search like this
+			await goto(
+				'/' +
+					$community.name +
+					`?persona=${get(sessionPersonaIndices).get(personaById.get(params.persona_id)!)}`,
+			);
 			return result;
 		},
 		UpdateCommunitySettings: async ({params, invoke}) => {
