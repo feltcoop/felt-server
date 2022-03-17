@@ -18,6 +18,7 @@ import {type UiHandlers} from '$lib/app/eventTypes';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {type ViewData} from '$lib/vocab/view/view';
 import {initBrowser} from '$lib/ui/init';
+import {page} from '$app/stores';
 
 if (browser) initBrowser();
 
@@ -387,11 +388,12 @@ export const toUi = (
 			log.trace('[CreatePersona]', $persona, $community, $spaces);
 			addPersona($persona);
 			addCommunity($community, $spaces, [$membership]);
+			// TODO BLOCK
 			dispatch('SelectPersona', {persona_id: $persona.persona_id});
 			dispatch('SelectCommunity', {community_id: $community.community_id});
 			return result;
 		},
-		CreateCommunity: async ({params, invoke, dispatch}) => {
+		CreateCommunity: async ({params, invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {persona_id} = params;
@@ -404,7 +406,12 @@ export const toUi = (
 			log.trace('[ui.CreateCommunity]', $community, persona_id);
 			addPersona($persona);
 			addCommunity($community, $spaces, $memberships);
-			dispatch('SelectCommunity', {community_id: $community.community_id});
+			await goto(
+				'/' +
+					$community.name +
+					// TODO after upgrading SvelteKit, use `$page`'s `URLSearchParams` instead of constructing the search like this
+					`?persona=${get(sessionPersonaIndices).get(personaById.get(persona_id)!)}`,
+			);
 			return result;
 		},
 		UpdateCommunitySettings: async ({params, invoke}) => {
