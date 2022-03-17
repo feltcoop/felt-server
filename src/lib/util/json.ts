@@ -1,4 +1,4 @@
-import {type Result} from '@feltcoop/felt';
+import type {Result} from '@feltcoop/felt';
 
 export const parseJson = (value: string): Result<{value: object}, {message: string}> => {
 	try {

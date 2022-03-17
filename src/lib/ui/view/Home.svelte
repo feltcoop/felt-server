@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {format} from 'date-fns';
 
-	import CommunitySettingsHue from '$lib/ui/CommunitySettingsHue.svelte';
 	import MemberItem from '$lib/ui/MemberItem.svelte';
 	import SpaceInfo from '$lib/ui/SpaceInfo.svelte';
 	import {getApp} from '$lib/ui/app';
@@ -46,10 +45,6 @@
 		<h2>activity</h2>
 		<div>This community was created on {format(new Date($community.created), 'PPPPp')}</div>
 		<code>TODO</code>
-	</section>
-	<section>
-		<h2>settings</h2>
-		<CommunitySettingsHue {community} />
 	</section>
 </div>
 

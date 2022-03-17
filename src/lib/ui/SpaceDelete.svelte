@@ -7,8 +7,8 @@
 	import SpaceName from '$lib/ui/SpaceName.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
-	import {type Community} from '$lib/vocab/community/community';
-	import {type Persona} from '$lib/vocab/persona/persona';
+	import type {Community} from '$lib/vocab/community/community';
+	import type {Persona} from '$lib/vocab/persona/persona';
 
 	const {dispatch} = getApp();
 

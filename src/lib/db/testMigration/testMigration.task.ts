@@ -1,7 +1,7 @@
 import type {Task} from '@feltcoop/gro';
 
 import {DbTestMigrationTaskArgsSchema} from '$lib/db/testMigration/testMigrationTask.schema';
-import {type DbTestMigrationTaskArgs} from '$lib/db/testMigration/testMigrationTask';
+import type {DbTestMigrationTaskArgs} from '$lib/db/testMigration/testMigrationTask';
 import {MIGRATIONS_DIR} from '$lib/db/migration';
 
 export const task: Task<DbTestMigrationTaskArgs> = {
