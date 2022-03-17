@@ -130,10 +130,10 @@ export const randomEventParams = async (
 			};
 		}
 		case 'HardDeleteEntity': {
+			const entity = await random.entity(persona, account, community, space);
+			random.entities.pop();
 			return {
-				entity_id: (
-					randomItem(random.entities) || (await random.entity(persona, account, community, space))
-				).entity_id,
+				entity_id: entity.entity_id,
 			};
 		}
 		case 'CreateTie': {
