@@ -1,12 +1,12 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 	import {format} from 'date-fns';
 
 	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';
 	// TODO devmode support
 	// import EntityTable from '$lib/ui/EntityTable.svelte';
-	import {type Space} from '$lib/vocab/space/space';
-	import {type Community} from '$lib/vocab/community/community';
+	import type {Space} from '$lib/vocab/space/space';
+	import type {Community} from '$lib/vocab/community/community';
 	import SpaceName from '$lib/ui/SpaceName.svelte';
 	import {getApp} from '$lib/ui/app';
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';

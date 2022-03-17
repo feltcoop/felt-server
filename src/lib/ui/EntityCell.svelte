@@ -1,9 +1,9 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import {scale} from 'svelte/transition';
 
-	import {type Entity} from '$lib/vocab/entity/entity';
+	import type {Entity} from '$lib/vocab/entity/entity';
 	import {getApp} from '$lib/ui/app';
 
 	export let entity: Readable<Entity>;

@@ -1,7 +1,7 @@
 import type {Task} from '@feltcoop/gro';
 
 import {DbCreateTaskArgsSchema} from '$lib/db/create/createTask.schema';
-import {type DbCreateTaskArgs} from '$lib/db/create/createTask';
+import type {DbCreateTaskArgs} from '$lib/db/create/createTask';
 import {obtainDb} from '$lib/db/obtainDb.js';
 
 export const task: Task<DbCreateTaskArgs> = {

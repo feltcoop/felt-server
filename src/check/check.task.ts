@@ -1,7 +1,7 @@
-import {type Task} from '@feltcoop/gro';
+import type {Task} from '@feltcoop/gro';
 
 import {MIGRATIONS_DIR, toMigrationIndex} from '$lib/db/migration';
-import {type CheckTaskArgs} from './checkTask';
+import type {CheckTaskArgs} from './checkTask';
 import {CheckTaskArgsSchema} from './checkTask.schema';
 
 export const task: Task<CheckTaskArgs> = {

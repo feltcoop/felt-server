@@ -2,21 +2,21 @@ import {writable, derived, get, type Readable, type Writable} from 'svelte/store
 import {setContext, getContext, type SvelteComponent} from 'svelte';
 import {goto} from '$app/navigation';
 import {mutable, type Mutable} from '@feltcoop/svelte-mutable-store';
-import {type DialogData} from '@feltcoop/felt/ui/dialog/dialog.js';
+import type {DialogData} from '@feltcoop/felt/ui/dialog/dialog.js';
 import {browser} from '$app/env';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import {type Community} from '$lib/vocab/community/community';
-import {type Space} from '$lib/vocab/space/space';
-import {type Persona} from '$lib/vocab/persona/persona';
-import {type ClientSession} from '$lib/session/clientSession';
-import {type AccountModel} from '$lib/vocab/account/account';
-import {type Entity} from '$lib/vocab/entity/entity';
-import {type Membership} from '$lib/vocab/membership/membership';
-import {type DispatchContext} from '$lib/app/dispatch';
-import {type UiHandlers} from '$lib/app/eventTypes';
+import type {Community} from '$lib/vocab/community/community';
+import type {Space} from '$lib/vocab/space/space';
+import type {Persona} from '$lib/vocab/persona/persona';
+import type {ClientSession} from '$lib/session/clientSession';
+import type {AccountModel} from '$lib/vocab/account/account';
+import type {Entity} from '$lib/vocab/entity/entity';
+import type {Membership} from '$lib/vocab/membership/membership';
+import type {DispatchContext} from '$lib/app/dispatch';
+import type {UiHandlers} from '$lib/app/eventTypes';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-import {type ViewData} from '$lib/vocab/view/view';
+import type {ViewData} from '$lib/vocab/view/view';
 import {initBrowser} from '$lib/ui/init';
 
 if (browser) initBrowser();
