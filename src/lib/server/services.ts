@@ -17,6 +17,7 @@ import {
 	createEntityService,
 	updateEntityService,
 	softDeleteEntityService,
+	hardDeleteEntityService,
 } from '$lib/vocab/entity/entityServices';
 import {
 	readSpaceService,
