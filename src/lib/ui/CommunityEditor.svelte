@@ -11,7 +11,7 @@
 
 <div class="community-editor column">
 	<div class="markup">
-		<h2>Edit Community</h2>
+		<h1>Edit Community</h1>
 		<section class="row" style:font-size="var(--font_size_xl)">
 			<CommunityAvatar {community} />
 		</section>
@@ -33,7 +33,7 @@
 		flex-direction: column;
 		padding: var(--spacing_xl);
 	}
-	h2 {
+	h1 {
 		text-align: center;
 	}
 </style>

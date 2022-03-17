@@ -27,7 +27,7 @@
 
 <div class="space-editor column">
 	<div class="markup">
-		<h2>Edit Space</h2>
+		<h1>Edit Space</h1>
 		<section class="row" style:font-size="var(--font_size_xl)">
 			<SpaceName {space} />
 		</section>
@@ -84,7 +84,7 @@
 		flex-direction: column;
 		padding: var(--spacing_xl);
 	}
-	h2 {
+	h1 {
 		text-align: center;
 	}
 	form li {
