@@ -34,6 +34,8 @@ export const getSession: GetSession = async (requestEvent) => {
 // export const handle: Handle = async ({event, resolve}) => {
 // 	const cookies = cookie.parse(event.request.headers.get('cookie') || '');
 // 	event.locals.userid = cookies.userid || uuid();
+// TODO BLOCK do this here instead of in the middleware (import db directly?)
+// event.locals.user = await getUserInformation(event.request.headers.get('cookie'));
 
 // 	const response = await resolve(event);
 
