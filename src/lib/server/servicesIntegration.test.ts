@@ -10,7 +10,7 @@ import {
 	randomSpaceParams,
 } from '$lib/vocab/random';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
-import {type NoteEntityData} from '$lib/vocab/entity/entityData';
+import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {SessionApi} from '$lib/server/SessionApi';
 import {

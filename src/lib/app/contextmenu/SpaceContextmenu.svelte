@@ -1,12 +1,12 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 
 	import {getApp} from '$lib/ui/app';
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
-	import {type Space} from '$lib/vocab/space/space';
-	import {type Persona} from '$lib/vocab/persona/persona';
-	import {type Community} from '$lib/vocab/community/community';
+	import type {Space} from '$lib/vocab/space/space';
+	import type {Persona} from '$lib/vocab/persona/persona';
+	import type {Community} from '$lib/vocab/community/community';
 	import SpaceDelete from '$lib/ui/SpaceDelete.svelte';
 	import SpaceIcon from '$lib/ui/SpaceIcon.svelte';
 	import SpaceEditor from '$lib/ui/SpaceEditor.svelte';

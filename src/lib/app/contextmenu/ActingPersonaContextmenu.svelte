@@ -1,9 +1,9 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import {getApp} from '$lib/ui/app';
-	import {type Persona} from '$lib/vocab/persona/persona';
+	import type {Persona} from '$lib/vocab/persona/persona';
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
 	import CommunityInput from '$lib/ui/CommunityInput.svelte';

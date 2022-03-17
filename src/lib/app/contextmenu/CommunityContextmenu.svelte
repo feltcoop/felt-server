@@ -1,14 +1,15 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import {getApp} from '$lib/ui/app';
-	import {type Community} from '$lib/vocab/community/community';
-	import {type Persona} from '$lib/vocab/persona/persona';
+	import type {Community} from '$lib/vocab/community/community';
+	import type {Persona} from '$lib/vocab/persona/persona';
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import MembershipInput from '$lib/ui/MembershipInput.svelte';
+	import CommunityEditor from '$lib/ui/CommunityEditor.svelte';
 
 	const {dispatch} = getApp();
 
@@ -21,6 +22,15 @@
 		<CommunityAvatar {community} />
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
+		<ContextmenuEntry
+			action={() =>
+				dispatch('OpenDialog', {
+					Component: CommunityEditor,
+					props: {community},
+				})}
+		>
+			<span class="title"> Edit Community </span>
+		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>
 				dispatch('OpenDialog', {

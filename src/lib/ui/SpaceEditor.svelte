@@ -1,12 +1,12 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 	import {format} from 'date-fns';
 
 	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';
 	// TODO devmode support
 	// import EntityTable from '$lib/ui/EntityTable.svelte';
-	import {type Space} from '$lib/vocab/space/space';
-	import {type Community} from '$lib/vocab/community/community';
+	import type {Space} from '$lib/vocab/space/space';
+	import type {Community} from '$lib/vocab/community/community';
 	import SpaceName from '$lib/ui/SpaceName.svelte';
 	import {getApp} from '$lib/ui/app';
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
@@ -27,7 +27,7 @@
 
 <div class="space-editor column">
 	<div class="markup">
-		<h2>Edit Space</h2>
+		<h1>Edit Space</h1>
 		<section class="row" style:font-size="var(--font_size_xl)">
 			<SpaceName {space} />
 		</section>
@@ -84,7 +84,7 @@
 		flex-direction: column;
 		padding: var(--spacing_xl);
 	}
-	h2 {
+	h1 {
 		text-align: center;
 	}
 	form li {

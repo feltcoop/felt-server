@@ -1,7 +1,7 @@
-import {type Result} from '@feltcoop/felt';
+import type {Result} from '@feltcoop/felt';
 
-import {type Service} from '$lib/server/service';
-import {type ErrorResponse} from '$lib/util/error';
+import type {Service} from '$lib/server/service';
+import type {ErrorResponse} from '$lib/util/error';
 
 // This currently only checks for the existence of an `account_id` on the request.
 // We'll want to allow services to declare more complex rules.

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 	import {format} from 'date-fns';
 
 	import {getApp} from '$lib/ui/app';
 	import EntityTable from '$lib/ui/EntityTable.svelte';
-	import {type Entity} from '$lib/vocab/entity/entity';
+	import type {Entity} from '$lib/vocab/entity/entity';
 	import {parseJson, serializeJson} from '$lib/util/json';
 	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
@@ -34,7 +34,7 @@
 
 <div class="entity-editor column">
 	<div class="markup">
-		<h2>Edit Entity</h2>
+		<h1>Edit Entity</h1>
 		<section class="row">
 			<span class="spaced">created by</span>
 			<PersonaAvatar {persona} />
@@ -81,7 +81,7 @@
 	.entity-editor {
 		padding: var(--spacing_xl);
 	}
-	h2 {
+	h1 {
 		text-align: center;
 	}
 	form li {

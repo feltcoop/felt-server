@@ -1,5 +1,5 @@
-import {type ApiResult} from '$lib/server/api';
-import {type ServiceEventInfo} from '$lib/vocab/event/event';
+import type {ApiResult} from '$lib/server/api';
+import type {ServiceEventInfo} from '$lib/vocab/event/event';
 
 export interface ApiClient<
 	TParamsMap extends Record<string, any> = any, // TODO default and value types?

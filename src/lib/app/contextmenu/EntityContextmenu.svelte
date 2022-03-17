@@ -1,7 +1,7 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 
-	import {type Entity} from '$lib/vocab/entity/entity';
+	import type {Entity} from '$lib/vocab/entity/entity';
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
 	import {getApp} from '$lib/ui/app';

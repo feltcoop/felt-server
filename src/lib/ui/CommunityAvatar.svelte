@@ -1,8 +1,8 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 
 	import Avatar from '$lib/ui/Avatar.svelte';
-	import {type Community} from '$lib/vocab/community/community';
+	import type {Community} from '$lib/vocab/community/community';
 	import CommunityContextmenu from '$lib/app/contextmenu/CommunityContextmenu.svelte';
 
 	export let community: Readable<Community>;
@@ -13,6 +13,7 @@
 <Avatar
 	name={$community.name}
 	type="Community"
+	hue={$community.settings.hue}
 	{showName}
 	{showIcon}
 	contextmenuAction={[[CommunityContextmenu, {community}]]}

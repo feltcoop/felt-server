@@ -1,8 +1,8 @@
-import {type Result} from '@feltcoop/felt';
+import type {Result} from '@feltcoop/felt';
 
-import {type Database} from '$lib/db/Database';
-import {type ServiceEventInfo} from '$lib/vocab/event/event';
-import {type ISessionApi} from '$lib/server/SessionApi';
+import type {Database} from '$lib/db/Database';
+import type {ServiceEventInfo} from '$lib/vocab/event/event';
+import type {ISessionApi} from '$lib/server/SessionApi';
 
 export type ServiceMethod =
 	| 'GET'
