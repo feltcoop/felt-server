@@ -390,13 +390,9 @@ export const toUi = (
 			log.trace('[CreatePersona]', $persona, $community, $spaces);
 			const persona = addPersona($persona);
 			addCommunity($community, $spaces, [$membership]);
-			// TODO BLOCK probably extract a helper
-			await goto(
-				'/' +
-					$community.name +
-					// TODO after upgrading SvelteKit, use `$page`'s `URLSearchParams` instead of constructing the search like this
-					`?persona=${get(sessionPersonaIndices).get(persona)}`,
-			);
+			// TODO extract a helper after upgrading SvelteKit and using
+			// `$page`'s `URLSearchParams` instead of constructing the search like this
+			await goto('/' + $community.name + `?persona=${get(sessionPersonaIndices).get(persona)}`);
 			return result;
 		},
 		CreateCommunity: async ({params, invoke}) => {
@@ -412,13 +408,9 @@ export const toUi = (
 			log.trace('[ui.CreateCommunity]', $community, persona_id);
 			const persona = addPersona($persona);
 			addCommunity($community, $spaces, $memberships);
-			// TODO BLOCK probably extract a helper
-			await goto(
-				'/' +
-					$community.name +
-					// TODO after upgrading SvelteKit, use `$page`'s `URLSearchParams` instead of constructing the search like this
-					`?persona=${get(sessionPersonaIndices).get(persona)}`,
-			);
+			// TODO extract a helper after upgrading SvelteKit and using
+			// `$page`'s `URLSearchParams` instead of constructing the search like this
+			await goto('/' + $community.name + `?persona=${get(sessionPersonaIndices).get(persona)}`);
 			return result;
 		},
 		UpdateCommunitySettings: async ({params, invoke}) => {
