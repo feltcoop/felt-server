@@ -6,14 +6,17 @@ import type {
 	ReadEntitiesResponseResult,
 	UpdateEntityParams,
 	UpdateEntityResponseResult,
-	DeleteEntityParams,
-	DeleteEntityResponseResult,
+	SoftDeleteEntityParams,
+	SoftDeleteEntityResponseResult,
+	HardDeleteEntityParams,
+	HardDeleteEntityResponseResult,
 } from '$lib/app/eventTypes';
 import {
 	ReadEntities,
 	UpdateEntity,
 	CreateEntity,
-	DeleteEntity,
+	SoftDeleteEntity,
+	HardDeleteEntity,
 } from '$lib/vocab/entity/entity.events';
 
 // TODO rename to `getEntities`? `loadEntities`?
@@ -56,11 +59,29 @@ export const updateEntityService: Service<UpdateEntityParams, UpdateEntityRespon
 	},
 };
 
-//deletes a single entity
-export const deleteEntityService: Service<DeleteEntityParams, DeleteEntityResponseResult> = {
-	event: DeleteEntity,
+//soft deletes a single entity, leaving behind a Tombstone entity
+export const softDeleteEntityService: Service<
+	SoftDeleteEntityParams,
+	SoftDeleteEntityResponseResult
+> = {
+	event: SoftDeleteEntity,
 	perform: async ({repos, params}) => {
-		const result = await repos.entity.deleteById(params.entity_id);
+		const result = await repos.entity.softDeleteById(params.entity_id);
+		if (!result.ok) {
+			return {ok: false, status: 500, message: result.message};
+		}
+		return {ok: true, status: 200, value: null};
+	},
+};
+
+//hard deletes a single entity, removing the record of it from the DB
+export const hardDeleteEntityService: Service<
+	HardDeleteEntityParams,
+	HardDeleteEntityResponseResult
+> = {
+	event: HardDeleteEntity,
+	perform: async ({repos, params}) => {
+		const result = await repos.entity.hardDeleteById(params.entity_id);
 		if (!result.ok) {
 			return {ok: false, status: 500, message: result.message};
 		}

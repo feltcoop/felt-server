@@ -28,7 +28,11 @@
 	]}
 >
 	<div class="markup formatted">
-		{$entity.data.content}
+		{#if $entity.data.type !== 'Tombstone'}
+			{$entity.data.content}
+		{:else}
+			<i>This message was deleted</i>
+		{/if}
 	</div>
 	<PersonaAvatar {persona} />
 </li>
