@@ -25,6 +25,9 @@ export default {
 			ssr: {
 				noExternal: ['@feltcoop/felt'],
 			},
+			optimizeDeps: {
+				exclude: ['@feltcoop/felt'],
+			},
 		},
 	},
 };
