@@ -2,6 +2,7 @@ import type {Result} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue, gray} from 'kleur/colors';
 
+import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Membership} from '$lib/vocab/membership/membership.js';
 import type {Database} from '$lib/db/Database';
 import type {ErrorResponse} from '$lib/util/error';

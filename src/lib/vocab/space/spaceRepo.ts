@@ -2,6 +2,7 @@ import type {Result} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue, gray} from 'kleur/colors';
 
+import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Space} from '$lib/vocab/space/space.js';
 import type {Database} from '$lib/db/Database';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
