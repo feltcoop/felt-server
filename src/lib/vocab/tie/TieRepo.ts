@@ -37,12 +37,12 @@ export class TieRepo extends PostgresRepo {
 		const ties = await this.db.sql<Tie[]>`
 			WITH RECURSIVE paths (source_id, dest_id, type, created, path) AS (
 				SELECT t.source_id, t.dest_id, t.type, t.created, ARRAY[t.source_id, t.dest_id]
-        	FROM ties t WHERE source_id=${directory_id}
-    		UNION ALL
-        	SELECT t.source_id, t.dest_id, t.type,t.created, p.path || ARRAY[t.dest_id]
-        	FROM paths p
-        	JOIN ties t
-        	ON p.dest_id = t.source_id AND t.dest_id != ALL(p.path)
+					FROM ties t WHERE source_id=${directory_id}
+				UNION ALL
+					SELECT t.source_id, t.dest_id, t.type,t.created, p.path || ARRAY[t.dest_id]
+					FROM paths p
+					JOIN ties t
+					ON p.dest_id = t.source_id AND t.dest_id != ALL(p.path)
 			)
 			SELECT DISTINCT source_id, dest_id, type, created FROM paths;
 		`;
