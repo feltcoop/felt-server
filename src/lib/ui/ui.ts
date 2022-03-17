@@ -406,11 +406,15 @@ export const toUi = (
 				communityPersona: $persona,
 			} = result.value;
 			log.trace('[ui.CreateCommunity]', $community, persona_id);
-			const persona = addPersona($persona);
+			addPersona($persona);
 			addCommunity($community, $spaces, $memberships);
 			// TODO extract a helper after upgrading SvelteKit and using
 			// `$page`'s `URLSearchParams` instead of constructing the search like this
-			await goto('/' + $community.name + `?persona=${get(sessionPersonaIndices).get(persona)}`);
+			await goto(
+				'/' +
+					$community.name +
+					`?persona=${get(sessionPersonaIndices).get(personaById.get(params.persona_id)!)}`,
+			);
 			return result;
 		},
 		UpdateCommunitySettings: async ({params, invoke}) => {
