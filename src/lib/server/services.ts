@@ -41,6 +41,7 @@ export const services: Map<string, Service<any, any>> = new Map(
 		createEntityService,
 		updateEntityService,
 		softDeleteEntityService,
+		hardDeleteEntityService,
 		readCommunityService,
 		readCommunitiesService,
 		updateCommunitySettingsService,
