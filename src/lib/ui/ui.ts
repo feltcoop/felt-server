@@ -18,7 +18,6 @@ import {type UiHandlers} from '$lib/app/eventTypes';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {type ViewData} from '$lib/vocab/view/view';
 import {initBrowser} from '$lib/ui/init';
-import {page} from '$app/stores';
 
 if (browser) initBrowser();
 
@@ -216,7 +215,7 @@ export const toUi = (
 		$community: Community,
 		$communitySpaces: Space[],
 		$memberships: Membership[],
-	): void => {
+	): Writable<Community> => {
 		memberships.mutate(($ms) => $ms.push(...$memberships.map(($m) => writable($m))));
 
 		// TODO what's the right order of updating `communities` and `spaces`?
@@ -243,14 +242,17 @@ export const toUi = (
 		// but is the better implementation to use a `mutable` wrapping a map, no array?
 		communityById.set($community.community_id, community);
 		communities.mutate(($communities) => $communities.push(community));
+		return community;
 	};
 
-	const addPersona = ($persona: Persona): void => {
+	const addPersona = ($persona: Persona): Writable<Persona> => {
 		const persona = writable($persona);
 		personaById.set($persona.persona_id, persona);
 		personas.mutate(($personas) => $personas.push(persona));
-		if ($persona.account_id)
+		if ($persona.account_id) {
 			sessionPersonas.update(($sessionPersonas) => $sessionPersonas.concat(persona));
+		}
+		return persona;
 	};
 
 	const ui: Ui = {
@@ -376,7 +378,7 @@ export const toUi = (
 			session.set({guest: true});
 			return result;
 		},
-		CreateAccountPersona: async ({invoke, dispatch}) => {
+		CreateAccountPersona: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
 			const {
@@ -386,11 +388,15 @@ export const toUi = (
 				membership: $membership,
 			} = result.value;
 			log.trace('[CreatePersona]', $persona, $community, $spaces);
-			addPersona($persona);
+			const persona = addPersona($persona);
 			addCommunity($community, $spaces, [$membership]);
-			// TODO BLOCK
-			dispatch('SelectPersona', {persona_id: $persona.persona_id});
-			dispatch('SelectCommunity', {community_id: $community.community_id});
+			// TODO BLOCK probably extract a helper
+			await goto(
+				'/' +
+					$community.name +
+					// TODO after upgrading SvelteKit, use `$page`'s `URLSearchParams` instead of constructing the search like this
+					`?persona=${get(sessionPersonaIndices).get(persona)}`,
+			);
 			return result;
 		},
 		CreateCommunity: async ({params, invoke}) => {
@@ -404,13 +410,14 @@ export const toUi = (
 				communityPersona: $persona,
 			} = result.value;
 			log.trace('[ui.CreateCommunity]', $community, persona_id);
-			addPersona($persona);
+			const persona = addPersona($persona);
 			addCommunity($community, $spaces, $memberships);
+			// TODO BLOCK probably extract a helper
 			await goto(
 				'/' +
 					$community.name +
 					// TODO after upgrading SvelteKit, use `$page`'s `URLSearchParams` instead of constructing the search like this
-					`?persona=${get(sessionPersonaIndices).get(personaById.get(persona_id)!)}`,
+					`?persona=${get(sessionPersonaIndices).get(persona)}`,
 			);
 			return result;
 		},

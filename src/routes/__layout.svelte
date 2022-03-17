@@ -101,6 +101,7 @@
 		params: {community?: string; space?: string},
 		query: URLSearchParams,
 	) => {
+		console.log(`updateStateFromPageParams params, query`, params, query);
 		if (!params.community) return;
 
 		const rawPersonaIndex = query.get(PERSONA_QUERY_KEY);
