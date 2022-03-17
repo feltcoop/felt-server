@@ -3,7 +3,6 @@
 	import {throttle} from 'throttle-debounce';
 	import HueInput from '@feltcoop/felt/ui/HueInput.svelte';
 
-	import EntityIcon from '$lib/ui/EntityIcon.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
 
@@ -22,14 +21,3 @@
 
 <!-- TODO maybe add a title or tooltip explaining `community.settings.hue` -->
 <HueInput hue={$community.settings.hue} on:input={(e) => updateHue(e.detail)} />
-<div class="community-icon">
-	<EntityIcon name={$community.name} type="Community" --hue={$community.settings.hue} />
-</div>
-
-<style>
-	.community-icon {
-		/* TODO instead of this, maybe have a "centered-box" or "box" or "flex-centered" or copy Tailwind */
-		display: flex;
-		justify-content: center;
-	}
-</style>
