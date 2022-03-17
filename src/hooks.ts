@@ -1,4 +1,4 @@
-import type {RequestHandler} from '@sveltejs/kit';
+import type {GetSession} from '@sveltejs/kit';
 import {noop} from '@feltcoop/felt/util/function.js';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
@@ -9,11 +9,10 @@ import {db} from '$lib/db/db';
 
 const log = new Logger('[hooks]');
 
-// TODO The type signature and return values are messy because the SvelteKit `JSONValue` type
-// requires an index signature with `any` values.
-export const getSession: RequestHandler<any, ClientSession & Record<string, any>> = async (
-	requestEvent,
-) => {
+// TODO BLOCK fix ambient types
+type A = App.Session.guest;
+
+export const getSession: GetSession = async (requestEvent) => {
 	log.trace('getSession');
 	const request = requestEvent.request as CookieSessionRequest;
 	cookieSessionMiddleware(request, {} as any, noop); // eslint-disable-line @typescript-eslint/no-floating-promises

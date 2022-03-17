@@ -297,6 +297,7 @@ export const toUi = (
 			log.warn('[dispatch] ignoring unhandled event', ctx);
 		},
 		setSession: ($session) => {
+			console.log(`$session`, $session);
 			if (browser) log.trace('[setSession]', $session);
 			account.set($session.guest ? null : $session.account);
 
