@@ -5,13 +5,13 @@ import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 
-/* test__entityRepo */
-const test__entityRepo = suite<TestDbContext & TestAppContext>('entityRepo');
+/* test__EntityRepo */
+const test__EntityRepo = suite<TestDbContext & TestAppContext>('EntityRepo');
 
-test__entityRepo.before(setupDb);
-test__entityRepo.after(teardownDb);
+test__EntityRepo.before(setupDb);
+test__EntityRepo.after(teardownDb);
 
-test__entityRepo('entites return sorted by created', async ({db}) => {
+test__EntityRepo('entites return sorted by created', async ({db}) => {
 	const random = new RandomVocabContext(db);
 	const space = await random.space();
 	const entity0 = await random.entity(undefined, undefined, undefined, space);
@@ -30,5 +30,5 @@ test__entityRepo('entites return sorted by created', async ({db}) => {
 	assert.equal(entity2.entity_id, result.value[2].entity_id);
 });
 
-test__entityRepo.run();
-/* test__entityRepo */
+test__EntityRepo.run();
+/* test__EntityRepo */

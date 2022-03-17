@@ -5,7 +5,7 @@ import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Tie} from '$lib/vocab/tie/tie';
 import type {ErrorResponse} from '$lib/util/error';
 
-const log = new Logger('[tieRepo]');
+const log = new Logger('[TieRepo]');
 
 export class TieRepo extends PostgresRepo {
 	async create(source_id: number, dest_id: number, type: string): Promise<Result<{value: Tie}>> {
@@ -27,7 +27,7 @@ export class TieRepo extends PostgresRepo {
 			FROM ties t 
 			JOIN (SELECT entity_id FROM entities WHERE space_id=${space_id}) as e 
 			ON e.entity_id = t.source_id OR e.entity_id = t.dest_id;
-			`;
+		`;
 		log.trace('space ties', ties);
 		return {ok: true, value: ties};
 	}
@@ -36,16 +36,16 @@ export class TieRepo extends PostgresRepo {
 		log.trace(`preparing to walk graph starting with directory: ${directory_id}`);
 		const ties = await this.db.sql<Tie[]>`
 			WITH RECURSIVE paths (source_id, dest_id, type, created, path) AS (
-        	SELECT t.source_id, t.dest_id, t.type, t.created, ARRAY[t.source_id, t.dest_id]
+				SELECT t.source_id, t.dest_id, t.type, t.created, ARRAY[t.source_id, t.dest_id]
         	FROM ties t WHERE source_id=${directory_id}
     		UNION ALL
         	SELECT t.source_id, t.dest_id, t.type,t.created, p.path || ARRAY[t.dest_id]
         	FROM paths p
         	JOIN ties t
         	ON p.dest_id = t.source_id AND t.dest_id != ALL(p.path)
-				)
+			)
 			SELECT DISTINCT source_id, dest_id, type, created FROM paths;
-			`;
+		`;
 		log.trace('directory ties', ties);
 		return {ok: true, value: ties};
 	}

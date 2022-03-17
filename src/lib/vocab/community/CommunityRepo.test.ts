@@ -5,13 +5,13 @@ import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 
-/* test__communityRepo */
-const test__communityRepo = suite<TestDbContext & TestAppContext>('communityRepo');
+/* test__CommunityRepo */
+const test__CommunityRepo = suite<TestDbContext & TestAppContext>('CommunityRepo');
 
-test__communityRepo.before(setupDb);
-test__communityRepo.after(teardownDb);
+test__CommunityRepo.before(setupDb);
+test__CommunityRepo.after(teardownDb);
 
-test__communityRepo('updateSettings', async ({db}) => {
+test__CommunityRepo('updateSettings', async ({db}) => {
 	const random = new RandomVocabContext(db);
 	const community = await random.community();
 	assert.type(community.settings, 'object');
@@ -26,5 +26,5 @@ test__communityRepo('updateSettings', async ({db}) => {
 	assert.equal(updatedCommunity.value.settings, newSettings);
 });
 
-test__communityRepo.run();
-/* test__communityRepo */
+test__CommunityRepo.run();
+/* test__CommunityRepo */
