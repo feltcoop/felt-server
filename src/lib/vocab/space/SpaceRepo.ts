@@ -36,7 +36,8 @@ export class SpaceRepo extends PostgresRepo {
 		const data = await this.db.sql<Space[]>`
 			SELECT s.space_id, s.name, s.url, icon, s.view, s.updated, s.created, s.community_id
 			FROM spaces s JOIN (
-				SELECT DISTINCT m.community_id FROM personas p JOIN memberships m ON p.persona_id=m.persona_id AND p.account_id = ${account_id}
+				SELECT DISTINCT m.community_id FROM personas p
+				JOIN memberships m ON p.persona_id=m.persona_id AND p.account_id=${account_id}
 			) apc
 			ON s.community_id=apc.community_id;
 		`;

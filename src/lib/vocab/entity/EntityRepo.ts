@@ -60,7 +60,7 @@ export class EntityRepo extends PostgresRepo {
 		log.trace('[deleteById]', entity_id);
 		const data = await this.db.sql<any[]>`
 			UPDATE entities
-			SET data = jsonb_build_object('type','Tombstone','formerType',data->'type','deleted',NOW())
+			SET data = jsonb_build_object('type','Tombstone','formerType',data->>'type','deleted',NOW())
 			WHERE entity_id=${entity_id} AND data->>'type' != 'Tombstone';
 		`;
 		if (data.count !== 1) {

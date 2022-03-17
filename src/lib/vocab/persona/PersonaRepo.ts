@@ -42,8 +42,8 @@ export class PersonaRepo extends PostgresRepo {
 	async filterByAccount(account_id: number): Promise<Result<{value: Persona[]}, ErrorResponse>> {
 		log.trace('[filterByAccount]', account_id);
 		const data = await this.db.sql<Persona[]>`
-			SELECT p.persona_id, p.type, p.name, p.account_id, p.community_id, p.created, p.updated
-			FROM personas p WHERE p.account_id = ${account_id}
+			SELECT persona_id, type, name, account_id, community_id, created, updated
+			FROM personas WHERE account_id=${account_id}
 		`;
 		return {ok: true, value: data};
 	}
