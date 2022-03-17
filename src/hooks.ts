@@ -20,12 +20,11 @@ export const getSession: GetSession = async (requestEvent) => {
 	if (account_id !== undefined) {
 		const result = await db.repos.session.loadClientSession(account_id);
 		if (result.ok) {
-			const body: ClientSession = result.value;
-			return {status: 200, body};
+			return result.value;
 		}
 		log.error('failed to load session', result.message);
 		request.session = null!;
 	}
-	const body: ClientSession = {guest: true};
-	return {status: 200, body};
+	const session: ClientSession = {guest: true}; // TODO BLOCK shouldn't need this declaration, see above
+	return session;
 };

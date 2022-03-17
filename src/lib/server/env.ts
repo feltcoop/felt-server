@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import {copyFileSync, existsSync} from 'fs'; // eslint-disable-line @typescript-eslint/no-restricted-imports
 
-// TODO does this stuff belong in `src/server/env.ts`?
 // TODO how to configure this stuff in user projects? felt/gro config?
 
 export const ENV_PROD = '.env.production';
