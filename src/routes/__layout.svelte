@@ -7,8 +7,6 @@
 	import {onMount} from 'svelte';
 	import {session, page} from '$app/stores';
 	import {browser} from '$app/env';
-	import type {Readable} from 'svelte/store';
-	import {get} from 'svelte/store';
 	import Dialogs from '@feltcoop/felt/ui/dialog/Dialogs.svelte';
 	import {Logger} from '@feltcoop/felt/util/log.js';
 
@@ -17,6 +15,7 @@
 	import MainNav from '$lib/ui/MainNav.svelte';
 	import Onboard from '$lib/ui/Onboard.svelte';
 	import {setUi, toUi} from '$lib/ui/ui';
+	import {syncUiToUrl} from '$lib/ui/syncUiToUrl';
 	import {toDispatch, toDispatchBroadcastMessage} from '$lib/app/dispatch';
 	import {setApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
@@ -26,9 +25,6 @@
 	import {toHttpApiClient} from '$lib/ui/HttpApiClient';
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import {findHttpService, findWebsocketService} from '$lib/ui/services';
-	import type {Persona} from '$lib/vocab/persona/persona';
-	import {goto} from '$app/navigation';
-	import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
 	import {components} from '$lib/app/components';
 	import AppContextmenu from '$lib/app/contextmenu/AppContextmenu.svelte';
@@ -76,78 +72,13 @@
 	}
 	$: browser && log.trace('$session', $session);
 
-	const {
-		mobile,
-		layout,
-		contextmenu,
-		dialogs,
-		account,
-		sessionPersonas,
-		communities,
-		personaIndexSelection,
-		communityIdSelection,
-		spacesByCommunityId,
-		spaceIdSelectionByCommunityId,
-		personaSelection,
-	} = ui;
+	const {mobile, layout, contextmenu, dialogs, account, sessionPersonas, personaSelection} = ui;
 
 	$: guest = $session.guest;
 	$: onboarding = !guest && !$sessionPersonas.length;
-
-	// TODO instead of dispatching `select` events on startup, try to initialize with correct values
-	// TODO refactor -- where should this logic go?
-	$: updateStateFromPageParams($page.params, $page.query);
 	$: selectedPersona = $personaSelection; // must be after `updateStateFromPageParams`
-	const updateStateFromPageParams = (
-		params: {community?: string; space?: string},
-		query: URLSearchParams,
-	) => {
-		if (!params.community) return;
 
-		const rawPersonaIndex = query.get(PERSONA_QUERY_KEY);
-		const personaIndex = rawPersonaIndex === null ? null : Number(rawPersonaIndex);
-		const persona: Readable<Persona> | null =
-			personaIndex === null ? null : $sessionPersonas[personaIndex];
-		if (!persona) {
-			if (browser) {
-				const fallbackPersonaIndex = 0;
-				log.warn(
-					`unable to find persona at index ${personaIndex}; falling back to index ${fallbackPersonaIndex}`,
-				);
-				// eslint-disable-next-line @typescript-eslint/no-floating-promises
-				goto(
-					location.pathname +
-						'?' +
-						setUrlPersona(fallbackPersonaIndex, new URLSearchParams(location.search)),
-					{replaceState: true},
-				);
-				return; // exit early; this function re-runs from the `goto` call with the updated `$page`
-			}
-		} else if (personaIndex !== $personaIndexSelection) {
-			dispatch.SelectPersona({persona_id: get(persona).persona_id});
-		} // else already selected
-
-		// TODO speed this up with a map of communityByName
-		const communityStore = $communities.value.find((c) => get(c).name === params.community);
-		if (!communityStore) return; // occurs when a session routes to a community they can't access
-		const community = get(communityStore);
-		const {community_id} = community;
-		if (community_id !== $communityIdSelection) {
-			dispatch.SelectCommunity({community_id});
-		}
-		if (community_id) {
-			const spaceUrl = '/' + (params.space || '');
-			//TODO lookup space by url
-			const space = $spacesByCommunityId.get(community_id)!.find((s) => get(s).url === spaceUrl);
-			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
-			const {space_id} = get(space);
-			if (space_id !== $spaceIdSelectionByCommunityId[community_id]) {
-				dispatch.SelectSpace({community_id, space_id});
-			}
-		} else {
-			// TODO what is this condition?
-		}
-	};
+	$: syncUiToUrl(ui, dispatch, $page.params, $page.query);
 
 	let mounted = false;
 
