@@ -1,9 +1,9 @@
 import type {Mutation} from '$lib/ui/mutation';
-import {LoginAccount, LogoutAccount} from '$lib/session/session.mutations';
-import {CreateAccountPersona} from '$lib/vocab/persona/persona.mutations';
-import {CreateCommunity, UpdateCommunitySettings} from '$lib/vocab/community/community.mutations';
-import {CreateSpace, DeleteSpace, UpdateSpace} from '$lib/vocab/space/space.mutations';
-import {CreateMembership, DeleteMembership} from '$lib/vocab/membership/membership.mutations';
+import {LoginAccount, LogoutAccount} from '$lib/session/sessionMutations';
+import {CreateAccountPersona} from '$lib/vocab/persona/personaMutations';
+import {CreateCommunity, UpdateCommunitySettings} from '$lib/vocab/community/communityMutations';
+import {CreateSpace, DeleteSpace, UpdateSpace} from '$lib/vocab/space/spaceMutations';
+import {CreateMembership, DeleteMembership} from '$lib/vocab/membership/membershipMutations';
 import {
 	CreateEntity,
 	UpdateEntity,
@@ -11,8 +11,8 @@ import {
 	HardDeleteEntity,
 	ReadEntities,
 	QueryEntities,
-} from '$lib/vocab/entity/entity.mutations';
-import {CreateTie, ReadTies, DeleteTie} from '$lib/vocab/tie/tie.mutations';
+} from '$lib/vocab/entity/entityMutations';
+import {CreateTie, ReadTies, DeleteTie} from '$lib/vocab/tie/tieMutations';
 import {
 	Ping,
 	SetMobile,
@@ -24,7 +24,7 @@ import {
 	ViewSpace,
 	ToggleMainNav,
 	ToggleSecondaryNav,
-} from '$lib/ui/ui.mutations';
+} from '$lib/ui/uiMutations';
 
 export const mutations: Record<string, Mutation> = {
 	LoginAccount,
