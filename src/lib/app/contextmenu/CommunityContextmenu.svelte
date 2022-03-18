@@ -50,6 +50,11 @@
 			>
 				<span class="title">Invite Members</span>
 			</ContextmenuEntry>
+			<ContextmenuEntry
+				action={() => dispatch('DeleteCommunity', {community_id: $community.community_id})}
+			>
+				<span class="title">Delete Community</span>
+			</ContextmenuEntry>
 		{/if}
 	</svelte:fragment>
 </ContextmenuSubmenu>

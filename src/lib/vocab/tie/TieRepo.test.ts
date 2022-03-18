@@ -5,13 +5,13 @@ import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 
-/* test__tieRepo */
-const test__tieRepo = suite<TestDbContext & TestAppContext>('tieRepo');
+/* test__TieRepo */
+const test__TieRepo = suite<TestDbContext & TestAppContext>('TieRepo');
 
-test__tieRepo.before(setupDb);
-test__tieRepo.after(teardownDb);
+test__TieRepo.before(setupDb);
+test__TieRepo.after(teardownDb);
 
-test__tieRepo('check tie queries', async ({db}) => {
+test__TieRepo('check tie queries', async ({db}) => {
 	//Gen space
 	//Gen dir entity -> thread entity -> post -> reply
 	const random = new RandomVocabContext(db);
@@ -59,5 +59,5 @@ test__tieRepo('check tie queries', async ({db}) => {
 	);
 });
 
-test__tieRepo.run();
-/* test__tieRepo */
+test__TieRepo.run();
+/* test__TieRepo */

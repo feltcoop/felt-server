@@ -24,6 +24,7 @@ export interface EventParamsByName {
 	ReadCommunity: ReadCommunityParams;
 	ReadCommunities: ReadCommunitiesParams;
 	UpdateCommunitySettings: UpdateCommunitySettingsParams;
+	DeleteCommunity: DeleteCommunityParams;
 	CreateAccountPersona: CreateAccountPersonaParams;
 	CreateMembership: CreateMembershipParams;
 	DeleteMembership: DeleteMembershipParams;
@@ -59,6 +60,7 @@ export interface EventResponseByName {
 	ReadCommunity: ReadCommunityResponse;
 	ReadCommunities: ReadCommunitiesResponse;
 	UpdateCommunitySettings: UpdateCommunitySettingsResponse;
+	DeleteCommunity: DeleteCommunityResponse;
 	CreateAccountPersona: CreateAccountPersonaResponse;
 	CreateMembership: CreateMembershipResponse;
 	DeleteMembership: DeleteMembershipResponse;
@@ -128,6 +130,12 @@ export interface UpdateCommunitySettingsParams {
 }
 export type UpdateCommunitySettingsResponse = null;
 export type UpdateCommunitySettingsResponseResult = ApiResult<UpdateCommunitySettingsResponse>;
+
+export interface DeleteCommunityParams {
+	community_id: number;
+}
+export type DeleteCommunityResponse = null;
+export type DeleteCommunityResponseResult = ApiResult<DeleteCommunityResponse>;
 
 export interface CreateAccountPersonaParams {
 	name: string;
@@ -320,6 +328,7 @@ export interface Dispatch {
 	UpdateCommunitySettings: (
 		params: UpdateCommunitySettingsParams,
 	) => Promise<UpdateCommunitySettingsResponseResult>;
+	DeleteCommunity: (params: DeleteCommunityParams) => Promise<DeleteCommunityResponseResult>;
 	CreateAccountPersona: (
 		params: CreateAccountPersonaParams,
 	) => Promise<CreateAccountPersonaResponseResult>;
@@ -370,6 +379,9 @@ export interface UiHandlers {
 	UpdateCommunitySettings: (
 		ctx: DispatchContext<UpdateCommunitySettingsParams, UpdateCommunitySettingsResponseResult>,
 	) => Promise<UpdateCommunitySettingsResponseResult>;
+	DeleteCommunity: (
+		ctx: DispatchContext<DeleteCommunityParams, DeleteCommunityResponseResult>,
+	) => Promise<DeleteCommunityResponseResult>;
 	CreateAccountPersona: (
 		ctx: DispatchContext<CreateAccountPersonaParams, CreateAccountPersonaResponseResult>,
 	) => Promise<CreateAccountPersonaResponseResult>;

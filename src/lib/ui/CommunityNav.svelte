@@ -23,10 +23,16 @@
 
 	// TODO improve the efficiency of this with better data structures and caching --
 	// probably `communitiesByPersona` (where the keys are the persona stores)
-	const toPersonaCommunity = (persona: Readable<Persona>): Readable<Community> =>
+	const toPersonaCommunity = (
+		persona: Readable<Persona>,
+		$communitiesBySessionPersona: Map<Readable<Persona>, Array<Readable<Community>>>,
+	): Readable<Community> =>
 		$communitiesBySessionPersona.get(persona)!.find((c) => get(c).type === 'personal')!;
 
-	const toStandardCommunities = (persona: Readable<Persona>): Array<Readable<Community>> =>
+	const toStandardCommunities = (
+		persona: Readable<Persona>,
+		$communitiesBySessionPersona: Map<Readable<Persona>, Array<Readable<Community>>>,
+	): Array<Readable<Community>> =>
 		$communitiesBySessionPersona.get(persona)!.filter((c) => get(c).type !== 'personal')!;
 </script>
 
@@ -36,11 +42,12 @@
 		<div class="persona-group" use:contextmenu.action={[[ActingPersonaContextmenu, {persona}]]}>
 			<!-- TODO refactor this hacky usage of `get` -->
 			<CommunityNavButton
-				community={toPersonaCommunity(persona)}
+				community={toPersonaCommunity(persona, $communitiesBySessionPersona)}
 				{persona}
-				selected={persona === selectedPersona && toPersonaCommunity(persona) === selectedCommunity}
+				selected={persona === selectedPersona &&
+					toPersonaCommunity(persona, $communitiesBySessionPersona) === selectedCommunity}
 			/>
-			{#each toStandardCommunities(persona) as community (community)}
+			{#each toStandardCommunities(persona, $communitiesBySessionPersona) as community (community)}
 				{#if get(community).name !== get(persona).name}
 					<CommunityNavButton
 						{community}

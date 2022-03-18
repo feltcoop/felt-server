@@ -1,12 +1,12 @@
 import type {PostgresSql} from '$lib/db/postgres.js';
-import {sessionRepo} from '$lib/session/sessionRepo';
-import {accountRepo} from '$lib/vocab/account/accountRepo';
-import {personaRepo} from '$lib/vocab/persona/personaRepo';
-import {membershipRepo} from '$lib/vocab/membership/membershipRepo';
-import {communityRepo} from '$lib/vocab/community/communityRepo';
-import {spaceRepo} from '$lib/vocab/space/spaceRepo';
-import {entityRepo} from '$lib/vocab/entity/entityRepo';
-import {tieRepo} from '$lib/vocab/tie/tieRepo';
+import {SessionRepo} from '$lib/session/SessionRepo';
+import {AccountRepo} from '$lib/vocab/account/AccountRepo';
+import {PersonaRepo} from '$lib/vocab/persona/PersonaRepo';
+import {MembershipRepo} from '$lib/vocab/membership/MembershipRepo';
+import {CommunityRepo} from '$lib/vocab/community/CommunityRepo';
+import {SpaceRepo} from '$lib/vocab/space/SpaceRepo';
+import {EntityRepo} from '$lib/vocab/entity/EntityRepo';
+import {TieRepo} from '$lib/vocab/tie/TieRepo';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue, gray} from 'kleur/colors';
 
@@ -31,13 +31,13 @@ export class Database {
 
 	// TODO refactor
 	repos = {
-		session: sessionRepo(this),
-		account: accountRepo(this),
-		persona: personaRepo(this),
-		membership: membershipRepo(this),
-		community: communityRepo(this),
-		space: spaceRepo(this),
-		entity: entityRepo(this),
-		tie: tieRepo(this),
+		session: new SessionRepo(this),
+		account: new AccountRepo(this),
+		persona: new PersonaRepo(this),
+		membership: new MembershipRepo(this),
+		community: new CommunityRepo(this),
+		space: new SpaceRepo(this),
+		entity: new EntityRepo(this),
+		tie: new TieRepo(this),
 	};
 }
