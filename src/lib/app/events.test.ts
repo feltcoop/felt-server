@@ -48,7 +48,7 @@ test__eventInfos('dispatch random events in a client app', async ({db, app}) => 
 		}
 
 		// TODO fix typecast with a union for `eventInfo`
-		const result = await app.dispatch(eventInfo.name as any, params);
+		const result = await (app.dispatch as any)[eventInfo.name](params);
 		if (eventInfo.type === 'ClientEvent') {
 			// TODO don't have schemas for `returns` yet, but eventually we'll want them and then validate here
 			if (eventInfo.returns !== 'void') {

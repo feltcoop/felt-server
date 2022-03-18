@@ -19,7 +19,7 @@
 	const {dispatch, devmode} = getApp();
 
 	const updateSpace = async (updated: any, field: string) =>
-		dispatch('UpdateSpace', {
+		dispatch.UpdateSpace({
 			space_id: $space.space_id,
 			[field]: field === 'view' ? parseView(updated) : updated,
 		});

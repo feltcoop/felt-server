@@ -40,7 +40,7 @@
 	const updateEntity = async (checked: boolean) => {
 		if ($entity.data.checked === checked) return;
 		pending = true;
-		await dispatch('UpdateEntity', {
+		await dispatch.UpdateEntity({
 			entity_id: $entity.entity_id,
 			data: {...$entity.data, checked},
 		});
@@ -57,7 +57,7 @@
 	const addToCollection = async () => {
 		const id = Number(source_id);
 		if (!id) return;
-		await dispatch('CreateTie', {
+		await dispatch.CreateTie({
 			source_id: id,
 			dest_id: $entity.entity_id,
 			type: 'HasItem',

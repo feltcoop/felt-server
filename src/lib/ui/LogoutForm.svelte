@@ -19,7 +19,7 @@
 	const logout = async () => {
 		submitting = true;
 		errorMessage = '';
-		const result = await dispatch('LogoutAccount');
+		const result = await dispatch.LogoutAccount();
 		if (!result.ok) {
 			errorMessage = result.message;
 		}

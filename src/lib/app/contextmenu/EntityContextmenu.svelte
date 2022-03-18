@@ -20,7 +20,7 @@
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
 			action={() =>
-				dispatch('OpenDialog', {
+				dispatch.OpenDialog({
 					Component: EntityEditor,
 					props: {entity},
 					dialogProps: {layout: 'page'},
@@ -28,7 +28,7 @@
 		>
 			<span class="title">Edit Entity</span>
 		</ContextmenuEntry>
-		<ContextmenuEntry action={() => dispatch('SoftDeleteEntity', {entity_id: $entity.entity_id})}>
+		<ContextmenuEntry action={() => dispatch.SoftDeleteEntity({entity_id: $entity.entity_id})}>
 			<span class="title">Delete Entity</span>
 		</ContextmenuEntry>
 	</svelte:fragment>

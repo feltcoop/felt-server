@@ -111,3 +111,26 @@ export const UpdateCommunitySettings: ServiceEventInfo = {
 		method: 'POST',
 	},
 };
+
+export const DeleteCommunity: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'DeleteCommunity',
+	params: {
+		$id: '/schemas/DeleteCommunityParams.json',
+		type: 'object',
+		properties: {
+			community_id: {type: 'number'},
+		},
+		required: ['community_id'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: '/schemas/DeleteCommunityResponse.json',
+		type: 'null',
+	},
+	returns: 'Promise<DeleteCommunityResponseResult>',
+	route: {
+		path: '/api/v1/communities/:community_id',
+		method: 'DELETE',
+	},
+};

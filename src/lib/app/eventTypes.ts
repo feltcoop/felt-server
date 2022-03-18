@@ -24,6 +24,7 @@ export interface EventParamsByName {
 	ReadCommunity: ReadCommunityParams;
 	ReadCommunities: ReadCommunitiesParams;
 	UpdateCommunitySettings: UpdateCommunitySettingsParams;
+	DeleteCommunity: DeleteCommunityParams;
 	CreateAccountPersona: CreateAccountPersonaParams;
 	CreateMembership: CreateMembershipParams;
 	DeleteMembership: DeleteMembershipParams;
@@ -59,6 +60,7 @@ export interface EventResponseByName {
 	ReadCommunity: ReadCommunityResponse;
 	ReadCommunities: ReadCommunitiesResponse;
 	UpdateCommunitySettings: UpdateCommunitySettingsResponse;
+	DeleteCommunity: DeleteCommunityResponse;
 	CreateAccountPersona: CreateAccountPersonaResponse;
 	CreateMembership: CreateMembershipResponse;
 	DeleteMembership: DeleteMembershipResponse;
@@ -128,6 +130,12 @@ export interface UpdateCommunitySettingsParams {
 }
 export type UpdateCommunitySettingsResponse = null;
 export type UpdateCommunitySettingsResponseResult = ApiResult<UpdateCommunitySettingsResponse>;
+
+export interface DeleteCommunityParams {
+	community_id: number;
+}
+export type DeleteCommunityResponse = null;
+export type DeleteCommunityResponseResult = ApiResult<DeleteCommunityResponse>;
 
 export interface CreateAccountPersonaParams {
 	name: string;
@@ -312,23 +320,16 @@ export interface ViewSpaceParams {
 }
 
 export interface Dispatch {
-	(eventName: 'LoginAccount', params: LoginAccountParams): Promise<LoginAccountResponseResult>;
-	(eventName: 'LogoutAccount', params: LogoutAccountParams): Promise<LogoutAccountResponseResult>;
-	(
-		eventName: 'CreateCommunity',
-		params: CreateCommunityParams,
-	): Promise<CreateCommunityResponseResult>;
-	(eventName: 'ReadCommunity', params: ReadCommunityParams): Promise<ReadCommunityResponseResult>;
-	(
-		eventName: 'ReadCommunities',
-		params: ReadCommunitiesParams,
-	): Promise<ReadCommunitiesResponseResult>;
-	(
-		eventName: 'UpdateCommunitySettings',
+	LoginAccount: (params: LoginAccountParams) => Promise<LoginAccountResponseResult>;
+	LogoutAccount: (params: LogoutAccountParams) => Promise<LogoutAccountResponseResult>;
+	CreateCommunity: (params: CreateCommunityParams) => Promise<CreateCommunityResponseResult>;
+	ReadCommunity: (params: ReadCommunityParams) => Promise<ReadCommunityResponseResult>;
+	ReadCommunities: (params: ReadCommunitiesParams) => Promise<ReadCommunitiesResponseResult>;
+	UpdateCommunitySettings: (
 		params: UpdateCommunitySettingsParams,
-	): Promise<UpdateCommunitySettingsResponseResult>;
-	(
-		eventName: 'CreateAccountPersona',
+	) => Promise<UpdateCommunitySettingsResponseResult>;
+	DeleteCommunity: (params: DeleteCommunityParams) => Promise<DeleteCommunityResponseResult>;
+	CreateAccountPersona: (
 		params: CreateAccountPersonaParams,
 	): Promise<CreateAccountPersonaResponseResult>;
 	(
@@ -390,6 +391,9 @@ export interface UiHandlers {
 	UpdateCommunitySettings: (
 		ctx: DispatchContext<UpdateCommunitySettingsParams, UpdateCommunitySettingsResponseResult>,
 	) => Promise<UpdateCommunitySettingsResponseResult>;
+	DeleteCommunity: (
+		ctx: DispatchContext<DeleteCommunityParams, DeleteCommunityResponseResult>,
+	) => Promise<DeleteCommunityResponseResult>;
 	CreateAccountPersona: (
 		ctx: DispatchContext<CreateAccountPersonaParams, CreateAccountPersonaResponseResult>,
 	) => Promise<CreateAccountPersonaResponseResult>;
