@@ -25,6 +25,7 @@ export interface DispatchContext<
 	eventName: string;
 	params: TParams;
 	dispatch: Dispatch;
+	ui: Ui;
 	invoke: TResult extends void ? null : (params?: TParams) => Promise<TResult>;
 }
 
@@ -46,6 +47,7 @@ export const toDispatch = (ui: Ui, toClient: ToDispatchClient): Dispatch => {
 		return ui.dispatch({
 			eventName,
 			params,
+			ui,
 			dispatch,
 			invoke: client ? (p = params) => client.invoke(eventName, p) : null,
 		});
@@ -71,6 +73,7 @@ export const toDispatchBroadcastMessage =
 		return ui.dispatch({
 			eventName,
 			params,
+			ui,
 			dispatch,
 			invoke: () => Promise.resolve(message.result),
 		});
