@@ -80,7 +80,7 @@ export type WritableUi = ReturnType<typeof toUi>;
 
 // This ensures that the inferred `WritableUi` is assignable to `Ui`.
 // The latter type is used in components and it exposes its data as `Readable` stores,
-// while the format is used in mutations and exposes `Writable` stores.
+// while the former is used in mutations and exposes `Writable` stores.
 // TODO is there a better way to do this assertion without any runtime code?
 // @see https://github.com/feltcoop/felt-server/pull/292
 // and @see https://github.com/feltcoop/felt-server/pull/292/commits/f24a7377a7328df6071771facaacb6464e10a000
