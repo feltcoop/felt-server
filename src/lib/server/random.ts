@@ -58,9 +58,10 @@ export const randomEventParams = async (
 			return {community_id: community.community_id};
 		}
 		case 'DeleteCommunity': {
-			if (!community) {
-				community = randomItem(random.communities) || (await random.community(persona, account));
-			}
+			do {
+				// eslint-disable-next-line no-await-in-loop
+				community = await random.community(persona, account);
+			} while (community.type !== 'standard');
 			return {community_id: community.community_id};
 		}
 		case 'ReadCommunities': {

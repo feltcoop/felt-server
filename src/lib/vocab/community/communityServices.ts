@@ -154,6 +154,21 @@ export const deleteCommunityService: Service<DeleteCommunityParams, DeleteCommun
 	{
 		event: DeleteCommunity,
 		perform: async ({repos, params}) => {
+			const communityResult = await repos.community.findById(params.community_id);
+			if (!communityResult.ok) {
+				return {
+					ok: false,
+					status: 404,
+					message: communityResult.message || 'issue finding community',
+				};
+			}
+			if (communityResult.value.type === 'personal') {
+				return {
+					ok: false,
+					status: 405,
+					message: 'cannot delete personal community',
+				};
+			}
 			const deleteResult = await repos.community.deleteById(params.community_id);
 			if (!deleteResult.ok) {
 				return {ok: false, status: 500, message: deleteResult.message || 'unknown error'};
