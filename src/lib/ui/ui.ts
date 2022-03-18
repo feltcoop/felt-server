@@ -248,8 +248,7 @@ export const toUi = (
 			unsubscribeSession();
 		},
 		dispatch: (ctx) => {
-			const mutation = (mutations as any)[ctx.eventName];
-			// const mutation = mutations.get(eventName); // TODO ? would make it easy to do external registration
+			const mutation = mutations[ctx.eventName];
 			if (mutation) {
 				return mutation(ctx);
 			}
