@@ -137,7 +137,7 @@
 		}
 		if (community_id) {
 			const spaceUrl = '/' + (params.space || '');
-			//TODO lookup space by url
+			//TODO lookup space by community_id+url (see this comment in multiple places)
 			const space = $spacesByCommunityId.get(community_id)!.find((s) => get(s).url === spaceUrl);
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = get(space);
