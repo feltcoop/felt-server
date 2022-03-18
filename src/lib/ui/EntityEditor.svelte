@@ -20,13 +20,13 @@
 	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
 
 	const updateEntityDataProperty = async (updated: any, field: string) =>
-		dispatch('UpdateEntity', {
+		dispatch.UpdateEntity({
 			entity_id: $entity.entity_id,
 			data: {...$entity.data, [field]: updated},
 		});
 
 	const updateEntityData = async (updated: any) =>
-		dispatch('UpdateEntity', {
+		dispatch.UpdateEntity({
 			entity_id: $entity.entity_id,
 			data: updated,
 		});

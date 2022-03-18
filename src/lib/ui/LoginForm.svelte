@@ -33,7 +33,7 @@
 		buttonEl.focus();
 		submitting = true;
 		errorMessage = '';
-		const result = await dispatch('LoginAccount', {username, password});
+		const result = await dispatch.LoginAccount({username, password});
 		submitting = false;
 		if (!result.ok) {
 			errorMessage = result.message;

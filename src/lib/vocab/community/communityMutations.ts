@@ -45,3 +45,21 @@ export const UpdateCommunitySettings: Mutations['UpdateCommunitySettings'] = asy
 	}
 	return result;
 };
+
+export const DeleteCommunity: Mutations['UpdateCommunitySettings'] = async ({
+	params,
+	invoke,
+	ui: {communityById, communitySelection, personaSelection, communities},
+}) => {
+	const result = await invoke();
+	if (!result.ok) return result;
+	const community = communityById.get(params.community_id)!;
+	const selectedCommunity = get(communitySelection);
+	if (selectedCommunity === community) {
+		const persona = get(personaSelection)!;
+		await goto('/' + get(persona).name + location.search, {replaceState: true});
+	}
+	communityById.delete(params.community_id);
+	communities.mutate(($communites) => $communites.splice($communites.indexOf(community), 1));
+	return result;
+};

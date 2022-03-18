@@ -21,15 +21,15 @@
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
 			action={() =>
-				dispatch('OpenDialog', {
+				dispatch.OpenDialog({
 					Component: CommunityInput,
-					props: {persona, done: () => dispatch('CloseDialog')},
+					props: {persona, done: () => dispatch.CloseDialog()},
 					dialogProps: {layout: 'page'},
 				})}
 		>
 			<span class="title">Create Community</span>
 		</ContextmenuEntry>
-		<ContextmenuEntry action={() => dispatch('OpenDialog', {Component: ManageMembershipForm})}>
+		<ContextmenuEntry action={() => dispatch.OpenDialog({Component: ManageMembershipForm})}>
 			<span class="title">Manage Memberships</span>
 		</ContextmenuEntry>
 	</svelte:fragment>

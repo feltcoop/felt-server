@@ -15,7 +15,7 @@
 	class:expanded={$expandMarquee}
 	style="transform: translate3d({right}px, 0, 0)"
 	aria-label="toggle marquee"
-	on:click={() => dispatch('ToggleSecondaryNav')}
+	on:click={() => dispatch.ToggleSecondaryNav()}
 >
 	<div class="content">⚆</div>
 </button>

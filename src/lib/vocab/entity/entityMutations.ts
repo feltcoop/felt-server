@@ -22,9 +22,9 @@ export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui: {enti
 	if (!result.ok) return result;
 	//TODO maybe return to $entity naming convention OR propagate this pattern?
 	const {entity: updatedEntity} = result.value;
-	const entities = entitiesBySpace.get(updatedEntity.space_id);
-	const entity = get(entities!).find((e) => get(e).entity_id === updatedEntity.entity_id);
-	entity!.set(updatedEntity);
+	const entities = entitiesBySpace.get(updatedEntity.space_id)!;
+	const entity = get(entities).find((e) => get(e).entity_id === updatedEntity.entity_id)!;
+	entity.set(updatedEntity);
 	return result;
 };
 
@@ -73,7 +73,7 @@ export const QueryEntities: Mutations['QueryEntities'] = ({
 	let spaceEntities = entitiesBySpace.get(params.space_id);
 	if (!spaceEntities) {
 		entitiesBySpace.set(params.space_id, (spaceEntities = writable([])));
-		dispatch('ReadEntities', params); // eslint-disable-line @typescript-eslint/no-floating-promises
+		dispatch.ReadEntities(params); // eslint-disable-line @typescript-eslint/no-floating-promises
 	}
 	return spaceEntities;
 };
