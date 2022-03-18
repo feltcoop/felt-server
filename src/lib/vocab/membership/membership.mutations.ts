@@ -1,16 +1,24 @@
+import {get, writable} from 'svelte/store';
+
 import type {Mutations} from '$lib/app/mutationTypes';
 
-export const CreateMembership: Mutations['CreateMembership'] = async ({invoke}) => {
+export const CreateMembership: Mutations['CreateMembership'] = async ({
+	invoke,
+	ui: {memberships},
+}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {membership: $membership} = result.value;
-	log.trace('[CreateMembership]', $membership);
 	// TODO also update `communities.personas`
 	memberships.mutate(($memberships) => $memberships.push(writable($membership)));
 	return result;
 };
 
-export const DeleteMembership: Mutations['DeleteMembership'] = async ({params, invoke}) => {
+export const DeleteMembership: Mutations['DeleteMembership'] = async ({
+	params,
+	invoke,
+	ui: {memberships},
+}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	// TODO also update `communities.personas`

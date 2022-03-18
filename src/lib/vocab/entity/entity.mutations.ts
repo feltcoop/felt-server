@@ -1,10 +1,11 @@
+import {writable, get} from 'svelte/store';
+
 import type {Mutations} from '$lib/app/mutationTypes';
 
-export const CreateEntity: Mutations['CreateEntity'] = async ({invoke}) => {
+export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, ui: {entitiesBySpace}}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {entity: $entity} = result.value;
-	log.trace('[CreateEntity]', $entity);
 	const entity = writable($entity);
 	const spaceEntities = entitiesBySpace.get($entity.space_id);
 	if (spaceEntities) {
@@ -16,13 +17,11 @@ export const CreateEntity: Mutations['CreateEntity'] = async ({invoke}) => {
 	return result;
 };
 
-export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke}) => {
+export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui: {entitiesBySpace}}) => {
 	const result = await invoke();
-	log.trace('[UpdateEnity] result', result);
 	if (!result.ok) return result;
 	//TODO maybe return to $entity naming convention OR propagate this pattern?
 	const {entity: updatedEntity} = result.value;
-	log.trace('[UpdateEntity]', updatedEntity.entity_id);
 	const entities = entitiesBySpace.get(updatedEntity.space_id);
 	const entity = get(entities!).find((e) => get(e).entity_id === updatedEntity.entity_id);
 	entity!.set(updatedEntity);
@@ -47,14 +46,17 @@ export const HardDeleteEntity: Mutations['HardDeleteEntity'] = async ({invoke}) 
 	return result;
 };
 
-export const ReadEntities: Mutations['ReadEntities'] = async ({params, invoke}) => {
+export const ReadEntities: Mutations['ReadEntities'] = async ({
+	params,
+	invoke,
+	ui: {entitiesBySpace},
+}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {space_id} = params;
 	const existingSpaceEntities = entitiesBySpace.get(space_id);
 	// TODO probably check to make sure they don't already exist
 	const newFiles = result ? result.value.entities.map((f) => writable(f)) : [];
-	log.trace('[ReadEntities]', newFiles);
 	if (existingSpaceEntities) {
 		existingSpaceEntities.set(newFiles);
 	} else {
@@ -63,7 +65,11 @@ export const ReadEntities: Mutations['ReadEntities'] = async ({params, invoke}) 
 	return result;
 };
 
-export const QueryEntities: Mutations['QueryEntities'] = ({params, dispatch}) => {
+export const QueryEntities: Mutations['QueryEntities'] = ({
+	params,
+	dispatch,
+	ui: {entitiesBySpace},
+}) => {
 	let spaceEntities = entitiesBySpace.get(params.space_id);
 	if (!spaceEntities) {
 		entitiesBySpace.set(params.space_id, (spaceEntities = writable([])));

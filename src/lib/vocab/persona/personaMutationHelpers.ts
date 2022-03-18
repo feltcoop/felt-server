@@ -3,8 +3,6 @@ import {writable, type Writable} from 'svelte/store';
 import type {Ui} from '$lib/ui/ui';
 import type {Persona} from '$lib/vocab/persona/persona';
 
-// TODO BLOCK `communityMutationHelpers.ts` or `community.mutations.ts` or something else?
-
 export const addPersona = (
 	{personaById, personas, sessionPersonas}: Ui,
 	$persona: Persona,

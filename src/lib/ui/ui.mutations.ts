@@ -1,44 +1,30 @@
 import {goto} from '$app/navigation';
-import {Logger} from '@feltcoop/felt/util/log.js';
+import {get} from 'svelte/store';
 
 import type {Mutations} from '$lib/app/mutationTypes';
 
-const log = new Logger('[ui.mutations]');
-
 export const Ping: Mutations['Ping'] = ({invoke}) => invoke();
 
-// TODO BLOCK session mutations? session vocab?
-export const LoginAccount: Mutations['LoginAccount'] = async ({invoke, ui: {session}}) => {
-	const result = await invoke();
-	if (!result.ok) return result;
-	session.set(result.value.session);
-	return result;
-};
-
-export const LogoutAccount: Mutations['LogoutAccount'] = async ({invoke, ui: {session}}) => {
-	const result = await invoke();
-	if (!result.ok) return result;
-	session.set({guest: true});
-	return result;
-};
-
-export const SetMobile: Mutations['SetMobile'] = ({params}) => {
+export const SetMobile: Mutations['SetMobile'] = ({params, ui: {mobile}}) => {
 	mobile.set(params);
 };
 
-export const OpenDialog: Mutations['OpenDialog'] = ({params}) => {
+export const OpenDialog: Mutations['OpenDialog'] = ({params, ui: {dialogs}}) => {
 	dialogs.update(($dialogs) => $dialogs.concat(params));
 };
 
-export const CloseDialog: Mutations['CloseDialog'] = () => {
+export const CloseDialog: Mutations['CloseDialog'] = ({ui: {dialogs}}) => {
 	dialogs.update(($dialogs) => $dialogs.slice(0, $dialogs.length - 1));
 };
 
-export const SelectPersona: Mutations['SelectPersona'] = ({params}) => {
+export const SelectPersona: Mutations['SelectPersona'] = ({params, ui: {personaIdSelection}}) => {
 	personaIdSelection.set(params.persona_id);
 };
 
-export const SelectCommunity: Mutations['SelectCommunity'] = ({params}) => {
+export const SelectCommunity: Mutations['SelectCommunity'] = ({
+	params,
+	ui: {personaIdSelection, communityIdSelectionByPersonaId},
+}) => {
 	const $personaIdSelection = get(personaIdSelection); // TODO how to remove the `!`?
 	const {community_id} = params;
 	if (community_id && $personaIdSelection) {
@@ -49,7 +35,10 @@ export const SelectCommunity: Mutations['SelectCommunity'] = ({params}) => {
 	}
 };
 
-export const SelectSpace: Mutations['SelectSpace'] = ({params}) => {
+export const SelectSpace: Mutations['SelectSpace'] = ({
+	params,
+	ui: {spaceIdSelectionByCommunityId},
+}) => {
 	const {community_id, space_id} = params;
 	spaceIdSelectionByCommunityId.update(($spaceIdSelectionByCommunityId) => ({
 		...$spaceIdSelectionByCommunityId,
@@ -57,7 +46,10 @@ export const SelectSpace: Mutations['SelectSpace'] = ({params}) => {
 	}));
 };
 
-export const ViewSpace: Mutations['ViewSpace'] = async ({params: {space, view}}) => {
+export const ViewSpace: Mutations['ViewSpace'] = async ({
+	params: {space, view},
+	ui: {viewBySpace, communitySelection, spaceIdSelectionByCommunityId, communityById},
+}) => {
 	viewBySpace.mutate(($viewBySpace) => {
 		if (view) {
 			$viewBySpace.set(space, view);
@@ -80,10 +72,10 @@ export const ViewSpace: Mutations['ViewSpace'] = async ({params: {space, view}})
 	}
 };
 
-export const ToggleMainNav: Mutations['ToggleMainNav'] = () => {
+export const ToggleMainNav: Mutations['ToggleMainNav'] = ({ui: {expandMainNav}}) => {
 	expandMainNav.update(($expandMainNav) => !$expandMainNav);
 };
 
-export const ToggleSecondaryNav: Mutations['ToggleSecondaryNav'] = () => {
+export const ToggleSecondaryNav: Mutations['ToggleSecondaryNav'] = ({ui: {expandMarquee}}) => {
 	expandMarquee.update(($expandMarquee) => !$expandMarquee);
 };

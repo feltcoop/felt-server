@@ -5,8 +5,6 @@ import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
 import type {Membership} from '$lib/vocab//membership/membership';
 
-// TODO BLOCK `communityMutationHelpers.ts` or `community.mutations.ts` or something else?
-
 export const addCommunity = (
 	{memberships, spaceById, spaces, spaceIdSelectionByCommunityId, communityById, communities}: Ui,
 	$community: Community,

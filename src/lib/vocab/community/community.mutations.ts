@@ -1,18 +1,22 @@
-import type {Mutations} from '$lib/app/mutationTypes';
+import {goto} from '$app/navigation';
+import {get} from 'svelte/store';
 
-export const CreateCommunity: Mutations['CreateCommunity'] = async ({params, invoke}) => {
+import type {Mutations} from '$lib/app/mutationTypes';
+import {addPersona} from '$lib/vocab/persona/personaMutationHelpers';
+import {addCommunity} from '$lib/vocab/community/communityMutationHelpers';
+
+export const CreateCommunity: Mutations['CreateCommunity'] = async ({params, invoke, ui}) => {
+	const {sessionPersonaIndices, personaById} = ui;
 	const result = await invoke();
 	if (!result.ok) return result;
-	const {persona_id} = params;
 	const {
 		community: $community,
 		spaces: $spaces,
 		memberships: $memberships,
 		communityPersona: $persona,
 	} = result.value;
-	log.trace('[ui.CreateCommunity]', $community, persona_id);
-	addPersona($persona);
-	addCommunity($community, $spaces, $memberships);
+	addPersona(ui, $persona);
+	addCommunity(ui, $community, $spaces, $memberships);
 	// TODO extract a helper after upgrading SvelteKit and using
 	// `$page`'s `URLSearchParams` instead of constructing the search like this
 	await goto(
@@ -26,6 +30,7 @@ export const CreateCommunity: Mutations['CreateCommunity'] = async ({params, inv
 export const UpdateCommunitySettings: Mutations['UpdateCommunitySettings'] = async ({
 	params,
 	invoke,
+	ui: {communityById},
 }) => {
 	// optimistic update
 	const community = communityById.get(params.community_id)!;

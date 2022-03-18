@@ -43,37 +43,37 @@ export interface Ui {
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
-	personas: Mutable<Array<Readable<Persona>>>;
-	sessionPersonas: Readable<Array<Readable<Persona>>>;
-	sessionPersonaIndices: Readable<Map<Readable<Persona>, number>>;
-	communities: Mutable<Array<Readable<Community>>>;
-	spaces: Mutable<Array<Readable<Space>>>;
+	personas: Mutable<Array<Writable<Persona>>>;
+	sessionPersonas: Writable<Array<Writable<Persona>>>;
+	sessionPersonaIndices: Readable<Map<Writable<Persona>, number>>;
+	communities: Mutable<Array<Writable<Community>>>;
+	spaces: Mutable<Array<Writable<Space>>>;
 	memberships: Mutable<Array<Readable<Membership>>>;
-	personaById: Map<number, Readable<Persona>>;
-	communityById: Map<number, Readable<Community>>;
-	spaceById: Map<number, Readable<Space>>;
+	personaById: Map<number, Writable<Persona>>;
+	communityById: Map<number, Writable<Community>>;
+	spaceById: Map<number, Writable<Space>>;
 	//TODO maybe refactor to remove store around map? Like personaById
-	spacesByCommunityId: Readable<Map<number, Array<Readable<Space>>>>;
-	personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>>;
-	entitiesBySpace: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
+	spacesByCommunityId: Readable<Map<number, Array<Writable<Space>>>>;
+	personasByCommunityId: Readable<Map<number, Array<Writable<Persona>>>>;
+	entitiesBySpace: Map<number, Writable<Array<Writable<Entity>>>>; // TODO mutable inner store
 	// view state
-	expandMainNav: Readable<boolean>;
-	expandMarquee: Readable<boolean>; // TODO name?
+	expandMainNav: Writable<boolean>;
+	expandMarquee: Writable<boolean>;
 	// derived state
-	personaIdSelection: Readable<number | null>;
-	personaSelection: Readable<Readable<Persona> | null>;
+	personaIdSelection: Writable<number | null>;
+	personaSelection: Readable<Writable<Persona> | null>;
 	personaIndexSelection: Readable<number | null>;
-	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Readable<Community>>>>;
-	communityIdSelectionByPersonaId: Readable<{[key: number]: number}>;
+	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Writable<Community>>>>;
+	communityIdSelectionByPersonaId: Writable<{[key: number]: number}>;
 	communityIdSelection: Readable<number | null>;
-	communitySelection: Readable<Readable<Community> | null>;
-	spaceIdSelectionByCommunityId: Readable<{[key: number]: number | null}>;
-	spaceSelection: Readable<Readable<Space> | null>;
-	mobile: Readable<boolean>;
+	communitySelection: Readable<Writable<Community> | null>;
+	spaceIdSelectionByCommunityId: Writable<{[key: number]: number | null}>;
+	spaceSelection: Readable<Writable<Space> | null>;
+	mobile: Writable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
 	dialogs: Writable<DialogData[]>;
-	viewBySpace: Mutable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
+	viewBySpace: Mutable<WeakMap<Writable<Space>, ViewData>>; // client overrides for the views set by the community
 }
 
 export const toUi = (
@@ -96,10 +96,10 @@ export const toUi = (
 	const communityById: Map<number, Writable<Community>> = new Map();
 	const spaceById: Map<number, Writable<Space>> = new Map();
 	// TODO do these maps more efficiently
-	const spacesByCommunityId: Readable<Map<number, Array<Readable<Space>>>> = derived(
+	const spacesByCommunityId: Readable<Map<number, Array<Writable<Space>>>> = derived(
 		[communities, spaces],
 		([$communities, $spaces]) => {
-			const map: Map<number, Array<Readable<Space>>> = new Map();
+			const map: Map<number, Array<Writable<Space>>> = new Map();
 			for (const community of $communities.value) {
 				const communitySpaces: Array<Writable<Space>> = [];
 				const {community_id} = get(community);
@@ -114,10 +114,10 @@ export const toUi = (
 		},
 	);
 
-	const personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>> = derived(
+	const personasByCommunityId: Readable<Map<number, Array<Writable<Persona>>>> = derived(
 		[communities, memberships],
 		([$communities, $memberships]) => {
-			const map: Map<number, Array<Readable<Persona>>> = new Map();
+			const map: Map<number, Array<Writable<Persona>>> = new Map();
 			for (const community of $communities.value) {
 				const communityPersonas: Array<Writable<Persona>> = [];
 				const {community_id} = get(community);
@@ -158,14 +158,14 @@ export const toUi = (
 		[sessionPersonas],
 		([$sessionPersonas]) => new Map($sessionPersonas.map((p, i) => [p, i])),
 	);
-	const communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Readable<Community>>>> =
+	const communitiesBySessionPersona: Readable<Map<Writable<Persona>, Array<Writable<Community>>>> =
 		derived(
 			[sessionPersonas, memberships, communities],
 			([$sessionPersonas, $memberships, $communities]) => {
-				const map: Map<Readable<Persona>, Array<Readable<Community>>> = new Map();
+				const map: Map<Writable<Persona>, Array<Writable<Community>>> = new Map();
 				for (const sessionPersona of $sessionPersonas) {
 					const $sessionPersona = get(sessionPersona);
-					const sessionPersonaCommunities: Array<Readable<Community>> = [];
+					const sessionPersonaCommunities: Array<Writable<Community>> = [];
 					for (const community of $communities.value) {
 						const $community = get(community);
 						for (const membership of $memberships.value) {
