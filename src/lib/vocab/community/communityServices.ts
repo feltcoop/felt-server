@@ -149,7 +149,7 @@ export const updateCommunitySettingsService: Service<
 	},
 };
 
-//TODO BLOCK don't let users delete their home community
+//TODO don't let users delete their home community
 export const deleteCommunityService: Service<DeleteCommunityParams, DeleteCommunityResponseResult> =
 	{
 		event: DeleteCommunity,

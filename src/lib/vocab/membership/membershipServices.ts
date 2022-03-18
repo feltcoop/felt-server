@@ -91,7 +91,6 @@ export const deleteMembershipService: Service<
 	},
 };
 
-//TODO BLOCK add a test for this use case
 const cleanOrphanCommunities = async (community_id: number, repos: Database['repos']) => {
 	log.trace('[membershipServices] checking if community is orphaned', community_id);
 	const result = await repos.membership.filterByCommunityId(community_id);
