@@ -50,7 +50,7 @@
 		errorMessage = null;
 		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
 		const url = `/${name}`;
-		const result = await dispatch('CreateSpace', {
+		const result = await dispatch.CreateSpace({
 			community_id: $community.community_id,
 			name,
 			url,

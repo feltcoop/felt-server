@@ -32,7 +32,7 @@
 			errorMessage = 'invalid json';
 			return;
 		}
-		const result = await dispatch('UpdateEntity', {
+		const result = await dispatch.UpdateEntity({
 			entity_id: $entity.entity_id,
 			data: updatedData,
 		});

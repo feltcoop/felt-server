@@ -34,22 +34,24 @@ export interface ToDispatchClient {
 
 export const toDispatch = (ui: Ui, toClient: ToDispatchClient): Dispatch => {
 	// TODO validate the params here to improve UX, but for now we're safe letting the server validate
-	const dispatch: Dispatch = (eventName, params) => {
-		log.trace(
-			'%c[dispatch.%c' + eventName + '%c]',
-			'color: gray',
-			'color: blue',
-			'color: gray',
-			params === undefined ? '' : params, // print null but not undefined
-		);
-		const client = toClient(eventName);
-		return ui.dispatch({
-			eventName,
-			params,
-			dispatch,
-			invoke: client ? (p = params) => client.invoke(eventName, p) : null,
-		});
-	};
+	const dispatch: Dispatch = new Proxy({} as any, {
+		get: (_target, eventName: string) => (params: unknown) => {
+			log.trace(
+				'%c[dispatch.%c' + eventName + '%c]',
+				'color: gray',
+				'color: blue',
+				'color: gray',
+				params === undefined ? '' : params, // print null but not undefined
+			);
+			const client = toClient(eventName);
+			return ui.dispatch({
+				eventName,
+				params,
+				dispatch,
+				invoke: client ? (p = params) => client.invoke(eventName, p) : null,
+			});
+		},
+	});
 	return dispatch;
 };
 

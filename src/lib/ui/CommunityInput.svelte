@@ -39,7 +39,7 @@
 		if (pending) return;
 		pending = true;
 		errorMessage = null;
-		const result = await dispatch('CreateCommunity', {
+		const result = await dispatch.CreateCommunity({
 			name,
 			persona_id: $persona.persona_id,
 			settings: {hue},

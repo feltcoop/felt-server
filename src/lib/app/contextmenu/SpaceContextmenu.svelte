@@ -29,7 +29,7 @@
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
 			action={() =>
-				dispatch('OpenDialog', {
+				dispatch.OpenDialog({
 					Component: SpaceEditor,
 					props: {space, community},
 					dialogProps: {layout: 'page'},
@@ -39,16 +39,16 @@
 		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>
-				dispatch('OpenDialog', {
+				dispatch.OpenDialog({
 					Component: SpaceDelete,
-					props: {persona, community, space, done: () => dispatch('CloseDialog')},
+					props: {persona, community, space, done: () => dispatch.CloseDialog()},
 				})}
 		>
 			<span class="title"> Delete Space </span>
 		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>
-				dispatch('ViewSpace', {
+				dispatch.ViewSpace({
 					space,
 					view: toComponentViewData('EntityExplorer'),
 				})}

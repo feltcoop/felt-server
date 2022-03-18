@@ -5,11 +5,7 @@
 </script>
 
 <div class="luggage">
-	<button
-		class="icon-button"
-		aria-label="toggle luggage"
-		on:click={() => dispatch('ToggleMainNav')}
-	>
+	<button class="icon-button" aria-label="toggle luggage" on:click={() => dispatch.ToggleMainNav()}>
 		☰
 	</button>
 </div>

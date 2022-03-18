@@ -567,7 +567,7 @@ export const toUi = (
 			let spaceEntities = entitiesBySpace.get(params.space_id);
 			if (!spaceEntities) {
 				entitiesBySpace.set(params.space_id, (spaceEntities = writable([])));
-				dispatch('ReadEntities', params); // eslint-disable-line @typescript-eslint/no-floating-promises
+				dispatch.ReadEntities(params); // eslint-disable-line @typescript-eslint/no-floating-promises
 			}
 			return spaceEntities;
 		},

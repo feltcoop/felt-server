@@ -312,63 +312,43 @@ export type DeleteTieResponse = null;
 export type DeleteTieResponseResult = ApiResult<DeleteTieResponse>;
 
 export interface Dispatch {
-	(eventName: 'LoginAccount', params: LoginAccountParams): Promise<LoginAccountResponseResult>;
-	(eventName: 'LogoutAccount', params: LogoutAccountParams): Promise<LogoutAccountResponseResult>;
-	(
-		eventName: 'CreateCommunity',
-		params: CreateCommunityParams,
-	): Promise<CreateCommunityResponseResult>;
-	(eventName: 'ReadCommunity', params: ReadCommunityParams): Promise<ReadCommunityResponseResult>;
-	(
-		eventName: 'ReadCommunities',
-		params: ReadCommunitiesParams,
-	): Promise<ReadCommunitiesResponseResult>;
-	(
-		eventName: 'UpdateCommunitySettings',
+	LoginAccount: (params: LoginAccountParams) => Promise<LoginAccountResponseResult>;
+	LogoutAccount: (params: LogoutAccountParams) => Promise<LogoutAccountResponseResult>;
+	CreateCommunity: (params: CreateCommunityParams) => Promise<CreateCommunityResponseResult>;
+	ReadCommunity: (params: ReadCommunityParams) => Promise<ReadCommunityResponseResult>;
+	ReadCommunities: (params: ReadCommunitiesParams) => Promise<ReadCommunitiesResponseResult>;
+	UpdateCommunitySettings: (
 		params: UpdateCommunitySettingsParams,
-	): Promise<UpdateCommunitySettingsResponseResult>;
-	(
-		eventName: 'CreateAccountPersona',
+	) => Promise<UpdateCommunitySettingsResponseResult>;
+	CreateAccountPersona: (
 		params: CreateAccountPersonaParams,
-	): Promise<CreateAccountPersonaResponseResult>;
-	(
-		eventName: 'CreateMembership',
-		params: CreateMembershipParams,
-	): Promise<CreateMembershipResponseResult>;
-	(
-		eventName: 'DeleteMembership',
-		params: DeleteMembershipParams,
-	): Promise<DeleteMembershipResponseResult>;
-	(eventName: 'CreateSpace', params: CreateSpaceParams): Promise<CreateSpaceResponseResult>;
-	(eventName: 'ReadSpace', params: ReadSpaceParams): Promise<ReadSpaceResponseResult>;
-	(eventName: 'ReadSpaces', params: ReadSpacesParams): Promise<ReadSpacesResponseResult>;
-	(eventName: 'UpdateSpace', params: UpdateSpaceParams): Promise<UpdateSpaceResponseResult>;
-	(eventName: 'DeleteSpace', params: DeleteSpaceParams): Promise<DeleteSpaceResponseResult>;
-	(eventName: 'CreateEntity', params: CreateEntityParams): Promise<CreateEntityResponseResult>;
-	(eventName: 'ReadEntities', params: ReadEntitiesParams): Promise<ReadEntitiesResponseResult>;
-	(eventName: 'UpdateEntity', params: UpdateEntityParams): Promise<UpdateEntityResponseResult>;
-	(eventName: 'QueryEntities', params: QueryEntitiesParams): Readable<Readable<Entity>[]>;
-	(
-		eventName: 'SoftDeleteEntity',
-		params: SoftDeleteEntityParams,
-	): Promise<SoftDeleteEntityResponseResult>;
-	(
-		eventName: 'HardDeleteEntity',
-		params: HardDeleteEntityParams,
-	): Promise<HardDeleteEntityResponseResult>;
-	(eventName: 'Ping', params: PingParams): Promise<ApiResult<null>>;
-	(eventName: 'ToggleMainNav', params: ToggleMainNavParams): void;
-	(eventName: 'ToggleSecondaryNav', params: ToggleSecondaryNavParams): void;
-	(eventName: 'SetMobile', params: SetMobileParams): void;
-	(eventName: 'OpenDialog', params: OpenDialogParams): void;
-	(eventName: 'CloseDialog', params: CloseDialogParams): void;
-	(eventName: 'SelectPersona', params: SelectPersonaParams): void;
-	(eventName: 'SelectCommunity', params: SelectCommunityParams): void;
-	(eventName: 'SelectSpace', params: SelectSpaceParams): void;
-	(eventName: 'ViewSpace', params: ViewSpaceParams): void;
-	(eventName: 'CreateTie', params: CreateTieParams): Promise<CreateTieResponseResult>;
-	(eventName: 'ReadTies', params: ReadTiesParams): Promise<ReadTiesResponseResult>;
-	(eventName: 'DeleteTie', params: DeleteTieParams): Promise<DeleteTieResponseResult>;
+	) => Promise<CreateAccountPersonaResponseResult>;
+	CreateMembership: (params: CreateMembershipParams) => Promise<CreateMembershipResponseResult>;
+	DeleteMembership: (params: DeleteMembershipParams) => Promise<DeleteMembershipResponseResult>;
+	CreateSpace: (params: CreateSpaceParams) => Promise<CreateSpaceResponseResult>;
+	ReadSpace: (params: ReadSpaceParams) => Promise<ReadSpaceResponseResult>;
+	ReadSpaces: (params: ReadSpacesParams) => Promise<ReadSpacesResponseResult>;
+	UpdateSpace: (params: UpdateSpaceParams) => Promise<UpdateSpaceResponseResult>;
+	DeleteSpace: (params: DeleteSpaceParams) => Promise<DeleteSpaceResponseResult>;
+	CreateEntity: (params: CreateEntityParams) => Promise<CreateEntityResponseResult>;
+	ReadEntities: (params: ReadEntitiesParams) => Promise<ReadEntitiesResponseResult>;
+	UpdateEntity: (params: UpdateEntityParams) => Promise<UpdateEntityResponseResult>;
+	QueryEntities: (params: QueryEntitiesParams) => Readable<Readable<Entity>[]>;
+	SoftDeleteEntity: (params: SoftDeleteEntityParams) => Promise<SoftDeleteEntityResponseResult>;
+	HardDeleteEntity: (params: HardDeleteEntityParams) => Promise<HardDeleteEntityResponseResult>;
+	Ping: (params: PingParams) => Promise<ApiResult<null>>;
+	ToggleMainNav: (params: ToggleMainNavParams) => void;
+	ToggleSecondaryNav: (params: ToggleSecondaryNavParams) => void;
+	SetMobile: (params: SetMobileParams) => void;
+	OpenDialog: (params: OpenDialogParams) => void;
+	CloseDialog: (params: CloseDialogParams) => void;
+	SelectPersona: (params: SelectPersonaParams) => void;
+	SelectCommunity: (params: SelectCommunityParams) => void;
+	SelectSpace: (params: SelectSpaceParams) => void;
+	ViewSpace: (params: ViewSpaceParams) => void;
+	CreateTie: (params: CreateTieParams) => Promise<CreateTieResponseResult>;
+	ReadTies: (params: ReadTiesParams) => Promise<ReadTiesResponseResult>;
+	DeleteTie: (params: DeleteTieParams) => Promise<DeleteTieResponseResult>;
 }
 
 export interface UiHandlers {

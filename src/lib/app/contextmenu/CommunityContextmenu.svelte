@@ -24,7 +24,7 @@
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
 			action={() =>
-				dispatch('OpenDialog', {
+				dispatch.OpenDialog({
 					Component: CommunityEditor,
 					props: {community},
 				})}
@@ -33,9 +33,9 @@
 		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>
-				dispatch('OpenDialog', {
+				dispatch.OpenDialog({
 					Component: SpaceInput,
-					props: {persona, community, done: () => dispatch('CloseDialog')},
+					props: {persona, community, done: () => dispatch.CloseDialog()},
 				})}
 		>
 			<span class="title">Create Space</span>
@@ -43,7 +43,7 @@
 		{#if $community.type !== 'personal'}
 			<ContextmenuEntry
 				action={() =>
-					dispatch('OpenDialog', {
+					dispatch.OpenDialog({
 						Component: MembershipInput,
 						props: {community},
 					})}

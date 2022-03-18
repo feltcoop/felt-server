@@ -46,14 +46,14 @@
 		// that only reads this default value when the user has no override.
 		const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_WIDTH})`);
 		initialMobileValue = mediaQuery.matches;
-		mediaQuery.onchange = (e) => dispatch('SetMobile', e.matches);
+		mediaQuery.onchange = (e) => dispatch.SetMobile(e.matches);
 	}
 
 	const devmode = setDevmode();
 	const socket = setSocket(
 		toSocketStore(
 			(message) => websocketClient.handle(message.data),
-			() => dispatch('Ping'),
+			() => dispatch.Ping(),
 		),
 	);
 	const ui = setUi(toUi(session, initialMobileValue, components));
@@ -123,7 +123,7 @@
 				return; // exit early; this function re-runs from the `goto` call with the updated `$page`
 			}
 		} else if (personaIndex !== $personaIndexSelection) {
-			dispatch('SelectPersona', {persona_id: get(persona).persona_id});
+			dispatch.SelectPersona({persona_id: get(persona).persona_id});
 		} // else already selected
 
 		// TODO speed this up with a map of communityByName
@@ -132,7 +132,7 @@
 		const community = get(communityStore);
 		const {community_id} = community;
 		if (community_id !== $communityIdSelection) {
-			dispatch('SelectCommunity', {community_id});
+			dispatch.SelectCommunity({community_id});
 		}
 		if (community_id) {
 			const spaceUrl = '/' + (params.space || '');
@@ -141,7 +141,7 @@
 			if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
 			const {space_id} = get(space);
 			if (space_id !== $spaceIdSelectionByCommunityId[community_id]) {
-				dispatch('SelectSpace', {community_id, space_id});
+				dispatch.SelectSpace({community_id, space_id});
 			}
 		} else {
 			// TODO what is this condition?
@@ -200,7 +200,7 @@
 		{/if}
 	</main>
 	<DevmodeControls {devmode} />
-	<Dialogs {dialogs} on:close={() => dispatch('CloseDialog')} />
+	<Dialogs {dialogs} on:close={() => dispatch.CloseDialog()} />
 	<Contextmenu {contextmenu} {LinkContextmenu} />
 	<FeltWindowHost query={() => ({hue: randomHue($account?.name || GUEST_PERSONA_NAME)})} />
 </div>
