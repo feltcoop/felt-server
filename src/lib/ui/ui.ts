@@ -330,16 +330,15 @@ export const toUi = (
 		ui.setSession($session);
 	});
 
-	// TODO BLOCK go with which of these?
+	// TODO which of these? if `typeis`, upstream to Felt
 	// This is a hack that ensures the inferred `WritableUi` type is assignable to `Ui`.
 	const _ui: Ui = ui;
 	_ui; // eslint-disable-line @typescript-eslint/no-unused-expressions
+	const typeis = <T>(_: T): void => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 	typeis<Ui>(ui);
 
 	return ui;
 };
-
-const typeis = <T>(_: T): void => {}; // TODO is this correct? upstream to Felt if so
 
 // TODO this is a hack until we have `community_ids` normalized and off the `Persona`,
 // the issue is that the "session personas" are different than the rest of the personas
