@@ -1,4 +1,4 @@
-import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
+import type {ServiceEventInfo} from '$lib/vocab/event/event';
 
 export const CreateCommunity: ServiceEventInfo = {
 	type: 'ServiceEvent',
@@ -111,10 +111,3 @@ export const UpdateCommunitySettings: ServiceEventInfo = {
 		method: 'POST',
 	},
 };
-
-export const events: EventInfo[] = [
-	CreateCommunity,
-	ReadCommunity,
-	ReadCommunities,
-	UpdateCommunitySettings,
-];

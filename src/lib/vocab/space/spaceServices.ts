@@ -20,7 +20,7 @@ import {
 	ReadSpaces,
 	UpdateSpace,
 	DeleteSpace,
-} from '$lib/vocab/space/space.events';
+} from '$lib/vocab/space/spaceEvents';
 
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 

@@ -1,4 +1,4 @@
-import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
+import type {ServiceEventInfo} from '$lib/vocab/event/event';
 
 export const CreateSpace: ServiceEventInfo = {
 	type: 'ServiceEvent',
@@ -145,5 +145,3 @@ export const DeleteSpace: ServiceEventInfo = {
 		method: 'DELETE',
 	},
 };
-
-export const events: EventInfo[] = [CreateSpace, ReadSpace, ReadSpaces, UpdateSpace, DeleteSpace];
