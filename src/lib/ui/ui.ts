@@ -78,6 +78,14 @@ export interface Ui {
 
 export type WritableUi = ReturnType<typeof toUi>;
 
+// This ensures that the inferred `WritableUi` is assignable to `Ui`.
+// The latter type is used in components and it exposes its data as `Readable` stores,
+// while the format is used in mutations and exposes `Writable` stores.
+// TODO is there a better way to do this assertion without any runtime code?
+// @see https://github.com/feltcoop/felt-server/pull/292
+type Typecheck<T extends Ui> = T;
+export type Typechecked = Typecheck<WritableUi>;
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const toUi = (
 	session: Writable<ClientSession>,
@@ -329,13 +337,6 @@ export const toUi = (
 	const unsubscribeSession = session.subscribe(($session) => {
 		ui.setSession($session);
 	});
-
-	// TODO which of these? if `typeis`, upstream to Felt
-	// This is a hack that ensures the inferred `WritableUi` type is assignable to `Ui`.
-	const _ui: Ui = ui;
-	_ui; // eslint-disable-line @typescript-eslint/no-unused-expressions
-	const typeis = <T>(_: T): void => {}; // eslint-disable-line @typescript-eslint/no-empty-function
-	typeis<Ui>(ui);
 
 	return ui;
 };
