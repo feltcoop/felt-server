@@ -43,44 +43,47 @@ export interface Ui {
 
 	// db state and caches
 	account: Readable<AccountModel | null>;
-	personas: Mutable<Array<Writable<Persona>>>;
-	sessionPersonas: Writable<Array<Writable<Persona>>>;
-	sessionPersonaIndices: Readable<Map<Writable<Persona>, number>>;
-	communities: Mutable<Array<Writable<Community>>>;
-	spaces: Mutable<Array<Writable<Space>>>;
+	personas: Mutable<Array<Readable<Persona>>>;
+	sessionPersonas: Readable<Array<Readable<Persona>>>;
+	sessionPersonaIndices: Readable<Map<Readable<Persona>, number>>;
+	communities: Mutable<Array<Readable<Community>>>;
+	spaces: Mutable<Array<Readable<Space>>>;
 	memberships: Mutable<Array<Readable<Membership>>>;
-	personaById: Map<number, Writable<Persona>>;
-	communityById: Map<number, Writable<Community>>;
-	spaceById: Map<number, Writable<Space>>;
+	personaById: Map<number, Readable<Persona>>;
+	communityById: Map<number, Readable<Community>>;
+	spaceById: Map<number, Readable<Space>>;
 	//TODO maybe refactor to remove store around map? Like personaById
-	spacesByCommunityId: Readable<Map<number, Array<Writable<Space>>>>;
-	personasByCommunityId: Readable<Map<number, Array<Writable<Persona>>>>;
-	entitiesBySpace: Map<number, Writable<Array<Writable<Entity>>>>; // TODO mutable inner store
+	spacesByCommunityId: Readable<Map<number, Array<Readable<Space>>>>;
+	personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>>;
+	entitiesBySpace: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
 	// view state
-	expandMainNav: Writable<boolean>;
-	expandMarquee: Writable<boolean>;
+	expandMainNav: Readable<boolean>;
+	expandMarquee: Readable<boolean>;
 	// derived state
-	personaIdSelection: Writable<number | null>;
-	personaSelection: Readable<Writable<Persona> | null>;
+	personaIdSelection: Readable<number | null>;
+	personaSelection: Readable<Readable<Persona> | null>;
 	personaIndexSelection: Readable<number | null>;
-	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Writable<Community>>>>;
-	communityIdSelectionByPersonaId: Writable<{[key: number]: number}>;
+	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Readable<Community>>>>;
+	communityIdSelectionByPersonaId: Readable<{[key: number]: number}>;
 	communityIdSelection: Readable<number | null>;
-	communitySelection: Readable<Writable<Community> | null>;
-	spaceIdSelectionByCommunityId: Writable<{[key: number]: number | null}>;
-	spaceSelection: Readable<Writable<Space> | null>;
-	mobile: Writable<boolean>;
+	communitySelection: Readable<Readable<Community> | null>;
+	spaceIdSelectionByCommunityId: Readable<{[key: number]: number | null}>;
+	spaceSelection: Readable<Readable<Space> | null>;
+	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
-	dialogs: Writable<DialogData[]>;
-	viewBySpace: Mutable<WeakMap<Writable<Space>, ViewData>>; // client overrides for the views set by the community
+	dialogs: Readable<DialogData[]>;
+	viewBySpace: Mutable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
 }
 
+export type WritableUi = ReturnType<typeof toUi>;
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const toUi = (
 	session: Writable<ClientSession>,
 	initialMobile: boolean,
 	components: {[key: string]: typeof SvelteComponent},
-): Ui => {
+) => {
 	// Could then put these calculations in one place.
 	const account = writable<AccountModel | null>(null);
 	// Importantly, this only changes when items are added or removed from the collection,
@@ -211,7 +214,7 @@ export const toUi = (
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
 
-	const ui: Ui = {
+	const ui = {
 		// db data
 		components,
 		account,
@@ -247,7 +250,7 @@ export const toUi = (
 		destroy: () => {
 			unsubscribeSession();
 		},
-		dispatch: (ctx) => {
+		dispatch: (ctx: DispatchContext) => {
 			const mutation = mutations[ctx.eventName];
 			if (mutation) {
 				return mutation(ctx);
@@ -255,7 +258,7 @@ export const toUi = (
 			log.warn(`ignoring event has no mutation: ${ctx.eventName}`, ctx);
 		},
 		session,
-		setSession: ($session) => {
+		setSession: ($session: ClientSession) => {
 			if (browser) log.trace('[setSession]', $session);
 			account.set($session.guest ? null : $session.account);
 
@@ -321,14 +324,22 @@ export const toUi = (
 					  ),
 			);
 		},
-	};
+	} as const;
 
 	const unsubscribeSession = session.subscribe(($session) => {
 		ui.setSession($session);
 	});
 
+	// TODO BLOCK go with which of these?
+	// This is a hack that ensures the inferred `WritableUi` type is assignable to `Ui`.
+	const _ui: Ui = ui;
+	_ui; // eslint-disable-line @typescript-eslint/no-unused-expressions
+	typeis<Ui>(ui);
+
 	return ui;
 };
+
+const typeis = <T>(_: T): void => {}; // TODO is this correct? upstream to Felt if so
 
 // TODO this is a hack until we have `community_ids` normalized and off the `Persona`,
 // the issue is that the "session personas" are different than the rest of the personas

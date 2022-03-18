@@ -56,7 +56,8 @@
 			() => dispatch('Ping'),
 		),
 	);
-	const ui = setUi(toUi(session, initialMobileValue, components));
+	const ui = toUi(session, initialMobileValue, components);
+	setUi(ui);
 
 	const dispatch = toDispatch(ui, (e) =>
 		websocketClient.find(e) ? websocketClient : httpClient.find(e) ? httpClient : null,
@@ -168,7 +169,7 @@
 
 	let clientWidth: number;
 	let clientHeight: number;
-	$: $layout = {width: clientWidth, height: clientHeight};
+	$: $layout = {width: clientWidth, height: clientHeight}; // TODO event? `UpdateLayout`?
 </script>
 
 <svelte:body

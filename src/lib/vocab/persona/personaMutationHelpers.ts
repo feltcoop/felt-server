@@ -1,10 +1,10 @@
 import {writable, type Writable} from 'svelte/store';
 
-import type {Ui} from '$lib/ui/ui';
+import type {WritableUi} from '$lib/ui/ui';
 import type {Persona} from '$lib/vocab/persona/persona';
 
 export const addPersona = (
-	{personaById, personas, sessionPersonas}: Ui,
+	{personaById, personas, sessionPersonas}: WritableUi,
 	$persona: Persona,
 ): Writable<Persona> => {
 	const persona = writable($persona);

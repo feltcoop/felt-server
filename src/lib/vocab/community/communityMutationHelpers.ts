@@ -1,12 +1,19 @@
 import {writable, type Writable} from 'svelte/store';
 
-import type {Ui} from '$lib/ui/ui';
+import type {WritableUi} from '$lib/ui/ui';
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
 import type {Membership} from '$lib/vocab//membership/membership';
 
 export const addCommunity = (
-	{memberships, spaceById, spaces, spaceIdSelectionByCommunityId, communityById, communities}: Ui,
+	{
+		memberships,
+		spaceById,
+		spaces,
+		spaceIdSelectionByCommunityId,
+		communityById,
+		communities,
+	}: WritableUi,
 	$community: Community,
 	$communitySpaces: Space[],
 	$memberships: Membership[],

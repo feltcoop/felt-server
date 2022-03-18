@@ -108,7 +108,7 @@ export const events: EventInfo[] = [
 			$id: '/schemas/ViewSpaceParams.json',
 			type: 'object',
 			properties: {
-				space: {type: 'object', tsType: 'Writable<Space>'},
+				space: {type: 'object', tsType: 'Readable<Space>'},
 				view: {type: ['object', 'null'], tsType: 'ViewData | null'},
 			},
 			required: ['space', 'view'],

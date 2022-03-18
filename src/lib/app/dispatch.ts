@@ -1,7 +1,7 @@
 import {setContext, getContext} from 'svelte';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import type {Ui} from '$lib/ui/ui';
+import type {WritableUi} from '$lib/ui/ui';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
 import type {Dispatch} from '$lib/app/eventTypes';
@@ -25,7 +25,7 @@ export interface DispatchContext<
 	eventName: string;
 	params: TParams;
 	dispatch: Dispatch;
-	ui: Ui;
+	ui: WritableUi;
 	invoke: TResult extends void ? null : (params?: TParams) => Promise<TResult>;
 }
 
@@ -33,7 +33,7 @@ export interface ToDispatchClient {
 	(eventName: string): ApiClient | null;
 }
 
-export const toDispatch = (ui: Ui, toClient: ToDispatchClient): Dispatch => {
+export const toDispatch = (ui: WritableUi, toClient: ToDispatchClient): Dispatch => {
 	// TODO validate the params here to improve UX, but for now we're safe letting the server validate
 	const dispatch: Dispatch = (eventName, params) => {
 		log.trace(
@@ -60,7 +60,7 @@ export interface DispatchBroadcastMessage {
 }
 
 export const toDispatchBroadcastMessage =
-	(ui: Ui, dispatch: Dispatch): DispatchBroadcastMessage =>
+	(ui: WritableUi, dispatch: Dispatch): DispatchBroadcastMessage =>
 	(message) => {
 		const {method: eventName, params} = message;
 		log.trace(
