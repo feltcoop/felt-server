@@ -34,19 +34,19 @@ export const DeleteSpace: Mutations['DeleteSpace'] = async ({
 	const {community_id} = $space;
 	const $spaceIdSelectionByCommunityId = get(spaceIdSelectionByCommunityId);
 
-	// If the deleted space is selected, select a fallback.
+	// If the deleted space is selected, select the home space as a fallback.
 	if (space_id === $spaceIdSelectionByCommunityId[community_id]) {
 		const community = communityById.get(community_id)!;
 		if (community === get(communitySelection)) {
 			await goto('/' + get(community).name + location.search, {replaceState: true});
 		} else {
 			//TODO lookup space by community_id+url (see this comment in multiple places)
-			const selectedSpaceFallback = get(spacesByCommunityId)
+			const homeSpace = get(spacesByCommunityId)
 				.get(community_id)!
 				.find((s) => get(s).url === '/')!;
 			spaceIdSelectionByCommunityId.update(($v) => ({
 				...$v,
-				[community_id]: get(selectedSpaceFallback).space_id,
+				[community_id]: get(homeSpace).space_id,
 			}));
 		}
 	}
