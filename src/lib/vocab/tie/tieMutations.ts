@@ -1,4 +1,4 @@
-import type {Mutations} from '$lib/app/mutationTypes';
+import type {Mutations} from '$lib/app/eventTypes';
 
 export const CreateTie: Mutations['CreateTie'] = async ({invoke}) => {
 	const result = await invoke();

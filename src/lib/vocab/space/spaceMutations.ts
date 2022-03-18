@@ -1,7 +1,7 @@
 import {writable, get} from 'svelte/store';
 import {goto} from '$app/navigation';
 
-import type {Mutations} from '$lib/app/mutationTypes';
+import type {Mutations} from '$lib/app/eventTypes';
 
 export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui: {spaceById, spaces}}) => {
 	const result = await invoke();

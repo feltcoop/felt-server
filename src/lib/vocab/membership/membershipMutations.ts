@@ -1,6 +1,6 @@
 import {get, writable} from 'svelte/store';
 
-import type {Mutations} from '$lib/app/mutationTypes';
+import type {Mutations} from '$lib/app/eventTypes';
 
 export const CreateMembership: Mutations['CreateMembership'] = async ({
 	invoke,

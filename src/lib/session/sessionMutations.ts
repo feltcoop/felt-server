@@ -1,4 +1,4 @@
-import type {Mutations} from '$lib/app/mutationTypes';
+import type {Mutations} from '$lib/app/eventTypes';
 
 export const LoginAccount: Mutations['LoginAccount'] = async ({invoke, ui: {session}}) => {
 	const result = await invoke();

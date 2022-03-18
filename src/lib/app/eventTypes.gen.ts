@@ -40,6 +40,7 @@ import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
 import type {EntityData} from '$lib/vocab/entity/entityData';
 import type {ViewData} from '$lib/vocab/view/view';
+import type {DispatchContext} from '$lib/app/dispatch';
 
 /* eslint-disable @typescript-eslint/no-empty-interface, @typescript-eslint/array-type */
 
@@ -97,6 +98,21 @@ export interface Dispatch {
 			eventName: '${eventInfo.name}',
 			params: ${toParamsName(eventInfo.name)},
 		): ${eventInfo.returns};
+`.trim(),
+		'',
+	)}
+}
+
+export interface Mutations {
+  ${eventInfos.reduce(
+		(str, eventInfo) =>
+			str +
+			`
+      ${eventInfo.name}: (
+        ctx: DispatchContext<${toParamsName(eventInfo.name)}, ${
+				eventInfo.type === 'ClientEvent' ? 'void' : toResponseResultName(eventInfo.name)
+			}>,
+      ) => ${eventInfo.returns};
 `.trim(),
 		'',
 	)}

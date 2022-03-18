@@ -1,7 +1,7 @@
 import {goto} from '$app/navigation';
 import {get} from 'svelte/store';
 
-import type {Mutations} from '$lib/app/mutationTypes';
+import type {Mutations} from '$lib/app/eventTypes';
 import {addPersona} from '$lib/vocab/persona/personaMutationHelpers';
 import {addCommunity} from '$lib/vocab/community/communityMutationHelpers';
 

@@ -1,6 +1,6 @@
 import {writable, get} from 'svelte/store';
 
-import type {Mutations} from '$lib/app/mutationTypes';
+import type {Mutations} from '$lib/app/eventTypes';
 
 export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, ui: {entitiesBySpace}}) => {
 	const result = await invoke();
