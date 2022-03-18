@@ -32,7 +32,7 @@ export const setUi = (store: Ui): Ui => {
 };
 
 export interface Ui {
-	session: Writable<ClientSession>;
+	session: Readable<ClientSession>;
 	setSession: ($session: ClientSession) => void;
 	destroy: () => void;
 	dispatch: (ctx: DispatchContext) => any; // TODO return value type?
