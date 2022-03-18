@@ -10,12 +10,21 @@ import {
 	deleteMembershipService,
 } from '$lib/vocab/membership/membershipServices';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
+import {SessionApi} from '$lib/server/SessionApi';
 
 /* test__membershipServices */
 const test__membershipServices = suite<TestDbContext & TestAppContext>('membershipServices');
 
 test__membershipServices.before(setupDb);
 test__membershipServices.after(teardownDb);
+
+const serviceRequest = (account_id: number, db: any) => {
+	return {
+		account_id,
+		repos: db.repos,
+		session: new SessionApi(null),
+	};
+};
 
 test__membershipServices('disallow creating duplicate memberships', async ({db}) => {
 	const random = new RandomVocabContext(db);
@@ -123,6 +132,27 @@ test__membershipServices('fail to delete a community persona membership', async 
 		community.community_id,
 	);
 	assert.ok(findSpaceResult.ok);
+});
+
+test__membershipServices('delete orphaned communities on last member leaving', async ({db}) => {
+	//Need a community with two members
+	const random = new RandomVocabContext(db);
+	const account = await random.account();
+
+	const community = await random.community();
+	const persona1 = await random.persona();
+	const persona2 = await random.persona();
+	const membership1 = await createMembershipService.perform({
+		params: {persona_id: persona1.persona_id, community_id: community.community_id},
+		...serviceRequest(account.account_id, db),
+	});
+	const membership2 = await createMembershipService.perform({
+		params: {persona_id: persona2.persona_id, community_id: community.community_id},
+		...serviceRequest(account.account_id, db),
+	});
+
+	//One leaves, still a community
+	//Last leaves, no community
 });
 
 test__membershipServices.run();
