@@ -431,6 +431,21 @@ export const toUi = (
 			}
 			return result;
 		},
+		DeleteCommunity: async ({params, invoke}) => {
+			const result = await invoke();
+			if (!result.ok) return result;
+			const community = communityById.get(params.community_id)!;
+			const selectedCommunity = get(communitySelection);
+			if (selectedCommunity === community) {
+				const persona = get(personaSelection)!;
+				await goto('/' + get(persona).name + location.search, {replaceState: true});
+			}
+			//update state here
+
+			communityById.delete(params.community_id);
+			communities.mutate(($communites) => $communites.splice($communites.indexOf(community), 1));
+			return result;
+		},
 		CreateMembership: async ({invoke}) => {
 			const result = await invoke();
 			if (!result.ok) return result;
@@ -472,13 +487,13 @@ export const toUi = (
 			if (!result.ok) return result;
 			//update state here
 			const {space_id} = params;
-			get(communities).value.forEach((community) => {
+			for (const community of get(communities).value) {
 				// TODO maybe make a nav helper or event?
 				const $community = get(community);
 				// TODO this should only nav for the active community, otherwise update just update the spaceIdSelectionByCommunityId
 				if (space_id === get(spaceIdSelectionByCommunityId)[$community.community_id]) {
-					// eslint-disable-next-line @typescript-eslint/no-floating-promises
-					goto(
+					// eslint-disable-next-line no-await-in-loop
+					await goto(
 						'/' +
 							$community.name +
 							get(get(spacesByCommunityId).get($community.community_id)![0]).url +
@@ -486,7 +501,7 @@ export const toUi = (
 						{replaceState: true},
 					);
 				}
-			});
+			}
 
 			const space = spaceById.get(space_id)!;
 			spaceById.delete(space_id);
