@@ -255,7 +255,7 @@ export const toUi = (
 			if (mutation) {
 				return mutation(ctx);
 			}
-			log.warn(`ignoring event has no mutation: ${ctx.eventName}`, ctx);
+			log.warn(`ignoring event with no mutation: ${ctx.eventName}`, ctx);
 		},
 		session,
 		setSession: ($session: ClientSession) => {
