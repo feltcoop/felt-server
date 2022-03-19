@@ -28,22 +28,15 @@ export const syncUiToUrl = (
 ): void => {
 	if (!params.community) return;
 
-	const $communities = get(communities);
-	const $personaIndexSelection = get(personaIndexSelection);
-	const $communityIdSelection = get(communityIdSelection);
-	const $spacesByCommunityId = get(spacesByCommunityId);
-	const $spaceIdSelectionByCommunityId = get(spaceIdSelectionByCommunityId);
-	const $sessionPersonas = get(sessionPersonas);
-
 	const rawPersonaIndex = query.get(PERSONA_QUERY_KEY);
 	const personaIndex = rawPersonaIndex === null ? null : Number(rawPersonaIndex);
 	const persona: Readable<Persona> | null =
-		personaIndex === null ? null : $sessionPersonas[personaIndex];
+		personaIndex === null ? null : get(sessionPersonas)[personaIndex];
 	if (!persona) {
 		if (browser) {
 			const fallbackPersonaIndex = 0;
 			log.warn(
-				`unable to find persona at index ${personaIndex}; falling back to index ${fallbackPersonaIndex}`,
+				`failed to find persona at index ${personaIndex}; falling back to index ${fallbackPersonaIndex}`,
 			);
 			// eslint-disable-next-line @typescript-eslint/no-floating-promises
 			goto(
@@ -54,28 +47,29 @@ export const syncUiToUrl = (
 			);
 			return; // exit early; this function re-runs from the `goto` call with the updated `$page`
 		}
-	} else if (personaIndex !== $personaIndexSelection) {
+	} else if (personaIndex !== get(personaIndexSelection)) {
 		dispatch.SelectPersona({persona_id: get(persona).persona_id});
 	} // else already selected
 
 	// TODO speed this up with a map of communityByName
-	const communityStore = $communities.value.find((c) => get(c).name === params.community);
-	if (!communityStore) return; // occurs when a session routes to a community they can't access
-	const community = get(communityStore);
-	const {community_id} = community;
-	if (community_id !== $communityIdSelection) {
+	const community = get(communities).value.find((c) => get(c).name === params.community);
+	if (!community) return; // occurs when a session routes to a community they can't access
+	const {community_id} = get(community);
+	if (community_id !== get(communityIdSelection)) {
 		dispatch.SelectCommunity({community_id});
 	}
-	if (community_id) {
-		const spaceUrl = '/' + (params.space || '');
-		//TODO lookup space by community_id+url (see this comment in multiple places)
-		const space = $spacesByCommunityId.get(community_id)!.find((s) => get(s).url === spaceUrl);
-		if (!space) throw Error(`TODO Unable to find space: ${spaceUrl}`);
-		const {space_id} = get(space);
-		if (space_id !== $spaceIdSelectionByCommunityId[community_id]) {
-			dispatch.SelectSpace({community_id, space_id});
-		}
-	} else {
-		// TODO what is this condition?
+
+	const spaceUrl = '/' + (params.space || '');
+	//TODO lookup space by community_id+url (see this comment in multiple places)
+	const space = get(spacesByCommunityId)
+		.get(community_id)!
+		.find((s) => get(s).url === spaceUrl);
+	if (!space) {
+		log.error('failed to find space with url:', spaceUrl);
+		return;
+	}
+	const {space_id} = get(space);
+	if (space_id !== get(spaceIdSelectionByCommunityId)[community_id]) {
+		dispatch.SelectSpace({community_id, space_id});
 	}
 };
