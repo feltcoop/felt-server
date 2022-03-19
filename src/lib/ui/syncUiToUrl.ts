@@ -1,10 +1,9 @@
-import type {Readable} from 'svelte/store';
-import {get} from 'svelte/store';
+import {get, type Readable} from 'svelte/store';
 import {browser} from '$app/env';
+import {goto} from '$app/navigation';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {Persona} from '$lib/vocab/persona/persona';
-import {goto} from '$app/navigation';
 import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
 import type {Dispatch} from '$lib/app/eventTypes';
 import type {Ui} from '$lib/ui/ui';
