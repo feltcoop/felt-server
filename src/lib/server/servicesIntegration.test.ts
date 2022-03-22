@@ -161,7 +161,10 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	// assert.ok(deleteFileResult.ok);
 
 	await Promise.all(
-		filterSpacesValue.map(async (space) => unwrap(await db.repos.space.deleteById(space.space_id))),
+		filterSpacesValue.map(
+			// TODO BLOCK remove typecast after upgrading Felt: https://github.com/feltcoop/felt/pull/188
+			async (space) => unwrap((await db.repos.space.deleteById(space.space_id)) as any),
+		),
 	);
 	const deletedSpaceResult = await db.repos.space.filterByCommunity(community.community_id);
 	assert.is(unwrap(deletedSpaceResult).length, 0);

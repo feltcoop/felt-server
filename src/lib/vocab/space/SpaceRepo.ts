@@ -127,7 +127,7 @@ export class SpaceRepo extends PostgresRepo {
 
 	async deleteById(
 		space_id: number,
-	): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> {
+	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
 		log.trace('[deleteById]', space_id);
 		const data = await this.db.sql<any[]>`
 			DELETE FROM spaces WHERE space_id=${space_id}
@@ -139,6 +139,6 @@ export class SpaceRepo extends PostgresRepo {
 				message: 'failed to delete space',
 			};
 		}
-		return {ok: true, value: data};
+		return {ok: true};
 	}
 }

@@ -56,7 +56,7 @@ export class EntityRepo extends PostgresRepo {
 	//This function is a idempotent soft delete, that leaves behind a Tombstone entity per Activity-Streams spec
 	async softDeleteById(
 		entity_id: number,
-	): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> {
+	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
 		log.trace('[deleteById]', entity_id);
 		const data = await this.db.sql<any[]>`
 			UPDATE entities
@@ -70,13 +70,13 @@ export class EntityRepo extends PostgresRepo {
 				message: 'failed to delete entity',
 			};
 		}
-		return {ok: true, value: data};
+		return {ok: true};
 	}
 
 	//This function actually deletes the record in the DB
 	async hardDeleteById(
 		entity_id: number,
-	): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> {
+	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
 		log.trace('[hardDeleteById]', entity_id);
 		const data = await this.db.sql<any[]>`
 			DELETE FROM entities WHERE ${entity_id}=entity_id
@@ -88,6 +88,6 @@ export class EntityRepo extends PostgresRepo {
 				message: 'failed to hard delete entity',
 			};
 		}
-		return {ok: true, value: data};
+		return {ok: true};
 	}
 }
