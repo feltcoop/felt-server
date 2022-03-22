@@ -59,7 +59,7 @@ export const toDispatch = (
 			};
 			const mutation = mutations[eventName];
 			if (!mutation) {
-				log.warn(`ignoring event with no mutation: ${eventName}`, ctx);
+				log.warn('ignoring event with no mutation', ctx);
 				return;
 			}
 			return mutation(ctx);
@@ -96,7 +96,7 @@ export const toDispatchBroadcastMessage =
 		};
 		const mutation = mutations[eventName];
 		if (!mutation) {
-			log.warn(`ignoring broadcast event with no mutation: ${eventName}`, ctx);
+			log.warn('ignoring broadcast event with no mutation', ctx);
 			return;
 		}
 		return mutation(ctx);
