@@ -40,15 +40,14 @@ gro test
 [Svelte](https://github.com/sveltejs/svelte) ∙
 [SvelteKit](https://github.com/sveltejs/kit) ∙
 [Vite](https://github.com/vitejs/vite) ∙
-[Gro](https://github.com/feltcoop/gro) ∙
-[Rollup](https://github.com/rollup/rollup) ∙
 [TypeScript](https://github.com/microsoft/TypeScript) ∙
-[esbuild](https://github.com/evanw/esbuild) ∙
-[esinstall](https://github.com/snowpackjs/snowpack/tree/main/esinstall) ∙
 [uvu](https://github.com/lukeed/uvu) ∙
+[Postgres.js](https://github.com/porsager/postgres) ∙
 [Ley](https://github.com/lukeed/ley) ∙
-[Prettier](https://github.com/prettier/prettier) ∙
-[@lukeed\/\*](https://github.com/lukeed)
+[Gro](https://github.com/feltcoop/gro) ∙
+[Felt](https://github.com/feltcoop/felt) ∙
+[ESLint](https://github.com/eslint/eslint) ∙
+[Prettier](https://github.com/prettier/prettier)
 & [more](package.json)
 
 ## license [🐦](https://en.wikipedia.org/wiki/Free_and_open-source_software)
