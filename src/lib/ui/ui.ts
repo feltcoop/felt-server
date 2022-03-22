@@ -315,10 +315,11 @@ export const toUi = (
 					: Object.fromEntries(
 							$session.communities
 								.map(($community) => {
-									const $firstSpace = $session.spaces.find(
-										(s) => s.community_id === $community.community_id,
+									//TODO lookup space by community_id+url (see this comment in multiple places)
+									const $homeSpace = $session.spaces.find(
+										(s) => s.community_id === $community.community_id && s.url === '/',
 									)!;
-									return [$community.community_id, $firstSpace.space_id];
+									return [$community.community_id, $homeSpace.space_id];
 								})
 								.filter(Boolean),
 					  ),

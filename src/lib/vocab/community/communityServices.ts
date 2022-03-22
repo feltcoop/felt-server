@@ -20,7 +20,7 @@ import {
 	ReadCommunity,
 	UpdateCommunitySettings,
 	DeleteCommunity,
-} from '$lib/vocab/community/community.events';
+} from '$lib/vocab/community/communityEvents';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 
 const log = new Logger(gray('[') + blue('communityServices') + gray(']'));

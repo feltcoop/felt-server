@@ -17,7 +17,7 @@ import {
 	CreateEntity,
 	SoftDeleteEntity,
 	HardDeleteEntity,
-} from '$lib/vocab/entity/entity.events';
+} from '$lib/vocab/entity/entityEvents';
 
 // TODO rename to `getEntities`? `loadEntities`?
 export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesResponseResult> = {

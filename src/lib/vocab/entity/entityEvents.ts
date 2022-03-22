@@ -1,4 +1,4 @@
-import type {EventInfo, ClientEventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
+import type {ClientEventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
 export const CreateEntity: ServiceEventInfo = {
 	type: 'ServiceEvent',
@@ -156,12 +156,3 @@ export const HardDeleteEntity: ServiceEventInfo = {
 		method: 'DELETE',
 	},
 };
-
-export const events: EventInfo[] = [
-	CreateEntity,
-	ReadEntities,
-	UpdateEntity,
-	QueryEntities,
-	SoftDeleteEntity,
-	HardDeleteEntity,
-];

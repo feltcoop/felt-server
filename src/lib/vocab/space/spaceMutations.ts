@@ -16,29 +16,41 @@ export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui: {spaceB
 export const DeleteSpace: Mutations['DeleteSpace'] = async ({
 	params,
 	invoke,
-	ui: {communities, spaceIdSelectionByCommunityId, spacesByCommunityId, spaceById, spaces},
+	ui: {
+		communityById,
+		spaceIdSelectionByCommunityId,
+		spacesByCommunityId,
+		spaceById,
+		spaces,
+		communitySelection,
+	},
 }) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	//update state here
-	const {space_id} = params;
-	get(communities).value.forEach((community) => {
-		// TODO maybe make a nav helper or event?
-		const $community = get(community);
-		// TODO this should only nav for the active community, otherwise update just update the spaceIdSelectionByCommunityId
-		if (space_id === get(spaceIdSelectionByCommunityId)[$community.community_id]) {
-			// eslint-disable-next-line @typescript-eslint/no-floating-promises
-			goto(
-				'/' +
-					$community.name +
-					get(get(spacesByCommunityId).get($community.community_id)![0]).url +
-					location.search,
-				{replaceState: true},
-			);
-		}
-	});
 
+	const {space_id} = params;
 	const space = spaceById.get(space_id)!;
+	const $space = get(space);
+	const {community_id} = $space;
+	const $spaceIdSelectionByCommunityId = get(spaceIdSelectionByCommunityId);
+
+	// If the deleted space is selected, select the home space as a fallback.
+	if (space_id === $spaceIdSelectionByCommunityId[community_id]) {
+		const community = communityById.get(community_id)!;
+		if (community === get(communitySelection)) {
+			await goto('/' + get(community).name + location.search, {replaceState: true});
+		} else {
+			//TODO lookup space by community_id+url (see this comment in multiple places)
+			const homeSpace = get(spacesByCommunityId)
+				.get(community_id)!
+				.find((s) => get(s).url === '/')!;
+			spaceIdSelectionByCommunityId.update(($v) => ({
+				...$v,
+				[community_id]: get(homeSpace).space_id,
+			}));
+		}
+	}
+
 	spaceById.delete(space_id);
 	spaces.mutate(($spaces) => $spaces.splice($spaces.indexOf(space), 1));
 
