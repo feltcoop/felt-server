@@ -36,7 +36,7 @@
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {$community.settings.hue}"
 	use:contextmenu.action={[[CommunityContextmenu, {community, persona}]]}
-	on:click={() => dispatch('SelectPersona', {persona_id: $persona.persona_id})}
+	on:click={() => dispatch.SelectPersona({persona_id: $persona.persona_id})}
 >
 	<!-- TODO maybe use `Avatar`? does `hue` need to be on the link? -->
 	<EntityIcon name={$community.name} type="Community" />

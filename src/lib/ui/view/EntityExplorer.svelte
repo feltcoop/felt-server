@@ -12,11 +12,11 @@
 	const {dispatch, socket} = getApp();
 
 	$: shouldLoadEntities = browser && $socket.open;
-	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
+	$: entities = shouldLoadEntities ? dispatch.QueryEntities({space_id: $space.space_id}) : null;
 </script>
 
 <div class="entity-explorer">
-	<button type="button" on:click={() => dispatch('ViewSpace', {space, view: null})}>
+	<button type="button" on:click={() => dispatch.ViewSpace({space, view: null})}>
 		Close EntityExplorer
 	</button>
 	<div class="entities">

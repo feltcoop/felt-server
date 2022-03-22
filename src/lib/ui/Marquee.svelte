@@ -42,7 +42,7 @@
 		</section>
 		{#if $space}
 			<section>
-				<button on:click={() => dispatch('OpenDialog', {Component: SpaceEditor, props: {space}})}
+				<button on:click={() => dispatch.OpenDialog({Component: SpaceEditor, props: {space}})}
 					>Edit Space</button
 				>
 			</section>

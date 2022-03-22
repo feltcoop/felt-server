@@ -16,7 +16,7 @@
 
 	const leaveCommunity = async (community_id: number) => {
 		errorMessage = '';
-		const result = await dispatch('DeleteMembership', {
+		const result = await dispatch.DeleteMembership({
 			persona_id: $persona.persona_id,
 			community_id,
 		});

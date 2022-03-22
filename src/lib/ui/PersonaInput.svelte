@@ -25,7 +25,7 @@
 			return;
 		}
 		status = 'pending';
-		const result = await dispatch('CreateAccountPersona', {name});
+		const result = await dispatch.CreateAccountPersona({name});
 		status = 'success'; // TODO handle failure (also refactor to be generic)
 		if (result.ok) {
 			errorMessage = null;

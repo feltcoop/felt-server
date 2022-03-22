@@ -12,7 +12,7 @@ export const AccountSchema = {
 	additionalProperties: false,
 };
 
-// TODO make the `create_account` event in account.events.ts
+// TODO make the `create_account` event in accountEvents.ts
 export interface CreateAccountParams {
 	name: string;
 	password: string;

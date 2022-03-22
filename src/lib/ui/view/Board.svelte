@@ -14,13 +14,13 @@
 	let text = '';
 
 	$: shouldLoadEntities = browser && $socket.open;
-	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
+	$: entities = shouldLoadEntities ? dispatch.QueryEntities({space_id: $space.space_id}) : null;
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
 
 		if (!content) return;
-		await dispatch('CreateEntity', {
+		await dispatch.CreateEntity({
 			space_id: $space.space_id,
 			data: {type: 'Note', content},
 			actor_id: $persona.persona_id,

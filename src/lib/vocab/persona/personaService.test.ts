@@ -6,7 +6,7 @@ import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {randomEventParams} from '$lib/server/random';
-import {CreateAccountPersona} from '$lib/vocab/persona/persona.events';
+import {CreateAccountPersona} from '$lib/vocab/persona/personaEvents';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
 
 /* test__personaService */

@@ -32,7 +32,7 @@
 			{:else}
 				<!-- TODO support store param? only? -->
 				<ContextmenuEntry
-					action={() => dispatch('SelectPersona', {persona_id: get(sessionPersona).persona_id})}
+					action={() => dispatch.SelectPersona({persona_id: get(sessionPersona).persona_id})}
 				>
 					<PersonaAvatar persona={sessionPersona} />
 				</ContextmenuEntry>
@@ -40,16 +40,16 @@
 		{/each}
 		<ContextmenuEntry
 			action={() =>
-				dispatch('OpenDialog', {
+				dispatch.OpenDialog({
 					Component: PersonaInput,
-					props: {done: () => dispatch('CloseDialog')},
+					props: {done: () => dispatch.CloseDialog()},
 				})}
 		>
 			<span class="title">Create Persona</span>
 		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>
-				dispatch('OpenDialog', {
+				dispatch.OpenDialog({
 					Component: About,
 				})}
 		>

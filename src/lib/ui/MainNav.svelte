@@ -32,7 +32,7 @@
 </script>
 
 {#if $expandMainNav}
-	<div class="main-nav-bg" on:click={() => ($expandMainNav ? dispatch('ToggleMainNav') : null)} />
+	<div class="main-nav-bg" on:click={() => ($expandMainNav ? dispatch.ToggleMainNav() : null)} />
 {/if}
 <div class="main-nav-panel" class:expanded={$expandMainNav} style="--hue: {hue}">
 	<div class="main-nav">

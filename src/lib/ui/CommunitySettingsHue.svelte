@@ -12,7 +12,7 @@
 
 	const UPDATE_INTERVAL = 500; // TODO extract this to config
 	const updateHue = throttle(UPDATE_INTERVAL, async (hue: number): Promise<void> => {
-		await dispatch('UpdateCommunitySettings', {
+		await dispatch.UpdateCommunitySettings({
 			community_id: $community.community_id,
 			settings: {hue},
 		});

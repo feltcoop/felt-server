@@ -10,7 +10,7 @@ import type {
 	DeleteTieParams,
 	DeleteTieResponseResult,
 } from '$lib/app/eventTypes';
-import {CreateTie, ReadTies, DeleteTie} from '$lib/vocab/tie/tie.events';
+import {CreateTie, ReadTies, DeleteTie} from '$lib/vocab/tie/tieEvents';
 
 const log = new Logger(gray('[') + blue('CreateTie') + gray(']'));
 
