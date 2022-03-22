@@ -198,7 +198,7 @@ export const onContextmenu = (
 	if (e.shiftKey) return;
 	e.stopPropagation();
 	e.preventDefault();
-	const target = e.target as HTMLElement;
+	const target = e.target as HTMLElement | SVGElement;
 	const items = queryContextmenuItems(target, LinkContextmenu);
 	if (!items || isEditable(target) || excludeEl?.contains(target)) return;
 	// TODO dispatch a UI event, like OpenContextmenu
