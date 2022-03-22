@@ -27,6 +27,7 @@
 	import {findHttpService, findWebsocketService} from '$lib/ui/services';
 	import Contextmenu from '$lib/ui/contextmenu/Contextmenu.svelte';
 	import {components} from '$lib/app/components';
+	import {mutations} from '$lib/app/mutations';
 	import AppContextmenu from '$lib/app/contextmenu/AppContextmenu.svelte';
 	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
 	import LinkContextmenu from '$lib/app/contextmenu/LinkContextmenu.svelte';
@@ -55,13 +56,13 @@
 	const ui = toUi(session, initialMobileValue, components);
 	setUi(ui);
 
-	const dispatch = toDispatch(ui, (e) =>
+	const dispatch = toDispatch(ui, mutations, (e) =>
 		websocketClient.find(e) ? websocketClient : httpClient.find(e) ? httpClient : null,
 	);
 	const websocketClient = toWebsocketApiClient(
 		findWebsocketService,
 		socket.send,
-		toDispatchBroadcastMessage(ui, dispatch),
+		toDispatchBroadcastMessage(ui, mutations, dispatch),
 	);
 	const httpClient = toHttpApiClient(findHttpService);
 	const app = setApp({ui, dispatch, devmode, socket});

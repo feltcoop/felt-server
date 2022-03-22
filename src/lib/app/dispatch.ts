@@ -6,6 +6,7 @@ import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
 import type {Dispatch} from '$lib/app/eventTypes';
 import type {BroadcastMessage} from '$lib/server/websocketMiddleware';
+import type {Mutation} from '$lib/ui/mutation';
 
 const log = new Logger();
 
@@ -33,7 +34,11 @@ export interface ToDispatchClient {
 	(eventName: string): ApiClient | null;
 }
 
-export const toDispatch = (ui: WritableUi, toClient: ToDispatchClient): Dispatch => {
+export const toDispatch = (
+	ui: WritableUi,
+	mutations: Record<string, Mutation>,
+	toClient: ToDispatchClient,
+): Dispatch => {
 	// TODO validate the params here to improve UX, but for now we're safe letting the server validate
 	const dispatch: Dispatch = new Proxy({} as any, {
 		get: (_target, eventName: string) => (params: unknown) => {
@@ -45,13 +50,19 @@ export const toDispatch = (ui: WritableUi, toClient: ToDispatchClient): Dispatch
 				params === undefined ? '' : params, // print null but not undefined
 			);
 			const client = toClient(eventName);
-			return ui.dispatch({
+			const ctx: DispatchContext = {
 				eventName,
 				params,
 				ui,
 				dispatch,
 				invoke: client ? (p = params) => client.invoke(eventName, p) : null,
-			});
+			};
+			const mutation = mutations[eventName];
+			if (!mutation) {
+				log.warn(`ignoring event with no mutation: ${eventName}`, ctx);
+				return;
+			}
+			return mutation(ctx);
 		},
 	});
 	return dispatch;
@@ -62,7 +73,11 @@ export interface DispatchBroadcastMessage {
 }
 
 export const toDispatchBroadcastMessage =
-	(ui: WritableUi, dispatch: Dispatch): DispatchBroadcastMessage =>
+	(
+		ui: WritableUi,
+		mutations: Record<string, Mutation>,
+		dispatch: Dispatch,
+	): DispatchBroadcastMessage =>
 	(message) => {
 		const {method: eventName, params} = message;
 		log.trace(
@@ -72,11 +87,17 @@ export const toDispatchBroadcastMessage =
 			'color: gray',
 			params === undefined ? '' : params, // print null but not undefined
 		);
-		return ui.dispatch({
+		const ctx: DispatchContext = {
 			eventName,
 			params,
 			ui,
 			dispatch,
 			invoke: () => Promise.resolve(message.result),
-		});
+		};
+		const mutation = mutations[eventName];
+		if (!mutation) {
+			log.warn(`ignoring broadcast event with no mutation: ${eventName}`, ctx);
+			return;
+		}
+		return mutation(ctx);
 	};
