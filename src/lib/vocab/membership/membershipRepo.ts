@@ -66,6 +66,20 @@ export const membershipRepo = (db: Database) =>
 			`;
 			return {ok: true, value: data};
 		},
+		filterAccountMembersByCommunityId: async (
+			community_id: number,
+		): Promise<Result<{value: Membership[]}, ErrorResponse>> => {
+			log.trace(`[filterByCommunityId] ${community_id}`);
+			const data = await db.sql<Membership[]>`
+			SELECT m.persona_id, m.community_id, m.created, m.updated 
+			FROM personas p JOIN 
+				(SELECT persona_id, community_id, created, updated 
+					FROM memberships 
+					WHERE community_id=${community_id}) as m 
+			ON m.persona_id = p.persona_id WHERE type = 'account';
+			`;
+			return {ok: true, value: data};
+		},
 		deleteById: async (
 			persona_id: number,
 			community_id: number,
