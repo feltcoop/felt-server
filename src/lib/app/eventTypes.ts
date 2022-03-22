@@ -327,19 +327,9 @@ export interface Dispatch {
 	ReadCommunities: (params: ReadCommunitiesParams) => Promise<ReadCommunitiesResponseResult>;
 	UpdateCommunitySettings: (
 		params: UpdateCommunitySettingsParams,
-<<<<<<< HEAD
-	): Promise<UpdateCommunitySettingsResponseResult>;
-	(
-		eventName: 'DeleteCommunity',
-		params: DeleteCommunityParams,
-	): Promise<DeleteCommunityResponseResult>;
-	(
-		eventName: 'CreateAccountPersona',
-=======
 	) => Promise<UpdateCommunitySettingsResponseResult>;
 	DeleteCommunity: (params: DeleteCommunityParams) => Promise<DeleteCommunityResponseResult>;
 	CreateAccountPersona: (
->>>>>>> main
 		params: CreateAccountPersonaParams,
 	) => Promise<CreateAccountPersonaResponseResult>;
 	CreateMembership: (params: CreateMembershipParams) => Promise<CreateMembershipResponseResult>;

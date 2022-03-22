@@ -141,10 +141,11 @@ test__membershipServices('delete orphaned communities on last member leaving', a
 	const persona1 = await random.persona();
 	const community = await random.community(persona1);
 	const persona2 = await random.persona();
-	const membership = await createMembershipService.perform({
+	const membershipResult = await createMembershipService.perform({
 		params: {persona_id: persona2.persona_id, community_id: community.community_id},
 		...serviceRequest(account.account_id, db),
 	});
+	assert.ok(membershipResult.ok);
 	let communityMemberships = await db.repos.membership.filterByCommunityId(community.community_id);
 	assert.ok(communityMemberships.ok);
 	assert.is(communityMemberships.value.length, 3);
