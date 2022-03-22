@@ -135,24 +135,49 @@ test__membershipServices('fail to delete a community persona membership', async 
 });
 
 test__membershipServices('delete orphaned communities on last member leaving', async ({db}) => {
-	//Need a community with two members
+	//Need a community with two account members
 	const random = new RandomVocabContext(db);
 	const account = await random.account();
-
-	const community = await random.community();
 	const persona1 = await random.persona();
+	const community = await random.community(persona1);
 	const persona2 = await random.persona();
-	const membership1 = await createMembershipService.perform({
-		params: {persona_id: persona1.persona_id, community_id: community.community_id},
-		...serviceRequest(account.account_id, db),
-	});
-	const membership2 = await createMembershipService.perform({
+	const membership = await createMembershipService.perform({
 		params: {persona_id: persona2.persona_id, community_id: community.community_id},
 		...serviceRequest(account.account_id, db),
 	});
+	let communityMemberships = await db.repos.membership.filterByCommunityId(community.community_id);
+	assert.ok(communityMemberships.ok);
+	assert.is(communityMemberships.value.length, 3);
 
-	//One leaves, still a community
-	//Last leaves, no community
+	//Delete 1 account member, the community still exists
+	let deleteResult = await deleteMembershipService.perform({
+		repos: db.repos,
+		params: {persona_id: persona2.persona_id, community_id: community.community_id},
+		account_id: account.account_id,
+		session: new SessionApiMock(),
+	});
+	assert.ok(deleteResult.ok);
+	communityMemberships = await db.repos.membership.filterByCommunityId(community.community_id);
+	assert.ok(communityMemberships.ok);
+	assert.is(communityMemberships.value.length, 2);
+	let communityRecord = await db.repos.community.findById(community.community_id);
+	assert.ok(communityRecord.ok);
+
+	//Delete last account member, the community is deleted
+	deleteResult = await deleteMembershipService.perform({
+		repos: db.repos,
+		params: {persona_id: persona1.persona_id, community_id: community.community_id},
+		account_id: account.account_id,
+		session: new SessionApiMock(),
+	});
+
+	assert.ok(deleteResult.ok);
+	communityMemberships = await db.repos.membership.filterByCommunityId(community.community_id);
+	assert.ok(communityMemberships.ok);
+	assert.is(communityMemberships.value.length, 0);
+	communityRecord = await db.repos.community.findById(community.community_id);
+	assert.ok(!communityRecord.ok);
+	assert.is(communityRecord.type, 'no_community_found');
 });
 
 test__membershipServices.run();
