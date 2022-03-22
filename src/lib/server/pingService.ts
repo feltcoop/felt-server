@@ -1,6 +1,6 @@
 import type {Service} from '$lib/server/service';
 import type {PingParams, PingResponseResult} from '$lib/app/eventTypes';
-import {Ping} from '$lib/ui/ui.events';
+import {Ping} from '$lib/ui/uiEvents';
 
 // TODO maybe move this module?
 // Possibly to `$lib/server/serverServices.ts` or a new dir

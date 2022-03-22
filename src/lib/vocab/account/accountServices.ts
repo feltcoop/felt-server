@@ -1,7 +1,7 @@
 import type {Service} from '$lib/server/service';
 import type {Account} from '$lib/vocab/account/account.js';
 import {verifyPassword} from '$lib/util/password';
-import {LoginAccount, LogoutAccount} from '$lib/vocab/account/account.events';
+import {LoginAccount, LogoutAccount} from '$lib/vocab/account/accountEvents';
 import type {
 	LoginAccountParams,
 	LoginAccountResponseResult,

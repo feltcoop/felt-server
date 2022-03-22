@@ -19,8 +19,8 @@
 	let list = false;
 
 	$: shouldLoadEntities = browser && $socket.open;
-	$: entities = shouldLoadEntities ? dispatch('QueryEntities', {space_id: $space.space_id}) : null;
-	$: tiesResult = shouldLoadEntities ? dispatch('ReadTies', {space_id: $space.space_id}) : null;
+	$: entities = shouldLoadEntities ? dispatch.QueryEntities({space_id: $space.space_id}) : null;
+	$: tiesResult = shouldLoadEntities ? dispatch.ReadTies({space_id: $space.space_id}) : null;
 	let ties: Tie[] | undefined;
 	//TODO move this call to the UI to get arch & caching
 	// eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -63,7 +63,7 @@
 			? {type: 'Collection', name: content}
 			: {type: 'Note', content, checked: false};
 
-		await dispatch('CreateEntity', {
+		await dispatch.CreateEntity({
 			space_id: $space.space_id,
 			data,
 			actor_id: $persona.persona_id,

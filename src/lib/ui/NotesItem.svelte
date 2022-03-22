@@ -15,16 +15,18 @@
 	$: persona = personaById.get($entity.actor_id)!;
 </script>
 
-<li
-	use:contextmenu.action={[
-		[PersonaContextmenu, {persona}],
-		[EntityContextmenu, {entity}],
-	]}
->
-	<div class="markup formatted">
-		{$entity.data.content}
-	</div>
-</li>
+{#if $entity.data.type !== 'Tombstone'}
+	<li
+		use:contextmenu.action={[
+			[PersonaContextmenu, {persona}],
+			[EntityContextmenu, {entity}],
+		]}
+	>
+		<div class="markup formatted">
+			{$entity.data.content}
+		</div>
+	</li>
+{/if}
 
 <style>
 	li {

@@ -1,7 +1,7 @@
 import {setContext, getContext} from 'svelte';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import type {Ui} from '$lib/ui/ui';
+import type {WritableUi} from '$lib/ui/ui';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
 import type {Dispatch} from '$lib/app/eventTypes';
@@ -25,6 +25,7 @@ export interface DispatchContext<
 	eventName: string;
 	params: TParams;
 	dispatch: Dispatch;
+	ui: WritableUi;
 	invoke: TResult extends void ? null : (params?: TParams) => Promise<TResult>;
 }
 
@@ -32,24 +33,27 @@ export interface ToDispatchClient {
 	(eventName: string): ApiClient | null;
 }
 
-export const toDispatch = (ui: Ui, toClient: ToDispatchClient): Dispatch => {
+export const toDispatch = (ui: WritableUi, toClient: ToDispatchClient): Dispatch => {
 	// TODO validate the params here to improve UX, but for now we're safe letting the server validate
-	const dispatch: Dispatch = (eventName, params) => {
-		log.trace(
-			'%c[dispatch.%c' + eventName + '%c]',
-			'color: gray',
-			'color: blue',
-			'color: gray',
-			params === undefined ? '' : params, // print null but not undefined
-		);
-		const client = toClient(eventName);
-		return ui.dispatch({
-			eventName,
-			params,
-			dispatch,
-			invoke: client ? (p = params) => client.invoke(eventName, p) : null,
-		});
-	};
+	const dispatch: Dispatch = new Proxy({} as any, {
+		get: (_target, eventName: string) => (params: unknown) => {
+			log.trace(
+				'%c[dispatch.%c' + eventName + '%c]',
+				'color: gray',
+				'color: blue',
+				'color: gray',
+				params === undefined ? '' : params, // print null but not undefined
+			);
+			const client = toClient(eventName);
+			return ui.dispatch({
+				eventName,
+				params,
+				ui,
+				dispatch,
+				invoke: client ? (p = params) => client.invoke(eventName, p) : null,
+			});
+		},
+	});
 	return dispatch;
 };
 
@@ -58,7 +62,7 @@ export interface DispatchBroadcastMessage {
 }
 
 export const toDispatchBroadcastMessage =
-	(ui: Ui, dispatch: Dispatch): DispatchBroadcastMessage =>
+	(ui: WritableUi, dispatch: Dispatch): DispatchBroadcastMessage =>
 	(message) => {
 		const {method: eventName, params} = message;
 		log.trace(
@@ -71,6 +75,7 @@ export const toDispatchBroadcastMessage =
 		return ui.dispatch({
 			eventName,
 			params,
+			ui,
 			dispatch,
 			invoke: () => Promise.resolve(message.result),
 		});

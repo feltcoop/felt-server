@@ -6,7 +6,7 @@ import type {
 	CreateAccountPersonaParams,
 	CreateAccountPersonaResponseResult,
 } from '$lib/app/eventTypes';
-import {CreateAccountPersona} from '$lib/vocab/persona/persona.events';
+import {CreateAccountPersona} from '$lib/vocab/persona/personaEvents';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 
 const log = new Logger(gray('[') + blue('personaServices') + gray(']'));

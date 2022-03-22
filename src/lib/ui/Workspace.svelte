@@ -38,7 +38,7 @@
 	{#if $expandMarquee}
 		<div
 			class="marquee-bg"
-			on:click={() => ($expandMarquee ? dispatch('ToggleSecondaryNav') : null)}
+			on:click={() => ($expandMarquee ? dispatch.ToggleSecondaryNav() : null)}
 		/>
 	{/if}
 	<div class="space column">

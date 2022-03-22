@@ -8,7 +8,7 @@ import type {
 	DeleteMembershipParams,
 	DeleteMembershipResponseResult,
 } from '$lib/app/eventTypes';
-import {CreateMembership, DeleteMembership} from '$lib/vocab/membership/membership.events';
+import {CreateMembership, DeleteMembership} from '$lib/vocab/membership/membershipEvents';
 
 const log = new Logger(gray('[') + blue('membershipServices') + gray(']'));
 

@@ -17,6 +17,7 @@ import {
 	createCommunityService,
 	readCommunitiesService,
 	readCommunityService,
+	deleteCommunityService,
 } from '$lib/vocab/community/communityServices';
 import {
 	createSpaceService,
@@ -180,6 +181,22 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	);
 
 	// TODO delete communities here
+	const deleteCommunitiesResult = await deleteCommunityService.perform({
+		params: {community_id: community.community_id},
+		...serviceRequest,
+	});
+	assert.ok(deleteCommunitiesResult.ok);
+
+	const readCommunityResult = await readCommunityService.perform({
+		params: {community_id: community.community_id},
+		...serviceRequest,
+	});
+	assert.is(readCommunityResult.status, 404);
+
+	assert.is(
+		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
+		0,
+	);
 
 	// TODO delete personas here
 

@@ -1,4 +1,4 @@
-import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
+import type {ServiceEventInfo} from '$lib/vocab/event/event';
 
 export const CreateCommunity: ServiceEventInfo = {
 	type: 'ServiceEvent',
@@ -112,9 +112,25 @@ export const UpdateCommunitySettings: ServiceEventInfo = {
 	},
 };
 
-export const events: EventInfo[] = [
-	CreateCommunity,
-	ReadCommunity,
-	ReadCommunities,
-	UpdateCommunitySettings,
-];
+export const DeleteCommunity: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'DeleteCommunity',
+	params: {
+		$id: '/schemas/DeleteCommunityParams.json',
+		type: 'object',
+		properties: {
+			community_id: {type: 'number'},
+		},
+		required: ['community_id'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: '/schemas/DeleteCommunityResponse.json',
+		type: 'null',
+	},
+	returns: 'Promise<DeleteCommunityResponseResult>',
+	route: {
+		path: '/api/v1/communities/:community_id',
+		method: 'DELETE',
+	},
+};

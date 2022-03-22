@@ -1,4 +1,4 @@
-import type {EventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
+import type {ServiceEventInfo} from '$lib/vocab/event/event';
 
 export const CreateTie: ServiceEventInfo = {
 	type: 'ServiceEvent',
@@ -83,5 +83,3 @@ export const DeleteTie: ServiceEventInfo = {
 		method: 'DELETE',
 	},
 };
-
-export const events: EventInfo[] = [CreateTie, ReadTies, DeleteTie];
