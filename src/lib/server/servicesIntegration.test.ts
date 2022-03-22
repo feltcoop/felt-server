@@ -162,7 +162,7 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 
 	await Promise.all(
 		filterSpacesValue.map(
-			// TODO BLOCK remove typecast after upgrading Felt: https://github.com/feltcoop/felt/pull/188
+			// TODO remove typecast after upgrading Felt: https://github.com/feltcoop/felt/pull/188
 			async (space) => unwrap((await db.repos.space.deleteById(space.space_id)) as any),
 		),
 	);
