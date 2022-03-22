@@ -109,6 +109,6 @@
 	}
 	:global(.mobile) .marquee-bg {
 		display: block;
-		animation: fade-in var(--transition_duration_3) ease-out;
+		animation: fade-in var(--duration_3) ease-out;
 	}
 </style>

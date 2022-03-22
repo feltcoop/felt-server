@@ -28,10 +28,10 @@
 		top: 0;
 		/* TODO this is janky because it can go offscreen for a bit,
 		though it's a nice idea because it maintains object permanence */
-		/* transition: transform var(--transition_duration_1) ease-out; */
+		/* transition: transform var(--duration_1) ease-out; */
 	}
 	.content {
-		transition: transform var(--transition_duration_4) ease-in-out;
+		transition: transform var(--duration_4) ease-in-out;
 		transform: rotate(0deg);
 	}
 	.expanded .content {

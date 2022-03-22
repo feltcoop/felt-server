@@ -77,11 +77,11 @@
 		transform-origin: top left;
 		background-color: var(--tint_light);
 		transform: translate3d(-100%, 0, 0) scale3d(1, 1, 1);
-		transition: transform var(--transition_duration_1) ease-out;
+		transition: transform var(--duration_1) ease-out;
 	}
 	.expanded .main-nav {
 		transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
-		transition-duration: var(--transition_duration_2);
+		transition-duration: var(--duration_2);
 	}
 	.main-nav-bg {
 		z-index: 2;
@@ -98,7 +98,7 @@
 	}
 	:global(.mobile) .main-nav-bg {
 		display: block;
-		animation: fade-in var(--transition_duration_3) ease-out;
+		animation: fade-in var(--duration_3) ease-out;
 	}
 	:global(.mobile) .main-nav-panel.expanded {
 		width: 0;
