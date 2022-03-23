@@ -67,7 +67,8 @@ export class MembershipRepo extends PostgresRepo {
 		return {ok: true, value: data};
 	}
 
-	async filterAccountMembersByCommunityId(
+	//TODO refactor once generic queries are available in psql driver
+	async filterAccountPersonaMembershipsByCommunityId(
 		community_id: number,
 	): Promise<Result<{value: Membership[]}, ErrorResponse>> {
 		log.trace(`[filterByCommunityId] ${community_id}`);
