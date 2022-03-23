@@ -7,6 +7,7 @@ import type {EventParamsByName, EventResponseByName} from '$lib/app/eventTypes';
 import {toDispatch} from '$lib/app/dispatch';
 import {findHttpService} from '$lib/ui/services';
 import {installSourceMaps} from '$lib/util/testHelpers';
+import {mutations} from '$lib/app/mutations';
 
 installSourceMaps();
 
@@ -25,7 +26,7 @@ export const setupApp =
 		);
 		context.app = {
 			ui,
-			dispatch: toDispatch(ui, () => httpApiClient),
+			dispatch: toDispatch(ui, mutations, () => httpApiClient),
 			devmode: writable(false),
 			// TODO refactor this so the socket isn't an app dependency,
 			// instead the socket should only exist for the websocket client

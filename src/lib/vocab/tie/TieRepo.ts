@@ -54,7 +54,7 @@ export class TieRepo extends PostgresRepo {
 		source_id: number,
 		dest_id: number,
 		type: string,
-	): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> {
+	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
 		log.trace('[deleteTie]', source_id, dest_id);
 		const data = await this.db.sql<any[]>`
 				DELETE FROM ties WHERE ${source_id}=source_id AND ${dest_id}=dest_id AND ${type}=type
@@ -66,6 +66,6 @@ export class TieRepo extends PostgresRepo {
 				message: 'failed to delete tie',
 			};
 		}
-		return {ok: true, value: data};
+		return {ok: true};
 	}
 }

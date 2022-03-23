@@ -9,6 +9,7 @@ import type {
 	DeleteMembershipResponseResult,
 } from '$lib/app/eventTypes';
 import {CreateMembership, DeleteMembership} from '$lib/vocab/membership/membershipEvents';
+import {Database} from '$lib/db/Database';
 
 const log = new Logger(gray('[') + blue('membershipServices') + gray(']'));
 
@@ -85,6 +86,21 @@ export const deleteMembershipService: Service<
 			log.trace('[DeleteSpace] error removing membership: ', persona_id, community_id);
 			return {ok: false, status: 500, message: result.message};
 		}
+		await cleanOrphanCommunities(params.community_id, repos);
 		return {ok: true, status: 200, value: null};
 	},
+};
+
+const cleanOrphanCommunities = async (community_id: number, repos: Database['repos']) => {
+	log.trace('[membershipServices] checking if community is orphaned', community_id);
+	const result = await repos.membership.filterAccountPersonaMembershipsByCommunityId(community_id);
+	if (result.ok && result.value.length <= 0) {
+		log.trace('[membershipServices] no memberships found, cleaning up', community_id);
+		const cleanupResult = await repos.community.deleteById(community_id);
+		if (cleanupResult.ok) {
+			log.trace('[membershipServices] orphan community successfully removed', community_id);
+		} else {
+			log.trace('[membershipServices] issue deleting orphaned community', community_id);
+		}
+	}
 };

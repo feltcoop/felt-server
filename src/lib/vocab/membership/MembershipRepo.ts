@@ -67,10 +67,26 @@ export class MembershipRepo extends PostgresRepo {
 		return {ok: true, value: data};
 	}
 
+	//TODO refactor once generic queries are available in psql driver
+	async filterAccountPersonaMembershipsByCommunityId(
+		community_id: number,
+	): Promise<Result<{value: Membership[]}, ErrorResponse>> {
+		log.trace(`[filterByCommunityId] ${community_id}`);
+		const data = await this.db.sql<Membership[]>`
+		SELECT m.persona_id, m.community_id, m.created, m.updated 
+		FROM personas p JOIN (
+				SELECT persona_id, community_id, created, updated 
+				FROM memberships 
+				WHERE community_id=${community_id}
+			) as m ON m.persona_id = p.persona_id WHERE p.type = 'account';
+		`;
+		return {ok: true, value: data};
+	}
+
 	async deleteById(
 		persona_id: number,
 		community_id: number,
-	): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> {
+	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
 		const data = await this.db.sql<any[]>`
 			DELETE FROM memberships 
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
@@ -82,6 +98,6 @@ export class MembershipRepo extends PostgresRepo {
 				message: 'failed to delete membership',
 			};
 		}
-		return {ok: true, value: data};
+		return {ok: true};
 	}
 }

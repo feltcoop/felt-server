@@ -86,7 +86,7 @@ export class CommunityRepo extends PostgresRepo {
 
 	async deleteById(
 		community_id: number,
-	): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> {
+	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
 		log.trace('[deleteById]', community_id);
 		const data = await this.db.sql<any[]>`
 			DELETE FROM communities WHERE community_id=${community_id}
@@ -98,6 +98,6 @@ export class CommunityRepo extends PostgresRepo {
 				message: 'failed to hard delete entity',
 			};
 		}
-		return {ok: true, value: data};
+		return {ok: true};
 	}
 }
