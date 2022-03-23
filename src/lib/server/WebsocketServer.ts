@@ -4,12 +4,8 @@ import type {Server as HttpServer} from 'http';
 import type {Server as HttpsServer} from 'https';
 import {EventEmitter} from 'events';
 import type StrictEventEmitter from 'strict-event-emitter-types';
-import {noop} from '@feltcoop/felt/util/function.js';
 import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
-
-import type {CookieSessionIncomingMessage} from '$lib/session/cookieSession';
-import {cookieSessionMiddleware} from '$lib/session/cookieSession';
 
 const log = new Logger(gray('[') + blue('wss') + gray(']'));
 
@@ -38,7 +34,8 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 			log.trace('connection req.url', req.url, wss.clients.size);
 			log.trace('connection req.headers', req.headers);
 
-			cookieSessionMiddleware(req as any, {} as any, noop); // eslint-disable-line @typescript-eslint/no-floating-promises
+			// TODO BLOCK cookie session logic to add session -- do hooks run? in dev/prod?
+
 			const account_id = req.session?.account_id;
 			if (account_id == null) {
 				log.trace('request to open connection was unauthenticated');

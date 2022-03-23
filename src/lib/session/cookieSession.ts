@@ -1,12 +1,8 @@
 import type {IncomingMessage} from 'http';
-import cookieSession, {
-	type CookieSessionRequest as BaseCookieSessionRequest,
-	type CookieSessionObject as BaseCookieSessionObject,
-} from 'cookie-session';
 
 import {fromEnv} from '$lib/server/env';
 
-export interface CookieSessionRequest extends BaseCookieSessionRequest {
+export interface CookieSessionRequest {
 	session: CookieSessionObject;
 }
 
@@ -14,12 +10,13 @@ export interface CookieSessionIncomingMessage extends IncomingMessage {
 	session?: CookieSessionObject;
 }
 
-export interface CookieSessionObject extends BaseCookieSessionObject {
+export interface CookieSessionObject {
 	account_id?: number;
 }
 
 const dev = process.env.NODE_ENV !== 'production';
 
+// TODO BLOCK const cookies = cookie.parse(event.request.headers.get('cookie') || '');
 export const cookieSessionMiddleware = cookieSession({
 	name: 'session_id',
 	keys: fromEnv('COOKIE_KEYS').split('__'),
