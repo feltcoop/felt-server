@@ -49,20 +49,19 @@ export const toDispatch = (
 				'color: gray',
 				params === undefined ? '' : params, // print null but not undefined
 			);
+			const mutation = mutations[eventName];
+			if (!mutation) {
+				log.warn('ignoring event with no mutation', eventName, params);
+				return;
+			}
 			const client = toClient(eventName);
-			const ctx: DispatchContext = {
+			return mutation({
 				eventName,
 				params,
 				ui,
 				dispatch,
 				invoke: client ? (p = params) => client.invoke(eventName, p) : null,
-			};
-			const mutation = mutations[eventName];
-			if (!mutation) {
-				log.warn('ignoring event with no mutation', ctx);
-				return;
-			}
-			return mutation(ctx);
+			});
 		},
 	});
 	return dispatch;
@@ -87,17 +86,16 @@ export const toDispatchBroadcastMessage =
 			'color: gray',
 			params === undefined ? '' : params, // print null but not undefined
 		);
-		const ctx: DispatchContext = {
+		const mutation = mutations[eventName];
+		if (!mutation) {
+			log.warn('ignoring broadcast event with no mutation', eventName, params);
+			return;
+		}
+		return mutation({
 			eventName,
 			params,
 			ui,
 			dispatch,
 			invoke: () => Promise.resolve(message.result),
-		};
-		const mutation = mutations[eventName];
-		if (!mutation) {
-			log.warn('ignoring broadcast event with no mutation', ctx);
-			return;
-		}
-		return mutation(ctx);
+		});
 	};
