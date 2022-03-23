@@ -13,6 +13,6 @@ export const task: Task<DbCreateTaskArgs> = {
 		await invokeTask('lib/db/destroy');
 		await invokeTask('lib/db/migrate');
 		if (seed) await invokeTask('lib/db/seed');
-		unobtainDb(); // eslint-disable-line @typescript-eslint/no-floating-promises
+		unobtainDb();
 	},
 };

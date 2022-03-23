@@ -31,7 +31,7 @@
 	};
 
 	const onWindowKeydown = (e: KeyboardEvent) => {
-		if (e.key === 'Escape' && !(e.target instanceof HTMLElement && isEditable(e.target))) {
+		if (e.key === 'Escape' && !isEditable(e.target)) {
 			contextmenu.close();
 			e.stopPropagation();
 		} else if (e.key === 'ArrowLeft') {
