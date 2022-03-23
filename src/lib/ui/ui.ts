@@ -12,11 +12,9 @@ import type {ClientSession} from '$lib/session/clientSession';
 import type {AccountModel} from '$lib/vocab/account/account';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Membership} from '$lib/vocab/membership/membership';
-import type {DispatchContext} from '$lib/app/dispatch';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import type {ViewData} from '$lib/vocab/view/view';
 import {initBrowser} from '$lib/ui/init';
-import {mutations} from '$lib/app/mutations';
 
 if (browser) initBrowser();
 
@@ -35,7 +33,6 @@ export interface Ui {
 	session: Readable<ClientSession>;
 	setSession: ($session: ClientSession) => void;
 	destroy: () => void;
-	dispatch: (ctx: DispatchContext) => any; // TODO return value type?
 
 	// TODO instead of eagerly loading these components,
 	// this should be an interface to lazy-load UI components
@@ -249,13 +246,6 @@ export const toUi = (
 		spaceSelection,
 		destroy: () => {
 			unsubscribeSession();
-		},
-		dispatch: (ctx: DispatchContext) => {
-			const mutation = mutations[ctx.eventName];
-			if (mutation) {
-				return mutation(ctx);
-			}
-			log.warn(`ignoring event with no mutation: ${ctx.eventName}`, ctx);
 		},
 		session,
 		setSession: ($session: ClientSession) => {
