@@ -93,7 +93,7 @@ export const deleteMembershipService: Service<
 
 const cleanOrphanCommunities = async (community_id: number, repos: Database['repos']) => {
 	log.trace('[membershipServices] checking if community is orphaned', community_id);
-	const result = await repos.membership.filterAccountMembersByCommunityId(community_id);
+	const result = await repos.membership.filterAccountPersonaMembershipsByCommunityId(community_id);
 	if (result.ok && result.value.length <= 0) {
 		log.trace('[membershipServices] no memberships found, cleaning up', community_id);
 		const cleanupResult = await repos.community.deleteById(community_id);
