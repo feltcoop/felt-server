@@ -9,27 +9,6 @@ import {db} from '$lib/db/db';
 
 const log = new Logger('[hooks]');
 
-export const getSession: GetSession = async (requestEvent) => {
-	log.trace('getSession');
-	const request = requestEvent.request as CookieSessionRequest & Request; // TODO BLOCK type
-	const account_id = request.session?.account_id;
-	if (account_id !== undefined) {
-		const result = await db.repos.session.loadClientSession(account_id);
-		if (result.ok) {
-			return result.value;
-		}
-		log.error('failed to load session', result.message);
-		request.session = null!;
-	}
-	return {guest: true};
-};
-
-// TODO might want to do this instead of `cookie-session`
-
-// import cookie from 'cookie';
-// import {v4 as uuid} from '@lukeed/uuid';
-// import type {Handle} from '@sveltejs/kit';
-
 export const handle: Handle = async ({event, resolve}) => {
 	const cookies = cookie.parse(event.request.headers.get('cookie') || '');
 	cookieSessionMiddleware(request as any, {} as any, noop); // eslint-disable-line @typescript-eslint/no-floating-promises
@@ -53,4 +32,19 @@ export const handle: Handle = async ({event, resolve}) => {
 	}
 
 	return response;
+};
+
+export const getSession: GetSession = async (requestEvent) => {
+	log.trace('getSession');
+	const request = requestEvent.request as CookieSessionRequest & Request; // TODO BLOCK type
+	const account_id = request.session?.account_id;
+	if (account_id !== undefined) {
+		const result = await db.repos.session.loadClientSession(account_id);
+		if (result.ok) {
+			return result.value;
+		}
+		log.error('failed to load session', result.message);
+		request.session = null!;
+	}
+	return {guest: true};
 };
