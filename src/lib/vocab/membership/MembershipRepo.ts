@@ -77,7 +77,7 @@ export class MembershipRepo extends PostgresRepo {
 				SELECT persona_id, community_id, created, updated 
 				FROM memberships 
 				WHERE community_id=${community_id}
-			) as m ON m.persona_id = p.persona_id WHERE type = 'account';
+			) as m ON m.persona_id = p.persona_id WHERE p.type = 'account';
 		`;
 		return {ok: true, value: data};
 	}
