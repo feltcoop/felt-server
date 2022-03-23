@@ -17,7 +17,7 @@
 	) => Promise<Result<unknown, {message: string}>>;
 	export let parse: (serialized: string) => Result<{value: TValue}, {message: string}> = (
 		serialized,
-	) => ({ok: true, value: serialized as any});
+	) => ({ok: true, value: serialized as any}); // TODO consider extracting an `ok` helper
 	export let serialize: (value: TValue, print?: boolean) => string = identity as any; // TODO type
 
 	let editing = false;
