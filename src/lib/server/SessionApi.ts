@@ -19,18 +19,24 @@ export class SessionApi implements ISessionApi {
 	constructor(private readonly req: ApiServerRequest | null) {}
 
 	login(account_id: number): void {
+		console.log('LOGGING IN');
 		if (!this.req) {
 			log.error('Expected "req". Was login called from a non-http service?');
 			return;
 		}
-		if (!this.req.session) {
-			log.error('Expected "req.session". The authentication middleware may be misconfigured.');
-			return;
-		}
-		this.req.session.account_id = account_id;
+		// TODO BLOCK
+		// if (!this.req.session) {
+		// 	log.error('Expected "req.session". The authentication middleware may be misconfigured.');
+		// 	return;
+		// }
+		setCookie(this.req.headers, 'session_id', {account_id});
+		// TODO request.locals?
+		console.log(`login, this.req.locals`, this.req.locals);
+		this.req.account_id = account_id;
 	}
 
 	logout(): void {
+		console.log('LOGGING OUT');
 		if (!this.req) {
 			log.error('Expected "req". Was logout called from a non-http service?');
 			return;

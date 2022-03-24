@@ -9,9 +9,10 @@ const log = new Logger('[hooks]');
 export const handle: Handle = async ({event, resolve}) => {
 	console.log(`handle`, event);
 	const cookies = parseCookie(event.request.headers);
+	console.log(`parsed cookies`, cookies);
 	event.locals.account_id = cookies.account_id;
 	// TODO BLOCK also set the request account_id? and delete `authenticationMiddleware`?
-	event.request.account_id = event.locals.account_id;
+	// event.request.account_id = event.locals.account_id;
 
 	// TODO BLOCK do this here instead of in the middleware (import db directly?)
 	// event.locals.user = await getUserInformation(event.request.headers.get('cookie'));
@@ -21,17 +22,18 @@ export const handle: Handle = async ({event, resolve}) => {
 	return response;
 };
 
-export const getSession: GetSession = async (requestEvent) => {
-	log.trace('getSession');
-	const request = requestEvent.request as CookieSessionRequest & Request; // TODO BLOCK type
-	const account_id = request.session?.account_id;
-	if (account_id !== undefined) {
-		const result = await db.repos.session.loadClientSession(account_id);
-		if (result.ok) {
-			return result.value;
-		}
+export const getSession: GetSession = async (event) => {
+	log.trace('getSession', event.locals);
+
+	const account_id = event.locals.account_id;
+
+	if (!account_id) return {guest: true};
+
+	const result = await db.repos.session.loadClientSession(account_id);
+	if (!result.ok) {
 		log.error('failed to load session', result.message);
-		request.session = null!;
+		// TODO BLOCK unset cookies
+		// request.session = null!;
 	}
-	return {guest: true};
+	return result.value;
 };
