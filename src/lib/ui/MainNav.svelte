@@ -33,7 +33,7 @@
 	$: sortedSelectedCommunitySpaces = selectedCommunitySpaces?.sort((_a, _b) => {
 		const a = get(_a);
 		const b = get(_b);
-		return a.url === '/' ? -1 : b.url === '/' ? 1 : a.created < b.created ? -1 : 1;
+		return a.url === '/' ? -1 : b.url === '/' ? 1 : a.name < b.name ? -1 : 1;
 	});
 
 	// TODO refactor to some client view-model for the account
