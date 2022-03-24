@@ -27,7 +27,7 @@ import type {Space} from './space';
 import type {ErrorResponse} from '$lib/util/error';
 import {toDefaultSpaces} from './defaultSpaces';
 import {db} from '$lib/db/db';
-import {SessionApi} from '$lib/server/SessionApi';
+import {type ISessionApi} from '$lib/server/SessionApi';
 
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
@@ -151,7 +151,7 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 export const createDefaultSpaces = async (
 	community: Community,
 	account_id: number,
-	session: SessionApi,
+	session: ISessionApi,
 ): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 	const spaces: Space[] = [];
 	for (const params of toDefaultSpaces(community)) {
