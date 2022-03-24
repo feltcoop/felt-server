@@ -30,7 +30,7 @@
 		selectedCommunity && $spacesByCommunityId.get($selectedCommunity!.community_id);
 
 	// TODO how to do this without using `get`?
-	$: selectedAndSelectedCommunitySpaces = selectedCommunitySpaces?.sort((_a, _b) => {
+	$: sortedSelectedCommunitySpaces = selectedCommunitySpaces?.sort((_a, _b) => {
 		const a = get(_a);
 		const b = get(_b);
 		return a.url === '/' ? -1 : b.url === '/' ? 1 : a.created < b.created ? -1 : 1;
@@ -55,11 +55,11 @@
 		</div>
 		<div class="explorer">
 			<CommunityNav />
-			{#if selectedPersona && selectedCommunity && selectedAndSelectedCommunitySpaces && selectedSpace}
+			{#if selectedPersona && selectedCommunity && sortedSelectedCommunitySpaces && selectedSpace}
 				<SpaceNav
 					persona={selectedPersona}
 					community={selectedCommunity}
-					spaces={selectedAndSelectedCommunitySpaces}
+					spaces={sortedSelectedCommunitySpaces}
 					{selectedSpace}
 				/>
 			{/if}
