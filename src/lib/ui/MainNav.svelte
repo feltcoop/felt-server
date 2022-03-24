@@ -30,7 +30,7 @@
 		selectedCommunity && $spacesByCommunityId.get($selectedCommunity!.community_id);
 
 	// TODO how to do this without using `get`?
-	$: sortedSelectedCommunitySpaces = selectedCommunitySpaces?.sort((_a, _b) => {
+	$: sortedSelectedCommunitySpaces = selectedCommunitySpaces?.slice().sort((_a, _b) => {
 		const a = get(_a);
 		const b = get(_b);
 		return a.url === '/' ? -1 : b.url === '/' ? 1 : a.name < b.name ? -1 : 1;
