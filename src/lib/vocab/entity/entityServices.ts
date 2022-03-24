@@ -37,8 +37,8 @@ export const createEntityService: Service<CreateEntityParams, CreateEntityRespon
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
 		const insertEntitiesResult = await repos.entity.create(
 			params.actor_id,
-			params.space_id,
 			params.data,
+			params.space_id,
 		);
 		if (insertEntitiesResult.ok) {
 			return {ok: true, status: 200, value: {entity: insertEntitiesResult.value}}; // TODO API types
