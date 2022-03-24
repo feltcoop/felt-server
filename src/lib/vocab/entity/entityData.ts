@@ -2,7 +2,8 @@ export type EntityData =
 	| NoteEntityData
 	| ArticleEntityData
 	| CollectionEntityData
-	| TombstoneEntityData;
+	| TombstoneEntityData
+	| DirectoryEntityData;
 
 export interface BaseEntityData {
 	type: string;
@@ -31,4 +32,8 @@ export interface TombstoneEntityData extends BaseEntityData {
 	type: 'Tombstone';
 	deleted: Date;
 	previousType: string;
+}
+
+export interface DirectoryEntityData extends BaseEntityData {
+	type: 'Directory';
 }

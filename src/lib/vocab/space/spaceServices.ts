@@ -21,6 +21,13 @@ import {
 	UpdateSpace,
 	DeleteSpace,
 } from '$lib/vocab/space/spaceEvents';
+import type {Community} from '../community/community';
+import type {Result} from '@feltcoop/felt';
+import type {Space} from './space';
+import type {ErrorResponse} from '$lib/util/error';
+import {toDefaultSpaces} from './defaultSpaces';
+import {db} from '$lib/db/db';
+import {SessionApi} from '$lib/server/SessionApi';
 
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
@@ -80,6 +87,22 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 			return {ok: false, status: 409, message: 'a space with that url already exists'};
 		}
 
+		log.trace('[CreateSpace] finding community space for dir actor');
+		const communityPersona = await repos.persona.findByCommunityId(params.community_id);
+		if (!communityPersona.ok) {
+			log.error('[CreateSpace] error finding persona for provided community', params.community_id);
+			return {ok: false, status: 500, message: 'error looking up community persona'};
+		}
+
+		log.trace('[CreateSpace] initializing directory for space');
+		const createDirectoryResult = await repos.entity.create(communityPersona.value.persona_id, {
+			type: 'Directory',
+		});
+		if (!createDirectoryResult.ok) {
+			log.error('[CreateSpace] error creating directory for space', params.name);
+			return {ok: false, status: 500, message: 'error creating directory for space'};
+		}
+
 		log.trace('[CreateSpace] creating space for community', params.community_id);
 		const createSpaceResult = await repos.space.create(
 			params.name,
@@ -87,6 +110,7 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 			params.url,
 			params.icon,
 			params.community_id,
+			createDirectoryResult.value.entity_id,
 		);
 		if (createSpaceResult.ok) {
 			return {ok: true, status: 200, value: {space: createSpaceResult.value}};
@@ -122,4 +146,24 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 		}
 		return {ok: true, status: 200, value: null};
 	},
+};
+
+export const createDefaultSpaces = async (
+	community: Community,
+	account_id: number,
+	session: SessionApi,
+): Promise<Result<{value: Space[]}, ErrorResponse>> => {
+	const spaces: Space[] = [];
+	for (const params of toDefaultSpaces(community)) {
+		// eslint-disable-next-line no-await-in-loop
+		const result = await createSpaceService.perform({
+			repos: db.repos,
+			account_id,
+			params,
+			session,
+		});
+		if (!result.ok) return {ok: false, message: 'failed to create default spaces'};
+		spaces.push(result.value.space);
+	}
+	return {ok: true, value: spaces};
 };

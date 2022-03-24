@@ -4,9 +4,7 @@ import {blue, gray} from 'kleur/colors';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Space} from '$lib/vocab/space/space.js';
-import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import type {ErrorResponse} from '$lib/util/error';
-import type {Community} from '$lib/vocab/community/community';
 import type {ViewData} from '$lib/vocab/view/view';
 
 const log = new Logger(gray('[') + blue('SpaceRepo') + gray(']'));
@@ -72,34 +70,14 @@ export class SpaceRepo extends PostgresRepo {
 		url: string,
 		icon: string,
 		community_id: number,
+		directory_id: number,
 	): Promise<Result<{value: Space}>> {
 		const data = await this.db.sql<Space[]>`
-			INSERT INTO spaces (name, url, icon, view, community_id) VALUES (
-				${name},${url},${icon},${this.db.sql.json(view)},${community_id}
+			INSERT INTO spaces (name, url, icon, view, community_id, directory_id) VALUES (
+				${name},${url},${icon},${this.db.sql.json(view)},${community_id}, ${directory_id}
 			) RETURNING *
 		`;
 		return {ok: true, value: data[0]};
-	}
-
-	async createDefaultSpaces(
-		community: Community,
-	): Promise<Result<{value: Space[]}, ErrorResponse>> {
-		const spaces: Space[] = [];
-		for (const params of toDefaultSpaces(community)) {
-			// TODO parallelize this and remove the eslint override, but how to preserve order?
-			// `db.repos.space.createMany`?
-			// eslint-disable-next-line no-await-in-loop
-			const result = await this.create(
-				params.name,
-				params.view,
-				params.url,
-				params.icon,
-				params.community_id,
-			);
-			if (!result.ok) return {ok: false, message: 'failed to create default spaces'};
-			spaces.push(result.value);
-		}
-		return {ok: true, value: spaces};
 	}
 
 	async update(

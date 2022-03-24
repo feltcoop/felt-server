@@ -23,6 +23,7 @@ export class CommunityRepo extends PostgresRepo {
 		log.trace('[db] created community', data[0]);
 		const community = data[0];
 		// TODO more robust error handling or condense into single query
+		// TODO move this logic up to service layer
 		const spacesResult = await this.db.repos.space.createDefaultSpaces(community); // TODO should this work happen elsewhere?
 		if (!spacesResult.ok) return spacesResult;
 		const spaces = spacesResult.value;
