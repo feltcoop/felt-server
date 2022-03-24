@@ -34,22 +34,5 @@ export const up = async (sql) => {
 				SET directory_id=${directory_id}
 				WHERE space_id=${space.space_id}
 		`;
-		//tie all orphaned entities to the directory
-		//uses a CTE to define the spaceEntities table as all entity_ids from the current space
-		//then inserts new ties based on the results of
-		//a query which finds all entities in a given space that don't already have a tie to a parent entity
-		//i.e. top level (non-leaf) entities which should be connected to the directory
-		sql`
-			WITH spaceEntities (entity_id) 
-			AS (SELECT entity_id FROM entities e WHERE e.space_id = ${space.space_id} AND e.data ->> 'type' != 'Directory')
-			INSERT INTO ties (source_id, dest_id, type)
-			SELECT ${directory_id},entity_id,'HasEntity' FROM spaceEntities 		
-			WHERE spaceEntities.entity_id NOT IN (
-				SELECT t.dest_id 
-				FROM ties t 
-				JOIN spaceEntities 
-				ON spaceEntities.entity_id = t.dest_id
-			) 
-		`;
 	}
 };
