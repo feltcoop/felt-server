@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
-	import {format} from 'date-fns';
 
 	import type {Space} from '$lib/vocab/space/space';
 	import type {Community} from '$lib/vocab/community/community';
@@ -30,7 +29,6 @@
 			/><span class="title">{$community.name}</span>{/if}{#if space}<SpaceIcon {space} />
 			<span class="title">{$space?.url.split('/').filter(Boolean).join(' / ') || ''}</span>{/if}
 	</li>
-	<li class="timestamp">created {space && $space && format(new Date($space.created), 'P')}</li>
 	<li class="marquee-button-placeholder" />
 </ul>
 
@@ -48,13 +46,6 @@
 	.breadcrumbs {
 		display: flex;
 		align-items: center;
-	}
-	.timestamp {
-		font-size: var(--font_size_md);
-		flex: 1;
-		display: flex;
-		justify-content: flex-end;
-		padding: 0 var(--spacing_lg);
 	}
 	.luggage-placeholder,
 	.marquee-button-placeholder {
