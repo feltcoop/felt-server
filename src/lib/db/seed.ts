@@ -105,16 +105,24 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 	};
 
 	for (const space of spaces) {
+		//TODO add seed data for Todo
 		const componentName = findFirstComponentName(space.view);
+		if (componentName === 'Todo') {
+			await generateTodo(db, nextPersona().persona_id, space.space_id);
+		}
 		if (!componentName || !(componentName in entitiesContents)) {
 			continue;
 		}
 		const entityContents = entitiesContents[componentName];
 		for (const entityContent of entityContents) {
-			await db.repos.entity.create(nextPersona().persona_id, space.space_id, {
-				type: 'Note',
-				content: entityContent,
-			});
+			await db.repos.entity.create(
+				nextPersona().persona_id,
+				{
+					type: 'Note',
+					content: entityContent,
+				},
+				space.space_id,
+			);
 		}
 	}
 };
@@ -131,6 +139,37 @@ const entitiesContents: Record<string, string[]> = {
 		'but we exist in the hope of something better.',
 		'The 14th Dalai Lama',
 	],
+};
+
+const generateTodo = async (db: Database, persona_id: number, space_id: number) => {
+	const list = await db.repos.entity.create(
+		persona_id,
+		{
+			type: 'Collection',
+			name: 'Grocery List',
+		},
+		space_id,
+	);
+	if (!list.ok) {
+		log.warn('Issue generating todo list');
+		return;
+	}
+	const items = ['eggs', 'milk', 'bread'];
+	for (const item of items) {
+		const result = await db.repos.entity.create(
+			persona_id,
+			{
+				type: 'Note',
+				content: item,
+			},
+			space_id,
+		);
+		if (!result.ok) {
+			log.warn('Issue generating todo item');
+			return;
+		}
+		await db.repos.tie.create(list.value.entity_id, result.value.entity_id, 'HasItem');
+	}
 };
 
 const findFirstComponentName = (view: ViewData): string | undefined => {

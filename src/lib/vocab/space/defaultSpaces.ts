@@ -35,23 +35,9 @@ export const toDefaultSpaces = ({community_id, name}: Community): CreateSpacePar
 	},
 	{
 		community_id,
-		name: 'voice',
-		url: '/voice',
-		...toViewTemplateDefaults('Voice'),
-	},
-	{
-		community_id,
-		name: 'felt library',
-		url: '/library',
-		view: parseView('<Iframe src="https://www.felt.dev/sketch/library" />'),
-		icon: '💻',
-	},
-	{
-		community_id,
-		name: 'dealt: tar',
-		url: '/tar',
-		view: parseView('<Iframe src="https://www.dealt.dev/tar" />'),
-		icon: '💻',
+		name: 'todo',
+		url: '/todo',
+		...toViewTemplateDefaults('Todo'),
 	},
 ];
 
