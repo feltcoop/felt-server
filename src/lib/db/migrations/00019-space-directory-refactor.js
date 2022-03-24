@@ -1,6 +1,11 @@
 /** @param {import('postgres').Sql<any>} sql */
 export const up = async (sql) => {
 	await sql`
+		ALTER TABLE entities
+		ALTER COLUMN actor_id SET NOT NULL	
+	`;
+
+	await sql`
 		ALTER TABLE spaces
 			ADD COLUMN directory_id int REFERENCES entities (entity_id)
 	`;
@@ -11,9 +16,14 @@ export const up = async (sql) => {
 
 	for (const space of spaces) {
 		// eslint-disable-next-line no-await-in-loop
+		const actorPersona = await sql`
+			SELECT persona_id FROM personas WHERE community_id = ${space.community_id};
+		`;
+
+		// eslint-disable-next-line no-await-in-loop
 		const entity = await sql`
-			INSERT INTO entities (space_id, data) VALUES (
-			${space.space_id},${sql.json({type: 'Directory'})}
+			INSERT INTO entities (actor_id,space_id, data) VALUES (
+			${actorPersona[0].persona_id},${space.space_id},${sql.json({type: 'Directory'})}
 		) RETURNING *
 		`;
 
