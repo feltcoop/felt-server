@@ -1,4 +1,5 @@
 import type {ApiServerRequest} from '$lib/server/ApiServer';
+import {setCookie} from '$lib/session/cookieSession';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 const log = new Logger('[SessionApi]');
@@ -35,6 +36,10 @@ export class SessionApi implements ISessionApi {
 			return;
 		}
 		this.req.account_id = undefined!;
-		this.req.session = null!;
+		// TODO BLOCK how to do this?
+		// TODO BLOCK `session_id` variable ?
+		// TODO BLOCK is this `this.res`?
+		setCookie(this.req.headers, 'session_id', '');
+		// this.req.session = null!;
 	}
 }

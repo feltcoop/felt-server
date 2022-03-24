@@ -6,7 +6,6 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue} from 'kleur/colors';
 import {promisify} from 'util';
 
-import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.js';
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
@@ -75,8 +74,7 @@ export class ApiServer {
 					body: req.body,
 				});
 				return next();
-			})
-			.use(toAuthenticationMiddleware(this));
+			});
 
 		// Register services as http routes.
 		for (const service of this.services.values()) {

@@ -1,7 +1,7 @@
 import type {IncomingMessage} from 'http';
+import cookie from 'cookie';
 
 import {fromEnv} from '$lib/server/env';
-import cookie from 'cookie';
 
 export interface CookieSessionRequest {
 	session: CookieSessionObject;
@@ -36,18 +36,22 @@ export const serializeCookie = (
 	value: string,
 	options?: cookie.CookieSerializeOptions | undefined,
 ): string =>
+	// TODO BLOCK signed cookies -- do we want to use `cookie-session` or `cookies`?
 	cookie.serialize(name, value, {
 		path: '/',
 		httpOnly: true,
+		maxAge: 1000 * 60 * 60 * 24 * 7 * 4, // 4 weeks
+		secure: !dev,
+		sameSite: 'lax',
 		...options,
 	});
 
 // TODO BLOCK merge with the above
-export const cookieSessionMiddleware = cookieSession({
-	name: 'session_id',
-	keys: fromEnv('COOKIE_KEYS').split('__'),
-	maxAge: 1000 * 60 * 60 * 24 * 7 * 4, // 4 weeks
-	httpOnly: true, // prevents JS from having access in browser
-	secure: !dev, // this makes cookies break in prod unless https! see letsencrypt
-	sameSite: 'lax', // is the default for modern browsers: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
-});
+// export const cookieSessionMiddleware = cookieSession({
+// 	name: 'session_id',
+// 	keys: fromEnv('COOKIE_KEYS').split('__'),
+// 	maxAge: 1000 * 60 * 60 * 24 * 7 * 4, // 4 weeks
+// 	httpOnly: true, // prevents JS from having access in browser
+// 	secure: !dev, // this makes cookies break in prod unless https! see letsencrypt
+// 	sameSite: 'lax', // is the default for modern browsers: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
+// });

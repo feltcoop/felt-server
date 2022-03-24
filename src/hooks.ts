@@ -7,19 +7,16 @@ import {setCookie, parseCookie} from '$lib/session/cookieSession';
 const log = new Logger('[hooks]');
 
 export const handle: Handle = async ({event, resolve}) => {
+	console.log(`handle`, event);
 	const cookies = parseCookie(event.request.headers);
 	event.locals.account_id = cookies.account_id;
+	// TODO BLOCK also set the request account_id? and delete `authenticationMiddleware`?
+	event.request.account_id = event.locals.account_id;
+
 	// TODO BLOCK do this here instead of in the middleware (import db directly?)
 	// event.locals.user = await getUserInformation(event.request.headers.get('cookie'));
 
 	const response = await resolve(event);
-
-	// TODO block session middleware
-	if (!cookies.account_id) {
-		// if this is the first time the user has visited this app,
-		// set a cookie so that we recognise them when they return
-		setCookie(event.request.headers, 'account_id', event.locals.account_id);
-	}
 
 	return response;
 };
