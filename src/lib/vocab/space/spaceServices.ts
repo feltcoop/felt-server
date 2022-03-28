@@ -94,10 +94,10 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 			return {ok: false, status: 500, message: 'error looking up community persona'};
 		}
 
-		//TODO BLOCK should Directory be collection named directory?
 		log.trace('[CreateSpace] initializing directory for space');
 		const createDirectoryResult = await repos.entity.create(communityPersona.value.persona_id, {
-			type: 'Directory',
+			type: 'Collection',
+			name: 'directory',
 		});
 		if (!createDirectoryResult.ok) {
 			log.error('[CreateSpace] error creating directory for space', params.name);
