@@ -22,8 +22,8 @@ export const up = async (sql) => {
 
 		// eslint-disable-next-line no-await-in-loop
 		const entity = await sql`
-			INSERT INTO entities (actor_id,space_id, data) VALUES (
-			${actorPersona[0].persona_id},${space.space_id},${sql.json({type: 'Collection', name: 'directory'})}
+			INSERT INTO entities (actor_id, data) VALUES (
+			${actorPersona[0].persona_id},${sql.json({type: 'Collection', name: 'directory'})}
 		) RETURNING *
 		`;
 
