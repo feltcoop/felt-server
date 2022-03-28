@@ -105,7 +105,6 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 	};
 
 	for (const space of spaces) {
-		//TODO add seed data for Todo
 		const componentName = findFirstComponentName(space.view);
 		if (componentName === 'Todo') {
 			await generateTodo(db, nextPersona().persona_id, space.space_id);
