@@ -24,7 +24,6 @@
 
 	$: selected = selectedList ? selectedList === $entity : false;
 	let pending = false;
-	let source_id = '';
 
 	$: items = itemsByEntity.get(entity);
 
@@ -55,16 +54,6 @@
 		//1) Only render Collections or Notes
 		if (!(type === 'Collection' || type === 'Note')) return false;
 		return true;
-	};
-
-	const addToCollection = async () => {
-		const id = Number(source_id);
-		if (!id) return;
-		await dispatch.CreateTie({
-			source_id: id,
-			dest_id: $entity.entity_id,
-			type: 'HasItem',
-		});
 	};
 </script>
 
