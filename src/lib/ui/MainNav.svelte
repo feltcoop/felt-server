@@ -1,6 +1,4 @@
 <script lang="ts">
-	import {get} from 'svelte/store';
-
 	import CommunityNav from '$lib/ui/CommunityNav.svelte';
 	import SpaceNav from '$lib/ui/SpaceNav.svelte';
 	import Avatar from '$lib/ui/Avatar.svelte';
@@ -29,13 +27,6 @@
 	$: selectedCommunitySpaces =
 		selectedCommunity && $spacesByCommunityId.get($selectedCommunity!.community_id);
 
-	// TODO how to do this without using `get`?
-	$: sortedSelectedCommunitySpaces = selectedCommunitySpaces?.slice().sort((_a, _b) => {
-		const a = get(_a);
-		const b = get(_b);
-		return a.url === '/' ? -1 : b.url === '/' ? 1 : a.name < b.name ? -1 : 1;
-	});
-
 	// TODO refactor to some client view-model for the account
 	$: hue = randomHue(toName($selectedPersona));
 </script>
@@ -55,11 +46,11 @@
 		</div>
 		<div class="explorer">
 			<CommunityNav />
-			{#if selectedPersona && selectedCommunity && sortedSelectedCommunitySpaces && selectedSpace}
+			{#if selectedPersona && selectedCommunity && selectedCommunitySpaces && selectedSpace}
 				<SpaceNav
 					persona={selectedPersona}
 					community={selectedCommunity}
-					spaces={sortedSelectedCommunitySpaces}
+					spaces={selectedCommunitySpaces}
 					{selectedSpace}
 				/>
 			{/if}
