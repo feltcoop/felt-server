@@ -109,7 +109,7 @@
 		flex: 1;
 		display: flex;
 		/* makes scrolling start at the bottom */
-		flex-direction: column-reverse;
+		flex-direction: column;
 	}
 	input {
 		border-left: none;
