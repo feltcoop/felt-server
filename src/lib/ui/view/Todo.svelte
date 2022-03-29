@@ -3,7 +3,6 @@
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 	import {get, type Readable} from 'svelte/store';
 
-	import type {EntityData} from '$lib/vocab/entity/entityData';
 	import TodoItems from '$lib/ui/TodoItems.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Tie} from '$lib/vocab/tie/tie';
@@ -12,12 +11,9 @@
 	import EntityInput from '$lib/ui/EntityInput.svelte';
 
 	const viewContext = getViewContext();
-	$: ({persona, space} = $viewContext);
+	$: ({space} = $viewContext);
 
 	const {dispatch, socket} = getApp();
-
-	let text = '';
-	let list = false;
 
 	$: shouldLoadEntities = browser && $socket.open;
 	$: entities = shouldLoadEntities ? dispatch.QueryEntities({space_id: $space.space_id}) : null;
@@ -54,29 +50,6 @@
 		}
 		return map;
 	};
-
-	const createEntity = async () => {
-		const content = text.trim(); // TODO parse to trim? regularize step?
-
-		if (!content) return;
-
-		const data: EntityData = list
-			? {type: 'Collection', name: content}
-			: {type: 'Note', content, checked: false};
-
-		await dispatch.CreateEntity({
-			space_id: $space.space_id,
-			data,
-			actor_id: $persona.persona_id,
-		});
-		text = '';
-	};
-
-	const onKeydown = async (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			await createEntity();
-		}
-	};
 </script>
 
 <div class="room">
@@ -95,13 +68,6 @@
 			<PendingAnimation />
 		{/if}
 	</div>
-	<!-- TODO replace this checkbox with modal -->
-	<input type="checkbox" bind:checked={list} />
-	{#if list}
-		<input placeholder="> create new list" on:keydown={onKeydown} bind:value={text} />
-	{:else}
-		<input placeholder="> create new todo" on:keydown={onKeydown} bind:value={text} />
-	{/if}
 </div>
 
 <style>
@@ -118,11 +84,5 @@
 		display: flex;
 		/* makes scrolling start at the bottom */
 		flex-direction: column;
-	}
-	input {
-		border-left: none;
-		border-right: none;
-		border-bottom: none;
-		border-radius: 0;
 	}
 </style>

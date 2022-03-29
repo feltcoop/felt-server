@@ -91,14 +91,6 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			<div>
 				{$entity.data.content || $entity.data.name}
 			</div>
-			<!-- TODO replace this form with context driven actions-->
-			<!-- TODO 1 type of picker to pick a collection-->
-			<!-- TODO Another type of picker to pick items-->
-			<form>
-				<input bind:value={source_id} /><button type="button" on:click={addToCollection}
-					>Add to collection</button
-				>
-			</form>
 		</div>
 		{#if items && selected}
 			<div class="items panel-inset">
@@ -128,10 +120,6 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-	}
-	.entity form {
-		display: flex;
-		flex-direction: row;
 	}
 	.entity form input {
 		width: 50px;
