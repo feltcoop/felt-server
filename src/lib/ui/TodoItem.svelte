@@ -20,6 +20,7 @@
 	export let itemsByEntity: Map<Readable<Entity>, Array<Readable<Entity>>>;
 	export let entityById: Map<number, Readable<Entity>>;
 
+	let selected = false;
 	let pending = false;
 	let source_id = '';
 
@@ -88,7 +89,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 				<Avatar name={toName($persona)} icon={toIcon($persona)} />
 			</div>
 			<div>
-				{$entity.data.content}::{$entity.entity_id}
+				{$entity.data.content || $entity.data.name}
 			</div>
 			<!-- TODO replace this form with context driven actions-->
 			<!-- TODO 1 type of picker to pick a collection-->
@@ -99,7 +100,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 				>
 			</form>
 		</div>
-		{#if items}
+		{#if items && selected}
 			<div class="items panel-inset">
 				<ul>
 					{#each items as item (item)}
