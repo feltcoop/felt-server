@@ -11,7 +11,7 @@
 	import EntityInput from '$lib/ui/EntityInput.svelte';
 
 	const viewContext = getViewContext();
-	$: ({space} = $viewContext);
+	$: ({persona, space} = $viewContext);
 
 	const {dispatch, socket} = getApp();
 
@@ -19,6 +19,8 @@
 	$: entities = shouldLoadEntities ? dispatch.QueryEntities({space_id: $space.space_id}) : null;
 	$: tiesResult = shouldLoadEntities ? dispatch.ReadTies({space_id: $space.space_id}) : null;
 	let ties: Tie[] | undefined;
+	let text = '';
+
 	//TODO move this call to the UI to get arch & caching
 	// eslint-disable-next-line @typescript-eslint/no-floating-promises
 	$: tiesResult?.then((data) => {
@@ -60,6 +62,32 @@
 		}
 		return map;
 	};
+
+	const createEntity = async () => {
+		const content = text.trim(); // TODO parse to trim? regularize step?
+		if (!content || !selectedList) return;
+
+		//TODO better error handling
+		//TODO create api call to do this in one step?
+		const entityResult = await dispatch.CreateEntity({
+			space_id: $space.space_id,
+			data: {type: 'Note', content, checked: false},
+			actor_id: $persona.persona_id,
+		});
+		if (entityResult.ok) {
+			await dispatch.CreateTie({
+				source_id: selectedList.entity_id,
+				dest_id: entityResult.value.entity.entity_id,
+				type: 'HasItem',
+			});
+		}
+		text = '';
+	};
+	const onKeydown = async (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			await createEntity();
+		}
+	};
 </script>
 
 <div class="room">
@@ -78,6 +106,9 @@
 			<PendingAnimation />
 		{/if}
 	</div>
+	{#if selectedList}
+		<input placeholder="> create new todo" on:keydown={onKeydown} bind:value={text} />
+	{/if}
 </div>
 
 <style>
