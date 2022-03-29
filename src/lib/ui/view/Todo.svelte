@@ -9,6 +9,7 @@
 	import type {Tie} from '$lib/vocab/tie/tie';
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import {getViewContext} from '$lib/vocab/view/view';
+	import EntityInput from '$lib/ui/EntityInput.svelte';
 
 	const viewContext = getViewContext();
 	$: ({persona, space} = $viewContext);
@@ -83,6 +84,13 @@
 		<!-- TODO handle failures here-->
 		{#if entities && ties && itemsByEntity && entityById}
 			<TodoItems {entities} {ties} {itemsByEntity} {entityById} />
+			<button
+				on:click={() =>
+					dispatch.OpenDialog({
+						Component: EntityInput,
+						props: {done: () => dispatch.CloseDialog()},
+					})}>+ ...Create List</button
+			>
 		{:else}
 			<PendingAnimation />
 		{/if}
