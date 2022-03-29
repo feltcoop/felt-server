@@ -19,8 +19,10 @@
 	export let ties: Tie[];
 	export let itemsByEntity: Map<Readable<Entity>, Array<Readable<Entity>>>;
 	export let entityById: Map<number, Readable<Entity>>;
+	export let selectedList: Entity | null;
+	export let selectList: (list: Entity) => void;
 
-	let selected = false;
+	$: selected = selectedList ? selectedList === $entity : false;
 	let pending = false;
 	let source_id = '';
 
@@ -76,7 +78,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			[EntityContextmenu, {entity}],
 		]}
 	>
-		<div class="entity markup formatted">
+		<div on:click={() => selectList($entity)} class="entity markup formatted">
 			{#if hasItems}
 				<div class="icon-button">📝</div>
 			{/if}
@@ -96,7 +98,14 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			<div class="items panel-inset">
 				<ul>
 					{#each items as item (item)}
-						<svelte:self entity={item} {ties} {itemsByEntity} {entityById} />
+						<svelte:self
+							entity={item}
+							{ties}
+							{itemsByEntity}
+							{entityById}
+							{selectedList}
+							{selectList}
+						/>
 					{/each}
 				</ul>
 			</div>

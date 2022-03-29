@@ -11,6 +11,8 @@
 	export let ties: Tie[];
 	export let itemsByEntity: Map<Readable<Entity>, Array<Readable<Entity>>>;
 	export let entityById: Map<number, Readable<Entity>>;
+	export let selectedList: Entity | null;
+	export let selectList: (list: Entity) => void;
 
 	//TODO in directory structure, this would just grab the "lists" collection from the dir
 	$: collectionEntities = $entities?.filter((e) => get(e).data.type === 'Collection');
@@ -19,6 +21,6 @@
 <!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->
 <ul>
 	{#each collectionEntities as entity (entity)}
-		<TodoItem {entity} {ties} {itemsByEntity} {entityById} />
+		<TodoItem {entity} {ties} {itemsByEntity} {entityById} {selectedList} {selectList} />
 	{/each}
 </ul>

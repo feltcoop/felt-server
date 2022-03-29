@@ -32,6 +32,16 @@
 	let entityById: Map<number, Readable<Entity>> | null = null;
 	$: entityById = $entities && new Map($entities.map((e) => [get(e).entity_id, e]));
 
+	let selectedList: Entity | null = null;
+	const selectList = (list: Entity) => {
+		if (list.data.type !== 'Collection') return;
+		if (selectedList === list) {
+			selectedList = null;
+		} else {
+			selectedList = list;
+		}
+	};
+
 	//TODO do caching here
 	const toItemsByEntity = (
 		entities: Array<Readable<Entity>>,
@@ -56,7 +66,7 @@
 	<div class="entities">
 		<!-- TODO handle failures here-->
 		{#if entities && ties && itemsByEntity && entityById}
-			<TodoItems {entities} {ties} {itemsByEntity} {entityById} />
+			<TodoItems {entities} {ties} {itemsByEntity} {entityById} {selectedList} {selectList} />
 			<button
 				on:click={() =>
 					dispatch.OpenDialog({
