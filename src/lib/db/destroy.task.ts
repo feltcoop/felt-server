@@ -15,6 +15,6 @@ export const task: Task = {
 			grant all on schema public to ${defaultPostgresOptions.username};
 			grant all on schema public to public;
 		`);
-		unobtainDb(); // eslint-disable-line @typescript-eslint/no-floating-promises
+		unobtainDb();
 	},
 };

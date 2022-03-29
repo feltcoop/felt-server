@@ -86,7 +86,7 @@ export class MembershipRepo extends PostgresRepo {
 	async deleteById(
 		persona_id: number,
 		community_id: number,
-	): Promise<Result<{value: any[]}, {type: 'deletion_error'} & ErrorResponse>> {
+	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
 		const data = await this.db.sql<any[]>`
 			DELETE FROM memberships 
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
@@ -98,6 +98,6 @@ export class MembershipRepo extends PostgresRepo {
 				message: 'failed to delete membership',
 			};
 		}
-		return {ok: true, value: data};
+		return {ok: true};
 	}
 }

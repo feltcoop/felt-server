@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import {identity} from '@feltcoop/felt/util/function.js';
-	import {type Result, ok} from '@feltcoop/felt';
+	import {type Result} from '@feltcoop/felt';
 
 	import {autofocus} from '$lib/ui/actions';
 
@@ -15,7 +15,9 @@
 		updated: TValue,
 		field: string,
 	) => Promise<Result<unknown, {message: string}>>;
-	export let parse: (serialized: string) => Result<{value: TValue}, {message: string}> = ok as any; // TODO type
+	export let parse: (serialized: string) => Result<{value: TValue}, {message: string}> = (
+		serialized,
+	) => ({ok: true, value: serialized as any}); // TODO consider extracting an `ok` helper
 	export let serialize: (value: TValue, print?: boolean) => string = identity as any; // TODO type
 
 	let editing = false;
