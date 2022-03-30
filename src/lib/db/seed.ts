@@ -12,8 +12,8 @@ import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {ViewData} from '$lib/vocab/view/view';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
-import {SessionApi} from '$lib/server/SessionApi';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
+import {SessionApiMock} from '$lib/server/SessionApiMock';
 
 /* eslint-disable no-await-in-loop */
 
@@ -21,7 +21,7 @@ import {createCommunityService} from '$lib/vocab/community/communityServices';
 
 const log = new Logger([cyan('[seed]')]);
 
-const session = new SessionApi(null);
+const session = new SessionApiMock();
 
 export const seed = async (db: Database): Promise<void> => {
 	const {sql} = db;

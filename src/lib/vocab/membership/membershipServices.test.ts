@@ -10,7 +10,6 @@ import {
 	deleteMembershipService,
 } from '$lib/vocab/membership/membershipServices';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
-import {SessionApi} from '$lib/server/SessionApi';
 
 /* test__membershipServices */
 const test__membershipServices = suite<TestDbContext & TestAppContext>('membershipServices');
@@ -22,7 +21,7 @@ const serviceRequest = (account_id: number, db: any) => {
 	return {
 		account_id,
 		repos: db.repos,
-		session: new SessionApi(null),
+		session: new SessionApiMock(),
 	};
 };
 

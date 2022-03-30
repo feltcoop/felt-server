@@ -19,10 +19,10 @@ import {parseView, type ViewData} from '$lib/vocab/view/view';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
-import {SessionApi} from '$lib/server/SessionApi';
+import {SessionApiMock} from '$lib/server/SessionApiMock';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
 
-const session = new SessionApi(null);
+const session = new SessionApiMock();
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = (): string => Math.random().toString().slice(2);
