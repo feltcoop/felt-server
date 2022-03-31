@@ -1,21 +1,15 @@
 <script lang="ts">
-	import {format} from 'date-fns';
-
-	import MemberItem from '$lib/ui/MemberItem.svelte';
-	import SpaceInfo from '$lib/ui/SpaceInfo.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {getViewContext} from '$lib/vocab/view/view';
 	import Forum from './Forum.svelte';
 	import PersonaAvatar from '../PersonaAvatar.svelte';
 
 	const viewContext = getViewContext();
-	$: ({persona, community} = $viewContext);
+	$: ({community} = $viewContext);
 
 	const {
-		ui: {spaceSelection, spacesByCommunityId, personasByCommunityId},
+		ui: {personasByCommunityId},
 	} = getApp();
-
-	$: communitySpaces = $spacesByCommunityId.get($community.community_id)!;
 
 	$: communityPersonas = $personasByCommunityId.get($community.community_id)!;
 </script>
