@@ -121,9 +121,8 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 		if (!findSpaceResult.ok) {
 			if (findSpaceResult.type === 'no_space_found') {
 				return {ok: false, status: 404, message: findSpaceResult.message};
-			} else {
-				return {ok: false, status: 500, message: 'unknown server error'};
 			}
+			return {ok: false, status: 500, message: 'unknown server error'};
 		}
 		const space = findSpaceResult.value;
 		if (!canDeleteSpace(space)) {
