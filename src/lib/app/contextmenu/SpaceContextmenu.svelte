@@ -11,6 +11,7 @@
 	import SpaceIcon from '$lib/ui/SpaceIcon.svelte';
 	import SpaceEditor from '$lib/ui/SpaceEditor.svelte';
 	import {toComponentViewData} from '$lib/vocab/view/view';
+	import {canDeleteSpace} from '$lib/vocab/space/spaceHelpers';
 
 	const {dispatch} = getApp();
 
@@ -37,15 +38,17 @@
 		>
 			<span class="title"> Edit Space </span>
 		</ContextmenuEntry>
-		<ContextmenuEntry
-			action={() =>
-				dispatch.OpenDialog({
-					Component: SpaceDelete,
-					props: {persona, community, space, done: () => dispatch.CloseDialog()},
-				})}
-		>
-			<span class="title"> Delete Space </span>
-		</ContextmenuEntry>
+		{#if canDeleteSpace($space)}
+			<ContextmenuEntry
+				action={() =>
+					dispatch.OpenDialog({
+						Component: SpaceDelete,
+						props: {persona, community, space, done: () => dispatch.CloseDialog()},
+					})}
+			>
+				<span class="title"> Delete Space </span>
+			</ContextmenuEntry>
+		{/if}
 		<ContextmenuEntry
 			action={() =>
 				dispatch.ViewSpace({

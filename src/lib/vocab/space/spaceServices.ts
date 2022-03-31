@@ -21,6 +21,7 @@ import {
 	UpdateSpace,
 	DeleteSpace,
 } from '$lib/vocab/space/spaceEvents';
+import {canDeleteSpace} from '$lib/vocab/space/spaceHelpers';
 
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
@@ -114,6 +115,21 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 	event: DeleteSpace,
 	perform: async ({repos, params}) => {
 		log.trace('[DeleteSpace] deleting space with id:', params.space_id);
+
+		// Check that the space can be deleted.
+		const findSpaceResult = await repos.space.findById(params.space_id);
+		if (!findSpaceResult.ok) {
+			if (findSpaceResult.type === 'no_space_found') {
+				return {ok: false, status: 404, message: findSpaceResult.message};
+			} else {
+				return {ok: false, status: 500, message: 'unknown server error'};
+			}
+		}
+		const space = findSpaceResult.value;
+		if (!canDeleteSpace(space)) {
+			return {ok: false, status: 405, message: 'cannot delete home space'};
+		}
+
 		const result = await repos.space.deleteById(params.space_id);
 		log.trace('[DeleteSpace] result', result);
 		if (!result.ok) {
