@@ -86,23 +86,17 @@ export interface RandomVocab {
 export class RandomVocabContext {
 	constructor(private db: Database) {}
 
-	accounts: Account[] = [];
-	personas: Persona[] = [];
-	communities: Community[] = [];
-	spaces: Space[] = [];
-	entities: Entity[] = [];
-	ties: Tie[] = [];
-
 	async account(): Promise<Account> {
 		const params = randomAccountParams();
 		const account = unwrap(await this.db.repos.account.create(params.name, params.password));
-		this.accounts.push(account);
 		return account;
 	}
 
-	async persona(account?: Account): Promise<Persona> {
+	async persona(
+		account?: Account,
+	): Promise<{persona: Persona; personalCommunity: Community; account: Account}> {
 		if (!account) account = await this.account();
-		const {community, persona} = unwrap(
+		const {persona, community: personalCommunity} = unwrap(
 			await createAccountPersonaService.perform({
 				params: {name: randomPersonaParams().name},
 				account_id: account.account_id,
@@ -110,14 +104,15 @@ export class RandomVocabContext {
 				session,
 			}),
 		);
-		this.communities.push(community);
-		this.personas.push(persona);
-		return persona;
+		return {persona, personalCommunity, account};
 	}
 
-	async community(persona?: Persona, account?: Account): Promise<Community> {
+	async community(
+		persona?: Persona,
+		account?: Account,
+	): Promise<{community: Community; persona: Persona; account: Account}> {
 		if (!account) account = await this.account();
-		if (!persona) persona = await this.persona(account);
+		if (!persona) ({persona, account} = await this.persona(account));
 		const params = randomCommunityParams(persona.persona_id);
 		const {community} = unwrap(
 			await createCommunityService.perform({
@@ -127,14 +122,17 @@ export class RandomVocabContext {
 				session,
 			}),
 		);
-		this.communities.push(community);
-		return community;
+		return {community, persona, account};
 	}
 
-	async space(persona?: Persona, account?: Account, community?: Community): Promise<Space> {
+	async space(
+		persona?: Persona,
+		account?: Account,
+		community?: Community,
+	): Promise<{space: Space; persona: Persona; account: Account; community: Community}> {
 		if (!account) account = await this.account();
-		if (!persona) persona = await this.persona(account);
-		if (!community) community = await this.community(persona, account);
+		if (!persona) ({persona} = await this.persona(account));
+		if (!community) ({community} = await this.community(persona, account));
 		const params = randomSpaceParams(community.community_id);
 		const space = unwrap(
 			await this.db.repos.space.create(
@@ -145,8 +143,7 @@ export class RandomVocabContext {
 				params.community_id,
 			),
 		);
-		this.spaces.push(space);
-		return space;
+		return {space, persona, account, community};
 	}
 
 	async entity(
@@ -154,26 +151,50 @@ export class RandomVocabContext {
 		account?: Account,
 		community?: Community,
 		space?: Space,
-	): Promise<Entity> {
+	): Promise<{
+		entity: Entity;
+		persona: Persona;
+		account: Account;
+		community: Community;
+		space: Space;
+	}> {
 		if (!account) account = await this.account();
-		if (!persona) persona = await this.persona(account);
-		if (!community) community = await this.community(persona, account);
-		if (!space) space = await this.space(persona, account, community);
+		if (!persona) ({persona} = await this.persona(account));
+		if (!community) ({community} = await this.community(persona, account));
+		if (!space) ({space} = await this.space(persona, account, community));
 		const params = randomEntityParams(persona.persona_id, space.space_id);
 		const entity = unwrap(
 			await this.db.repos.entity.create(params.actor_id, params.space_id, params.data),
 		);
-		this.entities.push(entity);
-		return entity;
+		return {entity, persona, account, community, space};
 	}
 
-	async tie(sourceEntity?: Entity, destEntity?: Entity): Promise<Tie> {
-		if (!sourceEntity) sourceEntity = await this.entity();
-		if (!destEntity) destEntity = await this.entity();
+	async tie(
+		sourceEntity?: Entity,
+		destEntity?: Entity,
+		persona?: Persona,
+		account?: Account,
+		community?: Community,
+		space?: Space,
+	): Promise<{
+		tie: Tie;
+		sourceEntity: Entity;
+		destEntity: Entity;
+		persona: Persona;
+		account: Account;
+		community: Community;
+		space: Space;
+	}> {
+		if (!account) account = await this.account();
+		if (!persona) ({persona} = await this.persona(account));
+		if (!community) ({community} = await this.community(persona, account));
+		if (!space) ({space} = await this.space(persona, account, community));
+		if (!sourceEntity)
+			({entity: sourceEntity} = await this.entity(persona, account, community, space));
+		if (!destEntity) ({entity: destEntity} = await this.entity(persona, account, community, space));
 		const tie = unwrap(
 			await this.db.repos.tie.create(sourceEntity.entity_id, destEntity.entity_id, 'HasItem'),
 		);
-		this.ties.push(tie);
-		return tie;
+		return {tie, sourceEntity, destEntity, persona, account, community, space};
 	}
 }

@@ -138,7 +138,6 @@ export const randomEventParams = async (
 		}
 		case 'HardDeleteEntity': {
 			const entity = await random.entity(persona, account, community, space);
-			random.entities.pop();
 			return {
 				entity_id: entity.entity_id,
 			};
