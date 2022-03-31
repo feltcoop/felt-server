@@ -2,6 +2,7 @@ import {writable, get} from 'svelte/store';
 import {goto} from '$app/navigation';
 
 import type {Mutations} from '$lib/app/eventTypes';
+import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 
 export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui: {spaceById, spaces}}) => {
 	const result = await invoke();
@@ -43,7 +44,7 @@ export const DeleteSpace: Mutations['DeleteSpace'] = async ({
 			//TODO lookup space by community_id+url (see this comment in multiple places)
 			const homeSpace = get(spacesByCommunityId)
 				.get(community_id)!
-				.find((s) => get(s).url === '/')!;
+				.find((s) => isHomeSpace(get(s)))!;
 			spaceIdSelectionByCommunityId.update(($v) => ({
 				...$v,
 				[community_id]: get(homeSpace).space_id,

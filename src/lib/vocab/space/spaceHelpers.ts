@@ -13,4 +13,6 @@ export const parseSpaceIcon = (value: string): Result<{value: string}, {message:
 	return {ok: true, value};
 };
 
-export const canDeleteSpace = (space: Space): boolean => space.url !== '/';
+export const isHomeSpace = (space: Space): boolean => space.url === '/';
+
+export const canDeleteSpace = (space: Space): boolean => !isHomeSpace(space);

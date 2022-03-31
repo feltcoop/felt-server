@@ -1,5 +1,6 @@
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
+import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 
 export const PERSONA_QUERY_KEY = 'persona';
 
@@ -10,7 +11,7 @@ export const toSpaceUrl = (
 	params?: URLSearchParams,
 ): string => {
 	const url = space?.url;
-	return `/${community.name}${!url || url === '/' ? '' : url}?${setUrlPersona(
+	return `/${community.name}${!url || isHomeSpace(space) ? '' : url}?${setUrlPersona(
 		personaIndex,
 		params,
 	)}`;
