@@ -21,6 +21,7 @@ import type {Tie} from '$lib/vocab/tie/tie';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {SessionApi} from '$lib/server/SessionApi';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
+import type {Membership} from '$lib/vocab/membership/membership';
 
 const session = new SessionApi(null);
 
@@ -92,11 +93,20 @@ export class RandomVocabContext {
 		return account;
 	}
 
-	async persona(
-		account?: Account,
-	): Promise<{persona: Persona; personalCommunity: Community; account: Account}> {
+	async persona(account?: Account): Promise<{
+		persona: Persona;
+		personalCommunity: Community;
+		membership: Membership;
+		spaces: Space[];
+		account: Account;
+	}> {
 		if (!account) account = await this.account();
-		const {persona, community: personalCommunity} = unwrap(
+		const {
+			persona,
+			community: personalCommunity,
+			membership,
+			spaces,
+		} = unwrap(
 			await createAccountPersonaService.perform({
 				params: {name: randomPersonaParams().name},
 				account_id: account.account_id,
@@ -104,17 +114,24 @@ export class RandomVocabContext {
 				session,
 			}),
 		);
-		return {persona, personalCommunity, account};
+		return {persona, personalCommunity, membership, spaces, account};
 	}
 
 	async community(
 		persona?: Persona,
 		account?: Account,
-	): Promise<{community: Community; persona: Persona; account: Account}> {
+	): Promise<{
+		community: Community;
+		communityPersona: Persona;
+		memberships: Membership[];
+		spaces: Space[];
+		persona: Persona;
+		account: Account;
+	}> {
 		if (!account) account = await this.account();
 		if (!persona) ({persona, account} = await this.persona(account));
 		const params = randomCommunityParams(persona.persona_id);
-		const {community} = unwrap(
+		const {community, communityPersona, memberships, spaces} = unwrap(
 			await createCommunityService.perform({
 				params,
 				account_id: account.account_id,
@@ -122,7 +139,7 @@ export class RandomVocabContext {
 				session,
 			}),
 		);
-		return {community, persona, account};
+		return {community, communityPersona, memberships, spaces, persona, account};
 	}
 
 	async space(

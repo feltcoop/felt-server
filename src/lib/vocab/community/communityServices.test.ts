@@ -15,8 +15,7 @@ test_communityServices.after(teardownDb);
 
 test_communityServices('unable to delete personal community', async ({db}) => {
 	const random = new RandomVocabContext(db);
-	const account = await random.account();
-	const persona = await random.persona();
+	const {persona, account} = await random.persona();
 
 	const deleteCommunityResult = await deleteCommunityService.perform({
 		repos: db.repos,
