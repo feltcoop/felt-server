@@ -8,6 +8,7 @@ import type {
 } from '$lib/app/eventTypes';
 import {CreateAccountPersona} from '$lib/vocab/persona/personaEvents';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
+import {createDefaultSpaces} from '$lib/vocab/space/spaceServices';
 
 const log = new Logger(gray('[') + blue('personaServices') + gray(']'));
 
@@ -19,7 +20,8 @@ export const createAccountPersonaService: Service<
 	event: CreateAccountPersona,
 	// TODO verify the `account_id` has permission to modify this persona
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
-	perform: async ({repos, params, account_id}) => {
+	perform: async (serviceRequest) => {
+		const {repos, params, account_id} = serviceRequest;
 		log.trace('[CreateAccountPersona] creating persona', params.name);
 		const name = params.name.trim();
 
@@ -44,9 +46,9 @@ export const createAccountPersonaService: Service<
 		if (!createCommunityResult.ok) {
 			return {ok: false, status: 500, message: 'failed to create initial persona community'};
 		}
-		const {community, spaces} = createCommunityResult.value;
-		log.trace('[CreateAccountPersona] creating persona', name);
+		const community = createCommunityResult.value;
 
+		log.trace('[CreateAccountPersona] creating persona', name);
 		const createPersonaResult = await repos.persona.createAccountPersona(
 			name,
 			account_id,
@@ -57,6 +59,17 @@ export const createAccountPersonaService: Service<
 			return {ok: false, status: 500, message: 'error searching for community personas'};
 		}
 		const persona = createPersonaResult.value;
+
+		const createDefaultSpaceResult = await createDefaultSpaces(serviceRequest, community);
+		if (!createDefaultSpaceResult.ok) {
+			log.trace('[CreateCommunity] error creating community default spaces');
+			return {
+				ok: false,
+				status: 500,
+				message: 'error creating community default spaces',
+			};
+		}
+		const spaces = createDefaultSpaceResult.value;
 
 		const membershipResult = await repos.membership.create(
 			persona.persona_id,

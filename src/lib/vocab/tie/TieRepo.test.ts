@@ -15,14 +15,11 @@ test__TieRepo('check tie queries', async ({db}) => {
 	//Gen space
 	//Gen dir entity -> thread entity -> post -> reply
 	const random = new RandomVocabContext(db);
-	const account = await random.account();
-	const persona = await random.persona(account);
-	const community = await random.community(persona, account);
-	const space = await random.space(persona, account, community);
-	const entityDir = await random.entity(persona, account, community, space);
-	const entityThread = await random.entity(persona, account, community, space);
-	const entityPost = await random.entity(persona, account, community, space);
-	const entityReply = await random.entity(persona, account, community, space);
+	const {persona, account, community, space} = await random.space();
+	const {entity: entityDir} = await random.entity(persona, account, community, space);
+	const {entity: entityThread} = await random.entity(persona, account, community, space);
+	const {entity: entityPost} = await random.entity(persona, account, community, space);
+	const {entity: entityReply} = await random.entity(persona, account, community, space);
 
 	const result1 = await db.repos.tie.create(
 		entityDir.entity_id,
