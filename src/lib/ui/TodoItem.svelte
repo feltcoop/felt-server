@@ -80,7 +80,11 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 				<Avatar name={toName($persona)} icon={toIcon($persona)} />
 			</div>
 			<div>
-				{$entity.data.content || $entity.data.name}
+				{#if $entity.data.type === 'Collection'}
+					{$entity.data.name}
+				{:else}
+					{$entity.data.content}
+				{/if}
 			</div>
 		</div>
 		{#if items && selected}
