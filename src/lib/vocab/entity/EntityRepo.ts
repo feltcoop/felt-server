@@ -6,7 +6,7 @@ import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {EntityData} from '$lib/vocab/entity/entityData';
 import type {ErrorResponse} from '$lib/util/error';
-import {type RowList} from 'postgres';
+import type {RowList} from 'postgres';
 
 const log = new Logger(gray('[') + blue('EntityRepo') + gray(']'));
 
