@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import type {Readable} from 'svelte/store';
+	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 
 	import {getApp} from '$lib/ui/app';
 	import type {Community} from '$lib/vocab/community/community';
@@ -13,13 +14,16 @@
 	export let persona: Readable<Persona>;
 
 	let errorMessage: string | undefined;
+	let pending = false;
 
 	const leaveCommunity = async (community_id: number) => {
 		errorMessage = '';
+		pending = true;
 		const result = await dispatch.DeleteMembership({
 			persona_id: $persona.persona_id,
 			community_id,
 		});
+		pending = false;
 		if (!result.ok) {
 			errorMessage = result.message;
 		}
@@ -30,9 +34,11 @@
 	<div class="row">
 		<CommunityAvatar {community} />
 		{#if $community.type === 'personal'}
-			<button type="button" disabled>🏠</button>
+			<button disabled>🏠</button>
 		{:else}
-			<button type="button" on:click={() => leaveCommunity($community.community_id)}> 👋 </button>
+			<PendingButton {pending} on:click={() => leaveCommunity($community.community_id)}>
+				👋
+			</PendingButton>
 		{/if}
 	</div>
 	{#if errorMessage}

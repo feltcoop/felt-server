@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {AsyncStatus} from '@feltcoop/felt';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
+	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
@@ -70,7 +71,7 @@
 		{#if errorMessage}
 			<Message status="error">{errorMessage}</Message>
 		{/if}
-		<button type="button" on:click={create} disabled={status === 'pending'}> Create entity </button>
+		<PendingButton on:click={create} pending={status === 'pending'}>Create entity</PendingButton>
 	</form>
 </div>
 
