@@ -21,7 +21,7 @@ import type {Tie} from '$lib/vocab/tie/tie';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {SessionApi} from '$lib/server/SessionApi';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
-import {createSpaceService} from './space/spaceServices';
+import {createSpaceService} from '$lib/vocab/space/spaceServices';
 
 const session = new SessionApi(null);
 
