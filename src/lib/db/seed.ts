@@ -140,33 +140,29 @@ const entitiesContents: Record<string, string[]> = {
 };
 
 const generateTodo = async (db: Database, persona_id: number, space_id: number) => {
-	const list = await db.repos.entity.create(
-		persona_id,
-		{
-			type: 'Collection',
-			name: 'Grocery List',
-		},
-		space_id,
-	);
-	if (!list.ok) {
-		log.warn('Issue generating todo list');
-		return;
-	}
-	const items = ['eggs', 'milk', 'bread'];
-	for (const item of items) {
-		const result = await db.repos.entity.create(
+	const list = unwrap(
+		await db.repos.entity.create(
 			persona_id,
 			{
-				type: 'Note',
-				content: item,
+				type: 'Collection',
+				name: 'Grocery List',
 			},
 			space_id,
+		),
+	);
+	const itemsContents = ['eggs', 'milk', 'bread'];
+	for (const content of itemsContents) {
+		const item = unwrap(
+			await db.repos.entity.create(
+				persona_id,
+				{
+					type: 'Note',
+					content,
+				},
+				space_id,
+			),
 		);
-		if (!result.ok) {
-			log.warn('Issue generating todo item');
-			return;
-		}
-		await db.repos.tie.create(list.value.entity_id, result.value.entity_id, 'HasItem');
+		unwrap(await db.repos.tie.create(list.entity_id, item.entity_id, 'HasItem'));
 	}
 };
 
