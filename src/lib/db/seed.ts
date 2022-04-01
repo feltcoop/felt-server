@@ -114,13 +114,12 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 		}
 		const entityContents = entitiesContents[componentName];
 		for (const entityContent of entityContents) {
-			await db.repos.entity.create(
-				nextPersona().persona_id,
-				{
-					type: 'Note',
-					content: entityContent,
-				},
-				space.space_id,
+			unwrap(
+				await db.repos.entity.create(
+					nextPersona().persona_id,
+					{type: 'Note', content: entityContent},
+					space.space_id,
+				),
 			);
 		}
 	}
