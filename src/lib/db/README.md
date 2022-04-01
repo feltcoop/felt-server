@@ -56,7 +56,7 @@ Use `gro lib/db/migrate` to run migrations.
 
 ## creating backups
 
-Using the following command one can quickly take backups of the felt table
+Using the following command one can quickly take backups of the `felt` database.
 
 ```
 sudo -u postgres pg_dump felt > backup.sql
