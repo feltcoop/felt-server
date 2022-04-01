@@ -20,7 +20,8 @@ export const createAccountPersonaService: Service<
 	event: CreateAccountPersona,
 	// TODO verify the `account_id` has permission to modify this persona
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
-	perform: async ({repos, params, account_id, session}) => {
+	perform: async (serviceRequest) => {
+		const {repos, params, account_id} = serviceRequest;
 		log.trace('[CreateAccountPersona] creating persona', params.name);
 		const name = params.name.trim();
 
@@ -59,7 +60,7 @@ export const createAccountPersonaService: Service<
 		}
 		const persona = createPersonaResult.value;
 
-		const createDefaultSpaceResult = await createDefaultSpaces(community, account_id, session);
+		const createDefaultSpaceResult = await createDefaultSpaces(serviceRequest, community);
 		if (!createDefaultSpaceResult.ok) {
 			log.trace('[CreateCommunity] error creating community default spaces');
 			return {

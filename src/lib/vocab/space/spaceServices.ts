@@ -1,7 +1,7 @@
 import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import type {Service} from '$lib/server/service';
+import type {Service, ServiceRequest} from '$lib/server/service';
 import type {
 	CreateSpaceParams,
 	CreateSpaceResponseResult,
@@ -26,8 +26,6 @@ import type {Result} from '@feltcoop/felt';
 import type {Space} from '$lib/vocab/space/space';
 import type {ErrorResponse} from '$lib/util/error';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
-import {db} from '$lib/db/db';
-import type {ISessionApi} from '$lib/server/SessionApi';
 
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
@@ -150,18 +148,15 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 };
 
 export const createDefaultSpaces = async (
+	serviceRequest: ServiceRequest<any>,
 	community: Community,
-	account_id: number,
-	session: ISessionApi,
 ): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 	const spaces: Space[] = [];
 	for (const params of toDefaultSpaces(community)) {
 		// eslint-disable-next-line no-await-in-loop
 		const result = await createSpaceService.perform({
-			repos: db.repos,
-			account_id,
+			...serviceRequest,
 			params,
-			session,
 		});
 		if (!result.ok) return {ok: false, message: 'failed to create default spaces'};
 		spaces.push(result.value.space);

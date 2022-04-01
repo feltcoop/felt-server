@@ -65,7 +65,8 @@ export const readCommunityService: Service<ReadCommunityParams, ReadCommunityRes
 export const createCommunityService: Service<CreateCommunityParams, CreateCommunityResponseResult> =
 	{
 		event: CreateCommunity,
-		perform: async ({session, repos, params, account_id}) => {
+		perform: async (serviceRequest) => {
+			const {repos, params, account_id} = serviceRequest;
 			log.trace('creating community account_id', account_id);
 			// TODO validate that `account_id` is `persona_id`
 			const createCommunityResult = await repos.community.create(
@@ -100,7 +101,7 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 			}
 			const communityPersona = communityPersonaResult.value;
 
-			const createDefaultSpaceResult = await createDefaultSpaces(community, account_id, session);
+			const createDefaultSpaceResult = await createDefaultSpaces(serviceRequest, community);
 			if (!createDefaultSpaceResult.ok) {
 				log.trace('[CreateCommunity] error creating community default spaces');
 				return {
