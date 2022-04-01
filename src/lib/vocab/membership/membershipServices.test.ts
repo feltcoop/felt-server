@@ -1,6 +1,5 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
-import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {RandomVocabContext} from '$lib/vocab/random';
@@ -28,21 +27,11 @@ const serviceRequest = (account_id: number, db: any) => {
 
 test__membershipServices('disallow creating duplicate memberships', async ({db}) => {
 	const random = new RandomVocabContext(db);
-	const account = await random.account();
-	const persona = await random.persona();
-	const community = await random.community();
-
-	let createMembershipResult = await createMembershipService.perform({
-		repos: db.repos,
-		account_id: account.account_id,
-		params: {community_id: community.community_id, persona_id: persona.persona_id},
-		session: new SessionApiMock(),
-	});
-	assert.ok(createMembershipResult.ok);
+	const {community, persona, account} = await random.community();
 
 	let errorMessage;
 	try {
-		createMembershipResult = await createMembershipService.perform({
+		const createMembershipResult = await createMembershipService.perform({
 			repos: db.repos,
 			account_id: account.account_id,
 			params: {community_id: community.community_id, persona_id: persona.persona_id},
@@ -57,15 +46,13 @@ test__membershipServices('disallow creating duplicate memberships', async ({db})
 
 test__membershipServices('disallow creating memberships for personal communities', async ({db}) => {
 	const random = new RandomVocabContext(db);
-	const account = await random.account();
-	const persona = await random.persona();
-	const community = unwrap(await db.repos.community.findByName(persona.name))!;
+	const {account, personalCommunity} = await random.persona();
 	const createMembershipResult = await createMembershipService.perform({
 		repos: db.repos,
 		account_id: account.account_id,
 		params: {
-			community_id: community.community_id,
-			persona_id: (await random.persona()).persona_id,
+			community_id: personalCommunity.community_id,
+			persona_id: (await random.persona()).persona.persona_id,
 		},
 		session: new SessionApiMock(),
 	});
@@ -74,9 +61,7 @@ test__membershipServices('disallow creating memberships for personal communities
 
 test__membershipServices('delete a membership in a community', async ({db}) => {
 	const random = new RandomVocabContext(db);
-	const account = await random.account();
-	const persona = await random.persona(account);
-	const community = await random.community(persona);
+	const {community, persona, account} = await random.community();
 
 	const deleteResult = await deleteMembershipService.perform({
 		repos: db.repos,
@@ -95,8 +80,7 @@ test__membershipServices('delete a membership in a community', async ({db}) => {
 
 test__membershipServices('fail to delete a personal membership', async ({db}) => {
 	const random = new RandomVocabContext(db);
-	const account = await random.account();
-	const persona = await random.persona(account);
+	const {persona, account} = await random.persona();
 
 	const deleteResult = await deleteMembershipService.perform({
 		repos: db.repos,
@@ -115,9 +99,7 @@ test__membershipServices('fail to delete a personal membership', async ({db}) =>
 
 test__membershipServices('fail to delete a community persona membership', async ({db}) => {
 	const random = new RandomVocabContext(db);
-	const account = await random.account();
-	const community = await random.community(undefined, account);
-	const communityPersona = unwrap(await db.repos.persona.findByCommunityId(community.community_id));
+	const {community, communityPersona, account} = await random.community();
 
 	const deleteResult = await deleteMembershipService.perform({
 		repos: db.repos,
@@ -137,10 +119,9 @@ test__membershipServices('fail to delete a community persona membership', async 
 test__membershipServices('delete orphaned communities on last member leaving', async ({db}) => {
 	//Need a community with two account members
 	const random = new RandomVocabContext(db);
-	const account = await random.account();
-	const persona1 = await random.persona();
-	const community = await random.community(persona1);
-	const persona2 = await random.persona();
+	const {persona: persona1, account} = await random.persona();
+	const {community} = await random.community(persona1);
+	const {persona: persona2} = await random.persona();
 	const membershipResult = await createMembershipService.perform({
 		params: {persona_id: persona2.persona_id, community_id: community.community_id},
 		...serviceRequest(account.account_id, db),

@@ -15,9 +15,7 @@ test__spaceServices.after(teardownDb);
 
 test__spaceServices('delete a space in multiple communities', async ({db}) => {
 	const random = new RandomVocabContext(db);
-	const account = await random.account();
-	const community1 = await random.community();
-	const space = await random.space(undefined, account, community1);
+	const {space, account} = await random.space();
 
 	const deleteResult = await deleteSpaceService.perform({
 		repos: db.repos,

@@ -19,9 +19,11 @@
 	export let ties: Tie[];
 	export let itemsByEntity: Map<Readable<Entity>, Array<Readable<Entity>>>;
 	export let entityById: Map<number, Readable<Entity>>;
+	export let selectedList: Entity | null;
+	export let selectList: (list: Entity) => void;
 
+	$: selected = selectedList ? selectedList === $entity : false;
 	let pending = false;
-	let source_id = '';
 
 	$: items = itemsByEntity.get(entity);
 
@@ -53,16 +55,6 @@
 		if (!(type === 'Collection' || type === 'Note')) return false;
 		return true;
 	};
-
-	const addToCollection = async () => {
-		const id = Number(source_id);
-		if (!id) return;
-		await dispatch.CreateTie({
-			source_id: id,
-			dest_id: $entity.entity_id,
-			type: 'HasItem',
-		});
-	};
 </script>
 
 <!-- TODO delete `PersonaContextmenu` ? should that be handled by the entity contextmenu?
@@ -75,7 +67,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			[EntityContextmenu, {entity}],
 		]}
 	>
-		<div class="entity markup formatted">
+		<div on:click={() => selectList($entity)} class="entity markup formatted">
 			{#if hasItems}
 				<div class="icon-button">📝</div>
 			{/if}
@@ -88,22 +80,25 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 				<Avatar name={toName($persona)} icon={toIcon($persona)} />
 			</div>
 			<div>
-				{$entity.data.content}::{$entity.entity_id}
+				{#if $entity.data.type === 'Collection'}
+					{$entity.data.name}
+				{:else}
+					{$entity.data.content}
+				{/if}
 			</div>
-			<!-- TODO replace this form with context driven actions-->
-			<!-- TODO 1 type of picker to pick a collection-->
-			<!-- TODO Another type of picker to pick items-->
-			<form>
-				<input bind:value={source_id} /><button type="button" on:click={addToCollection}
-					>Add to collection</button
-				>
-			</form>
 		</div>
-		{#if items}
+		{#if items && selected}
 			<div class="items panel-inset">
 				<ul>
 					{#each items as item (item)}
-						<svelte:self entity={item} {ties} {itemsByEntity} {entityById} />
+						<svelte:self
+							entity={item}
+							{ties}
+							{itemsByEntity}
+							{entityById}
+							{selectedList}
+							{selectList}
+						/>
 					{/each}
 				</ul>
 			</div>
@@ -127,10 +122,6 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-	}
-	.entity form {
-		display: flex;
-		flex-direction: row;
 	}
 	.entity form input {
 		width: 50px;

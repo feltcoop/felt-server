@@ -37,8 +37,11 @@ test__services('perform services', async ({db}) => {
 			account_id: service.event.authenticate === false ? (null as any) : account.account_id,
 			session: new SessionApiMock(),
 		});
-		if (!result.ok || !validateSchema(service.event.response)(result.value)) {
-			log.error(red(`failed to validate service response: ${service.event.name}`), result);
+		if (!result.ok) {
+			log.error(red(`failed service call: ${service.event.name}`), params, result);
+			throw new Error(`Failed service call: ${service.event.name}`);
+		} else if (!validateSchema(service.event.response)(result.value)) {
+			log.error(red(`failed to validate service response: ${service.event.name}`), params, result);
 			throw new Error(
 				`Failed to validate response for service ${service.event.name}: ${toValidationErrorMessage(
 					validateSchema(service.event.response).errors![0],

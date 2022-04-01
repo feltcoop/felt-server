@@ -13,7 +13,7 @@ test__CommunityRepo.after(teardownDb);
 
 test__CommunityRepo('updateSettings', async ({db}) => {
 	const random = new RandomVocabContext(db);
-	const community = await random.community();
+	const {community} = await random.community();
 	assert.type(community.settings, 'object');
 	assert.type(community.settings.hue, 'number');
 	const newHue = community.settings.hue === 1 ? 2 : 1;
