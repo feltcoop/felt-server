@@ -21,11 +21,11 @@ import {
 	UpdateSpace,
 	DeleteSpace,
 } from '$lib/vocab/space/spaceEvents';
-import type {Community} from '../community/community';
+import type {Community} from '$lib/vocab/community/community';
 import type {Result} from '@feltcoop/felt';
-import type {Space} from './space';
+import type {Space} from '$lib/vocab/space/space';
 import type {ErrorResponse} from '$lib/util/error';
-import {toDefaultSpaces} from './defaultSpaces';
+import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import {db} from '$lib/db/db';
 import type {ISessionApi} from '$lib/server/SessionApi';
 
