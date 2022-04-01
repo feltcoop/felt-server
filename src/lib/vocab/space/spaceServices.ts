@@ -27,7 +27,7 @@ import type {Space} from './space';
 import type {ErrorResponse} from '$lib/util/error';
 import {toDefaultSpaces} from './defaultSpaces';
 import {db} from '$lib/db/db';
-import {type ISessionApi} from '$lib/server/SessionApi';
+import type {ISessionApi} from '$lib/server/SessionApi';
 
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
