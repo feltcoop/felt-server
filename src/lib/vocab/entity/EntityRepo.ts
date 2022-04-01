@@ -6,21 +6,31 @@ import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {EntityData} from '$lib/vocab/entity/entityData';
 import type {ErrorResponse} from '$lib/util/error';
+import type {RowList} from 'postgres';
 
 const log = new Logger(gray('[') + blue('EntityRepo') + gray(']'));
 
 export class EntityRepo extends PostgresRepo {
 	async create(
 		actor_id: number,
-		space_id: number,
 		data: EntityData,
+		space_id?: number,
 	): Promise<Result<{value: Entity}>> {
 		log.trace('[create]', space_id, actor_id);
-		const entity = await this.db.sql<Entity[]>`
+		let entity: RowList<Entity[]>;
+		if (space_id) {
+			entity = await this.db.sql<Entity[]>`
 			INSERT INTO entities (actor_id, space_id, data) VALUES (
 				${actor_id},${space_id},${this.db.sql.json(data)}
 			) RETURNING *
 		`;
+		} else {
+			entity = await this.db.sql<Entity[]>`
+			INSERT INTO entities (actor_id, data) VALUES (
+				${actor_id},${this.db.sql.json(data)}
+			) RETURNING *
+		`;
+		}
 		// log.trace('create entity', data);
 		return {ok: true, value: entity[0]};
 	}

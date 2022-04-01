@@ -3,25 +3,24 @@
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 	import {get, type Readable} from 'svelte/store';
 
-	import type {EntityData} from '$lib/vocab/entity/entityData';
 	import TodoItems from '$lib/ui/TodoItems.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Tie} from '$lib/vocab/tie/tie';
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import {getViewContext} from '$lib/vocab/view/view';
+	import EntityInput from '$lib/ui/EntityInput.svelte';
 
 	const viewContext = getViewContext();
 	$: ({persona, space} = $viewContext);
 
 	const {dispatch, socket} = getApp();
 
-	let text = '';
-	let list = false;
-
 	$: shouldLoadEntities = browser && $socket.open;
 	$: entities = shouldLoadEntities ? dispatch.QueryEntities({space_id: $space.space_id}) : null;
 	$: tiesResult = shouldLoadEntities ? dispatch.ReadTies({space_id: $space.space_id}) : null;
 	let ties: Tie[] | undefined;
+	let text = '';
+
 	//TODO move this call to the UI to get arch & caching
 	// eslint-disable-next-line @typescript-eslint/no-floating-promises
 	$: tiesResult?.then((data) => {
@@ -34,6 +33,16 @@
 
 	let entityById: Map<number, Readable<Entity>> | null = null;
 	$: entityById = $entities && new Map($entities.map((e) => [get(e).entity_id, e]));
+
+	let selectedList: Entity | null = null;
+	const selectList = (list: Entity) => {
+		if (list.data.type !== 'Collection') return;
+		if (selectedList === list) {
+			selectedList = null;
+		} else {
+			selectedList = list;
+		}
+	};
 
 	//TODO do caching here
 	const toItemsByEntity = (
@@ -56,21 +65,24 @@
 
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
+		if (!content || !selectedList) return;
 
-		if (!content) return;
-
-		const data: EntityData = list
-			? {type: 'Collection', name: content}
-			: {type: 'Note', content, checked: false};
-
-		await dispatch.CreateEntity({
+		//TODO better error handling
+		//TODO create api call to do this in one step?
+		const entityResult = await dispatch.CreateEntity({
 			space_id: $space.space_id,
-			data,
+			data: {type: 'Note', content, checked: false},
 			actor_id: $persona.persona_id,
 		});
+		if (entityResult.ok) {
+			await dispatch.CreateTie({
+				source_id: selectedList.entity_id,
+				dest_id: entityResult.value.entity.entity_id,
+				type: 'HasItem',
+			});
+		}
 		text = '';
 	};
-
 	const onKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
 			await createEntity();
@@ -82,16 +94,19 @@
 	<div class="entities">
 		<!-- TODO handle failures here-->
 		{#if entities && ties && itemsByEntity && entityById}
-			<TodoItems {entities} {ties} {itemsByEntity} {entityById} />
+			<TodoItems {entities} {ties} {itemsByEntity} {entityById} {selectedList} {selectList} />
+			<button
+				on:click={() =>
+					dispatch.OpenDialog({
+						Component: EntityInput,
+						props: {done: () => dispatch.CloseDialog()},
+					})}>+ ...Create List</button
+			>
 		{:else}
 			<PendingAnimation />
 		{/if}
 	</div>
-	<!-- TODO replace this checkbox with modal -->
-	<input type="checkbox" bind:checked={list} />
-	{#if list}
-		<input placeholder="> create new list" on:keydown={onKeydown} bind:value={text} />
-	{:else}
+	{#if selectedList}
 		<input placeholder="> create new todo" on:keydown={onKeydown} bind:value={text} />
 	{/if}
 </div>
@@ -109,12 +124,6 @@
 		flex: 1;
 		display: flex;
 		/* makes scrolling start at the bottom */
-		flex-direction: column-reverse;
-	}
-	input {
-		border-left: none;
-		border-right: none;
-		border-bottom: none;
-		border-radius: 0;
+		flex-direction: column;
 	}
 </style>

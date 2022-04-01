@@ -4,7 +4,6 @@ import {blue, gray} from 'kleur/colors';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Community} from '$lib/vocab/community/community';
-import type {Space} from '$lib/vocab/space/space';
 import type {ErrorResponse} from '$lib/util/error';
 
 const log = new Logger(gray('[') + blue('CommunityRepo') + gray(']'));
@@ -14,7 +13,7 @@ export class CommunityRepo extends PostgresRepo {
 		type: Community['type'],
 		name: string,
 		settings: Community['settings'],
-	): Promise<Result<{value: {community: Community; spaces: Space[]}}, ErrorResponse>> {
+	): Promise<Result<{value: Community}, ErrorResponse>> {
 		const data = await this.db.sql<Community[]>`
 			INSERT INTO communities (type, name, settings) VALUES (
 				${type}, ${name}, ${this.db.sql.json(settings)}
@@ -22,11 +21,7 @@ export class CommunityRepo extends PostgresRepo {
 		`;
 		log.trace('[db] created community', data[0]);
 		const community = data[0];
-		// TODO more robust error handling or condense into single query
-		const spacesResult = await this.db.repos.space.createDefaultSpaces(community); // TODO should this work happen elsewhere?
-		if (!spacesResult.ok) return spacesResult;
-		const spaces = spacesResult.value;
-		return {ok: true, value: {community, spaces}};
+		return {ok: true, value: community};
 	}
 
 	async findById(

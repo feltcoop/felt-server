@@ -12,7 +12,7 @@ import {
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
-import {SessionApi} from '$lib/server/SessionApi';
+import {SessionApiMock} from '$lib/server/SessionApiMock';
 import {
 	createCommunityService,
 	readCommunitiesService,
@@ -44,7 +44,7 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	const serviceRequest = {
 		account_id: account.account_id,
 		repos: db.repos,
-		session: new SessionApi(null),
+		session: new SessionApiMock(),
 	};
 
 	// TODO create 2 personas

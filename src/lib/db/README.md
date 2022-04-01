@@ -54,6 +54,14 @@ Migration files are located in the [migrations](./migrations) directory.
 To create a new migration file use the `ley new` command (see Ley's docs for more details)
 Use `gro lib/db/migrate` to run migrations.
 
+## creating backups
+
+Using the following command one can quickly take backups of the `felt` database.
+
+```
+sudo -u postgres pg_dump felt > backup.sql
+```
+
 ## database tasks
 
 Felt has a number of [Gro](https://github.com/feltcoop/gro) tasks for managing the database.

@@ -12,8 +12,8 @@ import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {ViewData} from '$lib/vocab/view/view';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
-import {SessionApi} from '$lib/server/SessionApi';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
+import {SessionApiMock} from '$lib/server/SessionApiMock';
 
 /* eslint-disable no-await-in-loop */
 
@@ -21,7 +21,7 @@ import {createCommunityService} from '$lib/vocab/community/communityServices';
 
 const log = new Logger([cyan('[seed]')]);
 
-const session = new SessionApi(null);
+const session = new SessionApiMock();
 
 export const seed = async (db: Database): Promise<void> => {
 	const {sql} = db;
@@ -106,15 +106,21 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 
 	for (const space of spaces) {
 		const componentName = findFirstComponentName(space.view);
+		if (componentName === 'Todo') {
+			await generateTodo(db, nextPersona().persona_id, space.space_id);
+		}
 		if (!componentName || !(componentName in entitiesContents)) {
 			continue;
 		}
 		const entityContents = entitiesContents[componentName];
 		for (const entityContent of entityContents) {
-			await db.repos.entity.create(nextPersona().persona_id, space.space_id, {
-				type: 'Note',
-				content: entityContent,
-			});
+			unwrap(
+				await db.repos.entity.create(
+					nextPersona().persona_id,
+					{type: 'Note', content: entityContent},
+					space.space_id,
+				),
+			);
 		}
 	}
 };
@@ -131,6 +137,33 @@ const entitiesContents: Record<string, string[]> = {
 		'but we exist in the hope of something better.',
 		'The 14th Dalai Lama',
 	],
+};
+
+const generateTodo = async (db: Database, persona_id: number, space_id: number) => {
+	const list = unwrap(
+		await db.repos.entity.create(
+			persona_id,
+			{
+				type: 'Collection',
+				name: 'Grocery List',
+			},
+			space_id,
+		),
+	);
+	const itemsContents = ['eggs', 'milk', 'bread'];
+	for (const content of itemsContents) {
+		const item = unwrap(
+			await db.repos.entity.create(
+				persona_id,
+				{
+					type: 'Note',
+					content,
+				},
+				space_id,
+			),
+		);
+		unwrap(await db.repos.tie.create(list.entity_id, item.entity_id, 'HasItem'));
+	}
 };
 
 const findFirstComponentName = (view: ViewData): string | undefined => {
