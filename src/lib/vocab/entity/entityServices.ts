@@ -24,10 +24,10 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 	event: ReadEntities,
 	perform: async ({repos, params}) => {
 		const findEntitiesResult = await repos.entity.filterBySpace(params.space_id);
-		if (findEntitiesResult.ok) {
-			return {ok: true, status: 200, value: {entities: findEntitiesResult.value}}; // TODO API types
+		if (!findEntitiesResult.ok) {
+			return {ok: false, status: 500, message: 'error searching for entities'};
 		}
-		return {ok: false, status: 500, message: 'error searching for entities'};
+		return {ok: true, status: 200, value: {entities: findEntitiesResult.value}};
 	},
 };
 
@@ -40,10 +40,10 @@ export const createEntityService: Service<CreateEntityParams, CreateEntityRespon
 			params.data,
 			params.space_id,
 		);
-		if (insertEntitiesResult.ok) {
-			return {ok: true, status: 200, value: {entity: insertEntitiesResult.value}}; // TODO API types
+		if (!insertEntitiesResult.ok) {
+			return {ok: false, status: 500, message: 'failed to create entity'};
 		}
-		return {ok: false, status: 500, message: 'failed to create entity'};
+		return {ok: true, status: 200, value: {entity: insertEntitiesResult.value}};
 	},
 };
 
@@ -52,10 +52,10 @@ export const updateEntityService: Service<UpdateEntityParams, UpdateEntityRespon
 	perform: async ({repos, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
 		const updateEntitiesResult = await repos.entity.updateEntityData(params.entity_id, params.data);
-		if (updateEntitiesResult.ok) {
-			return {ok: true, status: 200, value: {entity: updateEntitiesResult.value}}; // TODO API types
+		if (!updateEntitiesResult.ok) {
+			return {ok: false, status: 500, message: 'failed to update entity'};
 		}
-		return {ok: false, status: 500, message: 'failed to update entity'};
+		return {ok: true, status: 200, value: {entity: updateEntitiesResult.value}};
 	},
 };
 
@@ -68,7 +68,7 @@ export const softDeleteEntityService: Service<
 	perform: async ({repos, params}) => {
 		const result = await repos.entity.softDeleteById(params.entity_id);
 		if (!result.ok) {
-			return {ok: false, status: 500, message: result.message};
+			return {ok: false, status: 500, message: 'failed to soft delete entity'};
 		}
 		return {ok: true, status: 200, value: null};
 	},
@@ -83,7 +83,7 @@ export const hardDeleteEntityService: Service<
 	perform: async ({repos, params}) => {
 		const result = await repos.entity.hardDeleteById(params.entity_id);
 		if (!result.ok) {
-			return {ok: false, status: 500, message: result.message};
+			return {ok: false, status: 500, message: 'failed to delete entity'};
 		}
 		return {ok: true, status: 200, value: null};
 	},

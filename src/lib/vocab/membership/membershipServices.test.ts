@@ -158,7 +158,6 @@ test__membershipServices('delete orphaned communities on last member leaving', a
 	assert.is(communityMemberships.value.length, 0);
 	communityRecord = await db.repos.community.findById(community.community_id);
 	assert.ok(!communityRecord.ok);
-	assert.is(communityRecord.type, 'no_community_found');
 });
 
 test__membershipServices.run();
