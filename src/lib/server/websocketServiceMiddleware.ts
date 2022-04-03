@@ -38,7 +38,7 @@ export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddl
 		}
 		log.trace('incoming', rawMessage);
 
-		// TODO possibly call into `websocketServiceMiddleware` at this point?
+		// TODO possibly move the above code to a generic `websocketMiddleware`?
 		// That way we could separate any other kind of websocket messages
 		// and handle services in their own module.
 		const message = parseJsonRpcRequest(rawMessage);
