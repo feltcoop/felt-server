@@ -52,8 +52,8 @@ export class TieRepo extends PostgresRepo {
 	async deleteTie(source_id: number, dest_id: number, type: string): Promise<Result<object>> {
 		log.trace('[deleteTie]', source_id, dest_id);
 		const data = await this.db.sql<any[]>`
-				DELETE FROM ties WHERE ${source_id}=source_id AND ${dest_id}=dest_id AND ${type}=type
-			`;
+			DELETE FROM ties WHERE ${source_id}=source_id AND ${dest_id}=dest_id AND ${type}=type
+		`;
 		if (!data.count) {
 			return {ok: false};
 		}
