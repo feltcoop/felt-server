@@ -3,7 +3,6 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Tie} from '$lib/vocab/tie/tie';
-import type {ErrorResponse} from '$lib/util/error';
 
 const log = new Logger('[TieRepo]');
 
@@ -54,17 +53,13 @@ export class TieRepo extends PostgresRepo {
 		source_id: number,
 		dest_id: number,
 		type: string,
-	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
+	): Promise<Result<object, {type: 'deletion_error'}>> {
 		log.trace('[deleteTie]', source_id, dest_id);
 		const data = await this.db.sql<any[]>`
 				DELETE FROM ties WHERE ${source_id}=source_id AND ${dest_id}=dest_id AND ${type}=type
 			`;
 		if (data.count !== 1) {
-			return {
-				ok: false,
-				type: 'deletion_error',
-				message: 'failed to delete tie',
-			};
+			return {ok: false, type: 'deletion_error'};
 		}
 		return {ok: true};
 	}

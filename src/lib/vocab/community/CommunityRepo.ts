@@ -4,7 +4,6 @@ import {blue, gray} from 'kleur/colors';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Community} from '$lib/vocab/community/community';
-import type {ErrorResponse} from '$lib/util/error';
 
 const log = new Logger(gray('[') + blue('CommunityRepo') + gray(']'));
 
@@ -13,7 +12,7 @@ export class CommunityRepo extends PostgresRepo {
 		type: Community['type'],
 		name: string,
 		settings: Community['settings'],
-	): Promise<Result<{value: Community}, ErrorResponse>> {
+	): Promise<Result<{value: Community}>> {
 		const data = await this.db.sql<Community[]>`
 			INSERT INTO communities (type, name, settings) VALUES (
 				${type}, ${name}, ${this.db.sql.json(settings)}
@@ -26,7 +25,7 @@ export class CommunityRepo extends PostgresRepo {
 
 	async findById(
 		community_id: number,
-	): Promise<Result<{value: Community}, {type: 'no_community_found'} & ErrorResponse>> {
+	): Promise<Result<{value: Community}, {type: 'no_community_found'}>> {
 		log.trace(`[findById] ${community_id}`);
 		const data = await this.db.sql<Community[]>`
 			SELECT community_id, type, name, settings, created, updated
@@ -36,14 +35,10 @@ export class CommunityRepo extends PostgresRepo {
 		if (data.length) {
 			return {ok: true, value: data[0]};
 		}
-		return {
-			ok: false,
-			type: 'no_community_found',
-			message: 'no community found',
-		};
+		return {ok: false, type: 'no_community_found'};
 	}
 
-	async findByName(name: string): Promise<Result<{value: Community | undefined}, ErrorResponse>> {
+	async findByName(name: string): Promise<Result<{value: Community | undefined}>> {
 		log.trace('[findByName]', name);
 		const data = await this.db.sql<Community[]>`
 			SELECT community_id, type, name, settings, created, updated
@@ -52,7 +47,7 @@ export class CommunityRepo extends PostgresRepo {
 		return {ok: true, value: data[0]};
 	}
 
-	async filterByAccount(account_id: number): Promise<Result<{value: Community[]}, ErrorResponse>> {
+	async filterByAccount(account_id: number): Promise<Result<{value: Community[]}>> {
 		log.trace(`[filterByAccount] ${account_id}`);
 		const data = await this.db.sql<Community[]>`
 			SELECT c.community_id, c.type, c.name, c.settings, c.created, c.updated							
@@ -66,32 +61,23 @@ export class CommunityRepo extends PostgresRepo {
 		return {ok: true, value: data};
 	}
 
-	async updateSettings(
-		community_id: number,
-		settings: Community['settings'],
-	): Promise<Result<object, ErrorResponse>> {
+	async updateSettings(community_id: number, settings: Community['settings']): Promise<Result> {
 		const data = await this.db.sql<any[]>`
 			UPDATE communities SET settings=${this.db.sql.json(settings)} WHERE community_id=${community_id}
 		`;
 		if (!data.count) {
-			return {ok: false, message: 'failed to update settings'};
+			return {ok: false}; // TODO BLOCK typeless error
 		}
 		return {ok: true};
 	}
 
-	async deleteById(
-		community_id: number,
-	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
+	async deleteById(community_id: number): Promise<Result<object, {type: 'deletion_error'}>> {
 		log.trace('[deleteById]', community_id);
 		const data = await this.db.sql<any[]>`
 			DELETE FROM communities WHERE community_id=${community_id}
 		`;
 		if (data.count !== 1) {
-			return {
-				ok: false,
-				type: 'deletion_error',
-				message: 'failed to hard delete entity',
-			};
+			return {ok: false, type: 'deletion_error'};
 		}
 		return {ok: true};
 	}
