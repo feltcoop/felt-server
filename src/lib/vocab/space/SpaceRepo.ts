@@ -9,7 +9,7 @@ import type {ViewData} from '$lib/vocab/view/view';
 const log = new Logger(gray('[') + blue('SpaceRepo') + gray(']'));
 
 export class SpaceRepo extends PostgresRepo {
-	async findById(space_id: number): Promise<Result<{value: Space}, {type: 'no_space_found'}>> {
+	async findById(space_id: number): Promise<Result<{value: Space}>> {
 		log.trace(`[findById] ${space_id}`);
 		const data = await this.db.sql<Space[]>`
 			SELECT space_id, name, url, icon, view, updated, created, community_id, directory_id
@@ -17,7 +17,7 @@ export class SpaceRepo extends PostgresRepo {
 		`;
 		log.trace('[findById] result', data);
 		if (!data.length) {
-			return {ok: false, type: 'no_space_found'};
+			return {ok: false};
 		}
 		return {ok: true, value: data[0]};
 	}
@@ -91,18 +91,18 @@ export class SpaceRepo extends PostgresRepo {
 			RETURNING *
 		`;
 		if (!result.count) {
-			return {ok: false}; // TODO BLOCK typeless error
+			return {ok: false};
 		}
 		return {ok: true, value: result[0]};
 	}
 
-	async deleteById(space_id: number): Promise<Result<object, {type: 'deletion_error'}>> {
+	async deleteById(space_id: number): Promise<Result<object>> {
 		log.trace('[deleteById]', space_id);
 		const data = await this.db.sql<any[]>`
 			DELETE FROM spaces WHERE space_id=${space_id}
 		`;
 		if (!data.count) {
-			return {ok: false, type: 'deletion_error'};
+			return {ok: false};
 		}
 		return {ok: true};
 	}

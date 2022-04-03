@@ -23,9 +23,7 @@ export class CommunityRepo extends PostgresRepo {
 		return {ok: true, value: community};
 	}
 
-	async findById(
-		community_id: number,
-	): Promise<Result<{value: Community}, {type: 'no_community_found'}>> {
+	async findById(community_id: number): Promise<Result<{value: Community}>> {
 		log.trace(`[findById] ${community_id}`);
 		const data = await this.db.sql<Community[]>`
 			SELECT community_id, type, name, settings, created, updated
@@ -33,7 +31,7 @@ export class CommunityRepo extends PostgresRepo {
 		`;
 		// log.trace('[findById]', data);
 		if (!data.length) {
-			return {ok: false, type: 'no_community_found'};
+			return {ok: false};
 		}
 		return {ok: true, value: data[0]};
 	}
@@ -66,18 +64,18 @@ export class CommunityRepo extends PostgresRepo {
 			UPDATE communities SET settings=${this.db.sql.json(settings)} WHERE community_id=${community_id}
 		`;
 		if (!data.count) {
-			return {ok: false}; // TODO BLOCK typeless error
+			return {ok: false};
 		}
 		return {ok: true};
 	}
 
-	async deleteById(community_id: number): Promise<Result<object, {type: 'deletion_error'}>> {
+	async deleteById(community_id: number): Promise<Result<object>> {
 		log.trace('[deleteById]', community_id);
 		const data = await this.db.sql<any[]>`
 			DELETE FROM communities WHERE community_id=${community_id}
 		`;
 		if (!data.count) {
-			return {ok: false, type: 'deletion_error'};
+			return {ok: false};
 		}
 		return {ok: true};
 	}

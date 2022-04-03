@@ -48,30 +48,26 @@ export class PersonaRepo extends PostgresRepo {
 	}
 
 	// TODO `findById` could be constructed by a generic function with id/columns params
-	async findById(
-		persona_id: number,
-	): Promise<Result<{value: Persona}, {type: 'no_persona_found'}>> {
+	async findById(persona_id: number): Promise<Result<{value: Persona}>> {
 		log.trace('[findById]', persona_id);
 		const data = await this.db.sql<Persona[]>`
 			SELECT persona_id, type, name, account_id, community_id, created, updated 
 			FROM personas WHERE persona_id=${persona_id}
 		`;
 		if (!data.length) {
-			return {ok: false, type: 'no_persona_found'};
+			return {ok: false};
 		}
 		return {ok: true, value: data[0]};
 	}
 
-	async findByCommunityId(
-		community_id: number,
-	): Promise<Result<{value: Persona}, {type: 'no_persona_found'}>> {
+	async findByCommunityId(community_id: number): Promise<Result<{value: Persona}>> {
 		log.trace('[findByCommunityId]', community_id);
 		const data = await this.db.sql<Persona[]>`
 			SELECT persona_id, type, name, account_id, community_id, created, updated 
 			FROM personas WHERE community_id=${community_id}
 		`;
 		if (!data.length) {
-			return {ok: false, type: 'no_persona_found'};
+			return {ok: false};
 		}
 		return {ok: true, value: data[0]};
 	}

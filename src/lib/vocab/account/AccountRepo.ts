@@ -21,27 +21,25 @@ export class AccountRepo extends PostgresRepo {
 		return {ok: true, value: account};
 	}
 
-	async findById(
-		account_id: number,
-	): Promise<Result<{value: AccountModel}, {type: 'no_account_found'}>> {
+	async findById(account_id: number): Promise<Result<{value: AccountModel}>> {
 		log.trace('loading account', account_id);
 		const data = await this.db.sql<AccountModel[]>`
 			SELECT account_id, name, created, updated
 			FROM accounts WHERE account_id = ${account_id}
 		`;
 		if (!data.length) {
-			return {ok: false, type: 'no_account_found'};
+			return {ok: false};
 		}
 		return {ok: true, value: data[0]};
 	}
 
-	async findByName(name: string): Promise<Result<{value: Account}, {type: 'no_account_found'}>> {
+	async findByName(name: string): Promise<Result<{value: Account}>> {
 		const data = await this.db.sql<Account[]>`
 			SELECT account_id, name, password, created, updated
 			FROM accounts WHERE name = ${name}
 		`;
 		if (!data.length) {
-			return {ok: false, type: 'no_account_found'};
+			return {ok: false};
 		}
 		return {ok: true, value: data[0]};
 	}

@@ -18,17 +18,14 @@ export class MembershipRepo extends PostgresRepo {
 		return {ok: true, value: data[0]};
 	}
 
-	async findById(
-		persona_id: number,
-		community_id: number,
-	): Promise<Result<{value: Membership}, {type: 'query_error'}>> {
+	async findById(persona_id: number, community_id: number): Promise<Result<{value: Membership}>> {
 		const data = await this.db.sql<Membership[]>`
 			SELECT persona_id, community_id, created, updated
 			FROM memberships
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
 		`;
 		if (!data.length) {
-			return {ok: false, type: 'query_error'};
+			return {ok: false};
 		}
 		return {ok: true, value: data[0]};
 	}
@@ -73,16 +70,13 @@ export class MembershipRepo extends PostgresRepo {
 		return {ok: true, value: data};
 	}
 
-	async deleteById(
-		persona_id: number,
-		community_id: number,
-	): Promise<Result<object, {type: 'deletion_error'}>> {
+	async deleteById(persona_id: number, community_id: number): Promise<Result<object>> {
 		const data = await this.db.sql<any[]>`
 			DELETE FROM memberships 
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
 		`;
 		if (!data.count) {
-			return {ok: false, type: 'deletion_error'};
+			return {ok: false};
 		}
 		return {ok: true};
 	}
