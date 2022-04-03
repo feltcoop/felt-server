@@ -8,7 +8,7 @@ import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
 import {SessionApi} from '$lib/server/SessionApi';
 import {authorize} from '$lib/server/authorize';
 
-const log = new Logger(gray('[') + blue('websocketMiddleware') + gray(']'));
+const log = new Logger(gray('[') + blue('websocketServiceMiddleware') + gray(']'));
 
 export interface WebsocketMiddleware {
 	(socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
@@ -22,7 +22,7 @@ export interface BroadcastMessage {
 	params: any;
 }
 
-export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
+export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddleware =
 	(server) => async (socket, messageData, account_id) => {
 		if (typeof messageData !== 'string') {
 			log.error('cannot handle websocket message; currently only supports strings');
