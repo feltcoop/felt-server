@@ -27,10 +27,10 @@ export class MembershipRepo extends PostgresRepo {
 			FROM memberships
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
 		`;
-		if (data.length) {
-			return {ok: true, value: data[0]};
+		if (!data.length) {
+			return {ok: false, type: 'query_error'};
 		}
-		return {ok: false, type: 'query_error'};
+		return {ok: true, value: data[0]};
 	}
 
 	async filterByAccount(account_id: number): Promise<Result<{value: Membership[]}>> {

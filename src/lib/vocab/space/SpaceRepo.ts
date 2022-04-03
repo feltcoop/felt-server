@@ -16,10 +16,10 @@ export class SpaceRepo extends PostgresRepo {
 			FROM spaces WHERE space_id=${space_id}
 		`;
 		log.trace('[findById] result', data);
-		if (data.length) {
-			return {ok: true, value: data[0]};
+		if (!data.length) {
+			return {ok: false, type: 'no_space_found'};
 		}
-		return {ok: false, type: 'no_space_found'};
+		return {ok: true, value: data[0]};
 	}
 
 	async filterByAccount(account_id: number): Promise<Result<{value: Space[]}>> {

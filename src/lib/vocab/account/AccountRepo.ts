@@ -29,11 +29,10 @@ export class AccountRepo extends PostgresRepo {
 			SELECT account_id, name, created, updated
 			FROM accounts WHERE account_id = ${account_id}
 		`;
-		if (data.length) {
-			log.trace('account found, returning', account_id);
-			return {ok: true, value: data[0]};
+		if (!data.length) {
+			return {ok: false, type: 'no_account_found'};
 		}
-		return {ok: false, type: 'no_account_found'};
+		return {ok: true, value: data[0]};
 	}
 
 	async findByName(name: string): Promise<Result<{value: Account}, {type: 'no_account_found'}>> {
@@ -41,9 +40,9 @@ export class AccountRepo extends PostgresRepo {
 			SELECT account_id, name, password, created, updated
 			FROM accounts WHERE name = ${name}
 		`;
-		if (data.length) {
-			return {ok: true, value: data[0]};
+		if (!data.length) {
+			return {ok: false, type: 'no_account_found'};
 		}
-		return {ok: false, type: 'no_account_found'};
+		return {ok: true, value: data[0]};
 	}
 }

@@ -32,10 +32,10 @@ export class CommunityRepo extends PostgresRepo {
 			FROM communities WHERE community_id=${community_id}
 		`;
 		// log.trace('[findById]', data);
-		if (data.length) {
-			return {ok: true, value: data[0]};
+		if (!data.length) {
+			return {ok: false, type: 'no_community_found'};
 		}
-		return {ok: false, type: 'no_community_found'};
+		return {ok: true, value: data[0]};
 	}
 
 	async findByName(name: string): Promise<Result<{value: Community | undefined}>> {

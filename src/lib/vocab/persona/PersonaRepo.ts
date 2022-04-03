@@ -56,10 +56,10 @@ export class PersonaRepo extends PostgresRepo {
 			SELECT persona_id, type, name, account_id, community_id, created, updated 
 			FROM personas WHERE persona_id=${persona_id}
 		`;
-		if (data.length) {
-			return {ok: true, value: data[0]};
+		if (!data.length) {
+			return {ok: false, type: 'no_persona_found'};
 		}
-		return {ok: false, type: 'no_persona_found'};
+		return {ok: true, value: data[0]};
 	}
 
 	async findByCommunityId(
@@ -70,10 +70,10 @@ export class PersonaRepo extends PostgresRepo {
 			SELECT persona_id, type, name, account_id, community_id, created, updated 
 			FROM personas WHERE community_id=${community_id}
 		`;
-		if (data.length) {
-			return {ok: true, value: data[0]};
+		if (!data.length) {
+			return {ok: false, type: 'no_persona_found'};
 		}
-		return {ok: false, type: 'no_persona_found'};
+		return {ok: true, value: data[0]};
 	}
 
 	async findByName(name: string): Promise<Result<{value: Persona | undefined}>> {
