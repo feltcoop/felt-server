@@ -101,7 +101,7 @@ export class SpaceRepo extends PostgresRepo {
 		const data = await this.db.sql<any[]>`
 			DELETE FROM spaces WHERE space_id=${space_id}
 		`;
-		if (data.count !== 1) {
+		if (!data.count) {
 			return {ok: false, type: 'deletion_error'};
 		}
 		return {ok: true};

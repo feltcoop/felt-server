@@ -67,7 +67,7 @@ export class EntityRepo extends PostgresRepo {
 			SET data = jsonb_build_object('type','Tombstone','formerType',data->>'type','deleted',NOW())
 			WHERE entity_id=${entity_id} AND data->>'type' != 'Tombstone';
 		`;
-		if (data.count !== 1) {
+		if (!data.count) {
 			return {ok: false, type: 'deletion_error'};
 		}
 		return {ok: true};
@@ -79,7 +79,7 @@ export class EntityRepo extends PostgresRepo {
 		const data = await this.db.sql<any[]>`
 			DELETE FROM entities WHERE ${entity_id}=entity_id
 		`;
-		if (data.count !== 1) {
+		if (!data.count) {
 			return {ok: false, type: 'deletion_error'};
 		}
 		return {ok: true};

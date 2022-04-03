@@ -81,7 +81,7 @@ export class MembershipRepo extends PostgresRepo {
 			DELETE FROM memberships 
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
 		`;
-		if (data.count !== 1) {
+		if (!data.count) {
 			return {ok: false, type: 'deletion_error'};
 		}
 		return {ok: true};

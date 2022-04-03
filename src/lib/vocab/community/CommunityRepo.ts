@@ -76,7 +76,7 @@ export class CommunityRepo extends PostgresRepo {
 		const data = await this.db.sql<any[]>`
 			DELETE FROM communities WHERE community_id=${community_id}
 		`;
-		if (data.count !== 1) {
+		if (!data.count) {
 			return {ok: false, type: 'deletion_error'};
 		}
 		return {ok: true};
