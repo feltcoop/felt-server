@@ -26,17 +26,9 @@ export const createTieService: Service<CreateTieParams, CreateTieResponseResult>
 		log.trace('[CreateTie] result', createTieResult);
 		if (!createTieResult.ok) {
 			log.trace('[CreateTie] error creating tie');
-			return {
-				ok: false,
-				status: 500,
-				message: 'error creating tie',
-			};
+			return {ok: false, status: 500, message: 'error creating tie'};
 		}
-		return {
-			ok: true,
-			status: 200,
-			value: {tie: createTieResult.value},
-		};
+		return {ok: true, status: 200, value: {tie: createTieResult.value}};
 	},
 };
 
