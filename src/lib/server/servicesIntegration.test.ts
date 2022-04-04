@@ -21,10 +21,16 @@ import {
 } from '$lib/vocab/community/communityServices';
 import {
 	createSpaceService,
+	deleteSpaceService,
 	readSpaceService,
 	readSpacesService,
 } from '$lib/vocab/space/spaceServices';
 import {createEntityService, readEntitiesService} from '$lib/vocab/entity/entityServices';
+import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
+import {
+	createMembershipService,
+	deleteMembershipService,
+} from '$lib/vocab/membership/membershipServices';
 
 /* test_servicesIntegration */
 const test_servicesIntegration = suite<TestDbContext>('repos');
@@ -47,24 +53,40 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 		session: new SessionApiMock(),
 	};
 
-	// TODO create 2 personas
-	const personaParams = randomPersonaParams();
+	// create a persona
 	const {persona, community: personaHomeCommunity} = unwrap(
 		await createAccountPersonaService.perform({
-			params: {name: personaParams.name},
+			params: randomPersonaParams(),
 			...serviceRequest,
 		}),
 	);
 	assert.ok(personaHomeCommunity);
 
-	const communityParams = randomCommunityParams(persona.persona_id);
-	const {community} = unwrap(
-		await createCommunityService.perform({
-			params: {name: communityParams.name, persona_id: communityParams.persona_id},
+	// create a second persona
+	const {persona: persona2} = unwrap(
+		await createAccountPersonaService.perform({
+			params: randomPersonaParams(),
 			...serviceRequest,
 		}),
 	);
 
+	// create community
+	const {community} = unwrap(
+		await createCommunityService.perform({
+			params: randomCommunityParams(persona.persona_id),
+			...serviceRequest,
+		}),
+	);
+
+	// join the community with the second persona
+	unwrap(
+		await createMembershipService.perform({
+			params: {community_id: community.community_id, persona_id: persona2.persona_id},
+			...serviceRequest,
+		}),
+	);
+
+	// create a space
 	const spaceParams = randomSpaceParams(community.community_id);
 	const {space} = unwrap(
 		await createSpaceService.perform({params: spaceParams, ...serviceRequest}),
@@ -132,20 +154,21 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 			...serviceRequest,
 		}),
 	);
-	assert.equal(filterCommunitiesValue.length, 2);
+	assert.equal(filterCommunitiesValue.length, 3);
 
 	// TODO add a service event?
-	const filterPersonasValue = unwrap(await db.repos.persona.filterByAccount(account.account_id));
-	assert.is(filterPersonasValue.length, 1);
-	assert.equal(filterPersonasValue, [persona]);
+	assert.equal(
+		unwrap(await db.repos.persona.filterByAccount(account.account_id)).sort((a, b) =>
+			a.created < b.created ? -1 : 1,
+		),
+		[persona, persona2],
+	);
 
 	// TODO add a service event?
-	const findAccountByIdValue = unwrap(await db.repos.account.findById(account.account_id));
-	assert.is(findAccountByIdValue.name, account.name);
+	assert.is(unwrap(await db.repos.account.findById(account.account_id)).name, account.name);
 
 	// TODO add a service event?
-	const findAccountByNameValue = unwrap(await db.repos.account.findByName(account.name));
-	assert.is(findAccountByNameValue.name, account.name);
+	assert.is(unwrap(await db.repos.account.findByName(account.name)).name, account.name);
 
 	// do changes
 	//
@@ -160,39 +183,57 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	// );
 	// assert.ok(deleteFileResult.ok);
 
+	// delete spaces except the home space
 	await Promise.all(
-		filterSpacesValue.map(async (space) => unwrap(await db.repos.space.deleteById(space.space_id))),
+		filterSpacesValue
+			.filter((s) => !isHomeSpace(s))
+			.map(async (space) =>
+				unwrap(
+					await deleteSpaceService.perform({
+						params: {space_id: space.space_id},
+						...serviceRequest,
+					}),
+				),
+			),
 	);
-	const deletedSpaceResult = await db.repos.space.filterByCommunity(community.community_id);
-	assert.is(unwrap(deletedSpaceResult).length, 0);
+	assert.is(unwrap(await db.repos.space.filterByCommunity(community.community_id)).length, 1);
 
+	// delete membership
+	assert.is(
+		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
+		3,
+	);
+	unwrap(
+		await deleteMembershipService.perform({
+			params: {persona_id: persona2.persona_id, community_id: community.community_id},
+			...serviceRequest,
+		}),
+	);
 	assert.is(
 		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
 		2,
 	);
-	const deletedMembershipResult = await db.repos.membership.deleteById(
-		persona.persona_id,
-		community.community_id,
-	);
-	assert.ok(deletedMembershipResult.ok);
 	assert.is(
-		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
+		unwrap(
+			await db.repos.membership.filterAccountPersonaMembershipsByCommunityId(
+				community.community_id,
+			),
+		).length,
 		1,
 	);
 
-	// TODO delete communities here
-	const deleteCommunitiesResult = await deleteCommunityService.perform({
-		params: {community_id: community.community_id},
-		...serviceRequest,
-	});
-	assert.ok(deleteCommunitiesResult.ok);
-
+	// delete community
+	unwrap(
+		await deleteCommunityService.perform({
+			params: {community_id: community.community_id},
+			...serviceRequest,
+		}),
+	);
 	const readCommunityResult = await readCommunityService.perform({
 		params: {community_id: community.community_id},
 		...serviceRequest,
 	});
 	assert.is(readCommunityResult.status, 404);
-
 	assert.is(
 		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
 		0,
