@@ -4,7 +4,6 @@ import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
-import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
 import {
 	readCommunitiesService,
@@ -16,7 +15,7 @@ import {
 	readSpaceService,
 	readSpacesService,
 } from '$lib/vocab/space/spaceServices';
-import {createEntityService, readEntitiesService} from '$lib/vocab/entity/entityServices';
+import {readEntitiesService} from '$lib/vocab/entity/entityServices';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {
 	createMembershipService,
@@ -67,26 +66,9 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	const defaultSpaces = toDefaultSpaces(community);
 	const defaultSpaceCount = defaultSpaces.length;
 
-	const entityData1: NoteEntityData = {type: 'Note', content: 'this is entity 1'};
-	const entityData2: NoteEntityData = {type: 'Note', content: 'entity: 2'};
-	const {entity: entity1} = unwrap(
-		await createEntityService.perform({
-			params: {actor_id: persona.persona_id, space_id: space.space_id, data: entityData1},
-			...serviceRequest,
-		}),
-	);
-	const {entity: entity2} = unwrap(
-		await createEntityService.perform({
-			params: {actor_id: persona.persona_id, space_id: space.space_id, data: entityData2},
-			...serviceRequest,
-		}),
-	);
-	assert.is(entity1.actor_id, persona.persona_id);
-	assert.is(entity2.actor_id, persona.persona_id);
-	assert.is(entity1.space_id, space.space_id);
-	assert.is(entity2.space_id, space.space_id);
-	assert.equal(entity1.data, entityData1);
-	assert.equal(entity2.data, entityData2);
+	// create some entities
+	const {entity: entity1} = await random.entity(persona, account, community, space);
+	const {entity: entity2} = await random.entity(persona, account, community, space);
 
 	// do queries
 	//

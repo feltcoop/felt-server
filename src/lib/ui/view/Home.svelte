@@ -1,8 +1,8 @@
 <script lang="ts">
 	import {getApp} from '$lib/ui/app';
 	import {getViewContext} from '$lib/vocab/view/view';
-	import Forum from './Forum.svelte';
-	import PersonaAvatar from '../PersonaAvatar.svelte';
+	import Forum from '$lib/ui/Forum.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 
 	const viewContext = getViewContext();
 	$: ({community} = $viewContext);

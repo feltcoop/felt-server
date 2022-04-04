@@ -3,7 +3,7 @@ import * as assert from 'uvu/assert';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
-import {deleteCommunityService} from './communityServices';
+import {deleteCommunityService} from '$lib/vocab/community/communityServices';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
 
 /* test_communityServices */

@@ -23,6 +23,7 @@ import {SessionApiMock} from '$lib/server/SessionApiMock';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
 import {createSpaceService} from '$lib/vocab/space/spaceServices';
 import type {Membership} from '$lib/vocab/membership/membership';
+import {createEntityService} from '$lib/vocab/entity/entityServices';
 
 const session = new SessionApiMock();
 
@@ -168,6 +169,7 @@ export class RandomVocabContext {
 		account?: Account,
 		community?: Community,
 		space?: Space,
+		paramsPartial?: Partial<CreateEntityParams>,
 	): Promise<{
 		entity: Entity;
 		persona: Persona;
@@ -179,9 +181,13 @@ export class RandomVocabContext {
 		if (!persona) ({persona} = await this.persona(account));
 		if (!community) ({community} = await this.community(persona, account));
 		if (!space) ({space} = await this.space(persona, account, community));
-		const params = randomEntityParams(persona.persona_id, space.space_id);
-		const entity = unwrap(
-			await this.db.repos.entity.create(params.actor_id, params.data, params.space_id),
+		const {entity} = unwrap(
+			await createEntityService.perform({
+				params: {...randomEntityParams(persona.persona_id, space.space_id), ...paramsPartial},
+				account_id: account.account_id,
+				repos: this.db.repos,
+				session,
+			}),
 		);
 		return {entity, persona, account, community, space};
 	}
