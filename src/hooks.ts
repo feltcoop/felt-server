@@ -35,6 +35,7 @@ export const getSession: GetSession = async (event) => {
 	if (!result.ok) {
 		log.error('failed to load session', result.message);
 		// TODO BLOCK unset cookies
+		// maybe `broken: true` as a workaround if we can't do it here
 		// request.session = null!;
 		// setCookie(event.request.headers, COOKIE_SESSION_KEY, '');
 		return {guest: true};
