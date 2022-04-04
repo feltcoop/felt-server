@@ -115,9 +115,10 @@ test__membershipServices('delete orphaned communities on last member leaving', a
 			...serviceRequest(account.account_id, db),
 		}),
 	);
-	let communityMemberships = await db.repos.membership.filterByCommunityId(community.community_id);
-	assert.ok(communityMemberships.ok);
-	assert.is(communityMemberships.value.length, 3);
+	assert.is(
+		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
+		3,
+	);
 
 	//Delete 1 account member, the community still exists
 	unwrap(
@@ -128,9 +129,10 @@ test__membershipServices('delete orphaned communities on last member leaving', a
 			session: new SessionApiMock(),
 		}),
 	);
-	communityMemberships = await db.repos.membership.filterByCommunityId(community.community_id);
-	assert.ok(communityMemberships.ok);
-	assert.is(communityMemberships.value.length, 2);
+	assert.is(
+		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
+		2,
+	);
 	unwrap(await db.repos.community.findById(community.community_id));
 
 	//Delete last account member, the community is deleted
@@ -143,9 +145,10 @@ test__membershipServices('delete orphaned communities on last member leaving', a
 		}),
 	);
 
-	communityMemberships = await db.repos.membership.filterByCommunityId(community.community_id);
-	assert.ok(communityMemberships.ok);
-	assert.is(communityMemberships.value.length, 0);
+	assert.is(
+		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
+		0,
+	);
 	unwrapError(await db.repos.community.findById(community.community_id));
 });
 
