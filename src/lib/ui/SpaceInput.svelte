@@ -102,7 +102,7 @@
 				{/each}
 			</select>
 		</label>
-		<PendingButton type="button" on:click={create} {pending}>Create space</PendingButton>
+		<PendingButton on:click={create} {pending}>Create space</PendingButton>
 		{#if errorMessage}
 			<Message status="error">{errorMessage}</Message>
 		{/if}

@@ -2,7 +2,6 @@ import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {randomEventParams} from '$lib/server/random';
@@ -15,9 +14,8 @@ const test__personaService = suite<TestDbContext & TestAppContext>('personaServi
 test__personaService.before(setupDb);
 test__personaService.after(teardownDb);
 
-test__personaService('create a persona & test collisions', async ({db}) => {
+test__personaService('create a persona & test collisions', async ({db, random}) => {
 	//STEP 1: get a server, account, and event context lined up
-	const random = new RandomVocabContext(db);
 	const account = await random.account();
 	const params = await randomEventParams(CreateAccountPersona, random);
 	params.name = params.name.toLowerCase();

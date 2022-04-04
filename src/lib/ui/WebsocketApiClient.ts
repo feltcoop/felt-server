@@ -9,7 +9,7 @@ import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
 import type {JsonRpcId, JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
-import type {BroadcastMessage} from '$lib/server/websocketMiddleware';
+import type {BroadcastMessage} from '$lib/server/websocketServiceMiddleware';
 
 const log = new Logger('[ws]');
 

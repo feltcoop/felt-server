@@ -56,7 +56,7 @@ export const deleteMembershipService: Service<
 	perform: async ({repos, params}) => {
 		const {persona_id, community_id} = params;
 		log.trace(
-			'[DeleteSpace] deleting membership for persona in community',
+			'[DeleteMembership] deleting membership for persona in community',
 			persona_id,
 			community_id,
 		);
@@ -65,10 +65,10 @@ export const deleteMembershipService: Service<
 			repos.community.findById(community_id),
 		]);
 		if (!personaResult.ok) {
-			return {ok: false, status: 404, message: personaResult.message};
+			return {ok: false, status: 404, message: 'no persona found'};
 		}
 		if (!communityResult.ok) {
-			return {ok: false, status: 404, message: communityResult.message};
+			return {ok: false, status: 404, message: 'no community found'};
 		}
 		if (communityResult.value.type === 'personal') {
 			return {ok: false, status: 405, message: 'cannot leave a personal community'};
@@ -81,10 +81,10 @@ export const deleteMembershipService: Service<
 		}
 
 		const result = await repos.membership.deleteById(persona_id, community_id);
-		log.trace('[DeleteSpace] result', result);
+		log.trace('[DeleteMembership] result', result);
 		if (!result.ok) {
-			log.trace('[DeleteSpace] error removing membership: ', persona_id, community_id);
-			return {ok: false, status: 500, message: result.message};
+			log.trace('[DeleteMembership] error removing membership: ', persona_id, community_id);
+			return {ok: false, status: 500, message: 'failed to delete membership'};
 		}
 		await cleanOrphanCommunities(params.community_id, repos);
 		return {ok: true, status: 200, value: null};

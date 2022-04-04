@@ -4,32 +4,25 @@ import {blue, gray} from 'kleur/colors';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Space} from '$lib/vocab/space/space.js';
-import type {ErrorResponse} from '$lib/util/error';
 import type {ViewData} from '$lib/vocab/view/view';
 
 const log = new Logger(gray('[') + blue('SpaceRepo') + gray(']'));
 
 export class SpaceRepo extends PostgresRepo {
-	async findById(
-		space_id: number,
-	): Promise<Result<{value: Space}, {type: 'no_space_found'} & ErrorResponse>> {
+	async findById(space_id: number): Promise<Result<{value: Space}>> {
 		log.trace(`[findById] ${space_id}`);
 		const data = await this.db.sql<Space[]>`
 			SELECT space_id, name, url, icon, view, updated, created, community_id, directory_id
 			FROM spaces WHERE space_id=${space_id}
 		`;
 		log.trace('[findById] result', data);
-		if (data.length) {
-			return {ok: true, value: data[0]};
+		if (!data.length) {
+			return {ok: false};
 		}
-		return {
-			ok: false,
-			type: 'no_space_found',
-			message: 'no space found',
-		};
+		return {ok: true, value: data[0]};
 	}
 
-	async filterByAccount(account_id: number): Promise<Result<{value: Space[]}, ErrorResponse>> {
+	async filterByAccount(account_id: number): Promise<Result<{value: Space[]}>> {
 		log.trace('[filterByAccount]', account_id);
 		const data = await this.db.sql<Space[]>`
 			SELECT s.space_id, s.name, s.url, icon, s.view, s.updated, s.created, s.community_id, s.directory_id
@@ -83,7 +76,7 @@ export class SpaceRepo extends PostgresRepo {
 	async update(
 		space_id: number,
 		partial: Partial<Pick<Space, 'name' | 'url' | 'icon' | 'view'>>,
-	): Promise<Result<{value: Space}, ErrorResponse>> {
+	): Promise<Result<{value: Space}>> {
 		log.trace(`updating data for space: ${space_id}`);
 		// TODO hacky, fix when `postgres` v2 is out with dynamic queries
 		const updated: Record<string, any> = {};
@@ -98,24 +91,18 @@ export class SpaceRepo extends PostgresRepo {
 			RETURNING *
 		`;
 		if (!result.count) {
-			return {ok: false, message: 'failed to update space'};
+			return {ok: false};
 		}
 		return {ok: true, value: result[0]};
 	}
 
-	async deleteById(
-		space_id: number,
-	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
+	async deleteById(space_id: number): Promise<Result<object>> {
 		log.trace('[deleteById]', space_id);
 		const data = await this.db.sql<any[]>`
 			DELETE FROM spaces WHERE space_id=${space_id}
 		`;
-		if (data.count !== 1) {
-			return {
-				ok: false,
-				type: 'deletion_error',
-				message: 'failed to delete space',
-			};
+		if (!data.count) {
+			return {ok: false};
 		}
 		return {ok: true};
 	}

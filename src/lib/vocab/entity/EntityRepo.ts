@@ -5,7 +5,6 @@ import {blue, gray} from 'kleur/colors';
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {EntityData} from '$lib/vocab/entity/entityData';
-import type {ErrorResponse} from '$lib/util/error';
 import type {RowList} from 'postgres';
 
 const log = new Logger(gray('[') + blue('EntityRepo') + gray(']'));
@@ -47,10 +46,7 @@ export class EntityRepo extends PostgresRepo {
 		return {ok: true, value: entities};
 	}
 
-	async updateEntityData(
-		entity_id: number,
-		data: EntityData,
-	): Promise<Result<{value: Entity}, ErrorResponse>> {
+	async updateEntityData(entity_id: number, data: EntityData): Promise<Result<{value: Entity}>> {
 		log.trace('[updateEntityData]', entity_id);
 		const result = await this.db.sql<Entity[]>`
 			UPDATE entities SET data=${this.db.sql.json(data)}, updated=NOW()
@@ -58,45 +54,33 @@ export class EntityRepo extends PostgresRepo {
 			RETURNING *
 		`;
 		if (!result.count) {
-			return {ok: false, message: 'failed to update entity data'};
+			return {ok: false};
 		}
 		return {ok: true, value: result[0]};
 	}
 
 	//This function is a idempotent soft delete, that leaves behind a Tombstone entity per Activity-Streams spec
-	async softDeleteById(
-		entity_id: number,
-	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
+	async softDeleteById(entity_id: number): Promise<Result<object>> {
 		log.trace('[deleteById]', entity_id);
 		const data = await this.db.sql<any[]>`
 			UPDATE entities
 			SET data = jsonb_build_object('type','Tombstone','formerType',data->>'type','deleted',NOW())
 			WHERE entity_id=${entity_id} AND data->>'type' != 'Tombstone';
 		`;
-		if (data.count !== 1) {
-			return {
-				ok: false,
-				type: 'deletion_error',
-				message: 'failed to delete entity',
-			};
+		if (!data.count) {
+			return {ok: false};
 		}
 		return {ok: true};
 	}
 
 	//This function actually deletes the record in the DB
-	async hardDeleteById(
-		entity_id: number,
-	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
+	async hardDeleteById(entity_id: number): Promise<Result<object>> {
 		log.trace('[hardDeleteById]', entity_id);
 		const data = await this.db.sql<any[]>`
 			DELETE FROM entities WHERE ${entity_id}=entity_id
 		`;
-		if (data.count !== 1) {
-			return {
-				ok: false,
-				type: 'deletion_error',
-				message: 'failed to hard delete entity',
-			};
+		if (!data.count) {
+			return {ok: false};
 		}
 		return {ok: true};
 	}
