@@ -14,6 +14,7 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import type {ViewData} from '$lib/vocab/view/view';
 import {initBrowser} from '$lib/ui/init';
+import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 
 if (browser) initBrowser();
 
@@ -107,6 +108,11 @@ export const toUi = (
 						communitySpaces.push(space);
 					}
 				}
+				communitySpaces.sort((_a, _b) => {
+					const a = get(_a);
+					const b = get(_b);
+					return isHomeSpace(a) ? -1 : isHomeSpace(b) ? 1 : a.name < b.name ? -1 : 1;
+				});
 				map.set(community_id, communitySpaces);
 			}
 			return map;
@@ -306,7 +312,7 @@ export const toUi = (
 								.map(($community) => {
 									//TODO lookup space by community_id+url (see this comment in multiple places)
 									const $homeSpace = $session.spaces.find(
-										(s) => s.community_id === $community.community_id && s.url === '/',
+										(s) => s.community_id === $community.community_id && isHomeSpace(s),
 									)!;
 									return [$community.community_id, $homeSpace.space_id];
 								})

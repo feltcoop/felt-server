@@ -22,6 +22,7 @@ import {
 	DeleteCommunity,
 } from '$lib/vocab/community/communityEvents';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
+import {createDefaultSpaces} from '$lib/vocab/space/spaceServices';
 
 const log = new Logger(gray('[') + blue('communityServices') + gray(']'));
 
@@ -64,7 +65,8 @@ export const readCommunityService: Service<ReadCommunityParams, ReadCommunityRes
 export const createCommunityService: Service<CreateCommunityParams, CreateCommunityResponseResult> =
 	{
 		event: CreateCommunity,
-		perform: async ({repos, params, account_id}) => {
+		perform: async (serviceRequest) => {
+			const {repos, params, account_id} = serviceRequest;
 			log.trace('creating community account_id', account_id);
 			// TODO validate that `account_id` is `persona_id`
 			const createCommunityResult = await repos.community.create(
@@ -82,7 +84,8 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 					message: 'error creating community',
 				};
 			}
-			const {community, spaces} = createCommunityResult.value;
+			const community = createCommunityResult.value;
+
 			//TODO maybe trim down returned Persona data?
 			const communityPersonaResult = await repos.persona.createCommunityPersona(
 				community.name,
@@ -97,6 +100,18 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 				};
 			}
 			const communityPersona = communityPersonaResult.value;
+
+			const createDefaultSpaceResult = await createDefaultSpaces(serviceRequest, community);
+			if (!createDefaultSpaceResult.ok) {
+				log.trace('[CreateCommunity] error creating community default spaces');
+				return {
+					ok: false,
+					status: 500,
+					message: 'error creating community default spaces',
+				};
+			}
+			const spaces = createDefaultSpaceResult.value;
+
 			const communityPersonaMembershipResult = await repos.membership.create(
 				communityPersona.persona_id,
 				community.community_id,

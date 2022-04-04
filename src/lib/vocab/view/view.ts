@@ -29,7 +29,6 @@ export const viewTemplates: Array<{
 	{name: 'Board', template: '<Board />', icon: '📚'},
 	{name: 'Forum', template: '<Forum />', icon: '📋'},
 	{name: 'Notes', template: '<Notes />', icon: '🏷'},
-	{name: 'Voice', template: '<Voice />', icon: '🎙'},
 	{name: 'Iframe', template: '<Iframe />', icon: '💻'}, // TODO does this need a default `src`?
 	{name: 'EntityExplorer', template: '<EntityExplorer />', icon: '✏️'},
 	{name: 'Todo', template: '<Todo />', icon: '🗒'},

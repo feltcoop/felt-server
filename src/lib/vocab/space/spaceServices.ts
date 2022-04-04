@@ -1,7 +1,7 @@
 import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import type {Service} from '$lib/server/service';
+import type {Service, ServiceRequest} from '$lib/server/service';
 import type {
 	CreateSpaceParams,
 	CreateSpaceResponseResult,
@@ -21,6 +21,12 @@ import {
 	UpdateSpace,
 	DeleteSpace,
 } from '$lib/vocab/space/spaceEvents';
+import {canDeleteSpace} from '$lib/vocab/space/spaceHelpers';
+import type {Community} from '$lib/vocab/community/community';
+import type {Result} from '@feltcoop/felt';
+import type {Space} from '$lib/vocab/space/space';
+import type {ErrorResponse} from '$lib/util/error';
+import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
@@ -80,6 +86,23 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 			return {ok: false, status: 409, message: 'a space with that url already exists'};
 		}
 
+		log.trace('[CreateSpace] finding community space for dir actor');
+		const communityPersona = await repos.persona.findByCommunityId(params.community_id);
+		if (!communityPersona.ok) {
+			log.error('[CreateSpace] error finding persona for provided community', params.community_id);
+			return {ok: false, status: 500, message: 'error looking up community persona'};
+		}
+
+		log.trace('[CreateSpace] initializing directory for space');
+		const createDirectoryResult = await repos.entity.create(communityPersona.value.persona_id, {
+			type: 'Collection',
+			name: 'directory',
+		});
+		if (!createDirectoryResult.ok) {
+			log.error('[CreateSpace] error creating directory for space', params.name);
+			return {ok: false, status: 500, message: 'error creating directory for space'};
+		}
+
 		log.trace('[CreateSpace] creating space for community', params.community_id);
 		const createSpaceResult = await repos.space.create(
 			params.name,
@@ -87,6 +110,7 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 			params.url,
 			params.icon,
 			params.community_id,
+			createDirectoryResult.value.entity_id,
 		);
 		if (createSpaceResult.ok) {
 			return {ok: true, status: 200, value: {space: createSpaceResult.value}};
@@ -114,6 +138,20 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 	event: DeleteSpace,
 	perform: async ({repos, params}) => {
 		log.trace('[DeleteSpace] deleting space with id:', params.space_id);
+
+		// Check that the space can be deleted.
+		const findSpaceResult = await repos.space.findById(params.space_id);
+		if (!findSpaceResult.ok) {
+			if (findSpaceResult.type === 'no_space_found') {
+				return {ok: false, status: 404, message: findSpaceResult.message};
+			}
+			return {ok: false, status: 500, message: 'unknown server error'};
+		}
+		const space = findSpaceResult.value;
+		if (!canDeleteSpace(space)) {
+			return {ok: false, status: 405, message: 'cannot delete home space'};
+		}
+
 		const result = await repos.space.deleteById(params.space_id);
 		log.trace('[DeleteSpace] result', result);
 		if (!result.ok) {
@@ -122,4 +160,21 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 		}
 		return {ok: true, status: 200, value: null};
 	},
+};
+
+export const createDefaultSpaces = async (
+	serviceRequest: ServiceRequest<any>,
+	community: Community,
+): Promise<Result<{value: Space[]}, ErrorResponse>> => {
+	const spaces: Space[] = [];
+	for (const params of toDefaultSpaces(community)) {
+		// eslint-disable-next-line no-await-in-loop
+		const result = await createSpaceService.perform({
+			...serviceRequest,
+			params,
+		});
+		if (!result.ok) return {ok: false, message: 'failed to create default spaces'};
+		spaces.push(result.value.space);
+	}
+	return {ok: true, value: spaces};
 };

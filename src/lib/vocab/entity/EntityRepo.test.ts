@@ -13,10 +13,10 @@ test__EntityRepo.after(teardownDb);
 
 test__EntityRepo('entites return sorted by created', async ({db}) => {
 	const random = new RandomVocabContext(db);
-	const space = await random.space();
-	const entity0 = await random.entity(undefined, undefined, undefined, space);
-	const entity1 = await random.entity(undefined, undefined, undefined, space);
-	const entity2 = await random.entity(undefined, undefined, undefined, space);
+	const {space, persona, account} = await random.space();
+	const {entity: entity0} = await random.entity(persona, account, undefined, space);
+	const {entity: entity1} = await random.entity(persona, account, undefined, space);
+	const {entity: entity2} = await random.entity(persona, account, undefined, space);
 
 	assert.equal(entity0.space_id, entity1.space_id);
 	assert.equal(entity1.space_id, entity2.space_id);

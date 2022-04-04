@@ -1,4 +1,4 @@
-import {randomBool, randomItem} from '@feltcoop/felt/util/random.js';
+import {randomBool} from '@feltcoop/felt/util/random.js';
 import {writable} from 'svelte/store';
 
 import type {EventInfo} from '$lib/vocab/event/event';
@@ -43,24 +43,21 @@ export const randomEventParams = async (
 			return null;
 		}
 		case 'CreateCommunity': {
-			if (!persona) persona = await random.persona(account);
+			if (!persona) ({persona} = await random.persona(account));
 			return randomCommunityParams(persona.persona_id);
 		}
 		case 'UpdateCommunitySettings': {
-			if (!persona) persona = await random.persona(account);
-			if (!community) community = await random.community(persona);
+			if (!community) ({community} = await random.community(persona, account));
 			return {community_id: community.community_id, settings: {hue: randomHue()}};
 		}
 		case 'ReadCommunity': {
-			if (!community) {
-				community = randomItem(random.communities) || (await random.community(persona, account));
-			}
+			if (!community) ({community} = await random.community(persona, account));
 			return {community_id: community.community_id};
 		}
 		case 'DeleteCommunity': {
 			do {
 				// eslint-disable-next-line no-await-in-loop
-				community = await random.community(persona, account);
+				({community} = await random.community(persona, account));
 			} while (community.type !== 'standard');
 			return {community_id: community.community_id};
 		}
@@ -71,97 +68,81 @@ export const randomEventParams = async (
 			return randomPersonaParams();
 		}
 		case 'CreateMembership': {
-			if (!persona) persona = await random.persona(account);
-			if (!community) community = await random.community(); // don't forward `persona`/`account` bc that's the service's job
+			if (!persona) ({persona} = await random.persona(account));
+			if (!community) ({community} = await random.community()); // don't forward `persona`/`account` bc that's the service's job
 			return randomMembershipParams(persona.persona_id, community.community_id);
 		}
 		case 'DeleteMembership': {
-			if (!persona) persona = await random.persona(account);
-			if (!community) community = await random.community(persona); // don't forward `persona`/`account` bc that's the service's job
+			if (!persona) ({persona} = await random.persona(account));
+			if (!community) ({community} = await random.community(persona));
 			return {persona_id: persona.persona_id, community_id: community.community_id};
 		}
 		case 'CreateSpace': {
-			if (!community) community = await random.community(persona, account);
+			if (!community) ({community} = await random.community(persona, account));
 			return randomSpaceParams(community.community_id);
 		}
 		case 'UpdateSpace': {
-			if (!space) space = await random.space(persona, account, community);
+			if (!space) ({space} = await random.space(persona, account, community));
 			return {space_id: space.space_id, name: randomSpaceName()};
 		}
 		case 'DeleteSpace': {
-			if (!space) space = await random.space(persona, account, community);
+			if (!space) ({space} = await random.space(persona, account, community));
 			return {space_id: space.space_id};
 		}
 		case 'ReadSpace': {
-			if (!space) {
-				space = randomItem(random.spaces) || (await random.space(persona, account, community));
-			}
+			if (!space) ({space} = await random.space(persona, account, community));
 			return {space_id: space.space_id};
 		}
 		case 'ReadSpaces': {
-			if (!community) {
-				community = randomItem(random.communities) || (await random.community(persona, account));
-			}
+			if (!community) ({community} = await random.community(persona, account));
 			return {community_id: community.community_id};
 		}
 		case 'CreateEntity': {
-			if (!persona) persona = await random.persona(account);
-			if (!space) space = await random.space(persona, account, community);
+			if (!persona) ({persona} = await random.persona(account));
+			if (!space) ({space} = await random.space(persona, account, community));
 			return randomEntityParams(persona.persona_id, space.space_id);
 		}
 		case 'ReadEntities': {
-			if (!space) {
-				space = randomItem(random.spaces) || (await random.space(persona, account, community));
-			}
+			if (!space) ({space} = await random.space(persona, account, community));
 			return {space_id: space.space_id};
 		}
 		case 'QueryEntities': {
 			return {
-				space_id: (randomItem(random.spaces) || (await random.space(persona, account, community)))
-					.space_id,
+				space_id: (await random.space(persona, account, community)).space.space_id,
 			};
 		}
 		case 'UpdateEntity': {
 			return {
-				entity_id: (
-					randomItem(random.entities) || (await random.entity(persona, account, community, space))
-				).entity_id,
+				entity_id: (await random.entity(persona, account, community, space)).entity.entity_id,
 				data: randomEntityData(),
 			};
 		}
 		case 'SoftDeleteEntity': {
 			return {
-				entity_id: (
-					randomItem(random.entities) || (await random.entity(persona, account, community, space))
-				).entity_id,
+				entity_id: (await random.entity(persona, account, community, space)).entity.entity_id,
 			};
 		}
 		case 'HardDeleteEntity': {
-			const entity = await random.entity(persona, account, community, space);
-			random.entities.pop();
+			const {entity} = await random.entity(persona, account, community, space);
 			return {
 				entity_id: entity.entity_id,
 			};
 		}
 		case 'CreateTie': {
 			return {
-				source_id: (
-					randomItem(random.entities) || (await random.entity(persona, account, community, space))
-				).entity_id,
-				dest_id: (
-					randomItem(random.entities) || (await random.entity(persona, account, community, space))
-				).entity_id,
+				source_id: (await random.entity(persona, account, community, space)).entity.entity_id,
+				dest_id: (await random.entity(persona, account, community, space)).entity.entity_id,
 				type: 'HasReply',
 			};
 		}
 		case 'ReadTies': {
 			if (!space) {
-				space = randomItem(random.spaces) || (await random.space(persona, account, community));
+				({space} = await random.space(persona, account, community));
 			}
 			return {space_id: space.space_id};
 		}
 		case 'DeleteTie': {
-			const tie = randomItem(random.ties) || (await random.tie());
+			const {tie} = await random.tie(undefined, undefined, persona, account, community, space);
 			return {
 				source_id: tie.source_id,
 				dest_id: tie.dest_id,
@@ -193,26 +174,18 @@ export const randomEventParams = async (
 		}
 		case 'SelectPersona': {
 			return {
-				persona_id: (randomItem(random.personas) || (await random.persona(account))).persona_id,
+				persona_id: (await random.persona(account)).persona.persona_id,
 			};
 		}
 		case 'SelectCommunity': {
 			return {
-				// TODO refactor
-				community_id: await randomItem([
-					async () =>
-						(randomItem(random.communities) || (await random.community(persona, account)))
-							.community_id,
-					() => null,
-				])(),
+				community_id: (await random.community(persona, account)).community.community_id,
 			};
 		}
 		case 'SelectSpace': {
 			return {
-				community_id: (randomItem(random.communities) || (await random.community(persona, account)))
-					.community_id,
-				space_id: (randomItem(random.spaces) || (await random.space(persona, account, community)))
-					.space_id,
+				community_id: (await random.community(persona, account)).community.community_id,
+				space_id: (await random.space(persona, account, community)).space.space_id,
 			};
 		}
 		case 'ViewSpace': {
