@@ -20,10 +20,11 @@ export const createMembershipService: Service<
 > = {
 	event: CreateMembership,
 	perform: async ({repos, params}) => {
-		log.trace('[CreateMembership] creating membership', params.persona_id, params.community_id);
+		const {community_id, persona_id} = params;
+		log.trace('[CreateMembership] creating membership', persona_id, community_id);
 
 		// Personal communities disallow memberships as a hard rule.
-		const communityResult = await repos.community.findById(params.community_id);
+		const communityResult = await repos.community.findById(community_id);
 		if (!communityResult.ok) {
 			return {ok: false, status: 400, message: 'community not found'};
 		}
@@ -32,12 +33,15 @@ export const createMembershipService: Service<
 			return {ok: false, status: 403, message: 'personal communities disallow memberships'};
 		}
 
+		// Check for duplicate memberships.
+		const findMembershipResult = await repos.membership.findById(persona_id, community_id);
+		if (findMembershipResult.ok) {
+			return {ok: false, status: 409, message: 'membership already exists'};
+		}
+
 		// TODO test what happens if the persona doesn't exist
 
-		const createMembershipResult = await repos.membership.create(
-			params.persona_id,
-			params.community_id,
-		);
+		const createMembershipResult = await repos.membership.create(persona_id, community_id);
 		if (createMembershipResult.ok) {
 			return {ok: true, status: 200, value: {membership: createMembershipResult.value}};
 		}
