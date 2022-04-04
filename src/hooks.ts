@@ -6,11 +6,13 @@ import {setCookie, parseCookie} from '$lib/session/cookieSession';
 
 const log = new Logger('[hooks]');
 
+const COOKIE_SESSION_KEY = 'sessionid';
+
 export const handle: Handle = async ({event, resolve}) => {
 	console.log(`handle`, event);
 	const cookies = parseCookie(event.request.headers);
 	console.log(`parsed cookies`, cookies);
-	event.locals.account_id = Number(cookies.account_id) || undefined;
+	event.locals.account_id = Number(cookies[COOKIE_SESSION_KEY]) || undefined;
 	// TODO BLOCK also set the request account_id? and delete `authenticationMiddleware`?
 	// event.request.account_id = event.locals.account_id;
 
@@ -34,6 +36,8 @@ export const getSession: GetSession = async (event) => {
 		log.error('failed to load session', result.message);
 		// TODO BLOCK unset cookies
 		// request.session = null!;
+		// setCookie(event.request.headers, COOKIE_SESSION_KEY, '');
+		return {guest: true};
 	}
 	return result.value;
 };
