@@ -1,5 +1,5 @@
 import {suite} from 'uvu';
-import * as assert from 'uvu/assert';
+import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {RandomVocabContext} from '$lib/vocab/random';
@@ -8,6 +8,7 @@ import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {randomEventParams} from '$lib/server/random';
 import {CreateAccountPersona} from '$lib/vocab/persona/personaEvents';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
+import {unwrapError} from '$lib/util/testHelpers';
 
 /* test__personaService */
 const test__personaService = suite<TestDbContext & TestAppContext>('personaService');
@@ -20,35 +21,19 @@ test__personaService('create a persona & test collisions', async ({db}) => {
 	const random = new RandomVocabContext(db);
 	const account = await random.account();
 	const params = await randomEventParams(CreateAccountPersona, random);
+	const serviceRequest = {
+		repos: db.repos,
+		account_id: account.account_id,
+		session: new SessionApiMock(),
+	};
+
 	params.name = params.name.toLowerCase();
+	unwrap(await createAccountPersonaService.perform({params, ...serviceRequest}));
 
-	let result = await createAccountPersonaService.perform({
-		repos: db.repos,
-		params,
-		account_id: account.account_id,
-		session: new SessionApiMock(),
-	});
-
-	assert.equal(result.ok, true);
-
-	result = await createAccountPersonaService.perform({
-		repos: db.repos,
-		params,
-		account_id: account.account_id,
-		session: new SessionApiMock(),
-	});
-
-	assert.equal(result.ok, false);
+	unwrapError(await createAccountPersonaService.perform({params, ...serviceRequest}));
 
 	params.name = params.name.toUpperCase();
-	result = await createAccountPersonaService.perform({
-		repos: db.repos,
-		params,
-		account_id: account.account_id,
-		session: new SessionApiMock(),
-	});
-
-	assert.equal(result.ok, false);
+	unwrapError(await createAccountPersonaService.perform({params, ...serviceRequest}));
 });
 
 test__personaService.run();

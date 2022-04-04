@@ -1,5 +1,6 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
+import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {RandomVocabContext} from '$lib/vocab/random';
@@ -21,38 +22,27 @@ test__TieRepo('check tie queries', async ({db}) => {
 	const {entity: entityPost} = await random.entity(persona, account, community, space);
 	const {entity: entityReply} = await random.entity(persona, account, community, space);
 
-	const result1 = await db.repos.tie.create(
-		entityDir.entity_id,
-		entityThread.entity_id,
-		'HasThread',
+	const tie1 = unwrap(
+		await db.repos.tie.create(entityDir.entity_id, entityThread.entity_id, 'HasThread'),
 	);
-	assert.ok(result1.ok);
 
-	const result2 = await db.repos.tie.create(
-		entityThread.entity_id,
-		entityPost.entity_id,
-		'HasPost',
+	const tie2 = unwrap(
+		await db.repos.tie.create(entityThread.entity_id, entityPost.entity_id, 'HasPost'),
 	);
-	assert.ok(result2.ok);
 
-	const result3 = await db.repos.tie.create(
-		entityPost.entity_id,
-		entityReply.entity_id,
-		'HasReply',
+	const tie3 = unwrap(
+		await db.repos.tie.create(entityPost.entity_id, entityReply.entity_id, 'HasReply'),
 	);
-	assert.ok(result3.ok);
 
-	const query1 = await db.repos.tie.filterBySpace(space.space_id);
-	assert.ok(query1.ok);
-	assert.equal(query1.value.length, 3);
-	assert.equal(query1.value, [result1.value, result2.value, result3.value]);
+	const query1 = unwrap(await db.repos.tie.filterBySpace(space.space_id));
+	assert.is(query1.length, 3);
+	assert.equal(query1, [tie1, tie2, tie3]);
 
-	const query2 = await db.repos.tie.filterBySourceId(entityDir.entity_id);
-	assert.ok(query2.ok);
-	assert.equal(query2.value.length, 3);
+	const query2 = unwrap(await db.repos.tie.filterBySourceId(entityDir.entity_id));
+	assert.is(query2.length, 3);
 	assert.equal(
-		query2.value.sort((a, b) => a.source_id - b.source_id),
-		[result1.value, result2.value, result3.value].sort((a, b) => a.source_id - b.source_id),
+		query2.sort((a, b) => a.source_id - b.source_id),
+		[tie1, tie2, tie3].sort((a, b) => a.source_id - b.source_id),
 	);
 });
 

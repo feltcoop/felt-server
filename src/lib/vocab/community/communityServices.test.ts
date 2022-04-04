@@ -25,8 +25,6 @@ test_communityServices('unable to delete personal community', async ({db}) => {
 	});
 	assert.not(deleteCommunityResult.ok);
 	assert.is(deleteCommunityResult.status, 405);
-	const errorMessage = deleteCommunityResult.ok ? 'failed' : deleteCommunityResult.message;
-	assert.is(errorMessage, 'cannot delete personal community');
 });
 
 test_communityServices.run();
