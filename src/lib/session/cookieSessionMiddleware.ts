@@ -4,6 +4,7 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {HttpMiddleware} from '$lib/server/ApiServer.js';
 import {parseCookie} from '$lib/session/cookieSession';
+import {COOKIE_SESSION_KEY} from '$lib/session/SessionApi';
 
 const log = new Logger(gray('[') + blue('authenticationMiddleware') + gray(']'));
 
@@ -17,7 +18,7 @@ export const cookieSessionMiddleware: HttpMiddleware = async (req, res, next) =>
 		return send(res, 500, {message: 'invalid server configuration'});
 	}
 
-	const account_id = Number(cookies.account_id) || undefined;
+	const account_id = Number(cookies[COOKIE_SESSION_KEY]) || undefined;
 	if (!account_id) {
 		log.trace('unauthenticated request');
 		return next();
