@@ -1,10 +1,11 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
+import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {RandomVocabContext} from '$lib/vocab/random';
+import {randomCommunityParams, RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
-import {deleteCommunityService} from './communityServices';
+import {deleteCommunityService, createCommunityService} from './communityServices';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
 
 /* test_communityServices */
@@ -27,6 +28,30 @@ test_communityServices('unable to delete personal community', async ({db}) => {
 	assert.is(deleteCommunityResult.status, 405);
 	const errorMessage = deleteCommunityResult.ok ? 'failed' : deleteCommunityResult.message;
 	assert.is(errorMessage, 'cannot delete personal community');
+});
+
+test_communityServices('disallow duplicate community names', async ({db}) => {
+	const random = new RandomVocabContext(db);
+	const {persona, account} = await random.persona();
+	const serviceRequest = {
+		repos: db.repos,
+		account_id: account.account_id,
+		session: new SessionApiMock(),
+	};
+
+	const params = randomCommunityParams(persona.persona_id);
+	params.name += 'Aa';
+	unwrap(await createCommunityService.perform({params, ...serviceRequest}));
+
+	params.name = params.name.toLowerCase();
+	let result = await createCommunityService.perform({params, ...serviceRequest});
+	assert.ok(!result.ok);
+	assert.is(result.status, 409);
+
+	params.name = params.name.toUpperCase();
+	result = await createCommunityService.perform({params, ...serviceRequest});
+	assert.ok(!result.ok);
+	assert.is(result.status, 409);
 });
 
 test_communityServices.run();
