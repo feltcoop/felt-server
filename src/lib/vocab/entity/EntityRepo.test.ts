@@ -2,7 +2,6 @@ import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 
 /* test__EntityRepo */
@@ -11,8 +10,7 @@ const test__EntityRepo = suite<TestDbContext & TestAppContext>('EntityRepo');
 test__EntityRepo.before(setupDb);
 test__EntityRepo.after(teardownDb);
 
-test__EntityRepo('entites return sorted by created', async ({db}) => {
-	const random = new RandomVocabContext(db);
+test__EntityRepo('entites return sorted by created', async ({db, random}) => {
 	const {space, persona, account} = await random.space();
 	const {entity: entity0} = await random.entity(persona, account, undefined, space);
 	const {entity: entity1} = await random.entity(persona, account, undefined, space);

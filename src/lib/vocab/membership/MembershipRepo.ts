@@ -4,15 +4,11 @@ import {blue, gray} from 'kleur/colors';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Membership} from '$lib/vocab/membership/membership.js';
-import type {ErrorResponse} from '$lib/util/error';
 
 const log = new Logger(gray('[') + blue('MembershipRepo') + gray(']'));
 
 export class MembershipRepo extends PostgresRepo {
-	async create(
-		persona_id: number,
-		community_id: number,
-	): Promise<Result<{value: Membership}, ErrorResponse>> {
+	async create(persona_id: number, community_id: number): Promise<Result<{value: Membership}>> {
 		const data = await this.db.sql<Membership[]>`
 			INSERT INTO memberships (persona_id, community_id) VALUES (
 				${persona_id},${community_id}
@@ -22,26 +18,19 @@ export class MembershipRepo extends PostgresRepo {
 		return {ok: true, value: data[0]};
 	}
 
-	async findById(
-		persona_id: number,
-		community_id: number,
-	): Promise<Result<{value: Membership}, {type: 'query_error'} & ErrorResponse>> {
+	async findById(persona_id: number, community_id: number): Promise<Result<{value: Membership}>> {
 		const data = await this.db.sql<Membership[]>`
 			SELECT persona_id, community_id, created, updated
 			FROM memberships
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
 		`;
-		if (data.length) {
-			return {ok: true, value: data[0]};
+		if (!data.length) {
+			return {ok: false};
 		}
-		return {
-			ok: false,
-			type: 'query_error',
-			message: 'no membership found',
-		};
+		return {ok: true, value: data[0]};
 	}
 
-	async filterByAccount(account_id: number): Promise<Result<{value: Membership[]}, ErrorResponse>> {
+	async filterByAccount(account_id: number): Promise<Result<{value: Membership[]}>> {
 		log.trace(`[filterByAccount] ${account_id}`);
 		const data = await this.db.sql<Membership[]>`
 			SELECT m.persona_id, m.community_id, m.created, m.updated 
@@ -55,9 +44,7 @@ export class MembershipRepo extends PostgresRepo {
 		return {ok: true, value: data};
 	}
 
-	async filterByCommunityId(
-		community_id: number,
-	): Promise<Result<{value: Membership[]}, ErrorResponse>> {
+	async filterByCommunityId(community_id: number): Promise<Result<{value: Membership[]}>> {
 		log.trace(`[filterByCommunityId] ${community_id}`);
 		const data = await this.db.sql<Membership[]>`
 			SELECT m.persona_id, m.community_id, m.created, m.updated 
@@ -70,11 +57,11 @@ export class MembershipRepo extends PostgresRepo {
 	//TODO refactor once generic queries are available in psql driver
 	async filterAccountPersonaMembershipsByCommunityId(
 		community_id: number,
-	): Promise<Result<{value: Membership[]}, ErrorResponse>> {
+	): Promise<Result<{value: Membership[]}>> {
 		log.trace(`[filterByCommunityId] ${community_id}`);
 		const data = await this.db.sql<Membership[]>`
-		SELECT m.persona_id, m.community_id, m.created, m.updated 
-		FROM personas p JOIN (
+			SELECT m.persona_id, m.community_id, m.created, m.updated 
+			FROM personas p JOIN (
 				SELECT persona_id, community_id, created, updated 
 				FROM memberships 
 				WHERE community_id=${community_id}
@@ -83,20 +70,13 @@ export class MembershipRepo extends PostgresRepo {
 		return {ok: true, value: data};
 	}
 
-	async deleteById(
-		persona_id: number,
-		community_id: number,
-	): Promise<Result<object, {type: 'deletion_error'} & ErrorResponse>> {
+	async deleteById(persona_id: number, community_id: number): Promise<Result<object>> {
 		const data = await this.db.sql<any[]>`
 			DELETE FROM memberships 
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
 		`;
-		if (data.count !== 1) {
-			return {
-				ok: false,
-				type: 'deletion_error',
-				message: 'failed to delete membership',
-			};
+		if (!data.count) {
+			return {ok: false};
 		}
 		return {ok: true};
 	}

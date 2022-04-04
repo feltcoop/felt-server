@@ -77,7 +77,7 @@
 				use:autofocus
 				on:keydown={onKeydown}
 			/>
-			<PendingButton type="button" on:click={create} {pending}>Create community</PendingButton>
+			<PendingButton on:click={create} {pending}>Create community</PendingButton>
 			{#if errorMessage}
 				<Message status="error">{errorMessage}</Message>
 			{/if}

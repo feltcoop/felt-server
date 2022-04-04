@@ -14,8 +14,7 @@ const test_communityServices = suite<TestDbContext & TestAppContext>('communityR
 test_communityServices.before(setupDb);
 test_communityServices.after(teardownDb);
 
-test_communityServices('unable to delete personal community', async ({db}) => {
-	const random = new RandomVocabContext(db);
+test_communityServices('unable to delete personal community', async ({db, random}) => {
 	const {persona, account} = await random.persona();
 
 	const deleteCommunityResult = await deleteCommunityService.perform({

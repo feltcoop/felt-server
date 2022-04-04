@@ -28,9 +28,7 @@
 </script>
 
 <form>
-	<PendingButton pending={!!submitting} type="button" on:click={logout} {disabled}>
-		log out
-	</PendingButton>
+	<PendingButton pending={!!submitting} on:click={logout} {disabled}>log out</PendingButton>
 	{#if errorMessage}
 		<Message status="error">{errorMessage}</Message>
 	{/if}

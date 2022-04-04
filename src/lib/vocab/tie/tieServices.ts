@@ -24,19 +24,11 @@ export const createTieService: Service<CreateTieParams, CreateTieResponseResult>
 		// TODO validate that `account_id` is `persona_id`
 		const createTieResult = await repos.tie.create(params.source_id, params.dest_id, params.type);
 		log.trace('[CreateTie] result', createTieResult);
-		if (createTieResult.ok) {
-			return {
-				ok: true,
-				status: 200,
-				value: {tie: createTieResult.value},
-			}; // TODO API types
+		if (!createTieResult.ok) {
+			log.trace('[CreateTie] error creating tie');
+			return {ok: false, status: 500, message: 'error creating tie'};
 		}
-		log.trace('[CreateTie] error creating tie');
-		return {
-			ok: false,
-			status: 500,
-			message: 'error creating tie',
-		};
+		return {ok: true, status: 200, value: {tie: createTieResult.value}};
 	},
 };
 
@@ -44,11 +36,11 @@ export const readTiesService: Service<ReadTiesParams, ReadTiesResponseResult> = 
 	event: ReadTies,
 	perform: async ({repos, params}) => {
 		const findTiesResult = await repos.tie.filterBySpace(params.space_id);
-		if (findTiesResult.ok) {
-			return {ok: true, status: 200, value: {ties: findTiesResult.value}}; // TODO API types
+		if (!findTiesResult.ok) {
+			log.trace('[ReadEntities] error searching for entities');
+			return {ok: false, status: 500, message: 'error searching for entities'};
 		}
-		log.trace('[ReadEntities] error searching for entities');
-		return {ok: false, status: 500, message: 'error searching for entities'};
+		return {ok: true, status: 200, value: {ties: findTiesResult.value}};
 	},
 };
 
@@ -61,7 +53,7 @@ export const deleteTieService: Service<DeleteTieParams, DeleteTieResponseResult>
 		log.trace('[DeleteTie] result', result);
 		if (!result.ok) {
 			log.trace('[DeleteTie] error removing tie: ', params.source_id, params.dest_id);
-			return {ok: false, status: 500, message: result.message};
+			return {ok: false, status: 500, message: 'failed to delete tie'};
 		}
 		return {ok: true, status: 200, value: null};
 	},
