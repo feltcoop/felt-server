@@ -3,7 +3,7 @@ import * as assert from 'uvu/assert';
 import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {randomCommunityParams, RandomVocabContext} from '$lib/vocab/random';
+import {randomCommunityParams} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {deleteCommunityService, createCommunityService} from './communityServices';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
@@ -29,8 +29,7 @@ test_communityServices('unable to delete personal community', async ({db, random
 	assert.is(errorMessage, 'cannot delete personal community');
 });
 
-test_communityServices('disallow duplicate community names', async ({db}) => {
-	const random = new RandomVocabContext(db);
+test_communityServices('disallow duplicate community names', async ({db, random}) => {
 	const {persona, account} = await random.persona();
 	const serviceRequest = {
 		repos: db.repos,
