@@ -5,7 +5,7 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 import {type JsonRpcResponse, parseJsonRpcRequest} from '$lib/util/jsonRpc';
 import type {ApiServer} from '$lib/server/ApiServer';
 import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
-import {SessionApi} from '$lib/server/SessionApi';
+import {SessionApi} from '$lib/session/SessionApi';
 import {authorize} from '$lib/server/authorize';
 
 const log = new Logger(gray('[') + blue('websocketMiddleware') + gray(']'));

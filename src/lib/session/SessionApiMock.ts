@@ -1,4 +1,4 @@
-import type {ISessionApi} from '$lib/server/SessionApi';
+import type {ISessionApi} from '$lib/session/SessionApi';
 
 export class SessionApiMock implements ISessionApi {
 	login(/*account_id: number*/): void {

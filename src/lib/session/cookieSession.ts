@@ -1,8 +1,6 @@
 import type {IncomingMessage} from 'http';
 import cookie from 'cookie';
 
-import {fromEnv} from '$lib/server/env';
-
 export interface CookieSessionRequest {
 	session: CookieSessionObject;
 }

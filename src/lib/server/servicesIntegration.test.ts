@@ -12,7 +12,7 @@ import {
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
-import {SessionApiMock} from '$lib/server/SessionApiMock';
+import {SessionApiMock} from '$lib/session/SessionApiMock';
 import {
 	createCommunityService,
 	readCommunitiesService,

@@ -8,7 +8,7 @@ import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {services} from '$lib/server/services';
 import {RandomVocabContext} from '$lib/vocab/random';
 import {randomEventParams} from '$lib/server/random';
-import {SessionApiMock} from '$lib/server/SessionApiMock';
+import {SessionApiMock} from '$lib/session/SessionApiMock';
 
 /* eslint-disable no-await-in-loop */
 

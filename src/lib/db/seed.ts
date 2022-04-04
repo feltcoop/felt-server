@@ -13,7 +13,7 @@ import type {Persona} from '$lib/vocab/persona/persona';
 import type {ViewData} from '$lib/vocab/view/view';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
-import {SessionApiMock} from '$lib/server/SessionApiMock';
+import {SessionApiMock} from '$lib/session/SessionApiMock';
 
 /* eslint-disable no-await-in-loop */
 

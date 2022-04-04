@@ -4,6 +4,8 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 
 const log = new Logger('[SessionApi]');
 
+export const COOKIE_SESSION_KEY = 'session_id';
+
 export interface ISessionApi {
 	login: (account_id: number) => void;
 	logout: () => void;
@@ -19,7 +21,7 @@ export class SessionApi implements ISessionApi {
 	constructor(private readonly req: ApiServerRequest | null) {}
 
 	login(account_id: number): void {
-		console.log('LOGGING IN');
+		console.log('LOGGING IN', this.req.headers);
 		if (!this.req) {
 			log.error('Expected "req". Was login called from a non-http service?');
 			return;

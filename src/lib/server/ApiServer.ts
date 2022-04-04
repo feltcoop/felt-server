@@ -12,6 +12,8 @@ import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import type {Service} from '$lib/server/service';
 import {toHttpServiceMiddleware} from '$lib/server/httpServiceMiddleware';
 import {toWebsocketMiddleware} from '$lib/server/websocketMiddleware';
+import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware';
+import {toCookieSessionMiddleware} from '$lib/session/cookieSessionMiddleware';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -74,7 +76,9 @@ export class ApiServer {
 					body: req.body,
 				});
 				return next();
-			});
+			})
+			.use(toCookieSessionMiddleware())
+			.use(toAuthenticationMiddleware());
 
 		// Register services as http routes.
 		for (const service of this.services.values()) {

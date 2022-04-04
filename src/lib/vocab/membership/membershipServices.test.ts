@@ -8,7 +8,7 @@ import {
 	createMembershipService,
 	deleteMembershipService,
 } from '$lib/vocab/membership/membershipServices';
-import {SessionApiMock} from '$lib/server/SessionApiMock';
+import {SessionApiMock} from '$lib/session/SessionApiMock';
 
 /* test__membershipServices */
 const test__membershipServices = suite<TestDbContext & TestAppContext>('membershipServices');

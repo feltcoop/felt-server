@@ -5,7 +5,7 @@ import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {deleteSpaceService} from '$lib/vocab/space/spaceServices';
-import {SessionApiMock} from '$lib/server/SessionApiMock';
+import {SessionApiMock} from '$lib/session/SessionApiMock';
 
 /* test__spaceServices */
 const test__spaceServices = suite<TestDbContext & TestAppContext>('spaceServices');
