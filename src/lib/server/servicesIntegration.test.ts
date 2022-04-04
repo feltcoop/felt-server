@@ -55,19 +55,13 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 
 	// create a persona
 	const {persona, community: personaHomeCommunity} = unwrap(
-		await createAccountPersonaService.perform({
-			params: randomPersonaParams(),
-			...serviceRequest,
-		}),
+		await createAccountPersonaService.perform({params: randomPersonaParams(), ...serviceRequest}),
 	);
 	assert.ok(personaHomeCommunity);
 
 	// create a second persona
 	const {persona: persona2} = unwrap(
-		await createAccountPersonaService.perform({
-			params: randomPersonaParams(),
-			...serviceRequest,
-		}),
+		await createAccountPersonaService.perform({params: randomPersonaParams(), ...serviceRequest}),
 	);
 
 	// create community
@@ -189,10 +183,7 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 			.filter((s) => !isHomeSpace(s))
 			.map(async (space) =>
 				unwrap(
-					await deleteSpaceService.perform({
-						params: {space_id: space.space_id},
-						...serviceRequest,
-					}),
+					await deleteSpaceService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
 				),
 			),
 	);
