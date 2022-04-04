@@ -71,9 +71,7 @@
 		placeholder="password"
 		autocomplete="current-password"
 	/>
-	<PendingButton pending={!!submitting} bind:el={buttonEl} type="button" on:click={login}>
-		log in
-	</PendingButton>
+	<PendingButton pending={!!submitting} bind:el={buttonEl} on:click={login}>log in</PendingButton>
 	<div class:error={!!errorMessage}>{errorMessage || '💚'}</div>
 </form>
 <div class="centered-block">

@@ -4,14 +4,11 @@ import {blue, gray} from 'kleur/colors';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {ClientAccountSession} from '$lib/session/clientSession.js';
-import type {ErrorResponse} from '$lib/util/error';
 
 const log = new Logger(gray('[') + blue('SessionRepo') + gray(']'));
 
 export class SessionRepo extends PostgresRepo {
-	async loadClientSession(
-		account_id: number,
-	): Promise<Result<{value: ClientAccountSession}, {type?: 'no_account_found'} & ErrorResponse>> {
+	async loadClientSession(account_id: number): Promise<Result<{value: ClientAccountSession}>> {
 		log.trace('loadClientSession', account_id);
 		const accountResult = await this.db.repos.account.findById(account_id);
 		if (!accountResult.ok) return accountResult;

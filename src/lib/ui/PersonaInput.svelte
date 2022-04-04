@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {AsyncStatus} from '@feltcoop/felt';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
+	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
@@ -58,9 +59,7 @@
 		{#if errorMessage}
 			<Message status="error">{errorMessage}</Message>
 		{/if}
-		<button type="button" on:click={create} disabled={status === 'pending'}>
-			Create persona
-		</button>
+		<PendingButton on:click={create} pending={status === 'pending'}>Create persona</PendingButton>
 	</form>
 	<div class="centered-block">
 		<Message icon="‼">your persona name is visible to others</Message>

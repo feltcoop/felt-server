@@ -2,6 +2,7 @@
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import {identity} from '@feltcoop/felt/util/function.js';
 	import {type Result} from '@feltcoop/felt';
+	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 
 	import {autofocus} from '$lib/ui/actions';
 
@@ -88,7 +89,9 @@
 	{#if changed}
 		<div class="buttons">
 			<button type="button" on:click={reset}> reset </button>
-			<button type="button" on:click={save} disabled={pending || !!errorMessage}> save </button>
+			<PendingButton on:click={save} {pending} disabled={pending || !!errorMessage}>
+				save
+			</PendingButton>
 		</div>
 	{:else}
 		<button type="button" on:click={stopEditing}>cancel</button>

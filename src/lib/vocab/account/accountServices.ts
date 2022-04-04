@@ -35,18 +35,15 @@ export const loginAccountService: Service<LoginAccountParams, LoginAccountRespon
 			if (!(await verifyPassword(password, account.password))) {
 				return {ok: false, status: 400, message: 'invalid account name or password'};
 			}
-		} else if (findAccountResult.type === 'no_account_found') {
+		} else {
 			// There's no account, so create one.
 			const createAccountResult = await repos.account.create(username, password);
 			if (createAccountResult.ok) {
 				account = createAccountResult.value;
 			} else {
 				// Failed to create the account.
-				return {ok: false, status: 500, message: createAccountResult.message};
+				return {ok: false, status: 500, message: 'failed to create account'};
 			}
-		} else {
-			// Failed to find the account.
-			return {ok: false, status: 500, message: findAccountResult.message};
 		}
 
 		const clientSessionResult = await repos.session.loadClientSession(account.account_id);

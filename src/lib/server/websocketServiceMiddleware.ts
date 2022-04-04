@@ -8,7 +8,7 @@ import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
 import {SessionApi} from '$lib/server/SessionApi';
 import {authorize} from '$lib/server/authorize';
 
-const log = new Logger(gray('[') + blue('websocketMiddleware') + gray(']'));
+const log = new Logger(gray('[') + blue('websocketServiceMiddleware') + gray(']'));
 
 export interface WebsocketMiddleware {
 	(socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
@@ -22,7 +22,7 @@ export interface BroadcastMessage {
 	params: any;
 }
 
-export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
+export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddleware =
 	(server) => async (socket, messageData, account_id) => {
 		if (typeof messageData !== 'string') {
 			log.error('cannot handle websocket message; currently only supports strings');
@@ -38,7 +38,7 @@ export const toWebsocketMiddleware: (server: ApiServer) => WebsocketMiddleware =
 		}
 		log.trace('incoming', rawMessage);
 
-		// TODO possibly call into `websocketServiceMiddleware` at this point?
+		// TODO possibly move the above code to a generic `websocketMiddleware`?
 		// That way we could separate any other kind of websocket messages
 		// and handle services in their own module.
 		const message = parseJsonRpcRequest(rawMessage);
