@@ -77,7 +77,7 @@ export class ApiServer {
 				});
 				return next();
 			})
-			.use(cookieSessionMiddleware())
+			.use(cookieSessionMiddleware)
 			.use(toAuthenticationMiddleware());
 
 		// Register services as http routes.

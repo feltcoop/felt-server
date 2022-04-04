@@ -16,9 +16,9 @@ export interface CookieSessionObject {
 const dev = process.env.NODE_ENV !== 'production';
 
 export const parseCookie = (
-	headers: Headers,
+	value: string | undefined | null,
 	options?: cookie.CookieParseOptions | undefined,
-): Record<string, string> => cookie.parse(headers.get('cookie') || '', options);
+): Record<string, string> => cookie.parse(value || '', options);
 
 export const setCookie = (
 	headers: Headers,

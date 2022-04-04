@@ -8,8 +8,8 @@ import {COOKIE_SESSION_KEY} from '$lib/session/SessionApi';
 const log = new Logger('[hooks]');
 
 export const handle: Handle = async ({event, resolve}) => {
-	console.log(`[handle] event`, event);
-	const cookies = parseCookie(event.request.headers);
+	console.log(`[handle] event`, event.url.href);
+	const cookies = parseCookie(event.request.headers.get('cookie'));
 	console.log(`[handle] parsed cookies`, cookies);
 	event.locals.account_id = Number(cookies[COOKIE_SESSION_KEY]) || undefined;
 	// TODO BLOCK also set the request account_id? and delete `authenticationMiddleware`?
