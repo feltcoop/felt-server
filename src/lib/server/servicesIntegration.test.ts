@@ -3,24 +3,15 @@ import * as assert from 'uvu/assert';
 import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {
-	randomAccountParams,
-	randomCommunityParams,
-	randomPersonaParams,
-	randomSpaceParams,
-} from '$lib/vocab/random';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import type {NoteEntityData} from '$lib/vocab/entity/entityData';
-import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
 import {
-	createCommunityService,
 	readCommunitiesService,
 	readCommunityService,
 	deleteCommunityService,
 } from '$lib/vocab/community/communityServices';
 import {
-	createSpaceService,
 	deleteSpaceService,
 	readSpaceService,
 	readSpacesService,
@@ -38,13 +29,12 @@ const test_servicesIntegration = suite<TestDbContext>('repos');
 test_servicesIntegration.before(setupDb);
 test_servicesIntegration.after(teardownDb);
 
-test_servicesIntegration('create, change, and delete some data from repos', async ({db}) => {
+test_servicesIntegration('services integration test', async ({db, random}) => {
 	// create everything
 	//
 	//
 	//
-	const accountParams = randomAccountParams();
-	const account = unwrap(await db.repos.account.create(accountParams.name, accountParams.password));
+	const account = await random.account();
 
 	// This is a reusable request context for all `service.perform` calls.
 	const serviceRequest = {
@@ -54,23 +44,14 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	};
 
 	// create a persona
-	const {persona, community: personaHomeCommunity} = unwrap(
-		await createAccountPersonaService.perform({params: randomPersonaParams(), ...serviceRequest}),
-	);
-	assert.ok(personaHomeCommunity);
+	const {persona, personalCommunity} = await random.persona(account);
+	assert.ok(personalCommunity);
 
 	// create a second persona
-	const {persona: persona2} = unwrap(
-		await createAccountPersonaService.perform({params: randomPersonaParams(), ...serviceRequest}),
-	);
+	const {persona: persona2} = await random.persona(account);
 
 	// create community
-	const {community} = unwrap(
-		await createCommunityService.perform({
-			params: randomCommunityParams(persona.persona_id),
-			...serviceRequest,
-		}),
-	);
+	const {community} = await random.community(persona);
 
 	// join the community with the second persona
 	unwrap(
@@ -81,10 +62,7 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	);
 
 	// create a space
-	const spaceParams = randomSpaceParams(community.community_id);
-	const {space} = unwrap(
-		await createSpaceService.perform({params: spaceParams, ...serviceRequest}),
-	);
+	const {space} = await random.space(persona, account, community);
 	const spaceCount = 1;
 	const defaultSpaces = toDefaultSpaces(community);
 	const defaultSpaceCount = defaultSpaces.length;
@@ -183,7 +161,10 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 			.filter((s) => !isHomeSpace(s))
 			.map(async (space) =>
 				unwrap(
-					await deleteSpaceService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
+					await deleteSpaceService.perform({
+						params: {space_id: space.space_id},
+						...serviceRequest,
+					}),
 				),
 			),
 	);
