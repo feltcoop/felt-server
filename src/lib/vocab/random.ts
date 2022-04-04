@@ -12,6 +12,7 @@ import type {
 	CreateEntityParams,
 	CreateSpaceParams,
 	CreateMembershipParams,
+	CreateTieParams,
 } from '$lib/app/eventTypes';
 import type {Database} from '$lib/db/Database';
 import type {EntityData} from '$lib/vocab/entity/entityData';
@@ -24,6 +25,7 @@ import {createCommunityService} from '$lib/vocab/community/communityServices';
 import {createSpaceService} from '$lib/vocab/space/spaceServices';
 import type {Membership} from '$lib/vocab/membership/membership';
 import {createEntityService} from '$lib/vocab/entity/entityServices';
+import {createTieService} from '$lib/vocab/tie/tieServices';
 
 const session = new SessionApiMock();
 
@@ -38,6 +40,7 @@ export const randomSpaceIcon = (): string => '🥥';
 export const randomSpaceName = randomString;
 export const randomViewData = (): ViewData => parseView('<Room />');
 export const randomEntityData = (): EntityData => ({type: 'Note', content: randomString()});
+export const randomTieType = randomString;
 export const randomAccountParams = (): CreateAccountParams => ({
 	name: randomAccountName(),
 	password: randomPassword(),
@@ -71,6 +74,11 @@ export const randomEntityParams = (actor_id: number, space_id: number): CreateEn
 	actor_id,
 	space_id,
 	data: randomEntityData(),
+});
+export const randomTieParams = (source_id: number, dest_id: number): CreateTieParams => ({
+	source_id,
+	dest_id,
+	type: randomTieType(),
 });
 
 // TODO maybe compute in relation to `RandomVocabContext`
@@ -199,6 +207,7 @@ export class RandomVocabContext {
 		account?: Account,
 		community?: Community,
 		space?: Space,
+		tieType?: Tie['type'],
 	): Promise<{
 		tie: Tie;
 		sourceEntity: Entity;
@@ -215,8 +224,15 @@ export class RandomVocabContext {
 		if (!sourceEntity)
 			({entity: sourceEntity} = await this.entity(persona, account, community, space));
 		if (!destEntity) ({entity: destEntity} = await this.entity(persona, account, community, space));
-		const tie = unwrap(
-			await this.db.repos.tie.create(sourceEntity.entity_id, destEntity.entity_id, 'HasItem'),
+		const params = randomTieParams(sourceEntity.entity_id, destEntity.entity_id);
+		if (tieType) params.type = tieType;
+		const {tie} = unwrap(
+			await createTieService.perform({
+				params,
+				account_id: account.account_id,
+				repos: this.db.repos,
+				session,
+			}),
 		);
 		return {tie, sourceEntity, destEntity, persona, account, community, space};
 	}

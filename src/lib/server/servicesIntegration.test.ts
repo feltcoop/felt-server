@@ -70,6 +70,8 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	const {entity: entity1} = await random.entity(persona, account, community, space);
 	const {entity: entity2} = await random.entity(persona, account, community, space);
 
+	// TODO create some ties
+
 	// do queries
 	//
 	//
