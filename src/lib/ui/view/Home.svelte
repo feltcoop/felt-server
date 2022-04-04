@@ -103,6 +103,7 @@
 		display: flex;
 		flex-direction: row;
 		flex: 1;
+		flex-wrap: wrap;
 	}
 	.role-members li {
 		margin-right: var(--spacing_md);
