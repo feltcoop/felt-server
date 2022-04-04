@@ -10,7 +10,7 @@ export const handle: Handle = async ({event, resolve}) => {
 	console.log(`handle`, event);
 	const cookies = parseCookie(event.request.headers);
 	console.log(`parsed cookies`, cookies);
-	event.locals.account_id = cookies.account_id;
+	event.locals.account_id = Number(cookies.account_id) || undefined;
 	// TODO BLOCK also set the request account_id? and delete `authenticationMiddleware`?
 	// event.request.account_id = event.locals.account_id;
 
