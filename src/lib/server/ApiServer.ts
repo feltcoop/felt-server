@@ -91,7 +91,7 @@ export class ApiServer {
 			try {
 				({handler} = await import(importPath));
 			} catch (err) {
-				throw Error(`Failed to import SvelteKit adapter-node middlewares: ${importPath} -- ${err}`);
+				throw Error(`Failed to import SvelteKit adapter-node handler from ${importPath} -- ${err}`);
 			}
 			this.app.use(handler);
 		}
