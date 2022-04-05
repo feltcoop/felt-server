@@ -10,9 +10,7 @@ const log = new Logger(gray('[') + blue('authenticationMiddleware') + gray(']'))
 // TODO maybe rename this to `authenticationMiddleware`
 
 export const cookieSessionMiddleware: HttpMiddleware = async (req, res, next) => {
-	console.log('req.headers.cookie', req.headers.cookie);
 	const cookies = parseCookie(req.headers.cookie);
-	console.log(`parsed cookies`, cookies);
 
 	if (req.account_id) {
 		log.error('unexpectedly already authenticated', req.account_id);
