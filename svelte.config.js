@@ -15,7 +15,6 @@ export default {
 	kit: {
 		adapter: node(),
 		files: {assets: 'src/static'},
-		prerender: {default: true},
 		vite: {
 			server: {
 				proxy: {
