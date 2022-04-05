@@ -9,7 +9,7 @@ import type {
 	DeleteMembershipResponseResult,
 } from '$lib/app/eventTypes';
 import {CreateMembership, DeleteMembership} from '$lib/vocab/membership/membershipEvents';
-import {Database} from '$lib/db/Database';
+import type {Database} from '$lib/db/Database';
 
 const log = new Logger(gray('[') + blue('membershipServices') + gray(']'));
 
