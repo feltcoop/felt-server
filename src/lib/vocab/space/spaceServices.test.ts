@@ -2,7 +2,6 @@ import {suite} from 'uvu';
 import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {deleteSpaceService} from '$lib/vocab/space/spaceServices';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
@@ -14,8 +13,7 @@ const test__spaceServices = suite<TestDbContext & TestAppContext>('spaceServices
 test__spaceServices.before(setupDb);
 test__spaceServices.after(teardownDb);
 
-test__spaceServices('delete a space in multiple communities', async ({db}) => {
-	const random = new RandomVocabContext(db);
+test__spaceServices('delete a space in multiple communities', async ({db, random}) => {
 	const {space, account} = await random.space();
 
 	unwrap(

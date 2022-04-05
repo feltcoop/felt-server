@@ -32,11 +32,19 @@ export const readCommunitiesService: Service<ReadCommunitiesParams, ReadCommunit
 		event: ReadCommunities,
 		perform: async ({repos, account_id}) => {
 			const findCommunitiesResult = await repos.community.filterByAccount(account_id);
-			if (findCommunitiesResult.ok) {
-				return {ok: true, status: 200, value: {communities: findCommunitiesResult.value}};
+			if (!findCommunitiesResult.ok) {
+				log.trace('[ReadCommunities] error searching for communities');
+				return {
+					ok: false,
+					status: 500,
+					message: 'error searching for communities',
+				};
 			}
-			log.trace('[ReadCommunities] error searching for communities');
-			return {ok: false, status: 500, message: 'error searching for communities'};
+			return {
+				ok: true,
+				status: 200,
+				value: {communities: findCommunitiesResult.value},
+			};
 		},
 	};
 
@@ -48,13 +56,17 @@ export const readCommunityService: Service<ReadCommunityParams, ReadCommunityRes
 		log.trace('[ReadCommunity] community', params.community_id);
 
 		const findCommunityResult = await repos.community.findById(params.community_id);
-		if (findCommunityResult.ok) {
-			return {ok: true, status: 200, value: {community: findCommunityResult.value}};
+		if (!findCommunityResult.ok) {
+			return {
+				ok: false,
+				status: 404,
+				message: 'no community found',
+			};
 		}
 		return {
-			ok: false,
-			status: findCommunityResult.type === 'no_community_found' ? 404 : 500,
-			message: findCommunityResult.message,
+			ok: true,
+			status: 200,
+			value: {community: findCommunityResult.value},
 		};
 	},
 };
@@ -68,6 +80,16 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 		perform: async (serviceRequest) => {
 			const {repos, params, account_id} = serviceRequest;
 			log.trace('creating community account_id', account_id);
+
+			// Check for duplicate community names.
+			const findCommunityResult = await repos.community.findByName(params.name);
+			if (!findCommunityResult.ok) {
+				return {ok: false, status: 500, message: 'failed to lookup existing community by name'};
+			}
+			if (findCommunityResult.value) {
+				return {ok: false, status: 409, message: 'a community with that name already exists'};
+			}
+
 			// TODO validate that `account_id` is `persona_id`
 			const createCommunityResult = await repos.community.create(
 				'standard',
@@ -146,7 +168,7 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 					communityPersona,
 					memberships: [communityPersonaMembershipResult.value, creatorMembershipResult.value],
 				},
-			}; // TODO API types
+			};
 		},
 	};
 
@@ -157,10 +179,10 @@ export const updateCommunitySettingsService: Service<
 	event: UpdateCommunitySettings,
 	perform: async ({repos, params}) => {
 		const result = await repos.community.updateSettings(params.community_id, params.settings);
-		if (result.ok) {
-			return {ok: true, status: 200, value: null};
+		if (!result.ok) {
+			return {ok: false, status: 500, message: 'failed to update community settings'};
 		}
-		return {ok: false, status: 500, message: result.message || 'unknown error'};
+		return {ok: true, status: 200, value: null};
 	},
 };
 
@@ -174,7 +196,7 @@ export const deleteCommunityService: Service<DeleteCommunityParams, DeleteCommun
 				return {
 					ok: false,
 					status: 404,
-					message: communityResult.message || 'issue finding community',
+					message: 'no community found',
 				};
 			}
 			if (communityResult.value.type === 'personal') {
@@ -186,7 +208,7 @@ export const deleteCommunityService: Service<DeleteCommunityParams, DeleteCommun
 			}
 			const deleteResult = await repos.community.deleteById(params.community_id);
 			if (!deleteResult.ok) {
-				return {ok: false, status: 500, message: deleteResult.message || 'unknown error'};
+				return {ok: false, status: 500, message: 'failed to delete community'};
 			}
 			return {ok: true, status: 200, value: null};
 		},

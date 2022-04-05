@@ -3,7 +3,6 @@ import * as assert from 'uvu/assert';
 import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 
 /* test__CommunityRepo */
@@ -12,8 +11,7 @@ const test__CommunityRepo = suite<TestDbContext & TestAppContext>('CommunityRepo
 test__CommunityRepo.before(setupDb);
 test__CommunityRepo.after(teardownDb);
 
-test__CommunityRepo('updateSettings', async ({db}) => {
-	const random = new RandomVocabContext(db);
+test__CommunityRepo('updateSettings', async ({db, random}) => {
 	const {community} = await random.community();
 	assert.type(community.settings, 'object');
 	assert.type(community.settings.hue, 'number');

@@ -3,6 +3,7 @@ import postgres from 'postgres';
 import {Database} from '$lib/db/Database';
 import {defaultPostgresOptions} from '$lib/db/postgres';
 import {installSourceMaps, log} from '$lib/util/testHelpers';
+import {RandomVocabContext} from '$lib/vocab/random';
 
 installSourceMaps();
 
@@ -12,10 +13,12 @@ installSourceMaps();
 
 export interface TestDbContext {
 	db: Database;
+	random: RandomVocabContext;
 }
 
 export const setupDb = async (context: TestDbContext): Promise<void> => {
 	context.db = new Database({sql: postgres(defaultPostgresOptions)});
+	context.random = new RandomVocabContext(context.db);
 };
 
 export const teardownDb = async (context: TestDbContext): Promise<void> => {

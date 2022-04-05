@@ -37,15 +37,11 @@ export const readSpaceService: Service<ReadSpaceParams, ReadSpaceResponseResult>
 		log.trace('[ReadSpace] space', params.space_id);
 
 		const findSpaceResult = await repos.space.findById(params.space_id);
-		if (findSpaceResult.ok) {
-			return {ok: true, status: 200, value: {space: findSpaceResult.value}};
+		if (!findSpaceResult.ok) {
+			log.trace('[ReadSpace] no space found');
+			return {ok: false, status: 404, message: 'no space found'};
 		}
-		log.trace('[ReadSpace] no space found');
-		return {
-			ok: false,
-			status: findSpaceResult.type === 'no_space_found' ? 404 : 500,
-			message: findSpaceResult.message,
-		};
+		return {ok: true, status: 200, value: {space: findSpaceResult.value}};
 	},
 };
 
@@ -56,11 +52,11 @@ export const readSpacesService: Service<ReadSpacesParams, ReadSpacesResponseResu
 		log.trace('[ReadSpaces] retrieving spaces for community', params.community_id);
 
 		const findSpacesResult = await repos.space.filterByCommunity(params.community_id);
-		if (findSpacesResult.ok) {
-			return {ok: true, status: 200, value: {spaces: findSpacesResult.value}};
+		if (!findSpacesResult.ok) {
+			log.trace('[ReadSpaces] error searching for community spaces');
+			return {ok: false, status: 500, message: 'error searching for community spaces'};
 		}
-		log.trace('[ReadSpaces] error searching for community spaces');
-		return {ok: false, status: 500, message: 'error searching for community spaces'};
+		return {ok: true, status: 200, value: {spaces: findSpacesResult.value}};
 	},
 };
 
@@ -112,11 +108,11 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 			params.community_id,
 			createDirectoryResult.value.entity_id,
 		);
-		if (createSpaceResult.ok) {
-			return {ok: true, status: 200, value: {space: createSpaceResult.value}};
+		if (!createSpaceResult.ok) {
+			log.trace('[CreateSpace] error searching for community spaces');
+			return {ok: false, status: 500, message: 'error searching for community spaces'};
 		}
-		log.trace('[CreateSpace] error searching for community spaces');
-		return {ok: false, status: 500, message: 'error searching for community spaces'};
+		return {ok: true, status: 200, value: {space: createSpaceResult.value}};
 	},
 };
 
@@ -125,11 +121,11 @@ export const updateSpaceService: Service<UpdateSpaceParams, UpdateSpaceResponseR
 	perform: async ({repos, params}) => {
 		const {space_id, ...partial} = params;
 		const updateEntitiesResult = await repos.space.update(space_id, partial);
-		if (updateEntitiesResult.ok) {
-			return {ok: true, status: 200, value: {space: updateEntitiesResult.value}}; // TODO API types
+		if (!updateEntitiesResult.ok) {
+			log.trace('[UpdateSpace] error updating space');
+			return {ok: false, status: 500, message: 'failed to update space'};
 		}
-		log.trace('[UpdateSpace] error updating space');
-		return {ok: false, status: 500, message: 'failed to update space'};
+		return {ok: true, status: 200, value: {space: updateEntitiesResult.value}};
 	},
 };
 
@@ -142,10 +138,7 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 		// Check that the space can be deleted.
 		const findSpaceResult = await repos.space.findById(params.space_id);
 		if (!findSpaceResult.ok) {
-			if (findSpaceResult.type === 'no_space_found') {
-				return {ok: false, status: 404, message: findSpaceResult.message};
-			}
-			return {ok: false, status: 500, message: 'unknown server error'};
+			return {ok: false, status: 404, message: 'no space found'};
 		}
 		const space = findSpaceResult.value;
 		if (!canDeleteSpace(space)) {
@@ -156,7 +149,7 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 		log.trace('[DeleteSpace] result', result);
 		if (!result.ok) {
 			log.trace('[DeleteSpace] error removing space: ', params.space_id);
-			return {ok: false, status: 500, message: result.message};
+			return {ok: false, status: 500, message: 'failed to delete space'};
 		}
 		return {ok: true, status: 200, value: null};
 	},

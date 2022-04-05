@@ -3,7 +3,6 @@ import * as assert from 'uvu/assert';
 import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {RandomVocabContext} from '$lib/vocab/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {
 	createMembershipService,
@@ -26,8 +25,7 @@ const serviceRequest = (account_id: number, db: any) => {
 	};
 };
 
-test__membershipServices('disallow creating duplicate memberships', async ({db}) => {
-	const random = new RandomVocabContext(db);
+test__membershipServices('disallow creating duplicate memberships', async ({db, random}) => {
 	const {community, persona, account} = await random.community();
 	unwrapError(
 		await createMembershipService.perform({
@@ -39,26 +37,26 @@ test__membershipServices('disallow creating duplicate memberships', async ({db})
 	);
 });
 
-test__membershipServices('disallow creating memberships for personal communities', async ({db}) => {
-	const random = new RandomVocabContext(db);
-	const {account, personalCommunity} = await random.persona();
-	unwrapError(
-		await createMembershipService.perform({
-			repos: db.repos,
-			account_id: account.account_id,
-			params: {
-				community_id: personalCommunity.community_id,
-				persona_id: (await random.persona()).persona.persona_id,
-			},
-			session: new SessionApiMock(),
-		}),
-	);
-});
+test__membershipServices(
+	'disallow creating memberships for personal communities',
+	async ({db, random}) => {
+		const {account, personalCommunity} = await random.persona();
+		unwrapError(
+			await createMembershipService.perform({
+				repos: db.repos,
+				account_id: account.account_id,
+				params: {
+					community_id: personalCommunity.community_id,
+					persona_id: (await random.persona()).persona.persona_id,
+				},
+				session: new SessionApiMock(),
+			}),
+		);
+	},
+);
 
-test__membershipServices('delete a membership in a community', async ({db}) => {
-	const random = new RandomVocabContext(db);
+test__membershipServices('delete a membership in a community', async ({db, random}) => {
 	const {community, persona, account} = await random.community();
-
 	unwrap(
 		await deleteMembershipService.perform({
 			repos: db.repos,
@@ -67,14 +65,11 @@ test__membershipServices('delete a membership in a community', async ({db}) => {
 			session: new SessionApiMock(),
 		}),
 	);
-
 	unwrapError(await db.repos.membership.findById(persona.persona_id, community.community_id));
 });
 
-test__membershipServices('fail to delete a personal membership', async ({db}) => {
-	const random = new RandomVocabContext(db);
+test__membershipServices('fail to delete a personal membership', async ({db, random}) => {
 	const {persona, account} = await random.persona();
-
 	unwrapError(
 		await deleteMembershipService.perform({
 			repos: db.repos,
@@ -83,14 +78,11 @@ test__membershipServices('fail to delete a personal membership', async ({db}) =>
 			session: new SessionApiMock(),
 		}),
 	);
-
 	unwrap(await db.repos.membership.findById(persona.persona_id, persona.community_id));
 });
 
-test__membershipServices('fail to delete a community persona membership', async ({db}) => {
-	const random = new RandomVocabContext(db);
+test__membershipServices('fail to delete a community persona membership', async ({db, random}) => {
 	const {community, communityPersona, account} = await random.community();
-
 	unwrapError(
 		await deleteMembershipService.perform({
 			repos: db.repos,
@@ -99,58 +91,59 @@ test__membershipServices('fail to delete a community persona membership', async 
 			session: new SessionApiMock(),
 		}),
 	);
-
 	unwrap(await db.repos.membership.findById(communityPersona.persona_id, community.community_id));
 });
 
-test__membershipServices('delete orphaned communities on last member leaving', async ({db}) => {
-	//Need a community with two account members
-	const random = new RandomVocabContext(db);
-	const {persona: persona1, account} = await random.persona();
-	const {community} = await random.community(persona1);
-	const {persona: persona2} = await random.persona();
-	unwrap(
-		await createMembershipService.perform({
-			params: {persona_id: persona2.persona_id, community_id: community.community_id},
-			...serviceRequest(account.account_id, db),
-		}),
-	);
-	assert.is(
-		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
-		3,
-	);
+test__membershipServices(
+	'delete orphaned communities on last member leaving',
+	async ({db, random}) => {
+		//Need a community with two account members
+		const {persona: persona1, account} = await random.persona();
+		const {community} = await random.community(persona1);
+		const {persona: persona2} = await random.persona();
+		unwrap(
+			await createMembershipService.perform({
+				params: {persona_id: persona2.persona_id, community_id: community.community_id},
+				...serviceRequest(account.account_id, db),
+			}),
+		);
+		assert.is(
+			unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
+			3,
+		);
 
-	//Delete 1 account member, the community still exists
-	unwrap(
-		await deleteMembershipService.perform({
-			repos: db.repos,
-			params: {persona_id: persona2.persona_id, community_id: community.community_id},
-			account_id: account.account_id,
-			session: new SessionApiMock(),
-		}),
-	);
-	assert.is(
-		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
-		2,
-	);
-	unwrap(await db.repos.community.findById(community.community_id));
+		//Delete 1 account member, the community still exists
+		unwrap(
+			await deleteMembershipService.perform({
+				repos: db.repos,
+				params: {persona_id: persona2.persona_id, community_id: community.community_id},
+				account_id: account.account_id,
+				session: new SessionApiMock(),
+			}),
+		);
+		assert.is(
+			unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
+			2,
+		);
+		unwrap(await db.repos.community.findById(community.community_id));
 
-	//Delete last account member, the community is deleted
-	unwrap(
-		await deleteMembershipService.perform({
-			repos: db.repos,
-			params: {persona_id: persona1.persona_id, community_id: community.community_id},
-			account_id: account.account_id,
-			session: new SessionApiMock(),
-		}),
-	);
+		//Delete last account member, the community is deleted
+		unwrap(
+			await deleteMembershipService.perform({
+				repos: db.repos,
+				params: {persona_id: persona1.persona_id, community_id: community.community_id},
+				account_id: account.account_id,
+				session: new SessionApiMock(),
+			}),
+		);
 
-	assert.is(
-		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
-		0,
-	);
-	unwrapError(await db.repos.community.findById(community.community_id));
-});
+		assert.is(
+			unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
+			0,
+		);
+		unwrapError(await db.repos.community.findById(community.community_id));
+	},
+);
 
 test__membershipServices.run();
 /* test__membershipServices */

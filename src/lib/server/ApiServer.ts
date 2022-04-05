@@ -13,7 +13,7 @@ import {cookieSessionMiddleware} from '$lib/session/cookieSession';
 import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import type {Service} from '$lib/server/service';
 import {toHttpServiceMiddleware} from '$lib/server/httpServiceMiddleware';
-import {toWebsocketMiddleware} from '$lib/server/websocketMiddleware';
+import {toWebsocketServiceMiddleware} from '$lib/server/websocketServiceMiddleware';
 
 const log = new Logger([blue('[ApiServer]')]);
 
@@ -40,7 +40,7 @@ export class ApiServer {
 	readonly db: Database;
 	readonly services: Map<string, Service<any, any>>;
 
-	websocketListener = toWebsocketMiddleware(this);
+	websocketListener = toWebsocketServiceMiddleware(this);
 
 	constructor(options: Options) {
 		this.server = options.server;

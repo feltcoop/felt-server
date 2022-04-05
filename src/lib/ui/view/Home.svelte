@@ -1,8 +1,8 @@
 <script lang="ts">
 	import {getApp} from '$lib/ui/app';
 	import {getViewContext} from '$lib/vocab/view/view';
-	import Forum from './Forum.svelte';
-	import PersonaAvatar from '../PersonaAvatar.svelte';
+	import Forum from '$lib/ui/view/Forum.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 
 	const viewContext = getViewContext();
 	$: ({community} = $viewContext);
@@ -103,6 +103,7 @@
 		display: flex;
 		flex-direction: row;
 		flex: 1;
+		flex-wrap: wrap;
 	}
 	.role-members li {
 		margin-right: var(--spacing_md);
