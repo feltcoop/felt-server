@@ -20,7 +20,7 @@ export const handle: Handle = async ({event, resolve}) => {
 	console.log('[handle] resolving');
 	const response = await resolve(event);
 	// TODO BLOCK can we introspect the session here to update headers to log out if something goes wrong?
-	console.log('[handle] resolved', response);
+	console.log('[handle] resolved');
 
 	return response;
 };

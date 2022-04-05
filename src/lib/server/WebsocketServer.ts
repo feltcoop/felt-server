@@ -7,6 +7,8 @@ import type StrictEventEmitter from 'strict-event-emitter-types';
 import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
+import {parseCookie, toSessionId} from '$lib/session/cookieSession';
+
 const log = new Logger(gray('[') + blue('wss') + gray(']'));
 
 type WebsocketServerEmitter = StrictEventEmitter<EventEmitter, WebsocketServerEvents>;
@@ -30,14 +32,14 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 
 	async init(): Promise<void> {
 		const {wss} = this;
-		wss.on('connection', (socket, req: CookieSessionIncomingMessage) => {
+		wss.on('connection', (socket, req) => {
 			log.trace('connection req.url', req.url, wss.clients.size);
 			log.trace('connection req.headers', req.headers);
 
-			// TODO BLOCK cookie session logic to add session -- do hooks run? in dev/prod?
+			const cookies = parseCookie(req.headers.cookie);
+			const account_id = toSessionId(cookies);
 
-			const account_id = req.session?.account_id;
-			if (account_id == null) {
+			if (!account_id) {
 				log.trace('request to open connection was unauthenticated');
 				socket.send(REQUIRES_AUTHENTICATION_MESSAGE);
 				socket.close();

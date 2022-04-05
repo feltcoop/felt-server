@@ -12,13 +12,11 @@ import type {Service} from '$lib/server/service';
 import {toHttpServiceMiddleware} from '$lib/server/httpServiceMiddleware';
 import {cookieSessionMiddleware} from '$lib/session/cookieSessionMiddleware';
 import {toWebsocketServiceMiddleware} from '$lib/server/websocketServiceMiddleware';
+import type {CookieSessionRequest} from '$lib/session/cookieSession';
 
 const log = new Logger([blue('[ApiServer]')]);
 
-// Similar but not identical to `WebsocketServerRequest`.
-export interface ApiServerRequest extends PolkaRequest {
-	account_id?: number;
-}
+export interface ApiServerRequest extends PolkaRequest, CookieSessionRequest {}
 export interface HttpMiddleware extends PolkaMiddleware<ApiServerRequest> {} // eslint-disable-line @typescript-eslint/no-empty-interface
 
 export interface Options {

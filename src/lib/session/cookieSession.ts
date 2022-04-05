@@ -4,6 +4,10 @@ const dev = process.env.NODE_ENV !== 'production';
 
 export const COOKIE_SESSION_KEY = 'session_id';
 
+export interface CookieSessionRequest {
+	account_id?: number;
+}
+
 export const parseCookie = (
 	value: string | undefined | null,
 	options?: cookie.CookieParseOptions | undefined,
@@ -23,6 +27,5 @@ export const serializeCookie = (
 		...options,
 	});
 
-// TODO BLOCK where does this belong? maybe `cookieSessionMiddleware`?
 export const toSessionId = (cookies: Record<string, string>): number | undefined =>
 	Number(cookies[COOKIE_SESSION_KEY]) || undefined;
