@@ -26,7 +26,7 @@ test_communityServices('unable to delete personal community', async ({db, random
 		params: {community_id: persona.community_id},
 		session: new SessionApiMock(),
 	});
-	assert.not(deleteCommunityResult.ok);
+	assert.ok(!deleteCommunityResult.ok);
 	assert.is(deleteCommunityResult.status, 405);
 });
 
