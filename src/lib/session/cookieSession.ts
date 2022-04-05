@@ -14,8 +14,12 @@ export const parseCookie = (
 	options?: cookie.CookieParseOptions | undefined,
 ): Record<string, string> => cookie.parse(value || '', options);
 
-export const setCookie = (res: ServerResponse, value: string): void => {
-	res.setHeader('set-cookie', serializeCookie(value));
+export const setCookie = (res: ServerResponse | {headers: Headers}, value: string): void => {
+	if ('headers' in res) {
+		res.headers.set('set-cookie', serializeCookie(value));
+	} else {
+		res.setHeader('set-cookie', serializeCookie(value));
+	}
 };
 
 export const serializeCookie = (
