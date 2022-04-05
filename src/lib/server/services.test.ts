@@ -18,6 +18,7 @@ test__services.before(setupDb);
 test__services.after(teardownDb);
 
 test__services('perform services', async ({db, random}) => {
+	const session = new SessionApiMock();
 	for (const service of services.values()) {
 		const account = await random.account();
 		const params = await randomEventParams(service.event, random, {account});
@@ -29,10 +30,10 @@ test__services('perform services', async ({db, random}) => {
 			);
 		}
 		const result = await service.perform({
-			repos: db.repos,
 			params,
 			account_id: service.event.authenticate === false ? (null as any) : account.account_id,
-			session: new SessionApiMock(),
+			repos: db.repos,
+			session,
 		});
 		if (!result.ok) {
 			log.error(red(`failed service call: ${service.event.name}`), params, result);

@@ -17,7 +17,7 @@ const envs: Array<{file: string; defaultFile: string}> = [
 
 interface Env {
 	VITE_GIT_HASH: string;
-	COOKIE_KEYS: string; // TODO validate this somehow to avoid production security issues
+	COOKIE_KEYS: string;
 	VITE_DEPLOY_SERVER_HOST: string;
 	DEPLOY_IP: string;
 	DEPLOY_USER: string;

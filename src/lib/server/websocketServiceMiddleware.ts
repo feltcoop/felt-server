@@ -7,7 +7,6 @@ import type {ApiServer} from '$lib/server/ApiServer';
 import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
 import {SessionApiDisabled} from '$lib/session/SessionApiDisabled';
 import {authorize} from '$lib/server/authorize';
-import {toClientErrorMessage} from '$lib/util/error';
 
 const log = new Logger(gray('[') + blue('websocketServiceMiddleware') + gray(']'));
 
@@ -92,7 +91,7 @@ export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddl
 					result = {
 						ok: false,
 						status: 500,
-						message: toClientErrorMessage(err),
+						message: 'unknown server error',
 					};
 				}
 			}

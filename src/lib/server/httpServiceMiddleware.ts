@@ -7,7 +7,6 @@ import type {Service} from '$lib/server/service';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {SessionApi} from '$lib/session/SessionApi';
 import {authorize} from '$lib/server/authorize';
-import {toClientErrorMessage} from '$lib/util/error';
 
 const log = new Logger(gray('[') + blue('httpServiceMiddleware') + gray(']'));
 
@@ -71,7 +70,7 @@ export const toHttpServiceMiddleware =
 			});
 		} catch (err) {
 			log.error(err);
-			send(res, 500, {message: toClientErrorMessage(err)});
+			send(res, 500, {message: 'unknown server error'});
 		}
 
 		if (!result.ok) {
