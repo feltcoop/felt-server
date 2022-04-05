@@ -1,7 +1,7 @@
 import type {ServerResponse} from 'http';
 
 import type {ApiServerRequest} from '$lib/server/ApiServer';
-import {COOKIE_SESSION_KEY, serializeCookie} from '$lib/session/cookieSession';
+import {serializeCookie} from '$lib/session/cookieSession';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 const log = new Logger('[SessionApi]');
@@ -23,14 +23,14 @@ export class SessionApi implements ISessionApi {
 	login(account_id: number): void {
 		log.trace('logging in', account_id);
 		// TODO BLOCK should this check `!account_id`?
-		this.res.setHeader(COOKIE_SESSION_KEY, serializeCookie(account_id + ''));
+		this.res.setHeader('set-cookie', serializeCookie(account_id + ''));
 		this.req.account_id = account_id;
 	}
 
 	logout(): void {
 		log.trace('logging out', this.req.account_id);
 		this.req.account_id = undefined!;
-		this.res.setHeader(COOKIE_SESSION_KEY, '');
+		this.res.setHeader('set-cookie', '');
 		// TODO BLOCK use a helper?
 		// setCookie(this.res.headers, COOKIE_SESSION_KEY, '');
 	}
