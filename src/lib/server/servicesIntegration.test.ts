@@ -77,13 +77,23 @@ test_servicesIntegration('create, change, and delete some data from repos', asyn
 	const entityData2: NoteEntityData = {type: 'Note', content: 'entity: 2'};
 	const {entity: entity1} = unwrap(
 		await createEntityService.perform({
-			params: {actor_id: persona.persona_id, space_id: space.space_id, data: entityData1},
+			params: {
+				actor_id: persona.persona_id,
+				space_id: space.space_id,
+				data: entityData1,
+				source_id: space.directory_id,
+			},
 			...serviceRequest,
 		}),
 	);
 	const {entity: entity2} = unwrap(
 		await createEntityService.perform({
-			params: {actor_id: persona.persona_id, space_id: space.space_id, data: entityData2},
+			params: {
+				actor_id: persona.persona_id,
+				space_id: space.space_id,
+				data: entityData2,
+				source_id: space.directory_id,
+			},
 			...serviceRequest,
 		}),
 	);

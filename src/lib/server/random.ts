@@ -100,7 +100,7 @@ export const randomEventParams = async (
 		case 'CreateEntity': {
 			if (!persona) ({persona} = await random.persona(account));
 			if (!space) ({space} = await random.space(persona, account, community));
-			return randomEntityParams(persona.persona_id, space.space_id);
+			return randomEntityParams(persona.persona_id, space.space_id, space.directory_id);
 		}
 		case 'ReadEntities': {
 			if (!space) ({space} = await random.space(persona, account, community));

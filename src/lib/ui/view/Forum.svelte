@@ -24,6 +24,7 @@
 			space_id: $space.space_id,
 			data: {type: 'Note', content},
 			actor_id: $persona.persona_id,
+			source_id: $space.directory_id,
 		});
 		text = '';
 	};

@@ -66,10 +66,15 @@ export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
 	url: randomSpaceUrl(),
 	icon: randomSpaceIcon(),
 });
-export const randomEntityParams = (actor_id: number, space_id: number): CreateEntityParams => ({
+export const randomEntityParams = (
+	actor_id: number,
+	space_id: number,
+	source_id: number,
+): CreateEntityParams => ({
 	actor_id,
 	space_id,
 	data: randomEntityData(),
+	source_id,
 });
 
 // TODO maybe compute in relation to `RandomVocabContext`
@@ -179,7 +184,7 @@ export class RandomVocabContext {
 		if (!persona) ({persona} = await this.persona(account));
 		if (!community) ({community} = await this.community(persona, account));
 		if (!space) ({space} = await this.space(persona, account, community));
-		const params = randomEntityParams(persona.persona_id, space.space_id);
+		const params = randomEntityParams(persona.persona_id, space.space_id, space.directory_id);
 		const entity = unwrap(
 			await this.db.repos.entity.create(params.actor_id, params.data, params.space_id),
 		);
