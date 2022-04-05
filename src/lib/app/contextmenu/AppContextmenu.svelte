@@ -58,7 +58,7 @@
 		{#if !$session.guest}
 			<li role="none">
 				<div>
-					<AccountForm guest={$session.guest} />
+					<AccountForm guest={false} />
 				</div>
 			</li>
 		{/if}

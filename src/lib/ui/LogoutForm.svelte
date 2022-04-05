@@ -9,7 +9,7 @@
 	const {dispatch} = getApp();
 
 	let account: AccountModel | undefined;
-	$: account = $session.account;
+	$: account = $session.guest ? undefined : $session.account;
 
 	let errorMessage: string | undefined;
 	let submitting: boolean | undefined;
