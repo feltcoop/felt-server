@@ -3,6 +3,9 @@ import {configureLogLevel, Logger, LogLevel} from '@feltcoop/felt/util/log.js';
 import * as assert from 'uvu/assert';
 import type {Result} from '@feltcoop/felt';
 
+import {SessionApiMock} from '$lib/server/SessionApiMock';
+import type {Database} from '$lib/db/Database';
+
 configureLogLevel(LogLevel.Info);
 
 export const log = new Logger('[test]');
@@ -31,3 +34,10 @@ export const unwrapError = <TError extends object>(
 export const unwrapError = (result: Result): void => {
 	assert.ok(!result.ok);
 };
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const serviceRequest = (account_id: number, db: Database) => ({
+	account_id,
+	repos: db.repos,
+	session: new SessionApiMock(),
+});

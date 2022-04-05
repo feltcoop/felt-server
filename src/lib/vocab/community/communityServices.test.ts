@@ -11,6 +11,8 @@ import {
 } from '$lib/vocab/community/communityServices';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
 
+const session = new SessionApiMock();
+
 /* test_communityServices */
 const test_communityServices = suite<TestDbContext & TestAppContext>('communityRepo');
 
@@ -24,7 +26,7 @@ test_communityServices('unable to delete personal community', async ({db, random
 		repos: db.repos,
 		account_id: account.account_id,
 		params: {community_id: persona.community_id},
-		session: new SessionApiMock(),
+		session,
 	});
 	assert.ok(!deleteCommunityResult.ok);
 	assert.is(deleteCommunityResult.status, 405);
@@ -35,7 +37,7 @@ test_communityServices('disallow duplicate community names', async ({db, random}
 	const serviceRequest = {
 		repos: db.repos,
 		account_id: account.account_id,
-		session: new SessionApiMock(),
+		session,
 	};
 
 	const params = randomCommunityParams(persona.persona_id);
