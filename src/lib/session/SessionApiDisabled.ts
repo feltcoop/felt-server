@@ -1,6 +1,7 @@
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {ISessionApi} from '$lib/session/SessionApi';
+import {ClientError} from '$lib/util/error';
 
 const log = new Logger('[SessionApi]');
 
@@ -11,14 +12,12 @@ const log = new Logger('[SessionApi]');
  */
 export class SessionApiDisabled implements ISessionApi {
 	login(): void {
-		log.error('login called from a non-http service');
-		// TODO BLOCK maybe throw a custom `ClientError` to pass through the error to clients?
-		throw Error('login is disabled from non-http services');
+		log.error('login was incorrectly called from a non-http service');
+		throw new ClientError('login can only be called by http clients');
 	}
 
 	logout(): void {
-		log.error('logout called from a non-http service?');
-		// TODO BLOCK maybe throw a custom `ClientError` to pass through the error to clients?
-		throw Error('logout is disabled from non-http services');
+		log.error('logout was incorrectly called from a non-http service');
+		throw new ClientError('logout can only be called by http clients');
 	}
 }
