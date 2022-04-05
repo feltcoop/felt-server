@@ -1,24 +1,40 @@
+import {fromEnv} from '$lib/server/env';
 import cookie from 'cookie';
 import type {ServerResponse} from 'http';
+// import cookieSignature from 'cookie-signature';
 
 const dev = process.env.NODE_ENV !== 'production';
 
 export const COOKIE_SESSION_KEY = 'session_id';
 
+console.log(`fromEnv('COOKIE_KEYS').split('__')`, fromEnv('COOKIE_KEYS').split('__'));
+const secrets = fromEnv('COOKIE_KEYS').split('__');
+const [secret] = secrets;
+// const keys = new Keygrip(fromEnv('COOKIE_KEYS').split('__'));
+
 export interface CookieSessionRequest {
 	account_id?: number;
 }
 
-export const parseCookie = (
+export const parseSessionCookie = (
 	value: string | undefined | null,
+	options?: cookie.CookieParseOptions | undefined,
+): number | undefined => {
+	if (!value) return undefined;
+	const cookies = parseCookies(value, options);
+	return Number(cookies[COOKIE_SESSION_KEY]) || undefined;
+};
+
+export const parseCookies = (
+	value: string,
 	options?: cookie.CookieParseOptions | undefined,
 ): Record<string, string> => cookie.parse(value || '', options);
 
 export const setCookie = (res: ServerResponse | {headers: Headers}, value: string): void => {
 	if ('headers' in res) {
-		res.headers.set('set-cookie', serializeCookie(value));
+		res.headers.set('Set-Cookie', serializeCookie(value));
 	} else {
-		res.setHeader('set-cookie', serializeCookie(value));
+		res.setHeader('Set-Cookie', serializeCookie(value));
 	}
 };
 
@@ -35,6 +51,3 @@ export const serializeCookie = (
 		sameSite: 'lax',
 		...options,
 	});
-
-export const toSessionId = (cookies: Record<string, string>): number | undefined =>
-	Number(cookies[COOKIE_SESSION_KEY]) || undefined;

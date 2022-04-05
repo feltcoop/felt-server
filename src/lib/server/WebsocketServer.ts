@@ -7,7 +7,7 @@ import type StrictEventEmitter from 'strict-event-emitter-types';
 import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import {parseCookie, toSessionId} from '$lib/session/cookieSession';
+import {parseSessionCookie} from '$lib/session/cookieSession';
 
 const log = new Logger(gray('[') + blue('wss') + gray(']'));
 
@@ -36,8 +36,7 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 			log.trace('connection req.url', req.url, wss.clients.size);
 			log.trace('connection req.headers', req.headers);
 
-			const cookies = parseCookie(req.headers.cookie);
-			const account_id = toSessionId(cookies);
+			const account_id = parseSessionCookie(req.headers.cookie);
 
 			if (!account_id) {
 				log.trace('request to open connection was unauthenticated');
