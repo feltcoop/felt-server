@@ -86,15 +86,14 @@ export class ApiServer {
 
 		// SvelteKit Node adapter, adapted to our production API server
 		if (process.env.NODE_ENV === 'production') {
-			const importPath = '../../../svelte-kit/middlewares.js';
-			let sveltekitMiddlewaresModule: any;
+			const importPath = '../../../svelte-kit/handler.js';
+			let handler: any;
 			try {
-				sveltekitMiddlewaresModule = await import(importPath);
+				({handler} = await import(importPath));
 			} catch (err) {
 				throw Error(`Failed to import SvelteKit adapter-node middlewares: ${importPath} -- ${err}`);
 			}
-			const {assetsMiddleware, prerenderedMiddleware, kitMiddleware} = sveltekitMiddlewaresModule;
-			this.app.use(assetsMiddleware, prerenderedMiddleware, kitMiddleware);
+			this.app.use(handler);
 		}
 
 		// Start the app.
