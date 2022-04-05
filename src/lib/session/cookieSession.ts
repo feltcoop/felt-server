@@ -1,4 +1,5 @@
 import cookie from 'cookie';
+import type {ServerResponse} from 'http';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -12,6 +13,10 @@ export const parseCookie = (
 	value: string | undefined | null,
 	options?: cookie.CookieParseOptions | undefined,
 ): Record<string, string> => cookie.parse(value || '', options);
+
+export const setCookie = (res: ServerResponse, value: string): void => {
+	res.setHeader('set-cookie', serializeCookie(value));
+};
 
 export const serializeCookie = (
 	value: string,
