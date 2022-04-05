@@ -207,7 +207,7 @@ export class RandomVocabContext {
 		account?: Account,
 		community?: Community,
 		space?: Space,
-		tieType?: Tie['type'],
+		type?: Tie['type'],
 	): Promise<{
 		tie: Tie;
 		sourceEntity: Entity;
@@ -225,7 +225,7 @@ export class RandomVocabContext {
 			({entity: sourceEntity} = await this.entity(persona, account, community, space));
 		if (!destEntity) ({entity: destEntity} = await this.entity(persona, account, community, space));
 		const params = randomTieParams(sourceEntity.entity_id, destEntity.entity_id);
-		if (tieType) params.type = tieType;
+		if (type) params.type = type;
 		const {tie} = unwrap(
 			await createTieService.perform({
 				params,
