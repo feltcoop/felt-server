@@ -1,4 +1,4 @@
-import type {Result} from '@feltcoop/felt';
+import {NOT_OK, OK, type Result} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue, gray} from 'kleur/colors';
 
@@ -17,7 +17,7 @@ export class SpaceRepo extends PostgresRepo {
 		`;
 		log.trace('[findById] result', data);
 		if (!data.length) {
-			return {ok: false};
+			return NOT_OK;
 		}
 		return {ok: true, value: data[0]};
 	}
@@ -91,7 +91,7 @@ export class SpaceRepo extends PostgresRepo {
 			RETURNING *
 		`;
 		if (!result.count) {
-			return {ok: false};
+			return NOT_OK;
 		}
 		return {ok: true, value: result[0]};
 	}
@@ -102,8 +102,8 @@ export class SpaceRepo extends PostgresRepo {
 			DELETE FROM spaces WHERE space_id=${space_id}
 		`;
 		if (!data.count) {
-			return {ok: false};
+			return NOT_OK;
 		}
-		return {ok: true};
+		return OK;
 	}
 }

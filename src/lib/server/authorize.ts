@@ -1,4 +1,4 @@
-import type {Result} from '@feltcoop/felt';
+import {OK, type Result} from '@feltcoop/felt';
 
 import type {Service} from '$lib/server/service';
 import type {ErrorResponse} from '$lib/util/error';
@@ -12,11 +12,11 @@ export const authorize = (
 	// Authorize all services by default; each service can opt-out as needed.
 	const requiresAuthentication = service.event.authenticate ?? true;
 	if (!requiresAuthentication) {
-		return {ok: true};
+		return OK;
 	}
 	if (!account_id) {
 		return {ok: false, message: 'not logged in'}; // TODO centralize error message strings
 	}
 	// TODO add authorization logic based on the account's roles and the requested service
-	return {ok: true};
+	return OK;
 };

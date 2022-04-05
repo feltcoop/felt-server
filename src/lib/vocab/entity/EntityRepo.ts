@@ -1,4 +1,4 @@
-import type {Result} from '@feltcoop/felt';
+import {NOT_OK, OK, type Result} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue, gray} from 'kleur/colors';
 
@@ -54,7 +54,7 @@ export class EntityRepo extends PostgresRepo {
 			RETURNING *
 		`;
 		if (!result.count) {
-			return {ok: false};
+			return NOT_OK;
 		}
 		return {ok: true, value: result[0]};
 	}
@@ -68,9 +68,9 @@ export class EntityRepo extends PostgresRepo {
 			WHERE entity_id=${entity_id} AND data->>'type' != 'Tombstone';
 		`;
 		if (!data.count) {
-			return {ok: false};
+			return NOT_OK;
 		}
-		return {ok: true};
+		return OK;
 	}
 
 	//This function actually deletes the record in the DB
@@ -80,8 +80,8 @@ export class EntityRepo extends PostgresRepo {
 			DELETE FROM entities WHERE ${entity_id}=entity_id
 		`;
 		if (!data.count) {
-			return {ok: false};
+			return NOT_OK;
 		}
-		return {ok: true};
+		return OK;
 	}
 }
