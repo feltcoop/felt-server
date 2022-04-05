@@ -1,12 +1,10 @@
 import type {ServerResponse} from 'http';
 
 import type {ApiServerRequest} from '$lib/server/ApiServer';
-import {setCookie} from '$lib/session/cookieSession';
+import {COOKIE_SESSION_KEY, serializeCookie} from '$lib/session/cookieSession';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 const log = new Logger('[SessionApi]');
-
-export const COOKIE_SESSION_KEY = 'session_id';
 
 export interface ISessionApi {
 	login: (account_id: number) => void;
@@ -25,7 +23,7 @@ export class SessionApi implements ISessionApi {
 	login(account_id: number): void {
 		log.trace('logging in', account_id);
 		// TODO BLOCK should this check `!account_id`?
-		setCookie(this.req.headers, COOKIE_SESSION_KEY, account_id + '');
+		this.res.setHeader(COOKIE_SESSION_KEY, serializeCookie(account_id + ''));
 		this.req.account_id = account_id;
 	}
 
@@ -35,10 +33,5 @@ export class SessionApi implements ISessionApi {
 		this.res.setHeader(COOKIE_SESSION_KEY, '');
 		// TODO BLOCK use a helper?
 		// setCookie(this.res.headers, COOKIE_SESSION_KEY, '');
-	}
-
-	// TODO BLOCK where does this belong? maybe `cookieSessionMiddleware`?
-	static toSessionId(cookies: Record<string, string>): number | undefined {
-		return Number(cookies[COOKIE_SESSION_KEY]) || undefined;
 	}
 }

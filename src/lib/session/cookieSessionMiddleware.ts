@@ -3,8 +3,7 @@ import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {HttpMiddleware} from '$lib/server/ApiServer.js';
-import {parseCookie} from '$lib/session/cookieSession';
-import {SessionApi} from '$lib/session/SessionApi';
+import {parseCookie, toSessionId} from '$lib/session/cookieSession';
 
 const log = new Logger(gray('[') + blue('authenticationMiddleware') + gray(']'));
 
@@ -20,7 +19,7 @@ export const cookieSessionMiddleware: HttpMiddleware = async (req, res, next) =>
 		return send(res, 500, {message: 'invalid server configuration'});
 	}
 
-	const account_id = SessionApi.toSessionId(cookies);
+	const account_id = toSessionId(cookies);
 	if (!account_id) {
 		log.trace('unauthenticated request');
 		return next();
