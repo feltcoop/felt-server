@@ -36,6 +36,8 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 			log.trace('connection req.url', req.url, wss.clients.size);
 			log.trace('connection req.headers', req.headers);
 
+			// TODO BLOCK how was this working before?
+			console.log('[WSS TODO] req.account_id', req.account_id);
 			const cookies = parseCookie(req.headers.cookie);
 			const account_id = toSessionId(cookies);
 
