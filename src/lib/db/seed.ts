@@ -13,15 +13,13 @@ import type {Persona} from '$lib/vocab/persona/persona';
 import type {ViewData} from '$lib/vocab/view/view';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
-import {SessionApiMock} from '$lib/server/SessionApiMock';
+import {toServiceRequest} from '$lib/util/testHelpers';
 
 /* eslint-disable no-await-in-loop */
 
 // TODO extract seed helpers and db methods
 
 const log = new Logger([cyan('[seed]')]);
-
-const session = new SessionApiMock();
 
 export const seed = async (db: Database): Promise<void> => {
 	const {sql} = db;
@@ -56,9 +54,7 @@ export const seed = async (db: Database): Promise<void> => {
 			const {persona, spaces} = unwrap(
 				await createAccountPersonaService.perform({
 					params: {name: personaName},
-					account_id: account.account_id,
-					repos: db.repos,
-					session,
+					...toServiceRequest(account.account_id, db),
 				}),
 			);
 
@@ -83,9 +79,7 @@ export const seed = async (db: Database): Promise<void> => {
 		const {community, spaces} = unwrap(
 			await createCommunityService.perform({
 				params: {name: communityParams.name, persona_id: communityParams.persona_id},
-				account_id: mainAccountCreator.account_id,
-				repos: db.repos,
-				session,
+				...toServiceRequest(mainAccountCreator.account_id, db),
 			}),
 		);
 		communities.push(community);

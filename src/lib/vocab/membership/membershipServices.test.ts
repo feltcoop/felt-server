@@ -8,7 +8,7 @@ import {
 	createMembershipService,
 	deleteMembershipService,
 } from '$lib/vocab/membership/membershipServices';
-import {serviceRequest, unwrapError} from '$lib/util/testHelpers';
+import {toServiceRequest, unwrapError} from '$lib/util/testHelpers';
 
 /* test__membershipServices */
 const test__membershipServices = suite<TestDbContext & TestAppContext>('membershipServices');
@@ -21,7 +21,7 @@ test__membershipServices('disallow creating duplicate memberships', async ({db, 
 	unwrapError(
 		await createMembershipService.perform({
 			params: {community_id: community.community_id, persona_id: persona.persona_id},
-			...serviceRequest(account.account_id, db),
+			...toServiceRequest(account.account_id, db),
 		}),
 	);
 });
@@ -36,7 +36,7 @@ test__membershipServices(
 					community_id: personalCommunity.community_id,
 					persona_id: (await random.persona()).persona.persona_id,
 				},
-				...serviceRequest(account.account_id, db),
+				...toServiceRequest(account.account_id, db),
 			}),
 		);
 	},
@@ -47,7 +47,7 @@ test__membershipServices('delete a membership in a community', async ({db, rando
 	unwrap(
 		await deleteMembershipService.perform({
 			params: {persona_id: persona.persona_id, community_id: community.community_id},
-			...serviceRequest(account.account_id, db),
+			...toServiceRequest(account.account_id, db),
 		}),
 	);
 	unwrapError(await db.repos.membership.findById(persona.persona_id, community.community_id));
@@ -58,7 +58,7 @@ test__membershipServices('fail to delete a personal membership', async ({db, ran
 	unwrapError(
 		await deleteMembershipService.perform({
 			params: {persona_id: persona.persona_id, community_id: persona.community_id},
-			...serviceRequest(account.account_id, db),
+			...toServiceRequest(account.account_id, db),
 		}),
 	);
 	unwrap(await db.repos.membership.findById(persona.persona_id, persona.community_id));
@@ -69,7 +69,7 @@ test__membershipServices('fail to delete a community persona membership', async 
 	unwrapError(
 		await deleteMembershipService.perform({
 			params: {persona_id: communityPersona.persona_id, community_id: community.community_id},
-			...serviceRequest(account.account_id, db),
+			...toServiceRequest(account.account_id, db),
 		}),
 	);
 	unwrap(await db.repos.membership.findById(communityPersona.persona_id, community.community_id));
@@ -85,7 +85,7 @@ test__membershipServices(
 		unwrap(
 			await createMembershipService.perform({
 				params: {persona_id: persona2.persona_id, community_id: community.community_id},
-				...serviceRequest(account.account_id, db),
+				...toServiceRequest(account.account_id, db),
 			}),
 		);
 		assert.is(
@@ -97,7 +97,7 @@ test__membershipServices(
 		unwrap(
 			await deleteMembershipService.perform({
 				params: {persona_id: persona2.persona_id, community_id: community.community_id},
-				...serviceRequest(account.account_id, db),
+				...toServiceRequest(account.account_id, db),
 			}),
 		);
 		assert.is(
@@ -110,7 +110,7 @@ test__membershipServices(
 		unwrap(
 			await deleteMembershipService.perform({
 				params: {persona_id: persona1.persona_id, community_id: community.community_id},
-				...serviceRequest(account.account_id, db),
+				...toServiceRequest(account.account_id, db),
 			}),
 		);
 

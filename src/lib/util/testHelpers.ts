@@ -36,7 +36,7 @@ export const unwrapError = (result: Result): void => {
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const serviceRequest = (account_id: number, db: Database) => ({
+export const toServiceRequest = (account_id: number, db: Database) => ({
 	account_id,
 	repos: db.repos,
 	session: new SessionApiMock(),

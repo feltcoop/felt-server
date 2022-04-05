@@ -4,8 +4,7 @@ import {unwrap} from '@feltcoop/felt';
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {deleteSpaceService} from '$lib/vocab/space/spaceServices';
-import {SessionApiMock} from '$lib/server/SessionApiMock';
-import {unwrapError} from '$lib/util/testHelpers';
+import {toServiceRequest, unwrapError} from '$lib/util/testHelpers';
 
 /* test__spaceServices */
 const test__spaceServices = suite<TestDbContext & TestAppContext>('spaceServices');
@@ -18,10 +17,8 @@ test__spaceServices('delete a space in multiple communities', async ({db, random
 
 	unwrap(
 		await deleteSpaceService.perform({
-			repos: db.repos,
 			params: {space_id: space.space_id},
-			account_id: account.account_id,
-			session: new SessionApiMock(),
+			...toServiceRequest(account.account_id, db),
 		}),
 	);
 
