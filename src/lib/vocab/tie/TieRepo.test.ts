@@ -42,16 +42,18 @@ test__TieRepo('check tie queries', async ({db, random}) => {
 
 	const query1 = await db.repos.tie.filterBySpace(space.space_id);
 	assert.ok(query1.ok);
-	assert.equal(query1.value.length, 3);
-	assert.equal(query1.value, [result1.value, result2.value, result3.value]);
+	assert.equal(query1.value.length, 7);
+	assert.ok(query1.value.includes(result1.value));
+	assert.ok(query1.value.includes(result2.value));
+	assert.ok(query1.value.includes(result3.value));
 
 	const query2 = await db.repos.tie.filterBySourceId(entityDir.entity_id);
 	assert.ok(query2.ok);
-	assert.equal(query2.value.length, 3);
-	assert.equal(
-		query2.value.sort((a, b) => a.source_id - b.source_id),
-		[result1.value, result2.value, result3.value].sort((a, b) => a.source_id - b.source_id),
-	);
+	assert.equal(query2.value.length, 7);
+
+	assert.ok(query2.value.includes(result1.value));
+	assert.ok(query2.value.includes(result2.value));
+	assert.ok(query2.value.includes(result3.value));
 });
 
 test__TieRepo.run();
