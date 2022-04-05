@@ -10,6 +10,7 @@ import {
 	createCommunityService,
 } from '$lib/vocab/community/communityServices';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
+import {unwrapError} from '$lib/util/testHelpers';
 
 /* test_communityServices */
 const test_communityServices = suite<TestDbContext & TestAppContext>('communityRepo');
@@ -19,15 +20,17 @@ test_communityServices.after(teardownDb);
 
 test_communityServices('unable to delete personal community', async ({db, random}) => {
 	const {persona, account} = await random.persona();
-
-	const deleteCommunityResult = await deleteCommunityService.perform({
-		repos: db.repos,
-		account_id: account.account_id,
-		params: {community_id: persona.community_id},
-		session: new SessionApiMock(),
-	});
-	assert.ok(!deleteCommunityResult.ok);
-	assert.is(deleteCommunityResult.status, 405);
+	assert.is(
+		unwrapError(
+			await deleteCommunityService.perform({
+				repos: db.repos,
+				account_id: account.account_id,
+				params: {community_id: persona.community_id},
+				session: new SessionApiMock(),
+			}),
+		).status,
+		405,
+	);
 });
 
 test_communityServices('disallow duplicate community names', async ({db, random}) => {
@@ -43,14 +46,16 @@ test_communityServices('disallow duplicate community names', async ({db, random}
 	unwrap(await createCommunityService.perform({params, ...serviceRequest}));
 
 	params.name = params.name.toLowerCase();
-	let result = await createCommunityService.perform({params, ...serviceRequest});
-	assert.ok(!result.ok);
-	assert.is(result.status, 409);
+	assert.is(
+		unwrapError(await createCommunityService.perform({params, ...serviceRequest})).status,
+		409,
+	);
 
 	params.name = params.name.toUpperCase();
-	result = await createCommunityService.perform({params, ...serviceRequest});
-	assert.ok(!result.ok);
-	assert.is(result.status, 409);
+	assert.is(
+		unwrapError(await createCommunityService.perform({params, ...serviceRequest})).status,
+		409,
+	);
 });
 
 test_communityServices.run();

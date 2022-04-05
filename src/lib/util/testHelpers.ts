@@ -17,17 +17,9 @@ export const installSourceMaps = (): void => {
 	});
 };
 
-/*
-TODO how to extract the error type from the `Result`?
-We could remove the remaining `assert.ok(!result.ok)` lines if we can figure out the type:
-
 export const unwrapError = <TError extends object>(
-	result: Result<any, TError>,
+	result: Result<object, TError>,
 ): {ok: false} & TError => {
 	assert.ok(!result.ok);
 	return result;
-};
-*/
-export const unwrapError = (result: Result): void => {
-	assert.ok(!result.ok);
 };
