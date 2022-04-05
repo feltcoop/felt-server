@@ -1,17 +1,5 @@
-import type {IncomingMessage} from 'http';
+import type {OutgoingHttpHeaders} from 'http';
 import cookie from 'cookie';
-
-export interface CookieSessionRequest {
-	session: CookieSessionObject;
-}
-
-export interface CookieSessionIncomingMessage extends IncomingMessage {
-	session?: CookieSessionObject;
-}
-
-export interface CookieSessionObject {
-	account_id?: number;
-}
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -21,12 +9,12 @@ export const parseCookie = (
 ): Record<string, string> => cookie.parse(value || '', options);
 
 export const setCookie = (
-	headers: Headers,
+	headers: OutgoingHttpHeaders,
 	name: string,
 	value: string,
 	options?: cookie.CookieSerializeOptions | undefined,
 ): void => {
-	headers.set('set-cookie', serializeCookie(name, value, options));
+	headers['set-cookie'] = serializeCookie(name, value, options);
 };
 
 export const serializeCookie = (
@@ -34,7 +22,7 @@ export const serializeCookie = (
 	value: string,
 	options?: cookie.CookieSerializeOptions | undefined,
 ): string =>
-	// TODO BLOCK signed cookies -- do we want to use `cookie-session` or `cookies`?
+	// TODO BLOCK signed cookies -- `keys: fromEnv('COOKIE_KEYS').split('__')`
 	cookie.serialize(name, value, {
 		path: '/',
 		httpOnly: true,
@@ -43,13 +31,3 @@ export const serializeCookie = (
 		sameSite: 'lax',
 		...options,
 	});
-
-// TODO BLOCK merge with the above
-// export const cookieSessionMiddleware = cookieSession({
-// 	name: 'session_id',
-// 	keys: fromEnv('COOKIE_KEYS').split('__'),
-// 	maxAge: 1000 * 60 * 60 * 24 * 7 * 4, // 4 weeks
-// 	httpOnly: true, // prevents JS from having access in browser
-// 	secure: !dev, // this makes cookies break in prod unless https! see letsencrypt
-// 	sameSite: 'lax', // is the default for modern browsers: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
-// });

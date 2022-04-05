@@ -66,7 +66,7 @@ export const toHttpServiceMiddleware =
 				repos: server.db.repos,
 				params,
 				account_id: req.account_id!, // TODO how to handle this type for services that don't require an account_id?
-				session: new SessionApi(req),
+				session: new SessionApi(req, res),
 			});
 		} catch (err) {
 			log.error(err);

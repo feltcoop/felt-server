@@ -8,17 +8,15 @@ import {promisify} from 'util';
 
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
-import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import type {Service} from '$lib/server/service';
 import {toHttpServiceMiddleware} from '$lib/server/httpServiceMiddleware';
-import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware';
 import {cookieSessionMiddleware} from '$lib/session/cookieSessionMiddleware';
 import {toWebsocketServiceMiddleware} from '$lib/server/websocketServiceMiddleware';
 
 const log = new Logger([blue('[ApiServer]')]);
 
 // Similar but not identical to `WebsocketServerRequest`.
-export interface ApiServerRequest extends PolkaRequest, CookieSessionRequest {
+export interface ApiServerRequest extends PolkaRequest {
 	account_id?: number;
 }
 export interface HttpMiddleware extends PolkaMiddleware<ApiServerRequest> {} // eslint-disable-line @typescript-eslint/no-empty-interface
@@ -77,8 +75,7 @@ export class ApiServer {
 				});
 				return next();
 			})
-			.use(cookieSessionMiddleware)
-			.use(toAuthenticationMiddleware());
+			.use(cookieSessionMiddleware);
 
 		// Register services as http routes.
 		for (const service of this.services.values()) {
