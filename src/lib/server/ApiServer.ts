@@ -61,7 +61,7 @@ export class ApiServer {
 
 		// Set up the app and its middleware.
 		this.app
-			.use(bodyParser.json()) // TODO is deprecated, but doesn't let us `import {json}`
+			.use(bodyParser.json())
 			.use((req, _res, next) => {
 				// TODO proper logger, also don't log sensitive info in prod
 				log.trace('req', {
