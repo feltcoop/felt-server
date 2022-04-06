@@ -25,20 +25,13 @@ const serviceRequest = (account_id: number, db: any) => {
 
 test__membershipServices('disallow creating duplicate memberships', async ({db, random}) => {
 	const {community, persona, account} = await random.community();
-
-	let errorMessage;
-	try {
-		const createMembershipResult = await createMembershipService.perform({
-			repos: db.repos,
-			account_id: account.account_id,
-			params: {community_id: community.community_id, persona_id: persona.persona_id},
-			session: new SessionApiMock(),
-		});
-		errorMessage = createMembershipResult.ok ? 'failed' : createMembershipResult.message;
-	} catch (_err) {
-		// expect this error because the repo method should throw
-	}
-	if (errorMessage) throw Error(errorMessage);
+	const result = await createMembershipService.perform({
+		repos: db.repos,
+		account_id: account.account_id,
+		params: {community_id: community.community_id, persona_id: persona.persona_id},
+		session: new SessionApiMock(),
+	});
+	assert.ok(!result.ok);
 });
 
 test__membershipServices(

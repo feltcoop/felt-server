@@ -80,6 +80,16 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 		perform: async (serviceRequest) => {
 			const {repos, params, account_id} = serviceRequest;
 			log.trace('creating community account_id', account_id);
+
+			// Check for duplicate community names.
+			const findCommunityResult = await repos.community.findByName(params.name);
+			if (!findCommunityResult.ok) {
+				return {ok: false, status: 500, message: 'failed to lookup existing community by name'};
+			}
+			if (findCommunityResult.value) {
+				return {ok: false, status: 409, message: 'a community with that name already exists'};
+			}
+
 			// TODO validate that `account_id` is `persona_id`
 			const createCommunityResult = await repos.community.create(
 				'standard',
