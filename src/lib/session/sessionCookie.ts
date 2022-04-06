@@ -9,13 +9,10 @@ const dev = process.env.NODE_ENV !== 'production';
 const MAX_AGE = 60 * 60 * 24 * 7 * 5; // 5 weeks
 const RESET_EXPIRY = new Date('Tue, 06 Apr 2021 15:36:00 GMT');
 
-export const COOKIE_SESSION_KEY = 'session_id';
+export const COOKIE_SESSION_NAME = 'session_id';
 
-console.log(`fromEnv('COOKIE_KEYS').split('__')`, fromEnv('COOKIE_KEYS').split('__'));
-const secrets = fromEnv('COOKIE_KEYS').split('__');
-const [secret] = secrets;
-// TODO BLOCK support key rotation
-// const keys = new Keygrip(fromEnv('COOKIE_KEYS').split('__'));
+// TODO BLOCK make this a param?
+const keys = fromEnv('COOKIE_KEYS').split('__');
 
 export interface CookieSessionRequest {
 	account_id?: number;
@@ -30,15 +27,21 @@ export interface CookieSessionRequest {
 export const parseSessionCookie = (
 	value: string | undefined | null,
 	options?: cookie.CookieParseOptions | undefined,
-): number | undefined | null => {
+): {account_id: number; index: number} | undefined | null => {
 	if (!value) return undefined;
-	const signed = cookie.parse(value, options)[COOKIE_SESSION_KEY];
+	const signed = cookie.parse(value, options)[COOKIE_SESSION_NAME];
 	if (!signed) return undefined;
 	console.log(red(`[parseSessionCookie] signed`), signed);
-	const unsigned = cookieSignature.unsign(signed, secret);
-	if (!unsigned) return null;
-	console.log(red(`[parseSessionCookie] unsigned`), unsigned);
-	return Number(unsigned) || null;
+	for (let i = 0; i < keys.length; i++) {
+		const unsigned = cookieSignature.unsign(signed, keys[i]);
+		console.log(red(`[parseSessionCookie] unsigned`), unsigned);
+		if (unsigned === false) continue;
+		const parsed = Number(unsigned);
+		console.log(red(`[parseSessionCookie] parsed`), parsed);
+		if (!parsed) return null;
+		return {account_id: parsed, index: i};
+	}
+	return null;
 };
 
 /**
@@ -56,7 +59,7 @@ export const setCookie = (res: ServerResponse | {headers: Headers}, value: strin
 
 const serializeCookie = (value: string, options: cookie.CookieSerializeOptions = {}): string => {
 	console.log(red(`[serializeCookie] value`), value);
-	const signed = value && cookieSignature.sign(value, secret);
+	const signed = value && cookieSignature.sign(value, keys[0]);
 	console.log(red(`[serializeCookie] signed`), signed);
 	const {maxAge, expires, ...defaults} = options;
 	const finalOptions: cookie.CookieSerializeOptions = {
@@ -79,7 +82,7 @@ const serializeCookie = (value: string, options: cookie.CookieSerializeOptions =
 		// force empty cookies to expire
 		finalOptions.expires = RESET_EXPIRY;
 	}
-	const serialized = cookie.serialize(COOKIE_SESSION_KEY, signed, finalOptions);
+	const serialized = cookie.serialize(COOKIE_SESSION_NAME, signed, finalOptions);
 	console.log(red(`[serializeCookie] serialized`), serialized);
 	return serialized;
 };

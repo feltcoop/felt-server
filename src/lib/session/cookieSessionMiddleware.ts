@@ -12,15 +12,17 @@ export const cookieSessionMiddleware: HttpMiddleware = async (req, res, next) =>
 		log.error('unexpectedly already authenticated, server needs to be fixed', req.account_id);
 		return send(res, 500, {message: 'invalid server configuration'});
 	}
-	const account_id = parseSessionCookie(req.headers.cookie);
-	if (account_id === undefined) {
+	const parsed = parseSessionCookie(req.headers.cookie);
+	if (parsed === undefined) {
 		log.trace('unauthenticated request');
 		return next();
-	} else if (account_id === null) {
+	} else if (parsed === null) {
 		setCookie(res, ''); // reset invalid cookie
 		log.trace('unauthenticated request with invalid cookie');
 		return next();
 	}
+	const {account_id, index} = parsed;
+	if (index > 0) setCookie(res, account_id + ''); // update signature with first key
 	req.account_id = account_id;
 	log.trace('authenticated', account_id);
 	return next();

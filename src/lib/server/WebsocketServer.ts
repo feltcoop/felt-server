@@ -33,14 +33,14 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 			log.trace('connection req.url', req.url, wss.clients.size);
 			log.trace('connection req.headers', req.headers);
 
-			const account_id = parseSessionCookie(req.headers.cookie);
-
-			if (!account_id) {
+			const parsed = parseSessionCookie(req.headers.cookie);
+			if (!parsed) {
 				log.trace('request to open connection was unauthenticated');
 				socket.send(REQUIRES_AUTHENTICATION_MESSAGE_STR);
 				socket.close();
 				return;
 			}
+			const {account_id} = parsed;
 
 			socket.on('message', async (data, isBinary) => {
 				const message = isBinary ? data : data.toString(); // eslint-disable-line @typescript-eslint/no-base-to-string

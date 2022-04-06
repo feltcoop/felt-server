@@ -7,12 +7,12 @@ import {parseSessionCookie, setCookie} from '$lib/session/sessionCookie';
 const log = new Logger('[hooks]');
 
 export const handle: Handle = async ({event, resolve}) => {
-	const account_id = parseSessionCookie(event.request.headers.get('cookie'));
-	if (account_id) {
-		event.locals.account_id = account_id;
+	const parsed = parseSessionCookie(event.request.headers.get('cookie'));
+	if (parsed?.account_id) {
+		event.locals.account_id = parsed.account_id;
 	}
 	const response = await resolve(event);
-	if (account_id === null) {
+	if (parsed === null) {
 		setCookie(response, ''); // reset invalid cookie
 	}
 	return response;
