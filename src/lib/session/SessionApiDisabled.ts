@@ -4,7 +4,7 @@ import type {Result} from '@feltcoop/felt';
 import type {ISessionApi} from '$lib/session/SessionApi';
 import type {ErrorResponse} from '$lib/util/error';
 
-const log = new Logger('[SessionApi]');
+const log = new Logger('[SessionApiDisabled]');
 
 /**
  * Transports like websockets cannot set http headers,

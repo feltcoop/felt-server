@@ -10,7 +10,6 @@
 		"noImplicitReturns": true,
 		"noImplicitOverride": true,
 		"noFallthroughCasesInSwitch": true,
-		"importHelpers": true,
-		"preserveValueImports": true
+		"importHelpers": true
 	}
 }

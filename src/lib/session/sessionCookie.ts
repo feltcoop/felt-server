@@ -80,6 +80,5 @@ const serializeCookie = (value: string, options: cookie.CookieSerializeOptions =
 		// force empty cookies to expire
 		finalOptions.expires = RESET_EXPIRY;
 	}
-	const serialized = cookie.serialize(COOKIE_SESSION_NAME, signed, finalOptions);
-	return serialized;
+	return cookie.serialize(COOKIE_SESSION_NAME, signed, finalOptions);
 };
