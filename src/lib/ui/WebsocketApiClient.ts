@@ -9,7 +9,7 @@ import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
 import type {JsonRpcId, JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
-import type {BroadcastMessage} from '$lib/server/websocketServiceMiddleware';
+import type {BroadcastMessage, StatusMessage} from '$lib/util/websocket';
 
 const log = new Logger('[ws]');
 
@@ -38,6 +38,7 @@ export const toWebsocketApiClient = <
 	findService: (name: string) => ServiceEventInfo | undefined,
 	send: (request: JsonRpcRequest) => void,
 	handleBroadcastMessage: (message: BroadcastMessage) => void,
+	handleStatusMessage: (message: StatusMessage) => void,
 ): WebsocketApiClient<TParamsMap, TResultMap> => {
 	// TODO maybe extract a `WebsocketRequests` interface, with `add`/`remove` functions (and `pending` items?)
 	const websocketRequests: Map<JsonRpcId, WebsocketRequest> = new Map();
@@ -79,6 +80,8 @@ export const toWebsocketApiClient = <
 				found.resolve({ok: message.result.status === 200, ...message.result});
 			} else if (message.type === 'broadcast') {
 				handleBroadcastMessage(message);
+			} else if (message.type === 'status') {
+				handleStatusMessage(message);
 			} else {
 				log.trace('unhandled message', message);
 			}
@@ -91,7 +94,9 @@ export const toWebsocketApiClient = <
 };
 
 // TODO do we need to support another type of message, the non-response kind?
-const parseSocketMessage = (rawMessage: any): JsonRpcResponse<any> | BroadcastMessage | null => {
+const parseSocketMessage = (
+	rawMessage: any,
+): JsonRpcResponse<any> | StatusMessage | BroadcastMessage | null => {
 	if (typeof rawMessage !== 'string') {
 		log.error(
 			'[parseSocketMessage] cannot parse websocket message; currently only supports strings',
@@ -105,14 +110,14 @@ const parseSocketMessage = (rawMessage: any): JsonRpcResponse<any> | BroadcastMe
 		log.error('[parseSocketMessage] message data is not valid JSON', rawMessage, err);
 		return null;
 	}
-	if ('jsonrpc' in message) {
+	if (message.jsonrpc) {
 		const response = parseJsonRpcResponse(message);
 		if (!response) {
-			log.error('[parseSocketMessage] message data is not valid JSON-RPC 2.0', message);
+			log.error('[parseSocketMessage] jsonrpc message data is not valid JSON-RPC 2.0', message);
 			return null;
 		}
 		return response;
-	} else if (message.type === 'broadcast') {
+	} else if (message.type === 'broadcast' || message.type === 'status') {
 		return message;
 	}
 	log.error('[parseSocketMessage] message data is unknown type', message);

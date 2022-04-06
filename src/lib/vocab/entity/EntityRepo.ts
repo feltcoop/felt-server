@@ -42,7 +42,7 @@ export class EntityRepo extends PostgresRepo {
 			FROM entities WHERE space_id= ${space_id}
 			ORDER BY created ASC
 		`;
-		log.trace('space entities', entities);
+		log.trace('space entity count:', entities.length);
 		return {ok: true, value: entities};
 	}
 

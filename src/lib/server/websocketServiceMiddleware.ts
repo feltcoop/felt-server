@@ -7,6 +7,7 @@ import type {ApiServer} from '$lib/server/ApiServer';
 import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
 import {SessionApiDisabled} from '$lib/session/SessionApiDisabled';
 import {authorize} from '$lib/server/authorize';
+import type {BroadcastMessage} from '$lib/util/websocket';
 
 const log = new Logger(gray('[') + blue('websocketServiceMiddleware') + gray(']'));
 
@@ -14,14 +15,6 @@ const session = new SessionApiDisabled();
 
 export interface WebsocketMiddleware {
 	(socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
-}
-
-//TODO clean this up
-export interface BroadcastMessage {
-	type: 'broadcast';
-	method: string;
-	result: any;
-	params: any;
 }
 
 export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddleware =

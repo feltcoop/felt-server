@@ -8,6 +8,7 @@ import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import {parseSessionCookie} from '$lib/session/sessionCookie';
+import type {StatusMessage} from '$lib/util/websocket';
 
 const log = new Logger(gray('[') + blue('wss') + gray(']'));
 
@@ -15,14 +16,6 @@ type WebsocketServerEmitter = StrictEventEmitter<EventEmitter, WebsocketServerEv
 interface WebsocketServerEvents {
 	message: (socket: WebSocket, message: Data, account_id: number) => void;
 }
-
-const REQUIRES_AUTHENTICATION_MESSAGE = JSON.stringify({
-	// TODO BLOCK the client should look for this status and reset the UI
-	// force by breaking `parseSessionCookie`:
-	// const unsigned = cookieSignature.unsign(signed + 'h', secret);
-	status: 401,
-	message: 'please log in before connecting via websocket',
-});
 
 export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEmitter}) {
 	readonly wss: WebSocketServer;
@@ -44,7 +37,7 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 
 			if (!account_id) {
 				log.trace('request to open connection was unauthenticated');
-				socket.send(REQUIRES_AUTHENTICATION_MESSAGE);
+				socket.send(REQUIRES_AUTHENTICATION_MESSAGE_STR);
 				socket.close();
 				return;
 			}
@@ -80,3 +73,10 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 		await close();
 	}
 }
+
+const REQUIRES_AUTHENTICATION_MESSAGE: StatusMessage = {
+	type: 'status',
+	status: 401,
+	message: 'please log in before connecting via websocket',
+};
+const REQUIRES_AUTHENTICATION_MESSAGE_STR = JSON.stringify(REQUIRES_AUTHENTICATION_MESSAGE);
