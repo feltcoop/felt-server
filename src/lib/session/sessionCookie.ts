@@ -28,7 +28,7 @@ export interface CookieSessionRequest {
 export const parseSessionCookie = (
 	value: string | undefined | null,
 	options?: cookie.CookieParseOptions | undefined,
-): {account_id: number; index: number} | undefined | null => {
+): {account_id: number; shouldRefreshSignature: boolean; keyIndex: number} | undefined | null => {
 	if (!value) return undefined;
 	const signed = cookie.parse(value, options)[COOKIE_SESSION_NAME];
 	if (!signed) return undefined;
@@ -40,7 +40,7 @@ export const parseSessionCookie = (
 		const parsed = Number(unsigned);
 		console.log(red(`[parseSessionCookie] parsed`), parsed);
 		if (!parsed) return null;
-		return {account_id: parsed, index: i};
+		return {account_id: parsed, shouldRefreshSignature: i > 0, keyIndex: i};
 	}
 	return null;
 };
@@ -50,11 +50,14 @@ export const parseSessionCookie = (
  * @param res The Node or browser Response object.
  * @param value The session cookie value. (currently, the `account_id`)
  */
-export const setCookie = (res: ServerResponse | {headers: Headers}, value: string): void => {
+export const setSessionCookie = (
+	res: ServerResponse | {headers: Headers},
+	value: number | '',
+): void => {
 	if ('headers' in res) {
-		res.headers.set('set-cookie', serializeCookie(value));
+		res.headers.set('set-cookie', serializeCookie(value + ''));
 	} else {
-		res.setHeader('set-cookie', serializeCookie(value));
+		res.setHeader('set-cookie', serializeCookie(value + ''));
 	}
 };
 

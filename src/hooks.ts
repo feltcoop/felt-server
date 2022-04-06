@@ -2,18 +2,21 @@ import type {GetSession, Handle} from '@sveltejs/kit';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import {db} from '$lib/db/db';
-import {parseSessionCookie, setCookie} from '$lib/session/sessionCookie';
+import {parseSessionCookie, setSessionCookie} from '$lib/session/sessionCookie';
 
 const log = new Logger('[hooks]');
 
 export const handle: Handle = async ({event, resolve}) => {
 	const parsed = parseSessionCookie(event.request.headers.get('cookie'));
-	if (parsed?.account_id) {
-		event.locals.account_id = parsed.account_id;
+	const account_id = parsed?.account_id;
+	if (account_id) {
+		event.locals.account_id = account_id;
 	}
 	const response = await resolve(event);
 	if (parsed === null) {
-		setCookie(response, ''); // reset invalid cookie
+		setSessionCookie(response, ''); // reset invalid cookie
+	} else if (account_id && parsed?.shouldRefreshSignature) {
+		setSessionCookie(response, account_id); // update signature with first key
 	}
 	return response;
 };

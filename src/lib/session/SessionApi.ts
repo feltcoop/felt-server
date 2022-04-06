@@ -2,7 +2,7 @@ import type {ServerResponse} from 'http';
 import type {Result} from '@feltcoop/felt';
 
 import type {ApiServerRequest} from '$lib/server/ApiServer';
-import {setCookie} from '$lib/session/sessionCookie';
+import {setSessionCookie} from '$lib/session/sessionCookie';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import type {ErrorResponse} from '$lib/util/error';
 
@@ -25,14 +25,14 @@ export class SessionApi implements ISessionApi {
 	login(account_id: number): Result<object, ErrorResponse> {
 		log.trace('logging in', account_id);
 		this.req.account_id = account_id;
-		setCookie(this.res, account_id + '');
+		setSessionCookie(this.res, account_id);
 		return {ok: true};
 	}
 
 	logout(): Result<object, ErrorResponse> {
 		log.trace('logging out', this.req.account_id);
 		this.req.account_id = undefined;
-		setCookie(this.res, '');
+		setSessionCookie(this.res, '');
 		return {ok: true};
 	}
 }
