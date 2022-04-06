@@ -1,6 +1,5 @@
 import cookie from 'cookie';
 import cookieSignature from 'cookie-signature';
-import {red} from 'kleur/colors';
 import type {ServerResponse} from 'http';
 
 import {fromEnv} from '$lib/server/env';
@@ -12,7 +11,7 @@ const RESET_EXPIRY = new Date('Tue, 06 Apr 2021 15:36:00 GMT');
 
 export const COOKIE_SESSION_NAME = 'session_id';
 
-// TODO BLOCK make this a param? where should it live?
+// TODO make this a param? where should it live?
 const keys = fromEnv('COOKIE_KEYS').split('__');
 
 export interface CookieSessionRequest {
@@ -32,13 +31,10 @@ export const parseSessionCookie = (
 	if (!value) return undefined;
 	const signed = cookie.parse(value, options)[COOKIE_SESSION_NAME];
 	if (!signed) return undefined;
-	console.log(red(`[parseSessionCookie] signed`), signed);
 	for (let i = 0; i < keys.length; i++) {
 		const unsigned = cookieSignature.unsign(signed, keys[i]);
-		console.log(red(`[parseSessionCookie] unsigned`), unsigned);
 		if (unsigned === false) continue;
 		const parsed = Number(unsigned);
-		console.log(red(`[parseSessionCookie] parsed`), parsed);
 		if (!parsed) return null;
 		return {account_id: parsed, shouldRefreshSignature: i > 0, keyIndex: i};
 	}
@@ -62,9 +58,7 @@ export const setSessionCookie = (
 };
 
 const serializeCookie = (value: string, options: cookie.CookieSerializeOptions = {}): string => {
-	console.log(red(`[serializeCookie] value`), value);
 	const signed = value && cookieSignature.sign(value, keys[0]);
-	console.log(red(`[serializeCookie] signed`), signed);
 	const {maxAge, expires, ...defaults} = options;
 	const finalOptions: cookie.CookieSerializeOptions = {
 		path: '/',
@@ -87,6 +81,5 @@ const serializeCookie = (value: string, options: cookie.CookieSerializeOptions =
 		finalOptions.expires = RESET_EXPIRY;
 	}
 	const serialized = cookie.serialize(COOKIE_SESSION_NAME, signed, finalOptions);
-	console.log(red(`[serializeCookie] serialized`), serialized);
 	return serialized;
 };
