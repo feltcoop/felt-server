@@ -1,8 +1,9 @@
 import cookie from 'cookie';
 import cookieSignature from 'cookie-signature';
-import {fromEnv} from '$lib/server/env';
 import {red} from 'kleur/colors';
 import type {ServerResponse} from 'http';
+
+import {fromEnv} from '$lib/server/env';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -11,7 +12,7 @@ const RESET_EXPIRY = new Date('Tue, 06 Apr 2021 15:36:00 GMT');
 
 export const COOKIE_SESSION_NAME = 'session_id';
 
-// TODO BLOCK make this a param?
+// TODO BLOCK make this a param? where should it live?
 const keys = fromEnv('COOKIE_KEYS').split('__');
 
 export interface CookieSessionRequest {
