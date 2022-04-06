@@ -7,7 +7,7 @@ import type StrictEventEmitter from 'strict-event-emitter-types';
 import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import {parseSessionCookie} from '$lib/session/cookieSession';
+import {parseSessionCookie} from '$lib/session/sessionCookie';
 
 const log = new Logger(gray('[') + blue('wss') + gray(']'));
 
@@ -17,6 +17,10 @@ interface WebsocketServerEvents {
 }
 
 const REQUIRES_AUTHENTICATION_MESSAGE = JSON.stringify({
+	// TODO BLOCK the client should look for this status and reset the UI
+	// force by breaking `parseSessionCookie`:
+	// const unsigned = cookieSignature.unsign(signed + 'h', secret);
+	status: 401,
 	message: 'please log in before connecting via websocket',
 });
 

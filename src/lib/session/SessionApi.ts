@@ -2,7 +2,7 @@ import type {ServerResponse} from 'http';
 import type {Result} from '@feltcoop/felt';
 
 import type {ApiServerRequest} from '$lib/server/ApiServer';
-import {setCookie} from '$lib/session/cookieSession';
+import {setCookie} from '$lib/session/sessionCookie';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import type {ErrorResponse} from '$lib/util/error';
 

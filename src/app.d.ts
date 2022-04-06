@@ -1,7 +1,6 @@
 declare namespace App {
 	interface Locals {
 		account_id?: number;
-		brokenSession?: boolean;
 	}
 
 	// interface Platform {}

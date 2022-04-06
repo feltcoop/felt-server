@@ -12,7 +12,7 @@ import type {Service} from '$lib/server/service';
 import {toHttpServiceMiddleware} from '$lib/server/httpServiceMiddleware';
 import {cookieSessionMiddleware} from '$lib/session/cookieSessionMiddleware';
 import {toWebsocketServiceMiddleware} from '$lib/server/websocketServiceMiddleware';
-import type {CookieSessionRequest} from '$lib/session/cookieSession';
+import type {CookieSessionRequest} from '$lib/session/sessionCookie';
 
 const log = new Logger([blue('[ApiServer]')]);
 
