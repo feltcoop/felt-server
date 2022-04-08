@@ -7,7 +7,6 @@ import {log} from '$lib/util/testHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {services} from '$lib/server/services';
 import {randomEventParams} from '$lib/server/random';
-import {SessionApiMock} from '$lib/session/SessionApiMock';
 
 /* eslint-disable no-await-in-loop */
 
@@ -31,9 +30,12 @@ test__services('perform services', async ({db, random}) => {
 		}
 		const result = await service.perform({
 			params,
-			account_id: service.event.authenticate === false ? (null as any) : account.account_id,
-			repos: db.repos,
-			session,
+			...toServiceRequest(
+				// TODO what's the proper type here? should `account_id` be optional?
+				service.event.authenticate === false ? (null as any) : account.account_id,
+				db,
+				session,
+			),
 		});
 		if (!result.ok) {
 			log.error(red(`failed service call: ${service.event.name}`), params, result);
