@@ -4,7 +4,6 @@ import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
-import {SessionApiMock} from '$lib/server/SessionApiMock';
 import {
 	readCommunitiesService,
 	readCommunityService,
@@ -21,6 +20,7 @@ import {
 	createMembershipService,
 	deleteMembershipService,
 } from '$lib/vocab/membership/membershipServices';
+import {toServiceRequest} from '$lib/util/testHelpers';
 
 /* test_servicesIntegration */
 const test_servicesIntegration = suite<TestDbContext>('repos');
@@ -36,11 +36,7 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	const account = await random.account();
 
 	// This is a reusable request context for all `service.perform` calls.
-	const serviceRequest = {
-		account_id: account.account_id,
-		repos: db.repos,
-		session: new SessionApiMock(),
-	};
+	const serviceRequest = toServiceRequest(account.account_id, db);
 
 	// create a persona
 	const {persona, personalCommunity} = await random.persona(account);

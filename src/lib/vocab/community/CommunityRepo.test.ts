@@ -1,5 +1,6 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
+import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
@@ -17,11 +18,11 @@ test__CommunityRepo('updateSettings', async ({db, random}) => {
 	const newHue = community.settings.hue === 1 ? 2 : 1;
 	const newSettings = {hue: newHue};
 	assert.is.not(community.settings.hue, newHue); // just in case we mess the logic up
-	const result = await db.repos.community.updateSettings(community.community_id, newSettings);
-	assert.ok(result.ok);
-	const updatedCommunity = await db.repos.community.findById(community.community_id);
-	assert.ok(updatedCommunity.ok);
-	assert.equal(updatedCommunity.value.settings, newSettings);
+	unwrap(await db.repos.community.updateSettings(community.community_id, newSettings));
+	assert.equal(
+		unwrap(await db.repos.community.findById(community.community_id)).settings,
+		newSettings,
+	);
 });
 
 test__CommunityRepo.run();

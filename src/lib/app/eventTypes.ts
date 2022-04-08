@@ -214,6 +214,8 @@ export interface CreateEntityParams {
 	actor_id: number;
 	space_id: number;
 	data: EntityData;
+	source_id: number;
+	type?: string;
 }
 export interface CreateEntityResponse {
 	entity: Entity;
