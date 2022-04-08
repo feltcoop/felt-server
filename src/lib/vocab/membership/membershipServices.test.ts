@@ -1,6 +1,6 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
-import {unwrap} from '@feltcoop/felt';
+import {unwrap, unwrapError} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
@@ -9,7 +9,6 @@ import {
 	deleteMembershipService,
 } from '$lib/vocab/membership/membershipServices';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
-import {unwrapError} from '$lib/util/testHelpers';
 
 /* test__membershipServices */
 const test__membershipServices = suite<TestDbContext & TestAppContext>('membershipServices');

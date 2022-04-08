@@ -1,6 +1,6 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
-import {unwrap} from '@feltcoop/felt';
+import {unwrap, unwrapError} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {randomCommunityParams} from '$lib/vocab/random';
@@ -10,7 +10,6 @@ import {
 	createCommunityService,
 } from '$lib/vocab/community/communityServices';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
-import {unwrapError} from '$lib/util/testHelpers';
 
 /* test_communityServices */
 const test_communityServices = suite<TestDbContext & TestAppContext>('communityRepo');

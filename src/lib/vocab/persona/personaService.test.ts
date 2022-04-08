@@ -1,5 +1,5 @@
 import {suite} from 'uvu';
-import {unwrap} from '@feltcoop/felt';
+import {unwrap, unwrapError} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
@@ -7,7 +7,6 @@ import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {randomEventParams} from '$lib/server/random';
 import {CreateAccountPersona} from '$lib/vocab/persona/personaEvents';
 import {SessionApiMock} from '$lib/server/SessionApiMock';
-import {unwrapError} from '$lib/util/testHelpers';
 
 /* test__personaService */
 const test__personaService = suite<TestDbContext & TestAppContext>('personaService');
