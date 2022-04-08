@@ -30,6 +30,7 @@ test__services('perform services', async ({db, random}) => {
 		const result = await service.perform({
 			params,
 			...toServiceRequest(
+				// TODO what's the proper type here? should `account_id` be optional?
 				service.event.authenticate === false ? (null as any) : account.account_id,
 				db,
 			),
