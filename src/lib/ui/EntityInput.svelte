@@ -17,6 +17,7 @@
 	$: actor_id = $selectedPersona!.persona_id;
 	$: selectedSpace = $spaceSelection;
 	$: space_id = $selectedSpace!.space_id;
+	$: source_id = $selectedSpace!.directory_id;
 
 	let name = '';
 	let status: AsyncStatus = 'initial'; // TODO refactor
@@ -38,6 +39,7 @@
 			actor_id,
 			space_id,
 			data: {type: 'Collection', name},
+			source_id,
 		});
 		status = 'success'; // TODO handle failure (also refactor to be generic)
 		if (result.ok) {

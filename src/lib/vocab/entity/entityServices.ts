@@ -43,6 +43,17 @@ export const createEntityService: Service<CreateEntityParams, CreateEntityRespon
 		if (!insertEntitiesResult.ok) {
 			return {ok: false, status: 500, message: 'failed to create entity'};
 		}
+
+		const insertTieResult = await repos.tie.create(
+			params.source_id,
+			insertEntitiesResult.value.entity_id,
+			params.type ? params.type : 'HasItem',
+		);
+
+		if (!insertTieResult.ok) {
+			return {ok: false, status: 500, message: 'failed to tie entity to graph'};
+		}
+
 		return {ok: true, status: 200, value: {entity: insertEntitiesResult.value}};
 	},
 };

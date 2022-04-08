@@ -68,19 +68,12 @@
 		if (!content || !selectedList) return;
 
 		//TODO better error handling
-		//TODO create api call to do this in one step?
-		const entityResult = await dispatch.CreateEntity({
+		await dispatch.CreateEntity({
 			space_id: $space.space_id,
 			data: {type: 'Note', content, checked: false},
 			actor_id: $persona.persona_id,
+			source_id: selectedList.entity_id,
 		});
-		if (entityResult.ok) {
-			await dispatch.CreateTie({
-				source_id: selectedList.entity_id,
-				dest_id: entityResult.value.entity.entity_id,
-				type: 'HasItem',
-			});
-		}
 		text = '';
 	};
 	const onKeydown = async (e: KeyboardEvent) => {
