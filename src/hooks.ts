@@ -29,7 +29,7 @@ export const getSession: GetSession = async (event) => {
 		// TODO what's the best UX for this condition? just ask the user to try again?
 		// If needed, could set `event.locals` to have `handle` manage this condition:
 		// event.locals.failedToLoadSession = true;
-		log.error('failed to load session');
+		log.error('failed to load session for account_id', account_id);
 		return {guest: true};
 	}
 	return result.value;
