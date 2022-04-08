@@ -1,7 +1,5 @@
 import sourcemapSupport from 'source-map-support';
 import {configureLogLevel, Logger, LogLevel} from '@feltcoop/felt/util/log.js';
-import * as assert from 'uvu/assert';
-import type {Result} from '@feltcoop/felt';
 
 import {SessionApiMock} from '$lib/server/SessionApiMock';
 import type {Database} from '$lib/db/Database';
@@ -20,16 +18,13 @@ export const installSourceMaps = (): void => {
 	});
 };
 
-export const unwrapError = <TError extends object>(
-	result: Result<object, TError>,
-): {ok: false} & TError => {
-	assert.ok(!result.ok);
-	return result;
-};
-
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const toServiceRequest = (account_id: number, db: Database) => ({
+export const toServiceRequest = (
+	account_id: number,
+	db: Database,
+	session = new SessionApiMock(),
+) => ({
 	account_id,
 	repos: db.repos,
-	session: new SessionApiMock(),
+	session,
 });

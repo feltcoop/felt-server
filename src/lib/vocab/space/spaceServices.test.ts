@@ -1,10 +1,10 @@
 import {suite} from 'uvu';
-import {unwrap} from '@feltcoop/felt';
+import {unwrap, unwrapError} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {deleteSpaceService} from '$lib/vocab/space/spaceServices';
-import {toServiceRequest, unwrapError} from '$lib/util/testHelpers';
+import {toServiceRequest} from '$lib/util/testHelpers';
 
 /* test__spaceServices */
 const test__spaceServices = suite<TestDbContext & TestAppContext>('spaceServices');
