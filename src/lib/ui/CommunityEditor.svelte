@@ -16,9 +16,9 @@
 			<CommunityAvatar {community} />
 		</section>
 		<section>
-			<p>created {format(new Date($community.created), 'PPPPp')}</p>
+			<p>created {format($community.created, 'PPPPp')}</p>
 			{#if $community.updated !== null}
-				<p>updated {format(new Date($community.updated), 'PPPPp')}</p>
+				<p>updated {format($community.updated, 'PPPPp')}</p>
 			{/if}
 		</section>
 	</div>
