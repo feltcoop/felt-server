@@ -80,8 +80,9 @@ export const ReadEntities: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			entities: {type: 'array', items: {$ref: '/schemas/Entity.json', tsType: 'Entity'}},
+			ties: {type: 'array', items: {$ref: '/schemas/Tie.json', tsType: 'Tie'}},
 		},
-		required: ['entities'],
+		required: ['entities', 'ties'],
 		additionalProperties: false,
 	},
 	returns: 'Promise<ReadEntitiesResponseResult>',
