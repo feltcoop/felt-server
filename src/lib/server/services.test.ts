@@ -9,8 +9,6 @@ import {services} from '$lib/server/services';
 import {randomEventParams} from '$lib/server/random';
 import {SessionApiMock} from '$lib/session/SessionApiMock';
 
-/* eslint-disable no-await-in-loop */
-
 /* test__services */
 const test__services = suite<TestDbContext>('services');
 
