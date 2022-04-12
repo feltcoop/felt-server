@@ -11,6 +11,8 @@
 	export let view: ViewNode;
 
 	$: props = toViewProps(view) || EMPTY_OBJECT;
+
+	$: console.log(`view, props`, view, props);
 </script>
 
 {#if view.type === 'root'}
@@ -23,4 +25,10 @@
 			<svelte:self view={childView} />
 		{/each}
 	</svelte:component>
+{:else if view.type === 'svelteElement'}
+	<svelte:element this={view.tagName} {...props}>
+		{#each view.children as childView (childView)}
+			<svelte:self view={childView} />
+		{/each}
+	</svelte:element>
 {/if}
