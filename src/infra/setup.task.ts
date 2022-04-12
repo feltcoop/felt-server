@@ -1,6 +1,6 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
-import {magenta, red} from 'kleur/colors';
+import {green, red} from 'kleur/colors';
 
 import {fromEnv} from '$lib/server/env';
 import {toNginxConfig} from './nginxConfig';
@@ -125,7 +125,8 @@ export const task: Task<SetupTaskArgs> = {
 			// <enter "password">
 		];
 		if (dry) {
-			log.info(magenta(`dry run! here's the script:`), steps.join('\n'));
+			log.info(green(`\n\ndry run! here's the script ↓\n\n`), 'ssh ' + steps.join('\n'));
+			log.info(green('\n\ndry run done ↑\n\n'));
 			return;
 		}
 		const result = await spawn('ssh', steps);
