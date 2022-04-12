@@ -9,8 +9,6 @@ import {randomEventParams} from '$lib/server/random';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {setupApp, teardownApp} from '$lib/util/testAppHelpers';
 
-/* eslint-disable no-await-in-loop */
-
 /* test__eventInfos */
 const test__eventInfos = suite<TestDbContext & TestAppContext>('eventInfos');
 
@@ -19,8 +17,8 @@ test__eventInfos.after(teardownDb);
 test__eventInfos.before(setupApp(noop as any)); // TODO either use `node-fetch` or mock
 test__eventInfos.after(teardownApp);
 
-test__eventInfos('dispatch random events in a client app', async ({app, random}) => {
-	for (const eventInfo of eventInfos.values()) {
+for (const eventInfo of eventInfos.values()) {
+	test__eventInfos(`dispatch event ${eventInfo.name} in a client app`, async ({app, random}) => {
 		const account = await random.account();
 		const params = await randomEventParams(eventInfo, random, {account});
 
@@ -41,7 +39,7 @@ test__eventInfos('dispatch random events in a client app', async ({app, random})
 
 		// TODO can't make remote calls yet -- either use `node-fetch` or mock
 		if (eventInfo.type !== 'ClientEvent' || eventInfo.name === 'QueryEntities') {
-			continue;
+			return;
 		}
 
 		// TODO fix typecast with a union for `eventInfo`
@@ -65,8 +63,8 @@ test__eventInfos('dispatch random events in a client app', async ({app, random})
 			// }
 			// assert.is(result.status, 200); // TODO generate invalid data and test those params+responses too
 		}
-	}
-});
+	});
+}
 
 test__eventInfos.run();
 /* test__eventInfos */

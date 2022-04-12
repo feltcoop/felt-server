@@ -1,4 +1,4 @@
-import type {Result} from '@feltcoop/felt';
+import {NOT_OK, OK, type Result} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue, gray} from 'kleur/colors';
 
@@ -31,7 +31,7 @@ export class CommunityRepo extends PostgresRepo {
 		`;
 		// log.trace('[findById]', data);
 		if (!data.length) {
-			return {ok: false};
+			return NOT_OK;
 		}
 		return {ok: true, value: data[0]};
 	}
@@ -64,9 +64,9 @@ export class CommunityRepo extends PostgresRepo {
 			UPDATE communities SET settings=${this.db.sql.json(settings)} WHERE community_id=${community_id}
 		`;
 		if (!data.count) {
-			return {ok: false};
+			return NOT_OK;
 		}
-		return {ok: true};
+		return OK;
 	}
 
 	async deleteById(community_id: number): Promise<Result<object>> {
@@ -75,8 +75,8 @@ export class CommunityRepo extends PostgresRepo {
 			DELETE FROM communities WHERE community_id=${community_id}
 		`;
 		if (!data.count) {
-			return {ok: false};
+			return NOT_OK;
 		}
-		return {ok: true};
+		return OK;
 	}
 }

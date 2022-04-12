@@ -1,4 +1,4 @@
-import type {Result} from '@feltcoop/felt';
+import {NOT_OK, type Result} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue, gray} from 'kleur/colors';
 
@@ -55,7 +55,7 @@ export class PersonaRepo extends PostgresRepo {
 			FROM personas WHERE persona_id=${persona_id}
 		`;
 		if (!data.length) {
-			return {ok: false};
+			return NOT_OK;
 		}
 		return {ok: true, value: data[0]};
 	}
@@ -67,7 +67,7 @@ export class PersonaRepo extends PostgresRepo {
 			FROM personas WHERE community_id=${community_id}
 		`;
 		if (!data.length) {
-			return {ok: false};
+			return NOT_OK;
 		}
 		return {ok: true, value: data[0]};
 	}
