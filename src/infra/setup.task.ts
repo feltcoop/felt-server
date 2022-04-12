@@ -9,16 +9,17 @@ import {toLogSequence} from './helpers';
 export const task: Task = {
 	summary: 'setup a clean server to prepare for a felt-server deploy',
 	production: true,
-	run: async ({log, fs}) => {
+	run: async ({log}) => {
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
 		const VITE_DEPLOY_SERVER_HOST = fromEnv('VITE_DEPLOY_SERVER_HOST');
 		const EMAIL_ADDRESS = fromEnv('EMAIL_ADDRESS');
 
-		// TODO BLOCK do this without the hack
+		// TODO this is hacky because of `import.meta` env handling
 		const {API_SERVER_HOST_PROD, SVELTEKIT_SERVER_HOST} = await import('../lib/config.js');
 
 		const REMOTE_NGINX_CONFIG_PATH = '/etc/nginx/sites-available/felt-server.conf';
+		const REMOTE_NGINX_SYMLINK_PATH = '/etc/nginx/sites-enabled/felt-server.conf';
 		const nginxConfig = toNginxConfig(
 			fromEnv('VITE_DEPLOY_SERVER_HOST'),
 			API_SERVER_HOST_PROD,
@@ -79,7 +80,7 @@ export const task: Task = {
 				//Make sure your DNS records are set up and configured first
 				//TODO stuff is still a little unstable arount this
 				logSequence('Enabling HTTPS with cerbot and nginx...') +
-				`ln -s ${REMOTE_NGINX_CONFIG_PATH} /etc/nginx/sites-enabled/felt-server.conf;
+				`ln -s ${REMOTE_NGINX_CONFIG_PATH} ${REMOTE_NGINX_SYMLINK_PATH};
 				certbot --nginx --non-interactive --agree-tos --email ${EMAIL_ADDRESS} -d ${VITE_DEPLOY_SERVER_HOST};
 				systemctl restart nginx.service;` +
 				// Install Postgres:
@@ -91,8 +92,8 @@ export const task: Task = {
 				sudo apt install -y postgresql;` +
 				// All done! Write a "state file" to avoid running the setup script twice.
 				logSequence(`Success! Writing setup state file to ${FELT_SETUP_STATE_FILE_PATH}`) +
-				`touch ${FELT_SETUP_STATE_FILE_PATH};`, // TODO BLOCK add any useful info?
-			// TODO BLOCK initialize the database
+				`touch ${FELT_SETUP_STATE_FILE_PATH};`,
+			// TODO initialize the database
 			// sudo -u postgres psql
 			// # in psql:
 			// # postgres=#
