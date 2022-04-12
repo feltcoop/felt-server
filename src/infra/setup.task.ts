@@ -1,15 +1,18 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
-import {red} from 'kleur/colors';
+import {magenta, red} from 'kleur/colors';
 
 import {fromEnv} from '$lib/server/env';
 import {toNginxConfig} from './nginxConfig';
 import {toLogSequence} from './helpers';
+import type {SetupTaskArgs} from './setupTask';
+import {SetupTaskArgsSchema} from './setupTask.schema';
 
-export const task: Task = {
+export const task: Task<SetupTaskArgs> = {
 	summary: 'setup a clean server to prepare for a felt-server deploy',
 	production: true,
-	run: async ({log}) => {
+	args: SetupTaskArgsSchema,
+	run: async ({log, args: {dry}}) => {
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
 		const VITE_DEPLOY_SERVER_HOST = fromEnv('VITE_DEPLOY_SERVER_HOST');
@@ -36,7 +39,7 @@ export const task: Task = {
 		//TODO set up initial user accounts & directory system
 
 		//Install initial tools for Node ecosystem
-		const result = await spawn('ssh', [
+		const steps: string[] = [
 			deployLogin,
 			logSequence('Setting up server instance...') +
 				//
@@ -120,7 +123,12 @@ export const task: Task = {
 			// create database felt; # notice the semicolon
 			// \password
 			// <enter "password">
-		]);
+		];
+		if (dry) {
+			log.info(magenta(`dry run! here's the script:`), steps.join('\n'));
+			return;
+		}
+		const result = await spawn('ssh', steps);
 		if (!result.ok) {
 			if (result.signal) log.error('spawn failed with signal', result.signal);
 			throw Error('Failed setup task');
