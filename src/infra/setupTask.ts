@@ -2,7 +2,7 @@
 
 export interface SetupTaskArgs {
 	/**
-	 * if true, logs the generated script instead of executing it
+	 * log the generated script instead of executing it
 	 */
 	dry?: boolean;
 }

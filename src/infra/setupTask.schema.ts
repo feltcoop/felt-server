@@ -7,7 +7,7 @@ export const SetupTaskArgsSchema: ArgsSchema = {
 		dry: {
 			type: 'boolean',
 			default: false,
-			description: 'if true, logs the generated script instead of executing it',
+			description: 'log the generated script instead of executing it',
 		},
 	},
 	required: [],
