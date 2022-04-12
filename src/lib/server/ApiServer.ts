@@ -6,21 +6,17 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue} from 'kleur/colors';
 import {promisify} from 'util';
 
-import {toAuthenticationMiddleware} from '$lib/session/authenticationMiddleware.js';
 import type {Database} from '$lib/db/Database.js';
 import type {WebsocketServer} from '$lib/server/WebsocketServer.js';
-import {cookieSessionMiddleware} from '$lib/session/cookieSession';
-import type {CookieSessionRequest} from '$lib/session/cookieSession';
 import type {Service} from '$lib/server/service';
 import {toHttpServiceMiddleware} from '$lib/server/httpServiceMiddleware';
+import {cookieSessionMiddleware} from '$lib/session/cookieSessionMiddleware';
 import {toWebsocketServiceMiddleware} from '$lib/server/websocketServiceMiddleware';
+import type {CookieSessionRequest} from '$lib/session/sessionCookie';
 
 const log = new Logger([blue('[ApiServer]')]);
 
-// Similar but not identical to `WebsocketServerRequest`.
-export interface ApiServerRequest extends PolkaRequest, CookieSessionRequest {
-	account_id?: number;
-}
+export interface ApiServerRequest extends PolkaRequest, CookieSessionRequest {}
 export interface HttpMiddleware extends PolkaMiddleware<ApiServerRequest> {} // eslint-disable-line @typescript-eslint/no-empty-interface
 
 export interface Options {
@@ -65,7 +61,7 @@ export class ApiServer {
 
 		// Set up the app and its middleware.
 		this.app
-			.use(bodyParser.json()) // TODO is deprecated, but doesn't let us `import {json}`
+			.use(bodyParser.json())
 			.use((req, _res, next) => {
 				// TODO proper logger, also don't log sensitive info in prod
 				log.trace('req', {
@@ -77,8 +73,7 @@ export class ApiServer {
 				});
 				return next();
 			})
-			.use(cookieSessionMiddleware)
-			.use(toAuthenticationMiddleware(this));
+			.use(cookieSessionMiddleware);
 
 		// Register services as http routes.
 		for (const service of this.services.values()) {
@@ -91,15 +86,14 @@ export class ApiServer {
 
 		// SvelteKit Node adapter, adapted to our production API server
 		if (process.env.NODE_ENV === 'production') {
-			const importPath = '../../../svelte-kit/middlewares.js';
-			let sveltekitMiddlewaresModule: any;
+			const importPath = '../../../svelte-kit/handler.js';
+			let handler: any;
 			try {
-				sveltekitMiddlewaresModule = await import(importPath);
+				({handler} = await import(importPath));
 			} catch (err) {
-				throw Error(`Failed to import SvelteKit adapter-node middlewares: ${importPath} -- ${err}`);
+				throw Error(`Failed to import SvelteKit adapter-node handler from ${importPath} -- ${err}`);
 			}
-			const {assetsMiddleware, prerenderedMiddleware, kitMiddleware} = sveltekitMiddlewaresModule;
-			this.app.use(assetsMiddleware, prerenderedMiddleware, kitMiddleware);
+			this.app.use(handler);
 		}
 
 		// Start the app.

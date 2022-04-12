@@ -5,21 +5,16 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 import {type JsonRpcResponse, parseJsonRpcRequest} from '$lib/util/jsonRpc';
 import type {ApiServer} from '$lib/server/ApiServer';
 import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
-import {SessionApi} from '$lib/server/SessionApi';
+import {SessionApiDisabled} from '$lib/session/SessionApiDisabled';
 import {authorize} from '$lib/server/authorize';
+import type {BroadcastMessage} from '$lib/util/websocket';
 
 const log = new Logger(gray('[') + blue('websocketServiceMiddleware') + gray(']'));
 
+const session = new SessionApiDisabled();
+
 export interface WebsocketMiddleware {
 	(socket: ws, rawMessage: ws.Data, account_id: number): Promise<void>;
-}
-
-//TODO clean this up
-export interface BroadcastMessage {
-	type: 'broadcast';
-	method: string;
-	result: any;
-	params: any;
 }
 
 export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddleware =
@@ -29,7 +24,7 @@ export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddl
 			return;
 		}
 
-		let rawMessage: any; // TODO type
+		let rawMessage: any;
 		try {
 			rawMessage = JSON.parse(messageData);
 		} catch (err) {
@@ -82,7 +77,7 @@ export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddl
 						repos: server.db.repos,
 						params,
 						account_id,
-						session: new SessionApi(null),
+						session,
 					});
 				} catch (err) {
 					log.error('service.perform failed', err);

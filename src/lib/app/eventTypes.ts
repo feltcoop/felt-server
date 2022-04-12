@@ -3,7 +3,6 @@
 import type {SvelteComponent} from 'svelte';
 import type {Readable} from 'svelte/store';
 
-import type {ClientAccountSession} from '$lib/session/clientSession';
 import type {ApiResult} from '$lib/server/api';
 import type {Community} from '$lib/vocab/community/community';
 import type {Persona, AccountPersona} from '$lib/vocab/persona/persona';

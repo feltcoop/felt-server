@@ -34,7 +34,7 @@
 	// TODO refactor to some client view-model for the actor
 	$: hue = randomHue($persona.name);
 
-	$: checked !== undefined && updateEntity(checked); // eslint-disable-line @typescript-eslint/no-floating-promises
+	$: checked !== undefined && updateEntity(checked);
 
 	$: hasItems = items !== undefined || $entity.data.type === 'Collection';
 	$: hasChecked = checked !== undefined || $entity.data.type === 'Note';

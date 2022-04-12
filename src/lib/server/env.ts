@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import {copyFileSync, existsSync} from 'fs'; // eslint-disable-line @typescript-eslint/no-restricted-imports
 
-// TODO does this stuff belong in `src/server/env.ts`?
 // TODO how to configure this stuff in user projects? felt/gro config?
 
 export const ENV_PROD = '.env.production';
@@ -18,7 +17,7 @@ const envs: Array<{file: string; defaultFile: string}> = [
 
 interface Env {
 	VITE_GIT_HASH: string;
-	COOKIE_KEYS: string; // TODO validate this somehow to avoid production security issues
+	COOKIE_KEYS: string;
 	VITE_DEPLOY_SERVER_HOST: string;
 	DEPLOY_IP: string;
 	DEPLOY_USER: string;

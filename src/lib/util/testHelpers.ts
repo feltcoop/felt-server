@@ -1,7 +1,7 @@
 import sourcemapSupport from 'source-map-support';
 import {configureLogLevel, Logger, LogLevel} from '@feltcoop/felt/util/log.js';
 
-import {SessionApiMock} from '$lib/server/SessionApiMock';
+import {SessionApiMock} from '$lib/session/SessionApiMock';
 import type {Database} from '$lib/db/Database';
 
 configureLogLevel(LogLevel.Info);

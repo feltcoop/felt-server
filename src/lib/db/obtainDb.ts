@@ -7,6 +7,6 @@ import {Database} from '$lib/db/Database.js';
 export const obtainDb = toObtainable(
 	(): Database => new Database({sql: postgres(defaultPostgresOptions)}),
 	(db): void => {
-		db.close(); // eslint-disable-line @typescript-eslint/no-floating-promises
+		void db.close();
 	},
 );

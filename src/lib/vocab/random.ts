@@ -20,7 +20,7 @@ import {parseView, type ViewData} from '$lib/vocab/view/view';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
-import {SessionApiMock} from '$lib/server/SessionApiMock';
+import {SessionApiMock} from '$lib/session/SessionApiMock';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
 import {createSpaceService} from '$lib/vocab/space/spaceServices';
 import type {Membership} from '$lib/vocab/membership/membership';

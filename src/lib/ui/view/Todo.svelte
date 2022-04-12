@@ -22,8 +22,7 @@
 	let text = '';
 
 	//TODO move this call to the UI to get arch & caching
-	// eslint-disable-next-line @typescript-eslint/no-floating-promises
-	$: tiesResult?.then((data) => {
+	$: void tiesResult?.then((data) => {
 		if (data.ok) {
 			ties = data.value.ties;
 		}

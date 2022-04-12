@@ -7,6 +7,7 @@ import {log, toServiceRequest} from '$lib/util/testHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {services} from '$lib/server/services';
 import {randomEventParams} from '$lib/server/random';
+import {SessionApiMock} from '$lib/session/SessionApiMock';
 
 /* eslint-disable no-await-in-loop */
 
@@ -15,6 +16,8 @@ const test__services = suite<TestDbContext>('services');
 
 test__services.before(setupDb);
 test__services.after(teardownDb);
+
+const session = new SessionApiMock(); // reuse the session so it tests login sequentially
 
 for (const service of services.values()) {
 	test__services(`perform service ${service.event.name}`, async ({db, random}) => {
@@ -33,6 +36,7 @@ for (const service of services.values()) {
 				// TODO what's the proper type here? should `account_id` be optional?
 				service.event.authenticate === false ? (null as any) : account.account_id,
 				db,
+				session,
 			),
 		});
 		if (!result.ok) {
