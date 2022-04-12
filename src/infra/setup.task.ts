@@ -101,7 +101,7 @@ export const task: Task = {
 			// <enter "password">
 		]);
 		if (!result.ok) {
-			log.error('spawn failed with signal', result.signal);
+			if (result.signal) log.error('spawn failed with signal', result.signal);
 			throw Error('Failed setup task');
 		}
 	},
