@@ -22,6 +22,9 @@ interface Env {
 	DEPLOY_IP: string;
 	DEPLOY_USER: string;
 	EMAIL_ADDRESS: string;
+	PGDATABASE: string;
+	PGUSERNAME: string;
+	PGPASSWORD: string;
 }
 
 let loaded = false;

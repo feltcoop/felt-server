@@ -5,6 +5,7 @@ import {red} from 'kleur/colors';
 import {fromEnv} from '$lib/server/env';
 import {toNginxConfig} from './nginxConfig';
 import {toLogSequence} from './helpers';
+import {defaultPostgresOptions} from '$lib/db/postgres';
 
 export const task: Task = {
 	summary: 'setup a clean server to prepare for a felt-server deploy',
@@ -14,6 +15,11 @@ export const task: Task = {
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
 		const VITE_DEPLOY_SERVER_HOST = fromEnv('VITE_DEPLOY_SERVER_HOST');
 		const EMAIL_ADDRESS = fromEnv('EMAIL_ADDRESS');
+
+		// TODO BLOCK how to do this?
+		const PGDATABASE = defaultPostgresOptions.database; //fromEnv('PGDATABASE');
+		const PGUSERNAME = defaultPostgresOptions.username; //fromEnv('PGUSERNAME');
+		const PGPASSWORD = defaultPostgresOptions.password; //fromEnv('PGPASSWORD');
 
 		// TODO this is hacky because of `import.meta` env handling
 		const {API_SERVER_HOST_PROD, SVELTEKIT_SERVER_HOST} = await import('../lib/config.js');
@@ -45,6 +51,7 @@ export const task: Task = {
 				// 	-e — exit the script if any command returns a nonzero exit code
 				// 	-u — throw an error if nonexistent variables are accessed
 				'set -eu;' +
+				//
 				// Ensure the setup task has not already run on this instance:
 				`if [ -f ${FELT_SETUP_STATE_FILE_PATH} ]; then
 					echo '${red('Felt setup task has already run on this instance, exiting without changes')}'
@@ -110,16 +117,19 @@ export const task: Task = {
 				sudo apt install -y postgresql;` +
 				//
 				//
+				// Create the Postgres database for Felt:
+				logSequence('Creating Postgres database...') +
+				`sudo -u postgres psql -U ${PGUSERNAME} -c "CREATE ROLE todo WITH LOGIN PASSWORD ${PGPASSWORD};";` +
+				`PGPASSWORD=${PGPASSWORD} sudo -u postgres psql -U ${PGUSERNAME} -c "create database ${PGDATABASE};";` +
+				// sudo -u postgres psql
+				// # in psql:
+				// # postgres=#
+				// create database felt; # notice the semicolon
+				// \password
+				// <enter "password">
 				// All done! Write a "state file" to avoid running the setup script twice.
 				logSequence(`Success! Writing setup state file to ${FELT_SETUP_STATE_FILE_PATH}`) +
 				`touch ${FELT_SETUP_STATE_FILE_PATH};`,
-			// TODO initialize the database
-			// sudo -u postgres psql
-			// # in psql:
-			// # postgres=#
-			// create database felt; # notice the semicolon
-			// \password
-			// <enter "password">
 		]);
 		if (!result.ok) {
 			if (result.signal) log.error('spawn failed with signal', result.signal);
