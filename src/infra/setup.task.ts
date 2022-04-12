@@ -1,5 +1,6 @@
 import type {Task} from '@feltcoop/gro';
 import {spawn} from '@feltcoop/felt/util/process.js';
+import {red} from 'kleur/colors';
 
 import {fromEnv} from '$lib/server/env';
 import {toNginxConfig} from './nginxConfig';
@@ -24,14 +25,12 @@ export const task: Task = {
 			SVELTEKIT_SERVER_HOST,
 		);
 
-		const logSequence = toLogSequence();
-
-		// TODO BLOCK how to detect and bail? maybe put hash
-		// ~/.felt_setup -- this file gets checked to see if the script has been run
-		// ~/.felt_deploy
-		// ~/.felt_restart
+		// This file is used to detect if the setup script has already run.
+		const FELT_SETUP_STATE_FILE_PATH = '~/felt_state_setup';
 
 		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
+
+		const logSequence = toLogSequence();
 
 		//TODO set up initial user accounts & directory system
 
@@ -43,6 +42,11 @@ export const task: Task = {
 				// 	-e — exit the script if any command returns a nonzero exit code
 				// 	-u — throw an error if nonexistent variables are accessed
 				'set -eu;' +
+				// Ensure the setup task has not already run on this instance:
+				`if [ -f ${FELT_SETUP_STATE_FILE_PATH} ]; then
+					echo '${red('Felt setup task has already run on this instance, exiting without changes')}'
+					exit 1
+				fi;` +
 				// Update and upgrade apt
 				logSequence('Updating apt...') +
 				`apt update;
@@ -84,7 +88,10 @@ export const task: Task = {
 				`sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list;'
 				curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -;
 				sudo apt update;
-				sudo apt install -y postgresql;`,
+				sudo apt install -y postgresql;` +
+				// All done! Write a "state file" to avoid running the setup script twice.
+				logSequence(`Success! Writing setup state file to ${FELT_SETUP_STATE_FILE_PATH}`) +
+				`touch ${FELT_SETUP_STATE_FILE_PATH};`, // TODO BLOCK add any useful info?
 			// TODO BLOCK initialize the database
 			// sudo -u postgres psql
 			// # in psql:
