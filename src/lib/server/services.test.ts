@@ -9,17 +9,16 @@ import {services} from '$lib/server/services';
 import {randomEventParams} from '$lib/server/random';
 import {SessionApiMock} from '$lib/session/SessionApiMock';
 
-/* eslint-disable no-await-in-loop */
-
 /* test__services */
 const test__services = suite<TestDbContext>('services');
 
 test__services.before(setupDb);
 test__services.after(teardownDb);
 
-test__services('perform services', async ({db, random}) => {
-	const session = new SessionApiMock();
-	for (const service of services.values()) {
+const session = new SessionApiMock(); // reuse the session so it tests login sequentially
+
+for (const service of services.values()) {
+	test__services(`perform service ${service.event.name}`, async ({db, random}) => {
 		const account = await random.account();
 		const params = await randomEventParams(service.event, random, {account});
 		if (!validateSchema(service.event.params)(params)) {
@@ -50,8 +49,8 @@ test__services('perform services', async ({db, random}) => {
 			);
 		}
 		assert.is(result.status, 200); // TODO generate invalid data and test those params+responses too
-	}
-});
+	});
+}
 
 test__services.run();
 /* test__services */
