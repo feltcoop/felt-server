@@ -76,8 +76,7 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	const {entities: filterFilesValue} = unwrap(
 		await readEntitiesService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
 	);
-	assert.is(filterFilesValue.length, 2);
-	assert.equal(filterFilesValue, [entity1, entity2]);
+	assert.equal(filterFilesValue.slice(), [entity1, entity2]); // `slice` because `RowList` is not deep equal to arrays
 
 	const {space: findSpaceValue} = unwrap(
 		await readSpaceService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
@@ -90,7 +89,7 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 			...serviceRequest,
 		}),
 	);
-	assert.equal(filterSpacesValue.length, spaceCount + defaultSpaceCount);
+	assert.is(filterSpacesValue.length, spaceCount + defaultSpaceCount);
 
 	const {community: findCommunityValue} = unwrap(
 		await readCommunityService.perform({
@@ -106,13 +105,13 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 			...serviceRequest,
 		}),
 	);
-	assert.equal(filterCommunitiesValue.length, 3);
+	assert.is(filterCommunitiesValue.length, 3);
 
 	// TODO add a service event?
 	assert.equal(
-		unwrap(await db.repos.persona.filterByAccount(account.account_id)).sort((a, b) =>
-			a.created < b.created ? -1 : 1,
-		),
+		unwrap(await db.repos.persona.filterByAccount(account.account_id))
+			.sort((a, b) => (a.created < b.created ? -1 : 1))
+			.slice(), // `slice` because `RowList` is not deep equal to arrays
 		[persona, persona2],
 	);
 
