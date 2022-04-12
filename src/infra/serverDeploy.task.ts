@@ -54,6 +54,7 @@ export const task: Task = {
 		await spawn('scp', [`src/infra/.env.default`, `${deployLogin}:${currentDeploy}/.env`]);
 		await spawn('scp', [ENV_PROD, `${deployLogin}:${currentDeploy}/${ENV_PROD}`]);
 		//TODO: re/start the server via pm2
+		// await invokeTask('infra/restartProd')
 	},
 };
 

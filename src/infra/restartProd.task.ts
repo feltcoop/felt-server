@@ -9,7 +9,8 @@ export const task: Task = {
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
 		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
-
+		// TODO BLOCK pm2 start
+		// export NODE_ENV=production && pm2 start npm -- run start --prefix current_felt_server_deploy
 		await spawn('ssh', [deployLogin, `pm2 restart default`]);
 	},
 };
