@@ -47,18 +47,18 @@ export const task: Task<SetupTaskArgs> = {
 				// Configure shell behavior:
 				// 	-e — exit the script if any command returns a nonzero exit code
 				// 	-u — throw an error if nonexistent variables are accessed
-				'set -eu;' +
+				'set -eu;\n\n' +
 				// Ensure the setup task has not already run on this instance:
 				`if [ -f ${FELT_SETUP_STATE_FILE_PATH} ]; then
 					echo '${red('Felt setup task has already run on this instance, exiting without changes')}'
 					exit 1
-				fi;` +
+				fi;\n\n` +
 				//
 				//
 				// Update and upgrade apt
 				logSequence('Updating apt...') +
 				`apt update;
-				apt upgrade -y;` +
+				apt upgrade -y;\n\n` +
 				//
 				//
 				// Install fnm:
@@ -66,7 +66,7 @@ export const task: Task<SetupTaskArgs> = {
 				`apt install -y unzip;
 				curl -fsSL https://fnm.vercel.app/install | bash;
 				export PATH=/root/.fnm:$PATH;
-				eval "\`fnm env\`";` +
+				eval "\`fnm env\`";\n\n` +
 				//
 				//
 				// Install Node:
@@ -74,26 +74,26 @@ export const task: Task<SetupTaskArgs> = {
 				`fnm install 16;
 				fnm use 16;
 				fnm default 16;
-				npm i -g npm@latest;` +
+				npm i -g npm@latest;\n\n` +
 				//
 				//
 				// Install Node tools:
 				logSequence('Installing pm2 and gro...') +
-				`npm i -g pm2 @feltcoop/gro;` +
+				`npm i -g pm2 @feltcoop/gro;\n\n` +
 				//
 				//
 				// Install nginx & certbot for HTTPS:
 				logSequence('Installing nginx and certbot...') +
 				`apt install -y nginx certbot python3-certbot-nginx;
 				systemctl start nginx;
-				sudo unlink /etc/nginx/sites-enabled/default;` +
+				sudo unlink /etc/nginx/sites-enabled/default;\n\n` +
 				//
 				//
 				// Create the nginx config:
 				logSequence('Creating nginx config...') +
 				`touch ${REMOTE_NGINX_CONFIG_PATH};
 				echo '${nginxConfig}' >> ${REMOTE_NGINX_CONFIG_PATH};
-				cat ${REMOTE_NGINX_CONFIG_PATH};` +
+				cat ${REMOTE_NGINX_CONFIG_PATH};\n\n` +
 				//
 				//
 				//Make sure your DNS records are set up and configured first
@@ -101,7 +101,7 @@ export const task: Task<SetupTaskArgs> = {
 				logSequence('Enabling HTTPS with cerbot and nginx...') +
 				`ln -s ${REMOTE_NGINX_CONFIG_PATH} ${REMOTE_NGINX_SYMLINK_PATH};
 				certbot --nginx --non-interactive --agree-tos --email ${EMAIL_ADDRESS} -d ${VITE_DEPLOY_SERVER_HOST};
-				systemctl restart nginx.service;` +
+				systemctl restart nginx.service;\n\n` +
 				//
 				//
 				// Install Postgres:
@@ -110,7 +110,7 @@ export const task: Task<SetupTaskArgs> = {
 				`sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list;'
 				curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -;
 				sudo apt update;
-				sudo apt install -y postgresql;` +
+				sudo apt install -y postgresql;\n\n` +
 				//
 				//
 				// All done! Write a "state file" to avoid running the setup script twice.
