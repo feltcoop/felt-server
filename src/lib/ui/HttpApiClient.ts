@@ -10,6 +10,7 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
+import {deserializeProperties} from '$lib/util/deserializeProperties'; // TODO BLOCK make this a param?
 
 const log = new Logger('[http]');
 
@@ -59,14 +60,15 @@ export const toHttpApiClient = <
 				};
 			}
 			log.trace('result', res.ok, res.status, json);
-			if (res.ok) {
-				return {ok: true, status: res.status, value: json};
+			if (!res.ok) {
+				return {
+					ok: false,
+					status: res.status,
+					message: json.message || res.statusText || 'unknown error',
+				};
 			}
-			return {
-				ok: false,
-				status: res.status,
-				message: json.message || res.statusText || 'unknown error',
-			};
+			deserializeProperties(json);
+			return {ok: true, status: res.status, value: json};
 		},
 		close: () => {
 			// TODO ?
