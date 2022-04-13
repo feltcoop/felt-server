@@ -49,10 +49,12 @@ export const task: Task<SetupTaskArgs> = {
 				// 	-u — throw an error if nonexistent variables are accessed
 				'set -eu;\n\n' +
 				// Ensure the setup task has not already run on this instance:
+				logSequence(`Checking setup state at ${FELT_SETUP_STATE_FILE_PATH}`) +
 				`if [ -f ${FELT_SETUP_STATE_FILE_PATH} ]; then
 					echo '${red('Felt setup task has already run on this instance, exiting without changes')}'
 					exit 1
-				fi;\n\n` +
+				fi;
+				touch ${FELT_SETUP_STATE_FILE_PATH};\n\n` +
 				//
 				//
 				// Update and upgrade apt
@@ -113,9 +115,8 @@ export const task: Task<SetupTaskArgs> = {
 				sudo apt install -y postgresql;\n\n` +
 				//
 				//
-				// All done! Write a "state file" to avoid running the setup script twice.
-				logSequence(`Success! Writing setup state file to ${FELT_SETUP_STATE_FILE_PATH}`) +
-				`touch ${FELT_SETUP_STATE_FILE_PATH};`,
+				// All done!
+				logSequence(`Success! Server is now setup for deployment.`),
 			// TODO initialize the database
 			// sudo -u postgres psql
 			// # in psql:
