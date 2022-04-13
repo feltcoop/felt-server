@@ -1,4 +1,4 @@
-import type {Result} from '@feltcoop/felt';
+import {NOT_OK, OK, type Result} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
@@ -55,8 +55,8 @@ export class TieRepo extends PostgresRepo {
 			DELETE FROM ties WHERE ${source_id}=source_id AND ${dest_id}=dest_id AND ${type}=type
 		`;
 		if (!data.count) {
-			return {ok: false};
+			return NOT_OK;
 		}
-		return {ok: true};
+		return OK;
 	}
 }

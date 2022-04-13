@@ -5,7 +5,7 @@ import type {WritableUi} from '$lib/ui/ui';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ApiResult} from '$lib/server/api';
 import type {Dispatch} from '$lib/app/eventTypes';
-import type {BroadcastMessage} from '$lib/server/websocketServiceMiddleware';
+import type {BroadcastMessage} from '$lib/util/websocket';
 import type {Mutation} from '$lib/ui/mutation';
 
 const log = new Logger();

@@ -63,6 +63,19 @@
 		findWebsocketService,
 		socket.send,
 		toDispatchBroadcastMessage(ui, mutations, dispatch),
+		async (message) => {
+			if (message.status === 401) {
+				// this condition occurs when the server fails to parse and validate session cookies
+				// TODO maybe display an error on the login screen
+				if ($session.guest) {
+					await dispatch.LogoutAccount();
+				} else {
+					$session = {guest: true};
+				}
+			} else {
+				log.error('unhandled status message', message);
+			}
+		},
 	);
 	const httpClient = toHttpApiClient(findHttpService);
 	const app = setApp({ui, dispatch, devmode, socket});
@@ -79,7 +92,7 @@
 	$: onboarding = !guest && !$sessionPersonas.length;
 	$: selectedPersona = $personaSelection; // must be after `updateStateFromPageParams`
 
-	$: syncUiToUrl(ui, dispatch, $page.params, $page.query);
+	$: syncUiToUrl(ui, dispatch, $page.params, $page.url.searchParams);
 
 	let mounted = false;
 

@@ -37,8 +37,7 @@ export const syncUiToUrl = (
 			log.warn(
 				`failed to find persona at index ${personaIndex}; falling back to index ${fallbackPersonaIndex}`,
 			);
-			// eslint-disable-next-line @typescript-eslint/no-floating-promises
-			goto(
+			void goto(
 				location.pathname +
 					'?' +
 					setUrlPersona(fallbackPersonaIndex, new URLSearchParams(location.search)),

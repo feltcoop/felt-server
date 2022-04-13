@@ -6,7 +6,6 @@ import {toHttpApiClient} from '$lib/ui/HttpApiClient';
 import type {EventParamsByName, EventResponseByName} from '$lib/app/eventTypes';
 import {toDispatch} from '$lib/app/dispatch';
 import {findHttpService} from '$lib/ui/services';
-import type {ClientSession} from '$lib/session/clientSession';
 import {installSourceMaps} from '$lib/util/testHelpers';
 import {mutations} from '$lib/app/mutations';
 

@@ -49,7 +49,8 @@ export const loginAccountService: Service<LoginAccountParams, LoginAccountRespon
 		const clientSessionResult = await repos.session.loadClientSession(account.account_id);
 
 		if (clientSessionResult.ok) {
-			session.login(account.account_id);
+			const result = session.login(account.account_id);
+			if (!result.ok) return {ok: false, status: 500, message: result.message};
 			return {
 				ok: true,
 				status: 200,
@@ -67,7 +68,8 @@ export const loginAccountService: Service<LoginAccountParams, LoginAccountRespon
 export const logoutAccountService: Service<LogoutAccountParams, LogoutAccountResponseResult> = {
 	event: LogoutAccount,
 	perform: async ({session}) => {
-		session.logout();
+		const result = session.logout();
+		if (!result.ok) return {ok: false, status: 500, message: result.message};
 		return {
 			ok: true,
 			status: 200,

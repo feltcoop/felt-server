@@ -1,8 +1,8 @@
 <script lang="ts">
-	import {type Readable} from 'svelte/store';
+	import type {Readable} from 'svelte/store';
 	import {format} from 'date-fns';
 
-	import {type Community} from '$lib/vocab/community/community';
+	import type {Community} from '$lib/vocab/community/community';
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import CommunitySettingsHue from '$lib/ui/CommunitySettingsHue.svelte';
 

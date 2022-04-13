@@ -11,10 +11,10 @@ Thanks for your interest in contributing! Before you get started you'll need to 
 
 1. Configure your environment to the Node & NPM versions listed in [package.json](/package.json)
 1. Run `npm i`
-1. Install [Gro](https://github.com/feltcoop/gro)
+1. Follow [the PostgreSQL db setup instructions](/src/lib/db/README.md)
+1. Optionally install [Gro](https://github.com/feltcoop/gro)
    globally to [run tasks](https://github.com/feltcoop/gro/tree/main/src/docs/task.md):
-   `npm i -g @feltcoop/gro`
-1. [Install Postgresql](/src/lib/db/README.md)
+   `npm i -g @feltcoop/gro` (or prefix `gro` commands with `npx`)
 1. Run `gro lib/db/create` to initialize the database'
 1. Run [`gro dev`](https://github.com/feltcoop/gro/blob/main/src/docs/dev.md)
    and navigate to localhost:3000 to start!

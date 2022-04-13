@@ -4,12 +4,11 @@ import type {Server as HttpServer} from 'http';
 import type {Server as HttpsServer} from 'https';
 import {EventEmitter} from 'events';
 import type StrictEventEmitter from 'strict-event-emitter-types';
-import {noop} from '@feltcoop/felt/util/function.js';
 import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import type {CookieSessionIncomingMessage} from '$lib/session/cookieSession';
-import {cookieSessionMiddleware} from '$lib/session/cookieSession';
+import {parseSessionCookie} from '$lib/session/sessionCookie';
+import type {StatusMessage} from '$lib/util/websocket';
 
 const log = new Logger(gray('[') + blue('wss') + gray(']'));
 
@@ -17,10 +16,6 @@ type WebsocketServerEmitter = StrictEventEmitter<EventEmitter, WebsocketServerEv
 interface WebsocketServerEvents {
 	message: (socket: WebSocket, message: Data, account_id: number) => void;
 }
-
-const REQUIRES_AUTHENTICATION_MESSAGE = JSON.stringify({
-	message: 'please log in before connecting via websocket',
-});
 
 export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEmitter}) {
 	readonly wss: WebSocketServer;
@@ -34,18 +29,18 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 
 	async init(): Promise<void> {
 		const {wss} = this;
-		wss.on('connection', (socket, req: CookieSessionIncomingMessage) => {
+		wss.on('connection', (socket, req) => {
 			log.trace('connection req.url', req.url, wss.clients.size);
 			log.trace('connection req.headers', req.headers);
 
-			cookieSessionMiddleware(req as any, {} as any, noop); // eslint-disable-line @typescript-eslint/no-floating-promises
-			const account_id = req.session?.account_id;
-			if (account_id == null) {
+			const parsed = parseSessionCookie(req.headers.cookie);
+			if (!parsed) {
 				log.trace('request to open connection was unauthenticated');
-				socket.send(REQUIRES_AUTHENTICATION_MESSAGE);
+				socket.send(REQUIRES_AUTHENTICATION_MESSAGE_STR);
 				socket.close();
 				return;
 			}
+			const {account_id} = parsed;
 
 			socket.on('message', async (data, isBinary) => {
 				const message = isBinary ? data : data.toString(); // eslint-disable-line @typescript-eslint/no-base-to-string
@@ -78,3 +73,10 @@ export class WebsocketServer extends (EventEmitter as {new (): WebsocketServerEm
 		await close();
 	}
 }
+
+const REQUIRES_AUTHENTICATION_MESSAGE: StatusMessage = {
+	type: 'status',
+	status: 401,
+	message: 'please log in before connecting via websocket',
+};
+const REQUIRES_AUTHENTICATION_MESSAGE_STR = JSON.stringify(REQUIRES_AUTHENTICATION_MESSAGE);

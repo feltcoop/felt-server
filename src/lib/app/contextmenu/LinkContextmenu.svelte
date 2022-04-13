@@ -9,7 +9,9 @@
 	// TODO move or upstream? rename? `printUrl`
 	const formatUrl = (url: string): string => {
 		const formatted = stripStart(stripStart(url, 'https://'), 'http://'); // TODO probably leave http but not locally
-		return formatted.startsWith($page.host + '/') ? stripStart(formatted, $page.host) : formatted;
+		return formatted.startsWith($page.url.host + '/')
+			? stripStart(formatted, $page.url.host)
+			: formatted;
 	};
 </script>
 
