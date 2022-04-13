@@ -9,7 +9,7 @@ import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
 import type {JsonRpcId, JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
-import type {BroadcastMessage, StatusMessage} from '$lib/util/websocket';
+import type {BroadcastMessage, StatusMessage, WebsocketResult} from '$lib/util/websocket';
 
 const log = new Logger('[ws]');
 
@@ -76,8 +76,7 @@ export const toWebsocketApiClient = <
 					return;
 				}
 				websocketRequests.delete(message.id);
-				// TODO upstream the `ok` instead of creating a new object? could return `message.result` directly
-				found.resolve({ok: message.result.status === 200, ...message.result});
+				found.resolve(message.result);
 			} else if (message.type === 'broadcast') {
 				handleBroadcastMessage(message);
 			} else if (message.type === 'status') {
@@ -96,7 +95,7 @@ export const toWebsocketApiClient = <
 // TODO do we need to support another type of message, the non-response kind?
 const parseSocketMessage = (
 	rawMessage: any,
-): JsonRpcResponse<any> | StatusMessage | BroadcastMessage | null => {
+): JsonRpcResponse<WebsocketResult> | StatusMessage | BroadcastMessage | null => {
 	if (typeof rawMessage !== 'string') {
 		log.error(
 			'[parseSocketMessage] cannot parse websocket message; currently only supports strings',
