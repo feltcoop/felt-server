@@ -31,6 +31,8 @@
 	import AppContextmenu from '$lib/app/contextmenu/AppContextmenu.svelte';
 	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
 	import LinkContextmenu from '$lib/app/contextmenu/LinkContextmenu.svelte';
+	import {deserializeProperties} from '$lib/util/deserializeProperties';
+	import {deserializers} from '$lib/util/deserializers';
 
 	const log = new Logger('[layout]');
 
@@ -56,6 +58,8 @@
 	const ui = toUi(session, initialMobileValue, components);
 	setUi(ui);
 
+	const deserialize = deserializeProperties(deserializers);
+
 	const dispatch = toDispatch(ui, mutations, (e) =>
 		websocketClient.find(e) ? websocketClient : httpClient.find(e) ? httpClient : null,
 	);
@@ -76,8 +80,9 @@
 				log.error('unhandled status message', message);
 			}
 		},
+		deserialize,
 	);
-	const httpClient = toHttpApiClient(findHttpService);
+	const httpClient = toHttpApiClient(findHttpService, deserialize);
 	const app = setApp({ui, dispatch, devmode, socket});
 	if (browser) {
 		(window as any).app = app;

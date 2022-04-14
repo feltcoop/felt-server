@@ -10,7 +10,7 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
-import {deserializeProperties} from '$lib/util/deserializeProperties'; // TODO BLOCK make this a param?
+import type {DeserializeProperties} from '$lib/util/deserializeProperties';
 
 const log = new Logger('[http]');
 
@@ -21,6 +21,7 @@ export const toHttpApiClient = <
 	TResultMap extends Record<string, any>,
 >(
 	findService: (name: string) => ServiceEventInfo | undefined,
+	deserialize: DeserializeProperties,
 	fetch: typeof globalThis.fetch = globalThis.fetch,
 ): ApiClient<TParamsMap, TResultMap> => {
 	const client: ApiClient<TParamsMap, TResultMap> = {
@@ -67,7 +68,7 @@ export const toHttpApiClient = <
 					message: json.message || res.statusText || 'unknown error',
 				};
 			}
-			deserializeProperties(json);
+			deserialize(json);
 			return {ok: true, status: res.status, value: json};
 		},
 		close: () => {

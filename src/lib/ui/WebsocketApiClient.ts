@@ -10,7 +10,7 @@ import type {ServiceEventInfo} from '$lib/vocab/event/event';
 import type {JsonRpcId, JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 import type {BroadcastMessage, StatusMessage, WebsocketResult} from '$lib/util/websocket';
-import {deserializeProperties} from '$lib/util/deserializeProperties'; // TODO BLOCK make this a param?
+import type {DeserializeProperties} from '$lib/util/deserializeProperties';
 
 const log = new Logger('[ws]');
 
@@ -40,6 +40,7 @@ export const toWebsocketApiClient = <
 	send: (request: JsonRpcRequest) => void,
 	handleBroadcastMessage: (message: BroadcastMessage) => void,
 	handleStatusMessage: (message: StatusMessage) => void,
+	deserialize: DeserializeProperties,
 ): WebsocketApiClient<TParamsMap, TResultMap> => {
 	// TODO maybe extract a `WebsocketRequests` interface, with `add`/`remove` functions (and `pending` items?)
 	const websocketRequests: Map<JsonRpcId, WebsocketRequest> = new Map();
@@ -77,10 +78,10 @@ export const toWebsocketApiClient = <
 					return;
 				}
 				websocketRequests.delete(message.id);
-				deserializeProperties(message.result); // TODO BLOCK here or up?
+				deserialize(message.result);
 				found.resolve(message.result);
 			} else if (message.type === 'broadcast') {
-				deserializeProperties(message.result); // TODO BLOCK here or up?
+				deserialize(message.result);
 				handleBroadcastMessage(message);
 			} else if (message.type === 'status') {
 				handleStatusMessage(message);
