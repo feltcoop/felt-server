@@ -1,5 +1,4 @@
 import type {Result} from '@feltcoop/felt';
-import type {Json} from '@feltcoop/felt/util/json.js';
 
 export interface BroadcastMessage {
 	type: 'broadcast';
@@ -14,7 +13,7 @@ export interface StatusMessage {
 	message: string;
 }
 
-export type WebsocketResult<T extends Json = Json> = Result<
+export type WebsocketResult<T = any> = Result<
 	{status: number; value: T},
 	{status: number; message: string}
 >;
