@@ -58,8 +58,6 @@
 	const ui = toUi(session, initialMobileValue, components);
 	setUi(ui);
 
-	const deserialize = deserializeProperties(deserializers);
-
 	const dispatch = toDispatch(ui, mutations, (e) =>
 		websocketClient.find(e) ? websocketClient : httpClient.find(e) ? httpClient : null,
 	);
@@ -80,9 +78,9 @@
 				log.error('unhandled status message', message);
 			}
 		},
-		deserialize,
+		deserializeProperties(deserializers),
 	);
-	const httpClient = toHttpApiClient(findHttpService, deserialize);
+	const httpClient = toHttpApiClient(findHttpService, deserializeProperties(deserializers));
 	const app = setApp({ui, dispatch, devmode, socket});
 	if (browser) {
 		(window as any).app = app;
