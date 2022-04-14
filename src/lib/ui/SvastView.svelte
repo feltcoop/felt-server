@@ -18,8 +18,7 @@
 
 {#if view.type === 'root'}{#each view.children as childView (childView)}<svelte:self
 			view={childView}
-		/>{/each}
-{:else if view.type === 'text'}{view.value}{:else if view.type === 'svelteComponent' && view.tagName in components}<svelte:component
+		/>{/each}{:else if view.type === 'text'}{view.value}{:else if view.type === 'svelteComponent' && view.tagName in components}<svelte:component
 		this={components[view.tagName]}
 		{...props}
 		>{#each view.children as childView (childView)}<svelte:self
