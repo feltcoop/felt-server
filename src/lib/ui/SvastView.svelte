@@ -16,16 +16,12 @@
 	$: props = toViewProps(view) || EMPTY_OBJECT;
 </script>
 
-{#if view.type === 'root'}{#each view.children as childView (childView)}<svelte:self
-			view={childView}
-		/>{/each}{:else if view.type === 'text'}{view.value}{:else if view.type === 'svelteComponent' && view.tagName in components}<svelte:component
-		this={components[view.tagName]}
-		{...props}
-		>{#each view.children as childView (childView)}<svelte:self
-				view={childView}
-			/>{/each}</svelte:component
-	>{:else if view.type === 'svelteElement'}<svelte:element this={view.tagName} {...props}
-		>{#each view.children as childView (childView)}<svelte:self
-				view={childView}
-			/>{/each}</svelte:element
-	>{/if}
+{#if view.type === 'svelteComponent'}{#if view.tagName in components}<svelte:component
+			this={components[view.tagName]}
+			{...props}
+			>{#each view.children as child (child)}<svelte:self view={child} />{/each}</svelte:component
+		>{/if}{:else if view.type === 'svelteElement'}<svelte:element this={view.tagName} {...props}
+		>{#each view.children as child (child)}<svelte:self view={child} />{/each}</svelte:element
+	>{:else if view.type === 'root'}{#each view.children as child (child)}<svelte:self
+			view={child}
+		/>{/each}{:else if view.type === 'text'}{view.value}{/if}
