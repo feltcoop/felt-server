@@ -18,7 +18,11 @@ export const deserialize =
 
 export const deserializeDate = (v: string): Date => new Date(v);
 
-export type Deserializers = Map<string, (v: any) => any>;
+export interface Deserializer<TInput = any, TOutput = any> {
+	(v: TInput): TOutput;
+}
+
+export type Deserializers = Map<string, Deserializer>;
 
 export const deserializers: Deserializers = new Map([
 	['created', deserializeDate],
