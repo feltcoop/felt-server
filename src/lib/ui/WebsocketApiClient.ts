@@ -10,7 +10,7 @@ import type {ServiceEventInfo} from '$lib/vocab/event/event';
 import type {JsonRpcId, JsonRpcRequest, JsonRpcResponse} from '$lib/util/jsonRpc';
 import {parseJsonRpcResponse} from '$lib/util/jsonRpc';
 import type {BroadcastMessage, StatusMessage, WebsocketResult} from '$lib/util/websocket';
-import type {DeserializeProperties} from '$lib/util/deserializeProperties';
+import type {Deserialize} from '$lib/util/deserialize';
 
 const log = new Logger('[ws]');
 
@@ -40,7 +40,7 @@ export const toWebsocketApiClient = <
 	send: (request: JsonRpcRequest) => void,
 	handleBroadcastMessage: (message: BroadcastMessage) => void,
 	handleStatusMessage: (message: StatusMessage) => void,
-	deserialize: DeserializeProperties,
+	deserialize: Deserialize,
 ): WebsocketApiClient<TParamsMap, TResultMap> => {
 	// TODO maybe extract a `WebsocketRequests` interface, with `add`/`remove` functions (and `pending` items?)
 	const websocketRequests: Map<JsonRpcId, WebsocketRequest> = new Map();

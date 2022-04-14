@@ -10,7 +10,7 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
-import type {DeserializeProperties} from '$lib/util/deserializeProperties';
+import type {Deserialize} from '$lib/util/deserialize';
 
 const log = new Logger('[http]');
 
@@ -21,7 +21,7 @@ export const toHttpApiClient = <
 	TResultMap extends Record<string, any>,
 >(
 	findService: (name: string) => ServiceEventInfo | undefined,
-	deserialize: DeserializeProperties,
+	deserialize: Deserialize,
 	fetch: typeof globalThis.fetch = globalThis.fetch,
 ): ApiClient<TParamsMap, TResultMap> => {
 	const client: ApiClient<TParamsMap, TResultMap> = {
