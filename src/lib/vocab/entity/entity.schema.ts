@@ -11,7 +11,7 @@ export const EntitySchema = {
 			tsImport: "import type { EntityData } from '$lib/vocab/entity/entityData';",
 		},
 		created: {type: 'object', instanceof: 'Date', tsType: 'Date'},
-		updated: {anyOf: [{type: 'object', instanceof: 'Date'}, {type: 'null'}], tsType: 'Date | null'},
+		updated: {anyOf: [{type: 'object', instanceof: 'Date', tsType: 'Date'}, {type: 'null'}]},
 	},
 	required: ['entity_id', 'actor_id', 'space_id', 'data', 'created', 'updated'],
 	additionalProperties: false,

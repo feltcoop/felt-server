@@ -10,7 +10,7 @@ export const CommunitySchema = {
 		name: {type: 'string'},
 		settings: {$ref: '/schemas/CommunitySettings.json'},
 		created: {type: 'object', instanceof: 'Date', tsType: 'Date'},
-		updated: {anyOf: [{type: 'object', instanceof: 'Date'}, {type: 'null'}], tsType: 'Date | null'},
+		updated: {anyOf: [{type: 'object', instanceof: 'Date', tsType: 'Date'}, {type: 'null'}]},
 	},
 	required: ['community_id', 'type', 'name', 'settings', 'created', 'updated'],
 	additionalProperties: false,
