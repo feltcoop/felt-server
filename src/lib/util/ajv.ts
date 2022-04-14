@@ -1,6 +1,6 @@
 import Ajv, {type Options, type ErrorObject, type ValidateFunction, type SchemaObject} from 'ajv';
-import addFormats from 'ajv-formats';
 import type {VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
+import AjvKeywordInstanceof from 'ajv-keywords/dist/keywords/instanceof.js';
 
 import {schemas} from '$lib/app/schemas';
 
@@ -11,7 +11,7 @@ export const ajv = (opts?: Options): Ajv => {
 	if (ajvInstance) return ajvInstance;
 	ajvInstance = new Ajv(opts);
 	ajvInstance.addKeyword('tsType').addKeyword('tsImport');
-	addFormats(ajvInstance);
+	AjvKeywordInstanceof(ajvInstance);
 	for (const schema of schemas) {
 		// This cast is needed because TypeScript's `exactOptionalPropertyTypes` is enabled
 		// and `json-schema` types have `| undefined` but `ajv` does not.
