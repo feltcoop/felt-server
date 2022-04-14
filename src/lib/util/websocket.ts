@@ -4,7 +4,7 @@ import type {Json} from '@feltcoop/felt/util/json.js';
 export interface BroadcastMessage {
 	type: 'broadcast';
 	method: string;
-	result: any; // TODO type
+	result: WebsocketResult;
 	params: any;
 }
 
