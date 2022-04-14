@@ -10,25 +10,23 @@
 
 	export let view: ViewNode;
 
+	// TODO `toComponentViewProps` and `toElementViewProps`? or expand this API?
+	// Maybe `toViewProps` with optional whitelist set of property names?
+	// Needs more flexibility than that -- e.g. to remove external links but preserve internal ones
 	$: props = toViewProps(view) || EMPTY_OBJECT;
-
-	$: console.log(`view, props`, view, props);
 </script>
 
-{#if view.type === 'root'}
-	{#each view.children as childView (childView)}
-		<svelte:self view={childView} />
-	{/each}
-{:else if view.type === 'svelteComponent' && view.tagName in components}
-	<svelte:component this={components[view.tagName]} {...props}>
-		{#each view.children as childView (childView)}
-			<svelte:self view={childView} />
-		{/each}
-	</svelte:component>
-{:else if view.type === 'svelteElement'}
-	<svelte:element this={view.tagName} {...props}>
-		{#each view.children as childView (childView)}
-			<svelte:self view={childView} />
-		{/each}
-	</svelte:element>
-{/if}
+{#if view.type === 'root'}{#each view.children as childView (childView)}<svelte:self
+			view={childView}
+		/>{/each}
+{:else if view.type === 'text'}{view.value}{:else if view.type === 'svelteComponent' && view.tagName in components}<svelte:component
+		this={components[view.tagName]}
+		{...props}
+		>{#each view.children as childView (childView)}<svelte:self
+				view={childView}
+			/>{/each}</svelte:component
+	>{:else if view.type === 'svelteElement'}<svelte:element this={view.tagName} {...props}
+		>{#each view.children as childView (childView)}<svelte:self
+				view={childView}
+			/>{/each}</svelte:element
+	>{/if}
