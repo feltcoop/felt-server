@@ -7,5 +7,5 @@ export interface LogSequence {
 
 export const toLogSequence = (): LogSequence => {
 	const counter = toCounter();
-	return (text, color = cyan) => `echo;echo;echo '${color(`${counter()}. ${text}`)}';`;
+	return (text, color = cyan) => `echo;echo;echo '${color(`${counter()}. ${text}`)}';\n`;
 };

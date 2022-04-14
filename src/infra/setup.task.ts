@@ -54,69 +54,68 @@ export const task: Task<SetupTaskArgs> = {
 					echo '${red('Felt setup task has already run on this instance, exiting without changes')}'
 					exit 1
 				fi;
-				touch ${FELT_SETUP_STATE_FILE_PATH};\n\n` +
-				//
-				//
-				// Update and upgrade apt
-				logSequence('Updating apt...') +
+				touch ${FELT_SETUP_STATE_FILE_PATH};`,
+			//
+			//
+			// Update and upgrade apt
+			logSequence('Updating apt...') +
 				`apt update;
-				apt upgrade -y;\n\n` +
-				//
-				//
-				// Install fnm:
-				logSequence('Installing fnm...') +
+				apt upgrade -y;`,
+			//
+			//
+			// Install fnm:
+			logSequence('Installing fnm...') +
 				`apt install -y unzip;
 				curl -fsSL https://fnm.vercel.app/install | bash;
 				export PATH=/root/.fnm:$PATH;
-				eval "\`fnm env\`";\n\n` +
-				//
-				//
-				// Install Node:
-				logSequence('Installing Node...') +
+				eval "\`fnm env\`";`,
+			//
+			//
+			// Install Node:
+			logSequence('Installing Node...') +
 				`fnm install 16;
 				fnm use 16;
 				fnm default 16;
-				npm i -g npm@latest;\n\n` +
-				//
-				//
-				// Install Node tools:
-				logSequence('Installing pm2 and gro...') +
-				`npm i -g pm2 @feltcoop/gro;\n\n` +
-				//
-				//
-				// Install nginx & certbot for HTTPS:
-				logSequence('Installing nginx and certbot...') +
+				npm i -g npm@latest;`,
+			//
+			//
+			// Install Node tools:
+			logSequence('Installing pm2 and gro...') + `npm i -g pm2 @feltcoop/gro;`,
+			//
+			//
+			// Install nginx & certbot for HTTPS:
+			logSequence('Installing nginx and certbot...') +
 				`apt install -y nginx certbot python3-certbot-nginx;
 				systemctl start nginx;
-				sudo unlink /etc/nginx/sites-enabled/default;\n\n` +
-				//
-				//
-				// Create the nginx config:
-				logSequence('Creating nginx config...') +
+				sudo unlink /etc/nginx/sites-enabled/default;`,
+			//
+			//
+			// Create the nginx config:
+			logSequence('Creating nginx config...') +
 				`touch ${REMOTE_NGINX_CONFIG_PATH};
 				echo '${nginxConfig}' >> ${REMOTE_NGINX_CONFIG_PATH};
-				cat ${REMOTE_NGINX_CONFIG_PATH};\n\n` +
-				//
-				//
-				//Make sure your DNS records are set up and configured first
-				//TODO stuff is still a little unstable arount this
-				logSequence('Enabling HTTPS with cerbot and nginx...') +
+				cat ${REMOTE_NGINX_CONFIG_PATH};`,
+			//
+			//
+			//Make sure your DNS records are set up and configured first
+			//TODO stuff is still a little unstable arount this
+			logSequence('Enabling HTTPS with cerbot and nginx...') +
 				`ln -s ${REMOTE_NGINX_CONFIG_PATH} ${REMOTE_NGINX_SYMLINK_PATH};
 				certbot --nginx --non-interactive --agree-tos --email ${EMAIL_ADDRESS} -d ${VITE_DEPLOY_SERVER_HOST};
-				systemctl restart nginx.service;\n\n` +
-				//
-				//
-				// Install Postgres:
-				// More details at src/lib/db/README.md and https://www.postgresql.org/download/linux/ubuntu/
-				logSequence('Installing Postgres...') +
+				systemctl restart nginx.service;`,
+			//
+			//
+			// Install Postgres:
+			// More details at src/lib/db/README.md and https://www.postgresql.org/download/linux/ubuntu/
+			logSequence('Installing Postgres...') +
 				`sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list;'
 				curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -;
 				sudo apt update;
-				sudo apt install -y postgresql;\n\n` +
-				//
-				//
-				// All done!
-				logSequence(`Success! Server is now setup for deployment.`),
+				sudo apt install -y postgresql;`,
+			//
+			//
+			// All done!
+			logSequence(`Success! Server is now setup for deployment.`),
 			// TODO initialize the database
 			// sudo -u postgres psql
 			// # in psql:
@@ -124,9 +123,9 @@ export const task: Task<SetupTaskArgs> = {
 			// create database felt; # notice the semicolon
 			// \password
 			// <enter "password">
-		];
+		].map((s) => s + '\n\n');
 		if (dry) {
-			log.info(green(`\n\ndry run! here's the script ↓\n\n`), 'ssh ' + steps.join('\n'));
+			log.info(green(`\n\ndry run! here's the script ↓\n\n`), 'ssh ' + steps.join(''));
 			log.info(green('\n\ndry run done ↑\n\n'));
 			return;
 		}
