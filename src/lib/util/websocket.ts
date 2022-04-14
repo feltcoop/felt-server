@@ -8,14 +8,13 @@ export interface BroadcastMessage {
 	params: any;
 }
 
-// TODO rename? `CommandMessage`? `ServerMessage`?
 export interface StatusMessage {
 	type: 'status';
 	status: number;
 	message: string;
 }
 
-export type WebsocketResult = Result<
-	{status: number; value: Json},
+export type WebsocketResult<T extends Json = Json> = Result<
+	{status: number; value: T},
 	{status: number; message: string}
 >;

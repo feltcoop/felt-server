@@ -8,6 +8,8 @@ import {toDispatch} from '$lib/app/dispatch';
 import {findHttpService} from '$lib/ui/services';
 import {installSourceMaps} from '$lib/util/testHelpers';
 import {mutations} from '$lib/app/mutations';
+import {deserializeProperties} from '$lib/util/deserializeProperties';
+import {deserializers} from '$lib/util/deserializers';
 
 installSourceMaps();
 
@@ -22,6 +24,7 @@ export const setupApp =
 		const ui = toUi(session, false, {});
 		const httpApiClient = toHttpApiClient<EventParamsByName, EventResponseByName>(
 			findHttpService,
+			deserializeProperties(deserializers),
 			fetch,
 		);
 		context.app = {
