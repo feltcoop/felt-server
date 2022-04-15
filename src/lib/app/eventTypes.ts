@@ -37,7 +37,7 @@ export interface EventParamsByName {
 	ReadEntities: ReadEntitiesParams;
 	QueryEntities: QueryEntitiesParams;
 	SoftDeleteEntity: SoftDeleteEntityParams;
-	HardDeleteEntity: HardDeleteEntityParams;
+	DeleteEntities: DeleteEntitiesParams;
 	CreateTie: CreateTieParams;
 	ReadTies: ReadTiesParams;
 	DeleteTie: DeleteTieParams;
@@ -72,7 +72,7 @@ export interface EventResponseByName {
 	UpdateEntity: UpdateEntityResponse;
 	ReadEntities: ReadEntitiesResponse;
 	SoftDeleteEntity: SoftDeleteEntityResponse;
-	HardDeleteEntity: HardDeleteEntityResponse;
+	DeleteEntities: DeleteEntitiesResponse;
 	CreateTie: CreateTieResponse;
 	ReadTies: ReadTiesResponse;
 	DeleteTie: DeleteTieResponse;
@@ -248,11 +248,11 @@ export interface SoftDeleteEntityParams {
 export type SoftDeleteEntityResponse = null;
 export type SoftDeleteEntityResponseResult = ApiResult<SoftDeleteEntityResponse>;
 
-export interface HardDeleteEntityParams {
-	entity_id: number;
+export interface DeleteEntitiesParams {
+	entity_ids: number[];
 }
-export type HardDeleteEntityResponse = null;
-export type HardDeleteEntityResponseResult = ApiResult<HardDeleteEntityResponse>;
+export type DeleteEntitiesResponse = null;
+export type DeleteEntitiesResponseResult = ApiResult<DeleteEntitiesResponse>;
 
 export interface CreateTieParams {
 	source_id: number;
@@ -345,7 +345,7 @@ export interface Dispatch {
 	ReadEntities: (params: ReadEntitiesParams) => Promise<ReadEntitiesResponseResult>;
 	QueryEntities: (params: QueryEntitiesParams) => Readable<Readable<Entity>[]>;
 	SoftDeleteEntity: (params: SoftDeleteEntityParams) => Promise<SoftDeleteEntityResponseResult>;
-	HardDeleteEntity: (params: HardDeleteEntityParams) => Promise<HardDeleteEntityResponseResult>;
+	DeleteEntities: (params: DeleteEntitiesParams) => Promise<DeleteEntitiesResponseResult>;
 	CreateTie: (params: CreateTieParams) => Promise<CreateTieResponseResult>;
 	ReadTies: (params: ReadTiesParams) => Promise<ReadTiesResponseResult>;
 	DeleteTie: (params: DeleteTieParams) => Promise<DeleteTieResponseResult>;
@@ -420,9 +420,9 @@ export interface Mutations {
 	SoftDeleteEntity: (
 		ctx: DispatchContext<SoftDeleteEntityParams, SoftDeleteEntityResponseResult>,
 	) => Promise<SoftDeleteEntityResponseResult>;
-	HardDeleteEntity: (
-		ctx: DispatchContext<HardDeleteEntityParams, HardDeleteEntityResponseResult>,
-	) => Promise<HardDeleteEntityResponseResult>;
+	DeleteEntities: (
+		ctx: DispatchContext<DeleteEntitiesParams, DeleteEntitiesResponseResult>,
+	) => Promise<DeleteEntitiesResponseResult>;
 	CreateTie: (
 		ctx: DispatchContext<CreateTieParams, CreateTieResponseResult>,
 	) => Promise<CreateTieResponseResult>;

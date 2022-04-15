@@ -122,10 +122,11 @@ export const randomEventParams = async (
 				entity_id: (await random.entity(persona, account, community, space)).entity.entity_id,
 			};
 		}
-		case 'HardDeleteEntity': {
-			const {entity} = await random.entity(persona, account, community, space);
+		case 'DeleteEntities': {
+			const entity1 = await random.entity(persona, account, community, space);
+			const entity2 = await random.entity(persona, account, community, space);
 			return {
-				entity_id: entity.entity_id,
+				entity_ids: [entity1.entity.entity_id, entity2.entity.entity_id],
 			};
 		}
 		case 'CreateTie': {

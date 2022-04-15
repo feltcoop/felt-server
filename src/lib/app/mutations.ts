@@ -12,7 +12,7 @@ import {
 	CreateEntity,
 	UpdateEntity,
 	SoftDeleteEntity,
-	HardDeleteEntity,
+	DeleteEntities,
 	ReadEntities,
 	QueryEntities,
 } from '$lib/vocab/entity/entityMutations';
@@ -51,7 +51,7 @@ export const mutations: Record<string, Mutation> = {
 	CreateEntity,
 	UpdateEntity,
 	SoftDeleteEntity,
-	HardDeleteEntity,
+	DeleteEntities,
 	ReadEntities,
 	QueryEntities,
 	// tieMutations
