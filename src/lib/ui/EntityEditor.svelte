@@ -40,9 +40,9 @@
 			<PersonaAvatar {persona} />
 		</section>
 		<section style:--icon_size="var(--icon_size_sm)">
-			<p>created {format(new Date($entity.created), 'PPPPp')}</p>
+			<p>created {format($entity.created, 'PPPPp')}</p>
 			{#if $entity.updated !== null}
-				<p>updated {format(new Date($entity.updated), 'PPPPp')}</p>
+				<p>updated {format($entity.updated, 'PPPPp')}</p>
 			{/if}
 		</section>
 	</div>
