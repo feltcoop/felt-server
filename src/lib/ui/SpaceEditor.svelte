@@ -36,9 +36,9 @@
 			<CommunityAvatar {community} />
 		</section>
 		<section>
-			<p>created {format(new Date($space.created), 'PPPPp')}</p>
+			<p>created {format($space.created, 'PPPPp')}</p>
 			{#if $space.updated !== null}
-				<p>updated {format(new Date($space.updated), 'PPPPp')}</p>
+				<p>updated {format($space.updated, 'PPPPp')}</p>
 			{/if}
 		</section>
 	</div>

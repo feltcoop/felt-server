@@ -1,10 +1,11 @@
-import type {Gen} from '@feltcoop/gro';
-
-import {VITE_DEPLOY_SERVER_HOST, API_SERVER_HOST_PROD, SVELTEKIT_SERVER_HOST} from '$lib/config';
 import {HEARTBEAT_INTERVAL} from '$lib/ui/socket';
 
 // Outputs an nginx config with configured values.
-export const gen: Gen = async () => {
+export const toNginxConfig = (
+	VITE_DEPLOY_SERVER_HOST: string,
+	API_SERVER_HOST_PROD: string,
+	SVELTEKIT_SERVER_HOST: string,
+): string => {
 	const websocketTimeout = `${HEARTBEAT_INTERVAL / 1000 + 60}s`; // 60 second padding
 	return `
 

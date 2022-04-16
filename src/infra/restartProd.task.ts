@@ -9,7 +9,6 @@ export const task: Task = {
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
 		const deployLogin = `${DEPLOY_USER}@${DEPLOY_IP}`;
-
 		await spawn('ssh', [deployLogin, `pm2 restart default`]);
 	},
 };

@@ -7,7 +7,7 @@ import type {ApiServer} from '$lib/server/ApiServer';
 import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
 import {SessionApiDisabled} from '$lib/session/SessionApiDisabled';
 import {authorize} from '$lib/server/authorize';
-import type {BroadcastMessage} from '$lib/util/websocket';
+import type {BroadcastMessage, WebsocketResult} from '$lib/util/websocket';
 
 const log = new Logger(gray('[') + blue('websocketServiceMiddleware') + gray(']'));
 
@@ -52,7 +52,7 @@ export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddl
 			return;
 		}
 
-		let result;
+		let result: WebsocketResult;
 
 		const authorizeResult = authorize(account_id, service);
 		if (!authorizeResult.ok) {
@@ -90,7 +90,7 @@ export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddl
 			}
 		}
 
-		const responseMessage: JsonRpcResponse = {
+		const responseMessage: JsonRpcResponse<WebsocketResult> = {
 			jsonrpc: '2.0',
 			id: message.id, // TODO this should only be set for the client we're responding to -- maybe don't use `response`?
 			result,
