@@ -114,15 +114,20 @@ export const task: Task<SetupTaskArgs> = {
 				sudo apt install -y postgresql;`,
 			//
 			//
-			// All done!
-			logSequence(`Success! Server is now setup for deployment.`),
-			// TODO initialize the database
-			// sudo -u postgres psql
-			// # in psql:
-			// # postgres=#
-			// create database felt; # notice the semicolon
-			// \password
-			// <enter "password">
+			// Create the Postgres database for Felt:
+			logSequence('Creating Postgres database...') +
+				`sudo -u postgres psql -U ${PGUSERNAME} -c "CREATE ROLE todo WITH LOGIN PASSWORD ${PGPASSWORD};";` +
+				`PGPASSWORD=${PGPASSWORD} sudo -u postgres psql -U ${PGUSERNAME} -c "create database ${PGDATABASE};";` +
+				// sudo -u postgres psql
+				// # in psql:
+				// # postgres=#
+				// create database felt; # notice the semicolon
+				// \password
+				// <enter "password">
+				//
+				//
+				// All done!
+				logSequence(`Success! Server is now setup for deployment.`),
 		].map((s) => s + '\n\n');
 		if (dry) {
 			log.info(green(`\n\ndry run! here's the script ↓\n\n`), 'ssh ' + steps.join(''));
