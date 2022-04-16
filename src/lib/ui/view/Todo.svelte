@@ -88,9 +88,8 @@
 		if (items) {
 			const doneItems = items.filter((i) => get(i).data.checked === true);
 			if (doneItems.length > 0) {
-				const doneItemsSet = doneItems.flatMap((i) => get(i).entity_id);
-				//TODO DISPATCH DELETEENTITYSET
-				console.log(doneItemsSet);
+				const entity_ids = doneItems.flatMap((i) => get(i).entity_id);
+				await dispatch.DeleteEntities({entity_ids});
 			}
 		}
 	};
