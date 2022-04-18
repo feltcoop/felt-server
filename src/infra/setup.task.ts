@@ -92,28 +92,23 @@ export const task: Task<SetupTaskArgs> = {
 				`export NODE_ENV=production;
 				echo "export NODE_ENV=production" >> ~/.profile;
 				echo "export NODE_ENV=production" >> ~/.bashrc;
-				npm i -g pm2 @feltcoop/gro;
-			`,
+				npm i -g pm2 @feltcoop/gro;`,
 			//
 			//
-			// Install nginx & certbot for HTTPS:
-			logSequence('Installing nginx and certbot...') +
-				`apt install -y nginx certbot python3-certbot-nginx;
-				systemctl start nginx;
-				sudo unlink /etc/nginx/sites-enabled/default;`,
-			//
-			//
-			// Create the nginx config:
-			logSequence('Creating nginx config...') +
-				`touch ${REMOTE_NGINX_CONFIG_PATH};
+			// Install nginx:
+			logSequence('Installing nginx...') +
+				`apt install -y nginx;
+				sudo unlink /etc/nginx/sites-enabled/default;
+				touch ${REMOTE_NGINX_CONFIG_PATH};
 				echo '${nginxConfig}' >> ${REMOTE_NGINX_CONFIG_PATH};
-				cat ${REMOTE_NGINX_CONFIG_PATH};`,
+				cat ${REMOTE_NGINX_CONFIG_PATH};
+				ln -s ${REMOTE_NGINX_CONFIG_PATH} ${REMOTE_NGINX_SYMLINK_PATH};
+				systemctl start nginx;`,
 			//
 			//
-			//Make sure your DNS records are set up and configured first
-			//TODO stuff is still a little unstable arount this
+			// Install certbot for HTTPS:
 			logSequence('Enabling HTTPS with cerbot and nginx...') +
-				`ln -s ${REMOTE_NGINX_CONFIG_PATH} ${REMOTE_NGINX_SYMLINK_PATH};
+				`apt install -y certbot python3-certbot-nginx;
 				certbot --nginx --non-interactive --agree-tos --email ${EMAIL_ADDRESS} -d ${VITE_DEPLOY_SERVER_HOST};
 				systemctl restart nginx.service;`,
 			//
