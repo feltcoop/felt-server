@@ -6,7 +6,7 @@ export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, ui: {enti
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {entity: $entity} = result.value;
-	const entity = writable($entity);
+	let entity = writable($entity);
 	const spaceEntities = entitiesBySpace.get($entity.space_id);
 	if (spaceEntities) {
 		// TODO check if it already exists -- maybe by getting `entityStore` from a `entityById` map
@@ -17,14 +17,15 @@ export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, ui: {enti
 	return result;
 };
 
-export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui: {entitiesBySpace}}) => {
+export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui: {entityById}}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	//TODO maybe return to $entity naming convention OR propagate this pattern?
 	const {entity: updatedEntity} = result.value;
-	const entities = entitiesBySpace.get(updatedEntity.space_id)!;
-	const entity = get(entities).find((e) => get(e).entity_id === updatedEntity.entity_id)!;
+	const entity = entityById.get(updatedEntity.entity_id);
+	if (!entity) return result; // TODO BLOCK add this, use the same code paths as `QueryEntities`
 	entity.set(updatedEntity);
+	// TODO BLOCK remove from `entitiesBySpace` if needed -- how to determine if it belongs?
 	return result;
 };
 
@@ -49,12 +50,13 @@ export const DeleteEntities: Mutations['DeleteEntities'] = async ({invoke}) => {
 export const ReadEntities: Mutations['ReadEntities'] = async ({
 	params,
 	invoke,
-	ui: {entitiesBySpace},
+	ui: {entitiesBySpace, entityById},
 }) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {space_id} = params;
 	const existingSpaceEntities = entitiesBySpace.get(space_id);
+	// TODO BLOCK add to `entityById`, use same code path as `UpdateEntity`
 	// TODO probably check to make sure they don't already exist
 	const newFiles = result ? result.value.entities.map((f) => writable(f)) : [];
 	if (existingSpaceEntities) {
