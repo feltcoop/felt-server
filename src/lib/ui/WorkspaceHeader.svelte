@@ -4,7 +4,7 @@
 	import type {Space} from '$lib/vocab/space/space';
 	import type {Community} from '$lib/vocab/community/community';
 	import {getApp} from '$lib/ui/app';
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import SpaceIcon from '$lib/ui/SpaceIcon.svelte';
 
 	const {
@@ -22,11 +22,9 @@
 >
 	<li class="luggage-placeholder" />
 	<li class="breadcrumbs">
-		{#if community && $community}<Avatar
-				name={$community.name}
-				showName={false}
-				type="Community"
-			/><span class="title">{$community.name}</span>{/if}{#if space}<SpaceIcon {space} />
+		{#if community && $community}<CommunityAvatar {community} showName={false} /><span class="title"
+				>{$community.name}</span
+			>{/if}{#if space}<SpaceIcon {space} />
 			<span class="title">{$space?.url.split('/').filter(Boolean).join(' / ') || ''}</span>{/if}
 	</li>
 	<li class="marquee-button-placeholder" />

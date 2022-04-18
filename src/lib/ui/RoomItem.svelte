@@ -3,9 +3,8 @@
 	import {format} from 'date-fns';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import {randomHue} from '$lib/ui/color';
-	import {toIcon, toName} from '$lib/vocab/entity/entityHelpers';
 	import {getApp} from '$lib/ui/app';
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
@@ -32,11 +31,11 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	]}
 >
 	<div class="signature">
-		<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
+		<PersonaAvatar {persona} showName={false} />
 	</div>
 	<div class="markup formatted">
 		<div class="signature">
-			<Avatar name={toName($persona)} icon={toIcon($persona)} showIcon={false} />
+			<PersonaAvatar {persona} showIcon={false} />
 			{format($entity.created, 'Pp')}
 		</div>
 		<div>
