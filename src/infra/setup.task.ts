@@ -116,7 +116,7 @@ export const task: Task<SetupTaskArgs> = {
 			// Install Postgres:
 			// More details at src/lib/db/README.md and https://www.postgresql.org/download/linux/ubuntu/
 			logSequence('Installing Postgres...') +
-				`sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list;'
+				`sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list;';
 				curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -;
 				sudo apt update;
 				sudo apt install -y postgresql;`,
@@ -124,14 +124,10 @@ export const task: Task<SetupTaskArgs> = {
 			//
 			// Create the Postgres database for Felt:
 			logSequence('Creating Postgres database...') +
-				`sudo -u postgres psql -U ${PGUSERNAME} -c "CREATE ROLE todo WITH LOGIN PASSWORD '${PGPASSWORD}';";` +
-				`PGPASSWORD=${PGPASSWORD} sudo -u postgres psql -U ${PGUSERNAME} -c "create database ${PGDATABASE};";` +
-				// sudo -u postgres psql
-				// # in psql:
-				// # postgres=#
-				// create database felt; # notice the semicolon
-				// \password
-				// <enter "password">
+				`sudo -i -u postgres psql -c "CREATE DATABASE ${PGDATABASE};";` +
+				// TODO create db user properly
+				// `sudo -i -u postgres psql -U postgres -c "CREATE USER ${PGUSERNAME} WITH LOGIN PASSWORD '${PGPASSWORD}';";` +
+				// `PGPASSWORD=${PGPASSWORD} sudo -i -u postgres psql -U ${PGUSERNAME} -c "CREATE DATABASE ${PGDATABASE};";` +
 				//
 				//
 				// All done!
