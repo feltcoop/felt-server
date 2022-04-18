@@ -69,11 +69,9 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	>
 		<div on:click={() => selectList($entity)} class="entity markup formatted">
 			{#if hasItems}
-				{#if selected}
-					<div class="icon-button">👉</div>
-				{:else}
-					<div class="icon-button">📝</div>
-				{/if}
+				<div class="icon-button">
+					{#if selected}👉{:else}📝{/if}
+				</div>
 			{/if}
 			{#if hasChecked}
 				<!-- TODO checkbox not updated properly on event broadcast-->
