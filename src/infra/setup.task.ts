@@ -26,8 +26,8 @@ export const task: Task<SetupTaskArgs> = {
 		// TODO hacky -- see notes above
 		const {defaultPostgresOptions} = await import('../lib/db/postgres.js');
 		const PGDATABASE = defaultPostgresOptions.database;
-		// const PGUSERNAME = defaultPostgresOptions.username;
-		// const PGPASSWORD = defaultPostgresOptions.password;
+		// const PGUSERNAME = defaultPostgresOptions.username; // TODO setup db user+password -- see below
+		// const PGPASSWORD = defaultPostgresOptions.password; // TODO setup db user+password -- see below
 
 		const REMOTE_NGINX_CONFIG_PATH = '/etc/nginx/sites-available/felt-server.conf';
 		const REMOTE_NGINX_SYMLINK_PATH = '/etc/nginx/sites-enabled/felt-server.conf';
