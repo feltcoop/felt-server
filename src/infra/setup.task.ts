@@ -7,19 +7,27 @@ import {toNginxConfig} from './nginxConfig';
 import {toLogSequence} from './helpers';
 import type {SetupTaskArgs} from './setupTask';
 import {SetupTaskArgsSchema} from './setupTask.schema';
+import {defaultPostgresOptions} from '$lib/db/postgres';
 
 export const task: Task<SetupTaskArgs> = {
 	summary: 'setup a clean server to prepare for a felt-server deploy',
 	production: true,
 	args: SetupTaskArgsSchema,
 	run: async ({log, args: {dry}}) => {
+		// TODO env vars are currently messy with 3 strategies:
+		// 1 - calling `fromEnv('VAR')`
+		// 2 - defaults setup by `$lib/config.js`
+		// 3 - defaults setup by `$lib/db/postgres`
 		const DEPLOY_IP = fromEnv('DEPLOY_IP');
 		const DEPLOY_USER = fromEnv('DEPLOY_USER');
 		const VITE_DEPLOY_SERVER_HOST = fromEnv('VITE_DEPLOY_SERVER_HOST');
 		const EMAIL_ADDRESS = fromEnv('EMAIL_ADDRESS');
-
 		// TODO this is hacky because of `import.meta` env handling
 		const {API_SERVER_HOST_PROD, SVELTEKIT_SERVER_HOST} = await import('../lib/config.js');
+		// TODO hacky -- see notes above
+		const PGDATABASE = defaultPostgresOptions.database;
+		const PGUSERNAME = defaultPostgresOptions.username;
+		const PGPASSWORD = defaultPostgresOptions.password;
 
 		const REMOTE_NGINX_CONFIG_PATH = '/etc/nginx/sites-available/felt-server.conf';
 		const REMOTE_NGINX_SYMLINK_PATH = '/etc/nginx/sites-enabled/felt-server.conf';
@@ -121,7 +129,7 @@ export const task: Task<SetupTaskArgs> = {
 			//
 			// Create the Postgres database for Felt:
 			logSequence('Creating Postgres database...') +
-				`sudo -u postgres psql -U ${PGUSERNAME} -c "CREATE ROLE todo WITH LOGIN PASSWORD ${PGPASSWORD};";` +
+				`sudo -u postgres psql -U ${PGUSERNAME} -c "CREATE ROLE todo WITH LOGIN PASSWORD '${PGPASSWORD}';";` +
 				`PGPASSWORD=${PGPASSWORD} sudo -u postgres psql -U ${PGUSERNAME} -c "create database ${PGDATABASE};";` +
 				// sudo -u postgres psql
 				// # in psql:
