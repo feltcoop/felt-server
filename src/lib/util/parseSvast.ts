@@ -36,40 +36,41 @@ const parseSvastText = (node: Text): SvelteChild => {
 	let plainText = '';
 	let children: SvelteChild[] | undefined;
 	const flushPlainText = () => {
-		if (plainText) {
-			(children || (children = [])).push({[ADDED_BY_FELT]: true, type: 'text', value: plainText});
-			plainText = '';
-		}
+		if (!plainText) return;
+		(children || (children = [])).push({
+			[ADDED_BY_FELT as any]: true,
+			type: 'text',
+			value: plainText,
+		});
+		plainText = '';
 	};
 	for (const word of words) {
-		console.log(`word`, word);
 		if (word.startsWith('/') || word.startsWith('https://') || word.startsWith('http://')) {
 			flushPlainText();
 			(children || (children = [])).push({
-				[ADDED_BY_FELT]: true,
+				[ADDED_BY_FELT as any]: true,
 				type: 'svelteComponent',
 				tagName: 'Link',
 				properties: [
 					{
 						type: 'svelteProperty',
 						name: 'href',
-						value: [{[ADDED_BY_FELT]: true, type: 'text', value: word}],
+						value: [{[ADDED_BY_FELT as any]: true, type: 'text', value: word}],
 						modifiers: [],
 						shorthand: 'none',
 					},
 				],
 				selfClosing: false,
-				children: [{[ADDED_BY_FELT]: true, type: 'text', value: word}],
+				children: [{[ADDED_BY_FELT as any]: true, type: 'text', value: word}],
 			});
 		} else {
 			plainText += word;
 		}
 	}
-	// console.log(`words`, words, words.matches); // TODO insert old plain text
-	if (!children) return node;
+	if (!children) return node; // nothing special was parsed
 	flushPlainText();
 	return {
-		[ADDED_BY_FELT]: true,
+		[ADDED_BY_FELT as any]: true,
 		type: 'svelteElement',
 		tagName: 'span',
 		properties: [],
