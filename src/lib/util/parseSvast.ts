@@ -32,18 +32,7 @@ export const parseSvast: typeof parse = (opts) => {
  * @param value
  */
 const parseSvastText = (node: Text): SvelteChild => {
-	// let hasMatch = false;
 	const words = node.value.split(MATCH_WHITESPACE);
-	// First iterate and detect if there's anything to transform.
-	// If not, exit early and return the original node unchanged.
-	// TODO BLOCK restructure this so it's not needed
-	// for (const word of words) {
-	// 	if (word.startsWith('/') || word.startsWith('https://') || word.startsWith('http://')) {
-	// 		hasMatch = true;
-	// 		break;
-	// 	}
-	// }
-	// if (!hasMatch) return node;
 	let plainText = '';
 	let children: SvelteChild[] | undefined;
 	const flushPlainText = () => {
