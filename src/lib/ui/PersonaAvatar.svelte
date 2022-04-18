@@ -10,7 +10,15 @@
 	export let persona: Readable<Persona>;
 	export let showName = true;
 	export let showIcon = true;
-	export let contextmenuAction: ContextmenuItems | null = [[PersonaContextmenu, {persona}]];
+	export let contextmenuAction: ContextmenuItems | null | undefined = undefined;
 </script>
 
-<Avatar name={toName($persona)} icon={toIcon($persona)} {showName} {showIcon} {contextmenuAction} />
+<Avatar
+	name={toName($persona)}
+	icon={toIcon($persona)}
+	{showName}
+	{showIcon}
+	contextmenuAction={contextmenuAction === undefined
+		? [[PersonaContextmenu, {persona}]]
+		: contextmenuAction}
+/>

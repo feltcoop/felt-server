@@ -9,7 +9,7 @@
 	export let community: Readable<Community>;
 	export let showName = true;
 	export let showIcon = true;
-	export let contextmenuAction: ContextmenuItems | null = [[CommunityContextmenu, {community}]];
+	export let contextmenuAction: ContextmenuItems | null | undefined = undefined;
 </script>
 
 <Avatar
@@ -18,5 +18,7 @@
 	hue={$community.settings.hue}
 	{showName}
 	{showIcon}
-	{contextmenuAction}
+	contextmenuAction={contextmenuAction === undefined
+		? [[CommunityContextmenu, {community}]]
+		: contextmenuAction}
 />
