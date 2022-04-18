@@ -32,31 +32,31 @@ export const parseSvast: typeof parse = (opts) => {
  * @param value
  */
 const parseSvastText = (node: Text): SvelteChild => {
-	let hasMatch = false;
+	// let hasMatch = false;
 	const words = node.value.split(MATCH_WHITESPACE);
 	// First iterate and detect if there's anything to transform.
 	// If not, exit early and return the original node unchanged.
 	// TODO BLOCK restructure this so it's not needed
-	for (const word of words) {
-		if (word.startsWith('/') || word.startsWith('https://') || word.startsWith('http://')) {
-			hasMatch = true;
-			break;
-		}
-	}
-	if (!hasMatch) return node;
+	// for (const word of words) {
+	// 	if (word.startsWith('/') || word.startsWith('https://') || word.startsWith('http://')) {
+	// 		hasMatch = true;
+	// 		break;
+	// 	}
+	// }
+	// if (!hasMatch) return node;
 	let plainText = '';
+	let children: SvelteChild[] | undefined;
 	const flushPlainText = () => {
 		if (plainText) {
-			children.push({type: 'text', value: plainText});
+			(children || (children = [])).push({[ADDED_BY_FELT]: true, type: 'text', value: plainText});
 			plainText = '';
 		}
 	};
-	const children: SvelteChild[] = [];
 	for (const word of words) {
 		console.log(`word`, word);
 		if (word.startsWith('/') || word.startsWith('https://') || word.startsWith('http://')) {
 			flushPlainText();
-			children.push({
+			(children || (children = [])).push({
 				[ADDED_BY_FELT]: true,
 				type: 'svelteComponent',
 				tagName: 'Link',
@@ -77,8 +77,10 @@ const parseSvastText = (node: Text): SvelteChild => {
 		}
 	}
 	// console.log(`words`, words, words.matches); // TODO insert old plain text
+	if (!children) return node;
 	flushPlainText();
 	return {
+		[ADDED_BY_FELT]: true,
 		type: 'svelteElement',
 		tagName: 'span',
 		properties: [],
