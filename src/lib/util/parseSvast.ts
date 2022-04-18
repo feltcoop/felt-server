@@ -16,8 +16,6 @@ export const parseSvast: typeof parse = (opts) => {
 				// parse this text and if it has extended syntax, replace the node with N new ones
 				const newNode = parseSvastText(node);
 				if (newNode !== node) {
-					console.log(`REPLACE OLD`, node);
-					console.log(`REPLACE newNode`, newNode);
 					this.replace(newNode);
 				}
 			}
@@ -38,8 +36,9 @@ const parseSvastText = (node: Text): SvelteChild => {
 	const words = node.value.split(MATCH_WHITESPACE);
 	// First iterate and detect if there's anything to transform.
 	// If not, exit early and return the original node unchanged.
+	// TODO BLOCK restructure this so it's not needed
 	for (const word of words) {
-		if (word.startsWith('/')) {
+		if (word.startsWith('/') || word.startsWith('https://') || word.startsWith('http://')) {
 			hasMatch = true;
 			break;
 		}
@@ -54,7 +53,8 @@ const parseSvastText = (node: Text): SvelteChild => {
 	};
 	const children: SvelteChild[] = [];
 	for (const word of words) {
-		if (word.startsWith('/')) {
+		console.log(`word`, word);
+		if (word.startsWith('/') || word.startsWith('https://') || word.startsWith('http://')) {
 			flushPlainText();
 			children.push({
 				[ADDED_BY_FELT]: true,

@@ -3,7 +3,7 @@ import * as assert from 'uvu/assert';
 
 import {parseSvast} from '$lib/util/parseSvast';
 
-// TODO BLOCK stringify  won't work with our stuff without pre-trasnsformation
+// TODO BLOCK stringify  won't work with our stuff without pre-transformation
 
 /* test__parseSvast */
 const test__parseSvast = suite('parseSvast');
@@ -35,10 +35,114 @@ test__parseSvast('parses a normal SVAST', async () => {
 	});
 });
 
-test__parseSvast('parses a SVAST with Felt-specific link behavior', async () => {
+test__parseSvast('parses https:// links', async () => {
+	const parsed = parseSvast({
+		value: 'https://felt.dev/another-link',
+		generatePositions: false,
+	});
+	assert.equal(parsed, {
+		type: 'root',
+		children: [
+			{
+				type: 'svelteElement',
+				tagName: 'span',
+				properties: [],
+				selfClosing: false,
+				children: [
+					{
+						type: 'svelteComponent',
+						tagName: 'Link',
+						properties: [
+							{
+								type: 'svelteProperty',
+								name: 'href',
+								value: [{type: 'text', value: 'https://felt.dev/another-link'}],
+								modifiers: [],
+								shorthand: 'none',
+							},
+						],
+						selfClosing: false,
+						children: [{type: 'text', value: 'https://felt.dev/another-link'}],
+					},
+				],
+			},
+		],
+	});
+});
+
+test__parseSvast('parses http:// links', async () => {
+	const parsed = parseSvast({
+		value: 'http://felt.dev/another-link',
+		generatePositions: false,
+	});
+	assert.equal(parsed, {
+		type: 'root',
+		children: [
+			{
+				type: 'svelteElement',
+				tagName: 'span',
+				properties: [],
+				selfClosing: false,
+				children: [
+					{
+						type: 'svelteComponent',
+						tagName: 'Link',
+						properties: [
+							{
+								type: 'svelteProperty',
+								name: 'href',
+								value: [{type: 'text', value: 'http://felt.dev/another-link'}],
+								modifiers: [],
+								shorthand: 'none',
+							},
+						],
+						selfClosing: false,
+						children: [{type: 'text', value: 'http://felt.dev/another-link'}],
+					},
+				],
+			},
+		],
+	});
+});
+test__parseSvast('parses absolute links', async () => {
+	const parsed = parseSvast({
+		value: '/felt.dev/another-link',
+		generatePositions: false,
+	});
+	assert.equal(parsed, {
+		type: 'root',
+		children: [
+			{
+				type: 'svelteElement',
+				tagName: 'span',
+				properties: [],
+				selfClosing: false,
+				children: [
+					{
+						type: 'svelteComponent',
+						tagName: 'Link',
+						properties: [
+							{
+								type: 'svelteProperty',
+								name: 'href',
+								value: [{type: 'text', value: '/felt.dev/another-link'}],
+								modifiers: [],
+								shorthand: 'none',
+							},
+						],
+						selfClosing: false,
+						children: [{type: 'text', value: '/felt.dev/another-link'}],
+					},
+				],
+			},
+		],
+	});
+});
+
+test__parseSvast('parses a SVAST with links and preserves whitespace', async () => {
 	const parsed = parseSvast({
 		value:
-			'<BigPenguinInATrenchboat>link to /sveveral/little/penguins in\nplain   text  \n  </BigPenguinInATrenchboat />',
+			'<BigPenguinInATrenchboat>link to <p> /sveveral/little/penguins\n<span>https://sveveral.more</span></p> in\nplain   text  \n  </BigPenguinInATrenchboat />',
 		generatePositions: false,
 	});
 	assert.equal(parsed, {
@@ -50,51 +154,77 @@ test__parseSvast('parses a SVAST with Felt-specific link behavior', async () => 
 				properties: [],
 				selfClosing: false,
 				children: [
+					{type: 'text', value: 'link to '},
 					{
 						type: 'svelteElement',
-						tagName: 'span',
+						tagName: 'p',
 						properties: [],
 						selfClosing: false,
 						children: [
-							{type: 'text', value: 'link to '},
 							{
-								type: 'svelteComponent',
-								tagName: 'Link',
-								properties: [
+								type: 'svelteElement',
+								tagName: 'span',
+								properties: [],
+								selfClosing: false,
+								children: [
+									{type: 'text', value: ' '},
 									{
-										type: 'svelteProperty',
-										name: 'href',
-										value: [
+										type: 'svelteComponent',
+										tagName: 'Link',
+										properties: [
 											{
-												type: 'text',
-												value: '/sveveral/little/penguins',
+												type: 'svelteProperty',
+												name: 'href',
+												value: [{type: 'text', value: '/sveveral/little/penguins'}],
+												modifiers: [],
+												shorthand: 'none',
 											},
 										],
-										modifiers: [],
-										shorthand: 'none',
+										selfClosing: false,
+										children: [{type: 'text', value: '/sveveral/little/penguins'}],
 									},
+									{type: 'text', value: '\n'},
 								],
+							},
+							{
+								type: 'svelteElement',
+								tagName: 'span',
+								properties: [],
 								selfClosing: false,
 								children: [
 									{
-										type: 'text',
-										value: '/sveveral/little/penguins',
+										type: 'svelteElement',
+										tagName: 'span',
+										properties: [],
+										selfClosing: false,
+										children: [
+											{
+												type: 'svelteComponent',
+												tagName: 'Link',
+												properties: [
+													{
+														type: 'svelteProperty',
+														name: 'href',
+														value: [{type: 'text', value: 'https://sveveral.more'}],
+														modifiers: [],
+														shorthand: 'none',
+													},
+												],
+												selfClosing: false,
+												children: [{type: 'text', value: 'https://sveveral.more'}],
+											},
+										],
 									},
 								],
 							},
-							{
-								type: 'text',
-								value: ' in\nplain   text  \n  ',
-							},
 						],
 					},
+					{type: 'text', value: ' in\nplain   text  \n  '},
 				],
 			},
 		],
 	});
 });
-
-// TODO BLOCK mentions
 
 test__parseSvast.run();
 /* test__parseSvast */
