@@ -22,9 +22,11 @@
 >
 	<li class="luggage-placeholder" />
 	<li class="breadcrumbs">
-		{#if community && $community}<CommunityAvatar {community} showName={false} /><span class="title"
-				>{$community.name}</span
-			>{/if}{#if space}<SpaceIcon {space} />
+		{#if community && $community}<CommunityAvatar
+				{community}
+				showName={false}
+				contextmenuAction={null}
+			/><span class="title">{$community.name}</span>{/if}{#if space}<SpaceIcon {space} />
 			<span class="title">{$space?.url.split('/').filter(Boolean).join(' / ') || ''}</span>{/if}
 	</li>
 	<li class="marquee-button-placeholder" />

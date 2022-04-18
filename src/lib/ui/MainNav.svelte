@@ -41,7 +41,7 @@
 			<div class="icon-button button-placeholder" />
 			<!-- TODO or maybe `selectedPersona.id` ? can't be `$selectedPersona.persona_id` as a serial value -->
 			<button class="explorer-button" on:click={(e) => onContextmenu(e, contextmenu)}>
-				<PersonaAvatar persona={selectedPersona} />
+				<PersonaAvatar persona={selectedPersona} contextmenuAction={null} />
 			</button>
 		</div>
 		<div class="explorer">
