@@ -124,7 +124,7 @@ export const task: Task<SetupTaskArgs> = {
 			// Create the Postgres database for Felt:
 			logSequence('Creating Postgres database...') +
 				`sudo -i -u postgres psql -c "CREATE DATABASE ${PGDATABASE};";` +
-				// TODO create the custom db user
+				// TODO create the custom db user (the following code does not work):
 				// `sudo -i -u postgres psql -U postgres -c "CREATE USER ${PGUSERNAME} WITH LOGIN PASSWORD '${PGPASSWORD}';";` +
 				// `PGPASSWORD=${PGPASSWORD} sudo -i -u postgres psql -U ${PGUSERNAME} -c "CREATE DATABASE ${PGDATABASE};";` +
 				//
