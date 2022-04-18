@@ -34,10 +34,14 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 			return {ok: false, status: 500, message: 'error searching space directory'};
 		}
 		//TODO stop filtering directory until we fix entity indexing by space_id
-		const entitySet = findTiesResult.value.flatMap((t) =>
-			[t.source_id, t.dest_id].filter((x) => x !== findSpaceResult.value.directory_id),
+		const entityIds = Array.from(
+			new Set(
+				findTiesResult.value.flatMap((t) =>
+					[t.source_id, t.dest_id].filter((x) => x !== findSpaceResult.value.directory_id),
+				),
+			),
 		);
-		const findEntitiesResult = await repos.entity.findBySet(entitySet);
+		const findEntitiesResult = await repos.entity.findByIds(entityIds);
 		if (!findEntitiesResult.ok) {
 			return {ok: false, status: 500, message: 'error searching for entities'};
 		}
