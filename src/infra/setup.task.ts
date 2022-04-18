@@ -80,7 +80,12 @@ export const task: Task<SetupTaskArgs> = {
 			//
 			//
 			// Install Node tools:
-			logSequence('Installing pm2 and gro...') + `npm i -g pm2 @feltcoop/gro;`,
+			logSequence('Installing pm2 and gro...') +
+				`export NODE_ENV=production;
+				echo "export NODE_ENV=production" >> ~/.profile;
+				echo "export NODE_ENV=production" >> ~/.bashrc;
+				npm i -g pm2 @feltcoop/gro;
+			`,
 			//
 			//
 			// Install nginx & certbot for HTTPS:

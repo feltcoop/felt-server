@@ -54,9 +54,7 @@ export const task: Task = {
 		await spawn('scp', [`src/infra/.env.default`, `${deployLogin}:${currentDeploy}/.env`]);
 		await spawn('scp', [ENV_PROD, `${deployLogin}:${currentDeploy}/${ENV_PROD}`]);
 		//TODO: re/start the server via pm2
-		// TODO move to restartProd
-		// TODO set NODE_ENV=production in bash profile?
-		// export NODE_ENV=production && pm2 start npm -- run start --prefix ${currentDeploy}
+		// pm2 start npm -- run start --prefix ${currentDeploy}
 		// await invokeTask('infra/restartProd')
 	},
 };
