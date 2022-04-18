@@ -7,7 +7,6 @@ import {toNginxConfig} from './nginxConfig';
 import {toLogSequence} from './helpers';
 import type {SetupTaskArgs} from './setupTask';
 import {SetupTaskArgsSchema} from './setupTask.schema';
-import {defaultPostgresOptions} from '$lib/db/postgres';
 
 export const task: Task<SetupTaskArgs> = {
 	summary: 'setup a clean server to prepare for a felt-server deploy',
@@ -25,6 +24,7 @@ export const task: Task<SetupTaskArgs> = {
 		// TODO this is hacky because of `import.meta` env handling
 		const {API_SERVER_HOST_PROD, SVELTEKIT_SERVER_HOST} = await import('../lib/config.js');
 		// TODO hacky -- see notes above
+		const {defaultPostgresOptions} = await import('../lib/db/postgres.js');
 		const PGDATABASE = defaultPostgresOptions.database;
 		const PGUSERNAME = defaultPostgresOptions.username;
 		const PGPASSWORD = defaultPostgresOptions.password;
