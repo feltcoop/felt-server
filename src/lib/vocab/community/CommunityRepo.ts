@@ -30,9 +30,7 @@ export class CommunityRepo extends PostgresRepo {
 			FROM communities WHERE community_id=${community_id}
 		`;
 		// log.trace('[findById]', data);
-		if (!data.length) {
-			return NOT_OK;
-		}
+		if (!data.length) return NOT_OK;
 		return {ok: true, value: data[0]};
 	}
 
@@ -63,9 +61,7 @@ export class CommunityRepo extends PostgresRepo {
 		const data = await this.db.sql<any[]>`
 			UPDATE communities SET settings=${this.db.sql.json(settings)} WHERE community_id=${community_id}
 		`;
-		if (!data.count) {
-			return NOT_OK;
-		}
+		if (!data.count) return NOT_OK;
 		return OK;
 	}
 
@@ -74,9 +70,7 @@ export class CommunityRepo extends PostgresRepo {
 		const data = await this.db.sql<any[]>`
 			DELETE FROM communities WHERE community_id=${community_id}
 		`;
-		if (!data.count) {
-			return NOT_OK;
-		}
+		if (!data.count) return NOT_OK;
 		return OK;
 	}
 }

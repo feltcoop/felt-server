@@ -27,9 +27,7 @@ export class AccountRepo extends PostgresRepo {
 			SELECT account_id, name, created, updated
 			FROM accounts WHERE account_id = ${account_id}
 		`;
-		if (!data.length) {
-			return NOT_OK;
-		}
+		if (!data.length) return NOT_OK;
 		return {ok: true, value: data[0]};
 	}
 
@@ -38,9 +36,7 @@ export class AccountRepo extends PostgresRepo {
 			SELECT account_id, name, password, created, updated
 			FROM accounts WHERE name = ${name}
 		`;
-		if (!data.length) {
-			return NOT_OK;
-		}
+		if (!data.length) return NOT_OK;
 		return {ok: true, value: data[0]};
 	}
 }

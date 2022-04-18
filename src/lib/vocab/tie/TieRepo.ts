@@ -54,9 +54,7 @@ export class TieRepo extends PostgresRepo {
 		const data = await this.db.sql<any[]>`
 			DELETE FROM ties WHERE ${source_id}=source_id AND ${dest_id}=dest_id AND ${type}=type
 		`;
-		if (!data.count) {
-			return NOT_OK;
-		}
+		if (!data.count) return NOT_OK;
 		return OK;
 	}
 }
