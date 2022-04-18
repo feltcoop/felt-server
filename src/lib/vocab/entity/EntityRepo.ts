@@ -46,6 +46,19 @@ export class EntityRepo extends PostgresRepo {
 		return {ok: true, value: entities};
 	}
 
+	// TODO maybe `EntityQuery`?
+	async findBySet(entityIdSet: number[]): Promise<Result<{value: Entity[]}>> {
+		if (entityIdSet.length === 0) return {ok: true, value: []};
+		log.trace('[findBySet]', entityIdSet);
+		const entities = await this.db.sql<Entity[]>`
+			SELECT entity_id, data, actor_id, space_id, created, updated 
+			FROM entities WHERE entity_id IN ${this.db.sql(entityIdSet)}
+			ORDER BY created ASC
+		`;
+		log.trace('entity count:', entities.length);
+		return {ok: true, value: entities};
+	}
+
 	async updateEntityData(entity_id: number, data: EntityData): Promise<Result<{value: Entity}>> {
 		log.trace('[updateEntityData]', entity_id);
 		const result = await this.db.sql<Entity[]>`

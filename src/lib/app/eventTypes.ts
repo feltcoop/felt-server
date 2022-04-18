@@ -235,6 +235,7 @@ export interface ReadEntitiesParams {
 }
 export interface ReadEntitiesResponse {
 	entities: Entity[];
+	ties: Tie[];
 }
 export type ReadEntitiesResponseResult = ApiResult<ReadEntitiesResponse>;
 

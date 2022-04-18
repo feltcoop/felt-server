@@ -80,7 +80,12 @@ export const toHttpServiceMiddleware =
 		if (process.env.NODE_ENV !== 'production') {
 			const validateResponse = validateSchema(service.event.response);
 			if (!validateResponse(result.value)) {
-				log.error(red('failed to validate'), service.event.name, result, validateResponse.errors);
+				log.error(
+					red('failed to validate service response'),
+					service.event.name,
+					result,
+					validateResponse.errors,
+				);
 				throw Error('Service validation failed');
 			}
 		}

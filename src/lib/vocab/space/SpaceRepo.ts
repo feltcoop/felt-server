@@ -78,15 +78,9 @@ export class SpaceRepo extends PostgresRepo {
 		partial: Partial<Pick<Space, 'name' | 'url' | 'icon' | 'view'>>,
 	): Promise<Result<{value: Space}>> {
 		log.trace(`updating data for space: ${space_id}`);
-		// TODO hacky, fix when `postgres` v2 is out with dynamic queries
-		const updated: Record<string, any> = {};
-		for (const [key, value] of Object.entries(partial)) {
-			updated[key] = value && typeof value === 'object' ? JSON.stringify(value) : value;
-		}
-		log.trace(`updated`, updated);
 		const result = await this.db.sql<Space[]>`
 			UPDATE spaces
-			SET updated=NOW(), ${this.db.sql(updated, ...Object.keys(updated))}
+			SET updated=NOW(), ${this.db.sql(partial as any, ...Object.keys(partial))}
 			WHERE space_id= ${space_id}
 			RETURNING *
 		`;
