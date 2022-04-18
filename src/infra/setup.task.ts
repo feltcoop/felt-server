@@ -48,7 +48,6 @@ export const task: Task<SetupTaskArgs> = {
 
 		//Install initial tools for Node ecosystem
 		const steps: string[] = [
-			deployLogin,
 			logSequence('Setting up server instance...') +
 				//
 				//
@@ -125,7 +124,7 @@ export const task: Task<SetupTaskArgs> = {
 			// Create the Postgres database for Felt:
 			logSequence('Creating Postgres database...') +
 				`sudo -i -u postgres psql -c "CREATE DATABASE ${PGDATABASE};";` +
-				// TODO create db user properly
+				// TODO create the custom db user
 				// `sudo -i -u postgres psql -U postgres -c "CREATE USER ${PGUSERNAME} WITH LOGIN PASSWORD '${PGPASSWORD}';";` +
 				// `PGPASSWORD=${PGPASSWORD} sudo -i -u postgres psql -U ${PGUSERNAME} -c "CREATE DATABASE ${PGDATABASE};";` +
 				//
@@ -134,11 +133,14 @@ export const task: Task<SetupTaskArgs> = {
 				logSequence(`Success! Server is now setup for deployment.`),
 		].map((s) => s + '\n\n');
 		if (dry) {
-			log.info(green(`\n\ndry run! here's the script ↓\n\n`), 'ssh ' + steps.join(''));
+			log.info(
+				green(`\n\ndry run! here's the script ↓\n\n`),
+				`ssh ${deployLogin} ${steps.join('')}`,
+			);
 			log.info(green('\n\ndry run done ↑\n\n'));
 			return;
 		}
-		const result = await spawn('ssh', steps);
+		const result = await spawn('ssh', [deployLogin, steps.join('')]);
 		if (!result.ok) {
 			if (result.signal) log.error('spawn failed with signal', result.signal);
 			throw Error('Failed setup task');
