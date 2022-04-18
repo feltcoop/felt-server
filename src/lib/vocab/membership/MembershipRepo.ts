@@ -24,9 +24,7 @@ export class MembershipRepo extends PostgresRepo {
 			FROM memberships
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
 		`;
-		if (!data.length) {
-			return NOT_OK;
-		}
+		if (!data.length) return NOT_OK;
 		return {ok: true, value: data[0]};
 	}
 
@@ -75,9 +73,7 @@ export class MembershipRepo extends PostgresRepo {
 			DELETE FROM memberships 
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
 		`;
-		if (!data.count) {
-			return NOT_OK;
-		}
+		if (!data.count) return NOT_OK;
 		return OK;
 	}
 }
