@@ -1,4 +1,4 @@
-import {parseView, viewTemplates, type ViewData} from '$lib/vocab/view/view';
+import {viewTemplates} from '$lib/vocab/view/view';
 import type {CreateSpaceParams} from '$lib/app/eventTypes';
 import type {Community} from '$lib/vocab/community/community';
 
@@ -41,8 +41,8 @@ export const toDefaultSpaces = ({community_id, name}: Community): CreateSpacePar
 	},
 ];
 
-const toViewTemplateDefaults = (name: string): {view: ViewData; icon: string} => {
+const toViewTemplateDefaults = (name: string): {view: string; icon: string} => {
 	const viewTemplate = viewTemplates.find((v) => v.name === name);
 	if (!viewTemplate) throw Error(`Unable to find view template with name ${name}`);
-	return {view: parseView(viewTemplate.template), icon: viewTemplate.icon};
+	return {view: viewTemplate.view, icon: viewTemplate.icon};
 };

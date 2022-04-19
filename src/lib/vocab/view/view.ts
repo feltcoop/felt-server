@@ -20,18 +20,18 @@ export type ViewNode = Root | SvelteChild; // TODO does this technically need to
  */
 export const viewTemplates: Array<{
 	name: string;
-	template: string;
+	view: string;
 	icon: string;
 	creatable?: boolean;
 }> = [
-	{name: 'Home', template: '<Home />', icon: '🏠', creatable: false}, // TODO better name?
-	{name: 'Room', template: '<Room />', icon: '🗨'},
-	{name: 'Board', template: '<Board />', icon: '📚'},
-	{name: 'Forum', template: '<Forum />', icon: '📋'},
-	{name: 'Notes', template: '<Notes />', icon: '🏷'},
-	{name: 'Iframe', template: '<Iframe />', icon: '💻'}, // TODO does this need a default `src`?
-	{name: 'EntityExplorer', template: '<EntityExplorer />', icon: '✏️'},
-	{name: 'Todo', template: '<Todo />', icon: '🗒'},
+	{name: 'Home', view: '<Home />', icon: '🏠', creatable: false}, // TODO better name?
+	{name: 'Room', view: '<Room />', icon: '🗨'},
+	{name: 'Board', view: '<Board />', icon: '📚'},
+	{name: 'Forum', view: '<Forum />', icon: '📋'},
+	{name: 'Notes', view: '<Notes />', icon: '🏷'},
+	{name: 'Iframe', view: '<Iframe />', icon: '💻'}, // TODO does this need a default `src`?
+	{name: 'EntityExplorer', view: '<EntityExplorer />', icon: '✏️'},
+	{name: 'Todo', view: '<Todo />', icon: '🗒'},
 ];
 
 /**
@@ -52,19 +52,6 @@ export const toViewProps = (view: ViewNode): Record<string, any> | undefined => 
 	}
 	return props;
 };
-
-export const toComponentViewData = (tagName: string): ViewData => ({
-	type: 'root',
-	children: [
-		{
-			type: 'svelteComponent',
-			tagName,
-			properties: [],
-			selfClosing: true,
-			children: [],
-		} as any, // TODO this cast is needed until this PR fixes it: https://github.com/pngwn/MDsveX/pull/436
-	],
-});
 
 export interface ViewContext {
 	persona: Readable<Persona>;

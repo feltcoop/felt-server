@@ -168,7 +168,7 @@ export interface CreateSpaceParams {
 	name: string;
 	url: string;
 	icon: string;
-	view: ViewData;
+	view: string;
 }
 export interface CreateSpaceResponse {
 	space: Space;
@@ -196,7 +196,7 @@ export interface UpdateSpaceParams {
 	name?: string;
 	url?: string;
 	icon?: string;
-	view?: ViewData;
+	view?: string;
 }
 export interface UpdateSpaceResponse {
 	space: Space;
@@ -318,7 +318,7 @@ export interface SelectSpaceParams {
 
 export interface ViewSpaceParams {
 	space: Readable<Space>;
-	view: ViewData | null;
+	view: string | null;
 }
 
 export interface Dispatch {

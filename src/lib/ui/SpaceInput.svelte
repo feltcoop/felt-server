@@ -55,7 +55,7 @@
 			name,
 			url,
 			icon: iconResult.value,
-			view: parseView(selectedViewTemplate.template),
+			view: selectedViewTemplate.view,
 		});
 		pending = false;
 		if (result.ok) {

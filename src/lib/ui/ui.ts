@@ -70,7 +70,7 @@ export interface Ui {
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
 	dialogs: Readable<DialogData[]>;
-	viewBySpace: Mutable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
+	viewBySpace: Mutable<WeakMap<Readable<Space>, string>>; // client overrides for the views set by the community
 }
 
 export type WritableUi = ReturnType<typeof toUi>;
