@@ -69,14 +69,16 @@ const parseSvastText = (node: Text): SvelteChild => {
 	}
 	if (!children) return node; // nothing special was parsed
 	flushPlainText();
-	return {
-		[ADDED_BY_FELT as any]: true,
-		type: 'svelteElement',
-		tagName: 'span',
-		properties: [],
-		selfClosing: false,
-		children,
-	};
+	return children.length === 1
+		? children[0]
+		: {
+				[ADDED_BY_FELT as any]: true,
+				type: 'svelteElement',
+				tagName: 'span',
+				properties: [],
+				selfClosing: false,
+				children,
+		  };
 };
 
 const MATCH_WHITESPACE = /(\s+)/u;

@@ -44,27 +44,19 @@ test__parseSvast('parses https:// links', async () => {
 		type: 'root',
 		children: [
 			{
-				type: 'svelteElement',
-				tagName: 'span',
-				properties: [],
-				selfClosing: false,
-				children: [
+				type: 'svelteComponent',
+				tagName: 'Link',
+				properties: [
 					{
-						type: 'svelteComponent',
-						tagName: 'Link',
-						properties: [
-							{
-								type: 'svelteProperty',
-								name: 'href',
-								value: [{type: 'text', value: 'https://felt.dev/another-link'}],
-								modifiers: [],
-								shorthand: 'none',
-							},
-						],
-						selfClosing: false,
-						children: [{type: 'text', value: 'https://felt.dev/another-link'}],
+						type: 'svelteProperty',
+						name: 'href',
+						value: [{type: 'text', value: 'https://felt.dev/another-link'}],
+						modifiers: [],
+						shorthand: 'none',
 					},
 				],
+				selfClosing: false,
+				children: [{type: 'text', value: 'https://felt.dev/another-link'}],
 			},
 		],
 	});
@@ -79,27 +71,19 @@ test__parseSvast('parses http:// links', async () => {
 		type: 'root',
 		children: [
 			{
-				type: 'svelteElement',
-				tagName: 'span',
-				properties: [],
-				selfClosing: false,
-				children: [
+				type: 'svelteComponent',
+				tagName: 'Link',
+				properties: [
 					{
-						type: 'svelteComponent',
-						tagName: 'Link',
-						properties: [
-							{
-								type: 'svelteProperty',
-								name: 'href',
-								value: [{type: 'text', value: 'http://felt.dev/another-link'}],
-								modifiers: [],
-								shorthand: 'none',
-							},
-						],
-						selfClosing: false,
-						children: [{type: 'text', value: 'http://felt.dev/another-link'}],
+						type: 'svelteProperty',
+						name: 'href',
+						value: [{type: 'text', value: 'http://felt.dev/another-link'}],
+						modifiers: [],
+						shorthand: 'none',
 					},
 				],
+				selfClosing: false,
+				children: [{type: 'text', value: 'http://felt.dev/another-link'}],
 			},
 		],
 	});
@@ -113,27 +97,19 @@ test__parseSvast('parses absolute links', async () => {
 		type: 'root',
 		children: [
 			{
-				type: 'svelteElement',
-				tagName: 'span',
-				properties: [],
-				selfClosing: false,
-				children: [
+				type: 'svelteComponent',
+				tagName: 'Link',
+				properties: [
 					{
-						type: 'svelteComponent',
-						tagName: 'Link',
-						properties: [
-							{
-								type: 'svelteProperty',
-								name: 'href',
-								value: [{type: 'text', value: '/felt.dev/another-link'}],
-								modifiers: [],
-								shorthand: 'none',
-							},
-						],
-						selfClosing: false,
-						children: [{type: 'text', value: '/felt.dev/another-link'}],
+						type: 'svelteProperty',
+						name: 'href',
+						value: [{type: 'text', value: '/felt.dev/another-link'}],
+						modifiers: [],
+						shorthand: 'none',
 					},
 				],
+				selfClosing: false,
+				children: [{type: 'text', value: '/felt.dev/another-link'}],
 			},
 		],
 	});
@@ -193,27 +169,19 @@ test__parseSvast('parses a SVAST with links and preserves whitespace', async () 
 								selfClosing: false,
 								children: [
 									{
-										type: 'svelteElement',
-										tagName: 'span',
-										properties: [],
-										selfClosing: false,
-										children: [
+										type: 'svelteComponent',
+										tagName: 'Link',
+										properties: [
 											{
-												type: 'svelteComponent',
-												tagName: 'Link',
-												properties: [
-													{
-														type: 'svelteProperty',
-														name: 'href',
-														value: [{type: 'text', value: 'https://sveveral.more'}],
-														modifiers: [],
-														shorthand: 'none',
-													},
-												],
-												selfClosing: false,
-												children: [{type: 'text', value: 'https://sveveral.more'}],
+												type: 'svelteProperty',
+												name: 'href',
+												value: [{type: 'text', value: 'https://sveveral.more'}],
+												modifiers: [],
+												shorthand: 'none',
 											},
 										],
+										selfClosing: false,
+										children: [{type: 'text', value: 'https://sveveral.more'}],
 									},
 								],
 							},
