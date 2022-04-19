@@ -31,6 +31,7 @@ export const parseSvast: typeof parse = (opts) => {
 	return ast;
 };
 
+// TODO this is hacky and temporary -- see `parseSvast` above
 const parseSvastText = (node: Text): SvelteChild => {
 	const words = node.value.split(MATCH_WHITESPACE);
 	let plainText = '';
