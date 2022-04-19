@@ -6,7 +6,7 @@
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 	import SvastView from '$lib/ui/SvastView.svelte';
-	import {setViewContext} from '$lib/vocab/view/view';
+	import {parseView, setViewContext} from '$lib/vocab/view/view';
 
 	const {
 		ui: {viewBySpace},
@@ -26,6 +26,7 @@
 	}
 
 	$: view = $viewBySpace.value.get(space) || $space.view;
+	$: parsed = parseView(view);
 </script>
 
-<SvastView {view} />
+<SvastView view={parsed} />

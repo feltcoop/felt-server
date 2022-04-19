@@ -4,7 +4,6 @@ import {blue, gray} from 'kleur/colors';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Space} from '$lib/vocab/space/space.js';
-import type {ViewData} from '$lib/vocab/view/view';
 
 const log = new Logger(gray('[') + blue('SpaceRepo') + gray(']'));
 
@@ -59,7 +58,7 @@ export class SpaceRepo extends PostgresRepo {
 
 	async create(
 		name: string,
-		view: ViewData,
+		view: string,
 		url: string,
 		icon: string,
 		community_id: number,

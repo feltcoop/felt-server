@@ -2,7 +2,6 @@ import type {Root, SvelteChild} from 'svast';
 import {compile as stringifySvast} from 'svast-stringify';
 import {setContext, getContext} from 'svelte';
 import type {Readable} from 'svelte/store';
-import type {Result} from '@feltcoop/felt';
 
 import type {Space} from '$lib/vocab/space/space';
 import type {Community} from '$lib/vocab/community/community';
@@ -65,14 +64,5 @@ export const setViewContext = (ctx: Readable<ViewContext>): void => setContext(K
 
 export const parseView = (value: string, generatePositions = false): ViewData =>
 	parseSvast({value, generatePositions});
-
-export const parseViewString = (value: string): Result<{value: string}, {message: string}> => {
-	try {
-		const parsed = parseView(value);
-		return {ok: true, value: stringifySvast(parsed)};
-	} catch (err) {
-		return {ok: false, message: 'failed to parse'};
-	}
-};
 
 export const serializeView = stringifySvast;

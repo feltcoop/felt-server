@@ -12,7 +12,6 @@ import type {AccountModel} from '$lib/vocab/account/account';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Membership} from '$lib/vocab/membership/membership';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-import type {ViewData} from '$lib/vocab/view/view';
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 
