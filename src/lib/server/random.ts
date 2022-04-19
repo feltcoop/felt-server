@@ -191,7 +191,7 @@ export const randomEventParams = async (
 		case 'ViewSpace': {
 			return {
 				space: writable(await random.space(persona, account, community)),
-				view: {type: 'EntityExplorer'},
+				view: '<EntityExplorer />',
 			};
 		}
 		// TODO could do an exhaustive typecheck (so it'll be caught by TS, not at runtime)
