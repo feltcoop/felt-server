@@ -5,6 +5,8 @@ import {walk} from 'estree-walker';
 // Used to avoids infinite loops because newly added children get walked.
 const ADDED_BY_FELT = Symbol();
 
+// TODO sanitize using an allowlist of elements/attributes
+
 /**
  * Wraps `svelte-parse` with Felt-specific plaintext extensions like linkifying URLs.
  * This is a hacky initial implementation just to get links and mentions.
