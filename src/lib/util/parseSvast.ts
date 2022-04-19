@@ -2,15 +2,14 @@ import type {SvelteChild, Text} from 'svast';
 import {parse} from 'svelte-parse';
 import {walk} from 'estree-walker';
 
-// TODO is there a better way to do this?
-// avoids infinite walking because without it,
-// it walks the newly added children, which may cause new Felt children...
+// Used to avoids infinite loops because newly added children get walked.
 const ADDED_BY_FELT = Symbol();
 
 export const parseSvast: typeof parse = (opts) => {
 	const ast = parse(opts);
 	walk(ast, {
 		enter(node, parent, prop, index) {
+			// TODO BLOCK ignore nodes that are properties
 			if (node[ADDED_BY_FELT]) return;
 			if (node.type === 'text') {
 				// parse this text and if it has extended syntax, replace the node with N new ones
