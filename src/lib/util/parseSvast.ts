@@ -5,6 +5,14 @@ import {walk} from 'estree-walker';
 // Used to avoids infinite loops because newly added children get walked.
 const ADDED_BY_FELT = Symbol();
 
+/**
+ * Wraps `svelte-parse` with Felt-specific plaintext extensions like linkifying URLs.
+ * This is a hacky initial implementation just to get links and mentions.
+ * We plan to use MDsveX/Pfm to do this robustly/correctly:
+ * https://github.com/pngwn/MDsveX/
+ * @param opts `svelte-parse` options
+ * @returns SVAST
+ */
 export const parseSvast: typeof parse = (opts) => {
 	const ast = parse(opts);
 	walk(ast, {
@@ -23,13 +31,6 @@ export const parseSvast: typeof parse = (opts) => {
 	return ast;
 };
 
-/**
- * Parses plain text from a Felt-specific format into a SVAST.
- * This is a hacky initial implementation just to get links and mentions.
- * We plan to use MDsveX/Pfm to do this robustly/correctly:
- * https://github.com/pngwn/MDsveX/
- * @param value
- */
 const parseSvastText = (node: Text): SvelteChild => {
 	const words = node.value.split(MATCH_WHITESPACE);
 	let plainText = '';
