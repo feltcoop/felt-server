@@ -2,4 +2,4 @@
 	export let href: string;
 </script>
 
-<a {...$$restProps} {href}><slot /></a>
+<a rel="noreferrer" {...$$restProps} {href}><slot /></a>
