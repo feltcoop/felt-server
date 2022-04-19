@@ -66,7 +66,7 @@ export class SpaceRepo extends PostgresRepo {
 	): Promise<Result<{value: Space}>> {
 		const data = await this.db.sql<Space[]>`
 			INSERT INTO spaces (name, url, icon, view, community_id, directory_id) VALUES (
-				${name},${url},${icon},${this.db.sql.json(view)},${community_id}, ${directory_id}
+				${name},${url},${icon},${view},${community_id}, ${directory_id}
 			) RETURNING *
 		`;
 		return {ok: true, value: data[0]};
