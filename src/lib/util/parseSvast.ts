@@ -8,15 +8,15 @@ const ADDED_BY_FELT = Symbol();
 export const parseSvast: typeof parse = (opts) => {
 	const ast = parse(opts);
 	walk(ast, {
-		enter(node, parent, prop, index) {
-			// TODO BLOCK ignore nodes that are properties
+		enter(node, parent) {
 			if (node[ADDED_BY_FELT]) return;
 			if (node.type === 'text') {
-				// parse this text and if it has extended syntax, replace the node with N new ones
+				// Parse text and replace extended syntax with new nodes.
+				// This is a temporary implementation until Pfm is ready and we write a proper plugin.
+				const {type: t} = parent;
+				if (t !== 'root' && t !== 'svelteElement' && t !== 'svelteComponent') return;
 				const newNode = parseSvastText(node);
-				if (newNode !== node) {
-					this.replace(newNode);
-				}
+				if (newNode !== node) this.replace(newNode);
 			}
 		},
 	});

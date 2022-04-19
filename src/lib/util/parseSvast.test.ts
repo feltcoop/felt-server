@@ -194,5 +194,32 @@ test__parseSvast('parses a SVAST with links and preserves whitespace', async () 
 	});
 });
 
+test__parseSvast('does not parse https:// links in properties', async () => {
+	const parsed = parseSvast({
+		value: '<a href="https://felt.dev/another-link" />',
+		generatePositions: false,
+	});
+	assert.equal(parsed, {
+		type: 'root',
+		children: [
+			{
+				type: 'svelteElement',
+				tagName: 'a',
+				properties: [
+					{
+						type: 'svelteProperty',
+						name: 'href',
+						value: [{type: 'text', value: 'https://felt.dev/another-link'}],
+						modifiers: [],
+						shorthand: 'none',
+					},
+				],
+				selfClosing: true,
+				children: [],
+			},
+		],
+	});
+});
+
 test__parseSvast.run();
 /* test__parseSvast */
