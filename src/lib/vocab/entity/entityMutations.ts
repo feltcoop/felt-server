@@ -11,14 +11,17 @@ export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, ui}) => {
 	return result;
 };
 
-export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui: {entityById}}) => {
+export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	//TODO maybe return to $entity naming convention OR propagate this pattern?
 	const {entity: updatedEntity} = result.value;
-	const entity = entityById.get(updatedEntity.entity_id);
-	if (!entity) return result; // TODO BLOCK add this, use the same code paths as `QueryEntities`
-	entity.set(updatedEntity);
+	const entity = ui.entityById.get(updatedEntity.entity_id);
+	if (entity) {
+		entity.set(updatedEntity);
+	} else {
+		addEntity(ui, updatedEntity);
+	}
 	return result;
 };
 
@@ -30,6 +33,7 @@ export const SoftDeleteEntity: Mutations['SoftDeleteEntity'] = async ({
 	const result = await invoke();
 	if (!result.ok) return result;
 	//TODO update ties once stores are in place
+	// TODO return the updated value so it can be set to exactly what the server has (or use a toTombstone helper?)
 	// const entity = entityById.get(params.entity_id)!;
 	// entity.set(result.value);
 	return result;
