@@ -5,8 +5,10 @@ import type {Service} from '$lib/server/service';
 import type {
 	CreateAccountPersonaParams,
 	CreateAccountPersonaResponseResult,
+	ReadPersonaParams,
+	ReadPersonaResponseResult,
 } from '$lib/app/eventTypes';
-import {CreateAccountPersona} from '$lib/vocab/persona/personaEvents';
+import {CreateAccountPersona, ReadPersona} from '$lib/vocab/persona/personaEvents';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 import {createDefaultSpaces} from '$lib/vocab/space/spaceServices';
 
@@ -82,5 +84,20 @@ export const createAccountPersonaService: Service<
 		const membership = membershipResult.value;
 
 		return {ok: true, status: 200, value: {persona, community, spaces, membership}};
+	},
+};
+
+//Returns a single persona object
+export const readPersonaService: Service<ReadPersonaParams, ReadPersonaResponseResult> = {
+	event: ReadPersona,
+	perform: async ({repos, params}) => {
+		log.trace('[ReadPersona] persona', params.persona_id);
+
+		const findPersonaResult = await repos.persona.findById(params.persona_id);
+		if (!findPersonaResult.ok) {
+			log.trace('[ReadPersona] no persona found');
+			return {ok: false, status: 404, message: 'no persona found'};
+		}
+		return {ok: true, status: 200, value: {persona: findPersonaResult.value}};
 	},
 };

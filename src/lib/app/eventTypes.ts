@@ -25,6 +25,7 @@ export interface EventParamsByName {
 	UpdateCommunitySettings: UpdateCommunitySettingsParams;
 	DeleteCommunity: DeleteCommunityParams;
 	CreateAccountPersona: CreateAccountPersonaParams;
+	ReadPersona: ReadPersonaParams;
 	CreateMembership: CreateMembershipParams;
 	DeleteMembership: DeleteMembershipParams;
 	CreateSpace: CreateSpaceParams;
@@ -61,6 +62,7 @@ export interface EventResponseByName {
 	UpdateCommunitySettings: UpdateCommunitySettingsResponse;
 	DeleteCommunity: DeleteCommunityResponse;
 	CreateAccountPersona: CreateAccountPersonaResponse;
+	ReadPersona: ReadPersonaResponse;
 	CreateMembership: CreateMembershipResponse;
 	DeleteMembership: DeleteMembershipResponse;
 	CreateSpace: CreateSpaceResponse;
@@ -146,6 +148,14 @@ export interface CreateAccountPersonaResponse {
 	membership: Membership;
 }
 export type CreateAccountPersonaResponseResult = ApiResult<CreateAccountPersonaResponse>;
+
+export interface ReadPersonaParams {
+	persona_id: number;
+}
+export interface ReadPersonaResponse {
+	persona: Persona;
+}
+export type ReadPersonaResponseResult = ApiResult<ReadPersonaResponse>;
 
 export interface CreateMembershipParams {
 	persona_id: number;
@@ -334,6 +344,7 @@ export interface Dispatch {
 	CreateAccountPersona: (
 		params: CreateAccountPersonaParams,
 	) => Promise<CreateAccountPersonaResponseResult>;
+	ReadPersona: (params: ReadPersonaParams) => Promise<ReadPersonaResponseResult>;
 	CreateMembership: (params: CreateMembershipParams) => Promise<CreateMembershipResponseResult>;
 	DeleteMembership: (params: DeleteMembershipParams) => Promise<DeleteMembershipResponseResult>;
 	CreateSpace: (params: CreateSpaceParams) => Promise<CreateSpaceResponseResult>;
@@ -387,6 +398,9 @@ export interface Mutations {
 	CreateAccountPersona: (
 		ctx: DispatchContext<CreateAccountPersonaParams, CreateAccountPersonaResponseResult>,
 	) => Promise<CreateAccountPersonaResponseResult>;
+	ReadPersona: (
+		ctx: DispatchContext<ReadPersonaParams, ReadPersonaResponseResult>,
+	) => Promise<ReadPersonaResponseResult>;
 	CreateMembership: (
 		ctx: DispatchContext<CreateMembershipParams, CreateMembershipResponseResult>,
 	) => Promise<CreateMembershipResponseResult>;

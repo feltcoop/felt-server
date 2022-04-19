@@ -67,6 +67,10 @@ export const randomEventParams = async (
 		case 'CreateAccountPersona': {
 			return randomPersonaParams();
 		}
+		case 'ReadPersona': {
+			if (!persona) ({persona} = await random.persona());
+			return {persona_id: persona.persona_id};
+		}
 		case 'CreateMembership': {
 			if (!persona) ({persona} = await random.persona(account));
 			if (!community) ({community} = await random.community()); // don't forward `persona`/`account` bc that's the service's job
