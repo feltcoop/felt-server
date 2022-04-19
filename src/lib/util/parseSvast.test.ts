@@ -3,8 +3,6 @@ import * as assert from 'uvu/assert';
 
 import {parseSvast} from '$lib/util/parseSvast';
 
-// TODO BLOCK stringify  won't work with our stuff without pre-transformation
-
 /* test__parseSvast */
 const test__parseSvast = suite('parseSvast');
 
