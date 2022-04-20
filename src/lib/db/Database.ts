@@ -15,6 +15,8 @@ export interface Options {
 }
 
 export class Database {
+	DEFAULT_PAGE_SIZE = 20;
+
 	sql: PostgresSql;
 
 	log = new Logger(gray('[') + blue('db') + gray(']'));
