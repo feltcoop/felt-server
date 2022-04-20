@@ -1,7 +1,6 @@
 import {compile} from 'svast-stringify';
 
-///** @param {import('postgres').Sql<any>} sql */
-/** @param {any} sql */
+/** @param {import('postgres').Sql<any>} sql */
 export const up = async (sql) => {
 	const spaces = await sql`
 		SELECT * FROM spaces;
