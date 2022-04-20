@@ -7,17 +7,17 @@ export const up = async (sql) => {
 	`;
 
 	await sql`
-    ALTER TABLE spaces
-    ALTER COLUMN view TYPE text;
+		ALTER TABLE spaces
+		ALTER COLUMN view TYPE text;
   `;
 
 	for (const space of spaces) {
 		const viewText = compile(space.view);
 		// eslint-disable-next-line no-await-in-loop
 		await sql`
-      UPDATE spaces
-      SET view=${viewText}
-      WHERE space_id=${space.space_id}
+			UPDATE spaces
+			SET view=${viewText}
+			WHERE space_id=${space.space_id}
 		`;
 	}
 };
