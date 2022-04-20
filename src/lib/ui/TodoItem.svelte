@@ -69,22 +69,24 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	>
 		<div on:click={() => selectList($entity)} class="entity markup formatted">
 			{#if hasItems}
-				<div class="icon-button">📝</div>
+				<div class="icon-button">
+					{#if selected}👉{:else}📝{/if}
+				</div>
 			{/if}
 			{#if hasChecked}
 				<!-- TODO checkbox not updated properly on event broadcast-->
 				<!-- TODO maybe use Felt checkbox component when available-->
 				<input type="checkbox" disabled={pending} bind:checked />
 			{/if}
-			<div class="signature">
-				<Avatar name={toName($persona)} icon={toIcon($persona)} />
-			</div>
-			<div>
+			<div class="text">
 				{#if $entity.data.type === 'Collection'}
 					{$entity.data.name}
 				{:else}
 					{$entity.data.content}
 				{/if}
+			</div>
+			<div class="signature">
+				<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
 			</div>
 		</div>
 		{#if items && selected}
@@ -123,6 +125,9 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		flex-direction: row;
 		justify-content: space-between;
 	}
+	.entity:hover {
+		background-color: var(--tint_dark_1);
+	}
 	.entity form input {
 		width: 50px;
 		min-width: auto;
@@ -139,6 +144,9 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		align-items: center;
 		justify-content: center;
 		line-height: 0;
+	}
+	.text {
 		text-align: center;
+		flex-grow: 2;
 	}
 </style>

@@ -25,6 +25,7 @@ export interface EventParamsByName {
 	UpdateCommunitySettings: UpdateCommunitySettingsParams;
 	DeleteCommunity: DeleteCommunityParams;
 	CreateAccountPersona: CreateAccountPersonaParams;
+	ReadPersona: ReadPersonaParams;
 	CreateMembership: CreateMembershipParams;
 	DeleteMembership: DeleteMembershipParams;
 	CreateSpace: CreateSpaceParams;
@@ -37,7 +38,7 @@ export interface EventParamsByName {
 	ReadEntities: ReadEntitiesParams;
 	QueryEntities: QueryEntitiesParams;
 	SoftDeleteEntity: SoftDeleteEntityParams;
-	HardDeleteEntity: HardDeleteEntityParams;
+	DeleteEntities: DeleteEntitiesParams;
 	CreateTie: CreateTieParams;
 	ReadTies: ReadTiesParams;
 	DeleteTie: DeleteTieParams;
@@ -61,6 +62,7 @@ export interface EventResponseByName {
 	UpdateCommunitySettings: UpdateCommunitySettingsResponse;
 	DeleteCommunity: DeleteCommunityResponse;
 	CreateAccountPersona: CreateAccountPersonaResponse;
+	ReadPersona: ReadPersonaResponse;
 	CreateMembership: CreateMembershipResponse;
 	DeleteMembership: DeleteMembershipResponse;
 	CreateSpace: CreateSpaceResponse;
@@ -72,7 +74,7 @@ export interface EventResponseByName {
 	UpdateEntity: UpdateEntityResponse;
 	ReadEntities: ReadEntitiesResponse;
 	SoftDeleteEntity: SoftDeleteEntityResponse;
-	HardDeleteEntity: HardDeleteEntityResponse;
+	DeleteEntities: DeleteEntitiesResponse;
 	CreateTie: CreateTieResponse;
 	ReadTies: ReadTiesResponse;
 	DeleteTie: DeleteTieResponse;
@@ -146,6 +148,14 @@ export interface CreateAccountPersonaResponse {
 	membership: Membership;
 }
 export type CreateAccountPersonaResponseResult = ApiResult<CreateAccountPersonaResponse>;
+
+export interface ReadPersonaParams {
+	persona_id: number;
+}
+export interface ReadPersonaResponse {
+	persona: Persona;
+}
+export type ReadPersonaResponseResult = ApiResult<ReadPersonaResponse>;
 
 export interface CreateMembershipParams {
 	persona_id: number;
@@ -249,11 +259,11 @@ export interface SoftDeleteEntityParams {
 export type SoftDeleteEntityResponse = null;
 export type SoftDeleteEntityResponseResult = ApiResult<SoftDeleteEntityResponse>;
 
-export interface HardDeleteEntityParams {
-	entity_id: number;
+export interface DeleteEntitiesParams {
+	entity_ids: number[];
 }
-export type HardDeleteEntityResponse = null;
-export type HardDeleteEntityResponseResult = ApiResult<HardDeleteEntityResponse>;
+export type DeleteEntitiesResponse = null;
+export type DeleteEntitiesResponseResult = ApiResult<DeleteEntitiesResponse>;
 
 export interface CreateTieParams {
 	source_id: number;
@@ -334,6 +344,7 @@ export interface Dispatch {
 	CreateAccountPersona: (
 		params: CreateAccountPersonaParams,
 	) => Promise<CreateAccountPersonaResponseResult>;
+	ReadPersona: (params: ReadPersonaParams) => Promise<ReadPersonaResponseResult>;
 	CreateMembership: (params: CreateMembershipParams) => Promise<CreateMembershipResponseResult>;
 	DeleteMembership: (params: DeleteMembershipParams) => Promise<DeleteMembershipResponseResult>;
 	CreateSpace: (params: CreateSpaceParams) => Promise<CreateSpaceResponseResult>;
@@ -346,7 +357,7 @@ export interface Dispatch {
 	ReadEntities: (params: ReadEntitiesParams) => Promise<ReadEntitiesResponseResult>;
 	QueryEntities: (params: QueryEntitiesParams) => Readable<Readable<Entity>[]>;
 	SoftDeleteEntity: (params: SoftDeleteEntityParams) => Promise<SoftDeleteEntityResponseResult>;
-	HardDeleteEntity: (params: HardDeleteEntityParams) => Promise<HardDeleteEntityResponseResult>;
+	DeleteEntities: (params: DeleteEntitiesParams) => Promise<DeleteEntitiesResponseResult>;
 	CreateTie: (params: CreateTieParams) => Promise<CreateTieResponseResult>;
 	ReadTies: (params: ReadTiesParams) => Promise<ReadTiesResponseResult>;
 	DeleteTie: (params: DeleteTieParams) => Promise<DeleteTieResponseResult>;
@@ -387,6 +398,9 @@ export interface Mutations {
 	CreateAccountPersona: (
 		ctx: DispatchContext<CreateAccountPersonaParams, CreateAccountPersonaResponseResult>,
 	) => Promise<CreateAccountPersonaResponseResult>;
+	ReadPersona: (
+		ctx: DispatchContext<ReadPersonaParams, ReadPersonaResponseResult>,
+	) => Promise<ReadPersonaResponseResult>;
 	CreateMembership: (
 		ctx: DispatchContext<CreateMembershipParams, CreateMembershipResponseResult>,
 	) => Promise<CreateMembershipResponseResult>;
@@ -421,9 +435,9 @@ export interface Mutations {
 	SoftDeleteEntity: (
 		ctx: DispatchContext<SoftDeleteEntityParams, SoftDeleteEntityResponseResult>,
 	) => Promise<SoftDeleteEntityResponseResult>;
-	HardDeleteEntity: (
-		ctx: DispatchContext<HardDeleteEntityParams, HardDeleteEntityResponseResult>,
-	) => Promise<HardDeleteEntityResponseResult>;
+	DeleteEntities: (
+		ctx: DispatchContext<DeleteEntitiesParams, DeleteEntitiesResponseResult>,
+	) => Promise<DeleteEntitiesResponseResult>;
 	CreateTie: (
 		ctx: DispatchContext<CreateTieParams, CreateTieResponseResult>,
 	) => Promise<CreateTieResponseResult>;

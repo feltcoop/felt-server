@@ -47,7 +47,7 @@ export class EntityRepo extends PostgresRepo {
 	}
 
 	// TODO maybe `EntityQuery`?
-	async findBySet(entityIdSet: number[]): Promise<Result<{value: Entity[]}>> {
+	async findByIds(entityIdSet: number[]): Promise<Result<{value: Entity[]}>> {
 		if (entityIdSet.length === 0) return {ok: true, value: []};
 		log.trace('[findBySet]', entityIdSet);
 		const entities = await this.db.sql<Entity[]>`
@@ -87,10 +87,10 @@ export class EntityRepo extends PostgresRepo {
 	}
 
 	//This function actually deletes the record in the DB
-	async hardDeleteById(entity_id: number): Promise<Result<object>> {
-		log.trace('[hardDeleteById]', entity_id);
+	async deleteByIdSet(entity_ids: number[]): Promise<Result<object>> {
+		log.trace('[deleteByIdSet]', entity_ids);
 		const data = await this.db.sql<any[]>`
-			DELETE FROM entities WHERE ${entity_id}=entity_id
+			DELETE FROM entities WHERE entity_id IN ${this.db.sql(entity_ids)}
 		`;
 		if (!data.count) {
 			return NOT_OK;

@@ -1,7 +1,7 @@
 import type {Service} from '$lib/server/service';
 import {pingService} from '$lib/server/pingService';
 import {loginAccountService, logoutAccountService} from '$lib/vocab/account/accountServices';
-import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
+import {createAccountPersonaService, readPersonaService} from '$lib/vocab/persona/personaServices';
 import {
 	readCommunityService,
 	readCommunitiesService,
@@ -18,7 +18,7 @@ import {
 	createEntityService,
 	updateEntityService,
 	softDeleteEntityService,
-	hardDeleteEntityService,
+	deleteEntitiesService,
 } from '$lib/vocab/entity/entityServices';
 import {
 	readSpaceService,
@@ -35,6 +35,7 @@ export const services: Map<string, Service<any, any>> = new Map(
 		loginAccountService,
 		logoutAccountService,
 		createAccountPersonaService,
+		readPersonaService,
 		createCommunityService,
 		createMembershipService,
 		deleteMembershipService,
@@ -42,7 +43,7 @@ export const services: Map<string, Service<any, any>> = new Map(
 		createEntityService,
 		updateEntityService,
 		softDeleteEntityService,
-		hardDeleteEntityService,
+		deleteEntitiesService,
 		readCommunityService,
 		readCommunitiesService,
 		updateCommunitySettingsService,
