@@ -1,10 +1,10 @@
 <script lang="ts">
 	import CommunityNav from '$lib/ui/CommunityNav.svelte';
 	import SpaceNav from '$lib/ui/SpaceNav.svelte';
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
-	import {toName, toIcon} from '$lib/vocab/entity/entityHelpers';
+	import {toName} from '$lib/vocab/entity/entityHelpers';
 	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
 	const {
@@ -41,7 +41,7 @@
 			<div class="icon-button button-placeholder" />
 			<!-- TODO or maybe `selectedPersona.id` ? can't be `$selectedPersona.persona_id` as a serial value -->
 			<button class="explorer-button" on:click={(e) => onContextmenu(e, contextmenu)}>
-				<Avatar name={toName($selectedPersona)} icon={toIcon($selectedPersona)} />
+				<PersonaAvatar persona={selectedPersona} contextmenuAction={null} />
 			</button>
 		</div>
 		<div class="explorer">

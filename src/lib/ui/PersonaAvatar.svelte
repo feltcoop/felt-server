@@ -5,10 +5,12 @@
 	import {toName, toIcon} from '$lib/vocab/entity/entityHelpers';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
+	import type {ContextmenuItems} from '$lib/ui/contextmenu/contextmenu';
 
 	export let persona: Readable<Persona>;
 	export let showName = true;
 	export let showIcon = true;
+	export let contextmenuAction: ContextmenuItems | null | undefined = undefined;
 </script>
 
 <Avatar
@@ -16,5 +18,7 @@
 	icon={toIcon($persona)}
 	{showName}
 	{showIcon}
-	contextmenuAction={[[PersonaContextmenu, {persona}]]}
+	contextmenuAction={contextmenuAction === undefined
+		? [[PersonaContextmenu, {persona}]]
+		: contextmenuAction}
 />

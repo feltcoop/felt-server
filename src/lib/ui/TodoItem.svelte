@@ -3,9 +3,8 @@
 
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import type {Tie} from '$lib/vocab/tie/tie';
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import {randomHue} from '$lib/ui/color';
-	import {toIcon, toName} from '$lib/vocab/entity/entityHelpers';
 	import {getApp} from '$lib/ui/app';
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
@@ -86,7 +85,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 				{/if}
 			</div>
 			<div class="signature">
-				<Avatar name={toName($persona)} icon={toIcon($persona)} showName={false} />
+				<PersonaAvatar {persona} showName={false} />
 			</div>
 		</div>
 		{#if items && selected}

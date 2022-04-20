@@ -35,6 +35,7 @@
     "@typescript-eslint/parser": "^5.19.0",
     "eslint": "^8.13.0",
     "eslint-plugin-svelte3": "^3.4.1",
+    "estree-walker": "^3.0.1",
     "ley": "^0.7.1",
     "prettier": "^2.6.2",
     "prettier-plugin-svelte": "^2.7.0",
