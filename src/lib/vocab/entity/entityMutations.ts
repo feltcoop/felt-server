@@ -37,7 +37,7 @@ export const SoftDeleteEntity: Mutations['SoftDeleteEntity'] = async ({invoke}) 
 	return result;
 };
 
-export const HardDeleteEntity: Mutations['HardDeleteEntity'] = async ({invoke}) => {
+export const DeleteEntities: Mutations['DeleteEntities'] = async ({invoke}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	//update state here

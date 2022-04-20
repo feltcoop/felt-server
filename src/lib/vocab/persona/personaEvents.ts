@@ -30,3 +30,31 @@ export const CreateAccountPersona: ServiceEventInfo = {
 		method: 'POST',
 	},
 };
+
+export const ReadPersona: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'ReadPersona',
+	params: {
+		$id: '/schemas/ReadPersonaParams.json',
+		type: 'object',
+		properties: {
+			persona_id: {type: 'number'},
+		},
+		required: ['persona_id'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: '/schemas/ReadPersonaResponse.json',
+		type: 'object',
+		properties: {
+			persona: {$ref: '/schemas/Persona.json', tsType: 'Persona'},
+		},
+		required: ['persona'],
+		additionalProperties: false,
+	},
+	returns: 'Promise<ReadPersonaResponseResult>',
+	route: {
+		path: '/api/v1/personas/:persona_id',
+		method: 'GET',
+	},
+};

@@ -7,7 +7,7 @@ import {
 	UpdateCommunitySettings,
 	DeleteCommunity,
 } from '$lib/vocab/community/communityEvents';
-import {CreateAccountPersona} from '$lib/vocab/persona/personaEvents';
+import {CreateAccountPersona, ReadPersona} from '$lib/vocab/persona/personaEvents';
 import {CreateMembership, DeleteMembership} from '$lib/vocab/membership/membershipEvents';
 import {
 	CreateSpace,
@@ -22,7 +22,7 @@ import {
 	ReadEntities,
 	QueryEntities,
 	SoftDeleteEntity,
-	HardDeleteEntity,
+	DeleteEntities,
 } from '$lib/vocab/entity/entityEvents';
 import {CreateTie, ReadTies, DeleteTie} from '$lib/vocab/tie/tieEvents';
 import {
@@ -50,6 +50,7 @@ export const eventInfos: EventInfo[] = [
 	DeleteCommunity,
 	// personaEvents
 	CreateAccountPersona,
+	ReadPersona,
 	// membershipEvents
 	CreateMembership,
 	DeleteMembership,
@@ -65,7 +66,7 @@ export const eventInfos: EventInfo[] = [
 	ReadEntities,
 	QueryEntities,
 	SoftDeleteEntity,
-	HardDeleteEntity,
+	DeleteEntities,
 	// tieEvents
 	CreateTie,
 	ReadTies,

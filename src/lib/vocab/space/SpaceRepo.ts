@@ -15,9 +15,7 @@ export class SpaceRepo extends PostgresRepo {
 			FROM spaces WHERE space_id=${space_id}
 		`;
 		log.trace('[findById] result', data);
-		if (!data.length) {
-			return NOT_OK;
-		}
+		if (!data.length) return NOT_OK;
 		return {ok: true, value: data[0]};
 	}
 
@@ -83,9 +81,7 @@ export class SpaceRepo extends PostgresRepo {
 			WHERE space_id= ${space_id}
 			RETURNING *
 		`;
-		if (!result.count) {
-			return NOT_OK;
-		}
+		if (!result.count) return NOT_OK;
 		return {ok: true, value: result[0]};
 	}
 
@@ -94,9 +90,7 @@ export class SpaceRepo extends PostgresRepo {
 		const data = await this.db.sql<any[]>`
 			DELETE FROM spaces WHERE space_id=${space_id}
 		`;
-		if (!data.count) {
-			return NOT_OK;
-		}
+		if (!data.count) return NOT_OK;
 		return OK;
 	}
 }

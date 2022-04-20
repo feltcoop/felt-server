@@ -136,26 +136,26 @@ export const SoftDeleteEntity: ServiceEventInfo = {
 	},
 };
 
-export const HardDeleteEntity: ServiceEventInfo = {
+export const DeleteEntities: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'HardDeleteEntity',
+	name: 'DeleteEntities',
 	broadcast: true,
 	params: {
-		$id: '/schemas/HardDeleteEntityParams.json',
+		$id: '/schemas/DeleteEntitiesParams.json',
 		type: 'object',
 		properties: {
-			entity_id: {type: 'number'},
+			entity_ids: {type: 'array', items: {type: 'number'}},
 		},
-		required: ['entity_id'],
+		required: ['entity_ids'],
 		additionalProperties: false,
 	},
 	response: {
-		$id: '/schemas/HardDeleteEntityResponse.json',
+		$id: '/schemas/DeleteEntitiesResponse.json',
 		type: 'null',
 	},
-	returns: 'Promise<HardDeleteEntityResponseResult>',
+	returns: 'Promise<DeleteEntitiesResponseResult>',
 	route: {
-		path: '/api/v1/entities/:entity_id/hard',
+		path: '/api/v1/entities/delete',
 		method: 'DELETE',
 	},
 };

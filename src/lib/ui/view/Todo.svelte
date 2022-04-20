@@ -80,6 +80,19 @@
 			await createEntity();
 		}
 	};
+
+	const clearDone = async () => {
+		if (!selectedList) return;
+		const entityList = entityById!.get(selectedList.entity_id);
+		const items = itemsByEntity?.get(entityList!);
+		if (items) {
+			const doneItems = items.filter((i) => get(i).data.checked === true);
+			if (doneItems.length > 0) {
+				const entity_ids = doneItems.map((i) => get(i).entity_id);
+				await dispatch.DeleteEntities({entity_ids});
+			}
+		}
+	};
 </script>
 
 <div class="room">
@@ -99,7 +112,10 @@
 		{/if}
 	</div>
 	{#if selectedList}
-		<input placeholder="> create new todo" on:keydown={onKeydown} bind:value={text} />
+		<div class="selected-tools">
+			<input placeholder="> create new todo" on:keydown={onKeydown} bind:value={text} />
+			<button on:click={clearDone}>Clear Done</button>
+		</div>
 	{/if}
 </div>
 
@@ -117,5 +133,8 @@
 		display: flex;
 		/* makes scrolling start at the bottom */
 		flex-direction: column;
+	}
+	.selected-tools {
+		display: flex;
 	}
 </style>

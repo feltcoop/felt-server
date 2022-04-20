@@ -3,9 +3,8 @@
 
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import type {Tie} from '$lib/vocab/tie/tie';
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import {randomHue} from '$lib/ui/color';
-	import {toIcon, toName} from '$lib/vocab/entity/entityHelpers';
 	import {getApp} from '$lib/ui/app';
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
@@ -69,22 +68,24 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	>
 		<div on:click={() => selectList($entity)} class="entity markup formatted">
 			{#if hasItems}
-				<div class="icon-button">📝</div>
+				<div class="icon-button">
+					{#if selected}👉{:else}📝{/if}
+				</div>
 			{/if}
 			{#if hasChecked}
 				<!-- TODO checkbox not updated properly on event broadcast-->
 				<!-- TODO maybe use Felt checkbox component when available-->
 				<input type="checkbox" disabled={pending} bind:checked />
 			{/if}
-			<div class="signature">
-				<Avatar name={toName($persona)} icon={toIcon($persona)} />
-			</div>
-			<div>
+			<div class="text">
 				{#if $entity.data.type === 'Collection'}
 					{$entity.data.name}
 				{:else}
 					{$entity.data.content}
 				{/if}
+			</div>
+			<div class="signature">
+				<PersonaAvatar {persona} showName={false} />
 			</div>
 		</div>
 		{#if items && selected}
@@ -123,6 +124,9 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		flex-direction: row;
 		justify-content: space-between;
 	}
+	.entity:hover {
+		background-color: var(--tint_dark_1);
+	}
 	.entity form input {
 		width: 50px;
 		min-width: auto;
@@ -139,6 +143,9 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		align-items: center;
 		justify-content: center;
 		line-height: 0;
+	}
+	.text {
 		text-align: center;
+		flex-grow: 2;
 	}
 </style>
