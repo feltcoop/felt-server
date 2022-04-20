@@ -17,7 +17,7 @@ import {
 	readEntitiesService,
 	createEntityService,
 	updateEntityService,
-	softDeleteEntityService,
+	eraseEntityService,
 	deleteEntitiesService,
 } from '$lib/vocab/entity/entityServices';
 import {
@@ -42,7 +42,7 @@ export const services: Map<string, Service<any, any>> = new Map(
 		createSpaceService,
 		createEntityService,
 		updateEntityService,
-		softDeleteEntityService,
+		eraseEntityService,
 		deleteEntitiesService,
 		readCommunityService,
 		readCommunitiesService,
