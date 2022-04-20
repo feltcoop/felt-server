@@ -112,6 +112,37 @@ export const QueryEntities: ClientEventInfo = {
 	returns: 'Readable<Readable<Entity>[]>',
 };
 
+export const GetPaginatedEntities: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'GetPaginatedEntities',
+	params: {
+		$id: '/schemas/GetPaginatedEntitiesParams.json',
+		type: 'object',
+		properties: {
+			directory_id: {type: 'number'},
+			pageSize: {type: 'number'},
+			pageKey: {type: 'number'},
+		},
+		required: ['directory_id'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: '/schemas/GetPaginatedEntitiesResponse.json',
+		type: 'object',
+		properties: {
+			entities: {type: 'array', items: {$ref: '/schemas/Entity.json', tsType: 'Entity'}},
+			ties: {type: 'array', items: {$ref: '/schemas/Tie.json', tsType: 'Tie'}},
+		},
+		required: ['entities', 'ties'],
+		additionalProperties: false,
+	},
+	returns: 'Promise<GetPaginatedEntitiesResponseResult>',
+	route: {
+		path: '/api/v1/spaces/:space_id/entities',
+		method: 'GET',
+	},
+};
+
 export const SoftDeleteEntity: ServiceEventInfo = {
 	type: 'ServiceEvent',
 	name: 'SoftDeleteEntity',

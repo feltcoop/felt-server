@@ -23,6 +23,7 @@ import {
 	QueryEntities,
 	SoftDeleteEntity,
 	DeleteEntities,
+	GetPaginatedEntities,
 } from '$lib/vocab/entity/entityEvents';
 import {CreateTie, ReadTies, DeleteTie} from '$lib/vocab/tie/tieEvents';
 import {
@@ -64,6 +65,7 @@ export const eventInfos: EventInfo[] = [
 	CreateEntity,
 	UpdateEntity,
 	ReadEntities,
+	GetPaginatedEntities,
 	QueryEntities,
 	SoftDeleteEntity,
 	DeleteEntities,

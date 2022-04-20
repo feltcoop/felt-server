@@ -36,6 +36,7 @@ export interface EventParamsByName {
 	CreateEntity: CreateEntityParams;
 	UpdateEntity: UpdateEntityParams;
 	ReadEntities: ReadEntitiesParams;
+	GetPaginatedEntities: GetPaginatedEntitiesParams;
 	QueryEntities: QueryEntitiesParams;
 	SoftDeleteEntity: SoftDeleteEntityParams;
 	DeleteEntities: DeleteEntitiesParams;
@@ -73,6 +74,7 @@ export interface EventResponseByName {
 	CreateEntity: CreateEntityResponse;
 	UpdateEntity: UpdateEntityResponse;
 	ReadEntities: ReadEntitiesResponse;
+	GetPaginatedEntities: GetPaginatedEntitiesResponse;
 	SoftDeleteEntity: SoftDeleteEntityResponse;
 	DeleteEntities: DeleteEntitiesResponse;
 	CreateTie: CreateTieResponse;
@@ -249,6 +251,17 @@ export interface ReadEntitiesResponse {
 }
 export type ReadEntitiesResponseResult = ApiResult<ReadEntitiesResponse>;
 
+export interface GetPaginatedEntitiesParams {
+	directory_id: number;
+	pageSize?: number;
+	pageKey?: number;
+}
+export interface GetPaginatedEntitiesResponse {
+	entities: Entity[];
+	ties: Tie[];
+}
+export type GetPaginatedEntitiesResponseResult = ApiResult<GetPaginatedEntitiesResponse>;
+
 export interface QueryEntitiesParams {
 	space_id: number;
 }
@@ -355,6 +368,9 @@ export interface Dispatch {
 	CreateEntity: (params: CreateEntityParams) => Promise<CreateEntityResponseResult>;
 	UpdateEntity: (params: UpdateEntityParams) => Promise<UpdateEntityResponseResult>;
 	ReadEntities: (params: ReadEntitiesParams) => Promise<ReadEntitiesResponseResult>;
+	GetPaginatedEntities: (
+		params: GetPaginatedEntitiesParams,
+	) => Promise<GetPaginatedEntitiesResponseResult>;
 	QueryEntities: (params: QueryEntitiesParams) => Readable<Readable<Entity>[]>;
 	SoftDeleteEntity: (params: SoftDeleteEntityParams) => Promise<SoftDeleteEntityResponseResult>;
 	DeleteEntities: (params: DeleteEntitiesParams) => Promise<DeleteEntitiesResponseResult>;
@@ -431,6 +447,9 @@ export interface Mutations {
 	ReadEntities: (
 		ctx: DispatchContext<ReadEntitiesParams, ReadEntitiesResponseResult>,
 	) => Promise<ReadEntitiesResponseResult>;
+	GetPaginatedEntities: (
+		ctx: DispatchContext<GetPaginatedEntitiesParams, GetPaginatedEntitiesResponseResult>,
+	) => Promise<GetPaginatedEntitiesResponseResult>;
 	QueryEntities: (ctx: DispatchContext<QueryEntitiesParams, void>) => Readable<Readable<Entity>[]>;
 	SoftDeleteEntity: (
 		ctx: DispatchContext<SoftDeleteEntityParams, SoftDeleteEntityResponseResult>,

@@ -4,6 +4,8 @@ import type {
 	CreateEntityResponseResult,
 	ReadEntitiesParams,
 	ReadEntitiesResponseResult,
+	GetPaginatedEntitiesParams,
+	GetPaginatedEntitiesResponseResult,
 	UpdateEntityParams,
 	UpdateEntityResponseResult,
 	SoftDeleteEntityParams,
@@ -13,6 +15,7 @@ import type {
 } from '$lib/app/eventTypes';
 import {
 	ReadEntities,
+	GetPaginatedEntities,
 	UpdateEntity,
 	CreateEntity,
 	SoftDeleteEntity,
@@ -38,6 +41,40 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 			new Set(
 				findTiesResult.value.flatMap((t) =>
 					[t.source_id, t.dest_id].filter((x) => x !== findSpaceResult.value.directory_id),
+				),
+			),
+		);
+		const findEntitiesResult = await repos.entity.findByIds(entityIds);
+		if (!findEntitiesResult.ok) {
+			return {ok: false, status: 500, message: 'error searching for entities'};
+		}
+		return {
+			ok: true,
+			status: 200,
+			value: {entities: findEntitiesResult.value, ties: findTiesResult.value},
+		};
+	},
+};
+
+export const getPaginatedEntitiesService: Service<
+	GetPaginatedEntitiesParams,
+	GetPaginatedEntitiesResponseResult
+> = {
+	event: GetPaginatedEntities,
+	perform: async ({repos, params}) => {
+		const findTiesResult = await repos.tie.paginatedFilter(
+			params.directory_id,
+			params.pageSize,
+			params.pageKey,
+		);
+		if (!findTiesResult.ok) {
+			return {ok: false, status: 500, message: 'error searching directory'};
+		}
+		//TODO stop filtering directory until we fix entity indexing by space_id
+		const entityIds = Array.from(
+			new Set(
+				findTiesResult.value.flatMap((t) =>
+					[t.source_id, t.dest_id].filter((x) => x !== params.directory_id),
 				),
 			),
 		);
