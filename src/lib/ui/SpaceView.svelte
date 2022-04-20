@@ -25,8 +25,8 @@
 		ready = true;
 	}
 
-	$: view = $viewBySpace.value.get(space) || $space.view;
-	$: parsed = parseView(view); // TODO caching (with eviction in `updateSpace`?)
+	$: viewText = $viewBySpace.value.get(space) || $space.view;
+	$: view = parseView(viewText); // TODO caching (with eviction in `updateSpace`?)
 </script>
 
-<SvastView view={parsed} />
+<SvastView {view} />
