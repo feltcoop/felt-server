@@ -4,7 +4,7 @@
 	import {getViewContext} from '$lib/vocab/view/view';
 	import Forum from '$lib/ui/view/Forum.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
-	import {get} from 'svelte/store';
+	import type {Entity} from '$lib/vocab/entity/entity';
 
 	const viewContext = getViewContext();
 	$: ({community, space, persona} = $viewContext);
@@ -35,7 +35,18 @@
 
 	$: communityPersonas = $personasByCommunityId.get($community.community_id)!;
 	$: shouldLoadEntities = browser && $socket.open;
-	$: entities = shouldLoadEntities ? dispatch.QueryEntities({space_id: $space.space_id}) : null;
+
+	//TODO this is all done because the Query event always returns an empty array on initial call
+	$: entitiesResult = shouldLoadEntities
+		? dispatch.ReadEntities({space_id: $space.space_id})
+		: null;
+	let entities: Entity[] | undefined;
+
+	$: void entitiesResult?.then((data) => {
+		if (data.ok) {
+			entities = data.value.entities;
+		}
+	});
 
 	const createEntity = async (text: string, name: string) => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
@@ -49,18 +60,12 @@
 		});
 	};
 
-	$: console.log('should load', shouldLoadEntities);
-	$: console.log('checking entities');
-	$: if ($entities) {
-		console.log('array exists', $entities);
-		const result = $entities.filter(
-			(e) => get(e).data.name === 'rules' || get(e).data.name === 'norms',
-		);
-		console.log('array with rules &  norms', result);
-		// if (result.length === 0) {
-		// 	void createEntity(DEFAULT_RULES, 'rules');
-		// 	void createEntity(DEFAULT_NORMS, 'norms');
-		// }
+	$: if (entities) {
+		const result = entities.filter((e) => e.data.name === 'rules' || e.data.name === 'norms');
+		if (result.length === 0) {
+			void createEntity(DEFAULT_RULES, 'rules');
+			void createEntity(DEFAULT_NORMS, 'norms');
+		}
 	}
 </script>
 
@@ -82,11 +87,15 @@
 	<section class="rules-and-norms">
 		<div class="rules markup panel-inset">
 			<h4>rules</h4>
-			{@html DEFAULT_RULES}
+			{@html entities
+				? entities.find((e) => e.data.name === 'rules')?.data.content
+				: 'no rules found'}
 		</div>
 		<div class="norms markup panel-inset">
 			<h4>norms</h4>
-			{@html DEFAULT_NORMS}
+			{@html entities
+				? entities.find((e) => e.data.name === 'norms')?.data.content
+				: 'no norms found'}
 		</div>
 	</section>
 	<section class="roles">
