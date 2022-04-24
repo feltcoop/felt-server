@@ -4,7 +4,9 @@
 	import {getViewContext} from '$lib/vocab/view/view';
 	import Forum from '$lib/ui/view/Forum.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
+	import EntityEditor from '$lib/ui/EntityEditor.svelte';
 	import type {Entity} from '$lib/vocab/entity/entity';
+	import {writable, type Readable} from 'svelte/store';
 
 	const viewContext = getViewContext();
 	$: ({community, space, persona} = $viewContext);
@@ -41,10 +43,14 @@
 		? dispatch.ReadEntities({space_id: $space.space_id})
 		: null;
 	let entities: Entity[] | undefined;
+	let rules: Readable<Entity> | undefined;
+	let norms: Readable<Entity> | undefined;
 
 	$: void entitiesResult?.then((data) => {
 		if (data.ok) {
 			entities = data.value.entities;
+			rules = writable(entities.find((e) => e.data.name === 'rules'));
+			norms = writable(entities.find((e) => e.data.name === 'norms'));
 		}
 	});
 
@@ -86,16 +92,34 @@
 	</section>
 	<section class="rules-and-norms">
 		<div class="rules markup panel-inset">
-			<h4>rules</h4>
-			{@html entities
-				? entities.find((e) => e.data.name === 'rules')?.data.content
-				: 'no rules found'}
+			<div class="header">
+				<h4>rules</h4>
+				<button
+					on:click={() =>
+						dispatch.OpenDialog({
+							Component: EntityEditor,
+							props: {entity: rules},
+							dialogProps: {layout: 'page'},
+						})}
+					>propose change ✍️
+				</button>
+			</div>
+			{@html $rules ? $rules.data.content : 'rules not found'}
 		</div>
 		<div class="norms markup panel-inset">
-			<h4>norms</h4>
-			{@html entities
-				? entities.find((e) => e.data.name === 'norms')?.data.content
-				: 'no norms found'}
+			<div class="header">
+				<h4>norms</h4>
+				<button
+					on:click={() =>
+						dispatch.OpenDialog({
+							Component: EntityEditor,
+							props: {entity: norms},
+							dialogProps: {layout: 'page'},
+						})}
+					>propose change ✍️
+				</button>
+			</div>
+			{@html $norms ? $norms.data.content : 'norms not found'}
 		</div>
 	</section>
 	<section class="roles">
@@ -117,6 +141,13 @@
 </div>
 
 <style>
+	.header {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		align-items: center;
+	}
+
 	.rules-and-norms {
 		display: flex;
 	}
