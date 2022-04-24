@@ -15,8 +15,8 @@
 	export let done: (() => void) | undefined = undefined;
 
 	let errorMessage: string | undefined;
-	let locked = true;
 	let lockText = '';
+	$: locked = lockText.toLowerCase().trim() !== $community.name.toLowerCase();
 
 	const deleteCommunity = async () => {
 		errorMessage = '';
@@ -35,10 +35,6 @@
 			e.preventDefault();
 			await deleteCommunity();
 		}
-	};
-
-	const checkLocked = async () => {
-		lockText === $community.name ? (locked = false) : (locked = true);
 	};
 </script>
 
@@ -61,7 +57,6 @@
 			id="name"
 			name="name"
 			placeholder=">enter name to unlock button"
-			on:input={checkLocked}
 			bind:value={lockText}
 		/>
 		<button disabled={locked} type="button" on:click={deleteCommunity} on:keydown={onKeydown}>

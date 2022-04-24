@@ -18,8 +18,8 @@
 	export let done: (() => void) | undefined = undefined;
 
 	let errorMessage: string | undefined;
-	let locked = true;
 	let lockText = '';
+	$: locked = lockText.toLowerCase().trim() !== $space.name.toLowerCase();
 
 	const deleteSpace = async () => {
 		errorMessage = '';
@@ -38,10 +38,6 @@
 			e.preventDefault();
 			await deleteSpace();
 		}
-	};
-
-	const checkLocked = async () => {
-		lockText === $space.name ? (locked = false) : (locked = true);
 	};
 </script>
 
@@ -67,7 +63,6 @@
 			id="name"
 			name="name"
 			placeholder=">enter name to unlock button"
-			on:input={checkLocked}
 			bind:value={lockText}
 		/>
 		<button disabled={locked} type="button" on:click={deleteSpace} on:keydown={onKeydown}>
