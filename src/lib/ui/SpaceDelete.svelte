@@ -34,7 +34,7 @@
 	};
 
 	const onKeydown = async (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
+		if (!locked && e.key === 'Enter') {
 			e.preventDefault();
 			await deleteSpace();
 		}
