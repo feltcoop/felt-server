@@ -138,7 +138,7 @@ export const ReadEntitiesPaginated: ServiceEventInfo = {
 	},
 	returns: 'Promise<ReadEntitiesPaginatedResponseResult>',
 	route: {
-		path: '/api/v1/spaces/:space_id/entities',
+		path: '/api/v1/spaces/:space_id/entities/paginated',
 		method: 'GET',
 	},
 };

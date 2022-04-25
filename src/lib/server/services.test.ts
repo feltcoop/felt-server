@@ -52,5 +52,17 @@ for (const service of services.values()) {
 	});
 }
 
+test__services(`check for duplicate HTTP route paths`, async () => {
+	const paths = new Set();
+
+	for (const service of services.values()) {
+		const key = service.event.route.method + ':' + service.event.route.path;
+		if (paths.has(key)) {
+			throw Error(`Duplicate service event route ${key}`);
+		}
+		paths.add(key);
+	}
+});
+
 test__services.run();
 /* test__services */
