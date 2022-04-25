@@ -35,8 +35,9 @@ export interface EventParamsByName {
 	CreateEntity: CreateEntityParams;
 	UpdateEntity: UpdateEntityParams;
 	ReadEntities: ReadEntitiesParams;
+	ReadEntitiesPaginated: ReadEntitiesPaginatedParams;
 	QueryEntities: QueryEntitiesParams;
-	SoftDeleteEntity: SoftDeleteEntityParams;
+	EraseEntity: EraseEntityParams;
 	DeleteEntities: DeleteEntitiesParams;
 	CreateTie: CreateTieParams;
 	ReadTies: ReadTiesParams;
@@ -72,7 +73,8 @@ export interface EventResponseByName {
 	CreateEntity: CreateEntityResponse;
 	UpdateEntity: UpdateEntityResponse;
 	ReadEntities: ReadEntitiesResponse;
-	SoftDeleteEntity: SoftDeleteEntityResponse;
+	ReadEntitiesPaginated: ReadEntitiesPaginatedResponse;
+	EraseEntity: EraseEntityResponse;
 	DeleteEntities: DeleteEntitiesResponse;
 	CreateTie: CreateTieResponse;
 	ReadTies: ReadTiesResponse;
@@ -248,15 +250,26 @@ export interface ReadEntitiesResponse {
 }
 export type ReadEntitiesResponseResult = ApiResult<ReadEntitiesResponse>;
 
+export interface ReadEntitiesPaginatedParams {
+	source_id: number;
+	pageSize?: number;
+	pageKey?: number;
+}
+export interface ReadEntitiesPaginatedResponse {
+	entities: Entity[];
+	ties: Tie[];
+}
+export type ReadEntitiesPaginatedResponseResult = ApiResult<ReadEntitiesPaginatedResponse>;
+
 export interface QueryEntitiesParams {
 	space_id: number;
 }
 
-export interface SoftDeleteEntityParams {
+export interface EraseEntityParams {
 	entity_id: number;
 }
-export type SoftDeleteEntityResponse = null;
-export type SoftDeleteEntityResponseResult = ApiResult<SoftDeleteEntityResponse>;
+export type EraseEntityResponse = null;
+export type EraseEntityResponseResult = ApiResult<EraseEntityResponse>;
 
 export interface DeleteEntitiesParams {
 	entity_ids: number[];
@@ -354,8 +367,11 @@ export interface Dispatch {
 	CreateEntity: (params: CreateEntityParams) => Promise<CreateEntityResponseResult>;
 	UpdateEntity: (params: UpdateEntityParams) => Promise<UpdateEntityResponseResult>;
 	ReadEntities: (params: ReadEntitiesParams) => Promise<ReadEntitiesResponseResult>;
+	ReadEntitiesPaginated: (
+		params: ReadEntitiesPaginatedParams,
+	) => Promise<ReadEntitiesPaginatedResponseResult>;
 	QueryEntities: (params: QueryEntitiesParams) => Readable<Readable<Entity>[]>;
-	SoftDeleteEntity: (params: SoftDeleteEntityParams) => Promise<SoftDeleteEntityResponseResult>;
+	EraseEntity: (params: EraseEntityParams) => Promise<EraseEntityResponseResult>;
 	DeleteEntities: (params: DeleteEntitiesParams) => Promise<DeleteEntitiesResponseResult>;
 	CreateTie: (params: CreateTieParams) => Promise<CreateTieResponseResult>;
 	ReadTies: (params: ReadTiesParams) => Promise<ReadTiesResponseResult>;
@@ -430,10 +446,13 @@ export interface Mutations {
 	ReadEntities: (
 		ctx: DispatchContext<ReadEntitiesParams, ReadEntitiesResponseResult>,
 	) => Promise<ReadEntitiesResponseResult>;
+	ReadEntitiesPaginated: (
+		ctx: DispatchContext<ReadEntitiesPaginatedParams, ReadEntitiesPaginatedResponseResult>,
+	) => Promise<ReadEntitiesPaginatedResponseResult>;
 	QueryEntities: (ctx: DispatchContext<QueryEntitiesParams, void>) => Readable<Readable<Entity>[]>;
-	SoftDeleteEntity: (
-		ctx: DispatchContext<SoftDeleteEntityParams, SoftDeleteEntityResponseResult>,
-	) => Promise<SoftDeleteEntityResponseResult>;
+	EraseEntity: (
+		ctx: DispatchContext<EraseEntityParams, EraseEntityResponseResult>,
+	) => Promise<EraseEntityResponseResult>;
 	DeleteEntities: (
 		ctx: DispatchContext<DeleteEntitiesParams, DeleteEntitiesResponseResult>,
 	) => Promise<DeleteEntitiesResponseResult>;

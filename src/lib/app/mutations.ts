@@ -11,7 +11,7 @@ import {CreateMembership, DeleteMembership} from '$lib/vocab/membership/membersh
 import {
 	CreateEntity,
 	UpdateEntity,
-	SoftDeleteEntity,
+	EraseEntity,
 	DeleteEntities,
 	ReadEntities,
 	QueryEntities,
@@ -50,7 +50,7 @@ export const mutations: Record<string, Mutation> = {
 	// entityMutations
 	CreateEntity,
 	UpdateEntity,
-	SoftDeleteEntity,
+	EraseEntity,
 	DeleteEntities,
 	ReadEntities,
 	QueryEntities,

@@ -1,3 +1,4 @@
+import {DEFAULT_PAGE_SIZE} from '$lib/server/constants';
 import type {ClientEventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
 export const CreateEntity: ServiceEventInfo = {
@@ -112,12 +113,43 @@ export const QueryEntities: ClientEventInfo = {
 	returns: 'Readable<Readable<Entity>[]>',
 };
 
-export const SoftDeleteEntity: ServiceEventInfo = {
+export const ReadEntitiesPaginated: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'SoftDeleteEntity',
+	name: 'ReadEntitiesPaginated',
+	params: {
+		$id: '/schemas/ReadEntitiesPaginatedParams.json',
+		type: 'object',
+		properties: {
+			source_id: {type: 'number'},
+			pageSize: {type: 'number', maximum: DEFAULT_PAGE_SIZE},
+			pageKey: {type: 'number'},
+		},
+		required: ['source_id'],
+		additionalProperties: false,
+	},
+	response: {
+		$id: '/schemas/ReadEntitiesPaginatedResponse.json',
+		type: 'object',
+		properties: {
+			entities: {type: 'array', items: {$ref: '/schemas/Entity.json', tsType: 'Entity'}},
+			ties: {type: 'array', items: {$ref: '/schemas/Tie.json', tsType: 'Tie'}},
+		},
+		required: ['entities', 'ties'],
+		additionalProperties: false,
+	},
+	returns: 'Promise<ReadEntitiesPaginatedResponseResult>',
+	route: {
+		path: '/api/v1/spaces/:space_id/entities/paginated',
+		method: 'GET',
+	},
+};
+
+export const EraseEntity: ServiceEventInfo = {
+	type: 'ServiceEvent',
+	name: 'EraseEntity',
 	broadcast: true,
 	params: {
-		$id: '/schemas/SoftDeleteEntityParams.json',
+		$id: '/schemas/EraseEntityParams.json',
 		type: 'object',
 		properties: {
 			entity_id: {type: 'number'},
@@ -126,12 +158,12 @@ export const SoftDeleteEntity: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: '/schemas/SoftDeleteEntityResponse.json',
+		$id: '/schemas/EraseEntityResponse.json',
 		type: 'null',
 	},
-	returns: 'Promise<SoftDeleteEntityResponseResult>',
+	returns: 'Promise<EraseEntityResponseResult>',
 	route: {
-		path: '/api/v1/entities/:entity_id/soft',
+		path: '/api/v1/entities/:entity_id/erase',
 		method: 'DELETE',
 	},
 };

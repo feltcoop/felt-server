@@ -4,18 +4,21 @@ import type {
 	CreateEntityResponseResult,
 	ReadEntitiesParams,
 	ReadEntitiesResponseResult,
+	ReadEntitiesPaginatedParams,
+	ReadEntitiesPaginatedResponseResult,
 	UpdateEntityParams,
 	UpdateEntityResponseResult,
-	SoftDeleteEntityParams,
-	SoftDeleteEntityResponseResult,
+	EraseEntityParams,
+	EraseEntityResponseResult,
 	DeleteEntitiesParams,
 	DeleteEntitiesResponseResult,
 } from '$lib/app/eventTypes';
 import {
 	ReadEntities,
+	ReadEntitiesPaginated,
 	UpdateEntity,
 	CreateEntity,
-	SoftDeleteEntity,
+	EraseEntity,
 	DeleteEntities,
 } from '$lib/vocab/entity/entityEvents';
 
@@ -38,6 +41,40 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 			new Set(
 				findTiesResult.value.flatMap((t) =>
 					[t.source_id, t.dest_id].filter((x) => x !== findSpaceResult.value.directory_id),
+				),
+			),
+		);
+		const findEntitiesResult = await repos.entity.findByIds(entityIds);
+		if (!findEntitiesResult.ok) {
+			return {ok: false, status: 500, message: 'error searching for entities'};
+		}
+		return {
+			ok: true,
+			status: 200,
+			value: {entities: findEntitiesResult.value, ties: findTiesResult.value},
+		};
+	},
+};
+
+export const ReadEntitiesPaginatedService: Service<
+	ReadEntitiesPaginatedParams,
+	ReadEntitiesPaginatedResponseResult
+> = {
+	event: ReadEntitiesPaginated,
+	perform: async ({repos, params}) => {
+		const findTiesResult = await repos.tie.filterBySourceIdPaginated(
+			params.source_id,
+			params.pageSize,
+			params.pageKey,
+		);
+		if (!findTiesResult.ok) {
+			return {ok: false, status: 500, message: 'error searching directory'};
+		}
+		//TODO stop filtering directory until we fix entity indexing by space_id
+		const entityIds = Array.from(
+			new Set(
+				findTiesResult.value.flatMap((t) =>
+					[t.source_id, t.dest_id].filter((x) => x !== params.source_id),
 				),
 			),
 		);
@@ -93,13 +130,10 @@ export const updateEntityService: Service<UpdateEntityParams, UpdateEntityRespon
 };
 
 //soft deletes a single entity, leaving behind a Tombstone entity
-export const softDeleteEntityService: Service<
-	SoftDeleteEntityParams,
-	SoftDeleteEntityResponseResult
-> = {
-	event: SoftDeleteEntity,
+export const eraseEntityService: Service<EraseEntityParams, EraseEntityResponseResult> = {
+	event: EraseEntity,
 	perform: async ({repos, params}) => {
-		const result = await repos.entity.softDeleteById(params.entity_id);
+		const result = await repos.entity.eraseById(params.entity_id);
 		if (!result.ok) {
 			return {ok: false, status: 500, message: 'failed to soft delete entity'};
 		}
