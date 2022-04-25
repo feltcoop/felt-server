@@ -7,7 +7,7 @@ import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 import {toServiceRequest} from '$lib/util/testHelpers';
 
 import {ReadEntitiesPaginatedService} from '$lib/vocab/entity/entityServices';
-import {unwrap, unwrapError} from '@feltcoop/felt';
+import {unwrap} from '@feltcoop/felt';
 import type {Entity} from './entity';
 import {DEFAULT_PAGE_SIZE} from '$lib/server/constants';
 import {validateSchema} from '$lib/util/ajv';
