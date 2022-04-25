@@ -13,7 +13,7 @@ import {
 	randomCommunityParams,
 	randomSpaceParams,
 	randomSpaceName,
-} from '$lib/vocab/random';
+} from '$lib/util/randomVocab';
 import {randomHue} from '$lib/ui/color';
 
 /* eslint-disable no-param-reassign */

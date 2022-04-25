@@ -5,7 +5,7 @@ import {noop} from '@feltcoop/felt/util/function.js';
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {eventInfos} from '$lib/app/events';
-import {randomEventParams} from '$lib/server/random';
+import {randomEventParams} from '$lib/util/randomEventParams';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {setupApp, teardownApp} from '$lib/util/testAppHelpers';
 
