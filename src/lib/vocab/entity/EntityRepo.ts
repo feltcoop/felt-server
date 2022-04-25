@@ -66,23 +66,19 @@ export class EntityRepo extends PostgresRepo {
 			WHERE entity_id= ${entity_id}
 			RETURNING *
 		`;
-		if (!result.count) {
-			return NOT_OK;
-		}
+		if (!result.count) return NOT_OK;
 		return {ok: true, value: result[0]};
 	}
 
-	//This function is a idempotent soft delete, that leaves behind a Tombstone entity per Activity-Streams spec
-	async softDeleteById(entity_id: number): Promise<Result<object>> {
+	//This function is an idempotent soft delete, that leaves behind a Tombstone entity per Activity-Streams spec
+	async eraseById(entity_id: number): Promise<Result<object>> {
 		log.trace('[deleteById]', entity_id);
 		const data = await this.db.sql<any[]>`
 			UPDATE entities
 			SET data = jsonb_build_object('type','Tombstone','formerType',data->>'type','deleted',NOW())
 			WHERE entity_id=${entity_id} AND data->>'type' != 'Tombstone';
 		`;
-		if (!data.count) {
-			return NOT_OK;
-		}
+		if (!data.count) return NOT_OK;
 		return OK;
 	}
 
@@ -92,9 +88,7 @@ export class EntityRepo extends PostgresRepo {
 		const data = await this.db.sql<any[]>`
 			DELETE FROM entities WHERE entity_id IN ${this.db.sql(entity_ids)}
 		`;
-		if (!data.count) {
-			return NOT_OK;
-		}
+		if (!data.count) return NOT_OK;
 		return OK;
 	}
 }

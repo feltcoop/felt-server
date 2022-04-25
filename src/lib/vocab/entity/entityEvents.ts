@@ -143,12 +143,12 @@ export const GetPaginatedEntities: ServiceEventInfo = {
 	},
 };
 
-export const SoftDeleteEntity: ServiceEventInfo = {
+export const EraseEntity: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'SoftDeleteEntity',
+	name: 'EraseEntity',
 	broadcast: true,
 	params: {
-		$id: '/schemas/SoftDeleteEntityParams.json',
+		$id: '/schemas/EraseEntityParams.json',
 		type: 'object',
 		properties: {
 			entity_id: {type: 'number'},
@@ -157,12 +157,12 @@ export const SoftDeleteEntity: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: '/schemas/SoftDeleteEntityResponse.json',
+		$id: '/schemas/EraseEntityResponse.json',
 		type: 'null',
 	},
-	returns: 'Promise<SoftDeleteEntityResponseResult>',
+	returns: 'Promise<EraseEntityResponseResult>',
 	route: {
-		path: '/api/v1/entities/:entity_id/soft',
+		path: '/api/v1/entities/:entity_id/erase',
 		method: 'DELETE',
 	},
 };

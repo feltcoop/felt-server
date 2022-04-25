@@ -12,7 +12,6 @@ import type {AccountModel} from '$lib/vocab/account/account';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Membership} from '$lib/vocab/membership/membership';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
-import type {ViewData} from '$lib/vocab/view/view';
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 
@@ -70,7 +69,7 @@ export interface Ui {
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
 	dialogs: Readable<DialogData[]>;
-	viewBySpace: Mutable<WeakMap<Readable<Space>, ViewData>>; // client overrides for the views set by the community
+	viewBySpace: Mutable<WeakMap<Readable<Space>, string>>; // client overrides for the views set by the community
 }
 
 export type WritableUi = ReturnType<typeof toUi>;

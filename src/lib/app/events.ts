@@ -21,7 +21,7 @@ import {
 	UpdateEntity,
 	ReadEntities,
 	QueryEntities,
-	SoftDeleteEntity,
+	EraseEntity,
 	DeleteEntities,
 	GetPaginatedEntities,
 } from '$lib/vocab/entity/entityEvents';
@@ -67,7 +67,7 @@ export const eventInfos: EventInfo[] = [
 	ReadEntities,
 	GetPaginatedEntities,
 	QueryEntities,
-	SoftDeleteEntity,
+	EraseEntity,
 	DeleteEntities,
 	// tieEvents
 	CreateTie,

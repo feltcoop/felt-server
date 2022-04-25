@@ -6,7 +6,7 @@ import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {log, toServiceRequest} from '$lib/util/testHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {services} from '$lib/server/services';
-import {randomEventParams} from '$lib/server/random';
+import {randomEventParams} from '$lib/util/randomEventParams';
 import {SessionApiMock} from '$lib/session/SessionApiMock';
 
 /* test__services */

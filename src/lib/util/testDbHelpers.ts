@@ -3,7 +3,7 @@ import postgres from 'postgres';
 import {Database} from '$lib/db/Database';
 import {defaultPostgresOptions} from '$lib/db/postgres';
 import {installSourceMaps, log} from '$lib/util/testHelpers';
-import {RandomVocabContext} from '$lib/vocab/random';
+import {RandomVocabContext} from '$lib/util/randomVocab';
 
 installSourceMaps();
 

@@ -3,7 +3,7 @@ import * as assert from 'uvu/assert';
 import {unwrap, unwrapError} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {randomCommunityParams} from '$lib/vocab/random';
+import {randomCommunityParams} from '$lib/util/randomVocab';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {
 	deleteCommunityService,

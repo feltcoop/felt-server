@@ -8,8 +8,8 @@ import type {
 	GetPaginatedEntitiesResponseResult,
 	UpdateEntityParams,
 	UpdateEntityResponseResult,
-	SoftDeleteEntityParams,
-	SoftDeleteEntityResponseResult,
+	EraseEntityParams,
+	EraseEntityResponseResult,
 	DeleteEntitiesParams,
 	DeleteEntitiesResponseResult,
 } from '$lib/app/eventTypes';
@@ -18,7 +18,7 @@ import {
 	GetPaginatedEntities,
 	UpdateEntity,
 	CreateEntity,
-	SoftDeleteEntity,
+	EraseEntity,
 	DeleteEntities,
 } from '$lib/vocab/entity/entityEvents';
 
@@ -130,13 +130,10 @@ export const updateEntityService: Service<UpdateEntityParams, UpdateEntityRespon
 };
 
 //soft deletes a single entity, leaving behind a Tombstone entity
-export const softDeleteEntityService: Service<
-	SoftDeleteEntityParams,
-	SoftDeleteEntityResponseResult
-> = {
-	event: SoftDeleteEntity,
+export const eraseEntityService: Service<EraseEntityParams, EraseEntityResponseResult> = {
+	event: EraseEntity,
 	perform: async ({repos, params}) => {
-		const result = await repos.entity.softDeleteById(params.entity_id);
+		const result = await repos.entity.eraseById(params.entity_id);
 		if (!result.ok) {
 			return {ok: false, status: 500, message: 'failed to soft delete entity'};
 		}

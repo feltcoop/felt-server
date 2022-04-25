@@ -4,6 +4,7 @@
 	import {GUEST_PERSONA_NAME} from '$lib/vocab/persona/constants';
 	import type {EntityType} from '$lib/vocab/entity/entity.schema';
 	import {getApp} from '$lib/ui/app';
+	import type {ContextmenuItems} from '$lib/ui/contextmenu/contextmenu';
 
 	export let name: string = GUEST_PERSONA_NAME; // TODO should this handle "default" or "empty" or "blank" avatars?
 	export let icon: string | null = null;
@@ -11,7 +12,7 @@
 	export let showName = true;
 	export let showIcon = true;
 	export let type: EntityType = 'Persona';
-	export let contextmenuAction: any | undefined = undefined;
+	export let contextmenuAction: ContextmenuItems | null = null;
 
 	$: finalHue = hue ?? randomHue(name);
 

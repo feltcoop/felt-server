@@ -6,11 +6,7 @@ export const SpaceSchema = {
 		name: {type: 'string'},
 		url: {type: 'string'},
 		icon: {type: 'string'},
-		view: {
-			type: 'object',
-			tsType: 'ViewData',
-			tsImport: "import type {ViewData} from '$lib/vocab/view/view'",
-		},
+		view: {type: 'string'},
 		created: {type: 'object', instanceof: 'Date', tsType: 'Date'},
 		updated: {anyOf: [{type: 'object', instanceof: 'Date', tsType: 'Date'}, {type: 'null'}]},
 		community_id: {type: 'number'},

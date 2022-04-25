@@ -4,7 +4,6 @@ import {blue, gray} from 'kleur/colors';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Space} from '$lib/vocab/space/space.js';
-import type {ViewData} from '$lib/vocab/view/view';
 
 const log = new Logger(gray('[') + blue('SpaceRepo') + gray(']'));
 
@@ -16,9 +15,7 @@ export class SpaceRepo extends PostgresRepo {
 			FROM spaces WHERE space_id=${space_id}
 		`;
 		log.trace('[findById] result', data);
-		if (!data.length) {
-			return NOT_OK;
-		}
+		if (!data.length) return NOT_OK;
 		return {ok: true, value: data[0]};
 	}
 
@@ -59,7 +56,7 @@ export class SpaceRepo extends PostgresRepo {
 
 	async create(
 		name: string,
-		view: ViewData,
+		view: string,
 		url: string,
 		icon: string,
 		community_id: number,
@@ -67,7 +64,7 @@ export class SpaceRepo extends PostgresRepo {
 	): Promise<Result<{value: Space}>> {
 		const data = await this.db.sql<Space[]>`
 			INSERT INTO spaces (name, url, icon, view, community_id, directory_id) VALUES (
-				${name},${url},${icon},${this.db.sql.json(view)},${community_id}, ${directory_id}
+				${name},${url},${icon},${view},${community_id}, ${directory_id}
 			) RETURNING *
 		`;
 		return {ok: true, value: data[0]};
@@ -84,9 +81,7 @@ export class SpaceRepo extends PostgresRepo {
 			WHERE space_id= ${space_id}
 			RETURNING *
 		`;
-		if (!result.count) {
-			return NOT_OK;
-		}
+		if (!result.count) return NOT_OK;
 		return {ok: true, value: result[0]};
 	}
 
@@ -95,9 +90,7 @@ export class SpaceRepo extends PostgresRepo {
 		const data = await this.db.sql<any[]>`
 			DELETE FROM spaces WHERE space_id=${space_id}
 		`;
-		if (!data.count) {
-			return NOT_OK;
-		}
+		if (!data.count) return NOT_OK;
 		return OK;
 	}
 }

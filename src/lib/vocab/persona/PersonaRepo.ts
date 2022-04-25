@@ -54,9 +54,7 @@ export class PersonaRepo extends PostgresRepo {
 			SELECT persona_id, type, name, account_id, community_id, created, updated 
 			FROM personas WHERE persona_id=${persona_id}
 		`;
-		if (!data.length) {
-			return NOT_OK;
-		}
+		if (!data.length) return NOT_OK;
 		return {ok: true, value: data[0]};
 	}
 
@@ -66,9 +64,7 @@ export class PersonaRepo extends PostgresRepo {
 			SELECT persona_id, type, name, account_id, community_id, created, updated 
 			FROM personas WHERE community_id=${community_id}
 		`;
-		if (!data.length) {
-			return NOT_OK;
-		}
+		if (!data.length) return NOT_OK;
 		return {ok: true, value: data[0]};
 	}
 

@@ -11,7 +11,6 @@ import type {Space} from '$lib/vocab/space/space';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
 import type {EntityData} from '$lib/vocab/entity/entityData';
-import type {ViewData} from '$lib/vocab/view/view';
 import type {DispatchContext} from '$lib/app/dispatch';
 
 /* eslint-disable @typescript-eslint/no-empty-interface, @typescript-eslint/array-type */
@@ -38,7 +37,7 @@ export interface EventParamsByName {
 	ReadEntities: ReadEntitiesParams;
 	GetPaginatedEntities: GetPaginatedEntitiesParams;
 	QueryEntities: QueryEntitiesParams;
-	SoftDeleteEntity: SoftDeleteEntityParams;
+	EraseEntity: EraseEntityParams;
 	DeleteEntities: DeleteEntitiesParams;
 	CreateTie: CreateTieParams;
 	ReadTies: ReadTiesParams;
@@ -75,7 +74,7 @@ export interface EventResponseByName {
 	UpdateEntity: UpdateEntityResponse;
 	ReadEntities: ReadEntitiesResponse;
 	GetPaginatedEntities: GetPaginatedEntitiesResponse;
-	SoftDeleteEntity: SoftDeleteEntityResponse;
+	EraseEntity: EraseEntityResponse;
 	DeleteEntities: DeleteEntitiesResponse;
 	CreateTie: CreateTieResponse;
 	ReadTies: ReadTiesResponse;
@@ -180,7 +179,7 @@ export interface CreateSpaceParams {
 	name: string;
 	url: string;
 	icon: string;
-	view: ViewData;
+	view: string;
 }
 export interface CreateSpaceResponse {
 	space: Space;
@@ -208,7 +207,7 @@ export interface UpdateSpaceParams {
 	name?: string;
 	url?: string;
 	icon?: string;
-	view?: ViewData;
+	view?: string;
 }
 export interface UpdateSpaceResponse {
 	space: Space;
@@ -266,11 +265,11 @@ export interface QueryEntitiesParams {
 	space_id: number;
 }
 
-export interface SoftDeleteEntityParams {
+export interface EraseEntityParams {
 	entity_id: number;
 }
-export type SoftDeleteEntityResponse = null;
-export type SoftDeleteEntityResponseResult = ApiResult<SoftDeleteEntityResponse>;
+export type EraseEntityResponse = null;
+export type EraseEntityResponseResult = ApiResult<EraseEntityResponse>;
 
 export interface DeleteEntitiesParams {
 	entity_ids: number[];
@@ -341,7 +340,7 @@ export interface SelectSpaceParams {
 
 export interface ViewSpaceParams {
 	space: Readable<Space>;
-	view: ViewData | null;
+	view: string | null;
 }
 
 export interface Dispatch {
@@ -372,7 +371,7 @@ export interface Dispatch {
 		params: GetPaginatedEntitiesParams,
 	) => Promise<GetPaginatedEntitiesResponseResult>;
 	QueryEntities: (params: QueryEntitiesParams) => Readable<Readable<Entity>[]>;
-	SoftDeleteEntity: (params: SoftDeleteEntityParams) => Promise<SoftDeleteEntityResponseResult>;
+	EraseEntity: (params: EraseEntityParams) => Promise<EraseEntityResponseResult>;
 	DeleteEntities: (params: DeleteEntitiesParams) => Promise<DeleteEntitiesResponseResult>;
 	CreateTie: (params: CreateTieParams) => Promise<CreateTieResponseResult>;
 	ReadTies: (params: ReadTiesParams) => Promise<ReadTiesResponseResult>;
@@ -451,9 +450,9 @@ export interface Mutations {
 		ctx: DispatchContext<GetPaginatedEntitiesParams, GetPaginatedEntitiesResponseResult>,
 	) => Promise<GetPaginatedEntitiesResponseResult>;
 	QueryEntities: (ctx: DispatchContext<QueryEntitiesParams, void>) => Readable<Readable<Entity>[]>;
-	SoftDeleteEntity: (
-		ctx: DispatchContext<SoftDeleteEntityParams, SoftDeleteEntityResponseResult>,
-	) => Promise<SoftDeleteEntityResponseResult>;
+	EraseEntity: (
+		ctx: DispatchContext<EraseEntityParams, EraseEntityResponseResult>,
+	) => Promise<EraseEntityResponseResult>;
 	DeleteEntities: (
 		ctx: DispatchContext<DeleteEntitiesParams, DeleteEntitiesResponseResult>,
 	) => Promise<DeleteEntitiesResponseResult>;

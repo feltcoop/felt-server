@@ -11,9 +11,7 @@ export const authorize = (
 ): Result<object, ErrorResponse> => {
 	// Authorize all services by default; each service can opt-out as needed.
 	const requiresAuthentication = service.event.authenticate ?? true;
-	if (!requiresAuthentication) {
-		return OK;
-	}
+	if (!requiresAuthentication) return OK;
 	if (!account_id) {
 		return {ok: false, message: 'not logged in'}; // TODO centralize error message strings
 	}

@@ -3,8 +3,6 @@
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 
 	import {getApp} from '$lib/ui/app';
-	import type {Space} from '$lib/vocab/space/space';
-	import SpaceName from '$lib/ui/SpaceName.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import type {Community} from '$lib/vocab/community/community';
@@ -13,21 +11,20 @@
 
 	const {dispatch} = getApp();
 
-	export let space: Readable<Space>;
 	export let community: Readable<Community>;
 	export let persona: Readable<Persona>;
 	export let done: (() => void) | undefined = undefined;
-	export let pending = false;
 
 	let errorMessage: string | undefined;
+	let pending = false;
 	let lockText = '';
-	$: locked = lockText.toLowerCase().trim() !== $space.name.toLowerCase();
+	$: locked = lockText.toLowerCase().trim() !== $community.name.toLowerCase();
 
-	const deleteSpace = async () => {
+	const deleteCommunity = async () => {
 		pending = true;
 		errorMessage = '';
-		const result = await dispatch.DeleteSpace({
-			space_id: $space.space_id,
+		const result = await dispatch.DeleteCommunity({
+			community_id: $community.community_id,
 		});
 		if (result.ok) {
 			done?.();
@@ -40,16 +37,13 @@
 	const onKeydown = async (e: KeyboardEvent) => {
 		if (!locked && e.key === 'Enter') {
 			e.preventDefault();
-			await deleteSpace();
+			await deleteCommunity();
 		}
 	};
 </script>
 
 <div class="markup">
-	<h1>Delete Space?</h1>
-	<section class="row" style:font-size="var(--font_size_xl)">
-		<SpaceName {space} />
-	</section>
+	<h1>Delete Community?</h1>
 	<section class="row">
 		<span class="spaced">in</span>
 		<CommunityAvatar {community} />
@@ -70,9 +64,8 @@
 			bind:value={lockText}
 			on:keydown={onKeydown}
 		/>
-
-		<PendingButton {pending} disabled={locked || pending} on:click={deleteSpace}>
+		<PendingButton {pending} disabled={locked || pending} on:click={deleteCommunity}>
 			Delete space
-		</PendingButton>
+		</PendingButton>>
 	</form>
 </div>
