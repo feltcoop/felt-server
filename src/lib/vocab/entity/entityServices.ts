@@ -62,7 +62,7 @@ export const ReadEntitiesPaginatedService: Service<
 > = {
 	event: ReadEntitiesPaginated,
 	perform: async ({repos, params}) => {
-		const findTiesResult = await repos.tie.paginatedFilter(
+		const findTiesResult = await repos.tie.filterBySourceIdPaginated(
 			params.source_id,
 			params.pageSize,
 			params.pageKey,

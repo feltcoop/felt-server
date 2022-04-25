@@ -52,7 +52,7 @@ export class TieRepo extends PostgresRepo {
 	//which allows for pagination. Sets are sorted from newest to oldest.
 	//To get the next page of results, provide same source_id
 	//But for the pageKey put the oldest/last dest_id as the pageKey
-	async paginatedFilter(
+	async filterBySourceIdPaginated(
 		source_id: number,
 		pageSize = DEFAULT_PAGE_SIZE,
 		pageKey?: number,
