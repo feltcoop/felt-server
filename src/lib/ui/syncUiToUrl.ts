@@ -16,7 +16,7 @@ export const syncUiToUrl = (
 	{
 		communities,
 		personaIndexSelection,
-		communityIdSelection,
+		communitySelection,
 		spacesByCommunityId,
 		spaceIdSelectionByCommunityId,
 		sessionPersonas,
@@ -53,7 +53,7 @@ export const syncUiToUrl = (
 	const community = get(communities).value.find((c) => get(c).name === params.community);
 	if (!community) return; // occurs when a session routes to a community they can't access
 	const {community_id} = get(community);
-	if (community_id !== get(communityIdSelection)) {
+	if (community !== get(communitySelection)) {
 		dispatch.SelectCommunity({community_id});
 	}
 

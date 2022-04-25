@@ -49,17 +49,39 @@ export const UpdateCommunitySettings: Mutations['UpdateCommunitySettings'] = asy
 export const DeleteCommunity: Mutations['UpdateCommunitySettings'] = async ({
 	params,
 	invoke,
-	ui: {communityById, communitySelection, personaSelection, communities},
+	ui: {
+		communityById,
+		communitySelection,
+		personaSelection,
+		communities,
+		communityIdSelectionByPersonaId,
+	},
 }) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	const community = communityById.get(params.community_id)!;
+	const {community_id} = params;
+	const community = communityById.get(community_id)!;
+	communityById.delete(community_id);
+	communities.mutate(($communites) => $communites.splice($communites.indexOf(community), 1)); // TODO use fast volatile remove instead, or maybe a set?
+
+	// TODO BLOCK make this a map instead of an object because the persona ids are coerced to strings!
+	// TODO BLOCK fix stale communityIdSelectionByPersonaId
+	// TODO what's the cleaner way to do this? just use `update` and always cause a store change?
+	// doesn't that then cause derived stores to wastefully recalc?
+	const $communityIdSelectionByPersonaId = get(communityIdSelectionByPersonaId);
+	let shouldUpdateCommunityIdSelectionByPersonaId = false;
+	for (const key in $communityIdSelectionByPersonaId) {
+		if ($communityIdSelectionByPersonaId[key] === community_id) {
+			shouldUpdateCommunityIdSelectionByPersonaId = true;
+			break;
+		}
+	}
+	communityIdSelectionByPersonaId.update(($v) => {});
 	const selectedCommunity = get(communitySelection);
+
 	if (selectedCommunity === community) {
 		const persona = get(personaSelection)!;
 		await goto('/' + get(persona).name + location.search, {replaceState: true});
 	}
-	communityById.delete(params.community_id);
-	communities.mutate(($communites) => $communites.splice($communites.indexOf(community), 1));
 	return result;
 };

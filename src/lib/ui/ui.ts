@@ -61,7 +61,6 @@ export interface Ui {
 	personaIndexSelection: Readable<number | null>;
 	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Readable<Community>>>>;
 	communityIdSelectionByPersonaId: Readable<{[key: number]: number}>;
-	communityIdSelection: Readable<number | null>;
 	communitySelection: Readable<Readable<Community> | null>;
 	spaceIdSelectionByCommunityId: Readable<{[key: number]: number | null}>;
 	spaceSelection: Readable<Readable<Space> | null>;
@@ -192,13 +191,12 @@ export const toUi = (
 	// TODO should these be store references instead of ids?
 	// TODO maybe make this a lazy map, not a derived store?
 	const communityIdSelectionByPersonaId = writable<{[key: number]: number}>({});
-	const communityIdSelection = derived(
+	const communitySelection = derived(
 		[personaIdSelection, communityIdSelectionByPersonaId],
 		([$personaIdSelection, $communityIdSelectionByPersonaId]) =>
-			$personaIdSelection && $communityIdSelectionByPersonaId[$personaIdSelection],
-	);
-	const communitySelection = derived([communityIdSelection], ([$communityIdSelection]) =>
-		$communityIdSelection === null ? null : communityById.get($communityIdSelection)!,
+			$personaIdSelection === null
+				? null
+				: communityById.get($communityIdSelectionByPersonaId[$personaIdSelection])!,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
 	const spaceIdSelectionByCommunityId = writable<{[key: number]: number | null}>({});
@@ -244,7 +242,6 @@ export const toUi = (
 		personaSelection,
 		personaIndexSelection,
 		communityIdSelectionByPersonaId,
-		communityIdSelection,
 		communitySelection,
 		spaceIdSelectionByCommunityId,
 		spaceSelection,
@@ -290,32 +287,21 @@ export const toUi = (
 				$session.guest
 					? {}
 					: Object.fromEntries(
-							$sessionPersonas
-								.map(($persona) => {
-									const $firstMembership = $session.memberships.find(
-										(m) => m.persona_id === $persona.persona_id,
-									);
-									const $firstCommunity = $session.communities.find(
-										(c) => c.community_id === $firstMembership?.community_id,
-									)!;
-									return [$persona.persona_id, $firstCommunity.community_id];
-								})
-								.filter(Boolean),
+							// TODO instead of defaulting to the personal community, load this from localStorage
+							$sessionPersonas.map(($persona) => [$persona.persona_id, $persona.community_id]),
 					  ),
 			);
 			spaceIdSelectionByCommunityId.set(
 				$session.guest
 					? {}
 					: Object.fromEntries(
-							$session.communities
-								.map(($community) => {
-									//TODO lookup space by community_id+url (see this comment in multiple places)
-									const $homeSpace = $session.spaces.find(
-										(s) => s.community_id === $community.community_id && isHomeSpace(s),
-									)!;
-									return [$community.community_id, $homeSpace.space_id];
-								})
-								.filter(Boolean),
+							$session.communities.map(($community) => {
+								//TODO lookup space by community_id+url (see this comment in multiple places)
+								const $homeSpace = $session.spaces.find(
+									(s) => s.community_id === $community.community_id && isHomeSpace(s),
+								)!;
+								return [$community.community_id, $homeSpace.space_id];
+							}),
 					  ),
 			);
 		},
