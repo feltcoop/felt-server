@@ -36,6 +36,13 @@
 		}
 		pending = false;
 	};
+
+	const onKeydown = async (e: KeyboardEvent) => {
+		if (!locked && e.key === 'Enter') {
+			e.preventDefault();
+			await deleteSpace();
+		}
+	};
 </script>
 
 <div class="markup">
@@ -61,6 +68,7 @@
 			name="name"
 			placeholder=">enter name to unlock button"
 			bind:value={lockText}
+			on:keydown={onKeydown}
 		/>
 
 		<PendingButton {pending} disabled={locked || pending} on:click={deleteSpace}>
