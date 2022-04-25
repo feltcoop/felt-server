@@ -10,6 +10,7 @@
 	import SpaceInput from '$lib/ui/SpaceInput.svelte';
 	import MembershipInput from '$lib/ui/MembershipInput.svelte';
 	import CommunityEditor from '$lib/ui/CommunityEditor.svelte';
+	import CommunityDelete from '$lib/ui/CommunityDelete.svelte';
 
 	const {dispatch} = getApp();
 
@@ -51,7 +52,11 @@
 				<span class="title">Invite Members</span>
 			</ContextmenuEntry>
 			<ContextmenuEntry
-				action={() => dispatch.DeleteCommunity({community_id: $community.community_id})}
+				action={() =>
+					dispatch.OpenDialog({
+						Component: CommunityDelete,
+						props: {persona, community, done: () => dispatch.CloseDialog()},
+					})}
 			>
 				<span class="title">Delete Community</span>
 			</ContextmenuEntry>

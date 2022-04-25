@@ -36,7 +36,7 @@ export interface EventParamsByName {
 	UpdateEntity: UpdateEntityParams;
 	ReadEntities: ReadEntitiesParams;
 	QueryEntities: QueryEntitiesParams;
-	SoftDeleteEntity: SoftDeleteEntityParams;
+	EraseEntity: EraseEntityParams;
 	DeleteEntities: DeleteEntitiesParams;
 	CreateTie: CreateTieParams;
 	ReadTies: ReadTiesParams;
@@ -72,7 +72,7 @@ export interface EventResponseByName {
 	CreateEntity: CreateEntityResponse;
 	UpdateEntity: UpdateEntityResponse;
 	ReadEntities: ReadEntitiesResponse;
-	SoftDeleteEntity: SoftDeleteEntityResponse;
+	EraseEntity: EraseEntityResponse;
 	DeleteEntities: DeleteEntitiesResponse;
 	CreateTie: CreateTieResponse;
 	ReadTies: ReadTiesResponse;
@@ -252,11 +252,11 @@ export interface QueryEntitiesParams {
 	space_id: number;
 }
 
-export interface SoftDeleteEntityParams {
+export interface EraseEntityParams {
 	entity_id: number;
 }
-export type SoftDeleteEntityResponse = null;
-export type SoftDeleteEntityResponseResult = ApiResult<SoftDeleteEntityResponse>;
+export type EraseEntityResponse = null;
+export type EraseEntityResponseResult = ApiResult<EraseEntityResponse>;
 
 export interface DeleteEntitiesParams {
 	entity_ids: number[];
@@ -355,7 +355,7 @@ export interface Dispatch {
 	UpdateEntity: (params: UpdateEntityParams) => Promise<UpdateEntityResponseResult>;
 	ReadEntities: (params: ReadEntitiesParams) => Promise<ReadEntitiesResponseResult>;
 	QueryEntities: (params: QueryEntitiesParams) => Readable<Readable<Entity>[]>;
-	SoftDeleteEntity: (params: SoftDeleteEntityParams) => Promise<SoftDeleteEntityResponseResult>;
+	EraseEntity: (params: EraseEntityParams) => Promise<EraseEntityResponseResult>;
 	DeleteEntities: (params: DeleteEntitiesParams) => Promise<DeleteEntitiesResponseResult>;
 	CreateTie: (params: CreateTieParams) => Promise<CreateTieResponseResult>;
 	ReadTies: (params: ReadTiesParams) => Promise<ReadTiesResponseResult>;
@@ -431,9 +431,9 @@ export interface Mutations {
 		ctx: DispatchContext<ReadEntitiesParams, ReadEntitiesResponseResult>,
 	) => Promise<ReadEntitiesResponseResult>;
 	QueryEntities: (ctx: DispatchContext<QueryEntitiesParams, void>) => Readable<Readable<Entity>[]>;
-	SoftDeleteEntity: (
-		ctx: DispatchContext<SoftDeleteEntityParams, SoftDeleteEntityResponseResult>,
-	) => Promise<SoftDeleteEntityResponseResult>;
+	EraseEntity: (
+		ctx: DispatchContext<EraseEntityParams, EraseEntityResponseResult>,
+	) => Promise<EraseEntityResponseResult>;
 	DeleteEntities: (
 		ctx: DispatchContext<DeleteEntitiesParams, DeleteEntitiesResponseResult>,
 	) => Promise<DeleteEntitiesResponseResult>;

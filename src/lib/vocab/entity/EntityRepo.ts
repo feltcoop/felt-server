@@ -70,8 +70,8 @@ export class EntityRepo extends PostgresRepo {
 		return {ok: true, value: result[0]};
 	}
 
-	//This function is a idempotent soft delete, that leaves behind a Tombstone entity per Activity-Streams spec
-	async softDeleteById(entity_id: number): Promise<Result<object>> {
+	//This function is an idempotent soft delete, that leaves behind a Tombstone entity per Activity-Streams spec
+	async eraseById(entity_id: number): Promise<Result<object>> {
 		log.trace('[deleteById]', entity_id);
 		const data = await this.db.sql<any[]>`
 			UPDATE entities
