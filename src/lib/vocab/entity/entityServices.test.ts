@@ -36,19 +36,19 @@ test_entityServices('create entities with data', async ({random}) => {
 	assert.equal(entity2.data, entityData2);
 });
 
-test_entityServices('get paginated data', async ({db, random}) => {
+test_entityServices('read paginated entities by source_id', async ({db, random}) => {
 	const {space, persona, account, community} = await random.space();
 	const serviceRequest = toServiceRequest(account.account_id, db);
 
 	//first query on the space dir and expect an empty set
-	const {entities: filterFilesValue} = unwrap(
+	const {entities: filtered} = unwrap(
 		await ReadEntitiesPaginatedService.perform({
 			params: {source_id: space.directory_id},
 			...serviceRequest,
 		}),
 	);
 
-	assert.is(filterFilesValue.length, 0);
+	assert.is(filtered.length, 0);
 
 	const entities: Entity[] = [];
 	for (let i = 0; i < DEFAULT_PAGE_SIZE + 1; i++) {
@@ -58,53 +58,58 @@ test_entityServices('get paginated data', async ({db, random}) => {
 		});
 		entities.push(entity);
 	}
+	entities.reverse();
 
 	//test the default param returns properly
-	const {entities: filterFilesValue2} = unwrap(
+	const {entities: filtered2} = unwrap(
 		await ReadEntitiesPaginatedService.perform({
 			params: {source_id: space.directory_id},
 			...serviceRequest,
 		}),
 	);
-	assert.is(filterFilesValue2.length, DEFAULT_PAGE_SIZE);
+	assert.is(filtered2.length, DEFAULT_PAGE_SIZE);
+	assert.equal(filtered2.slice(), entities.slice(0, -1));
 
-	const SMALL_PAGE_SIZE = 10;
+	const FIRST_PAGE_SIZE = Math.floor(DEFAULT_PAGE_SIZE / 2);
+	const SECOND_PAGE_SIZE = Math.ceil(DEFAULT_PAGE_SIZE / 2);
 
-	//then do 3 queries on pagesize 10
-	const {entities: filterFilesValue3} = unwrap(
+	//then do 3 queries on smaller pages
+	const {entities: filtered3} = unwrap(
 		await ReadEntitiesPaginatedService.perform({
-			params: {source_id: space.directory_id, pageSize: SMALL_PAGE_SIZE},
+			params: {source_id: space.directory_id, pageSize: FIRST_PAGE_SIZE},
 			...serviceRequest,
 		}),
 	);
 
-	assert.is(filterFilesValue3.length, SMALL_PAGE_SIZE);
+	assert.is(filtered3.length, FIRST_PAGE_SIZE);
 
-	const {entities: filterFilesValue4} = unwrap(
+	const {entities: filtered4} = unwrap(
 		await ReadEntitiesPaginatedService.perform({
 			params: {
 				source_id: space.directory_id,
-				pageSize: SMALL_PAGE_SIZE,
-				pageKey: filterFilesValue3.at(-1)!.entity_id,
+				pageSize: SECOND_PAGE_SIZE,
+				pageKey: filtered3.at(-1)!.entity_id,
 			},
 			...serviceRequest,
 		}),
 	);
 
-	assert.is(filterFilesValue4.length, SMALL_PAGE_SIZE);
-	assert.not(filterFilesValue3.includes(filterFilesValue4[0]));
+	assert.is(filtered4.length, SECOND_PAGE_SIZE);
+	assert.ok(!filtered3.find((v) => v.entity_id === filtered4[0].entity_id));
 
-	const {entities: filterFilesValue5} = unwrap(
+	const {entities: filtered5} = unwrap(
 		await ReadEntitiesPaginatedService.perform({
 			params: {
 				source_id: space.directory_id,
-				pageSize: SMALL_PAGE_SIZE,
-				pageKey: filterFilesValue4.at(-1)!.entity_id,
+				pageSize: SECOND_PAGE_SIZE,
+				pageKey: filtered4.at(-1)!.entity_id,
 			},
 			...serviceRequest,
 		}),
 	);
-	assert.is(filterFilesValue5.length, 1);
+	assert.is(filtered5.length, 1);
+
+	assert.equal(filtered3.concat(filtered4).concat(filtered5), entities);
 });
 
 test_entityServices.run();
