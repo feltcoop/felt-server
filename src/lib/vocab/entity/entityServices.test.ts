@@ -7,9 +7,10 @@ import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 import {toServiceRequest} from '$lib/util/testHelpers';
 
 import {ReadEntitiesPaginatedService} from '$lib/vocab/entity/entityServices';
-import {unwrap} from '@feltcoop/felt';
+import {unwrap, unwrapError} from '@feltcoop/felt';
 import type {Entity} from './entity';
 import {DEFAULT_PAGE_SIZE} from '$lib/server/constants';
+import {validateSchema} from '$lib/util/ajv';
 
 /* test_entityServices */
 const test_entityServices = suite<TestDbContext & TestAppContext>('communityRepo');
@@ -110,6 +111,13 @@ test_entityServices('read paginated entities by source_id', async ({db, random})
 	assert.is(filtered5.length, 1);
 
 	assert.equal(filtered3.concat(filtered4).concat(filtered5), entities);
+});
+
+test_entityServices('assert default as max pageSize', async ({random}) => {
+	const {space} = await random.space();
+
+	const validateParams = validateSchema(ReadEntitiesPaginatedService.event.params);
+	assert.ok(!validateParams({source_id: space.directory_id, pageSize: DEFAULT_PAGE_SIZE + 1}));
 });
 
 test_entityServices.run();

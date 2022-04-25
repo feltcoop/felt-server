@@ -1,3 +1,4 @@
+import {DEFAULT_PAGE_SIZE} from '$lib/server/constants';
 import type {ClientEventInfo, ServiceEventInfo} from '$lib/vocab/event/event';
 
 export const CreateEntity: ServiceEventInfo = {
@@ -120,7 +121,7 @@ export const ReadEntitiesPaginated: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			source_id: {type: 'number'},
-			pageSize: {type: 'number'},
+			pageSize: {type: 'number', maximum: DEFAULT_PAGE_SIZE},
 			pageKey: {type: 'number'},
 		},
 		required: ['source_id'],
