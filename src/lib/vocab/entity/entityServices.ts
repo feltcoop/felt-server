@@ -4,8 +4,8 @@ import type {
 	CreateEntityResponseResult,
 	ReadEntitiesParams,
 	ReadEntitiesResponseResult,
-	GetPaginatedEntitiesParams,
-	GetPaginatedEntitiesResponseResult,
+	ReadEntitiesPaginatedParams,
+	ReadEntitiesPaginatedResponseResult,
 	UpdateEntityParams,
 	UpdateEntityResponseResult,
 	EraseEntityParams,
@@ -15,7 +15,7 @@ import type {
 } from '$lib/app/eventTypes';
 import {
 	ReadEntities,
-	GetPaginatedEntities,
+	ReadEntitiesPaginated,
 	UpdateEntity,
 	CreateEntity,
 	EraseEntity,
@@ -56,14 +56,14 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 	},
 };
 
-export const getPaginatedEntitiesService: Service<
-	GetPaginatedEntitiesParams,
-	GetPaginatedEntitiesResponseResult
+export const ReadEntitiesPaginatedService: Service<
+	ReadEntitiesPaginatedParams,
+	ReadEntitiesPaginatedResponseResult
 > = {
-	event: GetPaginatedEntities,
+	event: ReadEntitiesPaginated,
 	perform: async ({repos, params}) => {
 		const findTiesResult = await repos.tie.paginatedFilter(
-			params.directory_id,
+			params.source_id,
 			params.pageSize,
 			params.pageKey,
 		);
@@ -74,7 +74,7 @@ export const getPaginatedEntitiesService: Service<
 		const entityIds = Array.from(
 			new Set(
 				findTiesResult.value.flatMap((t) =>
-					[t.source_id, t.dest_id].filter((x) => x !== params.directory_id),
+					[t.source_id, t.dest_id].filter((x) => x !== params.source_id),
 				),
 			),
 		);

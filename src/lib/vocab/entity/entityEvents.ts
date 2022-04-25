@@ -112,22 +112,22 @@ export const QueryEntities: ClientEventInfo = {
 	returns: 'Readable<Readable<Entity>[]>',
 };
 
-export const GetPaginatedEntities: ServiceEventInfo = {
+export const ReadEntitiesPaginated: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'GetPaginatedEntities',
+	name: 'ReadEntitiesPaginated',
 	params: {
-		$id: '/schemas/GetPaginatedEntitiesParams.json',
+		$id: '/schemas/ReadEntitiesPaginatedParams.json',
 		type: 'object',
 		properties: {
-			directory_id: {type: 'number'},
+			source_id: {type: 'number'},
 			pageSize: {type: 'number'},
 			pageKey: {type: 'number'},
 		},
-		required: ['directory_id'],
+		required: ['source_id'],
 		additionalProperties: false,
 	},
 	response: {
-		$id: '/schemas/GetPaginatedEntitiesResponse.json',
+		$id: '/schemas/ReadEntitiesPaginatedResponse.json',
 		type: 'object',
 		properties: {
 			entities: {type: 'array', items: {$ref: '/schemas/Entity.json', tsType: 'Entity'}},
@@ -136,7 +136,7 @@ export const GetPaginatedEntities: ServiceEventInfo = {
 		required: ['entities', 'ties'],
 		additionalProperties: false,
 	},
-	returns: 'Promise<GetPaginatedEntitiesResponseResult>',
+	returns: 'Promise<ReadEntitiesPaginatedResponseResult>',
 	route: {
 		path: '/api/v1/spaces/:space_id/entities',
 		method: 'GET',

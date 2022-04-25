@@ -110,9 +110,9 @@ export const randomEventParams = async (
 			if (!space) ({space} = await random.space(persona, account, community));
 			return {space_id: space.space_id};
 		}
-		case 'GetPaginatedEntities': {
+		case 'ReadEntitiesPaginated': {
 			if (!space) ({space} = await random.space(persona, account, community));
-			return {directory_id: space.directory_id};
+			return {source_id: space.directory_id};
 		}
 		case 'QueryEntities': {
 			return {

@@ -6,7 +6,7 @@ import type {TestAppContext} from '$lib/util/testAppHelpers';
 import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 import {toServiceRequest} from '$lib/util/testHelpers';
 
-import {getPaginatedEntitiesService} from '$lib/vocab/entity/entityServices';
+import {ReadEntitiesPaginatedService} from '$lib/vocab/entity/entityServices';
 import {unwrap} from '@feltcoop/felt';
 import type {Entity} from './entity';
 
@@ -41,8 +41,8 @@ test_entityServices('get paginated data', async ({db, random}) => {
 
 	//first query on the space dir and expect an empty set
 	const {entities: filterFilesValue} = unwrap(
-		await getPaginatedEntitiesService.perform({
-			params: {directory_id: space.directory_id},
+		await ReadEntitiesPaginatedService.perform({
+			params: {source_id: space.directory_id},
 			...serviceRequest,
 		}),
 	);
@@ -60,8 +60,8 @@ test_entityServices('get paginated data', async ({db, random}) => {
 
 	//test the default param returns properly
 	const {entities: filterFilesValue2} = unwrap(
-		await getPaginatedEntitiesService.perform({
-			params: {directory_id: space.directory_id},
+		await ReadEntitiesPaginatedService.perform({
+			params: {source_id: space.directory_id},
 			...serviceRequest,
 		}),
 	);
@@ -71,8 +71,8 @@ test_entityServices('get paginated data', async ({db, random}) => {
 
 	//then do 3 queries on pagesize 10
 	const {entities: filterFilesValue3} = unwrap(
-		await getPaginatedEntitiesService.perform({
-			params: {directory_id: space.directory_id, pageSize: SMALL_PAGE_SIZE},
+		await ReadEntitiesPaginatedService.perform({
+			params: {source_id: space.directory_id, pageSize: SMALL_PAGE_SIZE},
 			...serviceRequest,
 		}),
 	);
@@ -80,9 +80,9 @@ test_entityServices('get paginated data', async ({db, random}) => {
 	assert.is(filterFilesValue3.length, SMALL_PAGE_SIZE);
 
 	const {entities: filterFilesValue4} = unwrap(
-		await getPaginatedEntitiesService.perform({
+		await ReadEntitiesPaginatedService.perform({
 			params: {
-				directory_id: space.directory_id,
+				source_id: space.directory_id,
 				pageSize: SMALL_PAGE_SIZE,
 				pageKey: filterFilesValue3.at(-1)!.entity_id,
 			},
@@ -94,9 +94,9 @@ test_entityServices('get paginated data', async ({db, random}) => {
 	assert.not(filterFilesValue3.includes(filterFilesValue4[0]));
 
 	const {entities: filterFilesValue5} = unwrap(
-		await getPaginatedEntitiesService.perform({
+		await ReadEntitiesPaginatedService.perform({
 			params: {
-				directory_id: space.directory_id,
+				source_id: space.directory_id,
 				pageSize: SMALL_PAGE_SIZE,
 				pageKey: filterFilesValue4.at(-1)!.entity_id,
 			},

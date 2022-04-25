@@ -15,7 +15,7 @@ import {
 } from '$lib/vocab/membership/membershipServices';
 import {
 	readEntitiesService,
-	getPaginatedEntitiesService,
+	ReadEntitiesPaginatedService,
 	createEntityService,
 	updateEntityService,
 	eraseEntityService,
@@ -52,7 +52,7 @@ export const services: Map<string, Service<any, any>> = new Map(
 		readSpaceService,
 		readSpacesService,
 		readEntitiesService,
-		getPaginatedEntitiesService,
+		ReadEntitiesPaginatedService,
 		updateSpaceService,
 		deleteSpaceService,
 		createTieService,
