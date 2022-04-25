@@ -9,6 +9,7 @@ import {toServiceRequest} from '$lib/util/testHelpers';
 import {ReadEntitiesPaginatedService} from '$lib/vocab/entity/entityServices';
 import {unwrap} from '@feltcoop/felt';
 import type {Entity} from './entity';
+import {DEFAULT_PAGE_SIZE} from '$lib/server/constants';
 
 /* test_entityServices */
 const test_entityServices = suite<TestDbContext & TestAppContext>('communityRepo');
@@ -50,7 +51,7 @@ test_entityServices('get paginated data', async ({db, random}) => {
 	assert.is(filterFilesValue.length, 0);
 
 	const entities: Entity[] = [];
-	for (let i = 0; i < db.DEFAULT_PAGE_SIZE + 1; i++) {
+	for (let i = 0; i < DEFAULT_PAGE_SIZE + 1; i++) {
 		// eslint-disable-next-line no-await-in-loop
 		const {entity} = await random.entity(persona, account, community, space, {
 			data: {type: 'Note', content: `This is note ${i}`},
@@ -65,7 +66,7 @@ test_entityServices('get paginated data', async ({db, random}) => {
 			...serviceRequest,
 		}),
 	);
-	assert.is(filterFilesValue2.length, db.DEFAULT_PAGE_SIZE);
+	assert.is(filterFilesValue2.length, DEFAULT_PAGE_SIZE);
 
 	const SMALL_PAGE_SIZE = 10;
 

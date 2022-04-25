@@ -3,6 +3,7 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Tie} from '$lib/vocab/tie/tie';
+import {DEFAULT_PAGE_SIZE} from '$lib/server/constants';
 
 const log = new Logger('[TieRepo]');
 
@@ -53,7 +54,7 @@ export class TieRepo extends PostgresRepo {
 	//But for the pageKey put the oldest/last dest_id as the pageKey
 	async paginatedFilter(
 		source_id: number,
-		pageSize = this.db.DEFAULT_PAGE_SIZE,
+		pageSize = DEFAULT_PAGE_SIZE,
 		pageKey?: number,
 	): Promise<Result<{value: Tie[]}>> {
 		log.trace(`paginated query of tie dests`, source_id, pageKey, pageSize);
