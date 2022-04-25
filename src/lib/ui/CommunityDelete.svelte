@@ -33,13 +33,6 @@
 		}
 		pending = false;
 	};
-
-	const onKeydown = async (e: KeyboardEvent) => {
-		if (!locked && e.key === 'Enter') {
-			e.preventDefault();
-			await deleteCommunity();
-		}
-	};
 </script>
 
 <div class="markup">
