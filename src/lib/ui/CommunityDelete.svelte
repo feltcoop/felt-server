@@ -35,9 +35,11 @@
 	};
 
 	const onKeydown = async (e: KeyboardEvent) => {
-		if (!locked && e.key === 'Enter') {
+		if (e.key === 'Enter') {
 			e.preventDefault();
-			await deleteCommunity();
+			if (!locked) {
+				await deleteCommunity();
+			}
 		}
 	};
 </script>
