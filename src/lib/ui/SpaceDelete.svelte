@@ -9,6 +9,7 @@
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import type {Community} from '$lib/vocab/community/community';
 	import type {Persona} from '$lib/vocab/persona/persona';
+	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 
 	const {dispatch} = getApp();
 
@@ -16,12 +17,14 @@
 	export let community: Readable<Community>;
 	export let persona: Readable<Persona>;
 	export let done: (() => void) | undefined = undefined;
+	export let pending = false;
 
 	let errorMessage: string | undefined;
 	let lockText = '';
 	$: locked = lockText.toLowerCase().trim() !== $space.name.toLowerCase();
 
 	const deleteSpace = async () => {
+		pending = true;
 		errorMessage = '';
 		const result = await dispatch.DeleteSpace({
 			space_id: $space.space_id,
@@ -31,13 +34,7 @@
 		} else {
 			errorMessage = result.message;
 		}
-	};
-
-	const onKeydown = async (e: KeyboardEvent) => {
-		if (!locked && e.key === 'Enter') {
-			e.preventDefault();
-			await deleteSpace();
-		}
+		pending = false;
 	};
 </script>
 
@@ -65,8 +62,9 @@
 			placeholder=">enter name to unlock button"
 			bind:value={lockText}
 		/>
-		<button disabled={locked} type="button" on:click={deleteSpace} on:keydown={onKeydown}>
+
+		<PendingButton {pending} disabled={locked || pending} on:click={deleteSpace}>
 			Delete space
-		</button>
+		</PendingButton>
 	</form>
 </div>
