@@ -155,7 +155,7 @@ export const toUi = (
 	const personaIndexSelection = derived(
 		[personaSelection, sessionPersonas],
 		([$personaSelection, $sessionPersonas]) =>
-			$personaSelection === null ? null : $sessionPersonas.indexOf($personaSelection),
+			$personaSelection ? $sessionPersonas.indexOf($personaSelection) : null,
 	);
 	const sessionPersonaIndices = derived(
 		[sessionPersonas],
@@ -194,9 +194,9 @@ export const toUi = (
 	const communitySelection = derived(
 		[personaIdSelection, communityIdSelectionByPersonaId],
 		([$personaIdSelection, $communityIdSelectionByPersonaId]) =>
-			$personaIdSelection === null
-				? null
-				: communityById.get($communityIdSelectionByPersonaId.value.get($personaIdSelection)!)!,
+			$personaIdSelection
+				? communityById.get($communityIdSelectionByPersonaId.value.get($personaIdSelection)!)!
+				: null,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
 	const spaceIdSelectionByCommunityId = mutable<Map<number, number | null>>(new Map());

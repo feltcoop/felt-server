@@ -28,7 +28,7 @@ export const syncUiToUrl = (
 	if (!params.community) return;
 
 	const rawPersonaIndex = query.get(PERSONA_QUERY_KEY);
-	const personaIndex = rawPersonaIndex === null ? null : Number(rawPersonaIndex);
+	const personaIndex = rawPersonaIndex ? Number(rawPersonaIndex) : null;
 	const persona: Readable<Persona> | null =
 		personaIndex === null ? null : get(sessionPersonas)[personaIndex];
 	if (!persona) {
