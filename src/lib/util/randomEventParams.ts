@@ -16,19 +16,17 @@ import {
 } from '$lib/util/randomVocab';
 import {randomHue} from '$lib/ui/color';
 
-/* eslint-disable no-param-reassign */
-
 // TODO consider the pattern below where every `create` event creates all dependencies from scratch.
 // We may want to instead test things for both new and existing objects.
-// TODO refactor to make it more ergnomic to read from the cache
 // TODO type should return the params associated with the event name
-// TODO maybe move to `src/lib/util`
 // TODO keep factoring this until it's fully automated, generating from the schema
 export const randomEventParams = async (
 	event: EventInfo,
 	random: RandomVocabContext,
-	{account, persona, community, space}: RandomVocab = {},
+	randomVocab: RandomVocab = {},
 ): Promise<any> => {
+	const {account} = randomVocab;
+	let {persona, community, space} = randomVocab;
 	switch (event.name) {
 		case 'Ping': {
 			return null;
@@ -55,10 +53,7 @@ export const randomEventParams = async (
 			return {community_id: community.community_id};
 		}
 		case 'DeleteCommunity': {
-			do {
-				// eslint-disable-next-line no-await-in-loop
-				({community} = await random.community(persona, account));
-			} while (community.type !== 'standard');
+			if (!community) ({community} = await random.community(persona, account));
 			return {community_id: community.community_id};
 		}
 		case 'ReadCommunities': {
