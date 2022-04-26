@@ -336,5 +336,5 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 // and @see https://github.com/feltcoop/felt-server/pull/292/commits/f24a7377a7328df6071771facaacb6464e10a000
 // for runtime alternatives. (though they could be elided in production code probably)
 type Typecheck<T extends Ui> = T;
-// @ts-expect-error
+// @ts-expect-error because it's unused
 type Typechecked = Typecheck<WritableUi>;
