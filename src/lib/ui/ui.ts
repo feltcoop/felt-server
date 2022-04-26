@@ -295,13 +295,13 @@ export const toUi = (
 				$session.guest
 					? {}
 					: Object.fromEntries(
-							$session.communities.map(($community) => {
-								//TODO lookup space by community_id+url (see this comment in multiple places)
-								const $homeSpace = $session.spaces.find(
+							//TODO lookup space by community_id+url (see this comment in multiple places)
+							$session.communities.map(($community) => [
+								$community.community_id,
+								$session.spaces.find(
 									(s) => s.community_id === $community.community_id && isHomeSpace(s),
-								)!;
-								return [$community.community_id, $homeSpace.space_id];
-							}),
+								)!.space_id,
+							]),
 					  ),
 			);
 		},
