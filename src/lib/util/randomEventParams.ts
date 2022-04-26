@@ -1,5 +1,4 @@
 import {randomBool} from '@feltcoop/felt/util/random.js';
-import {writable} from 'svelte/store';
 
 import type {EventInfo} from '$lib/vocab/event/event';
 import {
@@ -198,8 +197,9 @@ export const randomEventParams = async (
 			};
 		}
 		case 'ViewSpace': {
+			const {space_id} = (await random.space(persona, account, community)).space;
 			return {
-				space: writable(await random.space(persona, account, community)),
+				space_id,
 				view: '<EntityExplorer />',
 			};
 		}

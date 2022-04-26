@@ -339,7 +339,7 @@ export interface SelectSpaceParams {
 }
 
 export interface ViewSpaceParams {
-	space: Readable<Space>;
+	space_id: number;
 	view: string | null;
 }
 

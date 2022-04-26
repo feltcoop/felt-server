@@ -16,7 +16,10 @@
 </script>
 
 <div class="entity-explorer">
-	<button type="button" on:click={() => dispatch.ViewSpace({space, view: null})}>
+	<button
+		type="button"
+		on:click={() => dispatch.ViewSpace({space_id: $space.space_id, view: null})}
+	>
 		Close EntityExplorer
 	</button>
 	<div class="entities">

@@ -113,10 +113,10 @@ export const ViewSpace: ClientEventInfo = {
 		$id: '/schemas/ViewSpaceParams.json',
 		type: 'object',
 		properties: {
-			space: {type: 'object', tsType: 'Readable<Space>'},
+			space_id: {type: 'number'},
 			view: {type: ['string', 'null']},
 		},
-		required: ['space', 'view'],
+		required: ['space_id', 'view'],
 		additionalProperties: false,
 	},
 	returns: 'void',

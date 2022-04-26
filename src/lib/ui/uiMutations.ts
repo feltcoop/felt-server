@@ -46,9 +46,10 @@ export const SelectSpace: Mutations['SelectSpace'] = ({
 };
 
 export const ViewSpace: Mutations['ViewSpace'] = async ({
-	params: {space, view},
-	ui: {viewBySpace, communitySelection, spaceIdSelectionByCommunityId, communityById},
+	params: {space_id, view},
+	ui: {spaceById, viewBySpace, communitySelection, spaceIdSelectionByCommunityId, communityById},
 }) => {
+	const space = spaceById.get(space_id)!;
 	viewBySpace.mutate(($viewBySpace) => {
 		if (view) {
 			$viewBySpace.set(space, view);
