@@ -74,32 +74,21 @@ export const DeleteCommunity: Mutations['UpdateCommunitySettings'] = async ({
 	communities.mutate(($communites) => $communites.splice($communites.indexOf(community), 1)); // TODO use fast volatile remove instead, or maybe a set?
 
 	// TODO BLOCK after deleting a community that was active in a different community, the back button
-	// can put you in a deleted community, instead that should default you to the home community (but hmm, what about showing "this community doesn't exist"?)
+	// should show "this community doesn't exist"?
 	// TODO BLOCK make this a map instead of an object because the persona ids are coerced to strings!
-	// TODO what's the cleaner way to do this? just use `update` and always cause a store change?
-	// doesn't that then cause derived stores to wastefully recalc?
-	const $communityIdSelectionByPersonaId = get(communityIdSelectionByPersonaId);
-	let shouldUpdateCommunityIdSelectionByPersonaId = false;
-	for (const key in $communityIdSelectionByPersonaId) {
-		if ($communityIdSelectionByPersonaId[key] === community_id) {
-			shouldUpdateCommunityIdSelectionByPersonaId = true;
-			break;
+	communityIdSelectionByPersonaId.update(($v) => {
+		const $updated: Record<string, number> = {};
+		for (const persona_id in $v) {
+			const communityIdSelection = $v[persona_id];
+			// TODO BLOCK dont cast after changing to a map
+			$updated[persona_id] =
+				communityIdSelection === community_id
+					? get(personaById.get(Number(persona_id))!).community_id
+					: communityIdSelection;
 		}
-	}
-	if (shouldUpdateCommunityIdSelectionByPersonaId) {
-		communityIdSelectionByPersonaId.update(($v) => {
-			const $updated: Record<string, number> = {};
-			for (const persona_id in $v) {
-				const communityIdSelection = $v[persona_id];
-				// TODO BLOCK dont cast after changing to a map
-				$updated[persona_id] =
-					communityIdSelection === community_id
-						? get(personaById.get(Number(persona_id))!).community_id
-						: communityIdSelection;
-			}
-			console.log(`$updated`, $updated);
-			return $updated;
-		});
-	}
+		console.log(`$updated`, $updated);
+		return $updated;
+	});
+
 	return result;
 };
