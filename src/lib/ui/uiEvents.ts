@@ -48,7 +48,24 @@ export const OpenDialog: ClientEventInfo = {
 	name: 'OpenDialog',
 	params: {
 		$id: '/schemas/OpenDialogParams.json',
-		allOf: [{$ref: '/schemas/DialogData.json'}],
+		type: 'object',
+		properties: {
+			// TODO generate types for the component name and props
+			// so we get type safety when mounting dialogs
+			Component: {type: 'string'},
+			props: {
+				type: 'object',
+				tsType: 'Json',
+				tsImport: `import type {Json} from '@feltcoop/felt/util/json.js'`,
+			},
+			dialogProps: {
+				type: 'object',
+				tsType: 'Json',
+				tsImport: `import type {Json} from '@feltcoop/felt/util/json.js'`,
+			},
+		},
+		required: ['Component'],
+		additionalProperties: false,
 	},
 	returns: 'void',
 };
