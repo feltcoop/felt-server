@@ -197,9 +197,8 @@ export const randomEventParams = async (
 			};
 		}
 		case 'ViewSpace': {
-			const {space_id} = (await random.space(persona, account, community)).space;
 			return {
-				space_id,
+				space_id: (await random.space(persona, account, community)).space.space_id,
 				view: '<EntityExplorer />',
 			};
 		}
