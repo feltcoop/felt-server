@@ -73,9 +73,8 @@ export const syncUiToUrl = (
 		dispatch.SelectSpace({community_id, space_id: null});
 		return;
 	}
-	const selectedSpaceId = get(spaceIdSelectionByCommunityId)[community_id];
 	const {space_id} = get(space);
-	if (space_id !== selectedSpaceId) {
+	if (space_id !== get(spaceIdSelectionByCommunityId)[community_id]) {
 		dispatch.SelectSpace({community_id, space_id});
 	}
 };
