@@ -8,7 +8,6 @@ import {toServiceRequest} from '$lib/util/testHelpers';
 
 import {ReadEntitiesPaginatedService} from '$lib/vocab/entity/entityServices';
 import {unwrap} from '@feltcoop/felt';
-import type {Entity} from './entity';
 import {DEFAULT_PAGE_SIZE} from '$lib/server/constants';
 import {validateSchema} from '$lib/util/ajv';
 
