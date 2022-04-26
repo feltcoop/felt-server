@@ -287,7 +287,7 @@ export const toUi = (
 				$session.guest
 					? {}
 					: Object.fromEntries(
-							// TODO instead of defaulting to the personal community, load this from localStorage
+							// TODO first try to load this from localStorage
 							$sessionPersonas.map(($persona) => [$persona.persona_id, $persona.community_id]),
 					  ),
 			);
