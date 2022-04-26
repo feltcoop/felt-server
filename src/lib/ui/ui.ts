@@ -62,7 +62,7 @@ export interface Ui {
 	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Readable<Community>>>>;
 	communityIdSelectionByPersonaId: Mutable<Map<number, number | null>>;
 	communitySelection: Readable<Readable<Community> | null>;
-	spaceIdSelectionByCommunityId: Readable<{[key: number]: number | null}>;
+	spaceIdSelectionByCommunityId: Mutable<Map<number, number | null>>;
 	spaceSelection: Readable<Readable<Space> | null>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
@@ -199,12 +199,14 @@ export const toUi = (
 				: communityById.get($communityIdSelectionByPersonaId.value.get($personaIdSelection)!)!,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
-	const spaceIdSelectionByCommunityId = writable<{[key: number]: number | null}>({});
+	const spaceIdSelectionByCommunityId = mutable<Map<number, number | null>>(new Map());
 	const spaceSelection = derived(
 		[communitySelection, spaceIdSelectionByCommunityId],
 		([$communitySelection, $spaceIdSelectionByCommunityId]) =>
 			($communitySelection &&
-				spaceById.get($spaceIdSelectionByCommunityId[get($communitySelection)!.community_id]!)) ||
+				spaceById.get(
+					$spaceIdSelectionByCommunityId.value.get(get($communitySelection)!.community_id)!,
+				)) ||
 			null,
 	);
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
@@ -289,10 +291,10 @@ export const toUi = (
 					: // TODO first try to load this from localStorage
 					  new Map($sessionPersonas.map(($p) => [$p.persona_id, $p.community_id])),
 			);
-			spaceIdSelectionByCommunityId.set(
+			spaceIdSelectionByCommunityId.swap(
 				$session.guest
-					? {}
-					: Object.fromEntries(
+					? new Map()
+					: new Map(
 							//TODO lookup space by community_id+url (see this comment in multiple places)
 							$session.communities.map(($community) => [
 								$community.community_id,
