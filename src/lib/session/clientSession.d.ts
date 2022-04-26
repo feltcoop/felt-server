@@ -15,8 +15,8 @@ declare global {
 	type ClientSession = ClientAccountSession | ClientGuestSession;
 
 	interface ClientAccountSession {
-		sessionPersonas: Persona[];
 		account: AccountModel;
+		sessionPersonas: Persona[];
 		communities: Community[];
 		spaces: Space[];
 		memberships: Membership[];
