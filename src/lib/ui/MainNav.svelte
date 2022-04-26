@@ -46,7 +46,7 @@
 		</div>
 		<div class="explorer">
 			<CommunityNav />
-			{#if selectedPersona && selectedCommunity && selectedCommunitySpaces && selectedSpace}
+			{#if selectedPersona && selectedCommunity && selectedCommunitySpaces}
 				<SpaceNav
 					persona={selectedPersona}
 					community={selectedCommunity}
