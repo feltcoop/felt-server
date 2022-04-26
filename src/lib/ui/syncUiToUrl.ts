@@ -40,6 +40,8 @@ export const syncUiToUrl = (
 			void goto(
 				location.pathname +
 					'?' +
+					// TODO extract a helper after upgrading SvelteKit and using
+					// `$page`'s `URLSearchParams` instead of constructing the search like this
 					setUrlPersona(fallbackPersonaIndex, new URLSearchParams(location.search)),
 				{replaceState: true},
 			);
@@ -51,7 +53,11 @@ export const syncUiToUrl = (
 
 	// TODO speed this up with a map of communityByName
 	const community = get(communities).value.find((c) => get(c).name === params.community);
-	if (!community) return; // occurs when a session routes to a community they can't access
+	if (!community) {
+		// occurs when a session routes to an inaccessible or nonexistent community
+		dispatch.SelectCommunity({community_id: null});
+		return;
+	}
 	const {community_id} = get(community);
 	if (community !== get(communitySelection)) {
 		dispatch.SelectCommunity({community_id});
