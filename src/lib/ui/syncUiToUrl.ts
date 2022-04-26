@@ -54,7 +54,7 @@ export const syncUiToUrl = (
 	// TODO speed this up with a map of communityByName
 	const community = get(communities).value.find((c) => get(c).name === params.community);
 	if (!community) {
-		// occurs when a session routes to an inaccessible or nonexistent community
+		// occurs when routing to an inaccessible or nonexistent community
 		dispatch.SelectCommunity({community_id: null});
 		return;
 	}
@@ -69,7 +69,7 @@ export const syncUiToUrl = (
 		.get(community_id)!
 		.find((s) => get(s).url === spaceUrl);
 	if (!space) {
-		// occurs when a session routes to an inaccessible or nonexistent space
+		// occurs when routing to an inaccessible or nonexistent space
 		dispatch.SelectSpace({community_id, space_id: null});
 		return;
 	}
