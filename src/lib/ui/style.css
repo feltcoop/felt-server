@@ -5,7 +5,7 @@
 	--bg_lightness: 96%;
 	--luggage_size: var(--icon_size_md);
 	--navbar_size: var(--luggage_size);
-	--icon_size: var(--icon_size_md);
+	--icon_size: var(--icon_size_md); /* TODO remove when Felt is updated */
 	--contextmenu_width: 360px;
 }
 
