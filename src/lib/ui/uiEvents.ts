@@ -82,7 +82,7 @@ export const SelectCommunity: ClientEventInfo = {
 		$id: '/schemas/SelectCommunityParams.json',
 		type: 'object',
 		properties: {
-			community_id: {type: 'number'},
+			community_id: {type: ['number', 'null']},
 		},
 		required: ['community_id'],
 		additionalProperties: false,

@@ -330,7 +330,7 @@ export interface SelectPersonaParams {
 }
 
 export interface SelectCommunityParams {
-	community_id: number;
+	community_id: number | null;
 }
 
 export interface SelectSpaceParams {
