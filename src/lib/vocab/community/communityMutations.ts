@@ -71,8 +71,6 @@ export const DeleteCommunity: Mutations['UpdateCommunitySettings'] = async ({
 	communityById.delete(community_id);
 	communities.mutate(($communites) => $communites.splice($communites.indexOf(community), 1)); // TODO use fast volatile remove instead, or maybe a set?
 
-	// TODO BLOCK after deleting a community that was active in a different community, the back button
-	// should show "this community doesn't exist"?
 	communityIdSelectionByPersonaId.mutate(($c) => {
 		for (const [persona_id, communityIdSelection] of $c) {
 			if (communityIdSelection === community_id) {
