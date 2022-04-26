@@ -21,6 +21,7 @@ import {
 	EraseEntity,
 	DeleteEntities,
 } from '$lib/vocab/entity/entityEvents';
+import {toTieEntityIds} from '../tie/tieHelpers';
 
 // TODO rename to `getEntities`? `loadEntities`?
 export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesResponseResult> = {
@@ -38,11 +39,7 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 		}
 		//TODO stop filtering directory until we fix entity indexing by space_id
 		const entityIds = Array.from(
-			new Set(
-				findTiesResult.value.flatMap((t) =>
-					[t.source_id, t.dest_id].filter((x) => x !== findSpaceResult.value.directory_id),
-				),
-			),
+			toTieEntityIds(findTiesResult.value, (id) => id !== findSpaceResult.value.directory_id),
 		);
 		const findEntitiesResult = await repos.entity.findByIds(entityIds);
 		if (!findEntitiesResult.ok) {
@@ -72,11 +69,7 @@ export const ReadEntitiesPaginatedService: Service<
 		}
 		//TODO stop filtering directory until we fix entity indexing by space_id
 		const entityIds = Array.from(
-			new Set(
-				findTiesResult.value.flatMap((t) =>
-					[t.source_id, t.dest_id].filter((x) => x !== params.source_id),
-				),
-			),
+			toTieEntityIds(findTiesResult.value, (id) => id !== params.source_id),
 		);
 		const findEntitiesResult = await repos.entity.findByIds(entityIds);
 		if (!findEntitiesResult.ok) {
