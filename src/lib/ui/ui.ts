@@ -314,9 +314,9 @@ export const toUi = (
 	return ui;
 };
 
-// TODO this is a hack until we have `community_ids` normalized and off the `Persona`,
-// the issue is that the "session personas" are different than the rest of the personas
-// by having their `community_ids` populated, so as a hack we prefer that instance in the global,
+// TODO this is a hack until we figure out how to handle "session personas" differently from the rest --
+// the issue is that the "session personas" have their `community_ids` populated,
+// so as a hack we prefer that instance in the global,
 // but these probably need to be split into two separate collections --
 // notice that comparison checks between the two types of personas will not be able to use store reference equality
 const toInitialPersonas = (session: ClientSession): Persona[] =>
@@ -336,4 +336,5 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 // and @see https://github.com/feltcoop/felt-server/pull/292/commits/f24a7377a7328df6071771facaacb6464e10a000
 // for runtime alternatives. (though they could be elided in production code probably)
 type Typecheck<T extends Ui> = T;
-export type Typechecked = Typecheck<WritableUi>;
+// @ts-expect-error
+type Typechecked = Typecheck<WritableUi>;
