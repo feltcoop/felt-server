@@ -66,7 +66,6 @@
 		{/if}
 		<input
 			type="text"
-			id="name"
 			name="name"
 			placeholder=">enter name to unlock button"
 			bind:value={lockText}
@@ -74,7 +73,7 @@
 		/>
 
 		<PendingButton {pending} disabled={locked || pending} on:click={deleteSpace}>
-			Delete space
+			Delete Space
 		</PendingButton>
 	</form>
 </div>
