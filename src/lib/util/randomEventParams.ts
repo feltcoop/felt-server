@@ -21,8 +21,6 @@ import {randomHue} from '$lib/ui/color';
 // TODO consider the pattern below where every `create` event creates all dependencies from scratch.
 // We may want to instead test things for both new and existing objects.
 // TODO refactor to make it more ergnomic to read from the cache
-// TODO type should return the params associated with the event name
-// TODO maybe move to `src/lib/util`
 // TODO keep factoring this until it's fully automated, generating from the schema
 export const randomEventParams = async (
 	event: EventInfo,
