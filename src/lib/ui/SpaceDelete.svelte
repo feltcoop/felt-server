@@ -73,7 +73,7 @@
 		/>
 
 		<PendingButton {pending} disabled={locked || pending} on:click={deleteSpace}>
-			Delete Space
+			Delete space
 		</PendingButton>
 	</form>
 </div>

@@ -66,7 +66,7 @@
 			on:keydown={onKeydown}
 		/>
 		<PendingButton {pending} disabled={locked || pending} on:click={deleteCommunity}>
-			Delete Community
-		</PendingButton>>
+			Delete community
+		</PendingButton>
 	</form>
 </div>
