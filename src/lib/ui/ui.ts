@@ -60,7 +60,7 @@ export interface Ui {
 	personaSelection: Readable<Readable<Persona> | null>;
 	personaIndexSelection: Readable<number | null>;
 	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Readable<Community>>>>;
-	communityIdSelectionByPersonaId: Readable<{[key: number]: number}>;
+	communityIdSelectionByPersonaId: Mutable<Map<number, number>>;
 	communitySelection: Readable<Readable<Community> | null>;
 	spaceIdSelectionByCommunityId: Readable<{[key: number]: number | null}>;
 	spaceSelection: Readable<Readable<Space> | null>;
@@ -190,13 +190,13 @@ export const toUi = (
 		);
 	// TODO should these be store references instead of ids?
 	// TODO maybe make this a lazy map, not a derived store?
-	const communityIdSelectionByPersonaId = writable<{[key: number]: number}>({});
+	const communityIdSelectionByPersonaId = mutable<Map<number, number>>(new Map());
 	const communitySelection = derived(
 		[personaIdSelection, communityIdSelectionByPersonaId],
 		([$personaIdSelection, $communityIdSelectionByPersonaId]) =>
 			$personaIdSelection === null
 				? null
-				: communityById.get($communityIdSelectionByPersonaId[$personaIdSelection])!,
+				: communityById.get($communityIdSelectionByPersonaId.value.get($personaIdSelection)!)!,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
 	const spaceIdSelectionByCommunityId = writable<{[key: number]: number | null}>({});
@@ -283,13 +283,11 @@ export const toUi = (
 			// TODO these two selections are hacky because using the derived stores
 			// was causing various confusing issues, so they find stuff directly on the session objects
 			// instead of using derived stores like `sessionPersonas` and `spacesByCommunityId`.
-			communityIdSelectionByPersonaId.set(
+			communityIdSelectionByPersonaId.swap(
 				$session.guest
-					? {}
-					: Object.fromEntries(
-							// TODO first try to load this from localStorage
-							$sessionPersonas.map(($persona) => [$persona.persona_id, $persona.community_id]),
-					  ),
+					? new Map()
+					: // TODO first try to load this from localStorage
+					  new Map($sessionPersonas.map(($p) => [$p.persona_id, $p.community_id])),
 			);
 			spaceIdSelectionByCommunityId.set(
 				$session.guest

@@ -25,13 +25,12 @@ export const SelectCommunity: Mutations['SelectCommunity'] = ({
 	params,
 	ui: {personaIdSelection, communityIdSelectionByPersonaId},
 }) => {
-	const $personaIdSelection = get(personaIdSelection); // TODO how to remove the `!`?
-	const {community_id} = params;
+	const $personaIdSelection = get(personaIdSelection);
+	const {community_id} = params; // TODO BLOCK should this be nullable? if so, then so should `communityIdSelectionByPersonaId`
 	if (community_id && $personaIdSelection) {
-		communityIdSelectionByPersonaId.update(($communityIdSelectionByPersonaId) => ({
-			...$communityIdSelectionByPersonaId,
-			[$personaIdSelection]: community_id,
-		}));
+		communityIdSelectionByPersonaId.mutate(($c) => {
+			$c.set($personaIdSelection, community_id);
+		});
 	}
 };
 

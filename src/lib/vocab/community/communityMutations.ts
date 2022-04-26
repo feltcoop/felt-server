@@ -74,18 +74,12 @@ export const DeleteCommunity: Mutations['UpdateCommunitySettings'] = async ({
 
 	// TODO BLOCK after deleting a community that was active in a different community, the back button
 	// should show "this community doesn't exist"?
-	// TODO BLOCK make this a map instead of an object because the persona ids are coerced to strings!
-	communityIdSelectionByPersonaId.update(($c) => {
-		const $updated: Record<string, number> = {};
-		for (const persona_id in $c) {
-			const communityIdSelection = $c[persona_id];
-			// TODO BLOCK dont cast after changing to a map
-			$updated[persona_id] =
-				communityIdSelection === community_id
-					? get(personaById.get(Number(persona_id))!).community_id
-					: communityIdSelection;
+	communityIdSelectionByPersonaId.mutate(($c) => {
+		for (const [persona_id, communityIdSelection] of $c) {
+			if (communityIdSelection === community_id) {
+				$c.set(persona_id, get(personaById.get(persona_id)!).community_id);
+			}
 		}
-		return $updated;
 	});
 
 	return result;
