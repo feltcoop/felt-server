@@ -331,10 +331,6 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 // This ensures that the inferred `WritableUi` is assignable to `Ui`.
 // The latter type is used in components and it exposes its data as `Readable` stores,
 // while the former is used in mutations and exposes `Writable` stores.
-// TODO is there a better way to do this assertion without any runtime code?
-// @see https://github.com/feltcoop/felt-server/pull/292
-// and @see https://github.com/feltcoop/felt-server/pull/292/commits/f24a7377a7328df6071771facaacb6464e10a000
-// for runtime alternatives. (though they could be elided in production code probably)
+// TODO try to improve this to 1) be generic and 2) not export
 type Typecheck<T extends Ui> = T;
-// @ts-expect-error because it's unused
-type Typechecked = Typecheck<WritableUi>;
+export type Typechecked = Typecheck<WritableUi>;
