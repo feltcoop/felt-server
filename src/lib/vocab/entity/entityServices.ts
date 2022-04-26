@@ -44,7 +44,7 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 				),
 			),
 		);
-		const findEntitiesResult = await repos.entity.findByIds(entityIds);
+		const findEntitiesResult = await repos.entity.filterByIds(entityIds);
 		if (!findEntitiesResult.ok) {
 			return {ok: false, status: 500, message: 'error searching for entities'};
 		}
@@ -78,7 +78,7 @@ export const ReadEntitiesPaginatedService: Service<
 				),
 			),
 		);
-		const findEntitiesResult = await repos.entity.findByIds(entityIds);
+		const findEntitiesResult = await repos.entity.filterByIds(entityIds);
 		if (!findEntitiesResult.ok) {
 			return {ok: false, status: 500, message: 'error searching for entities'};
 		}
