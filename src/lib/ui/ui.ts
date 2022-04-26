@@ -331,6 +331,6 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 // This ensures that the inferred `WritableUi` is assignable to `Ui`.
 // The latter type is used in components and it exposes its data as `Readable` stores,
 // while the former is used in mutations and exposes `Writable` stores.
-// TODO try to improve this to 1) be generic and 2) not export
+// TODO try to improve this to 1) be generic, 2) not export, and 3) have no runtime representation
 type Typecheck<T extends Ui> = T;
 export type Typechecked = Typecheck<WritableUi>;
