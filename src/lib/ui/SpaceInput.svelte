@@ -88,6 +88,7 @@
 	</section>
 	<form>
 		<input
+			name="name"
 			placeholder="> name"
 			bind:value={name}
 			bind:this={nameEl}

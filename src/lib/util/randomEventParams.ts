@@ -82,8 +82,9 @@ export const randomEventParams = async (
 			return {persona_id: persona.persona_id, community_id: community.community_id};
 		}
 		case 'CreateSpace': {
+			if (!persona) ({persona} = await random.persona(account));
 			if (!community) ({community} = await random.community(persona, account));
-			return randomSpaceParams(community.community_id);
+			return randomSpaceParams(persona.persona_id, community.community_id);
 		}
 		case 'UpdateSpace': {
 			if (!space) ({space} = await random.space(persona, account, community));

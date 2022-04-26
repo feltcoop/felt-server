@@ -157,10 +157,11 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 
 export const createDefaultSpaces = async (
 	serviceRequest: ServiceRequest<any>,
+	persona_id: number,
 	community: Community,
 ): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 	const spaces: Space[] = [];
-	for (const params of toDefaultSpaces(community)) {
+	for (const params of toDefaultSpaces(persona_id, community)) {
 		// eslint-disable-next-line no-await-in-loop
 		const result = await createSpaceService.perform({
 			...serviceRequest,

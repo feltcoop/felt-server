@@ -22,6 +22,7 @@ export const CreateSpace: Mutations['CreateSpace'] = async ({
 	await goto(
 		'/' +
 			$community.name +
+			$space.url +
 			`?persona=${get(sessionPersonaIndices).get(personaById.get(params.persona_id)!)}`,
 	);
 	return result;
