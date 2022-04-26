@@ -38,10 +38,9 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 			return {ok: false, status: 500, message: 'error searching space directory'};
 		}
 		//TODO stop filtering directory until we fix entity indexing by space_id
-		const entityIds = Array.from(
-			toTieEntityIds(findTiesResult.value, (id) => id !== findSpaceResult.value.directory_id),
-		);
-		const findEntitiesResult = await repos.entity.findByIds(entityIds);
+		const entityIds = toTieEntityIds(findTiesResult.value);
+		entityIds.delete(findSpaceResult.value.directory_id);
+		const findEntitiesResult = await repos.entity.findByIds(Array.from(entityIds));
 		if (!findEntitiesResult.ok) {
 			return {ok: false, status: 500, message: 'error searching for entities'};
 		}
@@ -68,10 +67,9 @@ export const ReadEntitiesPaginatedService: Service<
 			return {ok: false, status: 500, message: 'error searching directory'};
 		}
 		//TODO stop filtering directory until we fix entity indexing by space_id
-		const entityIds = Array.from(
-			toTieEntityIds(findTiesResult.value, (id) => id !== params.source_id),
-		);
-		const findEntitiesResult = await repos.entity.findByIds(entityIds);
+		const entityIds = toTieEntityIds(findTiesResult.value);
+		entityIds.delete(params.source_id);
+		const findEntitiesResult = await repos.entity.findByIds(Array.from(entityIds));
 		if (!findEntitiesResult.ok) {
 			return {ok: false, status: 500, message: 'error searching for entities'};
 		}
