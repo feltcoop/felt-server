@@ -21,7 +21,7 @@ import {
 	EraseEntity,
 	DeleteEntities,
 } from '$lib/vocab/entity/entityEvents';
-import {toTieEntityIds} from '../tie/tieHelpers';
+import {toTieEntityIds} from '$lib/vocab/tie/tieHelpers';
 
 // TODO rename to `getEntities`? `loadEntities`?
 export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesResponseResult> = {

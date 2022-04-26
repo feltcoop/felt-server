@@ -1,4 +1,4 @@
-import type {Tie} from './tie';
+import type {Tie} from '$lib/vocab/tie/tie';
 
 export const toTieEntityIds = (ties: Tie[]): Set<number> => {
 	const ids = new Set<number>();
