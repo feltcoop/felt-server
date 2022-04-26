@@ -69,6 +69,7 @@ export const syncUiToUrl = (
 		.get(community_id)!
 		.find((s) => get(s).url === spaceUrl);
 	if (!space) {
+		// occurs when a session routes to an inaccessible or nonexistent space
 		dispatch.SelectSpace({community_id, space_id: null});
 		return;
 	}
