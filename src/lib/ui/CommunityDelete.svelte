@@ -47,7 +47,6 @@
 <div class="markup">
 	<h1>Delete Community?</h1>
 	<section class="row">
-		<span class="spaced">in</span>
 		<CommunityAvatar {community} />
 	</section>
 	<section class="row">
