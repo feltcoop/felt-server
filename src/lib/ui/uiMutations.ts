@@ -26,10 +26,9 @@ export const SelectCommunity: Mutations['SelectCommunity'] = ({
 	ui: {personaIdSelection, communityIdSelectionByPersonaId},
 }) => {
 	const $personaIdSelection = get(personaIdSelection);
-	const {community_id} = params;
-	if (community_id && $personaIdSelection) {
+	if ($personaIdSelection) {
 		communityIdSelectionByPersonaId.mutate(($c) => {
-			$c.set($personaIdSelection, community_id);
+			$c.set($personaIdSelection, params.community_id);
 		});
 	}
 };

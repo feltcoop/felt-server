@@ -56,6 +56,7 @@ export const syncUiToUrl = (
 	if (!community) {
 		// occurs when a session routes to an inaccessible or nonexistent community
 		dispatch.SelectCommunity({community_id: null});
+		dispatch.SelectSpace({space_id: null});
 		return;
 	}
 	const {community_id} = get(community);
@@ -69,11 +70,13 @@ export const syncUiToUrl = (
 		.get(community_id)!
 		.find((s) => get(s).url === spaceUrl);
 	if (!space) {
-		log.error('failed to find space with url:', spaceUrl);
+		// TODO BLOCK handdle this to be nullable, probably
+		dispatch.SelectSpace({space_id: null});
 		return;
 	}
+	const selectedSpaceId = get(spaceIdSelectionByCommunityId)[community_id];
 	const {space_id} = get(space);
-	if (space_id !== get(spaceIdSelectionByCommunityId)[community_id]) {
-		dispatch.SelectSpace({community_id, space_id});
+	if (space_id !== selectedSpaceId) {
+		dispatch.SelectSpace({community_id, space_id}); // TODO BLOCK remove community_id
 	}
 };

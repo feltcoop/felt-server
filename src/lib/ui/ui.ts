@@ -60,7 +60,7 @@ export interface Ui {
 	personaSelection: Readable<Readable<Persona> | null>;
 	personaIndexSelection: Readable<number | null>;
 	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Readable<Community>>>>;
-	communityIdSelectionByPersonaId: Mutable<Map<number, number>>;
+	communityIdSelectionByPersonaId: Mutable<Map<number, number | null>>;
 	communitySelection: Readable<Readable<Community> | null>;
 	spaceIdSelectionByCommunityId: Readable<{[key: number]: number | null}>;
 	spaceSelection: Readable<Readable<Space> | null>;
@@ -190,7 +190,7 @@ export const toUi = (
 		);
 	// TODO should these be store references instead of ids?
 	// TODO maybe make this a lazy map, not a derived store?
-	const communityIdSelectionByPersonaId = mutable<Map<number, number>>(new Map());
+	const communityIdSelectionByPersonaId = mutable<Map<number, number | null>>(new Map());
 	const communitySelection = derived(
 		[personaIdSelection, communityIdSelectionByPersonaId],
 		([$personaIdSelection, $communityIdSelectionByPersonaId]) =>
