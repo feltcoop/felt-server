@@ -51,15 +51,17 @@ test_entityServices('read paginated entities by source_id', async ({db, random})
 
 	assert.is(filtered.length, 0);
 
-	const entities: Entity[] = [];
-	for (let i = 0; i < DEFAULT_PAGE_SIZE + 1; i++) {
-		// eslint-disable-next-line no-await-in-loop
-		const {entity} = await random.entity(persona, account, community, space, {
-			data: {type: 'Note', content: `This is note ${i}`},
-		});
-		entities.push(entity);
-	}
-	entities.reverse();
+	const entities = (
+		await Promise.all(
+			Array.from({length: DEFAULT_PAGE_SIZE + 1}, (_, i) =>
+				random.entity(persona, account, community, space, {
+					data: {type: 'Note', content: `This is note ${i}`},
+				}),
+			),
+		)
+	)
+		.map((v) => v.entity)
+		.sort((a, b) => b.entity_id - a.entity_id);
 
 	//test the default param returns properly
 	const {entities: filtered2} = unwrap(

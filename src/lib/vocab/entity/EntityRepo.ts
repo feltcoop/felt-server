@@ -40,7 +40,7 @@ export class EntityRepo extends PostgresRepo {
 		const entities = await this.db.sql<Entity[]>`
 			SELECT entity_id, data, actor_id, space_id, created, updated 
 			FROM entities WHERE space_id= ${space_id}
-			ORDER BY created ASC
+			ORDER BY entity_id ASC
 		`;
 		log.trace('space entity count:', entities.length);
 		return {ok: true, value: entities};
@@ -53,7 +53,7 @@ export class EntityRepo extends PostgresRepo {
 		const entities = await this.db.sql<Entity[]>`
 			SELECT entity_id, data, actor_id, space_id, created, updated 
 			FROM entities WHERE entity_id IN ${this.db.sql(entityIdSet)}
-			ORDER BY created DESC
+			ORDER BY entity_id DESC
 		`;
 		log.trace('entity count:', entities.length);
 		return {ok: true, value: entities};
