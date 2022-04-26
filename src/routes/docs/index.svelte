@@ -11,13 +11,13 @@
 <div class="wrapper">
 	<div class="column">
 		<div class="markup">
-			<h1>docs</h1>
+			<h1 id="docs">docs</h1>
 			<ul>
 				<li><a href="#vocab">vocab</a></li>
 				<li><a href="#events">events</a></li>
 			</ul>
 			<hr />
-			<h2>vocab</h2>
+			<h2 id="vocab">vocab</h2>
 		</div>
 		<ul>
 			{#each schemas as schema (schema)}
@@ -28,7 +28,7 @@
 		</ul>
 		<hr />
 		<div class="markup">
-			<h2>events</h2>
+			<h2 id="events">events</h2>
 		</div>
 		<ul>
 			{#each eventInfos as eventInfo (eventInfo.name)}
