@@ -47,7 +47,6 @@
 <div class="markup">
 	<h1>Delete Community?</h1>
 	<section class="row">
-		<span class="spaced">in</span>
 		<CommunityAvatar {community} />
 	</section>
 	<section class="row">
@@ -60,14 +59,13 @@
 		{/if}
 		<input
 			type="text"
-			id="name"
 			name="name"
 			placeholder=">enter name to unlock button"
 			bind:value={lockText}
 			on:keydown={onKeydown}
 		/>
 		<PendingButton {pending} disabled={locked || pending} on:click={deleteCommunity}>
-			Delete space
-		</PendingButton>>
+			Delete community
+		</PendingButton>
 	</form>
 </div>

@@ -60,8 +60,7 @@ export interface Ui {
 	personaSelection: Readable<Readable<Persona> | null>;
 	personaIndexSelection: Readable<number | null>;
 	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Readable<Community>>>>;
-	communityIdSelectionByPersonaId: Readable<{[key: number]: number}>;
-	communityIdSelection: Readable<number | null>;
+	communityIdSelectionByPersonaId: Mutable<Map<number, number>>;
 	communitySelection: Readable<Readable<Community> | null>;
 	spaceIdSelectionByCommunityId: Readable<{[key: number]: number | null}>;
 	spaceSelection: Readable<Readable<Space> | null>;
@@ -191,14 +190,13 @@ export const toUi = (
 		);
 	// TODO should these be store references instead of ids?
 	// TODO maybe make this a lazy map, not a derived store?
-	const communityIdSelectionByPersonaId = writable<{[key: number]: number}>({});
-	const communityIdSelection = derived(
+	const communityIdSelectionByPersonaId = mutable<Map<number, number>>(new Map());
+	const communitySelection = derived(
 		[personaIdSelection, communityIdSelectionByPersonaId],
 		([$personaIdSelection, $communityIdSelectionByPersonaId]) =>
-			$personaIdSelection && $communityIdSelectionByPersonaId[$personaIdSelection],
-	);
-	const communitySelection = derived([communityIdSelection], ([$communityIdSelection]) =>
-		$communityIdSelection === null ? null : communityById.get($communityIdSelection)!,
+			$personaIdSelection === null
+				? null
+				: communityById.get($communityIdSelectionByPersonaId.value.get($personaIdSelection)!)!,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
 	const spaceIdSelectionByCommunityId = writable<{[key: number]: number | null}>({});
@@ -244,7 +242,6 @@ export const toUi = (
 		personaSelection,
 		personaIndexSelection,
 		communityIdSelectionByPersonaId,
-		communityIdSelection,
 		communitySelection,
 		spaceIdSelectionByCommunityId,
 		spaceSelection,
@@ -286,36 +283,23 @@ export const toUi = (
 			// TODO these two selections are hacky because using the derived stores
 			// was causing various confusing issues, so they find stuff directly on the session objects
 			// instead of using derived stores like `sessionPersonas` and `spacesByCommunityId`.
-			communityIdSelectionByPersonaId.set(
+			communityIdSelectionByPersonaId.swap(
 				$session.guest
-					? {}
-					: Object.fromEntries(
-							$sessionPersonas
-								.map(($persona) => {
-									const $firstMembership = $session.memberships.find(
-										(m) => m.persona_id === $persona.persona_id,
-									);
-									const $firstCommunity = $session.communities.find(
-										(c) => c.community_id === $firstMembership?.community_id,
-									)!;
-									return [$persona.persona_id, $firstCommunity.community_id];
-								})
-								.filter(Boolean),
-					  ),
+					? new Map()
+					: // TODO first try to load this from localStorage
+					  new Map($sessionPersonas.map(($p) => [$p.persona_id, $p.community_id])),
 			);
 			spaceIdSelectionByCommunityId.set(
 				$session.guest
 					? {}
 					: Object.fromEntries(
-							$session.communities
-								.map(($community) => {
-									//TODO lookup space by community_id+url (see this comment in multiple places)
-									const $homeSpace = $session.spaces.find(
-										(s) => s.community_id === $community.community_id && isHomeSpace(s),
-									)!;
-									return [$community.community_id, $homeSpace.space_id];
-								})
-								.filter(Boolean),
+							//TODO lookup space by community_id+url (see this comment in multiple places)
+							$session.communities.map(($community) => [
+								$community.community_id,
+								$session.spaces.find(
+									(s) => s.community_id === $community.community_id && isHomeSpace(s),
+								)!.space_id,
+							]),
 					  ),
 			);
 		},
@@ -328,9 +312,9 @@ export const toUi = (
 	return ui;
 };
 
-// TODO this is a hack until we have `community_ids` normalized and off the `Persona`,
-// the issue is that the "session personas" are different than the rest of the personas
-// by having their `community_ids` populated, so as a hack we prefer that instance in the global,
+// TODO this is a hack until we figure out how to handle "session personas" differently from the rest --
+// the issue is that the "session personas" have their `community_ids` populated,
+// so as a hack we prefer that instance in the global,
 // but these probably need to be split into two separate collections --
 // notice that comparison checks between the two types of personas will not be able to use store reference equality
 const toInitialPersonas = (session: ClientSession): Persona[] =>
@@ -345,9 +329,6 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 // This ensures that the inferred `WritableUi` is assignable to `Ui`.
 // The latter type is used in components and it exposes its data as `Readable` stores,
 // while the former is used in mutations and exposes `Writable` stores.
-// TODO is there a better way to do this assertion without any runtime code?
-// @see https://github.com/feltcoop/felt-server/pull/292
-// and @see https://github.com/feltcoop/felt-server/pull/292/commits/f24a7377a7328df6071771facaacb6464e10a000
-// for runtime alternatives. (though they could be elided in production code probably)
+// TODO try to improve this to 1) be generic, 2) not export, and 3) have no runtime representation
 type Typecheck<T extends Ui> = T;
 export type Typechecked = Typecheck<WritableUi>;

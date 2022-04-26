@@ -49,17 +49,34 @@ export const UpdateCommunitySettings: Mutations['UpdateCommunitySettings'] = asy
 export const DeleteCommunity: Mutations['UpdateCommunitySettings'] = async ({
 	params,
 	invoke,
-	ui: {communityById, communitySelection, personaSelection, communities},
+	ui: {
+		communityById,
+		communitySelection,
+		personaSelection,
+		communities,
+		communityIdSelectionByPersonaId,
+		personaById,
+	},
 }) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	const community = communityById.get(params.community_id)!;
-	const selectedCommunity = get(communitySelection);
-	if (selectedCommunity === community) {
+	const {community_id} = params;
+	const community = communityById.get(community_id)!;
+
+	if (get(communitySelection) === community) {
 		const persona = get(personaSelection)!;
 		await goto('/' + get(persona).name + location.search, {replaceState: true});
 	}
-	communityById.delete(params.community_id);
-	communities.mutate(($communites) => $communites.splice($communites.indexOf(community), 1));
+
+	communityById.delete(community_id);
+	communities.mutate(($communites) => $communites.splice($communites.indexOf(community), 1)); // TODO use fast volatile remove instead, or maybe a set?
+	communityIdSelectionByPersonaId.mutate(($c) => {
+		for (const [persona_id, communityIdSelection] of $c) {
+			if (communityIdSelection === community_id) {
+				$c.set(persona_id, get(personaById.get(persona_id)!).community_id);
+			}
+		}
+	});
+
 	return result;
 };
