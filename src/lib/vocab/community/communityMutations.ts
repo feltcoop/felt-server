@@ -66,7 +66,6 @@ export const DeleteCommunity: Mutations['UpdateCommunitySettings'] = async ({
 	// First navigate, because navigating last can leave the UI in a bad state in between.
 	if (get(communitySelection) === community) {
 		const persona = get(personaSelection)!;
-		console.log(`GO persona`, persona);
 		await goto('/' + get(persona).name + location.search, {replaceState: true});
 	}
 
@@ -86,7 +85,6 @@ export const DeleteCommunity: Mutations['UpdateCommunitySettings'] = async ({
 					? get(personaById.get(Number(persona_id))!).community_id
 					: communityIdSelection;
 		}
-		console.log(`$updated`, $updated);
 		return $updated;
 	});
 
