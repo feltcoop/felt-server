@@ -1,7 +1,7 @@
 import {randomBool} from '@feltcoop/felt/util/random.js';
 import {writable} from 'svelte/store';
 
-import type {EventInfo} from '$lib/vocab/event/event';
+import type {EventParamsByName} from '$lib/app/eventTypes';
 import {
 	randomEntityData,
 	randomEntityParams,
@@ -20,15 +20,15 @@ import {randomHue} from '$lib/ui/color';
 // We may want to instead test things for both new and existing objects.
 // TODO keep factoring this until it's fully automated, generating from the schema
 export const randomEventParams = async (
-	event: EventInfo,
+	eventName: keyof EventParamsByName,
 	random: RandomVocabContext,
 	randomVocab: RandomVocab = {},
-): Promise<any> => {
+): Promise<EventParamsByName[typeof eventName]> => {
 	const {account} = randomVocab;
 	let {persona, community, space} = randomVocab;
-	switch (event.name) {
+	switch (eventName) {
 		case 'Ping': {
-			return null;
+			return undefined;
 		}
 		case 'LoginAccount': {
 			return {
@@ -37,7 +37,7 @@ export const randomEventParams = async (
 			};
 		}
 		case 'LogoutAccount': {
-			return null;
+			return undefined;
 		}
 		case 'CreateCommunity': {
 			if (!persona) ({persona} = await random.persona(account));
@@ -201,7 +201,7 @@ export const randomEventParams = async (
 		// by generating something like a type union of `EventInfo`s and
 		// replacing the generic service type in the above function signature
 		default: {
-			throw Error(`Unhandled service for randomEventParams: ${event.name}`);
+			throw Error(`Unhandled service for randomEventParams: ${eventName}`);
 		}
 	}
 };
