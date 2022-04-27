@@ -90,8 +90,8 @@ export class EntityRepo extends PostgresRepo {
 	}
 
 	//This function actually deletes the record in the DB
-	async deleteByIdSet(entity_ids: number[]): Promise<Result<object>> {
-		log.trace('[deleteByIdSet]', entity_ids);
+	async deleteByIds(entity_ids: number[]): Promise<Result<object>> {
+		log.trace('[deleteByIds]', entity_ids);
 		const data = await this.db.sql<any[]>`
 			DELETE FROM entities WHERE entity_id IN ${this.db.sql(entity_ids)}
 		`;
