@@ -6,6 +6,7 @@ import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {EntityData} from '$lib/vocab/entity/entityData';
 import type {RowList} from 'postgres';
+import type {ErrorResponse} from '$lib/util/error';
 
 const log = new Logger(gray('[') + blue('EntityRepo') + gray(']'));
 
@@ -42,20 +43,26 @@ export class EntityRepo extends PostgresRepo {
 			FROM entities WHERE space_id= ${space_id}
 			ORDER BY entity_id ASC
 		`;
-		log.trace('space entity count:', entities.length);
+		log.trace('filterBySpace entity count:', entities.length);
 		return {ok: true, value: entities};
 	}
 
 	// TODO maybe `EntityQuery`?
-	async filterByIds(entityIdSet: number[]): Promise<Result<{value: Entity[]}>> {
-		if (entityIdSet.length === 0) return {ok: true, value: []};
-		log.trace('[findBySet]', entityIdSet);
+	async filterByIds(entityIds: number[]): Promise<Result<{value: Entity[]}, ErrorResponse>> {
+		if (entityIds.length === 0) return {ok: true, value: []};
+		log.trace('[findBySet]', entityIds);
 		const entities = await this.db.sql<Entity[]>`
 			SELECT entity_id, data, actor_id, space_id, created, updated 
-			FROM entities WHERE entity_id IN ${this.db.sql(entityIdSet)}
+			FROM entities WHERE entity_id IN ${this.db.sql(entityIds)}
 			ORDER BY entity_id DESC
 		`;
-		log.trace('entity count:', entities.length);
+		log.trace('filterByIds entity count:', entities.length);
+		if (entities.count !== entityIds.length) {
+			return {
+				ok: false,
+				message: `expected ${entityIds.length} entities but only found ${entities.count}`,
+			};
+		}
 		return {ok: true, value: entities};
 	}
 
