@@ -10,7 +10,6 @@
 	import SpaceDelete from '$lib/ui/SpaceDelete.svelte';
 	import SpaceIcon from '$lib/ui/SpaceIcon.svelte';
 	import SpaceEditor from '$lib/ui/SpaceEditor.svelte';
-	import {toComponentViewData} from '$lib/vocab/view/view';
 	import {canDeleteSpace} from '$lib/vocab/space/spaceHelpers';
 
 	const {dispatch} = getApp();
@@ -53,7 +52,7 @@
 			action={() =>
 				dispatch.ViewSpace({
 					space,
-					view: toComponentViewData('EntityExplorer'),
+					view: '<EntityExplorer />',
 				})}
 		>
 			<span class="title">View with EntityExplorer</span>

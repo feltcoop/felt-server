@@ -15,9 +15,10 @@ import {
 } from '$lib/vocab/membership/membershipServices';
 import {
 	readEntitiesService,
+	ReadEntitiesPaginatedService,
 	createEntityService,
 	updateEntityService,
-	softDeleteEntityService,
+	eraseEntityService,
 	deleteEntitiesService,
 } from '$lib/vocab/entity/entityServices';
 import {
@@ -42,7 +43,7 @@ export const services: Map<string, Service<any, any>> = new Map(
 		createSpaceService,
 		createEntityService,
 		updateEntityService,
-		softDeleteEntityService,
+		eraseEntityService,
 		deleteEntitiesService,
 		readCommunityService,
 		readCommunitiesService,
@@ -51,6 +52,7 @@ export const services: Map<string, Service<any, any>> = new Map(
 		readSpaceService,
 		readSpacesService,
 		readEntitiesService,
+		ReadEntitiesPaginatedService,
 		updateSpaceService,
 		deleteSpaceService,
 		createTieService,

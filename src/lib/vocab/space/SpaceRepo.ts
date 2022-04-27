@@ -4,7 +4,6 @@ import {blue, gray} from 'kleur/colors';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Space} from '$lib/vocab/space/space.js';
-import type {ViewData} from '$lib/vocab/view/view';
 
 const log = new Logger(gray('[') + blue('SpaceRepo') + gray(']'));
 
@@ -57,7 +56,7 @@ export class SpaceRepo extends PostgresRepo {
 
 	async create(
 		name: string,
-		view: ViewData,
+		view: string,
 		url: string,
 		icon: string,
 		community_id: number,
@@ -65,7 +64,7 @@ export class SpaceRepo extends PostgresRepo {
 	): Promise<Result<{value: Space}>> {
 		const data = await this.db.sql<Space[]>`
 			INSERT INTO spaces (name, url, icon, view, community_id, directory_id) VALUES (
-				${name},${url},${icon},${this.db.sql.json(view)},${community_id}, ${directory_id}
+				${name},${url},${icon},${view},${community_id}, ${directory_id}
 			) RETURNING *
 		`;
 		return {ok: true, value: data[0]};

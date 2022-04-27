@@ -4,7 +4,7 @@ import {unwrap, unwrapError} from '@feltcoop/felt';
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
-import {randomEventParams} from '$lib/server/random';
+import {randomEventParams} from '$lib/util/randomEventParams';
 import {CreateAccountPersona} from '$lib/vocab/persona/personaEvents';
 import {toServiceRequest} from '$lib/util/testHelpers';
 

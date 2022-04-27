@@ -15,9 +15,9 @@ export const addEntity = (
 	}
 	const entity = writable($entity);
 	entityById.set(entity_id, entity);
-	const spaceEntities = entitiesBySpace.get($entity.space_id);
-	if (spaceEntities) {
-		spaceEntities.update(($entities) =>
+	const existingSpaceEntities = entitiesBySpace.get($entity.space_id);
+	if (existingSpaceEntities) {
+		existingSpaceEntities.update(($entities) =>
 			$entities.includes(entity) ? $entities : $entities.concat(entity),
 		);
 	} else {

@@ -25,17 +25,12 @@ export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui}) => {
 	return result;
 };
 
-export const SoftDeleteEntity: Mutations['SoftDeleteEntity'] = async ({
-	invoke,
-	// params,
-	// ui: {entityById},
-}) => {
+export const EraseEntity: Mutations['EraseEntity'] = async ({invoke}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	//TODO update ties once stores are in place
-	// TODO return the updated value so it can be set to exactly what the server has (or use a toTombstone helper?)
-	// const entity = entityById.get(params.entity_id)!;
-	// entity.set(result.value);
+	//update state here
+
+	//TODO add store updates once new entity/tie stores are in place
 	return result;
 };
 

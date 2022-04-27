@@ -10,7 +10,6 @@
 	import SpaceName from '$lib/ui/SpaceName.svelte';
 	import {getApp} from '$lib/ui/app';
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
-	import {parseView, parseViewString, serializeView} from '$lib/vocab/view/view';
 	import {parseSpaceIcon} from '$lib/vocab/space/spaceHelpers';
 
 	export let space: Readable<Space>;
@@ -21,7 +20,7 @@
 	const updateSpace = async (updated: any, field: string) =>
 		dispatch.UpdateSpace({
 			space_id: $space.space_id,
-			[field]: field === 'view' ? parseView(updated) : updated,
+			[field]: updated,
 		});
 </script>
 
@@ -59,12 +58,7 @@
 				/>
 			</li>
 			<li>
-				<PropertyEditor
-					value={serializeView($space.view)}
-					field="view"
-					update={updateSpace}
-					parse={parseViewString}
-				/>
+				<PropertyEditor value={$space.view} field="view" update={updateSpace} />
 			</li>
 		</ul>
 	</form>

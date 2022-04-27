@@ -2,7 +2,6 @@ import type {Root, SvelteChild} from 'svast';
 import {compile as stringifySvast} from 'svast-stringify';
 import {setContext, getContext} from 'svelte';
 import type {Readable} from 'svelte/store';
-import type {Result} from '@feltcoop/felt';
 
 import type {Space} from '$lib/vocab/space/space';
 import type {Community} from '$lib/vocab/community/community';
@@ -20,18 +19,18 @@ export type ViewNode = Root | SvelteChild; // TODO does this technically need to
  */
 export const viewTemplates: Array<{
 	name: string;
-	template: string;
+	view: string;
 	icon: string;
 	creatable?: boolean;
 }> = [
-	{name: 'Home', template: '<Home />', icon: '🏠', creatable: false}, // TODO better name?
-	{name: 'Room', template: '<Room />', icon: '🗨'},
-	{name: 'Board', template: '<Board />', icon: '📚'},
-	{name: 'Forum', template: '<Forum />', icon: '📋'},
-	{name: 'Notes', template: '<Notes />', icon: '🏷'},
-	{name: 'Iframe', template: '<Iframe />', icon: '💻'}, // TODO does this need a default `src`?
-	{name: 'EntityExplorer', template: '<EntityExplorer />', icon: '✏️'},
-	{name: 'Todo', template: '<Todo />', icon: '🗒'},
+	{name: 'Home', view: '<Home />', icon: '🏠', creatable: false}, // TODO better name?
+	{name: 'Room', view: '<Room />', icon: '🗨'},
+	{name: 'Board', view: '<Board />', icon: '📚'},
+	{name: 'Forum', view: '<Forum />', icon: '📋'},
+	{name: 'Notes', view: '<Notes />', icon: '🏷'},
+	{name: 'Iframe', view: '<Iframe />', icon: '💻'}, // TODO does this need a default `src`?
+	{name: 'EntityExplorer', view: '<EntityExplorer />', icon: '✏️'},
+	{name: 'Todo', view: '<Todo />', icon: '🗒'},
 ];
 
 /**
@@ -53,19 +52,6 @@ export const toViewProps = (view: ViewNode): Record<string, any> | undefined => 
 	return props;
 };
 
-export const toComponentViewData = (tagName: string): ViewData => ({
-	type: 'root',
-	children: [
-		{
-			type: 'svelteComponent',
-			tagName,
-			properties: [],
-			selfClosing: true,
-			children: [],
-		} as any, // TODO this cast is needed until this PR fixes it: https://github.com/pngwn/MDsveX/pull/436
-	],
-});
-
 export interface ViewContext {
 	persona: Readable<Persona>;
 	community: Readable<Community>;
@@ -78,14 +64,5 @@ export const setViewContext = (ctx: Readable<ViewContext>): void => setContext(K
 
 export const parseView = (value: string, generatePositions = false): ViewData =>
 	parseSvast({value, generatePositions});
-
-export const parseViewString = (value: string): Result<{value: string}, {message: string}> => {
-	try {
-		const parsed = parseView(value);
-		return {ok: true, value: stringifySvast(parsed)};
-	} catch (err) {
-		return {ok: false, message: 'failed to parse'};
-	}
-};
 
 export const serializeView = stringifySvast;

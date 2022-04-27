@@ -13,7 +13,7 @@ import {
 	randomCommunityParams,
 	randomSpaceParams,
 	randomSpaceName,
-} from '$lib/vocab/random';
+} from '$lib/util/randomVocab';
 import {randomHue} from '$lib/ui/color';
 
 /* eslint-disable no-param-reassign */
@@ -110,6 +110,10 @@ export const randomEventParams = async (
 			if (!space) ({space} = await random.space(persona, account, community));
 			return {space_id: space.space_id};
 		}
+		case 'ReadEntitiesPaginated': {
+			if (!space) ({space} = await random.space(persona, account, community));
+			return {source_id: space.directory_id};
+		}
 		case 'QueryEntities': {
 			return {
 				space_id: (await random.space(persona, account, community)).space.space_id,
@@ -121,7 +125,7 @@ export const randomEventParams = async (
 				data: randomEntityData(),
 			};
 		}
-		case 'SoftDeleteEntity': {
+		case 'EraseEntity': {
 			return {
 				entity_id: (await random.entity(persona, account, community, space)).entity.entity_id,
 			};
@@ -196,7 +200,7 @@ export const randomEventParams = async (
 		case 'ViewSpace': {
 			return {
 				space: writable(await random.space(persona, account, community)),
-				view: {type: 'EntityExplorer'},
+				view: '<EntityExplorer />',
 			};
 		}
 		// TODO could do an exhaustive typecheck (so it'll be caught by TS, not at runtime)

@@ -10,7 +10,7 @@ import type {Space} from '$lib/vocab/space/space.js';
 import type {Community} from '$lib/vocab/community/community';
 import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
-import type {ViewData} from '$lib/vocab/view/view';
+import {parseView, type ViewData} from '$lib/vocab/view/view';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
 import {toServiceRequest} from '$lib/util/testHelpers';
@@ -99,7 +99,7 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 	};
 
 	for (const space of spaces) {
-		const componentName = findFirstComponentName(space.view);
+		const componentName = findFirstComponentName(parseView(space.view));
 		if (componentName === 'Todo') {
 			await generateTodo(db, nextPersona().persona_id, space.space_id);
 		}
