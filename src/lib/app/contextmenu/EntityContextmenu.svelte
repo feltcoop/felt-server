@@ -28,9 +28,11 @@
 		>
 			<span class="title">Edit Entity</span>
 		</ContextmenuEntry>
-		<ContextmenuEntry action={() => dispatch.EraseEntity({entity_id: $entity.entity_id})}>
-			<span class="title">Erase Entity</span>
-		</ContextmenuEntry>
+		{#if $entity.data.type !== 'Tombstone'}
+			<ContextmenuEntry action={() => dispatch.EraseEntity({entity_id: $entity.entity_id})}>
+				<span class="title">Erase Entity</span>
+			</ContextmenuEntry>
+		{/if}
 		<!-- TODO add `Delete Entity`, and add confirmation dialogs to both delete and erase actions -->
 	</svelte:fragment>
 </ContextmenuSubmenu>
