@@ -1,14 +1,13 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
+import {unwrap} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 import {toServiceRequest} from '$lib/util/testHelpers';
-
 import {ReadEntitiesPaginatedService} from '$lib/vocab/entity/entityServices';
-import {unwrap} from '@feltcoop/felt';
-import type {Entity} from './entity';
+import type {Entity} from '$lib/vocab/entity/entity';
 import {DEFAULT_PAGE_SIZE} from '$lib/server/constants';
 import {validateSchema} from '$lib/util/ajv';
 
