@@ -7,6 +7,8 @@
 	import {getApp} from '$lib/ui/app';
 	import SpaceContextmenu from '$lib/app/contextmenu/SpaceContextmenu.svelte';
 	import CommunityContextmenu from '$lib/app/contextmenu/CommunityContextmenu.svelte';
+	import PersonaInput from '$lib/ui/PersonaInput.svelte';
+	import CommunityInput from '$lib/ui/CommunityInput.svelte';
 
 	const {
 		dispatch,
@@ -42,14 +44,24 @@
 		/>
 	{/if}
 	<div class="space column">
-		<!-- TODO pass stores here instead of dereferncing -->
 		<WorkspaceHeader space={selectedSpace} community={selectedCommunity} />
 		<div class="content">
-			{#if selectedPersona && selectedCommunity && selectedSpace}
-				<SpaceView persona={selectedPersona} community={selectedCommunity} space={selectedSpace} />
-			{:else if selectedPersona && selectedCommunity}
-				<!-- TODO this should be the form, not dialog trigger -- fix after refactoring dialogs -->
-				<SpaceInput persona={selectedPersona} community={selectedCommunity} />
+			{#if selectedPersona}
+				{#if selectedCommunity}
+					{#if selectedSpace}
+						<SpaceView
+							persona={selectedPersona}
+							community={selectedCommunity}
+							space={selectedSpace}
+						/>
+					{:else}
+						<SpaceInput persona={selectedPersona} community={selectedCommunity} />
+					{/if}
+				{:else}
+					<CommunityInput persona={selectedPersona} />
+				{/if}
+			{:else}
+				<PersonaInput />
 			{/if}
 		</div>
 		<MarqueeButton />

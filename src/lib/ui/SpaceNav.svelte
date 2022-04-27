@@ -14,7 +14,7 @@
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
 	export let spaces: Array<Readable<Space>>;
-	export let selectedSpace: Readable<Space>;
+	export let selectedSpace: Readable<Space> | null;
 </script>
 
 <nav class="space-nav" use:contextmenu.action={[[CommunityContextmenu, {community, persona}]]}>
