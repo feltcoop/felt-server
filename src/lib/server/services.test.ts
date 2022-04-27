@@ -6,7 +6,7 @@ import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {log, toServiceRequest} from '$lib/util/testHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {services} from '$lib/server/services';
-import {randomEventParams} from '$lib/server/random';
+import {randomEventParams} from '$lib/util/randomEventParams';
 import {SessionApiMock} from '$lib/session/SessionApiMock';
 
 /* test__services */
@@ -51,6 +51,18 @@ for (const service of services.values()) {
 		assert.is(result.status, 200); // TODO generate invalid data and test those params+responses too
 	});
 }
+
+test__services(`check for duplicate HTTP route paths`, async () => {
+	const paths = new Set();
+
+	for (const service of services.values()) {
+		const key = service.event.route.method + ':' + service.event.route.path;
+		if (paths.has(key)) {
+			throw Error(`Duplicate service event route ${key}`);
+		}
+		paths.add(key);
+	}
+});
 
 test__services.run();
 /* test__services */

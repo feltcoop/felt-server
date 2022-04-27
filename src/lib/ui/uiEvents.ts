@@ -114,7 +114,7 @@ export const ViewSpace: ClientEventInfo = {
 		type: 'object',
 		properties: {
 			space: {type: 'object', tsType: 'Readable<Space>'},
-			view: {type: ['object', 'null'], tsType: 'ViewData | null'},
+			view: {type: ['string', 'null']},
 		},
 		required: ['space', 'view'],
 		additionalProperties: false,

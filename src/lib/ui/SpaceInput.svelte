@@ -6,7 +6,7 @@
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
-	import {viewTemplates, parseView} from '$lib/vocab/view/view';
+	import {viewTemplates} from '$lib/vocab/view/view';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
@@ -55,7 +55,7 @@
 			name,
 			url,
 			icon: iconResult.value,
-			view: parseView(selectedViewTemplate.template),
+			view: selectedViewTemplate.view,
 		});
 		pending = false;
 		if (result.ok) {
