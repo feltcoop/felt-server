@@ -1,14 +1,10 @@
-/* TODO upstream to Felt */
 /* global styles that override Felt's */
 :root {
-	--overlay_bg: hsla(0, 0%, 0%, 0.65); /* TODO delete after upgrading Felt */
 	--bg_hue: 24;
 	--bg_saturation: 23%;
 	--bg_lightness: 96%;
-	--bg_color_lightness: 91%; /* TODO ? */
 	--luggage_size: var(--icon_size_md);
 	--navbar_size: var(--luggage_size);
-	--icon_size: var(--icon_size_md);
 	--contextmenu_width: 360px;
 }
 

@@ -53,7 +53,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		align-items: flex-start;
 		padding: var(--spacing_xs);
 		/* TODO experiment with a border color instead of bg */
-		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
+		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--tint_lightness_8)));
 	}
 	.signature {
 		display: flex;
