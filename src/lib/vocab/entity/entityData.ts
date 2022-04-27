@@ -29,6 +29,7 @@ export interface CollectionEntityData extends BaseEntityData {
 
 export interface TombstoneEntityData extends BaseEntityData {
 	type: 'Tombstone';
+	formerType: string;
 	deleted: Date;
 	previousType: string;
 }

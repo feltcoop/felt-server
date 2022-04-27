@@ -25,12 +25,12 @@ export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui}) => {
 	return result;
 };
 
-export const EraseEntity: Mutations['EraseEntity'] = async ({invoke}) => {
+export const EraseEntity: Mutations['EraseEntity'] = async ({invoke, params, ui: {entityById}}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	//update state here
-
-	//TODO add store updates once new entity/tie stores are in place
+	const entity = entityById.get(params.entity_id)!;
+	entity.set(result.value.entity);
+	//TODO update ties once stores are in place
 	return result;
 };
 

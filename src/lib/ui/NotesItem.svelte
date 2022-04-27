@@ -5,6 +5,7 @@
 	import {getApp} from '$lib/ui/app';
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
+	import TombstoneContent from '$lib/ui/TombstoneContent.svelte';
 
 	const {
 		ui: {contextmenu, personaById},
@@ -15,18 +16,17 @@
 	$: persona = personaById.get($entity.actor_id)!;
 </script>
 
-{#if $entity.data.type !== 'Tombstone'}
-	<li
-		use:contextmenu.action={[
-			[PersonaContextmenu, {persona}],
-			[EntityContextmenu, {entity}],
-		]}
-	>
-		<div class="markup formatted">
-			{$entity.data.content}
-		</div>
-	</li>
-{/if}
+<li
+	use:contextmenu.action={[
+		[PersonaContextmenu, {persona}],
+		[EntityContextmenu, {entity}],
+	]}
+>
+	<div class="markup formatted">
+		{#if $entity.data.type === 'Tombstone'}<TombstoneContent {entity} />{:else}{$entity.data
+				.content}{/if}
+	</div>
+</li>
 
 <style>
 	li {

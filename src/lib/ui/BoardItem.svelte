@@ -7,6 +7,7 @@
 	import {getApp} from '$lib/ui/app';
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
+	import TombstoneContent from '$lib/ui/TombstoneContent.svelte';
 
 	const {
 		ui: {contextmenu, personaById},
@@ -29,11 +30,8 @@
 >
 	<div class="markup formatted">
 		<p>
-			{#if $entity.data.type !== 'Tombstone'}
-				{$entity.data.content}
-			{:else}
-				<i>This message was deleted</i>
-			{/if}
+			{#if $entity.data.type === 'Tombstone'}<TombstoneContent {entity} />{:else}{$entity.data
+					.content}{/if}
 		</p>
 	</div>
 	<PersonaAvatar {persona} />

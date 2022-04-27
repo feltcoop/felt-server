@@ -159,7 +159,12 @@ export const EraseEntity: ServiceEventInfo = {
 	},
 	response: {
 		$id: '/schemas/EraseEntityResponse.json',
-		type: 'null',
+		type: 'object',
+		properties: {
+			entity: {$ref: '/schemas/Entity.json', tsType: 'Entity'},
+		},
+		required: ['entity'],
+		additionalProperties: false,
 	},
 	returns: 'Promise<EraseEntityResponseResult>',
 	route: {

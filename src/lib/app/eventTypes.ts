@@ -268,7 +268,9 @@ export interface QueryEntitiesParams {
 export interface EraseEntityParams {
 	entity_id: number;
 }
-export type EraseEntityResponse = null;
+export interface EraseEntityResponse {
+	entity: Entity;
+}
 export type EraseEntityResponseResult = ApiResult<EraseEntityResponse>;
 
 export interface DeleteEntitiesParams {

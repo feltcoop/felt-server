@@ -128,7 +128,7 @@ export const eraseEntityService: Service<EraseEntityParams, EraseEntityResponseR
 		if (!result.ok) {
 			return {ok: false, status: 500, message: 'failed to soft delete entity'};
 		}
-		return {ok: true, status: 200, value: null};
+		return {ok: true, status: 200, value: {entity: result.value}};
 	},
 };
 

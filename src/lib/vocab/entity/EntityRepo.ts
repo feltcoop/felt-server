@@ -70,18 +70,21 @@ export class EntityRepo extends PostgresRepo {
 		return {ok: true, value: result[0]};
 	}
 
+	// TODO need to either remove `AND data->>'type' != 'Tombstone'`
+	// from `eraseById` or add it to `updateEntityData`
+	// or users will be able to edit entity data but then not erase it.
+
 	//This function is an idempotent soft delete, that leaves behind a Tombstone entity per Activity-Streams spec
-	async eraseById(entity_id: number): Promise<Result<object>> {
+	async eraseById(entity_id: number): Promise<Result<{value: Entity}>> {
 		log.trace('[deleteById]', entity_id);
 		const data = await this.db.sql<any[]>`
 			UPDATE entities
 			SET data = jsonb_build_object('type','Tombstone','formerType',data->>'type','deleted',NOW())
-			WHERE entity_id=${entity_id} AND data->>'type' != 'Tombstone';
+			WHERE entity_id=${entity_id} AND data->>'type' != 'Tombstone'
+			RETURNING *;
 		`;
 		if (!data.count) return NOT_OK;
-		// TODO BLOCK query the entity and return it? (is it returned in data?)
-		console.log(`soft deleted data`, data);
-		return OK;
+		return {ok: true, value: data[0]};
 	}
 
 	//This function actually deletes the records in the DB
