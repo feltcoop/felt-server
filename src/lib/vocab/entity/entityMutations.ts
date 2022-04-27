@@ -1,4 +1,4 @@
-import {writable} from 'svelte/store';
+import {get, writable} from 'svelte/store';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
@@ -29,14 +29,20 @@ export const EraseEntity: Mutations['EraseEntity'] = async ({invoke, ui}) => {
 export const DeleteEntities: Mutations['DeleteEntities'] = async ({
 	invoke,
 	params,
-	ui: {entityById},
+	ui: {entityById, entitiesBySpace},
 }) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	// TODO delete entities from `entitiesBySpace` (should they be sets instead of arrays?)
 	//TODO update ties once stores are in place
-	for (const entity_id of params.entity_ids) {
+	const {entity_ids} = params;
+	for (const entity_id of entity_ids) {
 		entityById.delete(entity_id);
+	}
+	for (const spaceEntities of entitiesBySpace.values()) {
+		// TODO this is very inefficient
+		if (get(spaceEntities).find((e) => entity_ids.includes(get(e).entity_id))) {
+			spaceEntities.update(($s) => $s.filter(($e) => !entity_ids.includes(get($e).entity_id)));
+		}
 	}
 	return result;
 };
