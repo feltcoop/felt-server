@@ -71,8 +71,8 @@ export class EntityRepo extends PostgresRepo {
 	}
 
 	// TODO need to either remove `AND data->>'type' != 'Tombstone'`
-	// from `eraseById` or add it to `updateEntityData`
-	// or users will be able to edit entity data but then not erase it.
+	// from `eraseById` or add it to `updateEntityData`,
+	// because users can currently edit an erased's entity data but then not erase it again
 
 	//This function is an idempotent soft delete, that leaves behind a Tombstone entity per Activity-Streams spec
 	async eraseById(entity_id: number): Promise<Result<{value: Entity}>> {

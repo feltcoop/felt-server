@@ -14,7 +14,6 @@ export const updateEntity = (
 	} else {
 		entityById.set(entity_id, (entity = writable($entity)));
 	}
-	entityById.set(entity_id, entity);
 	const existingSpaceEntities = entitiesBySpace.get($entity.space_id);
 	if (existingSpaceEntities) {
 		if (!get(existingSpaceEntities).includes(entity)) {
