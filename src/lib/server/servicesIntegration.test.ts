@@ -73,39 +73,39 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	//
 	//
 
-	const {entities: filterFilesValue} = unwrap(
+	const {entities: filteredEntities} = unwrap(
 		await readEntitiesService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
 	);
-	assert.equal(filterFilesValue.slice(), [entity2, entity1]); // `slice` because `RowList` is not deep equal to arrays
+	assert.equal(filteredEntities.slice(), [entity2, entity1]); // `slice` because `RowList` is not deep equal to arrays
 
-	const {space: findSpaceValue} = unwrap(
+	const {space: foundSpace} = unwrap(
 		await readSpaceService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
 	);
-	assert.equal(findSpaceValue, space);
+	assert.equal(foundSpace, space);
 
-	const {spaces: filterSpacesValue} = unwrap(
+	const {spaces: filteredSpaces} = unwrap(
 		await readSpacesService.perform({
 			params: {community_id: community.community_id},
 			...serviceRequest,
 		}),
 	);
-	assert.is(filterSpacesValue.length, spaceCount + defaultSpaceCount);
+	assert.is(filteredSpaces.length, spaceCount + defaultSpaceCount);
 
-	const {community: findCommunityValue} = unwrap(
+	const {community: foundCommunity} = unwrap(
 		await readCommunityService.perform({
 			params: {community_id: community.community_id},
 			...serviceRequest,
 		}),
 	);
-	assert.is(findCommunityValue.name, community.name);
+	assert.is(foundCommunity.name, community.name);
 
-	const {communities: filterCommunitiesValue} = unwrap(
+	const {communities: filteredCommunities} = unwrap(
 		await readCommunitiesService.perform({
 			params: {account_id: account.account_id},
 			...serviceRequest,
 		}),
 	);
-	assert.is(filterCommunitiesValue.length, 3);
+	assert.is(filteredCommunities.length, 3);
 
 	// TODO add a service event?
 	assert.equal(
@@ -126,17 +126,11 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	//
 	//
 
-	// TODO implement for entities
-	// const deleteFileResult = await db.repos.entity.delete(
-	// 	account.account_id,
-	// 	space.space_id,
-	// 	content,
-	// );
-	// assert.ok(deleteFileResult.ok);
+	// TODO delete entities here
 
 	// delete spaces except the home space
 	await Promise.all(
-		filterSpacesValue
+		filteredSpaces
 			.filter((s) => !isHomeSpace(s))
 			.map(async (space) =>
 				unwrap(

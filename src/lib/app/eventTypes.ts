@@ -335,7 +335,7 @@ export interface SelectCommunityParams {
 
 export interface SelectSpaceParams {
 	community_id: number;
-	space_id: number;
+	space_id: number | null;
 }
 
 export interface ViewSpaceParams {

@@ -25,13 +25,11 @@ export const SelectCommunity: Mutations['SelectCommunity'] = ({
 	params,
 	ui: {personaIdSelection, communityIdSelectionByPersonaId},
 }) => {
-	const $personaIdSelection = get(personaIdSelection); // TODO how to remove the `!`?
-	const {community_id} = params;
-	if (community_id && $personaIdSelection) {
-		communityIdSelectionByPersonaId.update(($communityIdSelectionByPersonaId) => ({
-			...$communityIdSelectionByPersonaId,
-			[$personaIdSelection]: community_id,
-		}));
+	const $personaIdSelection = get(personaIdSelection);
+	if ($personaIdSelection) {
+		communityIdSelectionByPersonaId.mutate(($c) => {
+			$c.set($personaIdSelection, params.community_id);
+		});
 	}
 };
 
