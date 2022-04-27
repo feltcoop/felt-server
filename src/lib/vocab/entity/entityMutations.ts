@@ -1,36 +1,28 @@
 import {writable} from 'svelte/store';
 
 import type {Mutations} from '$lib/app/eventTypes';
-import {addEntity} from '$lib/vocab/entity/entityMutationHelpers';
+import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
+
+// TODO if `Create/Update/Erase` remain identical, probably make them use a single helper
 
 export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	const {entity: $entity} = result.value;
-	addEntity(ui, $entity);
+	updateEntity(ui, result.value.entity);
 	return result;
 };
 
 export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	//TODO maybe return to $entity naming convention OR propagate this pattern?
-	const {entity: updatedEntity} = result.value;
-	const entity = ui.entityById.get(updatedEntity.entity_id);
-	if (entity) {
-		entity.set(updatedEntity);
-	} else {
-		addEntity(ui, updatedEntity);
-	}
+	updateEntity(ui, result.value.entity);
 	return result;
 };
 
-export const EraseEntity: Mutations['EraseEntity'] = async ({invoke, params, ui: {entityById}}) => {
+export const EraseEntity: Mutations['EraseEntity'] = async ({invoke, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	const entity = entityById.get(params.entity_id)!;
-	entity.set(result.value.entity);
-	//TODO update ties once stores are in place
+	updateEntity(ui, result.value.entity);
 	return result;
 };
 
@@ -41,6 +33,7 @@ export const DeleteEntities: Mutations['DeleteEntities'] = async ({
 }) => {
 	const result = await invoke();
 	if (!result.ok) return result;
+	// TODO delete entities from `entitiesBySpace` (should they be sets instead of arrays?)
 	//TODO update ties once stores are in place
 	for (const entity_id of params.entity_ids) {
 		entityById.delete(entity_id);
@@ -53,7 +46,7 @@ export const ReadEntities: Mutations['ReadEntities'] = async ({invoke, ui}) => {
 	if (!result.ok) return result;
 	//TODO update ties once stores are in place: `result.value.ties`
 	for (const $entity of result.value.entities) {
-		addEntity(ui, $entity);
+		updateEntity(ui, $entity);
 	}
 	return result;
 };
