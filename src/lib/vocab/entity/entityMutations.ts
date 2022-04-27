@@ -54,13 +54,13 @@ export const ReadEntities: Mutations['ReadEntities'] = async ({
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {space_id} = params;
-	const existingSpaceEntities = entitiesBySpace.get(space_id);
+	const existingEntities = entitiesBySpace.get(space_id);
 	// TODO probably check to make sure they don't already exist
-	const newFiles = result ? result.value.entities.map((f) => writable(f)) : [];
-	if (existingSpaceEntities) {
-		existingSpaceEntities.set(newFiles);
+	const newEntities = result ? result.value.entities.map((f) => writable(f)) : [];
+	if (existingEntities) {
+		existingEntities.set(newEntities);
 	} else {
-		entitiesBySpace.set(space_id, writable(newFiles));
+		entitiesBySpace.set(space_id, writable(newEntities));
 	}
 	return result;
 };
