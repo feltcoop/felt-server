@@ -35,8 +35,8 @@ export const addCommunity = (
 		spacesToAdd.forEach((s, i) => spaceById.set($spacesToAdd![i].space_id, s));
 		spaces.mutate(($spaces) => $spaces.push(...spacesToAdd));
 	}
-	spaceIdSelectionByCommunityId.mutate(($v) => {
-		$v.set($community.community_id, $communitySpaces[0].space_id);
+	spaceIdSelectionByCommunityId.mutate(($s) => {
+		$s.set($community.community_id, $communitySpaces[0].space_id);
 	});
 	const community = writable($community);
 	// TODO this updates the map before the store array because it may be derived,

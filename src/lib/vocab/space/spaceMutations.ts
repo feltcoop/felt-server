@@ -59,8 +59,8 @@ export const DeleteSpace: Mutations['DeleteSpace'] = async ({
 			const homeSpace = get(spacesByCommunityId)
 				.get(community_id)!
 				.find((s) => isHomeSpace(get(s)))!;
-			spaceIdSelectionByCommunityId.mutate(($v) => {
-				$v.set(community_id, get(homeSpace).space_id);
+			spaceIdSelectionByCommunityId.mutate(($s) => {
+				$s.set(community_id, get(homeSpace).space_id);
 			});
 		}
 	}
