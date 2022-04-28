@@ -22,7 +22,7 @@
 			action={() =>
 				dispatch.OpenDialog({
 					Component: EntityEditor,
-					props: {entity},
+					props: {entity, done: () => dispatch.CloseDialog()},
 					dialogProps: {layout: 'page'},
 				})}
 		>
