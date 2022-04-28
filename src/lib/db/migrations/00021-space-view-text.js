@@ -28,7 +28,7 @@ export const up = async (sql) => {
 const fixView = (space) => {
 	const view = space.view;
 	if (typeof view === 'string') {
-		//fixes 1 space w/ broken data
+		//fixes 1 space w/ broken data in staging
 		space.view = JSON.parse(view);
 		return;
 	}
