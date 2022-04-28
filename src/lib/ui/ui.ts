@@ -290,11 +290,11 @@ export const toUi = (
 				),
 			);
 			spaceIdSelectionByCommunityId.swap(
+				//TODO lookup space by community_id+url (see this comment in multiple places)
 				new Map(
 					$session.guest
 						? null
-						: //TODO lookup space by community_id+url (see this comment in multiple places)
-						  $session.communities.map(($community) => [
+						: $session.communities.map(($community) => [
 								$community.community_id,
 								$session.spaces.find(
 									(s) => s.community_id === $community.community_id && isHomeSpace(s),
