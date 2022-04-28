@@ -37,7 +37,7 @@ export interface EventParamsByName {
 	ReadEntities: ReadEntitiesParams;
 	ReadEntitiesPaginated: ReadEntitiesPaginatedParams;
 	QueryEntities: QueryEntitiesParams;
-	EraseEntity: EraseEntityParams;
+	EraseEntities: EraseEntitiesParams;
 	DeleteEntities: DeleteEntitiesParams;
 	CreateTie: CreateTieParams;
 	ReadTies: ReadTiesParams;
@@ -74,7 +74,7 @@ export interface EventResponseByName {
 	UpdateEntity: UpdateEntityResponse;
 	ReadEntities: ReadEntitiesResponse;
 	ReadEntitiesPaginated: ReadEntitiesPaginatedResponse;
-	EraseEntity: EraseEntityResponse;
+	EraseEntities: EraseEntitiesResponse;
 	DeleteEntities: DeleteEntitiesResponse;
 	CreateTie: CreateTieResponse;
 	ReadTies: ReadTiesResponse;
@@ -265,13 +265,13 @@ export interface QueryEntitiesParams {
 	space_id: number;
 }
 
-export interface EraseEntityParams {
-	entity_id: number;
+export interface EraseEntitiesParams {
+	entity_ids: number[];
 }
-export interface EraseEntityResponse {
-	entity: Entity;
+export interface EraseEntitiesResponse {
+	entities: Entity[];
 }
-export type EraseEntityResponseResult = ApiResult<EraseEntityResponse>;
+export type EraseEntitiesResponseResult = ApiResult<EraseEntitiesResponse>;
 
 export interface DeleteEntitiesParams {
 	entity_ids: number[];
@@ -373,7 +373,7 @@ export interface Dispatch {
 		params: ReadEntitiesPaginatedParams,
 	) => Promise<ReadEntitiesPaginatedResponseResult>;
 	QueryEntities: (params: QueryEntitiesParams) => Readable<Readable<Entity>[]>;
-	EraseEntity: (params: EraseEntityParams) => Promise<EraseEntityResponseResult>;
+	EraseEntities: (params: EraseEntitiesParams) => Promise<EraseEntitiesResponseResult>;
 	DeleteEntities: (params: DeleteEntitiesParams) => Promise<DeleteEntitiesResponseResult>;
 	CreateTie: (params: CreateTieParams) => Promise<CreateTieResponseResult>;
 	ReadTies: (params: ReadTiesParams) => Promise<ReadTiesResponseResult>;
@@ -452,9 +452,9 @@ export interface Mutations {
 		ctx: DispatchContext<ReadEntitiesPaginatedParams, ReadEntitiesPaginatedResponseResult>,
 	) => Promise<ReadEntitiesPaginatedResponseResult>;
 	QueryEntities: (ctx: DispatchContext<QueryEntitiesParams, void>) => Readable<Readable<Entity>[]>;
-	EraseEntity: (
-		ctx: DispatchContext<EraseEntityParams, EraseEntityResponseResult>,
-	) => Promise<EraseEntityResponseResult>;
+	EraseEntities: (
+		ctx: DispatchContext<EraseEntitiesParams, EraseEntitiesResponseResult>,
+	) => Promise<EraseEntitiesResponseResult>;
 	DeleteEntities: (
 		ctx: DispatchContext<DeleteEntitiesParams, DeleteEntitiesResponseResult>,
 	) => Promise<DeleteEntitiesResponseResult>;

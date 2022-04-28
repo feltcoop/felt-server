@@ -75,14 +75,14 @@ export class SpaceRepo extends PostgresRepo {
 		partial: Partial<Pick<Space, 'name' | 'url' | 'icon' | 'view'>>,
 	): Promise<Result<{value: Space}>> {
 		log.trace(`updating data for space: ${space_id}`);
-		const result = await this.db.sql<Space[]>`
+		const data = await this.db.sql<Space[]>`
 			UPDATE spaces
 			SET updated=NOW(), ${this.db.sql(partial as any, ...Object.keys(partial))}
 			WHERE space_id= ${space_id}
 			RETURNING *
 		`;
-		if (!result.count) return NOT_OK;
-		return {ok: true, value: result[0]};
+		if (!data.count) return NOT_OK;
+		return {ok: true, value: data[0]};
 	}
 
 	async deleteById(space_id: number): Promise<Result<object>> {

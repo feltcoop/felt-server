@@ -125,7 +125,7 @@ export const randomEventParams = async (
 				data: randomEntityData(),
 			};
 		}
-		case 'EraseEntity': {
+		case 'EraseEntities': {
 			return {
 				entity_id: (await random.entity(persona, account, community, space)).entity.entity_id,
 			};

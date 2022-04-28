@@ -19,10 +19,12 @@ export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui}) => {
 	return result;
 };
 
-export const EraseEntity: Mutations['EraseEntity'] = async ({invoke, ui}) => {
+export const EraseEntities: Mutations['EraseEntities'] = async ({invoke, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	updateEntity(ui, result.value.entity);
+	for (const $entity of result.value.entities) {
+		updateEntity(ui, $entity);
+	}
 	return result;
 };
 
