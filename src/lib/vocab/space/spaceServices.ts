@@ -1,19 +1,8 @@
 import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import type {Service, ServiceRequest} from '$lib/server/service';
-import type {
-	CreateSpaceParams,
-	CreateSpaceResponseResult,
-	ReadSpaceParams,
-	ReadSpaceResponseResult,
-	ReadSpacesParams,
-	ReadSpacesResponseResult,
-	UpdateSpaceParams,
-	UpdateSpaceResponseResult,
-	DeleteSpaceParams,
-	DeleteSpaceResponseResult,
-} from '$lib/app/eventTypes';
+import type {ServiceRequest} from '$lib/server/service';
+import type {ServicesByName} from '$lib/app/eventTypes';
 import {
 	CreateSpace,
 	ReadSpace,
@@ -31,7 +20,7 @@ import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
 //Returns a single space object
-export const readSpaceService: Service<ReadSpaceParams, ReadSpaceResponseResult> = {
+export const readSpaceService: ServicesByName['ReadSpace'] = {
 	event: ReadSpace,
 	perform: async ({repos, params}) => {
 		log.trace('[ReadSpace] space', params.space_id);
@@ -46,7 +35,7 @@ export const readSpaceService: Service<ReadSpaceParams, ReadSpaceResponseResult>
 };
 
 //Returns all spaces in a given community
-export const readSpacesService: Service<ReadSpacesParams, ReadSpacesResponseResult> = {
+export const readSpacesService: ServicesByName['ReadSpaces'] = {
 	event: ReadSpaces,
 	perform: async ({repos, params}) => {
 		log.trace('[ReadSpaces] retrieving spaces for community', params.community_id);
@@ -61,7 +50,7 @@ export const readSpacesService: Service<ReadSpacesParams, ReadSpacesResponseResu
 };
 
 //Creates a new space for a given community
-export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseResult> = {
+export const createSpaceService: ServicesByName['CreateSpace'] = {
 	event: CreateSpace,
 	// TODO security: verify the `account_id` has permission to modify this space
 	// TODO verify `params.persona_id` is  one of the `account_id`'s personas
@@ -116,7 +105,7 @@ export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseR
 	},
 };
 
-export const updateSpaceService: Service<UpdateSpaceParams, UpdateSpaceResponseResult> = {
+export const updateSpaceService: ServicesByName['UpdateSpace'] = {
 	event: UpdateSpace,
 	perform: async ({repos, params}) => {
 		const {space_id, ...partial} = params;
@@ -130,7 +119,7 @@ export const updateSpaceService: Service<UpdateSpaceParams, UpdateSpaceResponseR
 };
 
 //deletes a single space
-export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseResult> = {
+export const deleteSpaceService: ServicesByName['DeleteSpace'] = {
 	event: DeleteSpace,
 	perform: async ({repos, params}) => {
 		log.trace('[DeleteSpace] deleting space with id:', params.space_id);

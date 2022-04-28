@@ -1,23 +1,14 @@
 import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import type {Service} from '$lib/server/service';
-import type {
-	CreateMembershipParams,
-	CreateMembershipResponseResult,
-	DeleteMembershipParams,
-	DeleteMembershipResponseResult,
-} from '$lib/app/eventTypes';
+import type {ServicesByName} from '$lib/app/eventTypes';
 import {CreateMembership, DeleteMembership} from '$lib/vocab/membership/membershipEvents';
 import type {Database} from '$lib/db/Database';
 
 const log = new Logger(gray('[') + blue('membershipServices') + gray(']'));
 
 //Creates a new member relation for a community
-export const createMembershipService: Service<
-	CreateMembershipParams,
-	CreateMembershipResponseResult
-> = {
+export const createMembershipService: ServicesByName['CreateMembership'] = {
 	event: CreateMembership,
 	perform: async ({repos, params}) => {
 		const {community_id, persona_id} = params;
@@ -52,10 +43,7 @@ export const createMembershipService: Service<
 
 //deletes a membership of a given persona in a given community
 //TODO after front end data normalization make this use membership_id
-export const deleteMembershipService: Service<
-	DeleteMembershipParams,
-	DeleteMembershipResponseResult
-> = {
+export const deleteMembershipService: ServicesByName['DeleteMembership'] = {
 	event: DeleteMembership,
 	perform: async ({repos, params}) => {
 		const {persona_id, community_id} = params;

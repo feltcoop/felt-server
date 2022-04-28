@@ -1,15 +1,7 @@
 import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import type {Service} from '$lib/server/service';
-import type {
-	CreateTieParams,
-	CreateTieResponseResult,
-	ReadTiesParams,
-	ReadTiesResponseResult,
-	DeleteTieParams,
-	DeleteTieResponseResult,
-} from '$lib/app/eventTypes';
+import type {ServicesByName} from '$lib/app/eventTypes';
 import {CreateTie, ReadTies, DeleteTie} from '$lib/vocab/tie/tieEvents';
 
 const log = new Logger(gray('[') + blue('CreateTie') + gray(']'));
@@ -17,7 +9,7 @@ const log = new Logger(gray('[') + blue('CreateTie') + gray(']'));
 //Creates a new community for an instance
 // TODO think about extracting this to a `.services.` file
 // that imports a generated type and declares only `perform`
-export const createTieService: Service<CreateTieParams, CreateTieResponseResult> = {
+export const createTieService: ServicesByName['CreateTie'] = {
 	event: CreateTie,
 	perform: async ({repos, params}) => {
 		log.trace('[CreateTie] params', params);
@@ -32,7 +24,7 @@ export const createTieService: Service<CreateTieParams, CreateTieResponseResult>
 	},
 };
 
-export const readTiesService: Service<ReadTiesParams, ReadTiesResponseResult> = {
+export const readTiesService: ServicesByName['ReadTies'] = {
 	event: ReadTies,
 	perform: async ({repos, params}) => {
 		const findTiesResult = await repos.tie.filterBySpace(params.space_id);
@@ -45,7 +37,7 @@ export const readTiesService: Service<ReadTiesParams, ReadTiesResponseResult> = 
 };
 
 //deletes a single tie
-export const deleteTieService: Service<DeleteTieParams, DeleteTieResponseResult> = {
+export const deleteTieService: ServicesByName['DeleteTie'] = {
 	event: DeleteTie,
 	perform: async ({repos, params}) => {
 		log.trace('[DeleteTie] deleting tie with ids:', params.source_id, params.dest_id);

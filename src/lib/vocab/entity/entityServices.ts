@@ -1,18 +1,4 @@
-import type {Service} from '$lib/server/service';
-import type {
-	CreateEntityParams,
-	CreateEntityResponseResult,
-	ReadEntitiesParams,
-	ReadEntitiesResponseResult,
-	ReadEntitiesPaginatedParams,
-	ReadEntitiesPaginatedResponseResult,
-	UpdateEntityParams,
-	UpdateEntityResponseResult,
-	EraseEntityParams,
-	EraseEntityResponseResult,
-	DeleteEntitiesParams,
-	DeleteEntitiesResponseResult,
-} from '$lib/app/eventTypes';
+import type {ServicesByName} from '$lib/app/eventTypes';
 import {
 	ReadEntities,
 	ReadEntitiesPaginated,
@@ -24,7 +10,7 @@ import {
 import {toTieEntityIds} from '$lib/vocab/tie/tieHelpers';
 
 // TODO rename to `getEntities`? `loadEntities`?
-export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesResponseResult> = {
+export const readEntitiesService: ServicesByName['ReadEntities'] = {
 	event: ReadEntities,
 	perform: async ({repos, params}) => {
 		// could update the interface to just expect the client to provide the dir id
@@ -52,10 +38,7 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 	},
 };
 
-export const ReadEntitiesPaginatedService: Service<
-	ReadEntitiesPaginatedParams,
-	ReadEntitiesPaginatedResponseResult
-> = {
+export const ReadEntitiesPaginatedService: ServicesByName['ReadEntitiesPaginated'] = {
 	event: ReadEntitiesPaginated,
 	perform: async ({repos, params}) => {
 		const findTiesResult = await repos.tie.filterBySourceIdPaginated(
@@ -81,7 +64,7 @@ export const ReadEntitiesPaginatedService: Service<
 	},
 };
 
-export const createEntityService: Service<CreateEntityParams, CreateEntityResponseResult> = {
+export const createEntityService: ServicesByName['CreateEntity'] = {
 	event: CreateEntity,
 	perform: async ({repos, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
@@ -108,7 +91,7 @@ export const createEntityService: Service<CreateEntityParams, CreateEntityRespon
 	},
 };
 
-export const updateEntityService: Service<UpdateEntityParams, UpdateEntityResponseResult> = {
+export const updateEntityService: ServicesByName['UpdateEntity'] = {
 	event: UpdateEntity,
 	perform: async ({repos, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
@@ -121,7 +104,7 @@ export const updateEntityService: Service<UpdateEntityParams, UpdateEntityRespon
 };
 
 //soft deletes a single entity, leaving behind a Tombstone entity
-export const eraseEntityService: Service<EraseEntityParams, EraseEntityResponseResult> = {
+export const eraseEntityService: ServicesByName['EraseEntity'] = {
 	event: EraseEntity,
 	perform: async ({repos, params}) => {
 		const result = await repos.entity.eraseById(params.entity_id);
@@ -133,7 +116,7 @@ export const eraseEntityService: Service<EraseEntityParams, EraseEntityResponseR
 };
 
 //hard deletes a single entity, removing the record of it from the DB
-export const deleteEntitiesService: Service<DeleteEntitiesParams, DeleteEntitiesResponseResult> = {
+export const deleteEntitiesService: ServicesByName['DeleteEntities'] = {
 	event: DeleteEntities,
 	perform: async ({repos, params}) => {
 		const result = await repos.entity.deleteByIds(params.entity_ids);
