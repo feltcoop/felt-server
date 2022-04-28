@@ -14,6 +14,8 @@ import {parseView, type ViewData} from '$lib/vocab/view/view';
 import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {createCommunityService} from '$lib/vocab/community/communityServices';
 import {toServiceRequest} from '$lib/util/testHelpers';
+import {createMembershipService} from '$lib/vocab/membership/membershipServices';
+import {createEntityService} from '$lib/vocab/entity/entityServices';
 
 /* eslint-disable no-await-in-loop */
 
@@ -60,13 +62,15 @@ export const seed = async (db: Database): Promise<void> => {
 
 			log.trace('created persona', persona);
 			personas.push(persona);
-			await createDefaultEntities(db, spaces, [persona]);
+			await createDefaultEntities(toServiceRequest(account.account_id, db), spaces, [persona]);
 		}
 	}
 
 	const mainAccountCreator = accounts[0];
 	const mainPersonaCreator = personas[0];
 	const otherPersonas = personas.slice(1);
+
+	const serviceRequest = toServiceRequest(mainAccountCreator.account_id, db);
 
 	const communitiesParams: CreateCommunityParams[] = [
 		{name: 'felt', persona_id: mainPersonaCreator.persona_id},
@@ -79,18 +83,27 @@ export const seed = async (db: Database): Promise<void> => {
 		const {community, spaces} = unwrap(
 			await createCommunityService.perform({
 				params: {name: communityParams.name, persona_id: communityParams.persona_id},
-				...toServiceRequest(mainAccountCreator.account_id, db),
+				...serviceRequest,
 			}),
 		);
 		communities.push(community);
 		for (const persona of otherPersonas) {
-			await db.repos.membership.create(persona.persona_id, community.community_id);
+			unwrap(
+				await createMembershipService.perform({
+					params: {persona_id: persona.persona_id, community_id: community.community_id},
+					...serviceRequest,
+				}),
+			);
 		}
-		await createDefaultEntities(db, spaces, personas);
+		await createDefaultEntities(serviceRequest, spaces, personas);
 	}
 };
 
-const createDefaultEntities = async (db: Database, spaces: Space[], personas: Persona[]) => {
+const createDefaultEntities = async (
+	serviceRequest: ReturnType<typeof toServiceRequest>,
+	spaces: Space[],
+	personas: Persona[],
+) => {
 	let personaIndex = -1;
 	const nextPersona = (): Persona => {
 		personaIndex++;
@@ -101,7 +114,7 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 	for (const space of spaces) {
 		const componentName = findFirstComponentName(parseView(space.view));
 		if (componentName === 'Todo') {
-			await generateTodo(db, nextPersona().persona_id, space.space_id);
+			await generateTodo(serviceRequest, nextPersona().persona_id, space);
 		}
 		if (!componentName || !(componentName in entitiesContents)) {
 			continue;
@@ -109,11 +122,15 @@ const createDefaultEntities = async (db: Database, spaces: Space[], personas: Pe
 		const entityContents = entitiesContents[componentName];
 		for (const entityContent of entityContents) {
 			unwrap(
-				await db.repos.entity.create(
-					nextPersona().persona_id,
-					{type: 'Note', content: entityContent},
-					space.space_id,
-				),
+				await createEntityService.perform({
+					params: {
+						actor_id: nextPersona().persona_id,
+						data: {type: 'Note', content: entityContent},
+						space_id: space.space_id,
+						source_id: space.directory_id,
+					},
+					...serviceRequest,
+				}),
 			);
 		}
 	}
@@ -133,30 +150,35 @@ const entitiesContents: Record<string, string[]> = {
 	],
 };
 
-const generateTodo = async (db: Database, persona_id: number, space_id: number) => {
+const generateTodo = async (
+	serviceRequest: ReturnType<typeof toServiceRequest>,
+	persona_id: number,
+	space: Space,
+) => {
 	const list = unwrap(
-		await db.repos.entity.create(
-			persona_id,
-			{
-				type: 'Collection',
-				name: 'Grocery List',
+		await createEntityService.perform({
+			params: {
+				actor_id: persona_id,
+				data: {type: 'Collection', name: 'Grocery List'},
+				space_id: space.space_id,
+				source_id: space.directory_id,
 			},
-			space_id,
-		),
+			...serviceRequest,
+		}),
 	);
 	const itemsContents = ['eggs', 'milk', 'bread'];
 	for (const content of itemsContents) {
-		const item = unwrap(
-			await db.repos.entity.create(
-				persona_id,
-				{
-					type: 'Note',
-					content,
+		unwrap(
+			await createEntityService.perform({
+				params: {
+					actor_id: persona_id,
+					data: {type: 'Note', content},
+					space_id: space.space_id,
+					source_id: list.entity.entity_id,
 				},
-				space_id,
-			),
+				...serviceRequest,
+			}),
 		);
-		unwrap(await db.repos.tie.create(list.entity_id, item.entity_id, 'HasItem'));
 	}
 };
 

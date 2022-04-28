@@ -79,14 +79,12 @@ export const toUi = (
 	initialMobile: boolean,
 	components: {[key: string]: typeof SvelteComponent},
 ) => {
-	// Could then put these calculations in one place.
 	const account = writable<AccountModel | null>(null);
-	// Importantly, this only changes when items are added or removed from the collection,
+	// Importantly, these collections only change when items are added or removed,
 	// not when the items themselves change; each item is a store that can be subscribed to.
-	const personas = mutable<Array<Writable<Persona>>>([]);
-	// not derived from session because the session has only the initial snapshot
 	// TODO these `Persona`s need additional data compared to every other `Persona`
 	const sessionPersonas = writable<Array<Writable<Persona>>>([]);
+	const personas = mutable<Array<Writable<Persona>>>([]);
 	const communities = mutable<Array<Writable<Community>>>([]);
 	const spaces = mutable<Array<Writable<Space>>>([]);
 	const memberships = mutable<Array<Writable<Membership>>>([]);
@@ -259,7 +257,7 @@ export const toUi = (
 			$personas.forEach((p, i) => personaById.set($personaArray[i].persona_id, p));
 			personas.swap($personas);
 
-			const $sessionPersonas = $session.guest ? [] : $session.personas;
+			const $sessionPersonas = $session.guest ? [] : $session.sessionPersonas;
 			sessionPersonas.set($sessionPersonas.map((p) => personaById.get(p.persona_id)!));
 
 			const $communityArray = $session.guest ? [] : $session.communities;
@@ -320,9 +318,9 @@ export const toUi = (
 const toInitialPersonas = (session: ClientSession): Persona[] =>
 	session.guest
 		? []
-		: session.personas.concat(
-				session.allPersonas.filter(
-					(p1) => !session.personas.find((p2) => p2.persona_id === p1.persona_id),
+		: session.sessionPersonas.concat(
+				session.personas.filter(
+					(p1) => !session.sessionPersonas.find((p2) => p2.persona_id === p1.persona_id),
 				),
 		  );
 
