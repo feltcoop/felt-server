@@ -38,8 +38,8 @@ export const SelectSpace: Mutations['SelectSpace'] = ({
 	ui: {spaceIdSelectionByCommunityId},
 }) => {
 	const {community_id, space_id} = params;
-	spaceIdSelectionByCommunityId.mutate(($v) => {
-		$v.set(community_id, space_id);
+	spaceIdSelectionByCommunityId.mutate(($s) => {
+		$s.set(community_id, space_id);
 	});
 };
 
