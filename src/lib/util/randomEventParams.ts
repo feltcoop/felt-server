@@ -1,5 +1,6 @@
 import {randomBool} from '@feltcoop/felt/util/random.js';
 import {writable} from 'svelte/store';
+import {UnreachableError} from '@feltcoop/felt/util/error.js';
 
 import type {EventParamsByName} from '$lib/app/eventTypes';
 import {
@@ -19,11 +20,11 @@ import {randomHue} from '$lib/ui/color';
 // TODO consider the pattern below where every `create` event creates all dependencies from scratch.
 // We may want to instead test things for both new and existing objects.
 // TODO keep factoring this until it's fully automated, generating from the schema
-export const randomEventParams = async (
-	eventName: keyof EventParamsByName,
+export const randomEventParams = async <TEventName extends keyof EventParamsByName>(
+	eventName: TEventName,
 	random: RandomVocabContext,
 	randomVocab: RandomVocab = {},
-): Promise<EventParamsByName[typeof eventName]> => {
+): Promise<EventParamsByName[TEventName]> => {
 	const {account} = randomVocab;
 	let {persona, community, space} = randomVocab;
 	switch (eventName) {
@@ -198,11 +199,8 @@ export const randomEventParams = async (
 				view: '<EntityExplorer />',
 			};
 		}
-		// TODO could do an exhaustive typecheck (so it'll be caught by TS, not at runtime)
-		// by generating something like a type union of `EventInfo`s and
-		// replacing the generic service type in the above function signature
 		default: {
-			throw Error(`Unhandled service for randomEventParams: ${eventName}`);
+			throw new UnreachableError(eventName);
 		}
 	}
 };
