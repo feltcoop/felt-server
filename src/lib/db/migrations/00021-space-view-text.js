@@ -12,7 +12,7 @@ export const up = async (sql) => {
   `;
 
 	for (const space of spaces) {
-		//This fixes the broken migration in #17
+		//This fixes the broken migration in #00017
 		fixView(space);
 		const viewText = compile(space.view);
 		// eslint-disable-next-line no-await-in-loop
