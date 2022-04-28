@@ -284,23 +284,23 @@ export const toUi = (
 			// was causing various confusing issues, so they find stuff directly on the session objects
 			// instead of using derived stores like `sessionPersonas` and `spacesByCommunityId`.
 			communityIdSelectionByPersonaId.swap(
-				$session.guest
-					? new Map()
-					: // TODO first try to load this from localStorage
-					  new Map($sessionPersonas.map(($p) => [$p.persona_id, $p.community_id])),
+				// TODO first try to load this from localStorage
+				new Map(
+					$session.guest ? null : $sessionPersonas.map(($p) => [$p.persona_id, $p.community_id]),
+				),
 			);
 			spaceIdSelectionByCommunityId.swap(
-				$session.guest
-					? new Map()
-					: new Map(
-							//TODO lookup space by community_id+url (see this comment in multiple places)
-							$session.communities.map(($community) => [
+				new Map(
+					$session.guest
+						? null
+						: //TODO lookup space by community_id+url (see this comment in multiple places)
+						  $session.communities.map(($community) => [
 								$community.community_id,
 								$session.spaces.find(
 									(s) => s.community_id === $community.community_id && isHomeSpace(s),
 								)!.space_id,
-							]),
-					  ),
+						  ]),
+				),
 			);
 		},
 	} as const;
