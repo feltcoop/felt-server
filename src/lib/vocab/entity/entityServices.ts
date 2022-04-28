@@ -40,7 +40,7 @@ export const readEntitiesService: Service<ReadEntitiesParams, ReadEntitiesRespon
 		//TODO stop filtering directory until we fix entity indexing by space_id
 		const entityIds = toTieEntityIds(findTiesResult.value);
 		entityIds.delete(findSpaceResult.value.directory_id);
-		const findEntitiesResult = await repos.entity.findByIds(Array.from(entityIds));
+		const findEntitiesResult = await repos.entity.filterByIds(Array.from(entityIds));
 		if (!findEntitiesResult.ok) {
 			return {ok: false, status: 500, message: 'error searching for entities'};
 		}
@@ -69,7 +69,7 @@ export const ReadEntitiesPaginatedService: Service<
 		//TODO stop filtering directory until we fix entity indexing by space_id
 		const entityIds = toTieEntityIds(findTiesResult.value);
 		entityIds.delete(params.source_id);
-		const findEntitiesResult = await repos.entity.findByIds(Array.from(entityIds));
+		const findEntitiesResult = await repos.entity.filterByIds(Array.from(entityIds));
 		if (!findEntitiesResult.ok) {
 			return {ok: false, status: 500, message: 'error searching for entities'};
 		}
@@ -136,7 +136,7 @@ export const eraseEntityService: Service<EraseEntityParams, EraseEntityResponseR
 export const deleteEntitiesService: Service<DeleteEntitiesParams, DeleteEntitiesResponseResult> = {
 	event: DeleteEntities,
 	perform: async ({repos, params}) => {
-		const result = await repos.entity.deleteByIdSet(params.entity_ids);
+		const result = await repos.entity.deleteByIds(params.entity_ids);
 		if (!result.ok) {
 			return {ok: false, status: 500, message: 'failed to delete entity'};
 		}

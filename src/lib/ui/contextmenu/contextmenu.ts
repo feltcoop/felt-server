@@ -1,6 +1,5 @@
 import {writable, type Readable, type Writable} from 'svelte/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
-import {last} from '@feltcoop/felt/util/array.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
 
 // Items with `undefined` props are ignored.
@@ -86,7 +85,7 @@ export const createContextmenuStore = (
 		},
 		close: () => update(($state) => ({...$state, open: false})),
 		activateSelected: () => {
-			const selected = last(selections);
+			const selected = selections.at(-1);
 			if (!selected) return;
 			if (selected.isMenu) {
 				store.expandSelected();
@@ -100,7 +99,7 @@ export const createContextmenuStore = (
 		// Could be improved but it's fine because we're using mutation and the N is very small,
 		// and it allows us to have a single code path for the various selection methods.
 		selectItem: (item) => {
-			if (last(selections) === item) return;
+			if (selections.at(-1) === item) return;
 			for (const s of selections) s.selected = false;
 			selections.length = 0;
 			let i: ItemState | RootMenuState = item;
@@ -117,7 +116,7 @@ export const createContextmenuStore = (
 			update(($) => ({...$}));
 		},
 		expandSelected: () => {
-			const parent = last(selections);
+			const parent = selections.at(-1);
 			if (!parent?.isMenu) return;
 			const selected = parent.items[0];
 			selected.selected = true;
@@ -126,18 +125,18 @@ export const createContextmenuStore = (
 		},
 		selectNext: () => {
 			if (!selections.length) return store.selectFirst();
-			const item = last(selections)!;
+			const item = selections.at(-1)!;
 			const index = item.menu.items.indexOf(item);
 			store.selectItem(item.menu.items[index === item.menu.items.length - 1 ? 0 : index + 1]);
 		},
 		selectPrevious: () => {
 			if (!selections.length) return store.selectLast();
-			const item = last(selections)!;
+			const item = selections.at(-1)!;
 			const index = item.menu.items.indexOf(item);
 			store.selectItem(item.menu.items[index === 0 ? item.menu.items.length - 1 : index - 1]);
 		},
-		selectFirst: () => store.selectItem((last(selections)?.menu || rootMenu).items[0]),
-		selectLast: () => store.selectItem(last((last(selections)?.menu || rootMenu).items)!),
+		selectFirst: () => store.selectItem((selections.at(-1)?.menu || rootMenu).items[0]),
+		selectLast: () => store.selectItem((selections.at(-1)?.menu || rootMenu).items.at(-1)!),
 		addEntry: (action) => {
 			const menu = getContext<SubmenuState | undefined>(CONTEXTMENU_STATE_KEY) || rootMenu;
 			const entry: EntryState = {isMenu: false, menu, selected: false, action};

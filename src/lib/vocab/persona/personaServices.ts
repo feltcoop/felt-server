@@ -62,7 +62,11 @@ export const createAccountPersonaService: Service<
 		}
 		const persona = createPersonaResult.value;
 
-		const createDefaultSpaceResult = await createDefaultSpaces(serviceRequest, community);
+		const createDefaultSpaceResult = await createDefaultSpaces(
+			serviceRequest,
+			persona.persona_id,
+			community,
+		);
 		if (!createDefaultSpaceResult.ok) {
 			log.trace('[CreateCommunity] error creating community default spaces');
 			return {

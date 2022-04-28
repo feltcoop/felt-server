@@ -59,7 +59,7 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	// create a space
 	const {space} = await random.space(persona, account, community);
 	const spaceCount = 1;
-	const defaultSpaces = toDefaultSpaces(community);
+	const defaultSpaces = toDefaultSpaces(persona.persona_id, community);
 	const defaultSpaceCount = defaultSpaces.length;
 
 	// create some entities

@@ -8,13 +8,14 @@ export const CreateSpace: ServiceEventInfo = {
 		$id: '/schemas/CreateSpaceParams.json',
 		type: 'object',
 		properties: {
+			persona_id: {type: 'number'},
 			community_id: {type: 'number'},
 			name: {type: 'string'},
 			url: {type: 'string'},
 			icon: {type: 'string'},
 			view: {type: 'string'},
 		},
-		required: ['community_id', 'name', 'url', 'icon', 'view'],
+		required: ['persona_id', 'community_id', 'name', 'url', 'icon', 'view'],
 		additionalProperties: false,
 	},
 	response: {

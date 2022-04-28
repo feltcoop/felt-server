@@ -123,7 +123,11 @@ export const createCommunityService: Service<CreateCommunityParams, CreateCommun
 			}
 			const communityPersona = communityPersonaResult.value;
 
-			const createDefaultSpaceResult = await createDefaultSpaces(serviceRequest, community);
+			const createDefaultSpaceResult = await createDefaultSpaces(
+				serviceRequest,
+				params.persona_id,
+				community,
+			);
 			if (!createDefaultSpaceResult.ok) {
 				log.trace('[CreateCommunity] error creating community default spaces');
 				return {

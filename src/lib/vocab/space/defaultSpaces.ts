@@ -2,43 +2,16 @@ import {viewTemplates} from '$lib/vocab/view/view';
 import type {CreateSpaceParams} from '$lib/app/eventTypes';
 import type {Community} from '$lib/vocab/community/community';
 
-export const toDefaultSpaces = ({community_id, name}: Community): CreateSpaceParams[] => [
-	{
-		community_id,
-		name,
-		url: '/',
-		...toViewTemplateDefaults('Home'),
-	},
-	{
-		community_id,
-		name: 'room',
-		url: '/room',
-		...toViewTemplateDefaults('Room'),
-	},
-	{
-		community_id,
-		name: 'board',
-		url: '/board',
-		...toViewTemplateDefaults('Board'),
-	},
-	{
-		community_id,
-		name: 'forum',
-		url: '/forum',
-		...toViewTemplateDefaults('Forum'),
-	},
-	{
-		community_id,
-		name: 'notes',
-		url: '/notes',
-		...toViewTemplateDefaults('Notes'),
-	},
-	{
-		community_id,
-		name: 'todo',
-		url: '/todo',
-		...toViewTemplateDefaults('Todo'),
-	},
+export const toDefaultSpaces = (
+	persona_id: number,
+	{community_id, name}: Community,
+): CreateSpaceParams[] => [
+	{persona_id, community_id, name, url: '/', ...toViewTemplateDefaults('Home')},
+	{persona_id, community_id, name: 'room', url: '/room', ...toViewTemplateDefaults('Room')},
+	{persona_id, community_id, name: 'board', url: '/board', ...toViewTemplateDefaults('Board')},
+	{persona_id, community_id, name: 'forum', url: '/forum', ...toViewTemplateDefaults('Forum')},
+	{persona_id, community_id, name: 'notes', url: '/notes', ...toViewTemplateDefaults('Notes')},
+	{persona_id, community_id, name: 'todo', url: '/todo', ...toViewTemplateDefaults('Todo')},
 ];
 
 const toViewTemplateDefaults = (name: string): {view: string; icon: string} => {

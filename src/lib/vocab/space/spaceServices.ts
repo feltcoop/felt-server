@@ -64,7 +64,7 @@ export const readSpacesService: Service<ReadSpacesParams, ReadSpacesResponseResu
 export const createSpaceService: Service<CreateSpaceParams, CreateSpaceResponseResult> = {
 	event: CreateSpace,
 	// TODO security: verify the `account_id` has permission to modify this space
-	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
+	// TODO verify `params.persona_id` is  one of the `account_id`'s personas
 	perform: async ({repos, params}) => {
 		log.trace('[CreateSpace] validating space url uniqueness');
 		const findByCommunityUrlResult = await repos.space.findByCommunityUrl(
@@ -157,10 +157,11 @@ export const deleteSpaceService: Service<DeleteSpaceParams, DeleteSpaceResponseR
 
 export const createDefaultSpaces = async (
 	serviceRequest: ServiceRequest<any>,
+	persona_id: number,
 	community: Community,
 ): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 	const spaces: Space[] = [];
-	for (const params of toDefaultSpaces(community)) {
+	for (const params of toDefaultSpaces(persona_id, community)) {
 		// eslint-disable-next-line no-await-in-loop
 		const result = await createSpaceService.perform({
 			...serviceRequest,
