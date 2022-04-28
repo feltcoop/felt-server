@@ -4,6 +4,7 @@ import type {Mutations} from '$lib/app/eventTypes';
 import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 
 // TODO if `Create/Update/Erase` remain identical, probably make them use a single helper
+// `updateEntity` or more likely `updateEntities`
 
 export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, ui}) => {
 	const result = await invoke();
