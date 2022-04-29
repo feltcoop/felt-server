@@ -20,7 +20,7 @@ test__eventInfos.after(teardownApp);
 for (const eventInfo of eventInfos.values()) {
 	test__eventInfos(`dispatch event ${eventInfo.name} in a client app`, async ({app, random}) => {
 		const account = await random.account();
-		const params = await randomEventParams(eventInfo, random, {account});
+		const params = await randomEventParams[eventInfo.name](random, {account});
 
 		if (eventInfo.params) {
 			if (!validateSchema(eventInfo.params)(params)) {

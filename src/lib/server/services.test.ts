@@ -20,7 +20,7 @@ const session = new SessionApiMock(); // reuse the session so it tests login seq
 for (const service of services.values()) {
 	test__services(`perform service ${service.event.name}`, async ({db, random}) => {
 		const account = await random.account();
-		const params = await randomEventParams(service.event, random, {account});
+		const params = await randomEventParams[service.event.name](random, {account});
 		if (!validateSchema(service.event.params)(params)) {
 			throw new Error(
 				`Failed to validate random params for service ${
