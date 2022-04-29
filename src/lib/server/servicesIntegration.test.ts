@@ -5,20 +5,20 @@ import {unwrap} from '@feltcoop/felt';
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import {
-	readCommunitiesService,
-	readCommunityService,
-	deleteCommunityService,
+	ReadCommunitiesService,
+	ReadCommunityService,
+	DeleteCommunityService,
 } from '$lib/vocab/community/communityServices';
 import {
-	deleteSpaceService,
-	readSpaceService,
-	readSpacesService,
+	DeleteSpaceService,
+	ReadSpaceService,
+	ReadSpacesService,
 } from '$lib/vocab/space/spaceServices';
-import {readEntitiesService} from '$lib/vocab/entity/entityServices';
+import {ReadEntitiesService} from '$lib/vocab/entity/entityServices';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {
-	createMembershipService,
-	deleteMembershipService,
+	CreateMembershipService,
+	DeleteMembershipService,
 } from '$lib/vocab/membership/membershipServices';
 import {toServiceRequest} from '$lib/util/testHelpers';
 
@@ -50,7 +50,7 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 
 	// join the community with the second persona
 	unwrap(
-		await createMembershipService.perform({
+		await CreateMembershipService.perform({
 			params: {community_id: community.community_id, persona_id: persona2.persona_id},
 			...serviceRequest,
 		}),
@@ -74,17 +74,17 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	//
 
 	const {entities: filteredEntities} = unwrap(
-		await readEntitiesService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
+		await ReadEntitiesService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
 	);
 	assert.equal(filteredEntities.slice(), [entity2, entity1]); // `slice` because `RowList` is not deep equal to arrays
 
 	const {space: foundSpace} = unwrap(
-		await readSpaceService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
+		await ReadSpaceService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
 	);
 	assert.equal(foundSpace, space);
 
 	const {spaces: filteredSpaces} = unwrap(
-		await readSpacesService.perform({
+		await ReadSpacesService.perform({
 			params: {community_id: community.community_id},
 			...serviceRequest,
 		}),
@@ -92,7 +92,7 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	assert.is(filteredSpaces.length, spaceCount + defaultSpaceCount);
 
 	const {community: foundCommunity} = unwrap(
-		await readCommunityService.perform({
+		await ReadCommunityService.perform({
 			params: {community_id: community.community_id},
 			...serviceRequest,
 		}),
@@ -100,7 +100,7 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	assert.is(foundCommunity.name, community.name);
 
 	const {communities: filteredCommunities} = unwrap(
-		await readCommunitiesService.perform({
+		await ReadCommunitiesService.perform({
 			params: {account_id: account.account_id},
 			...serviceRequest,
 		}),
@@ -134,7 +134,7 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 			.filter((s) => !isHomeSpace(s))
 			.map(async (space) =>
 				unwrap(
-					await deleteSpaceService.perform({
+					await DeleteSpaceService.perform({
 						params: {space_id: space.space_id},
 						...serviceRequest,
 					}),
@@ -149,7 +149,7 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 		3,
 	);
 	unwrap(
-		await deleteMembershipService.perform({
+		await DeleteMembershipService.perform({
 			params: {persona_id: persona2.persona_id, community_id: community.community_id},
 			...serviceRequest,
 		}),
@@ -169,12 +169,12 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 
 	// delete community
 	unwrap(
-		await deleteCommunityService.perform({
+		await DeleteCommunityService.perform({
 			params: {community_id: community.community_id},
 			...serviceRequest,
 		}),
 	);
-	const readCommunityResult = await readCommunityService.perform({
+	const readCommunityResult = await ReadCommunityService.perform({
 		params: {community_id: community.community_id},
 		...serviceRequest,
 	});

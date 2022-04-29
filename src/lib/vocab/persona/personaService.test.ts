@@ -3,7 +3,7 @@ import {unwrap, unwrapError} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
-import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
+import {CreateAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {randomEventParams} from '$lib/util/randomEventParams';
 import {CreateAccountPersona} from '$lib/vocab/persona/personaEvents';
 import {toServiceRequest} from '$lib/util/testHelpers';
@@ -21,12 +21,12 @@ test__personaService('create a persona & test collisions', async ({db, random}) 
 	const serviceRequest = toServiceRequest(account.account_id, db);
 
 	params.name = params.name.toLowerCase();
-	unwrap(await createAccountPersonaService.perform({params, ...serviceRequest}));
+	unwrap(await CreateAccountPersonaService.perform({params, ...serviceRequest}));
 
-	unwrapError(await createAccountPersonaService.perform({params, ...serviceRequest}));
+	unwrapError(await CreateAccountPersonaService.perform({params, ...serviceRequest}));
 
 	params.name = params.name.toUpperCase();
-	unwrapError(await createAccountPersonaService.perform({params, ...serviceRequest}));
+	unwrapError(await CreateAccountPersonaService.perform({params, ...serviceRequest}));
 });
 
 test__personaService.run();

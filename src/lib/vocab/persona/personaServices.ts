@@ -9,7 +9,7 @@ import {createDefaultSpaces} from '$lib/vocab/space/spaceServices';
 const log = new Logger(gray('[') + blue('personaServices') + gray(']'));
 
 //Creates a new persona
-export const createAccountPersonaService: ServicesByName['CreateAccountPersona'] = {
+export const CreateAccountPersonaService: ServicesByName['CreateAccountPersona'] = {
 	event: CreateAccountPersona,
 	// TODO verify the `account_id` has permission to modify this persona
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
@@ -83,7 +83,7 @@ export const createAccountPersonaService: ServicesByName['CreateAccountPersona']
 };
 
 //Returns a single persona object
-export const readPersonaService: ServicesByName['ReadPersona'] = {
+export const ReadPersonaService: ServicesByName['ReadPersona'] = {
 	event: ReadPersona,
 	perform: async ({repos, params}) => {
 		log.trace('[ReadPersona] persona', params.persona_id);

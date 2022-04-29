@@ -1,62 +1,62 @@
 import type {Service} from '$lib/server/service';
-import {pingService} from '$lib/server/pingService';
-import {loginAccountService, logoutAccountService} from '$lib/vocab/account/accountServices';
-import {createAccountPersonaService, readPersonaService} from '$lib/vocab/persona/personaServices';
+import {PingService} from '$lib/server/pingService';
+import {LoginAccountService, LogoutAccountService} from '$lib/vocab/account/accountServices';
+import {CreateAccountPersonaService, ReadPersonaService} from '$lib/vocab/persona/personaServices';
 import {
-	readCommunityService,
-	readCommunitiesService,
-	createCommunityService,
-	updateCommunitySettingsService,
-	deleteCommunityService,
+	ReadCommunityService,
+	ReadCommunitiesService,
+	CreateCommunityService,
+	UpdateCommunitySettingsService,
+	DeleteCommunityService,
 } from '$lib/vocab/community/communityServices';
 import {
-	createMembershipService,
-	deleteMembershipService,
+	CreateMembershipService,
+	DeleteMembershipService,
 } from '$lib/vocab/membership/membershipServices';
 import {
-	readEntitiesService,
+	ReadEntitiesService,
 	ReadEntitiesPaginatedService,
-	createEntityService,
-	updateEntityService,
-	eraseEntityService,
-	deleteEntitiesService,
+	CreateEntityService,
+	UpdateEntityService,
+	EraseEntityService,
+	DeleteEntitiesService,
 } from '$lib/vocab/entity/entityServices';
 import {
-	readSpaceService,
-	readSpacesService,
-	createSpaceService,
-	updateSpaceService,
-	deleteSpaceService,
+	ReadSpaceService,
+	ReadSpacesService,
+	CreateSpaceService,
+	UpdateSpaceService,
+	DeleteSpaceService,
 } from '$lib/vocab/space/spaceServices';
-import {createTieService, readTiesService, deleteTieService} from '$lib/vocab/tie/tieServices';
+import {CreateTieService, ReadTiesService, DeleteTieService} from '$lib/vocab/tie/tieServices';
 
 export const services: Map<string, Service<any, any>> = new Map(
 	[
-		pingService,
-		loginAccountService,
-		logoutAccountService,
-		createAccountPersonaService,
-		readPersonaService,
-		createCommunityService,
-		createMembershipService,
-		deleteMembershipService,
-		createSpaceService,
-		createEntityService,
-		updateEntityService,
-		eraseEntityService,
-		deleteEntitiesService,
-		readCommunityService,
-		readCommunitiesService,
-		updateCommunitySettingsService,
-		deleteCommunityService,
-		readSpaceService,
-		readSpacesService,
-		readEntitiesService,
+		PingService,
+		LoginAccountService,
+		LogoutAccountService,
+		CreateAccountPersonaService,
+		ReadPersonaService,
+		CreateCommunityService,
+		CreateMembershipService,
+		DeleteMembershipService,
+		CreateSpaceService,
+		CreateEntityService,
+		UpdateEntityService,
+		EraseEntityService,
+		DeleteEntitiesService,
+		ReadCommunityService,
+		ReadCommunitiesService,
+		UpdateCommunitySettingsService,
+		DeleteCommunityService,
+		ReadSpaceService,
+		ReadSpacesService,
+		ReadEntitiesService,
 		ReadEntitiesPaginatedService,
-		updateSpaceService,
-		deleteSpaceService,
-		createTieService,
-		readTiesService,
-		deleteTieService,
+		UpdateSpaceService,
+		DeleteSpaceService,
+		CreateTieService,
+		ReadTiesService,
+		DeleteTieService,
 	].map((s) => [s.event.name, s]),
 );

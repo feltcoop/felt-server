@@ -10,7 +10,7 @@ import {
 import {toTieEntityIds} from '$lib/vocab/tie/tieHelpers';
 
 // TODO rename to `getEntities`? `loadEntities`?
-export const readEntitiesService: ServicesByName['ReadEntities'] = {
+export const ReadEntitiesService: ServicesByName['ReadEntities'] = {
 	event: ReadEntities,
 	perform: async ({repos, params}) => {
 		// could update the interface to just expect the client to provide the dir id
@@ -64,7 +64,7 @@ export const ReadEntitiesPaginatedService: ServicesByName['ReadEntitiesPaginated
 	},
 };
 
-export const createEntityService: ServicesByName['CreateEntity'] = {
+export const CreateEntityService: ServicesByName['CreateEntity'] = {
 	event: CreateEntity,
 	perform: async ({repos, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
@@ -91,7 +91,7 @@ export const createEntityService: ServicesByName['CreateEntity'] = {
 	},
 };
 
-export const updateEntityService: ServicesByName['UpdateEntity'] = {
+export const UpdateEntityService: ServicesByName['UpdateEntity'] = {
 	event: UpdateEntity,
 	perform: async ({repos, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
@@ -104,7 +104,7 @@ export const updateEntityService: ServicesByName['UpdateEntity'] = {
 };
 
 //soft deletes a single entity, leaving behind a Tombstone entity
-export const eraseEntityService: ServicesByName['EraseEntity'] = {
+export const EraseEntityService: ServicesByName['EraseEntity'] = {
 	event: EraseEntity,
 	perform: async ({repos, params}) => {
 		const result = await repos.entity.eraseById(params.entity_id);
@@ -116,7 +116,7 @@ export const eraseEntityService: ServicesByName['EraseEntity'] = {
 };
 
 //hard deletes a single entity, removing the record of it from the DB
-export const deleteEntitiesService: ServicesByName['DeleteEntities'] = {
+export const DeleteEntitiesService: ServicesByName['DeleteEntities'] = {
 	event: DeleteEntities,
 	perform: async ({repos, params}) => {
 		const result = await repos.entity.deleteByIds(params.entity_ids);

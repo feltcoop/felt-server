@@ -8,7 +8,7 @@ import type {Database} from '$lib/db/Database';
 const log = new Logger(gray('[') + blue('membershipServices') + gray(']'));
 
 //Creates a new member relation for a community
-export const createMembershipService: ServicesByName['CreateMembership'] = {
+export const CreateMembershipService: ServicesByName['CreateMembership'] = {
 	event: CreateMembership,
 	perform: async ({repos, params}) => {
 		const {community_id, persona_id} = params;
@@ -43,7 +43,7 @@ export const createMembershipService: ServicesByName['CreateMembership'] = {
 
 //deletes a membership of a given persona in a given community
 //TODO after front end data normalization make this use membership_id
-export const deleteMembershipService: ServicesByName['DeleteMembership'] = {
+export const DeleteMembershipService: ServicesByName['DeleteMembership'] = {
 	event: DeleteMembership,
 	perform: async ({repos, params}) => {
 		const {persona_id, community_id} = params;

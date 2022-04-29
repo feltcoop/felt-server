@@ -11,11 +11,11 @@ import type {Community} from '$lib/vocab/community/community';
 import type {CreateCommunityParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
 import {parseView, type ViewData} from '$lib/vocab/view/view';
-import {createAccountPersonaService} from '$lib/vocab/persona/personaServices';
-import {createCommunityService} from '$lib/vocab/community/communityServices';
+import {CreateAccountPersonaService} from '$lib/vocab/persona/personaServices';
+import {CreateCommunityService} from '$lib/vocab/community/communityServices';
 import {toServiceRequest} from '$lib/util/testHelpers';
-import {createMembershipService} from '$lib/vocab/membership/membershipServices';
-import {createEntityService} from '$lib/vocab/entity/entityServices';
+import {CreateMembershipService} from '$lib/vocab/membership/membershipServices';
+import {CreateEntityService} from '$lib/vocab/entity/entityServices';
 
 /* eslint-disable no-await-in-loop */
 
@@ -54,7 +54,7 @@ export const seed = async (db: Database): Promise<void> => {
 		accounts.push(account);
 		for (const personaName of personasParams[account.name]) {
 			const {persona, spaces} = unwrap(
-				await createAccountPersonaService.perform({
+				await CreateAccountPersonaService.perform({
 					params: {name: personaName},
 					...toServiceRequest(account.account_id, db),
 				}),
@@ -81,7 +81,7 @@ export const seed = async (db: Database): Promise<void> => {
 
 	for (const communityParams of communitiesParams) {
 		const {community, spaces} = unwrap(
-			await createCommunityService.perform({
+			await CreateCommunityService.perform({
 				params: {name: communityParams.name, persona_id: communityParams.persona_id},
 				...serviceRequest,
 			}),
@@ -89,7 +89,7 @@ export const seed = async (db: Database): Promise<void> => {
 		communities.push(community);
 		for (const persona of otherPersonas) {
 			unwrap(
-				await createMembershipService.perform({
+				await CreateMembershipService.perform({
 					params: {persona_id: persona.persona_id, community_id: community.community_id},
 					...serviceRequest,
 				}),
@@ -122,7 +122,7 @@ const createDefaultEntities = async (
 		const entityContents = entitiesContents[componentName];
 		for (const entityContent of entityContents) {
 			unwrap(
-				await createEntityService.perform({
+				await CreateEntityService.perform({
 					params: {
 						actor_id: nextPersona().persona_id,
 						data: {type: 'Note', content: entityContent},
@@ -156,7 +156,7 @@ const generateTodo = async (
 	space: Space,
 ) => {
 	const list = unwrap(
-		await createEntityService.perform({
+		await CreateEntityService.perform({
 			params: {
 				actor_id: persona_id,
 				data: {type: 'Collection', name: 'Grocery List'},
@@ -169,7 +169,7 @@ const generateTodo = async (
 	const itemsContents = ['eggs', 'milk', 'bread'];
 	for (const content of itemsContents) {
 		unwrap(
-			await createEntityService.perform({
+			await CreateEntityService.perform({
 				params: {
 					actor_id: persona_id,
 					data: {type: 'Note', content},

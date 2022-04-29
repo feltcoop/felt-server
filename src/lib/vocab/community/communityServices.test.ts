@@ -6,8 +6,8 @@ import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {randomCommunityParams} from '$lib/util/randomVocab';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {
-	deleteCommunityService,
-	createCommunityService,
+	DeleteCommunityService,
+	CreateCommunityService,
 } from '$lib/vocab/community/communityServices';
 import {toServiceRequest} from '$lib/util/testHelpers';
 
@@ -21,7 +21,7 @@ test_communityServices('unable to delete personal community', async ({db, random
 	const {persona, account} = await random.persona();
 	assert.is(
 		unwrapError(
-			await deleteCommunityService.perform({
+			await DeleteCommunityService.perform({
 				params: {community_id: persona.community_id},
 				...toServiceRequest(account.account_id, db),
 			}),
@@ -36,17 +36,17 @@ test_communityServices('disallow duplicate community names', async ({db, random}
 
 	const params = randomCommunityParams(persona.persona_id);
 	params.name += 'Aa';
-	unwrap(await createCommunityService.perform({params, ...serviceRequest}));
+	unwrap(await CreateCommunityService.perform({params, ...serviceRequest}));
 
 	params.name = params.name.toLowerCase();
 	assert.is(
-		unwrapError(await createCommunityService.perform({params, ...serviceRequest})).status,
+		unwrapError(await CreateCommunityService.perform({params, ...serviceRequest})).status,
 		409,
 	);
 
 	params.name = params.name.toUpperCase();
 	assert.is(
-		unwrapError(await createCommunityService.perform({params, ...serviceRequest})).status,
+		unwrapError(await CreateCommunityService.perform({params, ...serviceRequest})).status,
 		409,
 	);
 });

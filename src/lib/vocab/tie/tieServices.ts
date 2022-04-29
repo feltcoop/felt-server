@@ -9,7 +9,7 @@ const log = new Logger(gray('[') + blue('CreateTie') + gray(']'));
 //Creates a new community for an instance
 // TODO think about extracting this to a `.services.` file
 // that imports a generated type and declares only `perform`
-export const createTieService: ServicesByName['CreateTie'] = {
+export const CreateTieService: ServicesByName['CreateTie'] = {
 	event: CreateTie,
 	perform: async ({repos, params}) => {
 		log.trace('[CreateTie] params', params);
@@ -24,7 +24,7 @@ export const createTieService: ServicesByName['CreateTie'] = {
 	},
 };
 
-export const readTiesService: ServicesByName['ReadTies'] = {
+export const ReadTiesService: ServicesByName['ReadTies'] = {
 	event: ReadTies,
 	perform: async ({repos, params}) => {
 		const findTiesResult = await repos.tie.filterBySpace(params.space_id);
@@ -37,7 +37,7 @@ export const readTiesService: ServicesByName['ReadTies'] = {
 };
 
 //deletes a single tie
-export const deleteTieService: ServicesByName['DeleteTie'] = {
+export const DeleteTieService: ServicesByName['DeleteTie'] = {
 	event: DeleteTie,
 	perform: async ({repos, params}) => {
 		log.trace('[DeleteTie] deleting tie with ids:', params.source_id, params.dest_id);

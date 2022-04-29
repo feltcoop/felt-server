@@ -3,7 +3,7 @@ import {unwrap, unwrapError} from '@feltcoop/felt';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
-import {deleteSpaceService} from '$lib/vocab/space/spaceServices';
+import {DeleteSpaceService} from '$lib/vocab/space/spaceServices';
 import {toServiceRequest} from '$lib/util/testHelpers';
 
 /* test__spaceServices */
@@ -16,7 +16,7 @@ test__spaceServices('delete a space in multiple communities', async ({db, random
 	const {space, account} = await random.space();
 
 	unwrap(
-		await deleteSpaceService.perform({
+		await DeleteSpaceService.perform({
 			params: {space_id: space.space_id},
 			...toServiceRequest(account.account_id, db),
 		}),

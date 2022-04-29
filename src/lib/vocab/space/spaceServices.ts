@@ -20,7 +20,7 @@ import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
 //Returns a single space object
-export const readSpaceService: ServicesByName['ReadSpace'] = {
+export const ReadSpaceService: ServicesByName['ReadSpace'] = {
 	event: ReadSpace,
 	perform: async ({repos, params}) => {
 		log.trace('[ReadSpace] space', params.space_id);
@@ -35,7 +35,7 @@ export const readSpaceService: ServicesByName['ReadSpace'] = {
 };
 
 //Returns all spaces in a given community
-export const readSpacesService: ServicesByName['ReadSpaces'] = {
+export const ReadSpacesService: ServicesByName['ReadSpaces'] = {
 	event: ReadSpaces,
 	perform: async ({repos, params}) => {
 		log.trace('[ReadSpaces] retrieving spaces for community', params.community_id);
@@ -50,7 +50,7 @@ export const readSpacesService: ServicesByName['ReadSpaces'] = {
 };
 
 //Creates a new space for a given community
-export const createSpaceService: ServicesByName['CreateSpace'] = {
+export const CreateSpaceService: ServicesByName['CreateSpace'] = {
 	event: CreateSpace,
 	// TODO security: verify the `account_id` has permission to modify this space
 	// TODO verify `params.persona_id` is  one of the `account_id`'s personas
@@ -105,7 +105,7 @@ export const createSpaceService: ServicesByName['CreateSpace'] = {
 	},
 };
 
-export const updateSpaceService: ServicesByName['UpdateSpace'] = {
+export const UpdateSpaceService: ServicesByName['UpdateSpace'] = {
 	event: UpdateSpace,
 	perform: async ({repos, params}) => {
 		const {space_id, ...partial} = params;
@@ -119,7 +119,7 @@ export const updateSpaceService: ServicesByName['UpdateSpace'] = {
 };
 
 //deletes a single space
-export const deleteSpaceService: ServicesByName['DeleteSpace'] = {
+export const DeleteSpaceService: ServicesByName['DeleteSpace'] = {
 	event: DeleteSpace,
 	perform: async ({repos, params}) => {
 		log.trace('[DeleteSpace] deleting space with id:', params.space_id);
@@ -152,7 +152,7 @@ export const createDefaultSpaces = async (
 	const spaces: Space[] = [];
 	for (const params of toDefaultSpaces(persona_id, community)) {
 		// eslint-disable-next-line no-await-in-loop
-		const result = await createSpaceService.perform({
+		const result = await CreateSpaceService.perform({
 			...serviceRequest,
 			params,
 		});
