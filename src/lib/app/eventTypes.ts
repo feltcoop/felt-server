@@ -16,6 +16,46 @@ import type {DispatchContext} from '$lib/app/dispatch';
 
 /* eslint-disable @typescript-eslint/no-empty-interface, @typescript-eslint/array-type */
 
+export type ServiceEventName =
+	| 'LoginAccount'
+	| 'LogoutAccount'
+	| 'CreateCommunity'
+	| 'ReadCommunity'
+	| 'ReadCommunities'
+	| 'UpdateCommunitySettings'
+	| 'DeleteCommunity'
+	| 'CreateAccountPersona'
+	| 'ReadPersona'
+	| 'CreateMembership'
+	| 'DeleteMembership'
+	| 'CreateSpace'
+	| 'ReadSpace'
+	| 'ReadSpaces'
+	| 'UpdateSpace'
+	| 'DeleteSpace'
+	| 'CreateEntity'
+	| 'UpdateEntity'
+	| 'ReadEntities'
+	| 'ReadEntitiesPaginated'
+	| 'EraseEntity'
+	| 'DeleteEntities'
+	| 'CreateTie'
+	| 'ReadTies'
+	| 'DeleteTie'
+	| 'Ping';
+
+export type ClientEventName =
+	| 'QueryEntities'
+	| 'ToggleMainNav'
+	| 'ToggleSecondaryNav'
+	| 'SetMobile'
+	| 'OpenDialog'
+	| 'CloseDialog'
+	| 'SelectPersona'
+	| 'SelectCommunity'
+	| 'SelectSpace'
+	| 'ViewSpace';
+
 export interface EventParamsByName {
 	LoginAccount: LoginAccountParams;
 	LogoutAccount: LogoutAccountParams;
@@ -83,45 +123,37 @@ export interface EventResponseByName {
 	Ping: PingResponse;
 }
 
-export type ServiceEventName =
-	| 'LoginAccount'
-	| 'LogoutAccount'
-	| 'CreateCommunity'
-	| 'ReadCommunity'
-	| 'ReadCommunities'
-	| 'UpdateCommunitySettings'
-	| 'DeleteCommunity'
-	| 'CreateAccountPersona'
-	| 'ReadPersona'
-	| 'CreateMembership'
-	| 'DeleteMembership'
-	| 'CreateSpace'
-	| 'ReadSpace'
-	| 'ReadSpaces'
-	| 'UpdateSpace'
-	| 'DeleteSpace'
-	| 'CreateEntity'
-	| 'UpdateEntity'
-	| 'ReadEntities'
-	| 'ReadEntitiesPaginated'
-	| 'EraseEntity'
-	| 'DeleteEntities'
-	| 'CreateTie'
-	| 'ReadTies'
-	| 'DeleteTie'
-	| 'Ping';
-
-export type ClientEventName =
-	| 'QueryEntities'
-	| 'ToggleMainNav'
-	| 'ToggleSecondaryNav'
-	| 'SetMobile'
-	| 'OpenDialog'
-	| 'CloseDialog'
-	| 'SelectPersona'
-	| 'SelectCommunity'
-	| 'SelectSpace'
-	| 'ViewSpace';
+export interface ServiceByName {
+	Ping: Service<PingParams, PingResponseResult>;
+	LoginAccount: Service<LoginAccountParams, LoginAccountResponseResult>;
+	LogoutAccount: Service<LogoutAccountParams, LogoutAccountResponseResult>;
+	CreateAccountPersona: Service<CreateAccountPersonaParams, CreateAccountPersonaResponseResult>;
+	ReadPersona: Service<ReadPersonaParams, ReadPersonaResponseResult>;
+	CreateCommunity: Service<CreateCommunityParams, CreateCommunityResponseResult>;
+	CreateMembership: Service<CreateMembershipParams, CreateMembershipResponseResult>;
+	DeleteMembership: Service<DeleteMembershipParams, DeleteMembershipResponseResult>;
+	CreateSpace: Service<CreateSpaceParams, CreateSpaceResponseResult>;
+	CreateEntity: Service<CreateEntityParams, CreateEntityResponseResult>;
+	UpdateEntity: Service<UpdateEntityParams, UpdateEntityResponseResult>;
+	EraseEntity: Service<EraseEntityParams, EraseEntityResponseResult>;
+	DeleteEntities: Service<DeleteEntitiesParams, DeleteEntitiesResponseResult>;
+	ReadCommunity: Service<ReadCommunityParams, ReadCommunityResponseResult>;
+	ReadCommunities: Service<ReadCommunitiesParams, ReadCommunitiesResponseResult>;
+	UpdateCommunitySettings: Service<
+		UpdateCommunitySettingsParams,
+		UpdateCommunitySettingsResponseResult
+	>;
+	DeleteCommunity: Service<DeleteCommunityParams, DeleteCommunityResponseResult>;
+	ReadSpace: Service<ReadSpaceParams, ReadSpaceResponseResult>;
+	ReadSpaces: Service<ReadSpacesParams, ReadSpacesResponseResult>;
+	ReadEntities: Service<ReadEntitiesParams, ReadEntitiesResponseResult>;
+	ReadEntitiesPaginated: Service<ReadEntitiesPaginatedParams, ReadEntitiesPaginatedResponseResult>;
+	UpdateSpace: Service<UpdateSpaceParams, UpdateSpaceResponseResult>;
+	DeleteSpace: Service<DeleteSpaceParams, DeleteSpaceResponseResult>;
+	CreateTie: Service<CreateTieParams, CreateTieResponseResult>;
+	ReadTies: Service<ReadTiesParams, ReadTiesResponseResult>;
+	DeleteTie: Service<DeleteTieParams, DeleteTieResponseResult>;
+}
 
 export interface LoginAccountParams {
 	username: string;
@@ -517,38 +549,6 @@ export interface Mutations {
 	SelectCommunity: (ctx: DispatchContext<SelectCommunityParams, void>) => void;
 	SelectSpace: (ctx: DispatchContext<SelectSpaceParams, void>) => void;
 	ViewSpace: (ctx: DispatchContext<ViewSpaceParams, void>) => void;
-}
-
-export interface ServiceByName {
-	Ping: Service<PingParams, PingResponseResult>;
-	LoginAccount: Service<LoginAccountParams, LoginAccountResponseResult>;
-	LogoutAccount: Service<LogoutAccountParams, LogoutAccountResponseResult>;
-	CreateAccountPersona: Service<CreateAccountPersonaParams, CreateAccountPersonaResponseResult>;
-	ReadPersona: Service<ReadPersonaParams, ReadPersonaResponseResult>;
-	CreateCommunity: Service<CreateCommunityParams, CreateCommunityResponseResult>;
-	CreateMembership: Service<CreateMembershipParams, CreateMembershipResponseResult>;
-	DeleteMembership: Service<DeleteMembershipParams, DeleteMembershipResponseResult>;
-	CreateSpace: Service<CreateSpaceParams, CreateSpaceResponseResult>;
-	CreateEntity: Service<CreateEntityParams, CreateEntityResponseResult>;
-	UpdateEntity: Service<UpdateEntityParams, UpdateEntityResponseResult>;
-	EraseEntity: Service<EraseEntityParams, EraseEntityResponseResult>;
-	DeleteEntities: Service<DeleteEntitiesParams, DeleteEntitiesResponseResult>;
-	ReadCommunity: Service<ReadCommunityParams, ReadCommunityResponseResult>;
-	ReadCommunities: Service<ReadCommunitiesParams, ReadCommunitiesResponseResult>;
-	UpdateCommunitySettings: Service<
-		UpdateCommunitySettingsParams,
-		UpdateCommunitySettingsResponseResult
-	>;
-	DeleteCommunity: Service<DeleteCommunityParams, DeleteCommunityResponseResult>;
-	ReadSpace: Service<ReadSpaceParams, ReadSpaceResponseResult>;
-	ReadSpaces: Service<ReadSpacesParams, ReadSpacesResponseResult>;
-	ReadEntities: Service<ReadEntitiesParams, ReadEntitiesResponseResult>;
-	ReadEntitiesPaginated: Service<ReadEntitiesPaginatedParams, ReadEntitiesPaginatedResponseResult>;
-	UpdateSpace: Service<UpdateSpaceParams, UpdateSpaceResponseResult>;
-	DeleteSpace: Service<DeleteSpaceParams, DeleteSpaceResponseResult>;
-	CreateTie: Service<CreateTieParams, CreateTieResponseResult>;
-	ReadTies: Service<ReadTiesParams, ReadTiesResponseResult>;
-	DeleteTie: Service<DeleteTieParams, DeleteTieResponseResult>;
 }
 
 // generated by src/lib/app/eventTypes.gen.ts
