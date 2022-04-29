@@ -1,12 +1,13 @@
 import type {VocabSchema} from '@feltcoop/gro/dist/utils/schema.js';
 
 import type {ServiceMethod} from '$lib/server/service';
+import type {ClientEventName, ServiceEventName} from '$lib/app/eventTypes';
 
 export type EventInfo = ClientEventInfo | ServiceEventInfo;
 
 export interface ClientEventInfo {
 	type: 'ClientEvent';
-	name: string; // `snake_cased`
+	name: ClientEventName; // `snake_cased`
 	// TODO we want to enforce schemas so we can generate params forms and automatic randomizers
 	params: VocabSchema | null;
 	returns: string;
@@ -16,7 +17,7 @@ export interface ClientEventInfo {
 // Their `route` property enables url route building for http methods.
 export interface ServiceEventInfo {
 	type: 'ServiceEvent';
-	name: string; // `snake_cased`
+	name: ServiceEventName; // `snake_cased`
 	authenticate?: boolean; // `true` by default -- does this service require login?
 	websockets?: boolean; // `true` by default -- can this service be called via websockets?
 	broadcast?: boolean; // `false` by default -- does this service event rebroadcast to other community clients
