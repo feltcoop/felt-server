@@ -6,7 +6,6 @@ export const Ping: ServiceEventInfo = {
 	params: {
 		$id: '/schemas/PingParams.json',
 		type: 'null',
-		tsType: 'void',
 	},
 	response: {
 		$id: '/schemas/PingResponse.json',

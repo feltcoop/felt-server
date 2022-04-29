@@ -110,9 +110,9 @@ export interface Dispatch {
 	${eventInfos.reduce(
 		(str, eventInfo) =>
 			str +
-			`${eventInfo.name}: (params: ${toParamsName(eventInfo.name)}) => ${
-				eventInfo.returns
-			};`.trim(),
+			`${eventInfo.name}: (${
+				eventInfo.params?.type === 'null' ? '' : `params: ${toParamsName(eventInfo.name)}`
+			}) => ${eventInfo.returns};`.trim(),
 		'',
 	)}
 }

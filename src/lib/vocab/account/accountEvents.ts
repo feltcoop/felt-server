@@ -40,7 +40,6 @@ export const LogoutAccount: ServiceEventInfo = {
 	params: {
 		$id: '/schemas/LogoutAccountParams.json',
 		type: 'null',
-		tsType: 'void',
 	},
 	response: {
 		$id: '/schemas/LogoutAccountResponse.json',

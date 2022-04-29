@@ -164,7 +164,7 @@ export interface LoginAccountResponse {
 }
 export type LoginAccountResponseResult = ApiResult<LoginAccountResponse>;
 
-export type LogoutAccountParams = void;
+export type LogoutAccountParams = null;
 export type LogoutAccountResponse = null;
 export type LogoutAccountResponseResult = ApiResult<LogoutAccountResponse>;
 
@@ -377,7 +377,7 @@ export interface DeleteTieParams {
 export type DeleteTieResponse = null;
 export type DeleteTieResponseResult = ApiResult<DeleteTieResponse>;
 
-export type PingParams = void;
+export type PingParams = null;
 export type PingResponse = null;
 export type PingResponseResult = ApiResult<PingResponse>;
 
@@ -419,7 +419,7 @@ export interface ViewSpaceParams {
 
 export interface Dispatch {
 	LoginAccount: (params: LoginAccountParams) => Promise<LoginAccountResponseResult>;
-	LogoutAccount: (params: LogoutAccountParams) => Promise<LogoutAccountResponseResult>;
+	LogoutAccount: () => Promise<LogoutAccountResponseResult>;
 	CreateCommunity: (params: CreateCommunityParams) => Promise<CreateCommunityResponseResult>;
 	ReadCommunity: (params: ReadCommunityParams) => Promise<ReadCommunityResponseResult>;
 	ReadCommunities: (params: ReadCommunitiesParams) => Promise<ReadCommunitiesResponseResult>;
@@ -450,7 +450,7 @@ export interface Dispatch {
 	CreateTie: (params: CreateTieParams) => Promise<CreateTieResponseResult>;
 	ReadTies: (params: ReadTiesParams) => Promise<ReadTiesResponseResult>;
 	DeleteTie: (params: DeleteTieParams) => Promise<DeleteTieResponseResult>;
-	Ping: (params: PingParams) => Promise<ApiResult<null>>;
+	Ping: () => Promise<ApiResult<null>>;
 	ToggleMainNav: (params: ToggleMainNavParams) => void;
 	ToggleSecondaryNav: (params: ToggleSecondaryNavParams) => void;
 	SetMobile: (params: SetMobileParams) => void;
