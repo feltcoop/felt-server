@@ -479,7 +479,7 @@ export interface Mutations {
 	ViewSpace: (ctx: DispatchContext<ViewSpaceParams, void>) => void;
 }
 
-export interface ServicesByName {
+export interface ServiceByName {
 	Ping: Service<PingParams, PingResponseResult>;
 	LoginAccount: Service<LoginAccountParams, LoginAccountResponseResult>;
 	LogoutAccount: Service<LogoutAccountParams, LogoutAccountResponseResult>;

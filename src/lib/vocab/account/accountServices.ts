@@ -1,9 +1,9 @@
 import type {Account} from '$lib/vocab/account/account.js';
 import {verifyPassword} from '$lib/util/password';
 import {LoginAccount, LogoutAccount} from '$lib/vocab/account/accountEvents';
-import type {ServicesByName} from '$lib/app/eventTypes';
+import type {ServiceByName} from '$lib/app/eventTypes';
 
-export const LoginAccountService: ServicesByName['LoginAccount'] = {
+export const LoginAccountService: ServiceByName['LoginAccount'] = {
 	event: LoginAccount,
 	perform: async ({repos, params, account_id, session}) => {
 		const {username, password} = params;
@@ -59,7 +59,7 @@ export const LoginAccountService: ServicesByName['LoginAccount'] = {
 	},
 };
 
-export const LogoutAccountService: ServicesByName['LogoutAccount'] = {
+export const LogoutAccountService: ServiceByName['LogoutAccount'] = {
 	event: LogoutAccount,
 	perform: async ({session}) => {
 		const result = session.logout();

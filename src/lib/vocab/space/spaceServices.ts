@@ -2,7 +2,7 @@ import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {ServiceRequest} from '$lib/server/service';
-import type {ServicesByName} from '$lib/app/eventTypes';
+import type {ServiceByName} from '$lib/app/eventTypes';
 import {
 	CreateSpace,
 	ReadSpace,
@@ -20,7 +20,7 @@ import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
 //Returns a single space object
-export const ReadSpaceService: ServicesByName['ReadSpace'] = {
+export const ReadSpaceService: ServiceByName['ReadSpace'] = {
 	event: ReadSpace,
 	perform: async ({repos, params}) => {
 		log.trace('[ReadSpace] space', params.space_id);
@@ -35,7 +35,7 @@ export const ReadSpaceService: ServicesByName['ReadSpace'] = {
 };
 
 //Returns all spaces in a given community
-export const ReadSpacesService: ServicesByName['ReadSpaces'] = {
+export const ReadSpacesService: ServiceByName['ReadSpaces'] = {
 	event: ReadSpaces,
 	perform: async ({repos, params}) => {
 		log.trace('[ReadSpaces] retrieving spaces for community', params.community_id);
@@ -50,7 +50,7 @@ export const ReadSpacesService: ServicesByName['ReadSpaces'] = {
 };
 
 //Creates a new space for a given community
-export const CreateSpaceService: ServicesByName['CreateSpace'] = {
+export const CreateSpaceService: ServiceByName['CreateSpace'] = {
 	event: CreateSpace,
 	// TODO security: verify the `account_id` has permission to modify this space
 	// TODO verify `params.persona_id` is  one of the `account_id`'s personas
@@ -105,7 +105,7 @@ export const CreateSpaceService: ServicesByName['CreateSpace'] = {
 	},
 };
 
-export const UpdateSpaceService: ServicesByName['UpdateSpace'] = {
+export const UpdateSpaceService: ServiceByName['UpdateSpace'] = {
 	event: UpdateSpace,
 	perform: async ({repos, params}) => {
 		const {space_id, ...partial} = params;
@@ -119,7 +119,7 @@ export const UpdateSpaceService: ServicesByName['UpdateSpace'] = {
 };
 
 //deletes a single space
-export const DeleteSpaceService: ServicesByName['DeleteSpace'] = {
+export const DeleteSpaceService: ServiceByName['DeleteSpace'] = {
 	event: DeleteSpace,
 	perform: async ({repos, params}) => {
 		log.trace('[DeleteSpace] deleting space with id:', params.space_id);

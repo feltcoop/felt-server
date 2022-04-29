@@ -1,4 +1,4 @@
-import type {ServicesByName} from '$lib/app/eventTypes';
+import type {ServiceByName} from '$lib/app/eventTypes';
 import {
 	ReadEntities,
 	ReadEntitiesPaginated,
@@ -10,7 +10,7 @@ import {
 import {toTieEntityIds} from '$lib/vocab/tie/tieHelpers';
 
 // TODO rename to `getEntities`? `loadEntities`?
-export const ReadEntitiesService: ServicesByName['ReadEntities'] = {
+export const ReadEntitiesService: ServiceByName['ReadEntities'] = {
 	event: ReadEntities,
 	perform: async ({repos, params}) => {
 		// could update the interface to just expect the client to provide the dir id
@@ -38,7 +38,7 @@ export const ReadEntitiesService: ServicesByName['ReadEntities'] = {
 	},
 };
 
-export const ReadEntitiesPaginatedService: ServicesByName['ReadEntitiesPaginated'] = {
+export const ReadEntitiesPaginatedService: ServiceByName['ReadEntitiesPaginated'] = {
 	event: ReadEntitiesPaginated,
 	perform: async ({repos, params}) => {
 		const findTiesResult = await repos.tie.filterBySourceIdPaginated(
@@ -64,7 +64,7 @@ export const ReadEntitiesPaginatedService: ServicesByName['ReadEntitiesPaginated
 	},
 };
 
-export const CreateEntityService: ServicesByName['CreateEntity'] = {
+export const CreateEntityService: ServiceByName['CreateEntity'] = {
 	event: CreateEntity,
 	perform: async ({repos, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
@@ -91,7 +91,7 @@ export const CreateEntityService: ServicesByName['CreateEntity'] = {
 	},
 };
 
-export const UpdateEntityService: ServicesByName['UpdateEntity'] = {
+export const UpdateEntityService: ServiceByName['UpdateEntity'] = {
 	event: UpdateEntity,
 	perform: async ({repos, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
@@ -104,7 +104,7 @@ export const UpdateEntityService: ServicesByName['UpdateEntity'] = {
 };
 
 //soft deletes a single entity, leaving behind a Tombstone entity
-export const EraseEntityService: ServicesByName['EraseEntity'] = {
+export const EraseEntityService: ServiceByName['EraseEntity'] = {
 	event: EraseEntity,
 	perform: async ({repos, params}) => {
 		const result = await repos.entity.eraseById(params.entity_id);
@@ -116,7 +116,7 @@ export const EraseEntityService: ServicesByName['EraseEntity'] = {
 };
 
 //hard deletes a single entity, removing the record of it from the DB
-export const DeleteEntitiesService: ServicesByName['DeleteEntities'] = {
+export const DeleteEntitiesService: ServiceByName['DeleteEntities'] = {
 	event: DeleteEntities,
 	perform: async ({repos, params}) => {
 		const result = await repos.entity.deleteByIds(params.entity_ids);

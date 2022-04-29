@@ -115,7 +115,7 @@ export interface Mutations {
 	)}
 }
 
-export interface ServicesByName {
+export interface ServiceByName {
 	${Array.from(services.values()).reduce((str, service) => {
 		const {name} = service.event;
 		return str + `${name}: Service<${toParamsName(name)}, ${toResponseResultName(name)}>;`.trim();

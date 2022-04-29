@@ -1,7 +1,7 @@
 import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import type {ServicesByName} from '$lib/app/eventTypes';
+import type {ServiceByName} from '$lib/app/eventTypes';
 import {CreateAccountPersona, ReadPersona} from '$lib/vocab/persona/personaEvents';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 import {createDefaultSpaces} from '$lib/vocab/space/spaceServices';
@@ -9,7 +9,7 @@ import {createDefaultSpaces} from '$lib/vocab/space/spaceServices';
 const log = new Logger(gray('[') + blue('personaServices') + gray(']'));
 
 //Creates a new persona
-export const CreateAccountPersonaService: ServicesByName['CreateAccountPersona'] = {
+export const CreateAccountPersonaService: ServiceByName['CreateAccountPersona'] = {
 	event: CreateAccountPersona,
 	// TODO verify the `account_id` has permission to modify this persona
 	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
@@ -83,7 +83,7 @@ export const CreateAccountPersonaService: ServicesByName['CreateAccountPersona']
 };
 
 //Returns a single persona object
-export const ReadPersonaService: ServicesByName['ReadPersona'] = {
+export const ReadPersonaService: ServiceByName['ReadPersona'] = {
 	event: ReadPersona,
 	perform: async ({repos, params}) => {
 		log.trace('[ReadPersona] persona', params.persona_id);

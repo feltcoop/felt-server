@@ -1,7 +1,7 @@
 import {blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
-import type {ServicesByName} from '$lib/app/eventTypes';
+import type {ServiceByName} from '$lib/app/eventTypes';
 import {
 	CreateCommunity,
 	ReadCommunities,
@@ -15,7 +15,7 @@ import {createDefaultSpaces} from '$lib/vocab/space/spaceServices';
 const log = new Logger(gray('[') + blue('communityServices') + gray(']'));
 
 // Returns a list of community objects
-export const ReadCommunitiesService: ServicesByName['ReadCommunities'] = {
+export const ReadCommunitiesService: ServiceByName['ReadCommunities'] = {
 	event: ReadCommunities,
 	perform: async ({repos, account_id}) => {
 		const findCommunitiesResult = await repos.community.filterByAccount(account_id);
@@ -36,7 +36,7 @@ export const ReadCommunitiesService: ServicesByName['ReadCommunities'] = {
 };
 
 //Returns a single community object
-export const ReadCommunityService: ServicesByName['ReadCommunity'] = {
+export const ReadCommunityService: ServiceByName['ReadCommunity'] = {
 	event: ReadCommunity,
 	perform: async ({repos, params, account_id}) => {
 		log.trace('[ReadCommunity] account', account_id); // TODO logging
@@ -61,7 +61,7 @@ export const ReadCommunityService: ServicesByName['ReadCommunity'] = {
 //Creates a new community for an instance
 // TODO think about extracting this to a `.services.` file
 // that imports a generated type and declares only `perform`
-export const CreateCommunityService: ServicesByName['CreateCommunity'] = {
+export const CreateCommunityService: ServiceByName['CreateCommunity'] = {
 	event: CreateCommunity,
 	perform: async (serviceRequest) => {
 		const {repos, params, account_id} = serviceRequest;
@@ -162,7 +162,7 @@ export const CreateCommunityService: ServicesByName['CreateCommunity'] = {
 	},
 };
 
-export const UpdateCommunitySettingsService: ServicesByName['UpdateCommunitySettings'] = {
+export const UpdateCommunitySettingsService: ServiceByName['UpdateCommunitySettings'] = {
 	event: UpdateCommunitySettings,
 	perform: async ({repos, params}) => {
 		const result = await repos.community.updateSettings(params.community_id, params.settings);
@@ -174,7 +174,7 @@ export const UpdateCommunitySettingsService: ServicesByName['UpdateCommunitySett
 };
 
 //TODO don't let users delete their home community
-export const DeleteCommunityService: ServicesByName['DeleteCommunity'] = {
+export const DeleteCommunityService: ServiceByName['DeleteCommunity'] = {
 	event: DeleteCommunity,
 	perform: async ({repos, params}) => {
 		const communityResult = await repos.community.findById(params.community_id);
