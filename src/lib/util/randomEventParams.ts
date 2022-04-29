@@ -18,7 +18,7 @@ import type {RandomEventParams} from '$lib/util/randomEventParamsTypes';
 
 export const randomEventParams: RandomEventParams = {
 	Ping: async () => {
-		return undefined;
+		return null as never; // TODO minor type mismatch, `void` allows us to omit on event dispatch, but is required as `params: null` -- maybe fix in the type generation with special case?
 	},
 	LoginAccount: async () => {
 		return {
@@ -27,7 +27,7 @@ export const randomEventParams: RandomEventParams = {
 		};
 	},
 	LogoutAccount: async () => {
-		return undefined;
+		return null as never; // TODO minor type mismatch, `void` allows us to omit on event dispatch, but is required as `params: null` -- maybe fix in the type generation with special case?
 	},
 	CreateCommunity: async (random, {account, persona} = {}) => {
 		if (!persona) ({persona} = await random.persona(account));
