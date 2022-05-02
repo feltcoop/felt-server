@@ -15,19 +15,17 @@ import {
 } from '$lib/util/randomVocab';
 import {randomHue} from '$lib/ui/color';
 
-/* eslint-disable no-param-reassign */
-
 // TODO consider the pattern below where every `create` event creates all dependencies from scratch.
 // We may want to instead test things for both new and existing objects.
-// TODO refactor to make it more ergnomic to read from the cache
 // TODO type should return the params associated with the event name
-// TODO maybe move to `src/lib/util`
 // TODO keep factoring this until it's fully automated, generating from the schema
 export const randomEventParams = async (
 	event: EventInfo,
 	random: RandomVocabContext,
-	{account, persona, community, space}: RandomVocab = {},
+	randomVocab: RandomVocab = {},
 ): Promise<any> => {
+	const {account} = randomVocab;
+	let {persona, community, space} = randomVocab;
 	switch (event.name) {
 		case 'Ping': {
 			return null;
@@ -54,10 +52,7 @@ export const randomEventParams = async (
 			return {community_id: community.community_id};
 		}
 		case 'DeleteCommunity': {
-			do {
-				// eslint-disable-next-line no-await-in-loop
-				({community} = await random.community(persona, account));
-			} while (community.type !== 'standard');
+			if (!community) ({community} = await random.community(persona, account));
 			return {community_id: community.community_id};
 		}
 		case 'ReadCommunities': {
@@ -81,8 +76,9 @@ export const randomEventParams = async (
 			return {persona_id: persona.persona_id, community_id: community.community_id};
 		}
 		case 'CreateSpace': {
+			if (!persona) ({persona} = await random.persona(account));
 			if (!community) ({community} = await random.community(persona, account));
-			return randomSpaceParams(community.community_id);
+			return randomSpaceParams(persona.persona_id, community.community_id);
 		}
 		case 'UpdateSpace': {
 			if (!space) ({space} = await random.space(persona, account, community));
@@ -124,9 +120,11 @@ export const randomEventParams = async (
 				data: randomEntityData(),
 			};
 		}
-		case 'EraseEntity': {
+		case 'EraseEntities': {
+			const entity1 = await random.entity(persona, account, community, space);
+			const entity2 = await random.entity(persona, account, community, space);
 			return {
-				entity_id: (await random.entity(persona, account, community, space)).entity.entity_id,
+				entity_ids: [entity1.entity.entity_id, entity2.entity.entity_id],
 			};
 		}
 		case 'DeleteEntities': {

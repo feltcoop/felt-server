@@ -26,10 +26,9 @@ export const SelectCommunity: Mutations['SelectCommunity'] = ({
 	ui: {personaIdSelection, communityIdSelectionByPersonaId},
 }) => {
 	const $personaIdSelection = get(personaIdSelection);
-	const {community_id} = params;
-	if (community_id && $personaIdSelection) {
+	if ($personaIdSelection) {
 		communityIdSelectionByPersonaId.mutate(($c) => {
-			$c.set($personaIdSelection, community_id);
+			$c.set($personaIdSelection, params.community_id);
 		});
 	}
 };
@@ -39,10 +38,9 @@ export const SelectSpace: Mutations['SelectSpace'] = ({
 	ui: {spaceIdSelectionByCommunityId},
 }) => {
 	const {community_id, space_id} = params;
-	spaceIdSelectionByCommunityId.update(($spaceIdSelectionByCommunityId) => ({
-		...$spaceIdSelectionByCommunityId,
-		[community_id]: space_id,
-	}));
+	spaceIdSelectionByCommunityId.mutate(($s) => {
+		$s.set(community_id, space_id);
+	});
 };
 
 export const ViewSpace: Mutations['ViewSpace'] = async ({
@@ -65,7 +63,8 @@ export const ViewSpace: Mutations['ViewSpace'] = async ({
 	const $space = get(space);
 	if (
 		selectedCommunity &&
-		$space.space_id !== get(spaceIdSelectionByCommunityId)[get(selectedCommunity).community_id]
+		$space.space_id !==
+			get(spaceIdSelectionByCommunityId).value.get(get(selectedCommunity).community_id)
 	) {
 		const $community = get(communityById.get($space.community_id)!);
 		await goto('/' + $community.name + $space.url + location.search, {replaceState: true});

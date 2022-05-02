@@ -51,6 +51,7 @@
 		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
 		const url = `/${name}`;
 		const result = await dispatch.CreateSpace({
+			persona_id: $persona.persona_id,
 			community_id: $community.community_id,
 			name,
 			url,
@@ -87,6 +88,7 @@
 	</section>
 	<form>
 		<input
+			name="name"
 			placeholder="> name"
 			bind:value={name}
 			bind:this={nameEl}

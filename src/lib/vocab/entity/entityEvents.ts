@@ -144,24 +144,29 @@ export const ReadEntitiesPaginated: ServiceEventInfo = {
 	},
 };
 
-export const EraseEntity: ServiceEventInfo = {
+export const EraseEntities: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'EraseEntity',
+	name: 'EraseEntities',
 	broadcast: true,
 	params: {
-		$id: '/schemas/EraseEntityParams.json',
+		$id: '/schemas/EraseEntitiesParams.json',
 		type: 'object',
 		properties: {
-			entity_id: {type: 'number'},
+			entity_ids: {type: 'array', items: {type: 'number'}},
 		},
-		required: ['entity_id'],
+		required: ['entity_ids'],
 		additionalProperties: false,
 	},
 	response: {
-		$id: '/schemas/EraseEntityResponse.json',
-		type: 'null',
+		$id: '/schemas/EraseEntitiesResponse.json',
+		type: 'object',
+		properties: {
+			entities: {type: 'array', items: {$ref: '/schemas/Entity.json', tsType: 'Entity'}},
+		},
+		required: ['entities'],
+		additionalProperties: false,
 	},
-	returns: 'Promise<EraseEntityResponseResult>',
+	returns: 'Promise<EraseEntitiesResponseResult>',
 	route: {
 		path: '/api/v1/entities/:entity_id/erase',
 		method: 'DELETE',

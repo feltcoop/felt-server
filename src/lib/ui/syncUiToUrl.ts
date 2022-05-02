@@ -28,7 +28,7 @@ export const syncUiToUrl = (
 	if (!params.community) return;
 
 	const rawPersonaIndex = query.get(PERSONA_QUERY_KEY);
-	const personaIndex = rawPersonaIndex === null ? null : Number(rawPersonaIndex);
+	const personaIndex = rawPersonaIndex ? Number(rawPersonaIndex) : null;
 	const persona: Readable<Persona> | null =
 		personaIndex === null ? null : get(sessionPersonas)[personaIndex];
 	if (!persona) {
@@ -40,6 +40,8 @@ export const syncUiToUrl = (
 			void goto(
 				location.pathname +
 					'?' +
+					// TODO extract a helper after upgrading SvelteKit and using
+					// `$page`'s `URLSearchParams` instead of constructing the search like this
 					setUrlPersona(fallbackPersonaIndex, new URLSearchParams(location.search)),
 				{replaceState: true},
 			);
@@ -51,7 +53,11 @@ export const syncUiToUrl = (
 
 	// TODO speed this up with a map of communityByName
 	const community = get(communities).value.find((c) => get(c).name === params.community);
-	if (!community) return; // occurs when a session routes to a community they can't access
+	if (!community) {
+		// occurs when routing to an inaccessible or nonexistent community
+		dispatch.SelectCommunity({community_id: null});
+		return;
+	}
 	const {community_id} = get(community);
 	if (community !== get(communitySelection)) {
 		dispatch.SelectCommunity({community_id});
@@ -63,11 +69,13 @@ export const syncUiToUrl = (
 		.get(community_id)!
 		.find((s) => get(s).url === spaceUrl);
 	if (!space) {
-		log.error('failed to find space with url:', spaceUrl);
+		// occurs when routing to an inaccessible or nonexistent space
+		dispatch.SelectSpace({community_id, space_id: null});
 		return;
 	}
+	const selectedSpaceId = get(spaceIdSelectionByCommunityId).value.get(community_id);
 	const {space_id} = get(space);
-	if (space_id !== get(spaceIdSelectionByCommunityId)[community_id]) {
+	if (space_id !== selectedSpaceId) {
 		dispatch.SelectSpace({community_id, space_id});
 	}
 };

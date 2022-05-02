@@ -51,6 +51,7 @@ export interface Ui {
 	//TODO maybe refactor to remove store around map? Like personaById
 	spacesByCommunityId: Readable<Map<number, Array<Readable<Space>>>>;
 	personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>>;
+	entityById: Map<number, Readable<Entity>>; // TODO mutable inner store
 	entitiesBySpace: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
 	// view state
 	expandMainNav: Readable<boolean>;
@@ -60,9 +61,9 @@ export interface Ui {
 	personaSelection: Readable<Readable<Persona> | null>;
 	personaIndexSelection: Readable<number | null>;
 	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Readable<Community>>>>;
-	communityIdSelectionByPersonaId: Mutable<Map<number, number>>;
+	communityIdSelectionByPersonaId: Mutable<Map<number, number | null>>;
 	communitySelection: Readable<Readable<Community> | null>;
-	spaceIdSelectionByCommunityId: Readable<{[key: number]: number | null}>;
+	spaceIdSelectionByCommunityId: Mutable<Map<number, number | null>>;
 	spaceSelection: Readable<Readable<Space> | null>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
@@ -79,14 +80,12 @@ export const toUi = (
 	initialMobile: boolean,
 	components: {[key: string]: typeof SvelteComponent},
 ) => {
-	// Could then put these calculations in one place.
 	const account = writable<AccountModel | null>(null);
-	// Importantly, this only changes when items are added or removed from the collection,
+	// Importantly, these collections only change when items are added or removed,
 	// not when the items themselves change; each item is a store that can be subscribed to.
-	const personas = mutable<Array<Writable<Persona>>>([]);
-	// not derived from session because the session has only the initial snapshot
 	// TODO these `Persona`s need additional data compared to every other `Persona`
 	const sessionPersonas = writable<Array<Writable<Persona>>>([]);
+	const personas = mutable<Array<Writable<Persona>>>([]);
 	const communities = mutable<Array<Writable<Community>>>([]);
 	const spaces = mutable<Array<Writable<Space>>>([]);
 	const memberships = mutable<Array<Writable<Membership>>>([]);
@@ -155,7 +154,7 @@ export const toUi = (
 	const personaIndexSelection = derived(
 		[personaSelection, sessionPersonas],
 		([$personaSelection, $sessionPersonas]) =>
-			$personaSelection === null ? null : $sessionPersonas.indexOf($personaSelection),
+			$personaSelection ? $sessionPersonas.indexOf($personaSelection) : null,
 	);
 	const sessionPersonaIndices = derived(
 		[sessionPersonas],
@@ -190,24 +189,27 @@ export const toUi = (
 		);
 	// TODO should these be store references instead of ids?
 	// TODO maybe make this a lazy map, not a derived store?
-	const communityIdSelectionByPersonaId = mutable<Map<number, number>>(new Map());
+	const communityIdSelectionByPersonaId = mutable<Map<number, number | null>>(new Map());
 	const communitySelection = derived(
 		[personaIdSelection, communityIdSelectionByPersonaId],
 		([$personaIdSelection, $communityIdSelectionByPersonaId]) =>
-			$personaIdSelection === null
-				? null
-				: communityById.get($communityIdSelectionByPersonaId.value.get($personaIdSelection)!)!,
+			$personaIdSelection
+				? communityById.get($communityIdSelectionByPersonaId.value.get($personaIdSelection)!)!
+				: null,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
-	const spaceIdSelectionByCommunityId = writable<{[key: number]: number | null}>({});
+	const spaceIdSelectionByCommunityId = mutable<Map<number, number | null>>(new Map());
 	const spaceSelection = derived(
 		[communitySelection, spaceIdSelectionByCommunityId],
 		([$communitySelection, $spaceIdSelectionByCommunityId]) =>
 			($communitySelection &&
-				spaceById.get($spaceIdSelectionByCommunityId[get($communitySelection)!.community_id]!)) ||
+				spaceById.get(
+					$spaceIdSelectionByCommunityId.value.get(get($communitySelection)!.community_id)!,
+				)) ||
 			null,
 	);
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
+	const entityById: Map<number, Writable<Entity>> = new Map();
 	const entitiesBySpace: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
 
 	const expandMainNav = writable(!initialMobile);
@@ -228,6 +230,7 @@ export const toUi = (
 		spaceById,
 		spacesByCommunityId,
 		personasByCommunityId,
+		entityById,
 		entitiesBySpace,
 		communitiesBySessionPersona,
 		// view state
@@ -259,7 +262,7 @@ export const toUi = (
 			$personas.forEach((p, i) => personaById.set($personaArray[i].persona_id, p));
 			personas.swap($personas);
 
-			const $sessionPersonas = $session.guest ? [] : $session.personas;
+			const $sessionPersonas = $session.guest ? [] : $session.sessionPersonas;
 			sessionPersonas.set($sessionPersonas.map((p) => personaById.get(p.persona_id)!));
 
 			const $communityArray = $session.guest ? [] : $session.communities;
@@ -284,23 +287,23 @@ export const toUi = (
 			// was causing various confusing issues, so they find stuff directly on the session objects
 			// instead of using derived stores like `sessionPersonas` and `spacesByCommunityId`.
 			communityIdSelectionByPersonaId.swap(
-				$session.guest
-					? new Map()
-					: // TODO first try to load this from localStorage
-					  new Map($sessionPersonas.map(($p) => [$p.persona_id, $p.community_id])),
+				// TODO first try to load this from localStorage
+				new Map(
+					$session.guest ? null : $sessionPersonas.map(($p) => [$p.persona_id, $p.community_id]),
+				),
 			);
-			spaceIdSelectionByCommunityId.set(
-				$session.guest
-					? {}
-					: Object.fromEntries(
-							//TODO lookup space by community_id+url (see this comment in multiple places)
-							$session.communities.map(($community) => [
+			spaceIdSelectionByCommunityId.swap(
+				//TODO lookup space by community_id+url (see this comment in multiple places)
+				new Map(
+					$session.guest
+						? null
+						: $session.communities.map(($community) => [
 								$community.community_id,
 								$session.spaces.find(
 									(s) => s.community_id === $community.community_id && isHomeSpace(s),
 								)!.space_id,
-							]),
-					  ),
+						  ]),
+				),
 			);
 		},
 	} as const;
@@ -320,9 +323,9 @@ export const toUi = (
 const toInitialPersonas = (session: ClientSession): Persona[] =>
 	session.guest
 		? []
-		: session.personas.concat(
-				session.allPersonas.filter(
-					(p1) => !session.personas.find((p2) => p2.persona_id === p1.persona_id),
+		: session.sessionPersonas.concat(
+				session.personas.filter(
+					(p1) => !session.sessionPersonas.find((p2) => p2.persona_id === p1.persona_id),
 				),
 		  );
 

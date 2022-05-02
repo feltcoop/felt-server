@@ -98,7 +98,7 @@ export const SelectSpace: ClientEventInfo = {
 		type: 'object',
 		properties: {
 			community_id: {type: 'number'},
-			space_id: {type: 'number'},
+			space_id: {type: ['number', 'null']},
 		},
 		required: ['community_id', 'space_id'],
 		additionalProperties: false,

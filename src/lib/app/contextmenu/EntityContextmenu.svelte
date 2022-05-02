@@ -22,13 +22,19 @@
 			action={() =>
 				dispatch.OpenDialog({
 					Component: EntityEditor,
-					props: {entity},
+					props: {entity, done: () => dispatch.CloseDialog()},
 					dialogProps: {layout: 'page'},
 				})}
 		>
 			<span class="title">Edit Entity</span>
 		</ContextmenuEntry>
-		<ContextmenuEntry action={() => dispatch.EraseEntity({entity_id: $entity.entity_id})}>
+		<!-- TODO add confirmation dialogs to both delete and erase actions -->
+		{#if $entity.data.type !== 'Tombstone'}
+			<ContextmenuEntry action={() => dispatch.EraseEntities({entity_ids: [$entity.entity_id]})}>
+				<span class="title">Erase Entity</span>
+			</ContextmenuEntry>
+		{/if}
+		<ContextmenuEntry action={() => dispatch.DeleteEntities({entity_ids: [$entity.entity_id]})}>
 			<span class="title">Delete Entity</span>
 		</ContextmenuEntry>
 	</svelte:fragment>

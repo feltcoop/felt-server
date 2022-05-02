@@ -62,7 +62,8 @@ export const randomCommunityParams = (persona_id: number): CreateCommunityParams
 		settings: toDefaultCommunitySettings(name),
 	};
 };
-export const randomSpaceParams = (community_id: number): CreateSpaceParams => ({
+export const randomSpaceParams = (persona_id: number, community_id: number): CreateSpaceParams => ({
+	persona_id,
 	community_id,
 	view: randomView(),
 	name: randomSpaceName(),
@@ -164,7 +165,7 @@ export class RandomVocabContext {
 		if (!account) account = await this.account();
 		if (!persona) ({persona} = await this.persona(account));
 		if (!community) ({community} = await this.community(persona, account));
-		const params = randomSpaceParams(community.community_id);
+		const params = randomSpaceParams(persona.persona_id, community.community_id);
 		const {space} = unwrap(
 			await createSpaceService.perform({
 				params,

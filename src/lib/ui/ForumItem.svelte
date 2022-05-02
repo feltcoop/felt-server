@@ -7,6 +7,7 @@
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
+	import TombstoneContent from '$lib/ui/TombstoneContent.svelte';
 
 	const {
 		ui: {contextmenu, personaById},
@@ -28,11 +29,8 @@
 	]}
 >
 	<div class="markup formatted">
-		{#if $entity.data.type !== 'Tombstone'}
-			{$entity.data.content}
-		{:else}
-			<i>This message was deleted</i>
-		{/if}
+		{#if $entity.data.type === 'Tombstone'}<TombstoneContent {entity} />{:else}{$entity.data
+				.content}{/if}
 	</div>
 	<PersonaAvatar {persona} />
 </li>
@@ -42,7 +40,7 @@
 		--icon_size: var(--icon_size_sm);
 		padding: var(--spacing_xs);
 		/* TODO experiment with a border color instead of bg */
-		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
+		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--tint_lightness_8)));
 		flex-direction: column;
 	}
 

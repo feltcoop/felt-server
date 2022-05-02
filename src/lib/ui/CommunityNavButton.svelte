@@ -20,8 +20,8 @@
 	export let community: Readable<Community>;
 	export let selected = false;
 
-	$: spaceIdSelection = $spaceIdSelectionByCommunityId[$community.community_id];
-	$: selectedSpace = spaceIdSelection === null ? null : spaceById.get(spaceIdSelection)!;
+	$: spaceIdSelection = $spaceIdSelectionByCommunityId.value.get($community.community_id);
+	$: selectedSpace = spaceIdSelection ? spaceById.get(spaceIdSelection)! : null;
 
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
 

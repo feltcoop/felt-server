@@ -8,6 +8,7 @@
 	import {getApp} from '$lib/ui/app';
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
+	import TombstoneContent from '$lib/ui/TombstoneContent.svelte';
 
 	const {
 		ui: {contextmenu, personaById},
@@ -39,11 +40,8 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			{format($entity.created, 'Pp')}
 		</div>
 		<div>
-			{#if $entity.data.type !== 'Tombstone'}
-				{$entity.data.content}
-			{:else}
-				<i>This message was deleted</i>
-			{/if}
+			{#if $entity.data.type === 'Tombstone'}<TombstoneContent {entity} />{:else}{$entity.data
+					.content}{/if}
 		</div>
 	</div>
 </li>
@@ -53,7 +51,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		align-items: flex-start;
 		padding: var(--spacing_xs);
 		/* TODO experiment with a border color instead of bg */
-		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--bg_color_lightness)));
+		background-color: hsl(var(--hue), var(--bg_saturation), calc(var(--tint_lightness_8)));
 	}
 	.signature {
 		display: flex;
