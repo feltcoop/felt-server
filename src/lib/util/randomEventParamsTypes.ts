@@ -23,7 +23,7 @@ import type {
 	ReadEntitiesParams,
 	ReadEntitiesPaginatedParams,
 	QueryEntitiesParams,
-	EraseEntityParams,
+	EraseEntitiesParams,
 	DeleteEntitiesParams,
 	CreateTieParams,
 	ReadTiesParams,
@@ -119,10 +119,10 @@ export interface RandomEventParams {
 		random: RandomVocabContext,
 		randomVocab?: RandomVocab,
 	) => Promise<QueryEntitiesParams>;
-	EraseEntity: (
+	EraseEntities: (
 		random: RandomVocabContext,
 		randomVocab?: RandomVocab,
-	) => Promise<EraseEntityParams>;
+	) => Promise<EraseEntitiesParams>;
 	DeleteEntities: (
 		random: RandomVocabContext,
 		randomVocab?: RandomVocab,

@@ -104,7 +104,7 @@ export const UpdateEntityService: ServiceByName['UpdateEntity'] = {
 };
 
 //soft deletes a single entity, leaving behind a Tombstone entity
-export const eraseEntityService: ServiceByName['EraseEntities'] = {
+export const EraseEntitiesService: ServiceByName['EraseEntities'] = {
 	event: EraseEntities,
 	perform: async ({repos, params}) => {
 		const result = await repos.entity.eraseByIds(params.entity_ids);

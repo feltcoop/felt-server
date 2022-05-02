@@ -37,7 +37,7 @@ export type ServiceEventName =
 	| 'UpdateEntity'
 	| 'ReadEntities'
 	| 'ReadEntitiesPaginated'
-	| 'EraseEntity'
+	| 'EraseEntities'
 	| 'DeleteEntities'
 	| 'CreateTie'
 	| 'ReadTies'
@@ -135,7 +135,7 @@ export interface ServiceByName {
 	CreateSpace: Service<CreateSpaceParams, CreateSpaceResponseResult>;
 	CreateEntity: Service<CreateEntityParams, CreateEntityResponseResult>;
 	UpdateEntity: Service<UpdateEntityParams, UpdateEntityResponseResult>;
-	EraseEntity: Service<EraseEntityParams, EraseEntityResponseResult>;
+	EraseEntities: Service<EraseEntitiesParams, EraseEntitiesResponseResult>;
 	DeleteEntities: Service<DeleteEntitiesParams, DeleteEntitiesResponseResult>;
 	ReadCommunity: Service<ReadCommunityParams, ReadCommunityResponseResult>;
 	ReadCommunities: Service<ReadCommunitiesParams, ReadCommunitiesResponseResult>;
