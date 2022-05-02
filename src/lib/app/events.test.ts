@@ -43,6 +43,7 @@ for (const eventInfo of eventInfos.values()) {
 		}
 
 		// TODO this fails because the random space is not availabe in the client UI data
+		// maybe make the randomizer configurable for populating server and/or client data
 		if (eventInfo.name === 'ViewSpace') {
 			return;
 		}
