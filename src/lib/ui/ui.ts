@@ -51,6 +51,7 @@ export interface Ui {
 	//TODO maybe refactor to remove store around map? Like personaById
 	spacesByCommunityId: Readable<Map<number, Array<Readable<Space>>>>;
 	personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>>;
+	entityById: Map<number, Readable<Entity>>; // TODO mutable inner store
 	entitiesBySpace: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
 	// view state
 	expandMainNav: Readable<boolean>;
@@ -62,7 +63,7 @@ export interface Ui {
 	communitiesBySessionPersona: Readable<Map<Readable<Persona>, Array<Readable<Community>>>>;
 	communityIdSelectionByPersonaId: Mutable<Map<number, number | null>>;
 	communitySelection: Readable<Readable<Community> | null>;
-	spaceIdSelectionByCommunityId: Readable<{[key: number]: number | null}>;
+	spaceIdSelectionByCommunityId: Mutable<Map<number, number | null>>;
 	spaceSelection: Readable<Readable<Space> | null>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
@@ -153,7 +154,7 @@ export const toUi = (
 	const personaIndexSelection = derived(
 		[personaSelection, sessionPersonas],
 		([$personaSelection, $sessionPersonas]) =>
-			$personaSelection === null ? null : $sessionPersonas.indexOf($personaSelection),
+			$personaSelection ? $sessionPersonas.indexOf($personaSelection) : null,
 	);
 	const sessionPersonaIndices = derived(
 		[sessionPersonas],
@@ -192,20 +193,23 @@ export const toUi = (
 	const communitySelection = derived(
 		[personaIdSelection, communityIdSelectionByPersonaId],
 		([$personaIdSelection, $communityIdSelectionByPersonaId]) =>
-			$personaIdSelection === null
-				? null
-				: communityById.get($communityIdSelectionByPersonaId.value.get($personaIdSelection)!)!,
+			$personaIdSelection
+				? communityById.get($communityIdSelectionByPersonaId.value.get($personaIdSelection)!)!
+				: null,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
-	const spaceIdSelectionByCommunityId = writable<{[key: number]: number | null}>({});
+	const spaceIdSelectionByCommunityId = mutable<Map<number, number | null>>(new Map());
 	const spaceSelection = derived(
 		[communitySelection, spaceIdSelectionByCommunityId],
 		([$communitySelection, $spaceIdSelectionByCommunityId]) =>
 			($communitySelection &&
-				spaceById.get($spaceIdSelectionByCommunityId[get($communitySelection)!.community_id]!)) ||
+				spaceById.get(
+					$spaceIdSelectionByCommunityId.value.get(get($communitySelection)!.community_id)!,
+				)) ||
 			null,
 	);
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
+	const entityById: Map<number, Writable<Entity>> = new Map();
 	const entitiesBySpace: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
 
 	const expandMainNav = writable(!initialMobile);
@@ -226,6 +230,7 @@ export const toUi = (
 		spaceById,
 		spacesByCommunityId,
 		personasByCommunityId,
+		entityById,
 		entitiesBySpace,
 		communitiesBySessionPersona,
 		// view state
@@ -282,23 +287,23 @@ export const toUi = (
 			// was causing various confusing issues, so they find stuff directly on the session objects
 			// instead of using derived stores like `sessionPersonas` and `spacesByCommunityId`.
 			communityIdSelectionByPersonaId.swap(
-				$session.guest
-					? new Map()
-					: // TODO first try to load this from localStorage
-					  new Map($sessionPersonas.map(($p) => [$p.persona_id, $p.community_id])),
+				// TODO first try to load this from localStorage
+				new Map(
+					$session.guest ? null : $sessionPersonas.map(($p) => [$p.persona_id, $p.community_id]),
+				),
 			);
-			spaceIdSelectionByCommunityId.set(
-				$session.guest
-					? {}
-					: Object.fromEntries(
-							//TODO lookup space by community_id+url (see this comment in multiple places)
-							$session.communities.map(($community) => [
+			spaceIdSelectionByCommunityId.swap(
+				//TODO lookup space by community_id+url (see this comment in multiple places)
+				new Map(
+					$session.guest
+						? null
+						: $session.communities.map(($community) => [
 								$community.community_id,
 								$session.spaces.find(
 									(s) => s.community_id === $community.community_id && isHomeSpace(s),
 								)!.space_id,
-							]),
-					  ),
+						  ]),
+				),
 			);
 		},
 	} as const;

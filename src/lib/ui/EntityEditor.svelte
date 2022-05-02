@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
 	import {format} from 'date-fns';
+	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 
 	import {getApp} from '$lib/ui/app';
 	import EntityTable from '$lib/ui/EntityTable.svelte';
@@ -8,8 +9,10 @@
 	import {parseJson, serializeJson} from '$lib/util/json';
 	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
+	import TombstoneContent from './TombstoneContent.svelte';
 
 	export let entity: Readable<Entity>;
+	export let done: (() => void) | undefined = undefined;
 
 	const {
 		dispatch,
@@ -30,6 +33,15 @@
 			entity_id: $entity.entity_id,
 			data: updated,
 		});
+
+	// TODO factor this out into a component or something, and handle failures
+	let deletePending = false;
+	const deleteEntity = async () => {
+		deletePending = true;
+		await dispatch.DeleteEntities({entity_ids: [$entity.entity_id]});
+		deletePending = false;
+		done?.();
+	};
 </script>
 
 <div class="entity-editor column">
@@ -49,23 +61,30 @@
 	<!-- TODO add entity property contextmenu actions to this -->
 	<form>
 		<ul>
-			<li>
-				<PropertyEditor
-					value={$entity.data.content}
-					field="content"
-					update={updateEntityDataProperty}
-				/>
-			</li>
-			{#if $devmode}
+			{#if $entity.data.type === 'Tombstone'}
+				<div><TombstoneContent {entity} /></div>
+				<PendingButton on:click={() => deleteEntity()} pending={deletePending}
+					>Delete entity</PendingButton
+				>
+			{:else}
 				<li>
 					<PropertyEditor
-						value={$entity.data}
-						field="data"
-						update={updateEntityData}
-						parse={parseJson}
-						serialize={serializeJson}
+						value={$entity.data.content}
+						field="content"
+						update={updateEntityDataProperty}
 					/>
 				</li>
+				{#if $devmode}
+					<li>
+						<PropertyEditor
+							value={$entity.data}
+							field="data"
+							update={updateEntityData}
+							parse={parseJson}
+							serialize={serializeJson}
+						/>
+					</li>
+				{/if}
 			{/if}
 		</ul>
 	</form>

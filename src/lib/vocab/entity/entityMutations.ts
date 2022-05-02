@@ -1,66 +1,61 @@
-import {writable, get} from 'svelte/store';
+import {get, writable} from 'svelte/store';
 
 import type {Mutations} from '$lib/app/eventTypes';
+import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 
-export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, ui: {entitiesBySpace}}) => {
+// TODO if `Create/Update/Erase` remain identical, probably make them use a single helper
+// `updateEntity` or more likely `updateEntities`
+
+export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	const {entity: $entity} = result.value;
-	const entity = writable($entity);
-	const spaceEntities = entitiesBySpace.get($entity.space_id);
-	if (spaceEntities) {
-		// TODO check if it already exists -- maybe by getting `entityStore` from a `entityById` map
-		spaceEntities.update(($entities) => $entities.concat(entity));
-	} else {
-		entitiesBySpace.set($entity.space_id, writable([entity]));
+	updateEntity(ui, result.value.entity);
+	return result;
+};
+
+export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui}) => {
+	const result = await invoke();
+	if (!result.ok) return result;
+	updateEntity(ui, result.value.entity);
+	return result;
+};
+
+export const EraseEntities: Mutations['EraseEntities'] = async ({invoke, ui}) => {
+	const result = await invoke();
+	if (!result.ok) return result;
+	for (const $entity of result.value.entities) {
+		updateEntity(ui, $entity);
 	}
 	return result;
 };
 
-export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui: {entitiesBySpace}}) => {
-	const result = await invoke();
-	if (!result.ok) return result;
-	//TODO maybe return to $entity naming convention OR propagate this pattern?
-	const {entity: updatedEntity} = result.value;
-	const entities = entitiesBySpace.get(updatedEntity.space_id)!;
-	const entity = get(entities).find((e) => get(e).entity_id === updatedEntity.entity_id)!;
-	entity.set(updatedEntity);
-	return result;
-};
-
-export const EraseEntity: Mutations['EraseEntity'] = async ({invoke}) => {
-	const result = await invoke();
-	if (!result.ok) return result;
-	//update state here
-
-	//TODO add store updates once new entity/tie stores are in place
-	return result;
-};
-
-export const DeleteEntities: Mutations['DeleteEntities'] = async ({invoke}) => {
-	const result = await invoke();
-	if (!result.ok) return result;
-	//update state here
-
-	//TODO add store updates once new entity/tie stores are in place
-	return result;
-};
-
-export const ReadEntities: Mutations['ReadEntities'] = async ({
-	params,
+export const DeleteEntities: Mutations['DeleteEntities'] = async ({
 	invoke,
-	ui: {entitiesBySpace},
+	params,
+	ui: {entityById, entitiesBySpace},
 }) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	const {space_id} = params;
-	const existingEntities = entitiesBySpace.get(space_id);
-	// TODO probably check to make sure they don't already exist
-	const newEntities = result ? result.value.entities.map((f) => writable(f)) : [];
-	if (existingEntities) {
-		existingEntities.set(newEntities);
-	} else {
-		entitiesBySpace.set(space_id, writable(newEntities));
+	//TODO update ties once stores are in place
+	const {entity_ids} = params;
+	for (const entity_id of entity_ids) {
+		entityById.delete(entity_id);
+	}
+	for (const spaceEntities of entitiesBySpace.values()) {
+		// TODO this is very inefficient
+		if (get(spaceEntities).find((e) => entity_ids.includes(get(e).entity_id))) {
+			spaceEntities.update(($s) => $s.filter(($e) => !entity_ids.includes(get($e).entity_id)));
+		}
+	}
+	return result;
+};
+
+export const ReadEntities: Mutations['ReadEntities'] = async ({invoke, ui}) => {
+	const result = await invoke();
+	if (!result.ok) return result;
+	//TODO update ties once stores are in place: `result.value.ties`
+	for (const $entity of result.value.entities) {
+		updateEntity(ui, $entity);
 	}
 	return result;
 };

@@ -51,7 +51,7 @@
 		<ContextmenuEntry
 			action={() =>
 				dispatch.ViewSpace({
-					space,
+					space_id: $space.space_id,
 					view: '<EntityExplorer />',
 				})}
 		>

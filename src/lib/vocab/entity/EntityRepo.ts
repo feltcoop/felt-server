@@ -68,28 +68,29 @@ export class EntityRepo extends PostgresRepo {
 
 	async updateEntityData(entity_id: number, data: EntityData): Promise<Result<{value: Entity}>> {
 		log.trace('[updateEntityData]', entity_id);
-		const result = await this.db.sql<Entity[]>`
+		const _data = await this.db.sql<Entity[]>`
 			UPDATE entities SET data=${this.db.sql.json(data)}, updated=NOW()
-			WHERE entity_id= ${entity_id}
+			WHERE entity_id= ${entity_id} AND data->>'type' != 'Tombstone'
 			RETURNING *
 		`;
-		if (!result.count) return NOT_OK;
-		return {ok: true, value: result[0]};
+		if (!_data.count) return NOT_OK;
+		return {ok: true, value: _data[0]};
 	}
 
 	//This function is an idempotent soft delete, that leaves behind a Tombstone entity per Activity-Streams spec
-	async eraseById(entity_id: number): Promise<Result<object>> {
-		log.trace('[deleteById]', entity_id);
+	async eraseByIds(entity_ids: number[]): Promise<Result<{value: Entity[]}>> {
+		log.trace('[eraseById]', entity_ids);
 		const data = await this.db.sql<any[]>`
 			UPDATE entities
 			SET data = jsonb_build_object('type','Tombstone','formerType',data->>'type','deleted',NOW())
-			WHERE entity_id=${entity_id} AND data->>'type' != 'Tombstone';
+			WHERE entity_id IN ${this.db.sql(entity_ids)} AND data->>'type' != 'Tombstone'
+			RETURNING *;
 		`;
 		if (!data.count) return NOT_OK;
-		return OK;
+		return {ok: true, value: data};
 	}
 
-	//This function actually deletes the record in the DB
+	//This function actually deletes the records in the DB
 	async deleteByIds(entity_ids: number[]): Promise<Result<object>> {
 		log.trace('[deleteByIds]', entity_ids);
 		const data = await this.db.sql<any[]>`

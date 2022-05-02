@@ -4,7 +4,7 @@ import {
 	ReadEntitiesPaginated,
 	UpdateEntity,
 	CreateEntity,
-	EraseEntity,
+	EraseEntities,
 	DeleteEntities,
 } from '$lib/vocab/entity/entityEvents';
 import {toTieEntityIds} from '$lib/vocab/tie/tieHelpers';
@@ -104,14 +104,14 @@ export const UpdateEntityService: ServiceByName['UpdateEntity'] = {
 };
 
 //soft deletes a single entity, leaving behind a Tombstone entity
-export const EraseEntityService: ServiceByName['EraseEntity'] = {
-	event: EraseEntity,
+export const eraseEntityService: ServiceByName['EraseEntities'] = {
+	event: EraseEntities,
 	perform: async ({repos, params}) => {
-		const result = await repos.entity.eraseById(params.entity_id);
+		const result = await repos.entity.eraseByIds(params.entity_ids);
 		if (!result.ok) {
 			return {ok: false, status: 500, message: 'failed to soft delete entity'};
 		}
-		return {ok: true, status: 200, value: null};
+		return {ok: true, status: 200, value: {entities: result.value}};
 	},
 };
 

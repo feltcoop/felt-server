@@ -1,5 +1,4 @@
 import {randomBool} from '@feltcoop/felt/util/random.js';
-import {writable} from 'svelte/store';
 
 import {
 	randomEntityData,
@@ -110,9 +109,11 @@ export const randomEventParams: RandomEventParams = {
 			data: randomEntityData(),
 		};
 	},
-	EraseEntity: async (random, {account, persona, community, space} = {}) => {
+	EraseEntities: async (random, {account, persona, community, space} = {}) => {
+		const entity1 = await random.entity(persona, account, community, space);
+		const entity2 = await random.entity(persona, account, community, space);
 		return {
-			entity_id: (await random.entity(persona, account, community, space)).entity.entity_id,
+			entity_ids: [entity1.entity.entity_id, entity2.entity.entity_id],
 		};
 	},
 	DeleteEntities: async (random, {account, persona, community, space} = {}) => {
@@ -180,7 +181,7 @@ export const randomEventParams: RandomEventParams = {
 	},
 	ViewSpace: async (random, {account, persona, community} = {}) => {
 		return {
-			space: writable(await random.space(persona, account, community)) as any,
+			space_id: (await random.space(persona, account, community)).space.space_id,
 			view: '<EntityExplorer />',
 		};
 	},
