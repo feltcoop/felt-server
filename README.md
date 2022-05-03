@@ -9,7 +9,7 @@
 
 For more in depth development docs, please see
 [Getting started](/src/docs/getting-started.md) and
-[Contributing](/src/docs/contributing.md)
+[Contributing](/contributing.md)
 
 For build & deployment docs, see the [Infra README](/src/infra/README.md)
 
@@ -35,8 +35,9 @@ npm test
 gro test
 ```
 
-> learn more [about Gro](https://github.com/feltcoop/gro) and
-> [setting up a dev environment](/src/docs/contributing.md)
+> learn more [about Gro](https://github.com/feltcoop/gro),
+> [setting up a dev environment](/src/docs/getting-started.md),
+> and [contributing](/contributing.md)
 
 ## credits 🐢<sub>🐢</sub><sub><sub>🐢</sub></sub>
 
