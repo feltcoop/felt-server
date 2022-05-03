@@ -1,5 +1,7 @@
 # felt-server build & deploy
 
+> how to go from a [local dev setup](/src/docs/getting-started.md) to a live deployment
+
 These documents and tools were built with the assumption of remote cloud infrastructure,
 but can easily be adapted for local use & deployment.
 
