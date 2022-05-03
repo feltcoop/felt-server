@@ -8,12 +8,14 @@
 > **work in progress**: pre-pre-alpha
 
 For more in depth development docs, please see
-[Getting started](/src/docs/contributing.md) and
+[Getting started](/src/docs/getting-started.md) and
 [Contributing](/src/docs/contributing.md)
 
 For build & deployment docs, see the [Infra README](/src/infra/README.md)
 
 ## getting started
+
+First [setup for dev](/src/docs/getting-started.md), then:
 
 ```bash
 # node >=16.6
