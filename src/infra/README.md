@@ -1,4 +1,4 @@
-# felt-server build & deploy
+# Building and deploying felt-server
 
 > how to go from a [local dev setup](/src/docs/getting-started.md) to a live deployment
 
