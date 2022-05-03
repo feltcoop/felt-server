@@ -5,7 +5,7 @@
 > server for [Felt](https://github.com/feltcoop/felt),
 > a tool for building and maintaining communities 💚
 
-> **work in progress**: pre-pre-alpha
+> **work in progress**: pre-alpha
 
 For more in depth development docs, please see
 [Getting started](/src/docs/getting-started.md) and
