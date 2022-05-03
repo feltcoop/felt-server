@@ -1,6 +1,6 @@
 [<img src="/src/static/felt.png" align="right" width="192" height="178">](https://felt.dev)
 
-# Getting started
+# Getting started with felt-server
 
 > docs for devs on [felt-server](https://github.com/feltcoop/felt-server),
 > a tool for building and maintaining communities 💚
