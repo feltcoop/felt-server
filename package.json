@@ -44,7 +44,7 @@
     "svast": "^0.2.0",
     "svast-stringify": "^0.1.0",
     "svelte": "^3.48.0",
-    "svelte-check": "^2.6.0",
+    "svelte-check": "^2.7.0",
     "svelte-parse": "^0.1.0",
     "svelte-preprocess-esbuild": "^2.0.0",
     "throttle-debounce": "^4.0.0",
