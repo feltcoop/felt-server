@@ -92,7 +92,7 @@ export const randomEventParams: RandomEventParams = {
 	},
 	ReadEntities: async (random, {account, persona, community, space} = {}) => {
 		if (!space) ({space} = await random.space(persona, account, community));
-		return {space_id: space.space_id};
+		return {source_id: space.directory_id};
 	},
 	ReadEntitiesPaginated: async (random, {account, persona, community, space} = {}) => {
 		if (!space) ({space} = await random.space(persona, account, community));
@@ -100,7 +100,7 @@ export const randomEventParams: RandomEventParams = {
 	},
 	QueryEntities: async (random, {account, persona, community} = {}) => {
 		return {
-			space_id: (await random.space(persona, account, community)).space.space_id,
+			source_id: (await random.space(persona, account, community)).space.directory_id,
 		};
 	},
 	UpdateEntity: async (random, {account, persona, community, space} = {}) => {

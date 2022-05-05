@@ -316,7 +316,7 @@ export interface UpdateEntityResponse {
 export type UpdateEntityResponseResult = ApiResult<UpdateEntityResponse>;
 
 export interface ReadEntitiesParams {
-	space_id: number;
+	source_id: number;
 }
 export interface ReadEntitiesResponse {
 	entities: Entity[];
@@ -336,7 +336,7 @@ export interface ReadEntitiesPaginatedResponse {
 export type ReadEntitiesPaginatedResponseResult = ApiResult<ReadEntitiesPaginatedResponse>;
 
 export interface QueryEntitiesParams {
-	space_id: number;
+	source_id: number;
 }
 
 export interface EraseEntitiesParams {

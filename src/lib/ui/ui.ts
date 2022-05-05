@@ -52,7 +52,7 @@ export interface Ui {
 	spacesByCommunityId: Readable<Map<number, Array<Readable<Space>>>>;
 	personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>>;
 	entityById: Map<number, Readable<Entity>>; // TODO mutable inner store
-	entitiesBySpace: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
+	entitiesBySourceId: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
 	// view state
 	expandMainNav: Readable<boolean>;
 	expandMarquee: Readable<boolean>;
@@ -210,7 +210,7 @@ export const toUi = (
 	);
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const entityById: Map<number, Writable<Entity>> = new Map();
-	const entitiesBySpace: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
+	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
 
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
@@ -231,7 +231,7 @@ export const toUi = (
 		spacesByCommunityId,
 		personasByCommunityId,
 		entityById,
-		entitiesBySpace,
+		entitiesBySourceId,
 		communitiesBySessionPersona,
 		// view state
 		mobile,

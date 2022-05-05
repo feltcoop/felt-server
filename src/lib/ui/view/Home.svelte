@@ -40,7 +40,7 @@
 
 	//TODO this is all done because the Query event always returns an empty array on initial call
 	$: entitiesResult = shouldLoadEntities
-		? dispatch.ReadEntities({space_id: $space.space_id})
+		? dispatch.ReadEntities({source_id: $space.directory_id})
 		: null;
 	let entities: Entity[] | undefined;
 	let rules: Readable<Entity> | undefined;
