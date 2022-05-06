@@ -50,7 +50,10 @@
 		{:else}
 			<div class="icon-button" />
 		{/if}
-		<span>{$entity.data.name || '[nameless]'}: {$entity.data.type}</span>
+		<span
+			>{#if $entity.data.name}{$entity.data.name}:{/if}
+			{$entity.data.type}:</span
+		>
 		{#if $entity.data.content}<span class="content">{$entity.data.content}</span>{/if}
 	</div>
 	<!-- TODO key? -->
