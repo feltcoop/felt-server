@@ -64,6 +64,22 @@ export const ReadEntities: Mutations['ReadEntities'] = async ({invoke, params, u
 	return result;
 };
 
+// TODO implement this along with `ReadEntities` to use the same query and caching structures
+export const ReadEntitiesPaginated: Mutations['ReadEntitiesPaginated'] = async ({
+	invoke,
+	ui,
+	params,
+}) => {
+	const result = await invoke();
+	if (!result.ok) return result;
+	// //TODO update ties once stores are in place: `result.value.ties`
+	for (const $entity of result.value.entities) {
+		updateEntity(ui, $entity);
+		updateEntityCaches(ui, $entity, params.source_id);
+	}
+	return result;
+};
+
 //TODO rethink this caching element
 export const QueryEntities: Mutations['QueryEntities'] = ({
 	params,

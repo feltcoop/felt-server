@@ -1,15 +1,37 @@
 <script lang="ts">
 	import {browser} from '$app/env';
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
+	import {writable, type Readable} from 'svelte/store';
 
 	import EntityItems from '$lib/ui/EntityItems.svelte';
+	import EntityTree from '$lib/ui/EntityTree.svelte';
 	import {getApp} from '$lib/ui/app';
 	import {getViewContext} from '$lib/vocab/view/view';
+	import type {Entity} from '$lib/vocab/entity/entity';
+	import type {Tie} from '$lib/vocab/tie/tie';
 
 	const viewContext = getViewContext();
 	$: ({space} = $viewContext);
 
-	const {dispatch, socket} = getApp();
+	const {
+		dispatch,
+		socket,
+		ui: {entityById},
+	} = getApp();
+
+	// TODO use pageKey
+	let entities2: Readable<Array<Readable<Entity>>>;
+	let ties2: Readable<Array<Readable<Tie>>>;
+	$: console.log(`entities2, ties2`, $entities2, $ties2);
+	$: shouldLoadEntities && loadEntities2();
+	const loadEntities2 = async () => {
+		const result = await dispatch.ReadEntitiesPaginated({source_id: $space.directory_id});
+		if (result.ok) {
+			// TODO refactor using a query interface (with data, status)
+			entities2 = writable(result.value.entities.map((e) => entityById.get(e.entity_id)!));
+			ties2 = writable(result.value.ties.map((t) => writable(t)));
+		}
+	};
 
 	$: shouldLoadEntities = browser && $socket.open;
 	$: entities = shouldLoadEntities
@@ -24,6 +46,13 @@
 	>
 		Close EntityExplorer
 	</button>
+	<div class="tree">
+		{#if entities2}
+			<EntityTree entities={entities2} ties={ties2} />
+		{:else}
+			<PendingAnimation />
+		{/if}
+	</div>
 	<div class="entities">
 		{#if entities}
 			<EntityItems {entities} />

@@ -14,6 +14,7 @@ import {
 	EraseEntities,
 	DeleteEntities,
 	ReadEntities,
+	ReadEntitiesPaginated,
 	QueryEntities,
 } from '$lib/vocab/entity/entityMutations';
 import {CreateTie, ReadTies, DeleteTie} from '$lib/vocab/tie/tieMutations';
@@ -53,6 +54,7 @@ export const mutations: Record<string, Mutation> = {
 	EraseEntities,
 	DeleteEntities,
 	ReadEntities,
+	ReadEntitiesPaginated,
 	QueryEntities,
 	// tieMutations
 	CreateTie,
