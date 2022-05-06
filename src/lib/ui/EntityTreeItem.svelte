@@ -74,15 +74,15 @@
 		flex: 1;
 		display: flex;
 		align-items: center;
-		white-space: nowrap;
 	}
 	.icon-button {
 		margin-right: var(--spacing_sm);
 	}
 	.content {
-		flex: 1;
-		text-overflow: ellipsis;
 		padding: 0 var(--spacing_sm);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	li {
 		display: flex;
