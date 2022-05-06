@@ -26,7 +26,7 @@
 	// TODO use pageKey
 	let destEntities: Readable<Array<Readable<Entity>>>;
 	let destTies: Readable<Array<Readable<Tie>>>;
-	$: console.log(`destEntities, ties2`, $destEntities, $destTies);
+	$: console.log(`destEntities`, $destEntities, $destTies);
 	$: shouldLoadEntities && loadEntities2();
 	const loadEntities2 = async () => {
 		const result = await dispatch.ReadEntitiesPaginated({source_id: $entity.entity_id});
