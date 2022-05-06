@@ -26,6 +26,7 @@
 	$: shouldLoadEntities && loadEntities2();
 	const loadEntities2 = async () => {
 		const result = await dispatch.ReadEntitiesPaginated({source_id: $space.directory_id});
+		console.log(`EntityExplorer read result`, result);
 		if (result.ok) {
 			// TODO refactor using a query interface (with data, status)
 			entities2 = writable(result.value.entities.map((e) => entityById.get(e.entity_id)!));

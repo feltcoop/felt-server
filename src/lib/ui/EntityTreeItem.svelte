@@ -17,6 +17,7 @@
 
 	export let entity: Readable<Entity>;
 	export let ties: Readable<Array<Readable<Tie>>>; // TODO maybe don't pass these and do lookups instead
+	export let depth = 0;
 
 	let expanded = false;
 
@@ -40,7 +41,7 @@
 	$: shouldLoadEntities = browser && $socket.open;
 </script>
 
-<ul>
+<li style:--depth={depth}>
 	<div class="item" use:contextmenu.action={[[EntityContextmenu, {entity}]]}>
 		{#if hasDestEntities}
 			<button class="icon-button" on:click={() => (expanded = !expanded)}>
@@ -49,22 +50,41 @@
 		{:else}
 			<div class="icon-button" />
 		{/if}
-		{$entity.data.name || '(no name)'}: {$entity.data.type}
+		<span>{$entity.data.name || '[nameless]'}: {$entity.data.type}</span>
+		{#if $entity.data.content}<span class="content">{$entity.data.content}</span>{/if}
 	</div>
 	<!-- TODO key? -->
 	{#if expanded && hasDestEntities}
-		{#each $destEntities as destEntity (destEntity)}
-			<svelte:self entity={destEntity} {ties} />
-		{/each}
+		<ul>
+			{#each $destEntities as destEntity (destEntity)}
+				<svelte:self entity={destEntity} {ties} depth={depth + 1} />
+			{/each}
+		</ul>
 	{/if}
-</ul>
+</li>
 
 <style>
+	li {
+		padding-left: calc(var(--depth) * var(--icon_size));
+	}
 	.item {
+		flex: 1;
 		display: flex;
 		align-items: center;
+		white-space: nowrap;
 	}
 	.icon-button {
 		margin-right: var(--spacing_sm);
+	}
+	.content {
+		flex: 1;
+		text-overflow: ellipsis;
+		padding: 0 var(--spacing_sm);
+	}
+	li {
+		display: flex;
+		flex-direction: column;
+	}
+	ul {
 	}
 </style>

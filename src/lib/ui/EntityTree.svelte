@@ -13,9 +13,7 @@
 
 <ul>
 	{#each $entities as entity (entity)}
-		<li>
-			<EntityTreeItem {entity} {ties} />
-		</li>
+		<EntityTreeItem {entity} {ties} />
 	{/each}
 </ul>
 
