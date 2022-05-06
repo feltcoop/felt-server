@@ -12,6 +12,7 @@
 		"noImplicitOverride": true,
 		"noFallthroughCasesInSwitch": true,
 		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true,
 		"sourceMap": true,
 		"importHelpers": true,
 		"skipLibCheck": true,
