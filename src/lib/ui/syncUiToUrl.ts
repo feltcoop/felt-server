@@ -40,7 +40,7 @@ export const syncUiToUrl = (
 			void goto(
 				location.pathname +
 					'?' +
-					// TODO extract a helper after upgrading SvelteKit and using
+					// TODO BLOCK extract a helper after upgrading SvelteKit and using
 					// `$page`'s `URLSearchParams` instead of constructing the search like this
 					setUrlPersona(fallbackPersonaIndex, new URLSearchParams(location.search)),
 				{replaceState: true},

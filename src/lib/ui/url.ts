@@ -4,11 +4,19 @@ import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 
 export const PERSONA_QUERY_KEY = 'persona';
 
+export const toUrl = (
+	pathname: string,
+	params?: URLSearchParams, // TODO BLOCK clone?
+): string => {
+	// TODO BLOCK use a cached version?
+	return `${pathname}?${setUrlPersona(personaIndex, params)}`;
+};
+
 export const toSpaceUrl = (
 	personaIndex: number | null,
 	community: Community,
 	space: Space | null,
-	params?: URLSearchParams,
+	params?: URLSearchParams, // TODO BLOCK clone?
 ): string => {
 	const url = space?.url;
 	return `/${community.name}${!url || isHomeSpace(space) ? '' : url}?${setUrlPersona(

@@ -17,7 +17,7 @@ export const CreateSpace: Mutations['CreateSpace'] = async ({
 	const $community = get(community);
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
-	// TODO extract a helper after upgrading SvelteKit and using
+	// TODO BLOCK extract a helper after upgrading SvelteKit and using
 	// `$page`'s `URLSearchParams` instead of constructing the search like this
 	await goto(
 		'/' +

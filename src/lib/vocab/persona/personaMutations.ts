@@ -17,7 +17,7 @@ export const CreateAccountPersona: Mutations['CreateAccountPersona'] = async ({i
 	} = result.value;
 	const persona = addPersona(ui, $persona);
 	addCommunity(ui, $community, $spaces, [$membership]);
-	// TODO extract a helper after upgrading SvelteKit and using
+	// TODO BLOCK extract a helper after upgrading SvelteKit and using
 	// `$page`'s `URLSearchParams` instead of constructing the search like this
 	await goto('/' + $community.name + `?persona=${get(sessionPersonaIndices).get(persona)}`);
 	return result;
