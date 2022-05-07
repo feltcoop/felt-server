@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SchemaInfo from '$lib/ui/SchemaInfo.svelte';
 	import {eventInfos} from '$lib/app/events';
-	import {schemas} from '$lib/app/schemas';
+	import {vocabSchemas} from '$lib/app/schemas';
 
 	const title = 'docs';
 </script>
@@ -12,27 +12,41 @@
 	<div class="column">
 		<div class="markup">
 			<h1 id="docs">docs</h1>
-			<ul>
-				<li><a href="#vocab">vocab</a></li>
-				<li><a href="#events">events</a></li>
+		</div>
+		<!-- TODO extract an accessible menu component -->
+		<div class="menu-wrapper markup column-sm">
+			<ul class="menu">
+				<li><h3><a href="#docs">docs</a></h3></li>
+				<li><h4><a href="#vocab">vocab</a></h4></li>
+				<ul>
+					{#each vocabSchemas as schema (schema)}
+						<li><a href="#{schema.name}">{schema.name}</a></li>
+					{/each}
+				</ul>
+				<li><h4><a href="#events">events</a></h4></li>
+				<ul>
+					{#each eventInfos as eventInfo (eventInfo.name)}
+						<li><a href="#{eventInfo.name}">{eventInfo.name}</a></li>
+					{/each}
+				</ul>
 			</ul>
-			<hr />
+		</div>
+		<div class="markup">
 			<h2 id="vocab">vocab</h2>
 		</div>
 		<ul>
-			{#each schemas as schema (schema)}
-				<li>
+			{#each vocabSchemas as schema (schema)}
+				<li id={schema.name}>
 					<SchemaInfo {schema} />
 				</li>
 			{/each}
 		</ul>
-		<hr />
 		<div class="markup">
 			<h2 id="events">events</h2>
 		</div>
 		<ul>
 			{#each eventInfos as eventInfo (eventInfo.name)}
-				<li>
+				<li id={eventInfo.name}>
 					<div class="title">
 						<code class="name">{eventInfo.name}</code>
 						<small class="type">{eventInfo.type}</small>
@@ -41,41 +55,30 @@
 						<span>params</span>
 						<!-- TODO display the generated type string instead of the schema,
 						probably by generating a sibling file to `events.ts` like `eventTypeStrings.ts` -->
-						<pre>
-            {JSON.stringify(eventInfo.params, null, 2)}
-          </pre>
+						<pre>{JSON.stringify(eventInfo.params, null, 2)}</pre>
 					</div>
 					{#if eventInfo.type !== 'ClientEvent'}
 						<div class="property">
 							<span>response</span>
-							<pre>
-								<!-- TODO display the generated type string instead of the schema,
-								probably by generating a sibling file to `events.ts` like `eventTypeStrings.ts` -->
-								<pre>
-								{JSON.stringify(eventInfo.response, null, 2)}
-          </pre>
-						</pre>
+							<!-- TODO display the generated type string instead of the schema,
+							probably by generating a sibling file to `events.ts` like `eventTypeStrings.ts` -->
+							<pre>{JSON.stringify(eventInfo.response, null, 2)}</pre>
 						</div>
 					{/if}
 					<div class="property">
 						<span>returns</span>
-						<pre>
-            {eventInfo.returns}
-          </pre>
+						<pre>{eventInfo.returns}</pre>
 					</div>
 				</li>
 			{/each}
 		</ul>
-		<hr />
 		<div class="markup">
 			<ul>
-				<li>
-					<a href="#docs">docs</a>
-					<ul>
-						<li><a href="#vocab">vocab</a></li>
-						<li><a href="#events">events</a></li>
-					</ul>
-				</li>
+				<li><h3><a href="#docs">docs</a></h3></li>
+				<ul>
+					<li><h4><a href="#vocab">vocab</a></h4></li>
+					<li><h4><a href="#events">events</a></h4></li>
+				</ul>
 			</ul>
 		</div>
 	</div>
@@ -87,10 +90,40 @@
 		height: 100%;
 		overflow: auto;
 	}
+	.column {
+		position: relative;
+	}
 	li {
 		display: flex;
 		flex-direction: column;
 		padding: var(--spacing_lg) 0;
+	}
+	.menu li {
+		padding: 0;
+	}
+	.menu-wrapper {
+		position: absolute;
+		right: 0;
+		top: 0;
+		height: 100%;
+		transform: translate3d(calc(100% + 10px), 0, 0);
+	}
+	.menu {
+		position: sticky;
+		top: 0;
+		padding: var(--spacing_sm);
+	}
+	@media (max-width: 1500px) {
+		.menu-wrapper {
+			position: relative;
+			transform: none;
+			margin-bottom: var(--spacing_xl3);
+		}
+	}
+	.menu {
+		position: sticky;
+		right: 0;
+		top: 0;
 	}
 	.title {
 		display: flex;

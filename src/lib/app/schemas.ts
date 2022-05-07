@@ -13,6 +13,7 @@ import {MembershipSchema} from '$lib/vocab/membership/membership.schema';
 import {SpaceSchema} from '$lib/vocab/space/space.schema';
 import {EntitySchema} from '$lib/vocab/entity/entity.schema';
 import {TieSchema} from '$lib/vocab/tie/tie.schema';
+import {toSchemaName} from '$lib/util/schema';
 
 // TODO The casts to `as VocabSchema` in this file
 // are needed because the `json-schema` types are very strict,
@@ -22,7 +23,7 @@ import {TieSchema} from '$lib/vocab/tie/tie.schema';
 // but this has the downside of losing the inferred default types,
 // which are handy when the schemas are used directly.
 
-export const schemas = [
+export const vocabSchemas = [
 	AccountSchema,
 	AccountPersonaSchema,
 	CommunityPersonaSchema,
@@ -35,14 +36,18 @@ export const schemas = [
 	TieSchema,
 ] as VocabSchema[];
 
-schemas.push(
-	...eventInfos
+export const schemas = vocabSchemas.concat(
+	eventInfos
 		.flatMap((eventInfo) => [
 			eventInfo.params,
 			'response' in eventInfo ? eventInfo.response : (null as any),
 		])
 		.filter(Boolean),
+	// Include external schema dependencies.
+	DialogDataSchema as VocabSchema,
 );
 
-// Include external schema dependencies.
-schemas.push(DialogDataSchema as VocabSchema);
+// Add schema names
+for (const schema of schemas) {
+	schema.name = toSchemaName(schema.$id);
+}

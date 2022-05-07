@@ -4,6 +4,8 @@ import AjvKeywordInstanceof from 'ajv-keywords/dist/keywords/instanceof.js';
 
 import {schemas} from '$lib/app/schemas';
 
+// see also $lib/util/schema.ts
+
 let ajvInstance: Ajv | null = null;
 
 // TODO only one instance is created, which may be surprising in rare cases
