@@ -13,7 +13,9 @@
 		<div class="markup">
 			<h1 id="docs">docs</h1>
 		</div>
-		<!-- TODO extract an accessible menu component -->
+		<!-- TODO extract an accessible menu component, see PRS
+		https://github.com/feltcoop/felt-server/pull/362
+		and https://github.com/feltcoop/felt/pull/197 -->
 		<div class="menu-wrapper markup column-sm">
 			<ul class="menu">
 				<li><h3><a href="#docs">docs</a></h3></li>
