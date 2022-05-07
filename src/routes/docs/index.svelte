@@ -1,9 +1,15 @@
 <script lang="ts">
+	import {page} from '$app/stores';
+
 	import SchemaInfo from '$lib/ui/SchemaInfo.svelte';
 	import {eventInfos} from '$lib/app/events';
 	import {vocabSchemas} from '$lib/app/schemas';
 
 	const title = 'docs';
+
+	$: hash = $page.url.hash.substring(1);
+
+	// TODO use IntersectionObserver to update hash on scroll
 </script>
 
 <svelte:head><title>{title}</title></svelte:head>
@@ -18,17 +24,23 @@
 		and https://github.com/feltcoop/felt/pull/197 -->
 		<div class="menu-wrapper markup column-sm">
 			<ul class="menu">
-				<li><h3><a href="#docs">docs</a></h3></li>
-				<li><h4><a href="#vocab">vocab</a></h4></li>
+				<li><h3><a href="#docs" class:selected={hash === 'docs'}>docs</a></h3></li>
+				<li><h4><a href="#vocab" class:selected={hash === 'vocab'}>vocab</a></h4></li>
 				<ul>
 					{#each vocabSchemas as schema (schema)}
-						<li><a href="#{schema.name}">{schema.name}</a></li>
+						<li>
+							<a href="#{schema.name}" class:selected={hash === schema.name}>{schema.name}</a>
+						</li>
 					{/each}
 				</ul>
-				<li><h4><a href="#events">events</a></h4></li>
+				<li><h4><a href="#events" class:selected={hash === 'events'}>events</a></h4></li>
 				<ul>
 					{#each eventInfos as eventInfo (eventInfo.name)}
-						<li><a href="#{eventInfo.name}">{eventInfo.name}</a></li>
+						<li>
+							<a href="#{eventInfo.name}" class:selected={hash === eventInfo.name}
+								>{eventInfo.name}</a
+							>
+						</li>
 					{/each}
 				</ul>
 			</ul>
@@ -76,10 +88,18 @@
 		</ul>
 		<div class="markup">
 			<ul>
-				<li><h3><a href="#docs">docs</a></h3></li>
+				<li><h3><a href="#docs" class:selected={hash === 'docs'}>docs</a></h3></li>
 				<ul>
-					<li><h4><a href="#vocab">vocab</a></h4></li>
-					<li><h4><a href="#events">events</a></h4></li>
+					<li>
+						<h4>
+							<a href="#vocab" class:selected={hash === 'vocab'}>vocab</a>
+						</h4>
+					</li>
+					<li>
+						<h4>
+							<a href="#events" class:selected={hash === 'events'}>events</a>
+						</h4>
+					</li>
 				</ul>
 			</ul>
 		</div>
