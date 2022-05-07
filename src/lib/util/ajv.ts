@@ -12,7 +12,7 @@ let ajvInstance: Ajv | null = null;
 export const ajv = (opts?: Options): Ajv => {
 	if (ajvInstance) return ajvInstance;
 	ajvInstance = new Ajv(opts);
-	ajvInstance.addKeyword('tsType').addKeyword('tsImport');
+	ajvInstance.addKeyword('tsType').addKeyword('tsImport').addKeyword('name');
 	AjvKeywordInstanceof(ajvInstance);
 	for (const schema of schemas) {
 		// This cast is needed because TypeScript's `exactOptionalPropertyTypes` is enabled
