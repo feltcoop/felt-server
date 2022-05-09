@@ -4,7 +4,7 @@
 
 	export let text: string;
 
-	$: view = parseView(text); // TODO caching (with eviction in `updateSpace`?)
+	$: view = parseView(text); // TODO caching (with eviction in `updateSpace`/`deleteSpace`/etc)
 </script>
 
 <SvastView {view} />
