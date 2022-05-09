@@ -7,9 +7,9 @@
 
 	export let entity: Readable<Entity>;
 
-	$: content = $entity.data.content ?? ''; // TODO empty fallback?
+	$: content = $entity.data.content;
 </script>
 
-{#if $entity.data.type === 'Tombstone'}<TombstoneContent {entity} />{:else}<SvastText
+{#if $entity.data.type === 'Tombstone'}<TombstoneContent {entity} />{:else if content}<SvastText
 		text={content}
 	/>{/if}
