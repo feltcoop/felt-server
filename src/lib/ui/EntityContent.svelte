@@ -2,7 +2,7 @@
 	import type {Readable} from 'svelte/store';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
-	import SvastText from './SvastText.svelte';
+	import SvastText from '$lib/ui/SvastText.svelte';
 	import TombstoneContent from '$lib/ui/TombstoneContent.svelte';
 
 	export let entity: Readable<Entity>;
