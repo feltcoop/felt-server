@@ -7,9 +7,10 @@
 
 	export let entity: Readable<Entity>;
 
+	$: type = $entity.data.type;
 	$: content = $entity.data.content;
 </script>
 
-{#if $entity.data.type === 'Tombstone'}<TombstoneContent {entity} />{:else if content}<SvastText
+{#if type === 'Tombstone'}<TombstoneContent {entity} />{:else if content}<SvastText
 		text={content}
 	/>{/if}
