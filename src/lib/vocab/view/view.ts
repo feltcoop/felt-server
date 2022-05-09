@@ -60,7 +60,8 @@ export interface ViewContext {
 
 const KEY = Symbol();
 export const getViewContext = (): Readable<ViewContext> => getContext(KEY);
-export const setViewContext = (ctx: Readable<ViewContext>): void => setContext(KEY, ctx);
+export const setViewContext = (ctx: Readable<ViewContext>): Readable<ViewContext> =>
+	setContext(KEY, ctx);
 
 export const parseView = (value: string, generatePositions = false): ViewData =>
 	parseSvast({value, generatePositions});

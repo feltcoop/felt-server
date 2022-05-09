@@ -24,7 +24,10 @@ export const updateEntityCaches = (
 	const existingSpaceEntities = entitiesBySourceId.get(source_id);
 	if (existingSpaceEntities) {
 		if (!get(existingSpaceEntities).includes(entity)) {
-			existingSpaceEntities.update(($entities) => $entities.concat(entity));
+			existingSpaceEntities.update(($entities) =>
+				// TODO splice into a mutable array instead of sorting like this
+				$entities.concat(entity).sort((a, b) => (get(a).created > get(b).created ? 1 : -1)),
+			);
 		}
 	} else {
 		entitiesBySourceId.set(source_id, writable([entity]));

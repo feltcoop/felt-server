@@ -46,6 +46,7 @@ gro test
 [SvelteKit](https://github.com/sveltejs/kit) ∙
 [Vite](https://github.com/vitejs/vite) ∙
 [TypeScript](https://github.com/microsoft/TypeScript) ∙
+[MDsveX](https://github.com/pngwn/MDsveX) ∙
 [uvu](https://github.com/lukeed/uvu) ∙
 [Postgres.js](https://github.com/porsager/postgres) ∙
 [Ley](https://github.com/lukeed/ley) ∙
