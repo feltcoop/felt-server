@@ -94,7 +94,7 @@
 	$: onboarding = !guest && !$sessionPersonas.length;
 	$: selectedPersona = $personaSelection; // must be after `updateStateFromPageParams`
 
-	$: syncUiToUrl(ui, dispatch, $page.params, $page.url.searchParams);
+	$: syncUiToUrl(ui, dispatch, $page.params, $page.url);
 
 	let mounted = false;
 

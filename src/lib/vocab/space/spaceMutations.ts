@@ -17,13 +17,10 @@ export const CreateSpace: Mutations['CreateSpace'] = async ({
 	const $community = get(community);
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
-	// TODO BLOCK extract a helper after upgrading SvelteKit and using
-	// `$page`'s `URLSearchParams` instead of constructing the search like this
 	await goto(
-		'/' +
-			$community.name +
-			$space.url +
-			`?persona=${get(sessionPersonaIndices).get(personaById.get(params.persona_id)!)}`,
+		toUrl('/' + $community.name + $space.url, {
+			persona: get(sessionPersonaIndices).get(personaById.get(params.persona_id)!),
+		}),
 	);
 	return result;
 };

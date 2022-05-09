@@ -17,12 +17,10 @@ export const CreateCommunity: Mutations['CreateCommunity'] = async ({params, inv
 	} = result.value;
 	addPersona(ui, $persona);
 	addCommunity(ui, $community, $spaces, $memberships);
-	// TODO BLOCK extract a helper after upgrading SvelteKit and using
-	// `$page`'s `URLSearchParams` instead of constructing the search like this
 	await goto(
-		'/' +
-			$community.name +
-			`?persona=${get(sessionPersonaIndices).get(personaById.get(params.persona_id)!)}`,
+		toUrl('/' + $community.name, {
+			persona: get(sessionPersonaIndices).get(personaById.get(params.persona_id)!),
+		}),
 	);
 	return result;
 };
