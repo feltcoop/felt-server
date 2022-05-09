@@ -29,9 +29,7 @@
 	]}
 >
 	<div class="markup formatted">
-		<p>
-			<EntityContent {entity} />
-		</p>
+		<EntityContent {entity} />
 	</div>
 	<PersonaAvatar {persona} />
 </li>
