@@ -68,6 +68,7 @@
 				>
 			{:else}
 				<li>
+					<!-- TODO how to make this use `EntityContent`? slot? could default to the `pre` -->
 					<PropertyEditor
 						value={$entity.data.content}
 						field="content"
