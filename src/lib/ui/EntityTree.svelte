@@ -22,19 +22,17 @@
 	let expanded = false;
 
 	$: hasDestEntities = !!(destEntities && $destEntities.length);
-	$: console.log(`hasDestEntities`, hasDestEntities);
 
 	// TODO use pageKey
 	let destEntities: Readable<Array<Readable<Entity>>>;
-	let destTies: Readable<Array<Readable<Tie>>>;
-	$: console.log(`destEntities`, $destEntities, $destTies);
+	// let destTies: Readable<Array<Readable<Tie>>>;
 	$: shouldLoadEntities && loadEntities2();
 	const loadEntities2 = async () => {
 		const result = await dispatch.ReadEntitiesPaginated({source_id: $entity.entity_id});
 		if (result.ok) {
 			// TODO refactor using a query interface (with data, status)
 			destEntities = writable(result.value.entities.map((e) => entityById.get(e.entity_id)!));
-			destTies = writable(result.value.ties.map((t) => writable(t)));
+			// destTies = writable(result.value.ties.map((t) => writable(t)));
 		}
 	};
 
@@ -87,7 +85,5 @@
 	li {
 		display: flex;
 		flex-direction: column;
-	}
-	ul {
 	}
 </style>
