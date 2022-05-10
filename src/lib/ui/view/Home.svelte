@@ -106,7 +106,7 @@
 					>propose change ✍️
 				</button>
 			</div>
-			{#if rules}<EntityContent entity={rules} />{:else}rules not found{/if}
+			{#if rules && $rules}<EntityContent entity={rules} />{:else}rules not found{/if}
 		</div>
 		<div class="norms markup panel-inset">
 			<div class="header">
@@ -121,7 +121,7 @@
 					>propose change ✍️
 				</button>
 			</div>
-			{#if norms}<EntityContent entity={norms} />{:else}norms not found{/if}
+			{#if norms && $norms}<EntityContent entity={norms} />{:else}norms not found{/if}
 		</div>
 	</section>
 	<section class="roles">
