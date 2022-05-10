@@ -6,6 +6,7 @@
 	import type {Tie} from '$lib/vocab/tie/tie';
 	import {getApp} from '$lib/ui/app';
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
+	import EntityContent from '$lib/ui/EntityContent.svelte';
 
 	const {
 		dispatch,
@@ -52,7 +53,9 @@
 			>{#if $entity.data.name}{$entity.data.name}:{/if}
 			{$entity.data.type}:</span
 		>
-		{#if $entity.data.content}<span class="content">{$entity.data.content}</span>{/if}
+		{#if $entity.data.content || $entity.data.type === 'Tombstone'}<div class="content">
+				<EntityContent {entity} />
+			</div>{/if}
 	</div>
 	<!-- TODO key? -->
 	{#if expanded && hasDestEntities}
