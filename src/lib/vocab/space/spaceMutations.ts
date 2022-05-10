@@ -3,6 +3,7 @@ import {goto} from '$app/navigation';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
+import {toUrl} from '$lib/ui/url';
 
 export const CreateSpace: Mutations['CreateSpace'] = async ({
 	invoke,

@@ -4,6 +4,7 @@ import {get} from 'svelte/store';
 import type {Mutations} from '$lib/app/eventTypes';
 import {addPersona} from '$lib/vocab/persona/personaMutationHelpers';
 import {addCommunity} from '$lib/vocab/community/communityMutationHelpers';
+import {toUrl} from '$lib/ui/url';
 
 export const CreateCommunity: Mutations['CreateCommunity'] = async ({params, invoke, ui}) => {
 	const {sessionPersonaIndices, personaById} = ui;
