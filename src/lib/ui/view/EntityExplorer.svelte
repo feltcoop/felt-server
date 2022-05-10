@@ -49,7 +49,11 @@
 	</button>
 	<div class="tree">
 		{#if entities2}
-			<EntityTree entities={entities2} ties={ties2} />
+			<ul>
+				{#each $entities2 as entity (entity)}
+					<EntityTree {entity} ties={ties2} />
+				{/each}
+			</ul>
 		{:else}
 			<PendingAnimation />
 		{/if}
@@ -75,5 +79,8 @@
 		display: flex;
 		flex-direction: column;
 		overflow: auto;
+	}
+	.tree ul {
+		display: flex;
 	}
 </style>
