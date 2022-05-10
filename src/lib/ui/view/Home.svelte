@@ -1,12 +1,14 @@
 <script lang="ts">
 	import {browser} from '$app/env';
+	import {writable, type Readable} from 'svelte/store';
+
 	import {getApp} from '$lib/ui/app';
 	import {getViewContext} from '$lib/vocab/view/view';
 	import Forum from '$lib/ui/view/Forum.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import EntityEditor from '$lib/ui/EntityEditor.svelte';
 	import type {Entity} from '$lib/vocab/entity/entity';
-	import {writable, type Readable} from 'svelte/store';
+	import EntityContent from '$lib/ui/EntityContent.svelte';
 
 	const viewContext = getViewContext();
 	$: ({community, space, persona} = $viewContext);
@@ -104,7 +106,7 @@
 					>propose change ✍️
 				</button>
 			</div>
-			{@html $rules ? $rules.data.content : 'rules not found'}
+			{#if rules && $rules}<EntityContent entity={rules} />{:else}rules not found{/if}
 		</div>
 		<div class="norms markup panel-inset">
 			<div class="header">
@@ -119,7 +121,7 @@
 					>propose change ✍️
 				</button>
 			</div>
-			{@html $norms ? $norms.data.content : 'norms not found'}
+			{#if norms && $norms}<EntityContent entity={norms} />{:else}norms not found{/if}
 		</div>
 	</section>
 	<section class="roles">

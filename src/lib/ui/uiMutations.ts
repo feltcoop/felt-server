@@ -1,9 +1,19 @@
 import {goto} from '$app/navigation';
 import {get} from 'svelte/store';
+import {Logger} from '@feltcoop/felt/util/log.js';
+import {round} from '@feltcoop/felt/util/maths.js';
 
 import type {Mutations} from '$lib/app/eventTypes';
 
-export const Ping: Mutations['Ping'] = ({invoke}) => invoke();
+const log = new Logger('[uiMutations]');
+
+export const Ping: Mutations['Ping'] = async ({invoke}) => {
+	const t = performance.now();
+	const result = await invoke();
+	const dt = performance.now() - t;
+	log.info(`ping:`, round(dt, 1) + 'ms');
+	return result;
+};
 
 export const SetMobile: Mutations['SetMobile'] = ({params, ui: {mobile}}) => {
 	mobile.set(params);

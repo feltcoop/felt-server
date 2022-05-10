@@ -235,7 +235,7 @@ const queryContextmenuItems = (
 };
 
 const CONTEXTMENU_STORE_KEY = Symbol();
-export const setContextmenu = (contextmenu: ContextmenuStore): void =>
+export const setContextmenu = (contextmenu: ContextmenuStore): ContextmenuStore =>
 	setContext(CONTEXTMENU_STORE_KEY, contextmenu);
 export const getContextmenu = (): ContextmenuStore => getContext(CONTEXTMENU_STORE_KEY);
 

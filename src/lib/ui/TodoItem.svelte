@@ -8,6 +8,7 @@
 	import {getApp} from '$lib/ui/app';
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
+	import EntityContent from '$lib/ui/EntityContent.svelte';
 
 	const {
 		ui: {contextmenu, personaById},
@@ -81,7 +82,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 				{#if $entity.data.type === 'Collection'}
 					{$entity.data.name}
 				{:else}
-					{$entity.data.content}
+					<EntityContent {entity} />
 				{/if}
 			</div>
 			<div class="signature">
