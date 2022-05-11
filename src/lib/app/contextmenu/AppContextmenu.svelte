@@ -8,7 +8,6 @@
 	import UnicodeIcon from '$lib/ui/UnicodeIcon.svelte';
 	import About from '$lib/ui/About.svelte';
 	import {session} from '$app/stores';
-	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 
 	const {
@@ -56,11 +55,9 @@
 			<span class="title">About</span>
 		</ContextmenuEntry>
 		{#if !$session.guest}
-			<li role="none">
-				<div>
-					<AccountForm guest={false} />
-				</div>
-			</li>
+			<ContextmenuEntry action={() => dispatch.LogoutAccount()}>
+				<span class="title">Log out</span>
+			</ContextmenuEntry>
 		{/if}
 	</svelte:fragment>
 </ContextmenuSubmenu>
