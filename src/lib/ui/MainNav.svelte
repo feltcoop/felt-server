@@ -118,6 +118,6 @@
 		justify-content: flex-start;
 		height: var(--navbar_size);
 		flex: 1;
-		padding: 0;
+		padding: 0 0 0 var(--spacing_xs);
 	}
 </style>

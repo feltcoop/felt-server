@@ -57,9 +57,8 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		/* TODO do this layout without calculating */
-		width: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
-		height: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
+		width: var(--navbar_size);
+		height: var(--navbar_size);
 		--icon_size: var(--icon_size_sm);
 	}
 </style>

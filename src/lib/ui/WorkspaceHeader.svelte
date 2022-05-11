@@ -46,6 +46,7 @@
 	.breadcrumbs {
 		display: flex;
 		align-items: center;
+		padding-left: var(--spacing_xs);
 	}
 	.luggage-placeholder,
 	.marquee-button-placeholder {
