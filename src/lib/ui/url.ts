@@ -4,7 +4,7 @@ import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 
 export const PERSONA_QUERY_KEY = 'persona';
 
-export type SearchParams<TKey extends string = string> = Record<TKey, string | null>;
+export type SearchParams<TKey extends string = string> = Record<TKey, string | null | undefined>;
 
 export const toUrl = (
 	pathname: string,
@@ -15,7 +15,7 @@ export const toUrl = (
 
 export const toSpaceUrl = (
 	community: Community,
-	space: Space | null,
+	space: Space | null | undefined,
 	baseParams: URLSearchParams,
 	newSearchParams?: SearchParams<typeof PERSONA_QUERY_KEY>,
 ): string => {
@@ -31,8 +31,8 @@ const setSearchParams = (
 ): URLSearchParams => {
 	let finalParams: URLSearchParams | undefined;
 	for (const key in newSearchParams) {
-		const value = (newSearchParams as Record<string, string | null>)[key];
-		if (value === null) {
+		const value = newSearchParams[key];
+		if (value == null) {
 			if (baseParams.has(key)) {
 				if (!finalParams) finalParams = new URLSearchParams(baseParams);
 				finalParams.delete(key);
