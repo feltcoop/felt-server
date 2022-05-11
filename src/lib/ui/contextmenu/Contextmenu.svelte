@@ -25,12 +25,15 @@
 	// This handler runs during the event's `capture` phase
 	// so that things like the Dialog don't eat the events and prevent the contextmenu from closing.
 	const onWindowMousedown = (e: MouseEvent) => {
+		console.log('ON WINDOW MOUSEDOWN');
 		if (!el.contains(e.target as any)) {
+			console.log('ON WINDOW MOUSEDOWN CLOSING');
 			contextmenu.close();
 		}
 	};
 
 	const onWindowKeydown = (e: KeyboardEvent) => {
+		console.log('ON WINDOW KEYDOWN');
 		if (e.key === 'Escape' && !isEditable(e.target)) {
 			contextmenu.close();
 			e.stopImmediatePropagation();
@@ -62,6 +65,7 @@
 
 	const onClickContent = (e: MouseEvent) => {
 		if (isInteractive(e.target as any)) {
+			console.log('CLOSING AFTER CLICKING CONTENT', e.target);
 			contextmenu.close();
 		}
 	};

@@ -12,7 +12,9 @@
 	const submenu = contextmenu.addSubmenu();
 
 	const select = () => {
-		if (!selected) contextmenu.selectItem(submenu);
+		console.log('SUBMENU SELECT', submenu);
+		// TODO BLOCK this fixes it
+		if (!selected) setTimeout(() => contextmenu.selectItem(submenu));
 	};
 
 	$: ({layout} = contextmenu);
@@ -60,7 +62,7 @@
 		class="menu-item"
 		role="menuitem"
 		class:selected
-		on:click|stopPropagation
+		on:click={(e) => (console.log('STOPPING SUBMENU CLICK'), e.stopImmediatePropagation())}
 		on:mousemove|stopPropagation={select}
 		aria-expanded={selected}
 	>
