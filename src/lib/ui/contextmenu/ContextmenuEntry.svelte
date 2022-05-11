@@ -7,8 +7,7 @@
 
 	const entry = contextmenu.addEntry(action);
 
-	const select = (e: MouseEvent) => {
-		e.stopPropagation();
+	const select = () => {
 		contextmenu.selectItem(entry);
 	};
 
@@ -30,7 +29,7 @@ or should they be <button> ? But then how do we deal with focus?
 	role="menuitem"
 	class:selected
 	on:click={() => setTimeout(() => action())}
-	on:mousemove={select}
+	on:mousemove|stopPropagation={select}
 >
 	<slot />
 </li>
