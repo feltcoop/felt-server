@@ -4,7 +4,7 @@ import {goto} from '$app/navigation';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {Persona} from '$lib/vocab/persona/persona';
-import {PERSONA_QUERY_KEY, setUrlPersona} from '$lib/ui/url';
+import {PERSONA_QUERY_KEY, toUrl} from '$lib/ui/url';
 import type {Dispatch} from '$lib/app/eventTypes';
 import type {Ui} from '$lib/ui/ui';
 
@@ -23,11 +23,11 @@ export const syncUiToUrl = (
 	}: Ui,
 	dispatch: Dispatch,
 	params: {community?: string; space?: string},
-	query: URLSearchParams,
+	url: URL,
 ): void => {
 	if (!params.community) return;
 
-	const rawPersonaIndex = query.get(PERSONA_QUERY_KEY);
+	const rawPersonaIndex = url.searchParams.get(PERSONA_QUERY_KEY);
 	const personaIndex = rawPersonaIndex ? Number(rawPersonaIndex) : null;
 	const persona: Readable<Persona> | null =
 		personaIndex === null ? null : get(sessionPersonas)[personaIndex];
@@ -37,14 +37,9 @@ export const syncUiToUrl = (
 			log.warn(
 				`failed to find persona at index ${personaIndex}; falling back to index ${fallbackPersonaIndex}`,
 			);
-			void goto(
-				location.pathname +
-					'?' +
-					// TODO extract a helper after upgrading SvelteKit and using
-					// `$page`'s `URLSearchParams` instead of constructing the search like this
-					setUrlPersona(fallbackPersonaIndex, new URLSearchParams(location.search)),
-				{replaceState: true},
-			);
+			void goto(toUrl(url.pathname, url.searchParams, {persona: fallbackPersonaIndex + ''}), {
+				replaceState: true,
+			});
 			return; // exit early; this function re-runs from the `goto` call with the updated `$page`
 		}
 	} else if (personaIndex !== get(personaIndexSelection)) {

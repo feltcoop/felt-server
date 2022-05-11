@@ -3,13 +3,14 @@
 	export let label: string | undefined = undefined;
 </script>
 
-<span aria-label={label}>{icon}</span>
+<div aria-label={label}>{icon}</div>
 
 <style>
-	span {
+	div {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		flex-shrink: 0;
 		width: var(--icon_size);
 		height: var(--icon_size);
 	}

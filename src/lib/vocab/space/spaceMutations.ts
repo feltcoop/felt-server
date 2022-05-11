@@ -1,8 +1,10 @@
 import {writable, get} from 'svelte/store';
 import {goto} from '$app/navigation';
+import {page} from '$app/stores';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
+import {toSpaceUrl} from '$lib/ui/url';
 
 export const CreateSpace: Mutations['CreateSpace'] = async ({
 	invoke,
@@ -17,13 +19,10 @@ export const CreateSpace: Mutations['CreateSpace'] = async ({
 	const $community = get(community);
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
-	// TODO extract a helper after upgrading SvelteKit and using
-	// `$page`'s `URLSearchParams` instead of constructing the search like this
 	await goto(
-		'/' +
-			$community.name +
-			$space.url +
-			`?persona=${get(sessionPersonaIndices).get(personaById.get(params.persona_id)!)}`,
+		toSpaceUrl($community, $space, get(page).url.searchParams, {
+			persona: get(sessionPersonaIndices).get(personaById.get(params.persona_id)!) + '',
+		}),
 	);
 	return result;
 };
