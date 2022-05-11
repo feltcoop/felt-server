@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
+	import {page} from '$app/stores';
 
 	import type {Persona} from '$lib/vocab/persona/persona.js';
 	import type {Space} from '$lib/vocab/space/space.js';
@@ -23,7 +24,7 @@
 </script>
 
 <a
-	href={toSpaceUrl(personaIndex, $community, $space)}
+	href={toSpaceUrl($community, $space, $page.url.searchParams, {persona: personaIndex + ''})}
 	class:selected
 	use:contextmenu.action={[[SpaceContextmenu, {persona, community, space}]]}
 	on:click={() => {

@@ -1,10 +1,11 @@
 import {goto} from '$app/navigation';
 import {get} from 'svelte/store';
+import {page} from '$app/stores';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {addPersona} from '$lib/vocab/persona/personaMutationHelpers';
 import {addCommunity} from '$lib/vocab/community/communityMutationHelpers';
-import {toUrl} from '$lib/ui/url';
+import {toSpaceUrl} from '$lib/ui/url';
 
 export const CreateCommunity: Mutations['CreateCommunity'] = async ({params, invoke, ui}) => {
 	const {sessionPersonaIndices, personaById} = ui;
@@ -19,8 +20,8 @@ export const CreateCommunity: Mutations['CreateCommunity'] = async ({params, inv
 	addPersona(ui, $persona);
 	addCommunity(ui, $community, $spaces, $memberships);
 	await goto(
-		toUrl('/' + $community.name, {
-			persona: get(sessionPersonaIndices).get(personaById.get(params.persona_id)!),
+		toSpaceUrl($community, null, get(page).url.searchParams, {
+			persona: get(sessionPersonaIndices).get(personaById.get(params.persona_id)!) + '',
 		}),
 	);
 	return result;

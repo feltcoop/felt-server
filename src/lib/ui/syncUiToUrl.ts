@@ -37,7 +37,9 @@ export const syncUiToUrl = (
 			log.warn(
 				`failed to find persona at index ${personaIndex}; falling back to index ${fallbackPersonaIndex}`,
 			);
-			void goto(toUrl(url.pathname, {persona: fallbackPersonaIndex}), {replaceState: true});
+			void goto(toUrl(url.pathname, url.searchParams, {persona: fallbackPersonaIndex + ''}), {
+				replaceState: true,
+			});
 			return; // exit early; this function re-runs from the `goto` call with the updated `$page`
 		}
 	} else if (personaIndex !== get(personaIndexSelection)) {

@@ -1,47 +1,46 @@
-import {page} from '$app/stores';
-import type {Page} from '@sveltejs/kit';
-
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 
 export const PERSONA_QUERY_KEY = 'persona';
 
-let $page: Page;
-// TODO ? what if every time if changed, we flushed the cache, and reuse `searchParams`
-page.subscribe(($p) => ($page = $p));
+export type SearchParams<TKey extends string = string> = Record<TKey, string | null>;
 
 export const toUrl = (
 	pathname: string,
-	newSearchParams?: Record<string, string>, // TODO BLOCK clone?
-	baseParams = $page.url.searchParams,
-): string => {
-	// TODO BLOCK use a cached version?
-	return `${pathname}?${setUrlPersona(personaIndex, newSearchParams, baseParams)}`;
-};
+	baseParams: URLSearchParams,
+	newSearchParams?: SearchParams<typeof PERSONA_QUERY_KEY>,
+): string =>
+	`${pathname}?${newSearchParams ? setSearchParams(baseParams, newSearchParams) : baseParams}`;
 
 export const toSpaceUrl = (
-	personaIndex: number | null, // TODO BLOCK should be a no-op if already selected
 	community: Community,
 	space: Space | null,
-	newSearchParams?: Record<string, string>, // TODO BLOCK clone?
-	baseParams = $page.url.searchParams,
+	baseParams: URLSearchParams,
+	newSearchParams?: SearchParams<typeof PERSONA_QUERY_KEY>,
 ): string => {
-	const url = space?.url;
-	return toUrl(
-		`/${community.name}${!url || isHomeSpace(space) ? '' : url}`,
-		setUrlPersona(personaIndex, params),
-	);
+	let pathname = '/' + community.name;
+	const spaceUrl = space?.url;
+	if (spaceUrl && !isHomeSpace(space)) pathname += spaceUrl;
+	return toUrl(pathname, baseParams, newSearchParams);
 };
 
-export const setUrlPersona = (
-	personaIndex: null | number,
-	newSearchParams?: Record<string, string>, // TODO BLOCK clone?
-	baseParams = $page.url.searchParams,
-	baseParams = new URLSearchParams(),
+const setSearchParams = (
+	baseParams: URLSearchParams,
+	newSearchParams: SearchParams,
 ): URLSearchParams => {
-	if (personaIndex !== null) {
-		params.set(PERSONA_QUERY_KEY, personaIndex.toString());
+	let finalParams: URLSearchParams | undefined;
+	for (const key in newSearchParams) {
+		const value = (newSearchParams as Record<string, string | null>)[key];
+		if (value === null) {
+			if (baseParams.has(key)) {
+				if (!finalParams) finalParams = new URLSearchParams(baseParams);
+				finalParams.delete(key);
+			}
+		} else if (value !== baseParams.get(key)) {
+			if (!finalParams) finalParams = new URLSearchParams(baseParams);
+			finalParams.set(key, value);
+		}
 	}
-	return params;
+	return finalParams || baseParams;
 };

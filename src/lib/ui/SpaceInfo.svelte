@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
+	import {page} from '$app/stores';
 
 	import type {Space} from '$lib/vocab/space/space.js';
 	import type {Community} from '$lib/vocab/community/community.js';
@@ -25,7 +26,7 @@
 </script>
 
 <a
-	href={toSpaceUrl(personaIndex, $community, $space)}
+	href={toSpaceUrl($community, $space, $page.url.searchParams, {persona: personaIndex + ''})}
 	class:selected
 	class="space-info"
 	style="--hue: {hue}"

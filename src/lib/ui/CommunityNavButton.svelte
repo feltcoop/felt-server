@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type {Readable} from 'svelte/store';
+	import {page} from '$app/stores';
 
 	import type {Community} from '$lib/vocab/community/community.js';
 	import EntityIcon from '$lib/ui/EntityIcon.svelte';
@@ -31,7 +32,9 @@
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
 <a
 	class="community"
-	href={toSpaceUrl(personaIndex, $community, selectedSpace && $selectedSpace)}
+	href={toSpaceUrl($community, selectedSpace && $selectedSpace, $page.url.searchParams, {
+		persona: personaIndex + '',
+	})}
 	class:selected
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {$community.settings.hue}"

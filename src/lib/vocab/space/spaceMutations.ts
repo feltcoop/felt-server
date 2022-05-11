@@ -1,9 +1,10 @@
 import {writable, get} from 'svelte/store';
 import {goto} from '$app/navigation';
+import {page} from '$app/stores';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
-import {toUrl} from '$lib/ui/url';
+import {toSpaceUrl} from '$lib/ui/url';
 
 export const CreateSpace: Mutations['CreateSpace'] = async ({
 	invoke,
@@ -19,8 +20,8 @@ export const CreateSpace: Mutations['CreateSpace'] = async ({
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
 	await goto(
-		toUrl('/' + $community.name + $space.url, {
-			persona: get(sessionPersonaIndices).get(personaById.get(params.persona_id)!),
+		toSpaceUrl($community, $space, get(page).url.searchParams, {
+			persona: get(sessionPersonaIndices).get(personaById.get(params.persona_id)!) + '',
 		}),
 	);
 	return result;
