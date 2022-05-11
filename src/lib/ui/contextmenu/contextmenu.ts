@@ -193,7 +193,7 @@ export const onContextmenu = (
 	contextmenu: ContextmenuStore,
 	excludeEl?: HTMLElement,
 	LinkContextmenu?: typeof SvelteComponent,
-): undefined | false => {
+): void => {
 	if (e.shiftKey) return;
 	e.stopPropagation();
 	e.preventDefault();
@@ -202,7 +202,6 @@ export const onContextmenu = (
 	if (!items || isEditable(target) || excludeEl?.contains(target)) return;
 	// TODO dispatch a UI event, like OpenContextmenu
 	contextmenu.open(items, e.clientX, e.clientY);
-	return false; // TODO remove this if it doesn't fix FF mobile (and update the `false` return value)
 };
 
 const queryContextmenuItems = (
