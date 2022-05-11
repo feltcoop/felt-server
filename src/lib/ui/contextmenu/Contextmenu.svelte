@@ -25,39 +25,44 @@
 	// This handler runs during the event's `capture` phase
 	// so that things like the Dialog don't eat the events and prevent the contextmenu from closing.
 	const onWindowMousedown = (e: MouseEvent) => {
-		console.log('ON WINDOW MOUSEDOWN');
 		if (!el.contains(e.target as any)) {
-			console.log('ON WINDOW MOUSEDOWN CLOSING');
 			contextmenu.close();
 		}
 	};
 
 	const onWindowKeydown = (e: KeyboardEvent) => {
-		console.log('ON WINDOW KEYDOWN');
 		if (e.key === 'Escape' && !isEditable(e.target)) {
 			contextmenu.close();
 			e.stopImmediatePropagation();
+			e.preventDefault();
 		} else if (e.key === 'ArrowLeft' && !isEditable(e.target)) {
 			contextmenu.collapseSelected();
 			e.stopImmediatePropagation();
+			e.preventDefault();
 		} else if (e.key === 'ArrowRight' && !isEditable(e.target)) {
 			contextmenu.expandSelected();
 			e.stopImmediatePropagation();
+			e.preventDefault();
 		} else if ((e.key === 'ArrowDown' || e.key === 'PageDown') && !isEditable(e.target)) {
 			contextmenu.selectNext();
 			e.stopImmediatePropagation();
+			e.preventDefault();
 		} else if ((e.key === 'ArrowUp' || e.key === 'PageUp') && !isEditable(e.target)) {
 			contextmenu.selectPrevious();
 			e.stopImmediatePropagation();
+			e.preventDefault();
 		} else if (e.key === 'Home' && !isEditable(e.target)) {
 			contextmenu.selectFirst();
 			e.stopImmediatePropagation();
+			e.preventDefault();
 		} else if (e.key === 'End' && !isEditable(e.target)) {
 			contextmenu.selectLast();
 			e.stopImmediatePropagation();
+			e.preventDefault();
 		} else if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
 			contextmenu.activateSelected();
 			e.stopImmediatePropagation();
+			e.preventDefault();
 		}
 	};
 
@@ -65,7 +70,6 @@
 
 	const onClickContent = (e: MouseEvent) => {
 		if (isInteractive(e.target as any)) {
-			console.log('CLOSING AFTER CLICKING CONTENT', e.target);
 			contextmenu.close();
 		}
 	};

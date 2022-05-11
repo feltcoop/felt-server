@@ -83,7 +83,7 @@ export const createContextmenuStore = (
 			selections.length = 0;
 			update(($state) => ({...$state, open: true, items, x, y}));
 		},
-		close: () => (console.log('CLOSING'), update(($state) => ({...$state, open: false}))),
+		close: () => update(($state) => ({...$state, open: false})),
 		activateSelected: () => {
 			const selected = selections.at(-1);
 			if (!selected) return;
@@ -194,9 +194,8 @@ export const onContextmenu = (
 	excludeEl?: HTMLElement,
 	LinkContextmenu?: typeof SvelteComponent,
 ): undefined | false => {
-	console.log('ON CONTEXTMENU');
 	if (e.shiftKey) return;
-	e.stopPropagation();
+	e.stopImmediatePropagation();
 	e.preventDefault();
 	const target = e.target as HTMLElement | SVGElement;
 	const items = queryContextmenuItems(target, LinkContextmenu);
