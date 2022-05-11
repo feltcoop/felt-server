@@ -30,7 +30,7 @@
 		}
 	};
 
-	const onWindowKeydown = (e: KeyboardEvent) => {
+	const onWindowKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Escape' && !isEditable(e.target)) {
 			contextmenu.close();
 			e.stopPropagation();
@@ -53,7 +53,7 @@
 			contextmenu.selectLast();
 			e.stopPropagation();
 		} else if (e.key === ' ' || e.key === 'Enter') {
-			contextmenu.activateSelected();
+			await contextmenu.activateSelected();
 			e.stopPropagation();
 		}
 	};

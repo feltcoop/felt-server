@@ -12,7 +12,7 @@
 	const submenu = contextmenu.addSubmenu();
 
 	const select = () => {
-		if (!selected) contextmenu.selectItem(submenu);
+		if (!selected) contextmenu.select(submenu);
 	};
 
 	$: ({layout} = contextmenu);

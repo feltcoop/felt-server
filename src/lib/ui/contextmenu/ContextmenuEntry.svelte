@@ -9,7 +9,7 @@
 
 	const select = (e: MouseEvent) => {
 		e.stopPropagation();
-		contextmenu.selectItem(entry);
+		contextmenu.select(entry);
 	};
 
 	// the `$contextmenu` is needed because `entry` is not reactive
@@ -29,7 +29,7 @@ or should they be <button> ? But then how do we deal with focus?
 	class="menu-item"
 	role="menuitem"
 	class:selected
-	on:click={() => setTimeout(() => action())}
+	on:click={() => setTimeout(() => contextmenu.activate(entry))}
 	on:mousemove={select}
 >
 	<slot />

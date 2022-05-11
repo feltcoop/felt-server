@@ -8,12 +8,21 @@
 	import UnicodeIcon from '$lib/ui/UnicodeIcon.svelte';
 	import About from '$lib/ui/About.svelte';
 	import {session} from '$app/stores';
+	import LogoutForm from '$lib/ui/LogoutForm.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 
 	const {
 		dispatch,
 		ui: {sessionPersonas, personaSelection},
 	} = getApp();
+
+	let logoutForm: LogoutForm;
+	$: console.log(`logoutForm`, logoutForm);
+	const logout = () => {
+		console.log(`logoutForm`, logoutForm);
+		console.log(`logoutForm.logout`, logoutForm.logout);
+		logoutForm.logout();
+	};
 </script>
 
 <ContextmenuSubmenu>
@@ -55,8 +64,8 @@
 			<span class="title">About</span>
 		</ContextmenuEntry>
 		{#if !$session.guest}
-			<ContextmenuEntry action={() => dispatch.LogoutAccount()}>
-				<span class="title">Log out</span>
+			<ContextmenuEntry action={logout}>
+				<LogoutForm bind:this={logoutForm} />
 			</ContextmenuEntry>
 		{/if}
 	</svelte:fragment>
