@@ -58,14 +58,6 @@
 		}
 	};
 
-	const isInteractive = (el: Element): boolean => !!el.closest("button,a,area,[role='menuitem']");
-
-	const onClickContent = (e: MouseEvent) => {
-		if (isInteractive(e.target as any)) {
-			contextmenu.close();
-		}
-	};
-
 	$: ({layout} = contextmenu);
 	$: ({open} = $contextmenu);
 	$: contextmenuX = $contextmenu.x; // pull off `contextmenu` to avoid unnecessary recalculations
@@ -98,7 +90,6 @@
 		tabindex="-1"
 		bind:this={el}
 		style:transform="translate3d({x}px, {y}px, 0)"
-		on:click={onClickContent}
 	>
 		{#each $contextmenu.items as [component, props] (component)}
 			<ul>

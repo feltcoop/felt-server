@@ -17,11 +17,11 @@
 	} = getApp();
 
 	let logoutForm: LogoutForm;
-	$: console.log(`logoutForm`, logoutForm);
+	$: console.log(`REACXTOIVElogoutForm`, logoutForm);
 	const logout = () => {
 		console.log(`logoutForm`, logoutForm);
 		console.log(`logoutForm.logout`, logoutForm.logout);
-		logoutForm.logout();
+		return logoutForm.logout();
 	};
 </script>
 
