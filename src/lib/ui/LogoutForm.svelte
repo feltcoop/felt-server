@@ -17,7 +17,7 @@
 
 	$: disabled = !account;
 
-	export const logout = async (): Promise<LogoutAccountResponseResult> => {
+	const logout = async (): Promise<LogoutAccountResponseResult> => {
 		submitting = true;
 		errorMessage = '';
 		const result = await dispatch.LogoutAccount();

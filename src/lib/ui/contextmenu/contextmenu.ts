@@ -85,7 +85,7 @@ export const createContextmenuStore = (
 			selections.length = 0;
 			update(($state) => ({...$state, open: true, items, x, y}));
 		},
-		close: () => update(($state) => ({...$state, open: false})),
+		close: () => update(($state) => ($state.open ? {...$state, open: false} : $state)),
 		activate: (item) => {
 			if (item.isMenu) {
 				store.expandSelected();

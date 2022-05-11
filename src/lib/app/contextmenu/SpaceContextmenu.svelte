@@ -23,7 +23,7 @@
 	<svelte:fragment slot="entry">
 		<span class="menu-item-entry">
 			<SpaceIcon {space} />
-			<span class="title">{$space.name}</span>
+			<span class="content">{$space.name}</span>
 		</span>
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
@@ -35,7 +35,7 @@
 					dialogProps: {layout: 'page'},
 				})}
 		>
-			<span class="title"> Edit Space </span>
+			<span class="content"> Edit Space </span>
 		</ContextmenuEntry>
 		{#if canDeleteSpace($space)}
 			<ContextmenuEntry
@@ -45,7 +45,7 @@
 						props: {persona, community, space, done: () => dispatch.CloseDialog()},
 					})}
 			>
-				<span class="title"> Delete Space </span>
+				<span class="content"> Delete Space </span>
 			</ContextmenuEntry>
 		{/if}
 		<ContextmenuEntry
@@ -55,7 +55,7 @@
 					view: '<EntityExplorer />',
 				})}
 		>
-			<span class="title">View with EntityExplorer</span>
+			<span class="content">View with EntityExplorer</span>
 		</ContextmenuEntry>
 	</svelte:fragment>
 </ContextmenuSubmenu>

@@ -27,10 +27,10 @@
 					dialogProps: {layout: 'page'},
 				})}
 		>
-			<span class="title">Create Community</span>
+			<span class="content">Create Community</span>
 		</ContextmenuEntry>
 		<ContextmenuEntry action={() => dispatch.OpenDialog({Component: ManageMembershipForm})}>
-			<span class="title">Manage Memberships</span>
+			<span class="content">Manage Memberships</span>
 		</ContextmenuEntry>
 	</svelte:fragment>
 </ContextmenuSubmenu>

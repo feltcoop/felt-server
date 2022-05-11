@@ -68,8 +68,17 @@ form ul {
 	display: flex;
 	align-items: center;
 }
-.menu-item .title {
+.menu-item .content {
 	padding: var(--spacing_xs);
+	display: flex;
+	align-items: center;
+	overflow: hidden;
+}
+.menu-item .error {
+	color: var(--error_color);
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 /* TODO upstream to Felt */

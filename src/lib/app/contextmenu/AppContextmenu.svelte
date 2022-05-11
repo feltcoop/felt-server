@@ -8,21 +8,20 @@
 	import UnicodeIcon from '$lib/ui/UnicodeIcon.svelte';
 	import About from '$lib/ui/About.svelte';
 	import {session} from '$app/stores';
-	import LogoutForm from '$lib/ui/LogoutForm.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
+	import AsyncCall from '$lib/ui/AsyncCall.svelte';
+	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 
 	const {
 		dispatch,
 		ui: {sessionPersonas, personaSelection},
 	} = getApp();
-
-	let logoutForm: LogoutForm;
 </script>
 
 <ContextmenuSubmenu>
 	<svelte:fragment slot="entry">
 		<span class="menu-item-entry">
-			<UnicodeIcon icon="⚙️" /><span class="title">Account</span></span
+			<UnicodeIcon icon="⚙️" /><span class="content">Account</span></span
 		>
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
@@ -47,7 +46,7 @@
 					props: {done: () => dispatch.CloseDialog()},
 				})}
 		>
-			<span class="title">Create Persona</span>
+			<span class="content">Create Persona</span>
 		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>
@@ -55,12 +54,20 @@
 					Component: About,
 				})}
 		>
-			<span class="title">About</span>
+			<span class="content">About</span>
 		</ContextmenuEntry>
 		{#if !$session.guest}
-			<ContextmenuEntry action={() => logoutForm.logout()}>
-				<LogoutForm bind:this={logoutForm} />
-			</ContextmenuEntry>
+			<AsyncCall fn={() => dispatch.LogoutAccount()} let:pending let:call let:errorMessage>
+				<ContextmenuEntry action={call}>
+					<span class="content">
+						<span class="spaced" style="flex-shrink: 0">Log out</span>
+						{#if pending}<PendingAnimation />{/if}
+						{#if errorMessage}<span class="error" title="Error: {errorMessage}"
+								>Error: {errorMessage}</span
+							>{/if}
+					</span>
+				</ContextmenuEntry>
+			</AsyncCall>
 		{/if}
 	</svelte:fragment>
 </ContextmenuSubmenu>

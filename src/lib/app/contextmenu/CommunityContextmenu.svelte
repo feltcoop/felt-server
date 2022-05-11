@@ -30,7 +30,7 @@
 					props: {community},
 				})}
 		>
-			<span class="title"> Edit Community </span>
+			<span class="content"> Edit Community </span>
 		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>
@@ -39,7 +39,7 @@
 					props: {persona, community, done: () => dispatch.CloseDialog()},
 				})}
 		>
-			<span class="title">Create Space</span>
+			<span class="content">Create Space</span>
 		</ContextmenuEntry>
 		{#if $community.type !== 'personal'}
 			<ContextmenuEntry
@@ -49,7 +49,7 @@
 						props: {community},
 					})}
 			>
-				<span class="title">Invite Members</span>
+				<span class="content">Invite Members</span>
 			</ContextmenuEntry>
 			<ContextmenuEntry
 				action={() =>
@@ -58,7 +58,7 @@
 						props: {persona, community, done: () => dispatch.CloseDialog()},
 					})}
 			>
-				<span class="title">Delete Community</span>
+				<span class="content">Delete Community</span>
 			</ContextmenuEntry>
 		{/if}
 	</svelte:fragment>
