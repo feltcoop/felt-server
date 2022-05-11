@@ -17,12 +17,6 @@
 	} = getApp();
 
 	let logoutForm: LogoutForm;
-	$: console.log(`REACXTOIVElogoutForm`, logoutForm);
-	const logout = () => {
-		console.log(`logoutForm`, logoutForm);
-		console.log(`logoutForm.logout`, logoutForm.logout);
-		return logoutForm.logout();
-	};
 </script>
 
 <ContextmenuSubmenu>
@@ -64,7 +58,7 @@
 			<span class="title">About</span>
 		</ContextmenuEntry>
 		{#if !$session.guest}
-			<ContextmenuEntry action={logout}>
+			<ContextmenuEntry action={() => logoutForm.logout()}>
 				<LogoutForm bind:this={logoutForm} />
 			</ContextmenuEntry>
 		{/if}
