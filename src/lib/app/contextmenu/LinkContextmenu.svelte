@@ -43,7 +43,6 @@
 	.text {
 		padding: 0 var(--spacing_sm);
 		overflow: hidden;
-		overflow-wrap: break-word;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
