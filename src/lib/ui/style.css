@@ -3,7 +3,7 @@
 	--bg_hue: 24;
 	--bg_saturation: 23%;
 	--bg_lightness: 96%;
-	--luggage_size: calc(var(--icon_size) + var(--spacing_xs3) * 2);
+	--luggage_size: calc(var(--icon_size) + 4px);
 	--navbar_size: var(--luggage_size);
 	--contextmenu_width: 360px;
 }
