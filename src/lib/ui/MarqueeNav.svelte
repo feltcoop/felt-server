@@ -2,21 +2,29 @@
 	import type {Readable} from 'svelte/store';
 
 	import type {Persona} from '$lib/vocab/persona/persona';
+	import type {Space} from '$lib/vocab/space/space';
 
+	export let space: Readable<Space | null>;
 	export let communityPersonas: Array<Readable<Persona>>;
 </script>
 
-<div class="marquee-nav">Members — {communityPersonas.length}</div>
+<div class="marquee-nav">
+	{#if $space}<span class="icon">{$space.icon}</span>{/if}
+	{#if communityPersonas.length > 1}{communityPersonas.length}{/if}
+</div>
 
 <style>
 	.marquee-nav {
 		position: relative;
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
 		height: var(--navbar_size);
 		background-color: var(--tint_dark_1);
 		padding-right: var(--navbar_size); /* placeholder for button, which is rendered elsewhere */
 		padding-left: var(--spacing_lg);
+	}
+	.icon {
+		font-size: var(--font_size_lg);
+		padding-right: var(--spacing_md);
 	}
 </style>
