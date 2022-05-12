@@ -1,22 +1,23 @@
 <script lang="ts">
-	import type {Result} from '@feltcoop/felt';
+	type T = $$Generic;
 
-	type T = $$Generic<Result>;
-
-	export let fn: () => Promise<T>;
+	export let fn: () => T;
 
 	let errorMessage: string | undefined;
 	let pending: boolean | undefined;
 
-	const call = async (): Promise<T> => {
+	const call = (): T => {
+		const returned: any = fn();
+		if (!returned || !returned.then) return returned;
 		pending = true;
 		errorMessage = '';
-		const result = await fn();
-		if (!result.ok) {
-			errorMessage = (result as any).message || 'unknown error';
-		}
-		pending = false;
-		return result;
+		return returned.then((result: any) => {
+			if (!result.ok) {
+				errorMessage = result.message || 'unknown error';
+			}
+			pending = false;
+			return result;
+		});
 	};
 </script>
 

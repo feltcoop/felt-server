@@ -26,8 +26,8 @@
 				{community}
 				showName={false}
 				contextmenuAction={null}
-			/><span class="content">{$community.name}</span>{/if}{#if space}<SpaceIcon {space} />
-			<span class="content">{$space?.url.split('/').filter(Boolean).join(' / ') || ''}</span>{/if}
+			/><span class="title">{$community.name}</span>{/if}{#if space}<SpaceIcon {space} />
+			<span class="title">{$space?.url.split('/').filter(Boolean).join(' / ') || ''}</span>{/if}
 	</li>
 	<li class="marquee-button-placeholder" />
 </ul>

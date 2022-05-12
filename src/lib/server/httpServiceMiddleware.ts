@@ -8,6 +8,8 @@ import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {SessionApi} from '$lib/session/SessionApi';
 import {authorize} from '$lib/server/authorize';
 
+import {wait} from '@feltcoop/felt';
+
 const log = new Logger(gray('[') + blue('httpServiceMiddleware') + gray(']'));
 
 // Wraps a `Service` in an http `Middleware`
@@ -58,6 +60,13 @@ export const toHttpServiceMiddleware =
 			log.error('validation failed:', params, validateParams.errors);
 			const validationError = validateParams.errors![0];
 			return send(res, 400, {message: toValidationErrorMessage(validationError)});
+		}
+		if (service.event.name === 'LogoutAccount') {
+			await wait(1500);
+			return send(res, 500, {
+				message:
+					'errr expernced on the thingexpernced on the thingexpernced on the thingexpernced on the thing',
+			});
 		}
 
 		let result;

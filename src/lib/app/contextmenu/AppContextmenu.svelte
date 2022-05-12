@@ -9,7 +9,6 @@
 	import About from '$lib/ui/About.svelte';
 	import {session} from '$app/stores';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
-	import AsyncCall from '$lib/ui/AsyncCall.svelte';
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 
 	const {
@@ -57,17 +56,15 @@
 			<span class="content">About</span>
 		</ContextmenuEntry>
 		{#if !$session.guest}
-			<AsyncCall fn={() => dispatch.LogoutAccount()} let:pending let:call let:errorMessage>
-				<ContextmenuEntry action={call}>
-					<span class="content">
-						<span class="spaced" style="flex-shrink: 0">Log out</span>
-						{#if pending}<PendingAnimation />{/if}
-						{#if errorMessage}<span class="error" title="Error: {errorMessage}"
-								>Error: {errorMessage}</span
-							>{/if}
-					</span>
-				</ContextmenuEntry>
-			</AsyncCall>
+			<ContextmenuEntry action={() => dispatch.LogoutAccount()} let:pending let:errorMessage>
+				<span class="content">
+					<span class="spaced" style="flex-shrink: 0">Log out</span>
+					{#if pending}<PendingAnimation />{/if}
+					{#if errorMessage}<span class="error" title="Error: {errorMessage}"
+							>Error: {errorMessage}</span
+						>{/if}
+				</span>
+			</ContextmenuEntry>
 		{/if}
 	</svelte:fragment>
 </ContextmenuSubmenu>

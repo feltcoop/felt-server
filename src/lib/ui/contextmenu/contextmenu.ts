@@ -40,8 +40,8 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 	action: typeof contextmenuAction;
 	open: (items: ContextmenuItems, x: number, y: number) => void;
 	close: () => void;
-	activate: (item: ItemState) => boolean | Promise<boolean>;
-	activateSelected: () => boolean | Promise<boolean>;
+	activate: (item: ItemState) => boolean | Promise<Result>;
+	activateSelected: () => boolean | Promise<Result>;
 	select: (item: ItemState) => void;
 	collapseSelected: () => void;
 	expandSelected: () => void; // opens the selected submenu
@@ -93,9 +93,8 @@ export const createContextmenuStore = (
 				const returned = item.action();
 				if (returned?.then) {
 					return returned.then((result) => {
-						if (!result.ok) return false;
-						store.close();
-						return true;
+						if (result.ok) store.close();
+						return result;
 					});
 				}
 				store.close();
