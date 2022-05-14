@@ -19,9 +19,7 @@
 
 <ContextmenuSubmenu>
 	<svelte:fragment slot="entry">
-		<span class="menu-item-entry">
-			<UnicodeIcon icon="⚙️" /><span class="content">Account</span></span
-		>
+		<UnicodeIcon icon="⚙️" />Account
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		{#each $sessionPersonas as sessionPersona (sessionPersona)}
@@ -45,7 +43,7 @@
 					props: {done: () => dispatch.CloseDialog()},
 				})}
 		>
-			<span class="content">Create Persona</span>
+			Create Persona
 		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>
@@ -53,17 +51,15 @@
 					Component: About,
 				})}
 		>
-			<span class="content">About</span>
+			About
 		</ContextmenuEntry>
 		{#if !$session.guest}
 			<ContextmenuEntry action={() => dispatch.LogoutAccount()} let:pending let:errorMessage>
-				<span class="content">
-					<span class="spaced" style="flex-shrink: 0">Log out</span>
-					{#if pending}<PendingAnimation />{/if}
-					{#if errorMessage}<span class="error" title="Error: {errorMessage}"
-							>Error: {errorMessage}</span
-						>{/if}
-				</span>
+				<span class="spaced" style="flex-shrink: 0">Log out</span>
+				{#if pending}<PendingAnimation />{/if}
+				{#if errorMessage}<span class="error" title="Error: {errorMessage}"
+						>Error: {errorMessage}</span
+					>{/if}
 			</ContextmenuEntry>
 		{/if}
 	</svelte:fragment>

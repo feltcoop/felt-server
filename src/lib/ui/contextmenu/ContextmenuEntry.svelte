@@ -15,6 +15,14 @@
 
 	// the `$contextmenu` is needed because `entry` is not reactive
 	$: ({selected} = ($contextmenu, entry));
+
+	// TODO BLOCK hmm -- problem is what if it's activated through a different UI interaction,
+	// or internally in the store?
+	const entryAction = toAsyncAction(() => contextmenu.activate(entry));
+	$: ({call, pending, errorMessage} = entryAction);
+	$entryAction.call;
+	$entryAction.pending;
+	$entryAction.errorMessage;
 </script>
 
 <!-- TODO should be <a> ? But they don't have a `href` currently which is an a11y warning -- should they?
