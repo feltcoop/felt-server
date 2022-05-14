@@ -1,6 +1,6 @@
 import type {AsyncStatus} from '@feltcoop/felt';
-import {get, writable} from 'svelte/store';
-import type {Readable} from 'svelte/store';
+import {writable} from '$lib/store';
+import type {Readable} from '$lib/store';
 import {setContext, getContext} from 'svelte';
 
 import {Logger} from '@feltcoop/felt/util/log.js';
@@ -71,7 +71,7 @@ export const toSocketStore = (
 	// It's not called when the websocket closes due to a `disconnect` call.
 	const onWsCloseUnexpectedly = () => {
 		log.info('close');
-		if (get(store).open) {
+		if (store.get().open) {
 			update(($socket) => ({...$socket, open: false}));
 		}
 		queueReconnect();
@@ -85,7 +85,7 @@ export const toSocketStore = (
 		reconnectTimeout = setTimeout(() => {
 			reconnectTimeout = null;
 			const currentReconnectCount = reconnectCount; // preserve count because `connect` calls `disconnect`
-			store.connect(get(store).url!);
+			store.connect(store.get().url!);
 			reconnectCount = currentReconnectCount;
 		}, Math.min(RECONNECT_DELAY_MAX, RECONNECT_DELAY * reconnectCount));
 	};
@@ -99,7 +99,7 @@ export const toSocketStore = (
 
 	// Returns a bool indicating if it disconnected.
 	const tryToDisconnect = (): boolean => {
-		if (get(store).ws) {
+		if (store.get().ws) {
 			store.disconnect();
 			return true;
 		}
@@ -119,7 +119,7 @@ export const toSocketStore = (
 			});
 		},
 		disconnect: (code = 1000) => {
-			if (!get(store).ws) return;
+			if (!store.get().ws) return;
 			cancelReconnect();
 			update(($socket) => {
 				log.info('disconnect', code, $socket);
@@ -131,7 +131,7 @@ export const toSocketStore = (
 			});
 		},
 		updateUrl: (url) => {
-			if (get(store).url === url) return;
+			if (store.get().url === url) return;
 			if (tryToDisconnect()) {
 				store.connect(url);
 			} else {
@@ -139,7 +139,7 @@ export const toSocketStore = (
 			}
 		},
 		send: (data) => {
-			const $socket = get(store);
+			const $socket = store.get();
 			// log.trace('send', data, $socket);
 			if (!$socket.ws) {
 				log.error('[ws] cannot send because the socket is disconnected', data, $socket);

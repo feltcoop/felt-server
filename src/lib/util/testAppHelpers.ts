@@ -1,4 +1,4 @@
-import {writable} from 'svelte/store';
+import {writable} from '$lib/store';
 
 import type {AppStores} from '$lib/ui/app';
 import {toUi} from '$lib/ui/ui';

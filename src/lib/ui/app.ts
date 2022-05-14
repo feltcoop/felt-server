@@ -1,5 +1,5 @@
 import {setContext, getContext} from 'svelte';
-import type {Writable} from 'svelte/store';
+import type {Writable} from '$lib/store';
 
 import type {Ui} from '$lib/ui/ui';
 import type {Dispatch} from '$lib/app/eventTypes';

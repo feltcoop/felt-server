@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
+	import type {Readable} from '$lib/store';
 
 	import type {Space} from '$lib/vocab/space/space';
 	import type {Community} from '$lib/vocab/community/community';

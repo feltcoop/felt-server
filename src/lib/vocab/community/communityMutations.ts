@@ -1,5 +1,4 @@
 import {goto} from '$app/navigation';
-import {get} from 'svelte/store';
 import {page} from '$app/stores';
 
 import type {Mutations} from '$lib/app/eventTypes';
@@ -20,8 +19,8 @@ export const CreateCommunity: Mutations['CreateCommunity'] = async ({params, inv
 	addPersona(ui, $persona);
 	addCommunity(ui, $community, $spaces, $memberships);
 	await goto(
-		toSpaceUrl($community, null, get(page).url.searchParams, {
-			persona: get(sessionPersonaIndices).get(personaById.get(params.persona_id)!) + '',
+		toSpaceUrl($community, null, page.get().url.searchParams, {
+			persona: sessionPersonaIndices.get().get(personaById.get(params.persona_id)!) + '',
 		}),
 	);
 	return result;
@@ -34,7 +33,7 @@ export const UpdateCommunitySettings: Mutations['UpdateCommunitySettings'] = asy
 }) => {
 	// optimistic update
 	const community = communityById.get(params.community_id)!;
-	const originalSettings = get(community).settings;
+	const originalSettings = community.get().settings;
 	community.update(($community) => ({
 		...$community,
 		settings: {...$community.settings, ...params.settings},
@@ -63,9 +62,9 @@ export const DeleteCommunity: Mutations['UpdateCommunitySettings'] = async ({
 	const {community_id} = params;
 	const community = communityById.get(community_id)!;
 
-	if (get(communitySelection) === community) {
-		const persona = get(personaSelection)!;
-		await goto('/' + get(persona).name + location.search, {replaceState: true});
+	if (communitySelection.get() === community) {
+		const persona = personaSelection.get()!;
+		await goto('/' + persona.get().name + location.search, {replaceState: true});
 	}
 
 	communityById.delete(community_id);
@@ -73,7 +72,7 @@ export const DeleteCommunity: Mutations['UpdateCommunitySettings'] = async ({
 	communityIdSelectionByPersonaId.mutate(($c) => {
 		for (const [persona_id, communityIdSelection] of $c) {
 			if (communityIdSelection === community_id) {
-				$c.set(persona_id, get(personaById.get(persona_id)!).community_id);
+				$c.set(persona_id, personaById.get(persona_id)!.get().community_id);
 			}
 		}
 	});

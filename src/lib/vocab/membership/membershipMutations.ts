@@ -1,4 +1,4 @@
-import {get, writable} from 'svelte/store';
+import {writable} from '$lib/store';
 
 import type {Mutations} from '$lib/app/eventTypes';
 

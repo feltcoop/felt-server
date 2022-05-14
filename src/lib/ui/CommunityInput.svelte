@@ -1,7 +1,7 @@
 <script lang="ts">
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
-	import type {Readable} from 'svelte/store';
+	import type {Readable} from '$lib/store';
 	import HueInput from '@feltcoop/felt/ui/HueInput.svelte';
 
 	import {autofocus} from '$lib/ui/actions';

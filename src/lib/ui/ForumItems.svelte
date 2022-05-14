@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
+	import type {Readable} from '$lib/store';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import ForumItem from '$lib/ui/ForumItem.svelte';

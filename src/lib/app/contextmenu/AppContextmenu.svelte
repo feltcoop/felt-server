@@ -1,6 +1,4 @@
 <script lang="ts">
-	import {get} from 'svelte/store';
-
 	import {getApp} from '$lib/ui/app';
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
@@ -31,7 +29,7 @@
 			{:else}
 				<!-- TODO support store param? only? -->
 				<ContextmenuEntry
-					action={() => dispatch.SelectPersona({persona_id: get(sessionPersona).persona_id})}
+					action={() => dispatch.SelectPersona({persona_id: sessionPersona.get().persona_id})}
 				>
 					<PersonaAvatar persona={sessionPersona} />
 				</ContextmenuEntry>

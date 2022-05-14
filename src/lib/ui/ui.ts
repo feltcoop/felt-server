@@ -1,4 +1,4 @@
-import {writable, derived, get, type Readable, type Writable} from 'svelte/store';
+import {writable, derived, type Readable, type Writable} from '$lib/store';
 import {setContext, getContext, type SvelteComponent} from 'svelte';
 import {mutable, type Mutable} from '@feltcoop/svelte-mutable-store';
 import type {DialogData} from '@feltcoop/felt/ui/dialog/dialog.js';
@@ -99,15 +99,15 @@ export const toUi = (
 			const map: Map<number, Array<Writable<Space>>> = new Map();
 			for (const community of $communities.value) {
 				const communitySpaces: Array<Writable<Space>> = [];
-				const {community_id} = get(community);
+				const {community_id} = community.get();
 				for (const space of $spaces.value) {
-					if (get(space).community_id === community_id) {
+					if (space.get().community_id === community_id) {
 						communitySpaces.push(space);
 					}
 				}
 				communitySpaces.sort((_a, _b) => {
-					const a = get(_a);
-					const b = get(_b);
+					const a = _a.get();
+					const b = _b.get();
 					return isHomeSpace(a) ? -1 : isHomeSpace(b) ? 1 : a.name < b.name ? -1 : 1;
 				});
 				map.set(community_id, communitySpaces);
@@ -122,11 +122,11 @@ export const toUi = (
 			const map: Map<number, Array<Writable<Persona>>> = new Map();
 			for (const community of $communities.value) {
 				const communityPersonas: Array<Writable<Persona>> = [];
-				const {community_id} = get(community);
+				const {community_id} = community.get();
 				for (const membership of $memberships.value) {
-					if (get(membership).community_id === community_id) {
-						const persona = personaById.get(get(membership).persona_id)!;
-						if (get(persona).type !== 'account') continue;
+					if (membership.get().community_id === community_id) {
+						const persona = personaById.get(membership.get().persona_id)!;
+						if (persona.get().type !== 'account') continue;
 						communityPersonas.push(persona);
 					}
 				}
@@ -166,12 +166,12 @@ export const toUi = (
 			([$sessionPersonas, $memberships, $communities]) => {
 				const map: Map<Writable<Persona>, Array<Writable<Community>>> = new Map();
 				for (const sessionPersona of $sessionPersonas) {
-					const $sessionPersona = get(sessionPersona);
+					const $sessionPersona = sessionPersona.get();
 					const sessionPersonaCommunities: Array<Writable<Community>> = [];
 					for (const community of $communities.value) {
-						const $community = get(community);
+						const $community = community.get();
 						for (const membership of $memberships.value) {
-							const $membership = get(membership);
+							const $membership = membership.get();
 							if (
 								$membership.community_id === $community.community_id &&
 								$membership.persona_id === $sessionPersona.persona_id
@@ -181,7 +181,6 @@ export const toUi = (
 							}
 						}
 					}
-
 					map.set(sessionPersona, sessionPersonaCommunities);
 				}
 				return map;
@@ -204,7 +203,7 @@ export const toUi = (
 		([$communitySelection, $spaceIdSelectionByCommunityId]) =>
 			($communitySelection &&
 				spaceById.get(
-					$spaceIdSelectionByCommunityId.value.get(get($communitySelection)!.community_id)!,
+					$spaceIdSelectionByCommunityId.value.get($communitySelection.get()!.community_id)!,
 				)) ||
 			null,
 	);

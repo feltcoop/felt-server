@@ -1,4 +1,4 @@
-import {writable, get} from 'svelte/store';
+import {writable} from '$lib/store';
 import {goto} from '$app/navigation';
 import {page} from '$app/stores';
 
@@ -16,12 +16,12 @@ export const CreateSpace: Mutations['CreateSpace'] = async ({
 	const {space: $space} = result.value;
 	const space = writable($space);
 	const community = communityById.get($space.community_id)!;
-	const $community = get(community);
+	const $community = community.get();
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
 	await goto(
-		toSpaceUrl($community, $space, get(page).url.searchParams, {
-			persona: get(sessionPersonaIndices).get(personaById.get(params.persona_id)!) + '',
+		toSpaceUrl($community, $space, page.get().url.searchParams, {
+			persona: sessionPersonaIndices.get().get(personaById.get(params.persona_id)!) + '',
 		}),
 	);
 	return result;
@@ -44,22 +44,22 @@ export const DeleteSpace: Mutations['DeleteSpace'] = async ({
 
 	const {space_id} = params;
 	const space = spaceById.get(space_id)!;
-	const $space = get(space);
+	const $space = space.get();
 	const {community_id} = $space;
-	const $spaceIdSelectionByCommunityId = get(spaceIdSelectionByCommunityId);
 
 	// If the deleted space is selected, select the home space as a fallback.
-	if (space_id === $spaceIdSelectionByCommunityId.value.get(community_id)) {
+	if (space_id === spaceIdSelectionByCommunityId.get().value.get(community_id)) {
 		const community = communityById.get(community_id)!;
-		if (community === get(communitySelection)) {
-			await goto('/' + get(community).name + location.search, {replaceState: true});
+		if (community === communitySelection.get()) {
+			await goto('/' + community.get().name + location.search, {replaceState: true});
 		} else {
 			//TODO lookup space by community_id+url (see this comment in multiple places)
-			const homeSpace = get(spacesByCommunityId)
+			const homeSpace = spacesByCommunityId
+				.get()
 				.get(community_id)!
-				.find((s) => isHomeSpace(get(s)))!;
+				.find((s) => isHomeSpace(s.get()))!;
 			spaceIdSelectionByCommunityId.mutate(($s) => {
-				$s.set(community_id, get(homeSpace).space_id);
+				$s.set(community_id, homeSpace.get().space_id);
 			});
 		}
 	}

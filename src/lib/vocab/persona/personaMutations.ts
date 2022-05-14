@@ -1,4 +1,3 @@
-import {get} from 'svelte/store';
 import {goto} from '$app/navigation';
 import {page} from '$app/stores';
 
@@ -20,8 +19,8 @@ export const CreateAccountPersona: Mutations['CreateAccountPersona'] = async ({i
 	const persona = addPersona(ui, $persona);
 	addCommunity(ui, $community, $spaces, [$membership]);
 	await goto(
-		toSpaceUrl($community, null, get(page).url.searchParams, {
-			persona: get(sessionPersonaIndices).get(persona) + '',
+		toSpaceUrl($community, null, page.get().url.searchParams, {
+			persona: sessionPersonaIndices.get().get(persona) + '',
 		}),
 	);
 	return result;

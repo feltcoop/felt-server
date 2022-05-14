@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
+	import type {Readable} from '$lib/store';
 	import {page} from '$app/stores';
 
 	import type {Persona} from '$lib/vocab/persona/persona.js';

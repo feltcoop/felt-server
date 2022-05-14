@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
+	import type {Readable} from '$lib/store';
 	import {format} from 'date-fns';
 
 	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';

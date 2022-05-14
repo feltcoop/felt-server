@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {browser} from '$app/env';
-	import {writable, type Readable} from 'svelte/store';
+	import {writable, type Readable} from '$lib/store';
 
 	import {getApp} from '$lib/ui/app';
 	import {getViewContext} from '$lib/vocab/view/view';

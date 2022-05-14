@@ -1,4 +1,4 @@
-import {writable, type Readable, type Writable} from 'svelte/store';
+import {writable, type Readable, type Writable} from '$lib/store';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {writable, type Readable} from 'svelte/store';
+	import {writable, type Readable} from '$lib/store';
 	import {browser} from '$app/env';
 
 	import type {Entity} from '$lib/vocab/entity/entity';

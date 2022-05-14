@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
+	import type {Readable} from '$lib/store';
 	import {throttle} from 'throttle-debounce';
 	import HueInput from '@feltcoop/felt/ui/HueInput.svelte';
 
