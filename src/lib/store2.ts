@@ -1,9 +1,19 @@
 import {writable, type Readable, STORE_SUBSCRIBER_COUNT} from '$lib/store';
 
-export interface Mutable<T> extends Readable<{value: T}> {
+export interface Mutable<T> {
+	subscribe: Readable<{value: T}>['subscribe'];
+	get: Readable<{value: T}>['get'];
+	[STORE_SUBSCRIBER_COUNT]: Readable<{value: T}>[typeof STORE_SUBSCRIBER_COUNT];
 	mutate: (mutator?: (value: T) => void) => void;
 	swap: (value: T) => void; // typical usage is mutating the value with `mutate`; this updates the ref
 }
+
+// TODO BLOCK prefer this one if it works
+
+// export interface Mutable<T> extends Readable<{value: T}> {
+// 	mutate: (mutator?: (value: T) => void) => void;
+// 	swap: (value: T) => void; // typical usage is mutating the value with `mutate`; this updates the ref
+// }
 
 /**
  * Creates a store wrapping a mutable `value`.
