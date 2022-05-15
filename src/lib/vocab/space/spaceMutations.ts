@@ -1,4 +1,5 @@
 import {writable} from '$lib/store';
+import {get} from 'svelte/store';
 import {goto} from '$app/navigation';
 import {page} from '$app/stores';
 
@@ -20,7 +21,7 @@ export const CreateSpace: Mutations['CreateSpace'] = async ({
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
 	await goto(
-		toSpaceUrl($community, $space, page.get().url.searchParams, {
+		toSpaceUrl($community, $space, get(page).url.searchParams, {
 			persona: sessionPersonaIndices.get().get(personaById.get(params.persona_id)!) + '',
 		}),
 	);

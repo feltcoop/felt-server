@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* eslint-disable */
 // prettier-ignore
 
@@ -61,7 +60,7 @@ export interface Writable<T> extends Readable<T> {
 /** Pair of subscriber and invalidator. */
 type SubscribeInvalidateTuple<T> = [Subscriber<T>, Invalidator<T>];
 
-const subscriber_queue = [];
+const subscriber_queue: any[] = [];
 
 /**
  * Creates a `Readable` store that allows reading by subscription.
@@ -79,7 +78,7 @@ export function readable<T>(value?: T, start?: StartStopNotifier<T>): Readable<T
  * @param {StartStopNotifier=}start start and stop notifications for subscriptions
  */
 export function writable<T>(value?: T, start: StartStopNotifier<T> = noop): Writable<T> {
-	let stop: Unsubscriber;
+	let stop: Unsubscriber | undefined | null;
 	const subscribers: Set<SubscribeInvalidateTuple<T>> = new Set();
 
 	function set(new_value: T): void {
@@ -103,7 +102,7 @@ export function writable<T>(value?: T, start: StartStopNotifier<T> = noop): Writ
 	}
 
 	function update(fn: Updater<T>): void {
-		set(fn(value));
+		set(fn(value!));
 	}
 
 	function subscribe(run: Subscriber<T>, invalidate: Invalidator<T> = noop): Unsubscriber {
@@ -112,12 +111,12 @@ export function writable<T>(value?: T, start: StartStopNotifier<T> = noop): Writ
 		if (subscribers.size === 1) {
 			stop = start(set) || noop;
 		}
-		run(value);
+		run(value!);
 
 		return () => {
 			subscribers.delete(subscriber);
 			if (subscribers.size === 0) {
-				stop();
+				stop!();
 				stop = null;
 			}
 		};
@@ -127,7 +126,7 @@ export function writable<T>(value?: T, start: StartStopNotifier<T> = noop): Writ
 		set,
 		update,
 		subscribe,
-		get: () => value,
+		get: () => value!,
 		[STORE_SUBSCRIBER_COUNT]: () => subscribers.size,
 	};
 }
@@ -190,7 +189,7 @@ export function derived<T>(stores: Stores, fn: Function, initial_value?: T): Rea
 
 	const s = readable(initial_value, (set) => {
 		let inited = false;
-		const values = [];
+		const values: any[] = [];
 
 		let pending = 0;
 		let cleanup = noop;
@@ -211,7 +210,7 @@ export function derived<T>(stores: Stores, fn: Function, initial_value?: T): Rea
 		const unsubscribers = stores_array.map((store, i) =>
 			subscribe(
 				store,
-				(value) => {
+				(value: any) => {
 					values[i] = value;
 					pending &= ~(1 << i);
 					if (inited) {

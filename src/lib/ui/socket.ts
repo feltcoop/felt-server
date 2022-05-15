@@ -1,8 +1,7 @@
 import type {AsyncStatus} from '@feltcoop/felt';
-import {writable} from '$lib/store';
-import type {Readable} from '$lib/store';
 import {setContext, getContext} from 'svelte';
 
+import {writable, type Readable} from '$lib/store';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 const log = new Logger('[socket]');
@@ -34,8 +33,7 @@ export interface SocketState {
 	status: AsyncStatus;
 }
 
-export interface SocketStore {
-	subscribe: Readable<SocketState>['subscribe'];
+export interface SocketStore extends Readable<SocketState> {
 	connect: (url: string) => void;
 	disconnect: (code?: number) => void;
 	send: (data: object) => boolean; // returns `true` if sent, `false` if not for some reason
@@ -60,7 +58,7 @@ export const toSocketStore = (
 	sendHeartbeat: () => void,
 	heartbeatInterval: number = HEARTBEAT_INTERVAL,
 ): SocketStore => {
-	const {subscribe, update} = writable<SocketState>(toDefaultSocketState());
+	const {update, set: _set, ...rest} = writable<SocketState>(toDefaultSocketState());
 
 	const onWsOpen = () => {
 		log.info('open');
@@ -107,7 +105,7 @@ export const toSocketStore = (
 	};
 
 	const store: SocketStore = {
-		subscribe,
+		...rest,
 		connect: (url) => {
 			tryToDisconnect();
 			update(($socket) => {

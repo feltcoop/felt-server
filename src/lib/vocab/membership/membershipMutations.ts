@@ -26,8 +26,8 @@ export const DeleteMembership: Mutations['DeleteMembership'] = async ({
 		$memberships.splice(
 			$memberships.findIndex(
 				(membership) =>
-					get(membership).persona_id !== params.persona_id ||
-					get(membership).community_id !== params.community_id,
+					membership.get().persona_id !== params.persona_id ||
+					membership.get().community_id !== params.community_id,
 			),
 			1,
 		),

@@ -71,10 +71,10 @@ export const createContextmenuStore = (
 	const rootMenu: ContextmenuStore['rootMenu'] = {isMenu: true, menu: null, items: []};
 	const selections: ContextmenuStore['selections'] = [];
 
-	const {subscribe, update} = writable<Contextmenu>({open: false, items: [], x: 0, y: 0});
+	const {update, set: _set, ...rest} = writable<Contextmenu>({open: false, items: [], x: 0, y: 0});
 
 	const store: ContextmenuStore = {
-		subscribe,
+		...rest,
 		rootMenu,
 		selections,
 		layout,
