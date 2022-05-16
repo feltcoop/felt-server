@@ -2,6 +2,8 @@ import {writable, type Readable, STORE_SUBSCRIBER_COUNT} from '$lib/store';
 
 export interface Mutable<T> extends Readable<{value: T}> {
 	mutate: (mutator?: (value: T) => void) => void;
+	// The method function signature is used here because of strict function types:
+	// https://github.com/microsoft/TypeScript/pull/18654
 	swap(value: T): void; // eslint-disable-line @typescript-eslint/method-signature-style
 }
 
