@@ -237,9 +237,3 @@ export function derived<T>(stores: Stores, fn: Function, initial_value?: T): Rea
 		[STORE_SUBSCRIBER_COUNT]: s[STORE_SUBSCRIBER_COUNT],
 	};
 }
-
-/**
- * Get the current value from a store by subscribing and immediately unsubscribing.
- * @param store readable
- */
-export {get_store_value as get};
