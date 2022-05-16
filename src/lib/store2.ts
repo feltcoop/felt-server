@@ -1,19 +1,9 @@
 import {writable, type Readable, STORE_SUBSCRIBER_COUNT} from '$lib/store';
 
-export interface Mutable<T> {
-	subscribe: Readable<{value: T}>['subscribe'];
-	get: Readable<{value: T}>['get'];
-	[STORE_SUBSCRIBER_COUNT]: Readable<{value: T}>[typeof STORE_SUBSCRIBER_COUNT];
+export interface Mutable<T> extends Readable<{value: T}> {
 	mutate: (mutator?: (value: T) => void) => void;
-	swap: (value: T) => void; // typical usage is mutating the value with `mutate`; this updates the ref
+	swap(value: T): void; // eslint-disable-line @typescript-eslint/method-signature-style
 }
-
-// TODO BLOCK prefer this one if it works
-
-// export interface Mutable<T> extends Readable<{value: T}> {
-// 	mutate: (mutator?: (value: T) => void) => void;
-// 	swap: (value: T) => void; // typical usage is mutating the value with `mutate`; this updates the ref
-// }
 
 /**
  * Creates a store wrapping a mutable `value`.

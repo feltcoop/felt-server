@@ -1,4 +1,5 @@
 import {writable, derived, type Readable, type Writable, mutable, type Mutable} from '$lib/store';
+import type {Readable as SvelteReadable, Writable as SvelteWritable} from 'svelte/store';
 import {setContext, getContext, type SvelteComponent} from 'svelte';
 import type {DialogData} from '@feltcoop/felt/ui/dialog/dialog.js';
 import {browser} from '$app/env';
@@ -28,7 +29,7 @@ export const setUi = (store: Ui): Ui => {
 };
 
 export interface Ui {
-	session: Readable<ClientSession>;
+	session: SvelteReadable<ClientSession>;
 	setSession: ($session: ClientSession) => void;
 	destroy: () => void;
 
@@ -75,7 +76,7 @@ export type WritableUi = ReturnType<typeof toUi>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const toUi = (
-	session: Writable<ClientSession>,
+	session: SvelteWritable<ClientSession>,
 	initialMobile: boolean,
 	components: {[key: string]: typeof SvelteComponent},
 ) => {
