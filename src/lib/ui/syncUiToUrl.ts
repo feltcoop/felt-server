@@ -1,4 +1,4 @@
-import type {Readable} from '$lib/store';
+import type {Readable} from '@feltcoop/svelte-gettable-stores';
 import {browser} from '$app/env';
 import {goto} from '$app/navigation';
 import {Logger} from '@feltcoop/felt/util/log.js';

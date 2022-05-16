@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from '$lib/store';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	import type {Community} from '$lib/vocab/community/community.js';
 	import MembershipInputItem from '$lib/ui/MembershipInputItem.svelte';

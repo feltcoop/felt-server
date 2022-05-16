@@ -1,4 +1,11 @@
-import {writable, derived, type Readable, type Writable, mutable, type Mutable} from '$lib/store';
+import {
+	writable,
+	derived,
+	type Readable,
+	type Writable,
+	mutable,
+	type Mutable,
+} from '@feltcoop/svelte-gettable-stores';
 import type {Readable as SvelteReadable, Writable as SvelteWritable} from 'svelte/store';
 import {setContext, getContext, type SvelteComponent} from 'svelte';
 import type {DialogData} from '@feltcoop/felt/ui/dialog/dialog.js';

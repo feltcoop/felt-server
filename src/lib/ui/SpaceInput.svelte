@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from '$lib/store';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 

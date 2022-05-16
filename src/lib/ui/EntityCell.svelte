@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from '$lib/store';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import {scale} from 'svelte/transition';
 

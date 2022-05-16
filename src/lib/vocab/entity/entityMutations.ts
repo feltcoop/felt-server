@@ -1,4 +1,4 @@
-import {writable} from '$lib/store';
+import {writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {updateEntity, updateEntityCaches} from '$lib/vocab/entity/entityMutationHelpers';

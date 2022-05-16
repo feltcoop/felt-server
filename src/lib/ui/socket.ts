@@ -1,7 +1,7 @@
 import type {AsyncStatus} from '@feltcoop/felt';
 import {setContext, getContext} from 'svelte';
 
-import {writable, type Readable} from '$lib/store';
+import {writable, type Readable} from '@feltcoop/svelte-gettable-stores';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 const log = new Logger('[socket]');

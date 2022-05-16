@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from '$lib/store';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import EntityCell from '$lib/ui/EntityCell.svelte';
