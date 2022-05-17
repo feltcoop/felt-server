@@ -3,6 +3,8 @@
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 	import HueInput from '@feltcoop/felt/ui/HueInput.svelte';
+	import {goto} from '$app/navigation';
+	import {page} from '$app/stores';
 
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
@@ -10,8 +12,12 @@
 	import Avatar from '$lib/ui/Avatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {randomHue} from '$lib/ui/color';
+	import {toSpaceUrl} from '$lib/ui/url';
 
-	const {dispatch} = getApp();
+	const {
+		dispatch,
+		ui: {sessionPersonaIndices},
+	} = getApp();
 
 	export let persona: Readable<Persona>;
 	export let done: (() => void) | undefined = undefined;
@@ -48,6 +54,11 @@
 		if (result.ok) {
 			errorMessage = null;
 			name = '';
+			await goto(
+				toSpaceUrl(result.value.community, null, $page.url.searchParams, {
+					persona: sessionPersonaIndices.get().get(persona) + '',
+				}),
+			);
 			done?.();
 		} else {
 			errorMessage = result.message;
