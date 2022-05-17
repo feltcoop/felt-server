@@ -75,9 +75,9 @@ export const task: Task<SetupTaskArgs> = {
 				`apt install -y unzip;
 				curl -fsSL https://fnm.vercel.app/install | bash;
 				export PATH=/root/.fnm:$PATH;
-				echo "export PATH=$PATH
-				eval "\`fnm env\`";
-				$(cat ~/.bashrc)" > ~/.bashrc;
+				echo export PATH=$PATH
+				'eval "\`fnm env\`"'
+				$(cat ~/.bashrc) > ~/.bashrc;
 				eval "\`fnm env\`";`,
 			//
 			//
