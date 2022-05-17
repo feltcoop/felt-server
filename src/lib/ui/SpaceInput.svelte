@@ -20,7 +20,7 @@
 
 	const {
 		dispatch,
-		ui: {sessionPersonaIndices, personaById},
+		ui: {sessionPersonaIndices},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -68,7 +68,7 @@
 			name = '';
 			await goto(
 				toSpaceUrl($community, result.value.space, $page.url.searchParams, {
-					persona: sessionPersonaIndices.get().get(personaById.get($persona.persona_id)!) + '',
+					persona: sessionPersonaIndices.get().get(persona) + '',
 				}),
 			);
 			done?.();
