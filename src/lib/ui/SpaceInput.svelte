@@ -66,7 +66,7 @@
 		if (result.ok) {
 			errorMessage = null;
 			name = '';
-			void goto(
+			await goto(
 				toSpaceUrl($community, result.value.space, $page.url.searchParams, {
 					persona: sessionPersonaIndices.get().get(personaById.get($persona.persona_id)!) + '',
 				}),
