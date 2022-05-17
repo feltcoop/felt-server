@@ -76,65 +76,65 @@ export const task: Task<SetupTaskArgs> = {
 				curl -fsSL https://fnm.vercel.app/install | bash;
 				export PATH=/root/.fnm:$PATH;
 				echo 'export PATH='$PATH'
-				eval "\`fnm env\`"
-				'$(cat ~/.bashrc) > ~/.bashrc;
+				  eval "\`fnm env\`"
+				  '$(cat ~/.bashrc) > ~/.bashrc;
 				eval "\`fnm env\`";`,
 			//
 			//
-			// // Install Node:
-			// logSequence('Installing Node...') +
-			// 	`fnm install 16;
-			// 	fnm use 16;
-			// 	fnm default 16;
-			// 	npm i -g npm@latest;`,
-			// //
-			// //
-			// // Install Node tools:
-			// logSequence('Installing pm2 and gro...') +
-			// 	`export NODE_ENV=production;
-			// 	echo "export NODE_ENV=production" >> ~/.profile;
-			// 	echo "export NODE_ENV=production
-			// 	$(cat ~/.bashrc)" > ~/.bashrc;
-			// 	npm i -g pm2 @feltcoop/gro;`,
-			// //
-			// //
-			// // Install nginx:
-			// logSequence('Installing nginx...') +
-			// 	`apt install -y nginx;
-			// 	sudo unlink /etc/nginx/sites-enabled/default;
-			// 	touch ${REMOTE_NGINX_CONFIG_PATH};
-			// 	echo '${nginxConfig}' >> ${REMOTE_NGINX_CONFIG_PATH};
-			// 	cat ${REMOTE_NGINX_CONFIG_PATH};
-			// 	ln -s ${REMOTE_NGINX_CONFIG_PATH} ${REMOTE_NGINX_SYMLINK_PATH};
-			// 	systemctl start nginx;`,
-			// //
-			// //
-			// // Install certbot for HTTPS:
-			// logSequence('Enabling HTTPS with cerbot and nginx...') +
-			// 	`apt install -y certbot python3-certbot-nginx;
-			// 	certbot --nginx --non-interactive --agree-tos --email ${EMAIL_ADDRESS} -d ${VITE_DEPLOY_SERVER_HOST};
-			// 	systemctl restart nginx.service;`,
-			// //
-			// //
-			// // Install Postgres:
-			// // More details at src/lib/db/README.md and https://www.postgresql.org/download/linux/ubuntu/
-			// logSequence('Installing Postgres...') +
-			// 	`sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list;';
-			// 	curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -;
-			// 	sudo apt update;
-			// 	sudo apt install -y postgresql;`,
-			// //
-			// //
-			// // Create the Postgres database for Felt:
-			// logSequence('Creating Postgres database...') +
-			// 	`sudo -i -u postgres psql -c "CREATE DATABASE ${PGDATABASE};";` +
-			// 	// TODO create the custom db user (the following code does not work):
-			// 	// `sudo -i -u postgres psql -U postgres -c "CREATE USER ${PGUSERNAME} WITH LOGIN PASSWORD '${PGPASSWORD}';";` +
-			// 	// `PGPASSWORD=${PGPASSWORD} sudo -i -u postgres psql -U ${PGUSERNAME} -c "CREATE DATABASE ${PGDATABASE};";` +
-			// 	//
-			// 	//
-			// 	// All done!
-			logSequence(`Success! Server is now setup for deployment.`),
+			// Install Node:
+			logSequence('Installing Node...') +
+				`fnm install 16;
+				fnm use 16;
+				fnm default 16;
+				npm i -g npm@latest;`,
+			//
+			//
+			// Install Node tools:
+			logSequence('Installing pm2 and gro...') +
+				`export NODE_ENV=production;
+				echo "export NODE_ENV=production" >> ~/.profile;
+				echo "export NODE_ENV=production
+				  $(cat ~/.bashrc)" > ~/.bashrc;
+				npm i -g pm2 @feltcoop/gro;`,
+			//
+			//
+			// Install nginx:
+			logSequence('Installing nginx...') +
+				`apt install -y nginx;
+				sudo unlink /etc/nginx/sites-enabled/default;
+				touch ${REMOTE_NGINX_CONFIG_PATH};
+				echo '${nginxConfig}' >> ${REMOTE_NGINX_CONFIG_PATH};
+				cat ${REMOTE_NGINX_CONFIG_PATH};
+				ln -s ${REMOTE_NGINX_CONFIG_PATH} ${REMOTE_NGINX_SYMLINK_PATH};
+				systemctl start nginx;`,
+			//
+			//
+			// Install certbot for HTTPS:
+			logSequence('Enabling HTTPS with cerbot and nginx...') +
+				`apt install -y certbot python3-certbot-nginx;
+				certbot --nginx --non-interactive --agree-tos --email ${EMAIL_ADDRESS} -d ${VITE_DEPLOY_SERVER_HOST};
+				systemctl restart nginx.service;`,
+			//
+			//
+			// Install Postgres:
+			// More details at src/lib/db/README.md and https://www.postgresql.org/download/linux/ubuntu/
+			logSequence('Installing Postgres...') +
+				`sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list;';
+				curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -;
+				sudo apt update;
+				sudo apt install -y postgresql;`,
+			//
+			//
+			// Create the Postgres database for Felt:
+			logSequence('Creating Postgres database...') +
+				`sudo -i -u postgres psql -c "CREATE DATABASE ${PGDATABASE};";` +
+				// TODO create the custom db user (the following code does not work):
+				// `sudo -i -u postgres psql -U postgres -c "CREATE USER ${PGUSERNAME} WITH LOGIN PASSWORD '${PGPASSWORD}';";` +
+				// `PGPASSWORD=${PGPASSWORD} sudo -i -u postgres psql -U ${PGUSERNAME} -c "CREATE DATABASE ${PGDATABASE};";` +
+				//
+				//
+				// All done!
+				logSequence(`Success! Server is now setup for deployment.`),
 		].map((s) => s + '\n\n');
 		if (dry) {
 			log.info(
