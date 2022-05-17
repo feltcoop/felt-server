@@ -2,6 +2,8 @@
 	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
+	import {goto} from '$app/navigation';
+	import {page} from '$app/stores';
 
 	import type {Community} from '$lib/vocab/community/community.js';
 	import {autofocus} from '$lib/ui/actions';
@@ -11,11 +13,15 @@
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {parseSpaceIcon} from '$lib/vocab/space/spaceHelpers';
+	import {toSpaceUrl} from '$lib/ui/url';
 
 	// TODO does this belong in `view`?
 	const creatableViewTemplates = viewTemplates.filter((v) => v.creatable !== false);
 
-	const {dispatch} = getApp();
+	const {
+		dispatch,
+		ui: {sessionPersonaIndices, personaById},
+	} = getApp();
 
 	export let persona: Readable<Persona>;
 	export let community: Readable<Community>;
@@ -48,13 +54,11 @@
 		if (pending) return;
 		pending = true;
 		errorMessage = null;
-		//Needs to collect url(i.e. name for now), type (currently default application/json), & content (hardcoded JSON struct)
-		const url = `/${name}`;
 		const result = await dispatch.CreateSpace({
 			persona_id: $persona.persona_id,
 			community_id: $community.community_id,
 			name,
-			url,
+			url: `/${name}`,
 			icon: iconResult.value,
 			view: selectedViewTemplate.view,
 		});
@@ -62,6 +66,11 @@
 		if (result.ok) {
 			errorMessage = null;
 			name = '';
+			void goto(
+				toSpaceUrl($community, result.value.space, $page.url.searchParams, {
+					persona: sessionPersonaIndices.get().get(personaById.get($persona.persona_id)!) + '',
+				}),
+			);
 			done?.();
 		} else {
 			errorMessage = result.message;

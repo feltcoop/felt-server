@@ -1,30 +1,16 @@
 import {writable} from '@feltcoop/svelte-gettable-stores';
-import {get} from 'svelte/store';
 import {goto} from '$app/navigation';
-import {page} from '$app/stores';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
-import {toSpaceUrl} from '$lib/ui/url';
 
-export const CreateSpace: Mutations['CreateSpace'] = async ({
-	invoke,
-	params,
-	ui: {spaceById, spaces, communityById, sessionPersonaIndices, personaById},
-}) => {
+export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui: {spaceById, spaces}}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {space: $space} = result.value;
 	const space = writable($space);
-	const community = communityById.get($space.community_id)!;
-	const $community = community.get();
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
-	await goto(
-		toSpaceUrl($community, $space, get(page).url.searchParams, {
-			persona: sessionPersonaIndices.get().get(personaById.get(params.persona_id)!) + '',
-		}),
-	);
 	return result;
 };
 
