@@ -41,7 +41,8 @@ gro test
 
 ## credits 🐢<sub>🐢</sub><sub><sub>🐢</sub></sub>
 
-Design contributions by Jane Im ([imjane.net](https://imjane.net))
+Design contributions by Jane Im
+([imjane.net](https://imjane.net), [@trusttri](https://github.com/trusttri))
 
 Open source software including
 [Polka](https://github.com/lukeed/polka) ∙
