@@ -7,12 +7,18 @@
 
 	const contextmenu = getContextmenu();
 
-	// TODO add larger transparent cursor hit area
-
 	const submenu = contextmenu.addSubmenu();
 
-	const select = () => {
-		if (!selected) contextmenu.selectItem(submenu);
+	const onClick = (e: MouseEvent) => {
+		e.stopImmediatePropagation();
+	};
+	const onMousemove = (e: MouseEvent) => {
+		e.stopImmediatePropagation();
+		// This timeout fixes a bug on mobile where the mousemove event
+		// fires immediately when the contextmenu appears,
+		// and then the newly mounted selected entry immediately receives a click event.
+		// The timeout ensures the click event is not passed through.
+		setTimeout(() => contextmenu.selectItem(submenu));
 	};
 
 	$: ({layout} = contextmenu);
@@ -60,8 +66,8 @@
 		class="menu-item"
 		role="menuitem"
 		class:selected
-		on:click|stopPropagation
-		on:mousemove|stopPropagation={select}
+		on:click={onClick}
+		on:mousemove={onMousemove}
 		aria-expanded={selected}
 	>
 		<slot name="entry" />

@@ -13,19 +13,13 @@ import {toTieEntityIds} from '$lib/vocab/tie/tieHelpers';
 export const ReadEntitiesService: ServiceByName['ReadEntities'] = {
 	event: ReadEntities,
 	perform: async ({repos, params}) => {
-		// could update the interface to just expect the client to provide the dir id
-		// but didn't want to mess with the interface for now.
-		const findSpaceResult = await repos.space.findById(params.space_id);
-		if (!findSpaceResult.ok) {
-			return {ok: false, status: 500, message: 'error looking up space'};
-		}
-		const findTiesResult = await repos.tie.filterBySourceId(findSpaceResult.value.directory_id);
+		const findTiesResult = await repos.tie.filterBySourceId(params.source_id);
 		if (!findTiesResult.ok) {
 			return {ok: false, status: 500, message: 'error searching space directory'};
 		}
 		//TODO stop filtering directory until we fix entity indexing by space_id
 		const entityIds = toTieEntityIds(findTiesResult.value);
-		entityIds.delete(findSpaceResult.value.directory_id);
+		entityIds.delete(params.source_id);
 		const findEntitiesResult = await repos.entity.filterByIds(Array.from(entityIds));
 		if (!findEntitiesResult.ok) {
 			return {ok: false, status: 500, message: 'error searching for entities'};

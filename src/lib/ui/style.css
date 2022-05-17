@@ -37,6 +37,7 @@ main {
 .icon-button {
 	width: var(--navbar_size);
 	height: var(--navbar_size);
+	flex-shrink: 0;
 }
 
 .buttons {

@@ -1,4 +1,4 @@
-import {writable, type Readable, type Writable} from 'svelte/store';
+import {writable, type Readable, type Writable} from '@feltcoop/svelte-gettable-stores';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
 
@@ -71,10 +71,10 @@ export const createContextmenuStore = (
 	const rootMenu: ContextmenuStore['rootMenu'] = {isMenu: true, menu: null, items: []};
 	const selections: ContextmenuStore['selections'] = [];
 
-	const {subscribe, update} = writable<Contextmenu>({open: false, items: [], x: 0, y: 0});
+	const {update, set: _set, ...rest} = writable<Contextmenu>({open: false, items: [], x: 0, y: 0});
 
 	const store: ContextmenuStore = {
-		subscribe,
+		...rest,
 		rootMenu,
 		selections,
 		layout,
@@ -193,16 +193,15 @@ export const onContextmenu = (
 	contextmenu: ContextmenuStore,
 	excludeEl?: HTMLElement,
 	LinkContextmenu?: typeof SvelteComponent,
-): undefined | false => {
+): void => {
 	if (e.shiftKey) return;
-	e.stopPropagation();
+	e.stopImmediatePropagation();
 	e.preventDefault();
 	const target = e.target as HTMLElement | SVGElement;
 	const items = queryContextmenuItems(target, LinkContextmenu);
 	if (!items || isEditable(target) || excludeEl?.contains(target)) return;
 	// TODO dispatch a UI event, like OpenContextmenu
 	contextmenu.open(items, e.clientX, e.clientY);
-	return false; // TODO remove this if it doesn't fix FF mobile (and update the `false` return value)
 };
 
 const queryContextmenuItems = (
@@ -235,7 +234,7 @@ const queryContextmenuItems = (
 };
 
 const CONTEXTMENU_STORE_KEY = Symbol();
-export const setContextmenu = (contextmenu: ContextmenuStore): void =>
+export const setContextmenu = (contextmenu: ContextmenuStore): ContextmenuStore =>
 	setContext(CONTEXTMENU_STORE_KEY, contextmenu);
 export const getContextmenu = (): ContextmenuStore => getContext(CONTEXTMENU_STORE_KEY);
 

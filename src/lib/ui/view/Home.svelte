@@ -1,12 +1,14 @@
 <script lang="ts">
 	import {browser} from '$app/env';
+	import {writable, type Readable} from '@feltcoop/svelte-gettable-stores';
+
 	import {getApp} from '$lib/ui/app';
 	import {getViewContext} from '$lib/vocab/view/view';
 	import Forum from '$lib/ui/view/Forum.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import EntityEditor from '$lib/ui/EntityEditor.svelte';
 	import type {Entity} from '$lib/vocab/entity/entity';
-	import {writable, type Readable} from 'svelte/store';
+	import EntityContent from '$lib/ui/EntityContent.svelte';
 
 	const viewContext = getViewContext();
 	$: ({community, space, persona} = $viewContext);
@@ -40,7 +42,7 @@
 
 	//TODO this is all done because the Query event always returns an empty array on initial call
 	$: entitiesResult = shouldLoadEntities
-		? dispatch.ReadEntities({space_id: $space.space_id})
+		? dispatch.ReadEntities({source_id: $space.directory_id})
 		: null;
 	let entities: Entity[] | undefined;
 	let rules: Readable<Entity> | undefined;
@@ -104,7 +106,7 @@
 					>propose change ✍️
 				</button>
 			</div>
-			{@html $rules ? $rules.data.content : 'rules not found'}
+			{#if rules && $rules}<EntityContent entity={rules} />{:else}rules not found{/if}
 		</div>
 		<div class="norms markup panel-inset">
 			<div class="header">
@@ -119,7 +121,7 @@
 					>propose change ✍️
 				</button>
 			</div>
-			{@html $norms ? $norms.data.content : 'norms not found'}
+			{#if norms && $norms}<EntityContent entity={norms} />{:else}norms not found{/if}
 		</div>
 	</section>
 	<section class="roles">

@@ -1,7 +1,7 @@
 import type {Root, SvelteChild} from 'svast';
 import {compile as stringifySvast} from 'svast-stringify';
 import {setContext, getContext} from 'svelte';
-import type {Readable} from 'svelte/store';
+import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 import type {Space} from '$lib/vocab/space/space';
 import type {Community} from '$lib/vocab/community/community';
@@ -60,7 +60,8 @@ export interface ViewContext {
 
 const KEY = Symbol();
 export const getViewContext = (): Readable<ViewContext> => getContext(KEY);
-export const setViewContext = (ctx: Readable<ViewContext>): void => setContext(KEY, ctx);
+export const setViewContext = (ctx: Readable<ViewContext>): Readable<ViewContext> =>
+	setContext(KEY, ctx);
 
 export const parseView = (value: string, generatePositions = false): ViewData =>
 	parseSvast({value, generatePositions});

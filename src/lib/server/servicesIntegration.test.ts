@@ -74,7 +74,7 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	//
 
 	const {entities: filteredEntities} = unwrap(
-		await ReadEntitiesService.perform({params: {space_id: space.space_id}, ...serviceRequest}),
+		await ReadEntitiesService.perform({params: {source_id: space.directory_id}, ...serviceRequest}),
 	);
 	assert.equal(filteredEntities.slice(), [entity2, entity1]); // `slice` because `RowList` is not deep equal to arrays
 

@@ -1,9 +1,12 @@
-# felt-server build & deploy
+# Building and deploying felt-server
+
+> how to go from a [local dev setup](/src/docs/getting-started.md) to a live deployment
 
 These documents and tools were built with the assumption of remote cloud infrastructure,
 but can easily be adapted for local use & deployment.
 
-To start with clone a copy of the repo locally & make sure gro is installed globally.
+To start, clone the repo locally and make sure
+[Gro](https://github.com/feltcoop/gro) is installed globally.
 
 ## initializing
 

@@ -10,6 +10,7 @@ export const CreateEntity: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			actor_id: {type: 'number'},
+			//TODO remove
 			space_id: {type: 'number'},
 			data: {type: 'object', tsType: 'EntityData'},
 			source_id: {type: 'number'},
@@ -71,9 +72,9 @@ export const ReadEntities: ServiceEventInfo = {
 		$id: '/schemas/ReadEntitiesParams.json',
 		type: 'object',
 		properties: {
-			space_id: {type: 'number'},
+			source_id: {type: 'number'},
 		},
-		required: ['space_id'],
+		required: ['source_id'],
 		additionalProperties: false,
 	},
 	response: {
@@ -88,7 +89,7 @@ export const ReadEntities: ServiceEventInfo = {
 	},
 	returns: 'Promise<ReadEntitiesResponseResult>',
 	route: {
-		path: '/api/v1/spaces/:space_id/entities',
+		path: '/api/v1/entities/source/:source_id',
 		method: 'GET',
 	},
 };
@@ -139,7 +140,7 @@ export const ReadEntitiesPaginated: ServiceEventInfo = {
 	},
 	returns: 'Promise<ReadEntitiesPaginatedResponseResult>',
 	route: {
-		path: '/api/v1/spaces/:space_id/entities/paginated',
+		path: '/api/v1/entities/source/:source_id/paginated',
 		method: 'GET',
 	},
 };

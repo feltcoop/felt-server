@@ -1,9 +1,18 @@
 import {goto} from '$app/navigation';
-import {get} from 'svelte/store';
+import {Logger} from '@feltcoop/felt/util/log.js';
+import {round} from '@feltcoop/felt/util/maths.js';
 
 import type {Mutations} from '$lib/app/eventTypes';
 
-export const Ping: Mutations['Ping'] = ({invoke}) => invoke();
+const log = new Logger('[uiMutations]');
+
+export const Ping: Mutations['Ping'] = async ({invoke}) => {
+	const t = performance.now();
+	const result = await invoke();
+	const dt = performance.now() - t;
+	log.info(`ping:`, round(dt, 1) + 'ms');
+	return result;
+};
 
 export const SetMobile: Mutations['SetMobile'] = ({params, ui: {mobile}}) => {
 	mobile.set(params);
@@ -25,7 +34,7 @@ export const SelectCommunity: Mutations['SelectCommunity'] = ({
 	params,
 	ui: {personaIdSelection, communityIdSelectionByPersonaId},
 }) => {
-	const $personaIdSelection = get(personaIdSelection);
+	const $personaIdSelection = personaIdSelection.get();
 	if ($personaIdSelection) {
 		communityIdSelectionByPersonaId.mutate(($c) => {
 			$c.set($personaIdSelection, params.community_id);
@@ -59,14 +68,14 @@ export const ViewSpace: Mutations['ViewSpace'] = async ({
 	// The target community may not match the selected community,
 	// so it's not as simple as checking if this is already the selected space for its community,
 	// we need to check if the selected community's selected space matches this space.
-	const selectedCommunity = get(communitySelection);
-	const $space = get(space);
+	const selectedCommunity = communitySelection.get();
+	const $space = space.get();
 	if (
 		selectedCommunity &&
 		$space.space_id !==
-			get(spaceIdSelectionByCommunityId).value.get(get(selectedCommunity).community_id)
+			spaceIdSelectionByCommunityId.get().value.get(selectedCommunity.get().community_id)
 	) {
-		const $community = get(communityById.get($space.community_id)!);
+		const $community = communityById.get($space.community_id)!.get();
 		await goto('/' + $community.name + $space.url + location.search, {replaceState: true});
 	}
 };

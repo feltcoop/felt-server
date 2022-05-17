@@ -1,13 +1,20 @@
 [<img src="/src/static/felt.png" align="right" width="192" height="178">](https://felt.dev)
 
-# felt-server
+# Getting started with felt-server
 
-> server for [Felt](https://github.com/feltcoop/felt),
+> docs for devs on [felt-server](https://github.com/feltcoop/felt-server),
 > a tool for building and maintaining communities 💚
 
-Thanks for your interest in contributing! Before you get started you'll need to get your local machine set up.
+## Overview
 
-## Getting Started
+At a high level, felt-server depends on the following core technologies:
+
+- [Node](https://nodejs.org)
+- [PostgreSQL](https://www.postgresql.org) aka Postgres
+- [Svelte](https://svelte.dev) and [SvelteKit](https://kit.svelte.dev)
+- [TypeScript](https://www.typescriptlang.org)
+
+## Setup
 
 1. Configure your environment to the Node & NPM versions listed in [package.json](/package.json)
 1. Run `npm i`
@@ -25,6 +32,7 @@ In most cases [`gro dev`](https://github.com/feltcoop/gro/blob/main/src/docs/dev
 is the only command you'll need to run during development.
 It starts both SvelteKit and an API server,
 and when files change the system should automatically update or restart as needed.
+See [Gro's docs](https://github.com/feltcoop/gro) for more.
 
 ## manual processes
 

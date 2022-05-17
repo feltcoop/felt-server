@@ -1,12 +1,9 @@
-import {get, writable, type Writable} from 'svelte/store';
+import {writable, type Writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
 
-export const updateEntity = (
-	{entityById, entitiesBySpace}: WritableUi,
-	$entity: Entity,
-): Writable<Entity> => {
+export const updateEntity = ({entityById}: WritableUi, $entity: Entity): Writable<Entity> => {
 	const {entity_id} = $entity;
 	let entity = entityById.get(entity_id);
 	if (entity) {
@@ -14,13 +11,26 @@ export const updateEntity = (
 	} else {
 		entityById.set(entity_id, (entity = writable($entity)));
 	}
-	const existingSpaceEntities = entitiesBySpace.get($entity.space_id);
+	return entity;
+};
+
+export const updateEntityCaches = (
+	{entityById, entitiesBySourceId}: WritableUi,
+	$entity: Entity,
+	source_id: number,
+): Writable<Entity> => {
+	const {entity_id} = $entity;
+	const entity = entityById.get(entity_id)!;
+	const existingSpaceEntities = entitiesBySourceId.get(source_id);
 	if (existingSpaceEntities) {
-		if (!get(existingSpaceEntities).includes(entity)) {
-			existingSpaceEntities.update(($entities) => $entities.concat(entity!));
+		if (!existingSpaceEntities.get().includes(entity)) {
+			existingSpaceEntities.update(($entities) =>
+				// TODO splice into a mutable array instead of sorting like this
+				$entities.concat(entity).sort((a, b) => (a.get().created > b.get().created ? 1 : -1)),
+			);
 		}
 	} else {
-		entitiesBySpace.set($entity.space_id, writable([entity]));
+		entitiesBySourceId.set(source_id, writable([entity]));
 	}
 	return entity;
 };

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 	import {format} from 'date-fns';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 
@@ -68,6 +68,7 @@
 				>
 			{:else}
 				<li>
+					<!-- TODO how to make this use `EntityContent`? slot? could default to the `pre` -->
 					<PropertyEditor
 						value={$entity.data.content}
 						field="content"

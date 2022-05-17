@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	import type {Space} from '$lib/vocab/space/space';
 	import type {Community} from '$lib/vocab/community/community';
@@ -22,7 +22,7 @@
 	$: communityPersonas = $personasByCommunityId.get($community.community_id)!;
 </script>
 
-<MarqueeNav {communityPersonas} />
+<MarqueeNav {space} {communityPersonas} />
 
 <!-- TODO display other meta info about the community -->
 {#if $expandMarquee}

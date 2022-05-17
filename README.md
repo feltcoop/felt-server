@@ -5,13 +5,17 @@
 > server for [Felt](https://github.com/feltcoop/felt),
 > a tool for building and maintaining communities 💚
 
-> **work in progress**: pre-pre-alpha
+> **work in progress**: pre-alpha
 
-For more in depth development docs, please see [Contributing](/src/docs/contributing.md)
+For more in depth development docs, please see
+[Getting started](/src/docs/getting-started.md) and
+[Contributing](/contributing.md)
 
-For build & deployment docs, please see the [Infra README](/src/infra/README.md)
+For build & deployment docs, see the [Infra README](/src/infra/README.md)
 
 ## getting started
+
+First [setup for dev](/src/docs/getting-started.md), then:
 
 ```bash
 # node >=16.6
@@ -31,8 +35,9 @@ npm test
 gro test
 ```
 
-> learn more [about Gro](https://github.com/feltcoop/gro) and
-> [setting up a dev environment](/src/docs/contributing.md)
+> learn more [about Gro](https://github.com/feltcoop/gro),
+> [setting up a dev environment](/src/docs/getting-started.md),
+> and [contributing](/contributing.md)
 
 ## credits 🐢<sub>🐢</sub><sub><sub>🐢</sub></sub>
 
@@ -41,6 +46,7 @@ gro test
 [SvelteKit](https://github.com/sveltejs/kit) ∙
 [Vite](https://github.com/vitejs/vite) ∙
 [TypeScript](https://github.com/microsoft/TypeScript) ∙
+[MDsveX](https://github.com/pngwn/MDsveX) ∙
 [uvu](https://github.com/lukeed/uvu) ∙
 [Postgres.js](https://github.com/porsager/postgres) ∙
 [Ley](https://github.com/lukeed/ley) ∙
