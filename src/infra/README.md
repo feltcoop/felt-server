@@ -61,7 +61,11 @@ gro deploy
 
 ## manually upgrading cloud instances
 
-If upgrading your underlying cloud OS, we recommend spinning up a new server instance and restoring a DB backup to it. This helps keeps cruft from forming on your servers, helps you make sure you running on the latest hardware from your cloud provider, and tests your DB restoration process all in one.
+If upgrading your underlying cloud OS,
+we recommend spinning up a new server instance and restoring a DB backup to it.
+This helps keeps cruft from forming on your servers,
+helps you make sure you running on the latest hardware from your cloud provider,
+and tests your DB restoration process all in one.
 
 1. Spin up a new server with the new OS
 1. Point your DNS record to the new IP
