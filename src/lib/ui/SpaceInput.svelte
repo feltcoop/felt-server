@@ -68,7 +68,7 @@
 			name = '';
 			await goto(
 				toSpaceUrl($community, result.value.space, $page.url.searchParams, {
-					persona: sessionPersonaIndices.get().get(persona) + '',
+					persona: $sessionPersonaIndices.get(persona) + '',
 				}),
 			);
 			done?.();
