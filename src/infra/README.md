@@ -71,7 +71,8 @@ and tests your DB restoration process all in one.
 1. Point your DNS record to the new IP
 1. Run `infra/setup` on the new server
 1. Set up your DB password
-1. Take a dump of the DB from your old server instance
+1. Use [`pg_dump`](https://www.postgresql.org/docs/current/backup-dump.html)
+   to get a copy of the DB from your old server instance
 1. Copy that dump from old to new server & restore it
 1. Deploy the latest `felt-server` code to your new server
 1. Restart
