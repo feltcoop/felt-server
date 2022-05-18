@@ -12,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    - run: |
+          sudo rm /etc/docker/daemon.json
+          sudo systemctl restart docker
 
     strategy:
       matrix:
