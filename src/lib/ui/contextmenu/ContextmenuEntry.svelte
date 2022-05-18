@@ -27,7 +27,6 @@
 
 <!-- TODO should be <a> ? But they don't have a `href` currently which is an a11y warning -- should they?
 https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.html
-or should they be <button> ? But then how do we deal with focus?
 (in Chrome/FF contextmenus, `Tab` doesn't work, but maybe it should here?)
 -->
 <AsyncCall fn={() => contextmenu.activate(entry)} let:call let:pending let:errorMessage>

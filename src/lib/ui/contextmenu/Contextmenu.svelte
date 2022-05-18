@@ -117,10 +117,4 @@
 		width: var(--contextmenu_width);
 		border: var(--border);
 	}
-	ul {
-		border-bottom: var(--border);
-	}
-	ul:last-child {
-		border-bottom: none;
-	}
 </style>
