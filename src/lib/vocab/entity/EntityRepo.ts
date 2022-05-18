@@ -1,11 +1,11 @@
 import {NOT_OK, OK, type Result} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue, gray} from 'kleur/colors';
+import type {RowList} from 'postgres';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {EntityData} from '$lib/vocab/entity/entityData';
-import type {RowList} from 'postgres';
 import type {ErrorResponse} from '$lib/util/error';
 
 const log = new Logger(gray('[') + blue('EntityRepo') + gray(']'));
@@ -21,13 +21,13 @@ export class EntityRepo extends PostgresRepo {
 		if (space_id) {
 			entity = await this.db.sql<Entity[]>`
 			INSERT INTO entities (actor_id, space_id, data) VALUES (
-				${actor_id},${space_id},${this.db.sql.json(data)}
+				${actor_id},${space_id},${this.db.sql.json(data as any)}
 			) RETURNING *
 		`;
 		} else {
 			entity = await this.db.sql<Entity[]>`
 			INSERT INTO entities (actor_id, data) VALUES (
-				${actor_id},${this.db.sql.json(data)}
+				${actor_id},${this.db.sql.json(data as any)}
 			) RETURNING *
 		`;
 		}
@@ -69,7 +69,7 @@ export class EntityRepo extends PostgresRepo {
 	async updateEntityData(entity_id: number, data: EntityData): Promise<Result<{value: Entity}>> {
 		log.trace('[updateEntityData]', entity_id);
 		const _data = await this.db.sql<Entity[]>`
-			UPDATE entities SET data=${this.db.sql.json(data)}, updated=NOW()
+			UPDATE entities SET data=${this.db.sql.json(data as any)}, updated=NOW()
 			WHERE entity_id= ${entity_id} AND data->>'type' != 'Tombstone'
 			RETURNING *
 		`;
