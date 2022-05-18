@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@feltcoop/eslint-config": "^0.1.5",
-    "@feltcoop/gro": "^0.55.0",
+    "@feltcoop/gro": "^0.55.2",
     "@feltcoop/svelte-gettable-stores": "^0.1.0",
     "@sveltejs/adapter-node": "^1.0.0-next.73",
     "@sveltejs/kit": "^1.0.0-next.326",
@@ -44,7 +44,7 @@
     "svast": "^0.2.0",
     "svast-stringify": "^0.1.0",
     "svelte": "^3.48.0",
-    "svelte-check": "^2.7.0",
+    "svelte-check": "^2.7.1",
     "svelte-parse": "^0.1.0",
     "svelte-preprocess-esbuild": "^2.0.0",
     "throttle-debounce": "^4.0.0",
@@ -64,7 +64,7 @@
     "dotenv": "^16.0.0",
     "kleur": "^4.1.4",
     "polka": "^1.0.0-next.22",
-    "postgres": "^3.1.0",
+    "postgres": "^3.2.2",
     "ws": "^8.5.0"
   },
   "optionalDependencies": {
