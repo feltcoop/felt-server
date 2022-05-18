@@ -12,9 +12,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    - run: |
-          sudo rm /etc/docker/daemon.json
-          sudo systemctl restart docker
 
     strategy:
       matrix:
@@ -37,6 +34,9 @@ jobs:
           - 5432:5432
 
     steps:
+      - run: |
+          sudo rm /etc/docker/daemon.json
+          sudo systemctl restart docker
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
