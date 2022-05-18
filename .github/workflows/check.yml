@@ -13,10 +13,6 @@ jobs:
   build:
     runs-on: ubuntu-22.04
 
-    strategy:
-      matrix:
-        node-version: [16.6]
-
     services:
       # Postgres config taken from GitHub Actions help docs:
       # https://help.github.com/en/actions/configuring-and-managing-workflows/creating-postgresql-service-containers
@@ -34,14 +30,10 @@ jobs:
           - 5432:5432
 
     steps:
-      - run: |
-          sudo rm /etc/docker/daemon.json
-          sudo systemctl restart docker
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '16'
       - run: npm ci
       - run: npx gro lib/db/create
       - run: npx gro check
