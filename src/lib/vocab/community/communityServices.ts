@@ -14,6 +14,8 @@ import {createDefaultSpaces} from '$lib/vocab/space/spaceServices';
 
 const log = new Logger(gray('[') + blue('communityServices') + gray(']'));
 
+const BLOCKLIST = new Set(['docs', 'schemas', 'admin', 'about', 'blog']);
+
 // Returns a list of community objects
 export const ReadCommunitiesService: ServiceByName['ReadCommunities'] = {
 	event: ReadCommunities,
@@ -66,6 +68,10 @@ export const CreateCommunityService: ServiceByName['CreateCommunity'] = {
 	perform: async (serviceRequest) => {
 		const {repos, params, account_id} = serviceRequest;
 		log.trace('creating community account_id', account_id);
+		// run name through block list
+		if (BLOCKLIST.has(params.name)) {
+			return {ok: false, status: 409, message: 'a community with that name is not allowed'};
+		}
 
 		// Check for duplicate community names.
 		const findCommunityResult = await repos.community.findByName(params.name);
