@@ -46,7 +46,7 @@ export const task: Task = {
 			mv ${artifactName}.tar deploy_${artifactName}/;
 			cd deploy_${artifactName};
 			tar -xvf ${artifactName}.tar;
-			npm i;
+			npm ci;
 			cd ../;
 			ln -sfn deploy_${artifactName}/ ${currentDeploy};`,
 		]);
