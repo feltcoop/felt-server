@@ -3,8 +3,8 @@
 	--bg_hue: 24;
 	--bg_saturation: 23%;
 	--bg_lightness: 96%;
-	--luggage_size: calc(var(--icon_size) + 4px);
-	--navbar_size: var(--luggage_size);
+	--luggage_size: calc(var(--icon_size_md) + var(--spacing_sm) * 2);
+	--navbar_size: calc(var(--icon_size_sm) + var(--spacing_xs) * 2);
 	--contextmenu_width: 360px;
 }
 
@@ -35,8 +35,8 @@ main {
 
 /* TODO refactor or upstream -- `navbar_size` maybe should be `input_height` */
 .icon-button {
-	width: var(--navbar_size);
-	height: var(--navbar_size);
+	width: var(--icon_size);
+	height: var(--icon_size);
 	flex-shrink: 0;
 }
 

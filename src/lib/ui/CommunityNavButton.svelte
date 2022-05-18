@@ -46,7 +46,7 @@
 	a {
 		display: block;
 		/* TODO better way to have active state? this makes the community nav wider than the luggage button! */
-		padding: 2px;
+		padding: var(--spacing_xs);
 		text-decoration: none;
 	}
 	/* TODO jucier selected state, maybe scaling up 10ish percent */

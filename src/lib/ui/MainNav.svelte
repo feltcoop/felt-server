@@ -37,9 +37,7 @@
 <div class="main-nav-panel" class:expanded={$expandMainNav} style="--hue: {hue}">
 	<div class="main-nav">
 		<div class="header">
-			<!-- TODO how to do this? -->
 			<div class="icon-button button-placeholder" />
-			<!-- TODO or maybe `selectedPersona.id` ? can't be `$selectedPersona.persona_id` as a serial value -->
 			<button class="explorer-button" on:click={(e) => onContextmenu(e, contextmenu)}>
 				<PersonaAvatar persona={selectedPersona} contextmenuAction={null} />
 			</button>
@@ -107,7 +105,6 @@
 		position: sticky;
 		top: 0;
 		display: flex;
-		height: var(--navbar_size);
 		width: 100%;
 	}
 	.explorer {
@@ -115,9 +112,8 @@
 		flex: 1;
 	}
 	.explorer-button {
+		--icon_size: var(--icon_size_sm);
 		justify-content: flex-start;
-		height: var(--navbar_size);
 		flex: 1;
-		padding: 0 0 0 var(--spacing_xs);
 	}
 </style>

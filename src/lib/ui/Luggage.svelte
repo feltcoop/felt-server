@@ -12,6 +12,7 @@
 
 <style>
 	.luggage {
+		--icon_size: var(--luggage_size);
 		z-index: 3;
 		position: absolute;
 		left: 0;

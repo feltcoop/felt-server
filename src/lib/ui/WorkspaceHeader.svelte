@@ -41,9 +41,9 @@
 		width: 100%;
 		overflow: hidden;
 		background-color: var(--tint_dark_1);
-		font-size: var(--font_size_lg);
 	}
 	.breadcrumbs {
+		--icon_size: var(--icon_size_sm);
 		display: flex;
 		align-items: center;
 		padding-left: var(--spacing_xs);
