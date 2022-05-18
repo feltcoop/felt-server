@@ -1,7 +1,7 @@
 import type {Root, SvelteChild} from 'svast';
 import {compile as stringifySvast} from 'svast-stringify';
 import {setContext, getContext} from 'svelte';
-import type {Readable} from 'svelte/store';
+import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 import type {Space} from '$lib/vocab/space/space';
 import type {Community} from '$lib/vocab/community/community';

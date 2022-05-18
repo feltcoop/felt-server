@@ -1,4 +1,4 @@
-import {writable, type Writable} from 'svelte/store';
+import {writable, type Writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {WritableUi} from '$lib/ui/ui';
 import type {Persona} from '$lib/vocab/persona/persona';

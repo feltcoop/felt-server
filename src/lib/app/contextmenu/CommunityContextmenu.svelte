@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	import CommunityAvatar from '$lib/ui/CommunityAvatar.svelte';
 	import {getApp} from '$lib/ui/app';

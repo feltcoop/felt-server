@@ -71,7 +71,7 @@
 	};
 
 	const onKeydown = async (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
+		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault();
 			await save();
 		}

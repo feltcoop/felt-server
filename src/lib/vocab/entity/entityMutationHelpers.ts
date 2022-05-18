@@ -1,4 +1,4 @@
-import {get, writable, type Writable} from 'svelte/store';
+import {writable, type Writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
@@ -23,10 +23,10 @@ export const updateEntityCaches = (
 	const entity = entityById.get(entity_id)!;
 	const existingSpaceEntities = entitiesBySourceId.get(source_id);
 	if (existingSpaceEntities) {
-		if (!get(existingSpaceEntities).includes(entity)) {
+		if (!existingSpaceEntities.get().includes(entity)) {
 			existingSpaceEntities.update(($entities) =>
 				// TODO splice into a mutable array instead of sorting like this
-				$entities.concat(entity).sort((a, b) => (get(a).created > get(b).created ? 1 : -1)),
+				$entities.concat(entity).sort((a, b) => (a.get().created > b.get().created ? 1 : -1)),
 			);
 		}
 	} else {

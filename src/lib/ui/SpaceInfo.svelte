@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type {Readable} from 'svelte/store';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 	import {page} from '$app/stores';
 
 	import type {Space} from '$lib/vocab/space/space.js';

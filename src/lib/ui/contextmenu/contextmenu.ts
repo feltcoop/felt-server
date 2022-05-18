@@ -1,4 +1,4 @@
-import {writable, type Readable, type Writable} from 'svelte/store';
+import {writable, type Readable, type Writable} from '@feltcoop/svelte-gettable-stores';
 import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
 import type {Result} from '@feltcoop/felt';
@@ -73,10 +73,10 @@ export const createContextmenuStore = (
 	const rootMenu: ContextmenuStore['rootMenu'] = {isMenu: true, menu: null, items: []};
 	const selections: ContextmenuStore['selections'] = [];
 
-	const {subscribe, update} = writable<Contextmenu>({open: false, items: [], x: 0, y: 0});
+	const {update, set: _set, ...rest} = writable<Contextmenu>({open: false, items: [], x: 0, y: 0});
 
 	const store: ContextmenuStore = {
-		subscribe,
+		...rest,
 		rootMenu,
 		selections,
 		layout,
