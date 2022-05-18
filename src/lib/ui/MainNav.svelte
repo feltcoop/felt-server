@@ -37,7 +37,7 @@
 <div class="main-nav-panel" class:expanded={$expandMainNav} style="--hue: {hue}">
 	<div class="main-nav">
 		<div class="header">
-			<div class="icon-button button-placeholder" />
+			<div class="luggage-placeholder" />
 			<button class="explorer-button" on:click={(e) => onContextmenu(e, contextmenu)}>
 				<PersonaAvatar persona={selectedPersona} contextmenuAction={null} />
 			</button>
@@ -106,6 +106,11 @@
 		top: 0;
 		display: flex;
 		width: 100%;
+	}
+	.luggage-placeholder {
+		width: var(--luggage_size);
+		height: var(--luggage_size);
+		flex-shrink: 0;
 	}
 	.explorer {
 		display: flex;
