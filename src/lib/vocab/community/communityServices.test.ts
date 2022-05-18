@@ -59,7 +59,7 @@ test_communityServices('disallow reserved community names', async ({db, random})
 	params.name = 'docs';
 	assert.is(
 		unwrapError(await CreateCommunityService.perform({params, ...serviceRequest})).status,
-		405,
+		409,
 	);
 });
 
