@@ -1,4 +1,6 @@
 <script lang="ts">
+	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
+
 	import {getContextmenu, type ContextmenuAction} from '$lib/ui/contextmenu/contextmenu';
 	import AsyncCall from '$lib/ui/AsyncCall.svelte';
 
@@ -18,7 +20,7 @@
 
 	// TODO BLOCK hmm -- problem is what if it's activated through a different UI interaction,
 	let pending = false;
-	let errorMessage = null;
+	let errorMessage: string | null = null;
 	// or internally in the store?
 	// const entryAction = toAsyncCall(() => contextmenu.activate(entry));
 	// $: ({call, pending, errorMessage} = entryAction);
@@ -36,6 +38,7 @@ https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.
 	class="menu-item"
 	role="menuitem"
 	class:selected
+	title={errorMessage ? 'Error: {errorMessage}' : undefined}
 	on:click={() => {
 		// This timeout lets event handlers react to the current DOM
 		// before the action's changes are applied.
@@ -43,6 +46,8 @@ https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.
 	}}
 	on:mousemove={onMousemove}
 >
-	<slot {pending} {errorMessage} />
+	<span class="spaced" style="flex-shrink: 0"><slot {pending} {errorMessage} /></span>
+	{#if pending}<PendingAnimation />{/if}
+	{#if errorMessage}<span class="error">Error: {errorMessage}</span>{/if}
 </li>
 <!-- </AsyncCall> -->

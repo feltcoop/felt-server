@@ -7,7 +7,6 @@
 	import About from '$lib/ui/About.svelte';
 	import {session} from '$app/stores';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
-	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 
 	const {
 		dispatch,
@@ -52,13 +51,7 @@
 			About
 		</ContextmenuEntry>
 		{#if !$session.guest}
-			<ContextmenuEntry action={() => dispatch.LogoutAccount()} let:pending let:errorMessage>
-				<span class="spaced" style="flex-shrink: 0">Log out</span>
-				{#if pending}<PendingAnimation />{/if}
-				{#if errorMessage}<span class="error" title="Error: {errorMessage}"
-						>Error: {errorMessage}</span
-					>{/if}
-			</ContextmenuEntry>
+			<ContextmenuEntry action={() => dispatch.LogoutAccount()}>Log out</ContextmenuEntry>
 		{/if}
 	</svelte:fragment>
 </ContextmenuSubmenu>
