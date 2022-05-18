@@ -1,6 +1,5 @@
 <script lang="ts">
-	import {get} from 'svelte/store';
-	import type {Readable} from 'svelte/store';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	import type {Community} from '$lib/vocab/community/community.js';
 	import CommunityNavButton from '$lib/ui/CommunityNavButton.svelte';
@@ -27,13 +26,13 @@
 		persona: Readable<Persona>,
 		$communitiesBySessionPersona: Map<Readable<Persona>, Array<Readable<Community>>>,
 	): Readable<Community> =>
-		$communitiesBySessionPersona.get(persona)!.find((c) => get(c).type === 'personal')!;
+		$communitiesBySessionPersona.get(persona)!.find((c) => c.get().type === 'personal')!;
 
 	const toStandardCommunities = (
 		persona: Readable<Persona>,
 		$communitiesBySessionPersona: Map<Readable<Persona>, Array<Readable<Community>>>,
 	): Array<Readable<Community>> =>
-		$communitiesBySessionPersona.get(persona)!.filter((c) => get(c).type !== 'personal')!;
+		$communitiesBySessionPersona.get(persona)!.filter((c) => c.get().type !== 'personal')!;
 </script>
 
 <nav class="community-nav">
@@ -48,7 +47,7 @@
 					toPersonaCommunity(persona, $communitiesBySessionPersona) === selectedCommunity}
 			/>
 			{#each toStandardCommunities(persona, $communitiesBySessionPersona) as community (community)}
-				{#if get(community).name !== get(persona).name}
+				{#if community.get().name !== persona.get().name}
 					<CommunityNavButton
 						{community}
 						{persona}

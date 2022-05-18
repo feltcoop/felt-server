@@ -2,11 +2,17 @@
 	import type {AsyncStatus} from '@feltcoop/felt';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
+	import {goto} from '$app/navigation';
+	import {page} from '$app/stores';
 
 	import {autofocus} from '$lib/ui/actions';
 	import {getApp} from '$lib/ui/app';
+	import {toSpaceUrl} from '$lib/ui/url';
 
-	const {dispatch} = getApp();
+	const {
+		dispatch,
+		ui: {sessionPersonaIndices, personaById},
+	} = getApp();
 
 	export let done: (() => void) | undefined = undefined;
 
@@ -31,6 +37,12 @@
 		if (result.ok) {
 			errorMessage = null;
 			name = '';
+			await goto(
+				toSpaceUrl(result.value.community, null, $page.url.searchParams, {
+					persona:
+						$sessionPersonaIndices.get(personaById.get(result.value.persona.persona_id)!) + '',
+				}),
+			);
 			done?.();
 		} else {
 			errorMessage = result.message;

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {browser} from '$app/env';
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
-	import {get, type Readable} from 'svelte/store';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	import TodoItems from '$lib/ui/TodoItems.svelte';
 	import {getApp} from '$lib/ui/app';
@@ -33,7 +33,7 @@
 	$: itemsByEntity = $entities && ties ? toItemsByEntity($entities, ties) : null;
 
 	let entityById: Map<number, Readable<Entity>> | null = null;
-	$: entityById = $entities && new Map($entities.map((e) => [get(e).entity_id, e]));
+	$: entityById = $entities && new Map($entities.map((e) => [e.get().entity_id, e]));
 
 	let selectedList: Entity | null = null;
 	const selectList = (list: Entity) => {
@@ -53,8 +53,8 @@
 		const map: Map<Readable<Entity>, Array<Readable<Entity>>> = new Map();
 		for (const tie of ties) {
 			if (tie.type !== 'HasItem') continue;
-			const source = entities.find((e) => get(e).entity_id === tie.source_id)!;
-			const dest = entities.find((e) => get(e).entity_id === tie.dest_id)!;
+			const source = entities.find((e) => e.get().entity_id === tie.source_id)!;
+			const dest = entities.find((e) => e.get().entity_id === tie.dest_id)!;
 			let items = map.get(source);
 			if (!items) {
 				map.set(source, (items = []));
@@ -88,9 +88,9 @@
 		const entityList = entityById!.get(selectedList.entity_id);
 		const items = itemsByEntity?.get(entityList!);
 		if (items) {
-			const doneItems = items.filter((i) => get(i).data.checked === true);
+			const doneItems = items.filter((i) => i.get().data.checked === true);
 			if (doneItems.length > 0) {
-				const entity_ids = doneItems.map((i) => get(i).entity_id);
+				const entity_ids = doneItems.map((i) => i.get().entity_id);
 				await dispatch.DeleteEntities({entity_ids});
 			}
 		}

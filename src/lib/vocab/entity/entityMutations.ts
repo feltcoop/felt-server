@@ -1,4 +1,4 @@
-import {get, writable} from 'svelte/store';
+import {writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {updateEntity, updateEntityCaches} from '$lib/vocab/entity/entityMutationHelpers';
@@ -46,8 +46,8 @@ export const DeleteEntities: Mutations['DeleteEntities'] = async ({
 	//TODO extract all this to a helper sibling like updateEntityCaches
 	for (const spaceEntities of entitiesBySourceId.values()) {
 		// TODO this is very inefficient
-		if (get(spaceEntities).find((e) => entity_ids.includes(get(e).entity_id))) {
-			spaceEntities.update(($s) => $s.filter(($e) => !entity_ids.includes(get($e).entity_id)));
+		if (spaceEntities.get().find((e) => entity_ids.includes(e.get().entity_id))) {
+			spaceEntities.update(($s) => $s.filter(($e) => !entity_ids.includes($e.get().entity_id)));
 		}
 	}
 	return result;

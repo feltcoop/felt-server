@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {get, type Readable} from 'svelte/store';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	import type {Community} from '$lib/vocab/community/community.js';
 	import MembershipInputItem from '$lib/ui/MembershipInputItem.svelte';
@@ -19,7 +19,7 @@
 
 	// TODO speed this up with a better cached data structures
 	$: invitableMembers = $community
-		? $personas.value.filter((p) => !communityPersonas.includes(p) && get(p).type === 'account')
+		? $personas.value.filter((p) => !communityPersonas.includes(p) && p.get().type === 'account')
 		: [];
 </script>
 

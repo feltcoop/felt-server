@@ -1,5 +1,5 @@
 import {setContext, getContext} from 'svelte';
-import type {Writable} from 'svelte/store';
+import type {Writable as SvelteWritable} from 'svelte/store';
 
 import type {Ui} from '$lib/ui/ui';
 import type {Dispatch} from '$lib/app/eventTypes';
@@ -11,7 +11,7 @@ export interface AppStores {
 	dispatch: Dispatch;
 	ui: Ui;
 	socket: SocketStore;
-	devmode: Writable<boolean>;
+	devmode: SvelteWritable<boolean>;
 }
 
 const KEY = Symbol();

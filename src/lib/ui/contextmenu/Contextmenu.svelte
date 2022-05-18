@@ -33,28 +33,36 @@
 	const onWindowKeydown = (e: KeyboardEvent) => {
 		if (e.key === 'Escape' && !isEditable(e.target)) {
 			contextmenu.close();
-			e.stopPropagation();
-		} else if (e.key === 'ArrowLeft') {
+			e.stopImmediatePropagation();
+			e.preventDefault();
+		} else if (e.key === 'ArrowLeft' && !isEditable(e.target)) {
 			contextmenu.collapseSelected();
-			e.stopPropagation();
-		} else if (e.key === 'ArrowRight') {
+			e.stopImmediatePropagation();
+			e.preventDefault();
+		} else if (e.key === 'ArrowRight' && !isEditable(e.target)) {
 			contextmenu.expandSelected();
-			e.stopPropagation();
-		} else if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+			e.stopImmediatePropagation();
+			e.preventDefault();
+		} else if ((e.key === 'ArrowDown' || e.key === 'PageDown') && !isEditable(e.target)) {
 			contextmenu.selectNext();
-			e.stopPropagation();
-		} else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+			e.stopImmediatePropagation();
+			e.preventDefault();
+		} else if ((e.key === 'ArrowUp' || e.key === 'PageUp') && !isEditable(e.target)) {
 			contextmenu.selectPrevious();
-			e.stopPropagation();
-		} else if (e.key === 'Home') {
+			e.stopImmediatePropagation();
+			e.preventDefault();
+		} else if (e.key === 'Home' && !isEditable(e.target)) {
 			contextmenu.selectFirst();
-			e.stopPropagation();
-		} else if (e.key === 'End') {
+			e.stopImmediatePropagation();
+			e.preventDefault();
+		} else if (e.key === 'End' && !isEditable(e.target)) {
 			contextmenu.selectLast();
-			e.stopPropagation();
-		} else if (e.key === ' ' || e.key === 'Enter') {
+			e.stopImmediatePropagation();
+			e.preventDefault();
+		} else if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
 			contextmenu.activateSelected();
-			e.stopPropagation();
+			e.stopImmediatePropagation();
+			e.preventDefault();
 		}
 	};
 

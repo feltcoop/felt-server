@@ -1,6 +1,4 @@
 <script lang="ts">
-	import {get} from 'svelte/store';
-
 	import {getApp} from '$lib/ui/app';
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
 	import ContextmenuSubmenu from '$lib/ui/contextmenu/ContextmenuSubmenu.svelte';
@@ -8,7 +6,6 @@
 	import UnicodeIcon from '$lib/ui/UnicodeIcon.svelte';
 	import About from '$lib/ui/About.svelte';
 	import {session} from '$app/stores';
-	import AccountForm from '$lib/ui/AccountForm.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 
 	const {
@@ -32,7 +29,7 @@
 			{:else}
 				<!-- TODO support store param? only? -->
 				<ContextmenuEntry
-					action={() => dispatch.SelectPersona({persona_id: get(sessionPersona).persona_id})}
+					action={() => dispatch.SelectPersona({persona_id: sessionPersona.get().persona_id})}
 				>
 					<PersonaAvatar persona={sessionPersona} />
 				</ContextmenuEntry>
@@ -56,11 +53,9 @@
 			<span class="title">About</span>
 		</ContextmenuEntry>
 		{#if !$session.guest}
-			<li role="none">
-				<div>
-					<AccountForm guest={false} />
-				</div>
-			</li>
+			<ContextmenuEntry action={() => dispatch.LogoutAccount()}>
+				<span class="title">Log out</span>
+			</ContextmenuEntry>
 		{/if}
 	</svelte:fragment>
 </ContextmenuSubmenu>
