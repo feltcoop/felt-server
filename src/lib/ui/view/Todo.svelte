@@ -19,7 +19,7 @@
 	$: entities = shouldLoadEntities
 		? dispatch.QueryEntities({source_id: $space.directory_id})
 		: null;
-	$: tiesResult = shouldLoadEntities ? dispatch.ReadTies({space_id: $space.space_id}) : null;
+	$: tiesResult = shouldLoadEntities ? dispatch.ReadTies({source_id: $space.directory_id}) : null;
 	let ties: Tie[] | undefined;
 	let text = '';
 
@@ -70,7 +70,6 @@
 
 		//TODO better error handling
 		await dispatch.CreateEntity({
-			space_id: $space.space_id,
 			data: {type: 'Note', content, checked: false},
 			actor_id: $persona.persona_id,
 			source_id: selectedList.entity_id,
