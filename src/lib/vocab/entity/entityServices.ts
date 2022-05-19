@@ -62,11 +62,7 @@ export const CreateEntityService: ServiceByName['CreateEntity'] = {
 	event: CreateEntity,
 	perform: async ({repos, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
-		const insertEntitiesResult = await repos.entity.create(
-			params.actor_id,
-			params.data,
-			params.space_id,
-		);
+		const insertEntitiesResult = await repos.entity.create(params.actor_id, params.data);
 		if (!insertEntitiesResult.ok) {
 			return {ok: false, status: 500, message: 'failed to create entity'};
 		}
@@ -81,7 +77,11 @@ export const CreateEntityService: ServiceByName['CreateEntity'] = {
 			return {ok: false, status: 500, message: 'failed to tie entity to graph'};
 		}
 
-		return {ok: true, status: 200, value: {entity: insertEntitiesResult.value}};
+		return {
+			ok: true,
+			status: 200,
+			value: {entity: insertEntitiesResult.value, tie: insertTieResult.value},
+		};
 	},
 };
 

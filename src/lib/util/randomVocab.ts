@@ -70,13 +70,8 @@ export const randomSpaceParams = (persona_id: number, community_id: number): Cre
 	url: randomSpaceUrl(),
 	icon: randomSpaceIcon(),
 });
-export const randomEntityParams = (
-	actor_id: number,
-	space_id: number,
-	source_id: number,
-): CreateEntityParams => ({
+export const randomEntityParams = (actor_id: number, source_id: number): CreateEntityParams => ({
 	actor_id,
-	space_id,
 	data: randomEntityData(),
 	source_id,
 });
@@ -177,6 +172,7 @@ export class RandomVocabContext {
 		return {space, persona, account, community};
 	}
 
+	//TODO do we need space now? Should be source_id
 	async entity(
 		persona?: Persona,
 		account?: Account,
@@ -189,15 +185,16 @@ export class RandomVocabContext {
 		account: Account;
 		community: Community;
 		space: Space;
+		tie: Tie;
 	}> {
 		if (!account) account = await this.account();
 		if (!persona) ({persona} = await this.persona(account));
 		if (!community) ({community} = await this.community(persona, account));
 		if (!space) ({space} = await this.space(persona, account, community));
-		const {entity} = unwrap(
+		const {entity, tie} = unwrap(
 			await CreateEntityService.perform({
 				params: {
-					...randomEntityParams(persona.persona_id, space.space_id, space.directory_id),
+					...randomEntityParams(persona.persona_id, space.directory_id),
 					...paramsPartial,
 				},
 				account_id: account.account_id,
@@ -205,7 +202,7 @@ export class RandomVocabContext {
 				session,
 			}),
 		);
-		return {entity, persona, account, community, space};
+		return {entity, persona, account, community, space, tie};
 	}
 
 	async tie(

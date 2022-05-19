@@ -18,18 +18,6 @@ export class TieRepo extends PostgresRepo {
 		return {ok: true, value: tie[0]};
 	}
 
-	async filterBySpace(space_id: number): Promise<Result<{value: Tie[]}>> {
-		log.trace(`preparing to query for space ties: ${space_id}`);
-		const ties = await this.db.sql<Tie[]>`
-			SELECT DISTINCT source_id,dest_id,type,created 
-			FROM ties t 
-			JOIN (SELECT entity_id FROM entities WHERE space_id=${space_id}) as e 
-			ON e.entity_id = t.source_id OR e.entity_id = t.dest_id;
-		`;
-		log.trace('space ties', ties);
-		return {ok: true, value: ties};
-	}
-
 	async filterBySourceId(directory_id: number): Promise<Result<{value: Tie[]}>> {
 		log.trace(`preparing to walk graph starting with directory: ${directory_id}`);
 		const ties = await this.db.sql<Tie[]>`

@@ -296,13 +296,13 @@ export type DeleteSpaceResponseResult = ApiResult<DeleteSpaceResponse>;
 
 export interface CreateEntityParams {
 	actor_id: number;
-	space_id: number;
 	data: EntityData;
 	source_id: number;
 	type?: string;
 }
 export interface CreateEntityResponse {
 	entity: Entity;
+	tie: Tie;
 }
 export type CreateEntityResponseResult = ApiResult<CreateEntityResponse>;
 
@@ -364,7 +364,7 @@ export interface CreateTieResponse {
 export type CreateTieResponseResult = ApiResult<CreateTieResponse>;
 
 export interface ReadTiesParams {
-	space_id: number;
+	source_id: number;
 }
 export interface ReadTiesResponse {
 	ties: Tie[];

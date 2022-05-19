@@ -1,7 +1,6 @@
 import {NOT_OK, OK, type Result} from '@feltcoop/felt';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {blue, gray} from 'kleur/colors';
-import type {RowList} from 'postgres';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Entity} from '$lib/vocab/entity/entity';
@@ -11,40 +10,15 @@ import type {ErrorResponse} from '$lib/util/error';
 const log = new Logger(gray('[') + blue('EntityRepo') + gray(']'));
 
 export class EntityRepo extends PostgresRepo {
-	async create(
-		actor_id: number,
-		data: EntityData,
-		space_id?: number,
-	): Promise<Result<{value: Entity}>> {
-		log.trace('[create]', space_id, actor_id);
-		let entity: RowList<Entity[]>;
-		if (space_id) {
-			entity = await this.db.sql<Entity[]>`
-			INSERT INTO entities (actor_id, space_id, data) VALUES (
-				${actor_id},${space_id},${this.db.sql.json(data as any)}
-			) RETURNING *
-		`;
-		} else {
-			entity = await this.db.sql<Entity[]>`
+	async create(actor_id: number, data: EntityData): Promise<Result<{value: Entity}>> {
+		log.trace('[create]', actor_id);
+		const entity = await this.db.sql<Entity[]>`
 			INSERT INTO entities (actor_id, data) VALUES (
 				${actor_id},${this.db.sql.json(data as any)}
 			) RETURNING *
 		`;
-		}
 		// log.trace('create entity', data);
 		return {ok: true, value: entity[0]};
-	}
-
-	// TODO maybe `EntityQuery`?
-	async filterBySpace(space_id: number): Promise<Result<{value: Entity[]}>> {
-		log.trace('[filterBySpace]', space_id);
-		const entities = await this.db.sql<Entity[]>`
-			SELECT entity_id, data, actor_id, space_id, created, updated 
-			FROM entities WHERE space_id= ${space_id}
-			ORDER BY entity_id ASC
-		`;
-		log.trace('filterBySpace entity count:', entities.length);
-		return {ok: true, value: entities};
 	}
 
 	// TODO maybe `EntityQuery`?
@@ -52,7 +26,7 @@ export class EntityRepo extends PostgresRepo {
 		if (entityIds.length === 0) return {ok: true, value: []};
 		log.trace('[findBySet]', entityIds);
 		const entities = await this.db.sql<Entity[]>`
-			SELECT entity_id, data, actor_id, space_id, created, updated 
+			SELECT entity_id, data, actor_id, created, updated 
 			FROM entities WHERE entity_id IN ${this.db.sql(entityIds)}
 			ORDER BY entity_id DESC
 		`;
