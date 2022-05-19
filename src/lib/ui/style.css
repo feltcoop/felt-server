@@ -30,7 +30,10 @@ main {
 }
 /* TODO not sure about this */
 .spaced {
-	padding-right: var(--spacing_lg);
+	margin-right: var(--spacing_lg);
+}
+.spaced-sm {
+	margin-right: var(--spacing_sm);
 }
 
 /* TODO refactor or upstream -- `navbar_size` maybe should be `input_height` */
@@ -60,19 +63,15 @@ form ul {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	padding: var(--spacing_xs3);
 }
 .menu-item.selected {
 	background-color: var(--tint_dark_2);
 }
-.menu-item-entry {
-	display: flex;
-	align-items: center;
-}
 .menu-item .content {
-	padding: var(--spacing_xs);
 	display: flex;
 	align-items: center;
-	overflow: hidden;
+	flex-shrink: 0;
 }
 .menu-item .error {
 	color: var(--error_color);

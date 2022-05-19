@@ -21,7 +21,7 @@
 
 <ContextmenuSubmenu>
 	<svelte:fragment slot="entry">
-		<SpaceIcon {space} />
+		<SpaceIcon {space} class="spaced-sm" />
 		{$space.name}
 	</svelte:fragment>
 	<svelte:fragment slot="menu">

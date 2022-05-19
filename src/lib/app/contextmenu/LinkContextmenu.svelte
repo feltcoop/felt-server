@@ -22,7 +22,7 @@
 <!-- TODO this doesn't work with the keyboard controls, need to use `menuitem` -->
 <!-- TODO could do more if we had the original `target` element (but it might go stale on $contextmenu?) -->
 <li role="none">
-	<a {href} {rel}>
+	<a class="menu-item" {href} {rel}>
 		<UnicodeIcon icon="🔗" />
 		<span class="text">{text}</span>
 	</a>

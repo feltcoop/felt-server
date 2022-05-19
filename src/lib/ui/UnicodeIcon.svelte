@@ -3,7 +3,7 @@
 	export let label: string | undefined = undefined;
 </script>
 
-<div aria-label={label}>{icon}</div>
+<div aria-label={label} {...$$restProps}>{icon}</div>
 
 <style>
 	div {

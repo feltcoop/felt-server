@@ -7,6 +7,6 @@
 	export let persona: Readable<Persona>;
 </script>
 
-<li role="none">
+<li class="menu-item" role="none">
 	<Avatar name={$persona.name} />
 </li>

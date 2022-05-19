@@ -46,7 +46,7 @@ https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.
 	}}
 	on:mousemove={onMousemove}
 >
-	<span class="spaced" style="flex-shrink: 0"><slot {pending} {errorMessage} /></span>
+	<span class="content spaced"><slot {pending} {errorMessage} /></span>
 	{#if pending}<PendingAnimation />{/if}
 	{#if errorMessage}<span class="error">Error: {errorMessage}</span>{/if}
 </li>

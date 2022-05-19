@@ -16,7 +16,7 @@
 
 <ContextmenuSubmenu>
 	<svelte:fragment slot="entry">
-		<UnicodeIcon icon="⚙️" />Account
+		<UnicodeIcon icon="⚙️" class="spaced-sm" />Account
 	</svelte:fragment>
 	<svelte:fragment slot="menu">
 		{#each $sessionPersonas as sessionPersona (sessionPersona)}
