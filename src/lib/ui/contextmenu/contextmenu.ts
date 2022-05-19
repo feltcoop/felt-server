@@ -6,12 +6,17 @@ import type {Result} from '@feltcoop/felt';
 // Items with `undefined` props are ignored.
 export type ContextmenuItems = Array<[typeof SvelteComponent, object | null | undefined]>;
 
+type ActivateResult = Result<any, {message?: string}> | unknown;
+
 export type ItemState = SubmenuState | EntryState;
 export interface EntryState {
 	isMenu: false;
 	menu: SubmenuState | RootMenuState;
 	selected: boolean;
 	action: ContextmenuAction;
+	pending: boolean;
+	errorMessage: string | null;
+	promise: Promise<any> | null;
 }
 export interface SubmenuState {
 	isMenu: true;
@@ -25,7 +30,7 @@ export interface RootMenuState {
 	items: ItemState[];
 }
 export interface ContextmenuAction {
-	(): void | Promise<Result>;
+	(): void | Promise<ActivateResult>;
 }
 
 export interface Contextmenu {
@@ -40,8 +45,8 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 	action: typeof contextmenuAction;
 	open: (items: ContextmenuItems, x: number, y: number) => void;
 	close: () => void;
-	activate: (item: ItemState) => boolean | Promise<Result>;
-	activateSelected: () => boolean | Promise<Result>;
+	activate: (item: ItemState) => boolean | Promise<ActivateResult>;
+	activateSelected: () => boolean | Promise<ActivateResult>;
 	select: (item: ItemState) => void;
 	collapseSelected: () => void;
 	expandSelected: () => void; // opens the selected submenu
@@ -75,6 +80,9 @@ export const createContextmenuStore = (
 
 	const {update, set: _set, ...rest} = writable<Contextmenu>({open: false, items: [], x: 0, y: 0});
 
+	// TODO BLOCK instead of this, use a store per entry probably
+	const touch = () => update(($) => ({...$}));
+
 	const store: ContextmenuStore = {
 		...rest,
 		rootMenu,
@@ -92,10 +100,33 @@ export const createContextmenuStore = (
 			} else {
 				const returned = item.action();
 				if (returned?.then) {
-					return returned.then((result) => {
-						if (result.ok) store.close();
-						return result;
-					});
+					// TODO BLOCK need to set `pending` and error
+					item.pending = true;
+					item.errorMessage = null;
+					const promise = (item.promise = returned
+						.then(
+							(result) => {
+								if (promise !== item.promise) return;
+								if (result.ok) {
+									store.close();
+								} else if (result.message) {
+									item.errorMessage = result.message;
+								}
+								return result;
+							},
+							(err) => {
+								if (promise !== item.promise) return;
+								item.errorMessage = err?.message || 'unknown error';
+							},
+						)
+						.finally(() => {
+							if (promise !== item.promise) return;
+							item.pending = false;
+							item.promise = null;
+							touch();
+						}));
+					touch();
+					return item.promise;
 				}
 				store.close();
 			}
@@ -119,13 +150,13 @@ export const createContextmenuStore = (
 				i.selected = true;
 				selections.unshift(i);
 			} while ((i = i.menu) && i.menu);
-			update(($) => ({...$}));
+			touch();
 		},
 		collapseSelected: () => {
 			if (selections.length <= 1) return;
 			const deselected = selections.pop()!;
 			deselected.selected = false;
-			update(($) => ({...$}));
+			touch();
 		},
 		expandSelected: () => {
 			const parent = selections.at(-1);
@@ -133,7 +164,7 @@ export const createContextmenuStore = (
 			const selected = parent.items[0];
 			selected.selected = true;
 			selections.push(selected);
-			update(($) => ({...$}));
+			touch();
 		},
 		selectNext: () => {
 			if (!selections.length) return store.selectFirst();
@@ -151,7 +182,15 @@ export const createContextmenuStore = (
 		selectLast: () => store.select((selections.at(-1)?.menu || rootMenu).items.at(-1)!),
 		addEntry: (action) => {
 			const menu = getContext<SubmenuState | undefined>(CONTEXTMENU_STATE_KEY) || rootMenu;
-			const entry: EntryState = {isMenu: false, menu, selected: false, action};
+			const entry: EntryState = {
+				isMenu: false,
+				menu,
+				selected: false,
+				action,
+				pending: false,
+				errorMessage: null,
+				promise: null,
+			};
 			menu.items.push(entry);
 			onDestroy(() => {
 				menu.items.length = 0;

@@ -68,9 +68,17 @@ form ul {
 .menu-item.selected {
 	background-color: var(--tint_dark_2);
 }
+.menu-item.selected:active {
+	background-color: var(--tint_dark_3);
+}
 .menu-item .content {
 	display: flex;
 	align-items: center;
+	flex: 1;
+	width: 100%;
+}
+.menu-item .text {
+	margin-right: var(--spacing_lg);
 	flex-shrink: 0;
 }
 .menu-item .error {

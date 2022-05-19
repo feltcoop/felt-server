@@ -2,7 +2,6 @@
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
 
 	import {getContextmenu, type ContextmenuAction} from '$lib/ui/contextmenu/contextmenu';
-	import AsyncCall from '$lib/ui/AsyncCall.svelte';
 
 	export let action: ContextmenuAction;
 
@@ -16,17 +15,15 @@
 	};
 
 	// the `$contextmenu` is needed because `entry` is not reactive
-	$: ({selected} = ($contextmenu, entry));
+	$: ({selected, pending, errorMessage} = ($contextmenu, entry));
+	$: console.log(`pending, errorMessage`, pending, errorMessage);
 
-	// TODO BLOCK hmm -- problem is what if it's activated through a different UI interaction,
-	let pending = false;
-	let errorMessage: string | null = null;
-	// or internally in the store?
-	// const entryAction = toAsyncCall(() => contextmenu.activate(entry));
-	// $: ({call, pending, errorMessage} = entryAction);
+	// TODO BLOCK store instead of mutation?
 	// $entryAction.call;
 	// $entryAction.pending;
 	// $entryAction.errorMessage;
+
+	// TODO BLOCK can we remove the content wrapper for entries? only needed for submenus?
 </script>
 
 <!-- TODO should be <a> ? But they don't have a `href` currently which is an a11y warning -- should they?
@@ -42,12 +39,14 @@ https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.
 	on:click={() => {
 		// This timeout lets event handlers react to the current DOM
 		// before the action's changes are applied.
-		setTimeout(() => call());
+		setTimeout(() => contextmenu.activate(entry));
 	}}
 	on:mousemove={onMousemove}
 >
-	<span class="content spaced"><slot {pending} {errorMessage} /></span>
-	{#if pending}<PendingAnimation />{/if}
-	{#if errorMessage}<span class="error">Error: {errorMessage}</span>{/if}
+	<div class="content">
+		<div class="text"><slot {pending} {errorMessage} /></div>
+		{#if pending}<PendingAnimation />{/if}
+		{#if errorMessage}<div class="error">Error: {errorMessage}</div>{/if}
+	</div>
 </li>
 <!-- </AsyncCall> -->

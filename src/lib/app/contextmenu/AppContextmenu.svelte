@@ -44,9 +44,20 @@
 		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>
-				dispatch.OpenDialog({
-					Component: About,
-				})}
+				new Promise((resolve) =>
+					setTimeout(
+						() =>
+							// dispatch.OpenDialog({
+							// 	Component: About,
+							// }),
+							resolve({
+								ok: false,
+								message:
+									'yes it is error yes it is erroryes it is erroryes it is erroryes it is erroryes it is error',
+							}),
+						200,
+					),
+				)}
 		>
 			About
 		</ContextmenuEntry>
