@@ -63,7 +63,7 @@ form ul {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: var(--spacing_xs3);
+	padding: var(--spacing_xs3) var(--spacing_xs3) var(--spacing_xs3) var(--spacing_xs);
 }
 .menu-item.selected {
 	background-color: var(--tint_dark_2);
@@ -94,13 +94,13 @@ form ul {
 maybe upstream to Felt? think about how to upstream without bloating bundles that don't use it */
 .chevron {
 	position: relative;
-	height: 10px;
+	height: 8px;
 }
 .chevron::before {
 	display: block;
 	content: '';
-	border: 5px solid transparent;
-	border-left-color: #000;
+	border: 4px solid transparent;
+	border-left-color: var(--text_color_light);
 }
 
 /* TODO likely upstream to Felt */
