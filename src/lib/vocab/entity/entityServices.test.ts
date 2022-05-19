@@ -21,18 +21,20 @@ test_entityServices('create entities with data', async ({random}) => {
 
 	const entityData1: NoteEntityData = {type: 'Note', content: 'this is entity 1'};
 	const entityData2: NoteEntityData = {type: 'Note', content: 'entity: 2'};
-	const {entity: entity1} = await random.entity(persona, account, community, space, {
+	const {entity: entity1, tie: tie1} = await random.entity(persona, account, community, space, {
 		data: entityData1,
 	});
-	const {entity: entity2} = await random.entity(persona, account, community, space, {
+	const {entity: entity2, tie: tie2} = await random.entity(persona, account, community, space, {
 		data: entityData2,
 	});
 	assert.is(entity1.actor_id, persona.persona_id);
 	assert.is(entity2.actor_id, persona.persona_id);
-	assert.is(entity1.space_id, space.space_id);
-	assert.is(entity2.space_id, space.space_id);
 	assert.equal(entity1.data, entityData1);
 	assert.equal(entity2.data, entityData2);
+	assert.is(tie1.source_id, tie2.source_id);
+	assert.is(tie1.source_id, space.directory_id);
+	assert.is(tie1.dest_id, entity1.entity_id);
+	assert.is(tie2.dest_id, entity2.entity_id);
 });
 
 test_entityServices('read paginated entities by source_id', async ({db, random}) => {

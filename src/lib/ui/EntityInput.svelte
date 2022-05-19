@@ -16,7 +16,6 @@
 	$: selectedPersona = $personaSelection;
 	$: actor_id = $selectedPersona!.persona_id;
 	$: selectedSpace = $spaceSelection;
-	$: space_id = $selectedSpace!.space_id;
 	$: source_id = $selectedSpace!.directory_id;
 
 	let name = '';
@@ -37,7 +36,6 @@
 		status = 'pending';
 		const result = await dispatch.CreateEntity({
 			actor_id,
-			space_id,
 			data: {type: 'Collection', name},
 			source_id,
 		});

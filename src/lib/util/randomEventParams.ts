@@ -88,7 +88,7 @@ export const randomEventParams: RandomEventParams = {
 	CreateEntity: async (random, {account, persona, community, space} = {}) => {
 		if (!persona) ({persona} = await random.persona(account));
 		if (!space) ({space} = await random.space(persona, account, community));
-		return randomEntityParams(persona.persona_id, space.space_id, space.directory_id);
+		return randomEntityParams(persona.persona_id, space.directory_id);
 	},
 	ReadEntities: async (random, {account, persona, community, space} = {}) => {
 		if (!space) ({space} = await random.space(persona, account, community));
@@ -132,7 +132,7 @@ export const randomEventParams: RandomEventParams = {
 	},
 	ReadTies: async (random, {account, persona, community, space} = {}) => {
 		if (!space) ({space} = await random.space(persona, account, community));
-		return {space_id: space.space_id};
+		return {source_id: space.directory_id};
 	},
 	DeleteTie: async (random, {account, persona, community, space} = {}) => {
 		const {tie} = await random.tie(undefined, undefined, persona, account, community, space);

@@ -37,9 +37,9 @@ export const ReadTies: ServiceEventInfo = {
 		$id: '/schemas/ReadTiesParams.json',
 		type: 'object',
 		properties: {
-			space_id: {type: 'number'},
+			source_id: {type: 'number'},
 		},
-		required: ['space_id'],
+		required: ['source_id'],
 		additionalProperties: false,
 	},
 	response: {
@@ -53,7 +53,7 @@ export const ReadTies: ServiceEventInfo = {
 	},
 	returns: 'Promise<ReadTiesResponseResult>',
 	route: {
-		path: '/api/v1/spaces/:space_id/ties',
+		path: '/api/v1/entities/source/:source_id/ties',
 		method: 'GET',
 	},
 };
