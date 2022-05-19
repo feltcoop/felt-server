@@ -106,6 +106,7 @@ export const createContextmenuStore = (
 					const promise = (item.promise = returned
 						.then(
 							(result) => {
+								// TODO BLOCK put the result on the entry? or should the `action` handle it?
 								if (promise !== item.promise) return;
 								if (result.ok) {
 									store.close();

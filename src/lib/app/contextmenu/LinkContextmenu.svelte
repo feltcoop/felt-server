@@ -23,27 +23,21 @@
 <!-- TODO could do more if we had the original `target` element (but it might go stale on $contextmenu?) -->
 <li role="none">
 	<a class="menu-item" {href} {rel}>
-		<UnicodeIcon icon="🔗" />
-		<span class="text">{text}</span>
+		<div class="content">
+			<div class="title">
+				<UnicodeIcon icon="🔗" class="spaced-sm" />
+				<span class="text">{text}</span>
+			</div>
+		</div>
 	</a>
 </li>
 
 <style>
-	a {
-		display: flex;
-		align-items: center;
-		width: 100%;
-	}
+	/* Underline only the link text, not the icon. */
 	a:hover {
 		text-decoration: none;
 	}
 	a:hover .text {
 		text-decoration: underline;
-	}
-	.text {
-		padding: 0 var(--spacing_sm);
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
 </style>
