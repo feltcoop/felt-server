@@ -28,8 +28,8 @@ main {
 	display: flex;
 	align-items: center;
 }
-/* TODO not sure about this */
-.spaced {
+/* TODO upstream to Felt and add the other spacing sizes? */
+.spaced-lg {
 	margin-right: var(--spacing_lg);
 }
 .spaced-sm {

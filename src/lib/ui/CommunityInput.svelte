@@ -76,7 +76,7 @@
 <div class="markup">
 	<h1>Create a new Community</h1>
 	<section class="row">
-		<span class="spaced">as</span>
+		<span class="spaced-lg">as</span>
 		<PersonaAvatar {persona} />
 	</section>
 	<section>

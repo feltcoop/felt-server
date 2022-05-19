@@ -48,7 +48,7 @@
 	<div class="markup">
 		<h1>Edit Entity</h1>
 		<section class="row">
-			<span class="spaced">created by</span>
+			<span class="spaced-lg">created by</span>
 			<PersonaAvatar {persona} />
 		</section>
 		<section style:--icon_size="var(--icon_size_sm)">
