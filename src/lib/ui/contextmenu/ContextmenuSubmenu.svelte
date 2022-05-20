@@ -70,7 +70,7 @@
 		on:mousemove={onMousemove}
 		aria-expanded={selected}
 	>
-		<div class="content"><slot name="entry" /></div>
+		<div class="content"><div class="title"><slot name="entry" /></div></div>
 		<div class="chevron" />
 	</div>
 	{#if selected}

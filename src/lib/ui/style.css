@@ -75,7 +75,8 @@ form ul {
 	display: flex;
 	align-items: center;
 	flex: 1;
-	width: 100%;
+	/* allows the flex children to shrink */
+	min-width: 0;
 }
 .menu-item .title {
 	margin-right: var(--spacing_lg);
