@@ -83,14 +83,14 @@ form ul {
 }
 .menu-item .title {
 	margin-right: var(--spacing_lg);
-	flex-shrink: 0;
-	max-width: 100%;
+	flex-shrink: 1;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
 .menu-item .error {
 	color: var(--error_color);
+	flex-shrink: 1;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;

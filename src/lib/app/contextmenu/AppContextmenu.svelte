@@ -67,7 +67,7 @@
 					),
 				)}
 		>
-			About
+			AboutAboutAboutAboutAboutAboutAboutAboutAboutAboutAbout
 		</ContextmenuEntry>
 		{#if !$session.guest}
 			<ContextmenuEntry action={() => dispatch.LogoutAccount()}>Log out</ContextmenuEntry>
