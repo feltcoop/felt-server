@@ -16,14 +16,6 @@
 
 	// the `$contextmenu` is needed because `entry` is not reactive
 	$: ({selected, pending, errorMessage} = ($contextmenu, entry));
-	$: console.log(`pending, errorMessage`, pending, errorMessage);
-
-	// TODO BLOCK store instead of mutation?
-	// $entryAction.call;
-	// $entryAction.pending;
-	// $entryAction.errorMessage;
-
-	// TODO BLOCK can we remove the content wrapper for entries? only needed for submenus?
 </script>
 
 <!-- TODO should be <a> ? But they don't have a `href` currently which is an a11y warning -- should they?

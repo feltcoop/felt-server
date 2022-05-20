@@ -80,7 +80,11 @@ export const createContextmenuStore = (
 
 	const {update, set: _set, ...rest} = writable<Contextmenu>({open: false, items: [], x: 0, y: 0});
 
-	// TODO BLOCK instead of this, use a store per entry probably
+	// TODO instead of this, use a store per entry probably
+	// $entry.selected;
+	// $entry.activate;
+	// $entry.pending;
+	// $entry.errorMessage;
 	const touch = () => update(($) => ({...$}));
 
 	const store: ContextmenuStore = {
@@ -100,13 +104,11 @@ export const createContextmenuStore = (
 			} else {
 				const returned = item.action();
 				if (returned?.then) {
-					// TODO BLOCK need to set `pending` and error
 					item.pending = true;
 					item.errorMessage = null;
 					const promise = (item.promise = returned
 						.then(
 							(result) => {
-								// TODO BLOCK put the result on the entry? or should the `action` handle it?
 								if (promise !== item.promise) return;
 								if (result.ok) {
 									store.close();
