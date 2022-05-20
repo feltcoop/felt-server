@@ -295,7 +295,7 @@ export type DeleteSpaceResponse = null;
 export type DeleteSpaceResponseResult = ApiResult<DeleteSpaceResponse>;
 
 export interface CreateEntityParams {
-	actor_id: number;
+	persona_id: number;
 	data: EntityData;
 	source_id: number;
 	type?: string;

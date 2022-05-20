@@ -62,7 +62,7 @@ export const CreateEntityService: ServiceByName['CreateEntity'] = {
 	event: CreateEntity,
 	perform: async ({repos, params}) => {
 		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
-		const insertEntitiesResult = await repos.entity.create(params.actor_id, params.data);
+		const insertEntitiesResult = await repos.entity.create(params.persona_id, params.data);
 		if (!insertEntitiesResult.ok) {
 			return {ok: false, status: 500, message: 'failed to create entity'};
 		}
