@@ -177,24 +177,26 @@ export class RandomVocabContext {
 		persona?: Persona,
 		account?: Account,
 		community?: Community,
-		space?: Space,
+		source_id?: number,
 		paramsPartial?: Partial<CreateEntityParams>,
 	): Promise<{
 		entity: Entity;
 		persona: Persona;
 		account: Account;
 		community: Community;
-		space: Space;
 		tie: Tie;
 	}> {
 		if (!account) account = await this.account();
 		if (!persona) ({persona} = await this.persona(account));
 		if (!community) ({community} = await this.community(persona, account));
-		if (!space) ({space} = await this.space(persona, account, community));
+		if (!source_id) {
+			const {space} = await this.space(persona, account, community);
+			source_id = space.directory_id;
+		}
 		const {entity, tie} = unwrap(
 			await CreateEntityService.perform({
 				params: {
-					...randomEntityParams(persona.persona_id, space.directory_id),
+					...randomEntityParams(persona.persona_id, source_id),
 					...paramsPartial,
 				},
 				account_id: account.account_id,
@@ -202,7 +204,7 @@ export class RandomVocabContext {
 				session,
 			}),
 		);
-		return {entity, persona, account, community, space, tie};
+		return {entity, persona, account, community, tie};
 	}
 
 	async tie(
@@ -211,7 +213,7 @@ export class RandomVocabContext {
 		persona?: Persona,
 		account?: Account,
 		community?: Community,
-		space?: Space,
+		parentSourceId?: number, // optional directory or other source id for the source and dest entities (not the tie)
 		type?: Tie['type'],
 	): Promise<{
 		tie: Tie;
@@ -220,15 +222,21 @@ export class RandomVocabContext {
 		persona: Persona;
 		account: Account;
 		community: Community;
-		space: Space;
+		parentSourceId: number;
 	}> {
 		if (!account) account = await this.account();
 		if (!persona) ({persona} = await this.persona(account));
 		if (!community) ({community} = await this.community(persona, account));
-		if (!space) ({space} = await this.space(persona, account, community));
-		if (!sourceEntity)
-			({entity: sourceEntity} = await this.entity(persona, account, community, space));
-		if (!destEntity) ({entity: destEntity} = await this.entity(persona, account, community, space));
+		if (!parentSourceId) {
+			const {space} = await this.space(persona, account, community);
+			parentSourceId = space.directory_id;
+		}
+		if (!sourceEntity) {
+			({entity: sourceEntity} = await this.entity(persona, account, community, parentSourceId));
+		}
+		if (!destEntity) {
+			({entity: destEntity} = await this.entity(persona, account, community, parentSourceId));
+		}
 		const params = randomTieParams(sourceEntity.entity_id, destEntity.entity_id);
 		if (type) params.type = type;
 		const {tie} = unwrap(
@@ -239,6 +247,6 @@ export class RandomVocabContext {
 				session,
 			}),
 		);
-		return {tie, sourceEntity, destEntity, persona, account, community, space};
+		return {tie, sourceEntity, destEntity, persona, account, community, parentSourceId};
 	}
 }
