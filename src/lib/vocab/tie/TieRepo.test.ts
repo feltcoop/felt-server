@@ -16,10 +16,20 @@ test__TieRepo('check tie queries', async ({db, random}) => {
 	//Gen space
 	//Gen dir entity -> thread entity -> post -> reply
 	const {persona, account, community, space} = await random.space();
-	const {entity: entityDir} = await random.entity(persona, account, community, space);
-	const {entity: entityThread} = await random.entity(persona, account, community, space);
-	const {entity: entityPost} = await random.entity(persona, account, community, space);
-	const {entity: entityReply} = await random.entity(persona, account, community, space);
+	const {entity: entityDir} = await random.entity(persona, account, community, space.directory_id);
+	const {entity: entityThread} = await random.entity(
+		persona,
+		account,
+		community,
+		space.directory_id,
+	);
+	const {entity: entityPost} = await random.entity(persona, account, community, space.directory_id);
+	const {entity: entityReply} = await random.entity(
+		persona,
+		account,
+		community,
+		space.directory_id,
+	);
 
 	const tie1 = unwrap(
 		await db.repos.tie.create(entityDir.entity_id, entityThread.entity_id, 'HasThread'),

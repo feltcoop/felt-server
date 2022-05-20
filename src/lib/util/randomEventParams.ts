@@ -105,28 +105,31 @@ export const randomEventParams: RandomEventParams = {
 	},
 	UpdateEntity: async (random, {account, persona, community, space} = {}) => {
 		return {
-			entity_id: (await random.entity(persona, account, community, space)).entity.entity_id,
+			entity_id: (await random.entity(persona, account, community, space?.directory_id)).entity
+				.entity_id,
 			data: randomEntityData(),
 		};
 	},
 	EraseEntities: async (random, {account, persona, community, space} = {}) => {
-		const entity1 = await random.entity(persona, account, community, space);
-		const entity2 = await random.entity(persona, account, community, space);
+		const entity1 = await random.entity(persona, account, community, space?.directory_id);
+		const entity2 = await random.entity(persona, account, community, space?.directory_id);
 		return {
 			entity_ids: [entity1.entity.entity_id, entity2.entity.entity_id],
 		};
 	},
 	DeleteEntities: async (random, {account, persona, community, space} = {}) => {
-		const entity1 = await random.entity(persona, account, community, space);
-		const entity2 = await random.entity(persona, account, community, space);
+		const entity1 = await random.entity(persona, account, community, space?.directory_id);
+		const entity2 = await random.entity(persona, account, community, space?.directory_id);
 		return {
 			entity_ids: [entity1.entity.entity_id, entity2.entity.entity_id],
 		};
 	},
 	CreateTie: async (random, {account, persona, community, space} = {}) => {
 		return {
-			source_id: (await random.entity(persona, account, community, space)).entity.entity_id,
-			dest_id: (await random.entity(persona, account, community, space)).entity.entity_id,
+			source_id: (await random.entity(persona, account, community, space?.directory_id)).entity
+				.entity_id,
+			dest_id: (await random.entity(persona, account, community, space?.directory_id)).entity
+				.entity_id,
 			type: 'HasReply',
 		};
 	},
@@ -135,7 +138,14 @@ export const randomEventParams: RandomEventParams = {
 		return {source_id: space.directory_id};
 	},
 	DeleteTie: async (random, {account, persona, community, space} = {}) => {
-		const {tie} = await random.tie(undefined, undefined, persona, account, community, space);
+		const {tie} = await random.tie(
+			undefined,
+			undefined,
+			persona,
+			account,
+			community,
+			space?.directory_id,
+		);
 		return {
 			source_id: tie.source_id,
 			dest_id: tie.dest_id,
