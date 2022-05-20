@@ -13,9 +13,9 @@ test__EntityRepo.after(teardownDb);
 
 test__EntityRepo('entites return sorted by descending id', async ({db, random}) => {
 	const {space, persona, account} = await random.space();
-	const {entity: entity0} = await random.entity(persona, account, undefined, space);
-	const {entity: entity1} = await random.entity(persona, account, undefined, space);
-	const {entity: entity2} = await random.entity(persona, account, undefined, space);
+	const {entity: entity0} = await random.entity(persona, account, undefined, space.directory_id);
+	const {entity: entity1} = await random.entity(persona, account, undefined, space.directory_id);
+	const {entity: entity2} = await random.entity(persona, account, undefined, space.directory_id);
 
 	// Ensure db sort order is shuffled from the insertion order.
 	unwrap(await db.repos.entity.updateEntityData(entity1.entity_id, entity1.data));
