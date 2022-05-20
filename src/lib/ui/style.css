@@ -90,10 +90,6 @@ form ul {
 }
 .menu-item .error {
 	color: var(--error_color);
-	flex-shrink: 1;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
 }
 
 /* TODO upstream to Felt */

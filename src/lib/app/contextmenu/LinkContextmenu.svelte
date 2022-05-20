@@ -1,9 +1,15 @@
 <script lang="ts">
 	import {page} from '$app/stores';
-	import UnicodeIcon from '$lib/ui/UnicodeIcon.svelte';
 	import {stripStart} from '@feltcoop/felt/util/string.js';
 
+	import {getApp} from '$lib/ui/app';
+	import UnicodeIcon from '$lib/ui/UnicodeIcon.svelte';
+
 	export let href: string;
+
+	const {
+		ui: {contextmenu},
+	} = getApp();
 
 	// TODO refactor this after upgrading SvelteKit to where `$page` has `url`
 	// TODO move or upstream? rename? `printUrl`
@@ -22,7 +28,7 @@
 <!-- TODO this doesn't work with the keyboard controls, need to use `menuitem` -->
 <!-- TODO could do more if we had the original `target` element (but it might go stale on $contextmenu?) -->
 <li role="none">
-	<a class="menu-item" {href} {rel}>
+	<a class="menu-item" {href} {rel} on:click={() => contextmenu.close()}>
 		<div class="content">
 			<div class="icon">
 				<UnicodeIcon icon="🔗" />

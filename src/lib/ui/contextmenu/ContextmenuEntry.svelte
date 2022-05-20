@@ -44,8 +44,9 @@ https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.
 >
 	<div class="content">
 		<div class="icon"><slot name="icon" /></div>
-		<div class="title"><slot {pending} {errorMessage} /></div>
+		<div class="title" class:error={!!errorMessage}>
+			{#if errorMessage}Error: {errorMessage}{:else}<slot />{/if}
+		</div>
 		{#if pending}<PendingAnimation />{/if}
-		{#if errorMessage}<div class="error">Error: {errorMessage}</div>{/if}
 	</div>
 </li>
