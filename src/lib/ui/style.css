@@ -32,9 +32,6 @@ main {
 .spaced-lg {
 	margin-right: var(--spacing_lg);
 }
-.spaced-sm {
-	margin-right: var(--spacing_sm);
-}
 
 /* TODO refactor or upstream -- `navbar_size` maybe should be `input_height` */
 .icon-button {
@@ -77,6 +74,12 @@ form ul {
 	flex: 1;
 	/* allows the flex children to shrink */
 	min-width: 0;
+}
+.menu-item .icon {
+	width: var(--icon_size);
+	margin-right: var(--spacing_xs);
+	flex-shrink: 0;
+	text-align: center;
 }
 .menu-item .title {
 	margin-right: var(--spacing_lg);

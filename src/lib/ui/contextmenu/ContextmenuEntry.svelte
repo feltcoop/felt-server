@@ -30,7 +30,6 @@
 https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.html
 (in Chrome/FF contextmenus, `Tab` doesn't work, but maybe it should here?)
 -->
-<!-- <AsyncCall fn={() => contextmenu.activate(entry)} let:call let:pending let:errorMessage> -->
 <li
 	class="menu-item"
 	role="menuitem"
@@ -44,9 +43,9 @@ https://www.w3.org/TR/wai-aria-practices/examples/menu-button/menu-button-links.
 	on:mousemove={onMousemove}
 >
 	<div class="content">
+		<div class="icon"><slot name="icon" /></div>
 		<div class="title"><slot {pending} {errorMessage} /></div>
 		{#if pending}<PendingAnimation />{/if}
 		{#if errorMessage}<div class="error">Error: {errorMessage}</div>{/if}
 	</div>
 </li>
-<!-- </AsyncCall> -->

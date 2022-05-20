@@ -24,8 +24,10 @@
 <li role="none">
 	<a class="menu-item" {href} {rel}>
 		<div class="content">
+			<div class="icon">
+				<UnicodeIcon icon="🔗" />
+			</div>
 			<div class="title">
-				<UnicodeIcon icon="🔗" class="spaced-sm" />
 				<span class="text">{text}</span>
 			</div>
 		</div>

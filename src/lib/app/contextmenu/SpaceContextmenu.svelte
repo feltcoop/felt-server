@@ -20,10 +20,10 @@
 </script>
 
 <ContextmenuSubmenu>
-	<svelte:fragment slot="entry">
-		<SpaceIcon {space} class="spaced-sm" />
-		{$space.name}
+	<svelte:fragment slot="icon">
+		<SpaceIcon {space} />
 	</svelte:fragment>
+	{$space.name}
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
 			action={() =>

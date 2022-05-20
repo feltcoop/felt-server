@@ -15,21 +15,28 @@
 </script>
 
 <ContextmenuSubmenu>
-	<svelte:fragment slot="entry">
-		<UnicodeIcon icon="⚙️" class="spaced-sm" />Account
+	<svelte:fragment slot="icon">
+		<UnicodeIcon icon="⚙️" />
 	</svelte:fragment>
+	AccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccount
 	<svelte:fragment slot="menu">
 		{#each $sessionPersonas as sessionPersona (sessionPersona)}
 			{#if $personaSelection === sessionPersona}
 				<li class="menu-item panel-inset" role="none">
-					<PersonaAvatar persona={sessionPersona} />
+					<div class="content">
+						<div class="icon"><PersonaAvatar persona={sessionPersona} showName={false} /></div>
+						<div class="title"><PersonaAvatar persona={sessionPersona} showIcon={false} /></div>
+					</div>
 				</li>
 			{:else}
 				<!-- TODO support store param? only? -->
 				<ContextmenuEntry
 					action={() => dispatch.SelectPersona({persona_id: sessionPersona.get().persona_id})}
 				>
-					<PersonaAvatar persona={sessionPersona} />
+					<svelte:fragment slot="icon"
+						><PersonaAvatar persona={sessionPersona} showName={false} /></svelte:fragment
+					>
+					<PersonaAvatar persona={sessionPersona} showIcon={false} />
 				</ContextmenuEntry>
 			{/if}
 		{/each}
@@ -40,7 +47,8 @@
 					props: {done: () => dispatch.CloseDialog()},
 				})}
 		>
-			Create Persona
+			Create PersonaCreate PersonaCreate PersonaCreate PersonaCreate PersonaCreate PersonaCreate
+			PersonaCreate Persona
 		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>

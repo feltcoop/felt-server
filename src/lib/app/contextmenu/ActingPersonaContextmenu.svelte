@@ -15,9 +15,10 @@
 </script>
 
 <ContextmenuSubmenu>
-	<svelte:fragment slot="entry">
-		<Avatar name={$persona.name} />
+	<svelte:fragment slot="icon">
+		<Avatar name={$persona.name} showName={false} />
 	</svelte:fragment>
+	<Avatar name={$persona.name} showIcon={false} />
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
 			action={() =>

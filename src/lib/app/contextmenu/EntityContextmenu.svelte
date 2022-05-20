@@ -14,9 +14,10 @@
 </script>
 
 <ContextmenuSubmenu>
-	<svelte:fragment slot="entry">
-		<UnicodeIcon icon="☉" class="spaced-sm" />Entity
+	<svelte:fragment slot="icon">
+		<UnicodeIcon icon="☉" />
 	</svelte:fragment>
+	Entity
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
 			action={() =>

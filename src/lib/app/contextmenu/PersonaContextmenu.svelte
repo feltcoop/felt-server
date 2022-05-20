@@ -8,5 +8,12 @@
 </script>
 
 <li class="menu-item" role="none">
-	<Avatar name={$persona.name} />
+	<div class="content">
+		<div class="icon">
+			<Avatar name={$persona.name} showName={false} />
+		</div>
+		<div class="title">
+			<Avatar name={$persona.name} showIcon={false} />
+		</div>
+	</div>
 </li>
