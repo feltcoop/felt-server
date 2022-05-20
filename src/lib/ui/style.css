@@ -72,16 +72,6 @@ form ul {
 	padding: var(--spacing_xs);
 }
 
-/* TODO upstream to Felt */
-@keyframes fade-in {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
-}
-
 /* TODO change to SVG? or use CSS vars for size and color? rename to indicate it's facing right?
 maybe upstream to Felt? think about how to upstream without bloating bundles that don't use it */
 .chevron {
