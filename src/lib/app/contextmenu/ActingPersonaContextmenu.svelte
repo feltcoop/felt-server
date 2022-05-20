@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
@@ -16,9 +16,9 @@
 
 <ContextmenuSubmenu>
 	<svelte:fragment slot="icon">
-		<Avatar name={$persona.name} showName={false} />
+		<PersonaAvatar {persona} showName={false} />
 	</svelte:fragment>
-	<Avatar name={$persona.name} showIcon={false} />
+	<PersonaAvatar {persona} showIcon={false} />
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
 			action={() =>
