@@ -70,8 +70,8 @@ export const randomSpaceParams = (persona_id: number, community_id: number): Cre
 	url: randomSpaceUrl(),
 	icon: randomSpaceIcon(),
 });
-export const randomEntityParams = (actor_id: number, source_id: number): CreateEntityParams => ({
-	actor_id,
+export const randomEntityParams = (persona_id: number, source_id: number): CreateEntityParams => ({
+	persona_id,
 	data: randomEntityData(),
 	source_id,
 });

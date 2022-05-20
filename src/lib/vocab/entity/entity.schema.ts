@@ -3,7 +3,7 @@ export const EntitySchema = {
 	type: 'object',
 	properties: {
 		entity_id: {type: 'number'},
-		actor_id: {type: 'number'},
+		persona_id: {type: 'number'},
 		data: {
 			type: 'object',
 			tsType: 'EntityData',
@@ -12,7 +12,7 @@ export const EntitySchema = {
 		created: {type: 'object', instanceof: 'Date', tsType: 'Date'},
 		updated: {anyOf: [{type: 'object', instanceof: 'Date', tsType: 'Date'}, {type: 'null'}]},
 	},
-	required: ['entity_id', 'actor_id', 'data', 'created', 'updated'],
+	required: ['entity_id', 'persona_id', 'data', 'created', 'updated'],
 	additionalProperties: false,
 };
 

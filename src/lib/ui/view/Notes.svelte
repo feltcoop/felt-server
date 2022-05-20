@@ -24,7 +24,7 @@
 		if (!content) return;
 		await dispatch.CreateEntity({
 			data: {type: 'Note', content},
-			actor_id: $persona.persona_id,
+			persona_id: $persona.persona_id,
 			source_id: $space.directory_id,
 		});
 		text = '';

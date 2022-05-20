@@ -27,8 +27,8 @@ test_entityServices('create entities with data', async ({random}) => {
 	const {entity: entity2, tie: tie2} = await random.entity(persona, account, community, space, {
 		data: entityData2,
 	});
-	assert.is(entity1.actor_id, persona.persona_id);
-	assert.is(entity2.actor_id, persona.persona_id);
+	assert.is(entity1.persona_id, persona.persona_id);
+	assert.is(entity2.persona_id, persona.persona_id);
 	assert.equal(entity1.data, entityData1);
 	assert.equal(entity2.data, entityData2);
 	assert.is(tie1.source_id, tie2.source_id);

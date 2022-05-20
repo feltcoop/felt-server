@@ -124,7 +124,7 @@ const createDefaultEntities = async (
 			unwrap(
 				await CreateEntityService.perform({
 					params: {
-						actor_id: nextPersona().persona_id,
+						persona_id: nextPersona().persona_id,
 						data: {type: 'Note', content: entityContent},
 						source_id: space.directory_id,
 					},
@@ -157,7 +157,7 @@ const generateTodo = async (
 	const list = unwrap(
 		await CreateEntityService.perform({
 			params: {
-				actor_id: persona_id,
+				persona_id,
 				data: {type: 'Collection', name: 'Grocery List'},
 				source_id: space.directory_id,
 			},
@@ -169,7 +169,7 @@ const generateTodo = async (
 		unwrap(
 			await CreateEntityService.perform({
 				params: {
-					actor_id: persona_id,
+					persona_id,
 					data: {type: 'Note', content},
 					source_id: list.entity.entity_id,
 				},

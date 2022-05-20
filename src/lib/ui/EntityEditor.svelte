@@ -20,7 +20,7 @@
 		ui: {personaById},
 	} = getApp();
 
-	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
+	$: persona = personaById.get($entity.persona_id)!;
 
 	const updateEntityDataProperty = async (updated: any, field: string) =>
 		dispatch.UpdateEntity({

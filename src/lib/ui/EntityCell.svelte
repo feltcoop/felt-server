@@ -45,7 +45,7 @@
 </script>
 
 {#if propertyName.endsWith('_id')}
-	<!-- TODO  propertyName === 'actor_id' etc -->
+	<!-- TODO  propertyName === 'persona_id' etc -->
 	{value}
 {:else if propertyName === 'data' || propertyName === 'view'}<textarea
 		bind:value={updated}
