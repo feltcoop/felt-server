@@ -78,10 +78,9 @@ form ul {
 	width: 100%;
 }
 .menu-item .title {
-	display: flex;
-	align-items: center;
 	margin-right: var(--spacing_lg);
 	flex-shrink: 0;
+	max-width: 100%;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
