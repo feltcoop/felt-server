@@ -37,6 +37,7 @@ import {
 	SelectCommunity,
 	SelectSpace,
 	ViewSpace,
+	UpdateLastSeen,
 } from '$lib/ui/uiEvents';
 
 export const eventInfos: EventInfo[] = [
@@ -84,6 +85,7 @@ export const eventInfos: EventInfo[] = [
 	SelectCommunity,
 	SelectSpace,
 	ViewSpace,
+	UpdateLastSeen,
 ];
 
 export const eventInfoByName: Map<string, EventInfo> = new Map(eventInfos.map((e) => [e.name, e]));

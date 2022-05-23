@@ -9,6 +9,7 @@
 	import SvastText from '$lib/ui/SvastText.svelte';
 
 	const {
+		dispatch,
 		ui: {viewBySpace},
 	} = getApp();
 
@@ -20,6 +21,7 @@
 	setViewContext(viewContext);
 	let ready = false; // avoids a wasteful `viewContext` change on mount
 	$: if (ready) {
+		dispatch.UpdateLastSeen({directory_id: $space.directory_id});
 		viewContext.set({persona, community, space});
 	} else {
 		ready = true;

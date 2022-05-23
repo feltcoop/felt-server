@@ -72,6 +72,7 @@ export interface Ui {
 	communitySelection: Readable<Readable<Community> | null>;
 	spaceIdSelectionByCommunityId: Mutable<Map<number, number | null>>;
 	spaceSelection: Readable<Readable<Space> | null>;
+	lastSeenByDirectoryId: Mutable<Map<number, Writable<string> | null>>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
@@ -214,6 +215,7 @@ export const toUi = (
 				)) ||
 			null,
 	);
+	const lastSeenByDirectoryId = mutable<Map<number, Writable<string> | null>>(new Map());
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const entityById: Map<number, Writable<Entity>> = new Map();
 	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
@@ -254,6 +256,7 @@ export const toUi = (
 		communitySelection,
 		spaceIdSelectionByCommunityId,
 		spaceSelection,
+		lastSeenByDirectoryId,
 		destroy: () => {
 			unsubscribeSession();
 		},
@@ -308,6 +311,20 @@ export const toUi = (
 								$session.spaces.find(
 									(s) => s.community_id === $community.community_id && isHomeSpace(s),
 								)!.space_id,
+						  ]),
+				),
+			);
+			lastSeenByDirectoryId.swap(
+				new Map(
+					$session.guest
+						? null
+						: $session.spaces.map(($space) => [
+								$space.directory_id,
+								//TODO BLOCK put this magic string somewhere
+								writable(
+									(browser && localStorage.getItem(`lastseen:${$space.directory_id}`)) ||
+										new Date().toString(),
+								),
 						  ]),
 				),
 			);

@@ -120,3 +120,18 @@ export const ViewSpace: ClientEventInfo = {
 	},
 	returns: 'void',
 };
+
+export const UpdateLastSeen: ClientEventInfo = {
+	type: 'ClientEvent',
+	name: 'UpdateLastSeen',
+	params: {
+		$id: '/schemas/UpdateLastSeenParams.json',
+		type: 'object',
+		properties: {
+			directory_id: {type: 'number'},
+		},
+		required: ['directory_id'],
+		additionalProperties: false,
+	},
+	returns: 'void',
+};
