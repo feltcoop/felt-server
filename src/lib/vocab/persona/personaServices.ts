@@ -12,7 +12,7 @@ const log = new Logger(gray('[') + blue('personaServices') + gray(']'));
 export const CreateAccountPersonaService: ServiceByName['CreateAccountPersona'] = {
 	event: CreateAccountPersona,
 	// TODO verify the `account_id` has permission to modify this persona
-	// TODO add `actor_id` and verify it's one of the `account_id`'s personas
+	// TODO add `persona_id` and verify it's one of the `account_id`'s personas
 	perform: async (serviceRequest) => {
 		const {repos, params, account_id} = serviceRequest;
 		log.trace('[CreateAccountPersona] creating persona', params.name);

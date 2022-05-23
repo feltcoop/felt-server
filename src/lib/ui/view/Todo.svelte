@@ -71,7 +71,7 @@
 		//TODO better error handling
 		await dispatch.CreateEntity({
 			data: {type: 'Note', content, checked: false},
-			actor_id: $persona.persona_id,
+			persona_id: $persona.persona_id,
 			source_id: selectedList.entity_id,
 		});
 		text = '';

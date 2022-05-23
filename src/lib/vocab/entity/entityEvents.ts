@@ -9,12 +9,12 @@ export const CreateEntity: ServiceEventInfo = {
 		$id: '/schemas/CreateEntityParams.json',
 		type: 'object',
 		properties: {
-			actor_id: {type: 'number'},
+			persona_id: {type: 'number'},
 			data: {type: 'object', tsType: 'EntityData'},
 			source_id: {type: 'number'},
 			type: {type: 'string'}, //defaults to 'HasItem'
 		},
-		required: ['actor_id', 'data', 'source_id'],
+		required: ['persona_id', 'data', 'source_id'],
 		additionalProperties: false,
 	},
 	response: {

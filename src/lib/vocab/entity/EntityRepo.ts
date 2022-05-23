@@ -10,11 +10,11 @@ import type {ErrorResponse} from '$lib/util/error';
 const log = new Logger(gray('[') + blue('EntityRepo') + gray(']'));
 
 export class EntityRepo extends PostgresRepo {
-	async create(actor_id: number, data: EntityData): Promise<Result<{value: Entity}>> {
-		log.trace('[create]', actor_id);
+	async create(persona_id: number, data: EntityData): Promise<Result<{value: Entity}>> {
+		log.trace('[createEntity]', persona_id);
 		const entity = await this.db.sql<Entity[]>`
-			INSERT INTO entities (actor_id, data) VALUES (
-				${actor_id},${this.db.sql.json(data as any)}
+			INSERT INTO entities (persona_id, data) VALUES (
+				${persona_id},${this.db.sql.json(data as any)}
 			) RETURNING *
 		`;
 		// log.trace('create entity', data);
@@ -26,7 +26,7 @@ export class EntityRepo extends PostgresRepo {
 		if (entityIds.length === 0) return {ok: true, value: []};
 		log.trace('[findBySet]', entityIds);
 		const entities = await this.db.sql<Entity[]>`
-			SELECT entity_id, data, actor_id, created, updated 
+			SELECT entity_id, data, persona_id, created, updated 
 			FROM entities WHERE entity_id IN ${this.db.sql(entityIds)}
 			ORDER BY entity_id DESC
 		`;

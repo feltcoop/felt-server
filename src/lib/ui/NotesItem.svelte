@@ -13,7 +13,7 @@
 
 	export let entity: Readable<Entity>;
 
-	$: persona = personaById.get($entity.actor_id)!;
+	$: persona = personaById.get($entity.persona_id)!;
 </script>
 
 <li
