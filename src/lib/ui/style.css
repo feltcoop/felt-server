@@ -88,9 +88,6 @@ form ul {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
-.menu-item .error {
-	color: var(--error_color);
-}
 
 /* TODO change to SVG? or use CSS vars for size and color? rename to indicate it's facing right?
 maybe upstream to Felt? think about how to upstream without bloating bundles that don't use it */
