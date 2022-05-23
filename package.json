@@ -20,7 +20,7 @@
     "node": ">=16.6.0"
   },
   "devDependencies": {
-    "@feltcoop/eslint-config": "^0.1.5",
+    "@feltcoop/eslint-config": "^0.1.7",
     "@feltcoop/gro": "^0.55.2",
     "@sveltejs/adapter-node": "^1.0.0-next.73",
     "@sveltejs/kit": "^1.0.0-next.336",

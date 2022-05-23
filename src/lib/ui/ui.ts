@@ -86,6 +86,7 @@ export const toUi = (
 	session: SvelteWritable<ClientSession>,
 	initialMobile: boolean,
 	components: {[key: string]: typeof SvelteComponent},
+	onError: (message: string | undefined) => void,
 ) => {
 	const account = writable<AccountModel | null>(null);
 	// Importantly, these collections only change when items are added or removed,
@@ -145,7 +146,7 @@ export const toUi = (
 
 	const mobile = writable(initialMobile);
 	const layout = writable({width: 0, height: 0});
-	const contextmenu = createContextmenuStore(layout);
+	const contextmenu = createContextmenuStore({layout, onError});
 	const dialogs = writable<DialogData[]>([]);
 	const viewBySpace = mutable(new WeakMap());
 

@@ -3,8 +3,6 @@ import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
 import type {Result} from '@feltcoop/felt';
 
-const ERROR_MESSAGE_UNKNOWN = 'unknown error';
-
 // Items with `undefined` props are ignored.
 export type ContextmenuItems = Array<[typeof SvelteComponent, object | null | undefined]>;
 
@@ -66,6 +64,11 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 	selections: ItemState[];
 }
 
+export interface ContextmenuStoreOptions {
+	layout: Readable<{width: number; height: number}>;
+	onError: (message: string | undefined) => void;
+}
+
 const CONTEXTMENU_STATE_KEY = Symbol();
 
 /**
@@ -74,9 +77,10 @@ const CONTEXTMENU_STATE_KEY = Symbol();
  * and for internal usage see `Contextmenu.svelte`.
  * @returns
  */
-export const createContextmenuStore = (
-	layout: Readable<{width: number; height: number}>,
-): ContextmenuStore => {
+export const createContextmenuStore = ({
+	layout,
+	onError,
+}: ContextmenuStoreOptions): ContextmenuStore => {
 	const rootMenu: ContextmenuStore['rootMenu'] = {isMenu: true, menu: null, items: []};
 	const selections: ContextmenuStore['selections'] = [];
 
@@ -89,6 +93,18 @@ export const createContextmenuStore = (
 	// $entry.errorMessage;
 	const touch = () => update(($) => ({...$}));
 
+	// TODO not mutation, probably
+	const resetItems = (items: ItemState[]): void => {
+		for (const item of items) {
+			if (item.isMenu) {
+				resetItems(item.items);
+			} else {
+				if (item.promise !== null) item.promise = null;
+				if (item.errorMessage !== null) item.errorMessage = null;
+			}
+		}
+	};
+
 	const store: ContextmenuStore = {
 		...rest,
 		rootMenu,
@@ -99,7 +115,12 @@ export const createContextmenuStore = (
 			selections.length = 0;
 			update(($state) => ({...$state, open: true, items, x, y}));
 		},
-		close: () => update(($state) => ($state.open ? {...$state, open: false} : $state)),
+		close: () =>
+			update(($state) => {
+				if (!$state.open) return $state;
+				resetItems(rootMenu.items);
+				return {...$state, open: false};
+			}),
 		activate: (item) => {
 			if (item.isMenu) {
 				store.expandSelected();
@@ -116,7 +137,9 @@ export const createContextmenuStore = (
 									if (result.ok) {
 										store.close();
 									} else {
-										item.errorMessage = result.message || ERROR_MESSAGE_UNKNOWN;
+										const message = typeof result.message === 'string' ? result.message : undefined;
+										item.errorMessage = message ?? 'unknown error';
+										onError?.(message);
 									}
 								} else {
 									store.close();
@@ -125,7 +148,9 @@ export const createContextmenuStore = (
 							},
 							(err) => {
 								if (promise !== item.promise) return;
-								item.errorMessage = err?.message || ERROR_MESSAGE_UNKNOWN;
+								const message = typeof err?.message === 'string' ? err.message : undefined;
+								item.errorMessage = message ?? 'unknown error';
+								onError?.(message);
 							},
 						)
 						.finally(() => {
