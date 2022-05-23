@@ -3,6 +3,8 @@ import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
 import type {Result} from '@feltcoop/felt';
 
+const ERROR_MESSAGE_UNKNOWN = 'unknown error';
+
 // Items with `undefined` props are ignored.
 export type ContextmenuItems = Array<[typeof SvelteComponent, object | null | undefined]>;
 
@@ -110,16 +112,20 @@ export const createContextmenuStore = (
 						.then(
 							(result) => {
 								if (promise !== item.promise) return;
-								if (result.ok) {
+								if ('ok' in result) {
+									if (result.ok) {
+										store.close();
+									} else {
+										item.errorMessage = result.message || ERROR_MESSAGE_UNKNOWN;
+									}
+								} else {
 									store.close();
-								} else if (result.message) {
-									item.errorMessage = result.message;
 								}
 								return result;
 							},
 							(err) => {
 								if (promise !== item.promise) return;
-								item.errorMessage = err?.message || 'unknown error';
+								item.errorMessage = err?.message || ERROR_MESSAGE_UNKNOWN;
 							},
 						)
 						.finally(() => {
