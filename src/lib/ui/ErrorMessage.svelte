@@ -7,6 +7,6 @@
 	$: errorMessage = text ?? ERROR_MESSAGE_UNKNOWN;
 </script>
 
-<div>
+<div class="markup">
 	<Message status="error">Error: {errorMessage}</Message>
 </div>
