@@ -283,6 +283,9 @@ export const toUi = (
 			$spaces.forEach((s, i) => spaceById.set($spaceArray[i].space_id, s));
 			spaces.swap($spaces);
 
+			const $directoriesArray = $session.guest ? [] : $session.directories;
+			$directoriesArray.forEach((d) => entityById.set(d.entity_id, writable(d)));
+
 			memberships.swap($session.guest ? [] : $session.memberships.map((s) => writable(s)));
 
 			// TODO fix this and the 2 below to use the URL to initialize the correct persona+community+space

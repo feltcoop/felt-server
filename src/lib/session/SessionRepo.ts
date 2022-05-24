@@ -14,7 +14,7 @@ export class SessionRepo extends PostgresRepo {
 		const accountResult = await this.db.repos.account.findById(account_id);
 		if (!accountResult.ok) return accountResult;
 		const account = accountResult.value;
-		// TODO make this a single query
+
 		const data = await this.db.sql<Array<{space: Space; entity: Entity}>>`
 		SELECT json_build_object('space_id',s.space_id,'name',s.name,'url',s.url,'icon',s.icon,'view',s.view,'created',s.created,'updated',s.updated,'community_id',s.community_id,'directory_id',s.directory_id) space, 
 		json_build_object('entity_id',e.entity_id,'data',e.data,'persona_id',e.persona_id,'created',e.created,'updated',e.updated) entity  
@@ -31,22 +31,16 @@ export class SessionRepo extends PostgresRepo {
 		const spaces = data.map((r) => r.space);
 		const directories = data.map((r) => r.entity);
 
-		const [
-			sessionPersonasResult,
-			communitiesResult,
-			//spacesResult,
-			membershipsResult,
-			personasResult,
-		] = await Promise.all([
-			this.db.repos.persona.filterByAccount(account.account_id),
-			this.db.repos.community.filterByAccount(account.account_id),
-			//this.db.repos.space.filterByAccount(account.account_id),
-			this.db.repos.membership.filterByAccount(account.account_id),
-			this.db.repos.persona.getAll(), //TODO don't getAll
-		]);
+		// TODO make this a single query
+		const [sessionPersonasResult, communitiesResult, membershipsResult, personasResult] =
+			await Promise.all([
+				this.db.repos.persona.filterByAccount(account.account_id),
+				this.db.repos.community.filterByAccount(account.account_id),
+				this.db.repos.membership.filterByAccount(account.account_id),
+				this.db.repos.persona.getAll(), //TODO don't getAll
+			]);
 		if (!sessionPersonasResult.ok) return sessionPersonasResult;
 		if (!communitiesResult.ok) return communitiesResult;
-		//if (!spacesResult.ok) return spacesResult;
 		if (!membershipsResult.ok) return membershipsResult;
 		if (!personasResult.ok) return personasResult;
 		return {
