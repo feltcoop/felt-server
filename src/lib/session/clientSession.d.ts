@@ -19,6 +19,7 @@ declare global {
 		sessionPersonas: Persona[];
 		communities: Community[];
 		spaces: Space[];
+		directories: Entity[];
 		memberships: Membership[];
 		personas: Persona[];
 		guest?: false; // is only for types; this property doesn't exist at runtime
