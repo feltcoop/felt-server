@@ -8,8 +8,6 @@ import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {SessionApi} from '$lib/session/SessionApi';
 import {authorize} from '$lib/server/authorize';
 
-import {wait} from '@feltcoop/felt';
-
 const log = new Logger(gray('[') + blue('httpServiceMiddleware') + gray(']'));
 
 // Wraps a `Service` in an http `Middleware`
