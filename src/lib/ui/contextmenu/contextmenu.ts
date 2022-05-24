@@ -87,10 +87,6 @@ export const createContextmenuStore = ({
 	const {update, set: _set, ...rest} = writable<Contextmenu>({open: false, items: [], x: 0, y: 0});
 
 	// TODO instead of this, use a store per entry probably
-	// $entry.selected;
-	// $entry.activate;
-	// $entry.pending;
-	// $entry.errorMessage;
 	const touch = () => update(($) => ({...$}));
 
 	// TODO not mutation, probably
