@@ -87,7 +87,7 @@ export const createContextmenuStore = ({
 	const {update, set: _set, ...rest} = writable<Contextmenu>({open: false, items: [], x: 0, y: 0});
 
 	// TODO instead of this, use a store per entry probably
-	const touch = () => update(($) => ({...$}));
+	const forceUpdate = () => update(($) => ({...$}));
 
 	// TODO not mutation, probably
 	const resetItems = (items: ItemState[]): void => {
@@ -153,9 +153,9 @@ export const createContextmenuStore = ({
 							if (promise !== item.promise) return;
 							item.pending = false;
 							item.promise = null;
-							touch();
+							forceUpdate();
 						}));
-					touch();
+					forceUpdate();
 					return item.promise;
 				}
 				store.close();
@@ -180,13 +180,13 @@ export const createContextmenuStore = ({
 				i.selected = true;
 				selections.unshift(i);
 			} while ((i = i.menu) && i.menu);
-			touch();
+			forceUpdate();
 		},
 		collapseSelected: () => {
 			if (selections.length <= 1) return;
 			const deselected = selections.pop()!;
 			deselected.selected = false;
-			touch();
+			forceUpdate();
 		},
 		expandSelected: () => {
 			const parent = selections.at(-1);
@@ -194,7 +194,7 @@ export const createContextmenuStore = ({
 			const selected = parent.items[0];
 			selected.selected = true;
 			selections.push(selected);
-			touch();
+			forceUpdate();
 		},
 		selectNext: () => {
 			if (!selections.length) return store.selectFirst();
