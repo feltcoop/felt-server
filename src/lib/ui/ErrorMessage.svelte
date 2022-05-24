@@ -1,6 +1,7 @@
 <script lang="ts">
-	import {ERROR_MESSAGE_UNKNOWN} from '$lib/util/error';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
+
+	import {ERROR_MESSAGE_UNKNOWN} from '$lib/util/error';
 
 	export let text: string | undefined;
 
