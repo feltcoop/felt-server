@@ -308,7 +308,7 @@ export type CreateEntityResponseResult = ApiResult<CreateEntityResponse>;
 
 export interface UpdateEntityParams {
 	entity_id: number;
-	data: EntityData;
+	data: EntityData | null;
 }
 export interface UpdateEntityResponse {
 	entity: Entity;

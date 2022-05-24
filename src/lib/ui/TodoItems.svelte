@@ -4,8 +4,10 @@
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import type {Tie} from '$lib/vocab/tie/tie';
 	import TodoItem from '$lib/ui/TodoItem.svelte';
+	import type {Space} from '$lib/vocab/space/space';
 
 	export let entities: Readable<Array<Readable<Entity>>>;
+	export let space: Readable<Space>;
 	//TODO properly wrap in reactive store
 	export let ties: Tie[];
 	export let itemsByEntity: Map<Readable<Entity>, Array<Readable<Entity>>>;
@@ -20,6 +22,6 @@
 <!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->
 <ul>
 	{#each collectionEntities as entity (entity)}
-		<TodoItem {entity} {ties} {itemsByEntity} {entityById} {selectedList} {selectList} />
+		<TodoItem {entity} {space} {ties} {itemsByEntity} {entityById} {selectedList} {selectList} />
 	{/each}
 </ul>
