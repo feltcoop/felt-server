@@ -29,7 +29,7 @@ main {
 	align-items: center;
 }
 /* TODO upstream to Felt and add the other spacing sizes? */
-.spaced-lg {
+.spaced {
 	margin-right: var(--spacing_lg);
 }
 

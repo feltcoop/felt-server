@@ -50,7 +50,7 @@
 		<CommunityAvatar {community} />
 	</section>
 	<section class="row">
-		<span class="spaced-lg">as</span>
+		<span class="spaced">as</span>
 		<PersonaAvatar {persona} />
 	</section>
 	<form>
