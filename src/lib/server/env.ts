@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import {copyFileSync, existsSync} from 'fs'; // eslint-disable-line @typescript-eslint/no-restricted-imports
+import {copyFileSync, existsSync} from 'fs';
 
 // TODO how to configure this stuff in user projects? felt/gro config?
 
