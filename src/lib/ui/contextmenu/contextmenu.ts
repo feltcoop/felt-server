@@ -1,5 +1,5 @@
 import {writable, type Readable, type Writable} from '@feltcoop/svelte-gettable-stores';
-import {isEditable} from '@feltcoop/felt/util/dom.js';
+import {isEditable, swallow} from '@feltcoop/felt/util/dom.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
 import type {Result} from '@feltcoop/felt';
 
@@ -276,15 +276,13 @@ const contextmenuAction = (el: HTMLElement | SVGElement, params: ContextmenuItem
 export const onContextmenu = (
 	e: MouseEvent,
 	contextmenu: ContextmenuStore,
-	excludeEl?: HTMLElement,
 	LinkContextmenu?: typeof SvelteComponent,
 ): void => {
 	if (e.shiftKey) return;
-	e.stopImmediatePropagation();
-	e.preventDefault();
+	swallow(e);
 	const target = e.target as HTMLElement | SVGElement;
 	const items = queryContextmenuItems(target, LinkContextmenu);
-	if (!items || isEditable(target) || excludeEl?.contains(target)) return;
+	if (!items || isEditable(target)) return;
 	// TODO dispatch a UI event, like OpenContextmenu
 	contextmenu.open(items, e.clientX, e.clientY);
 };
