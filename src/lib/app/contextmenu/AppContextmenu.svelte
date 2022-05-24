@@ -18,7 +18,7 @@
 	<svelte:fragment slot="icon">
 		<UnicodeIcon icon="⚙️" />
 	</svelte:fragment>
-	AccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccountAccount
+	Account
 	<svelte:fragment slot="menu">
 		{#each $sessionPersonas as sessionPersona (sessionPersona)}
 			{#if $personaSelection === sessionPersona}
@@ -47,27 +47,10 @@
 					props: {done: () => dispatch.CloseDialog()},
 				})}
 		>
-			Create PersonaCreate PersonaCreate PersonaCreate PersonaCreate PersonaCreate PersonaCreate
-			PersonaCreate Persona
+			Create Persona
 		</ContextmenuEntry>
-		<ContextmenuEntry
-			action={() =>
-				new Promise((resolve) =>
-					setTimeout(
-						() =>
-							// dispatch.OpenDialog({
-							// 	Component: About,
-							// }),
-							resolve({
-								ok: false,
-								message:
-									'yes it is error yes it is erroryes it is erroryes it is erroryes it is erroryes it is error',
-							}),
-						200,
-					),
-				)}
-		>
-			AboutAboutAboutAboutAboutAboutAboutAboutAboutAboutAbout
+		<ContextmenuEntry action={() => dispatch.OpenDialog({Component: About})}>
+			About
 		</ContextmenuEntry>
 		{#if !$session.guest}
 			<ContextmenuEntry action={() => dispatch.LogoutAccount()}>Log out</ContextmenuEntry>

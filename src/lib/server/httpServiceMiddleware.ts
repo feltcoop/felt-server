@@ -61,13 +61,6 @@ export const toHttpServiceMiddleware =
 			const validationError = validateParams.errors![0];
 			return send(res, 400, {message: toValidationErrorMessage(validationError)});
 		}
-		if (service.event.name === 'LogoutAccount') {
-			await wait(1500);
-			return send(res, 500, {
-				message:
-					'errr expernced on the thingexpernced on the thingexpernced on the thingexpernced on the thing',
-			});
-		}
 
 		let result;
 		try {
