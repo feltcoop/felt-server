@@ -19,9 +19,9 @@
 
 	const viewContext = writable({persona, community, space});
 	setViewContext(viewContext);
+	dispatch.UpdateLastSeen({directory_id: $space.directory_id});
 	let ready = false; // avoids a wasteful `viewContext` change on mount
 	$: if (ready) {
-		dispatch.UpdateLastSeen({directory_id: $space.directory_id});
 		viewContext.set({persona, community, space});
 	} else {
 		ready = true;

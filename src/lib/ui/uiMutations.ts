@@ -3,6 +3,7 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 import {round} from '@feltcoop/felt/util/maths.js';
 import {browser} from '$app/env';
 import {writable} from '@feltcoop/svelte-gettable-stores';
+import {LAST_SEEN_KEY} from '$lib/ui/app';
 
 import type {Mutations} from '$lib/app/eventTypes';
 
@@ -93,8 +94,7 @@ export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
 		$lastSeenByDirectoryId.value.set(directory_id, writable(time));
 
 	if (browser) {
-		//TODO BLOCK put this magic string somewhere
-		localStorage.setItem(`lastseen:${directory_id}`, time);
+		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, time);
 	}
 	//TODO maybe turn this into a service event & make a server call too?
 };

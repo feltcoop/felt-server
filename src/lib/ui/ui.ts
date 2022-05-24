@@ -21,6 +21,7 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
+import {LAST_SEEN_KEY} from '$lib/ui/app';
 
 if (browser) initBrowser();
 
@@ -320,9 +321,8 @@ export const toUi = (
 						? null
 						: $session.spaces.map(($space) => [
 								$space.directory_id,
-								//TODO BLOCK put this magic string somewhere
 								writable(
-									(browser && localStorage.getItem(`lastseen:${$space.directory_id}`)) ||
+									(browser && localStorage.getItem(`${LAST_SEEN_KEY}${$space.directory_id}`)) ||
 										new Date().toString(),
 								),
 						  ]),
