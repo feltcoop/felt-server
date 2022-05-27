@@ -87,11 +87,11 @@ export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
 	params: {directory_id},
 	ui: {lastSeenByDirectoryId},
 }) => {
-	const $lastSeenByDirectoryId = lastSeenByDirectoryId.get();
 	const time = new Date().toString();
 
-	$lastSeenByDirectoryId.value.get(directory_id)?.set(time) ||
-		$lastSeenByDirectoryId.value.set(directory_id, writable(time));
+	lastSeenByDirectoryId.mutate(($v) => {
+		$v.get(directory_id)?.set(time) || $v.set(directory_id, writable(time));
+	});
 
 	if (browser) {
 		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, time);

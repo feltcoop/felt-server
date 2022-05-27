@@ -14,7 +14,7 @@
 	$: selected = $spaceSelection === space;
 	$: lastSeen = $lastSeenByDirectoryId.value.get($space.directory_id)!;
 	//TODO replace space timestamps with directory timestamps
-	$: systemTime = $space.updated ? $space.updated : $space.created;
+	$: systemTime = $space.updated ?? $space.created;
 	$: clientTime = new Date($lastSeen);
 	$: fresh = !selected && clientTime < systemTime;
 </script>
