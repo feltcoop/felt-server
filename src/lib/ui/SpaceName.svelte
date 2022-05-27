@@ -7,14 +7,15 @@
 	export let space: Readable<Space>;
 
 	const {
-		ui: {lastSeenByDirectoryId, spaceSelection},
+		ui: {lastSeenByDirectoryId, entityById, spaceSelection},
 	} = getApp();
 
 	//TODO replace selected with more cohesive control in Update mutation
 	$: selected = $spaceSelection === space;
+	$: directory = entityById.get($space.directory_id)!;
 	$: lastSeen = $lastSeenByDirectoryId.value.get($space.directory_id)!;
 	//TODO replace space timestamps with directory timestamps
-	$: systemTime = $space.updated ?? $space.created;
+	$: systemTime = $directory.updated ?? $directory.created;
 	$: clientTime = new Date($lastSeen);
 	$: fresh = !selected && clientTime < systemTime;
 </script>
