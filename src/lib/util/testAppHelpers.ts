@@ -20,7 +20,7 @@ export const setupApp =
 	(fetch: typeof globalThis.fetch) =>
 	async (context: TestAppContext): Promise<void> => {
 		const session = writable<ClientSession>({guest: true});
-		const ui = toUi(session, false, {});
+		const ui = toUi(session, false, {}, (_) => _);
 		const httpApiClient = toHttpApiClient<EventParamsByName, EventResponseByName>(
 			findHttpService,
 			deserialize(deserializers),

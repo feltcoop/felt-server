@@ -31,6 +31,7 @@
 	import AppContextmenu from '$lib/app/contextmenu/AppContextmenu.svelte';
 	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
 	import LinkContextmenu from '$lib/app/contextmenu/LinkContextmenu.svelte';
+	import ErrorMessage from '$lib/ui/ErrorMessage.svelte';
 	import {deserialize, deserializers} from '$lib/util/deserialize';
 
 	const log = new Logger('[layout]');
@@ -54,7 +55,9 @@
 			() => dispatch.Ping(),
 		),
 	);
-	const ui = toUi(session, initialMobileValue, components);
+	const ui = toUi(session, initialMobileValue, components, (errorMessage) => {
+		dispatch.OpenDialog({Component: ErrorMessage, props: {text: errorMessage}});
+	});
 	setUi(ui);
 
 	const dispatch = toDispatch(ui, mutations, (e) =>

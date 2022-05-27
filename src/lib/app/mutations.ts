@@ -27,6 +27,7 @@ import {
 	SelectCommunity,
 	SelectSpace,
 	ViewSpace,
+	UpdateLastSeen,
 	ToggleMainNav,
 	ToggleSecondaryNav,
 } from '$lib/ui/uiMutations';
@@ -69,6 +70,7 @@ export const mutations: Record<string, Mutation> = {
 	SelectCommunity,
 	SelectSpace,
 	ViewSpace,
+	UpdateLastSeen,
 	ToggleMainNav,
 	ToggleSecondaryNav,
 };

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import {getApp} from '$lib/ui/app';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import ContextmenuEntry from '$lib/ui/contextmenu/ContextmenuEntry.svelte';
@@ -15,9 +15,10 @@
 </script>
 
 <ContextmenuSubmenu>
-	<svelte:fragment slot="entry">
-		<Avatar name={$persona.name} />
+	<svelte:fragment slot="icon">
+		<PersonaAvatar {persona} showName={false} />
 	</svelte:fragment>
+	<PersonaAvatar {persona} showIcon={false} />
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
 			action={() =>
@@ -27,10 +28,10 @@
 					dialogProps: {layout: 'page'},
 				})}
 		>
-			<span class="title">Create Community</span>
+			Create Community
 		</ContextmenuEntry>
 		<ContextmenuEntry action={() => dispatch.OpenDialog({Component: ManageMembershipForm})}>
-			<span class="title">Manage Memberships</span>
+			Manage Memberships
 		</ContextmenuEntry>
 	</svelte:fragment>
 </ContextmenuSubmenu>

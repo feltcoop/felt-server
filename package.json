@@ -20,7 +20,7 @@
     "node": ">=16.6.0"
   },
   "devDependencies": {
-    "@feltcoop/eslint-config": "^0.1.5",
+    "@feltcoop/eslint-config": "^0.1.7",
     "@feltcoop/gro": "^0.55.2",
     "@sveltejs/adapter-node": "^1.0.0-next.75",
     "@sveltejs/kit": "^1.0.0-next.343",
@@ -46,7 +46,7 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "@feltcoop/felt": "^0.30.0",
+    "@feltcoop/felt": "^0.30.1",
     "@feltcoop/svelte-gettable-stores": "^0.1.0",
     "@polka/send-type": "^0.5.2",
     "@ryanatkn/json-schema-to-typescript": "^11.1.2",

@@ -2,6 +2,7 @@
 	import {session} from '$app/stores';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
 	import Message from '@feltcoop/felt/ui/Message.svelte';
+	import type {LogoutAccountResponseResult} from '$lib/app/eventTypes';
 
 	import type {AccountModel} from '$lib/vocab/account/account';
 	import {getApp} from '$lib/ui/app';
@@ -16,7 +17,7 @@
 
 	$: disabled = !account;
 
-	const logout = async () => {
+	const logout = async (): Promise<LogoutAccountResponseResult> => {
 		submitting = true;
 		errorMessage = '';
 		const result = await dispatch.LogoutAccount();
@@ -24,6 +25,7 @@
 			errorMessage = result.message;
 		}
 		submitting = false;
+		return result;
 	};
 </script>
 

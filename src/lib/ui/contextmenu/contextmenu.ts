@@ -1,9 +1,12 @@
 import {writable, type Readable, type Writable} from '@feltcoop/svelte-gettable-stores';
-import {isEditable} from '@feltcoop/felt/util/dom.js';
+import {isEditable, swallow} from '@feltcoop/felt/util/dom.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
+import type {Result} from '@feltcoop/felt';
 
 // Items with `undefined` props are ignored.
 export type ContextmenuItems = Array<[typeof SvelteComponent, object | null | undefined]>;
+
+type ActivateResult = Result<any, {message?: string}> | unknown;
 
 export type ItemState = SubmenuState | EntryState;
 export interface EntryState {
@@ -11,6 +14,9 @@ export interface EntryState {
 	menu: SubmenuState | RootMenuState;
 	selected: boolean;
 	action: ContextmenuAction;
+	pending: boolean;
+	errorMessage: string | null;
+	promise: Promise<any> | null;
 }
 export interface SubmenuState {
 	isMenu: true;
@@ -24,7 +30,7 @@ export interface RootMenuState {
 	items: ItemState[];
 }
 export interface ContextmenuAction {
-	(): void;
+	(): void | Promise<ActivateResult>;
 }
 
 export interface Contextmenu {
@@ -39,14 +45,15 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 	action: typeof contextmenuAction;
 	open: (items: ContextmenuItems, x: number, y: number) => void;
 	close: () => void;
-	activateSelected: () => void; // removes one
-	selectItem: (item: ItemState) => void;
-	collapseSelected: () => void; // removes one
+	activate: (item: ItemState) => boolean | Promise<ActivateResult>;
+	activateSelected: () => boolean | Promise<ActivateResult>;
+	select: (item: ItemState) => void;
+	collapseSelected: () => void;
 	expandSelected: () => void; // opens the selected submenu
-	selectNext: () => void; // advances to the next of the latest
-	selectPrevious: () => void; // removes one
-	selectFirst: () => void; // advances to the next of the latest
-	selectLast: () => void; // removes one
+	selectNext: () => void;
+	selectPrevious: () => void;
+	selectFirst: () => void;
+	selectLast: () => void;
 	addEntry: (action: ContextmenuAction) => EntryState;
 	addSubmenu: () => SubmenuState;
 	// These two properties are mutated internally.
@@ -57,6 +64,11 @@ export interface ContextmenuStore extends Readable<Contextmenu> {
 	selections: ItemState[];
 }
 
+export interface ContextmenuStoreOptions {
+	layout: Readable<{width: number; height: number}>;
+	onError: (message: string | undefined) => void;
+}
+
 const CONTEXTMENU_STATE_KEY = Symbol();
 
 /**
@@ -65,13 +77,29 @@ const CONTEXTMENU_STATE_KEY = Symbol();
  * and for internal usage see `Contextmenu.svelte`.
  * @returns
  */
-export const createContextmenuStore = (
-	layout: Readable<{width: number; height: number}>,
-): ContextmenuStore => {
+export const createContextmenuStore = ({
+	layout,
+	onError,
+}: ContextmenuStoreOptions): ContextmenuStore => {
 	const rootMenu: ContextmenuStore['rootMenu'] = {isMenu: true, menu: null, items: []};
 	const selections: ContextmenuStore['selections'] = [];
 
 	const {update, set: _set, ...rest} = writable<Contextmenu>({open: false, items: [], x: 0, y: 0});
+
+	// TODO instead of this, use a store per entry probably
+	const forceUpdate = () => update(($) => ({...$}));
+
+	// TODO not mutation, probably
+	const resetItems = (items: ItemState[]): void => {
+		for (const item of items) {
+			if (item.isMenu) {
+				resetItems(item.items);
+			} else {
+				if (item.promise !== null) item.promise = null;
+				if (item.errorMessage !== null) item.errorMessage = null;
+			}
+		}
+	};
 
 	const store: ContextmenuStore = {
 		...rest,
@@ -83,22 +111,67 @@ export const createContextmenuStore = (
 			selections.length = 0;
 			update(($state) => ({...$state, open: true, items, x, y}));
 		},
-		close: () => update(($state) => ({...$state, open: false})),
-		activateSelected: () => {
-			const selected = selections.at(-1);
-			if (!selected) return;
-			if (selected.isMenu) {
+		close: () =>
+			update(($state) => {
+				if (!$state.open) return $state;
+				resetItems(rootMenu.items);
+				return {...$state, open: false};
+			}),
+		activate: (item) => {
+			if (item.isMenu) {
 				store.expandSelected();
 			} else {
+				const returned = item.action();
+				if (returned?.then) {
+					item.pending = true;
+					item.errorMessage = null;
+					const promise = (item.promise = returned
+						.then(
+							(result) => {
+								if (promise !== item.promise) return;
+								if ('ok' in result) {
+									if (result.ok) {
+										store.close();
+									} else {
+										const message = typeof result.message === 'string' ? result.message : undefined;
+										item.errorMessage = message ?? 'unknown error';
+										onError?.(message);
+									}
+								} else {
+									store.close();
+								}
+								return result;
+							},
+							(err) => {
+								if (promise !== item.promise) return;
+								const message = typeof err?.message === 'string' ? err.message : undefined;
+								item.errorMessage = message ?? 'unknown error';
+								onError?.(message);
+							},
+						)
+						.finally(() => {
+							if (promise !== item.promise) return;
+							item.pending = false;
+							item.promise = null;
+							forceUpdate();
+						}));
+					forceUpdate();
+					return item.promise;
+				}
 				store.close();
-				selected.action();
 			}
+			return true;
+		},
+		activateSelected: () => {
+			const selected = selections.at(-1);
+			if (!selected) return false;
+			return store.activate(selected);
 		},
 		// Instead of diffing, this does the simple thing and
 		// deselects everything and then re-creates the list of selections.
 		// Could be improved but it's fine because we're using mutation and the N is very small,
 		// and it allows us to have a single code path for the various selection methods.
-		selectItem: (item) => {
+		select: (item) => {
 			if (selections.at(-1) === item) return;
 			for (const s of selections) s.selected = false;
 			selections.length = 0;
@@ -107,13 +180,13 @@ export const createContextmenuStore = (
 				i.selected = true;
 				selections.unshift(i);
 			} while ((i = i.menu) && i.menu);
-			update(($) => ({...$}));
+			forceUpdate();
 		},
 		collapseSelected: () => {
 			if (selections.length <= 1) return;
 			const deselected = selections.pop()!;
 			deselected.selected = false;
-			update(($) => ({...$}));
+			forceUpdate();
 		},
 		expandSelected: () => {
 			const parent = selections.at(-1);
@@ -121,25 +194,33 @@ export const createContextmenuStore = (
 			const selected = parent.items[0];
 			selected.selected = true;
 			selections.push(selected);
-			update(($) => ({...$}));
+			forceUpdate();
 		},
 		selectNext: () => {
 			if (!selections.length) return store.selectFirst();
 			const item = selections.at(-1)!;
 			const index = item.menu.items.indexOf(item);
-			store.selectItem(item.menu.items[index === item.menu.items.length - 1 ? 0 : index + 1]);
+			store.select(item.menu.items[index === item.menu.items.length - 1 ? 0 : index + 1]);
 		},
 		selectPrevious: () => {
 			if (!selections.length) return store.selectLast();
 			const item = selections.at(-1)!;
 			const index = item.menu.items.indexOf(item);
-			store.selectItem(item.menu.items[index === 0 ? item.menu.items.length - 1 : index - 1]);
+			store.select(item.menu.items[index === 0 ? item.menu.items.length - 1 : index - 1]);
 		},
-		selectFirst: () => store.selectItem((selections.at(-1)?.menu || rootMenu).items[0]),
-		selectLast: () => store.selectItem((selections.at(-1)?.menu || rootMenu).items.at(-1)!),
+		selectFirst: () => store.select((selections.at(-1)?.menu || rootMenu).items[0]),
+		selectLast: () => store.select((selections.at(-1)?.menu || rootMenu).items.at(-1)!),
 		addEntry: (action) => {
 			const menu = getContext<SubmenuState | undefined>(CONTEXTMENU_STATE_KEY) || rootMenu;
-			const entry: EntryState = {isMenu: false, menu, selected: false, action};
+			const entry: EntryState = {
+				isMenu: false,
+				menu,
+				selected: false,
+				action,
+				pending: false,
+				errorMessage: null,
+				promise: null,
+			};
 			menu.items.push(entry);
 			onDestroy(() => {
 				menu.items.length = 0;
@@ -191,15 +272,13 @@ const contextmenuAction = (el: HTMLElement | SVGElement, params: ContextmenuItem
 export const onContextmenu = (
 	e: MouseEvent,
 	contextmenu: ContextmenuStore,
-	excludeEl?: HTMLElement,
 	LinkContextmenu?: typeof SvelteComponent,
 ): void => {
 	if (e.shiftKey) return;
-	e.stopImmediatePropagation();
-	e.preventDefault();
+	swallow(e);
 	const target = e.target as HTMLElement | SVGElement;
 	const items = queryContextmenuItems(target, LinkContextmenu);
-	if (!items || isEditable(target) || excludeEl?.contains(target)) return;
+	if (!items || isEditable(target)) return;
 	// TODO dispatch a UI event, like OpenContextmenu
 	contextmenu.open(items, e.clientX, e.clientY);
 };

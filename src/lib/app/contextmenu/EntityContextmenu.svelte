@@ -14,9 +14,10 @@
 </script>
 
 <ContextmenuSubmenu>
-	<svelte:fragment slot="entry">
-		<span class="menu-item-entry"><UnicodeIcon icon="☉" /><span class="title">Entity</span></span>
+	<svelte:fragment slot="icon">
+		<UnicodeIcon icon="☉" />
 	</svelte:fragment>
+	Entity
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
 			action={() =>
@@ -26,16 +27,16 @@
 					dialogProps: {layout: 'page'},
 				})}
 		>
-			<span class="title">Edit Entity</span>
+			Edit Entity
 		</ContextmenuEntry>
 		<!-- TODO add confirmation dialogs to both delete and erase actions -->
 		{#if $entity.data.type !== 'Tombstone'}
 			<ContextmenuEntry action={() => dispatch.EraseEntities({entity_ids: [$entity.entity_id]})}>
-				<span class="title">Erase Entity</span>
+				Erase Entity
 			</ContextmenuEntry>
 		{/if}
 		<ContextmenuEntry action={() => dispatch.DeleteEntities({entity_ids: [$entity.entity_id]})}>
-			<span class="title">Delete Entity</span>
+			Delete Entity
 		</ContextmenuEntry>
 	</svelte:fragment>
 </ContextmenuSubmenu>

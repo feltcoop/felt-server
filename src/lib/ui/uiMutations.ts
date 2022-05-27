@@ -1,6 +1,9 @@
 import {goto} from '$app/navigation';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {round} from '@feltcoop/felt/util/maths.js';
+import {browser} from '$app/env';
+import {writable} from '@feltcoop/svelte-gettable-stores';
+import {LAST_SEEN_KEY} from '$lib/ui/app';
 
 import type {Mutations} from '$lib/app/eventTypes';
 
@@ -78,6 +81,22 @@ export const ViewSpace: Mutations['ViewSpace'] = async ({
 		const $community = communityById.get($space.community_id)!.get();
 		await goto('/' + $community.name + $space.url + location.search, {replaceState: true});
 	}
+};
+
+export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
+	params: {directory_id},
+	ui: {lastSeenByDirectoryId},
+}) => {
+	const time = new Date().toString();
+
+	lastSeenByDirectoryId.mutate(($v) => {
+		$v.get(directory_id)?.set(time) || $v.set(directory_id, writable(time));
+	});
+
+	if (browser) {
+		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, time);
+	}
+	//TODO maybe turn this into a service event & make a server call too?
 };
 
 export const ToggleMainNav: Mutations['ToggleMainNav'] = ({ui: {expandMainNav}}) => {

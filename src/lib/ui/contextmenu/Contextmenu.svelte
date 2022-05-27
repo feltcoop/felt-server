@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {isEditable} from '@feltcoop/felt/util/dom.js';
+	import {isEditable, swallow} from '@feltcoop/felt/util/dom.js';
 	import type {SvelteComponent} from 'svelte';
 
 	import {
@@ -30,47 +30,31 @@
 		}
 	};
 
-	const onWindowKeydown = (e: KeyboardEvent) => {
+	const onWindowKeydown = async (e: KeyboardEvent) => {
 		if (e.key === 'Escape' && !isEditable(e.target)) {
 			contextmenu.close();
-			e.stopImmediatePropagation();
-			e.preventDefault();
+			swallow(e);
 		} else if (e.key === 'ArrowLeft' && !isEditable(e.target)) {
 			contextmenu.collapseSelected();
-			e.stopImmediatePropagation();
-			e.preventDefault();
+			swallow(e);
 		} else if (e.key === 'ArrowRight' && !isEditable(e.target)) {
 			contextmenu.expandSelected();
-			e.stopImmediatePropagation();
-			e.preventDefault();
+			swallow(e);
 		} else if ((e.key === 'ArrowDown' || e.key === 'PageDown') && !isEditable(e.target)) {
 			contextmenu.selectNext();
-			e.stopImmediatePropagation();
-			e.preventDefault();
+			swallow(e);
 		} else if ((e.key === 'ArrowUp' || e.key === 'PageUp') && !isEditable(e.target)) {
 			contextmenu.selectPrevious();
-			e.stopImmediatePropagation();
-			e.preventDefault();
+			swallow(e);
 		} else if (e.key === 'Home' && !isEditable(e.target)) {
 			contextmenu.selectFirst();
-			e.stopImmediatePropagation();
-			e.preventDefault();
+			swallow(e);
 		} else if (e.key === 'End' && !isEditable(e.target)) {
 			contextmenu.selectLast();
-			e.stopImmediatePropagation();
-			e.preventDefault();
+			swallow(e);
 		} else if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
-			contextmenu.activateSelected();
-			e.stopImmediatePropagation();
-			e.preventDefault();
-		}
-	};
-
-	const isInteractive = (el: Element): boolean => !!el.closest("button,a,area,[role='menuitem']");
-
-	const onClickContent = (e: MouseEvent) => {
-		if (isInteractive(e.target as any)) {
-			contextmenu.close();
+			await contextmenu.activateSelected();
+			swallow(e);
 		}
 	};
 
@@ -86,13 +70,21 @@
 	};
 	$: x = contextmenuX + Math.min(0, $layout.width - (contextmenuX + $dimensions.width));
 	$: y = contextmenuY + Math.min(0, $layout.height - (contextmenuY + $dimensions.height));
+
+	const onWindowContextmenu = (e: MouseEvent) => {
+		if (e.target instanceof Element && el?.contains(e.target)) {
+			if (!e.target.closest('a')) swallow(e);
+			return;
+		}
+		onContextmenu(e, contextmenu, LinkContextmenu);
+	};
 </script>
 
 <!-- TODO need long-press detection for contextmenu on iOS -->
 <!-- TODO ensure `mousedown` works everywhere; might want to add `touchstart` or substitute `pointerdown` -->
 <!-- Capture keydown so it can handle the event before any dialogs. -->
 <svelte:window
-	on:contextmenu|capture={(e) => onContextmenu(e, contextmenu, el, LinkContextmenu)}
+	on:contextmenu|capture={onWindowContextmenu}
 	on:mousedown|capture={open ? onWindowMousedown : undefined}
 	on:keydown|capture={open ? onWindowKeydown : undefined}
 />
@@ -106,7 +98,6 @@
 		tabindex="-1"
 		bind:this={el}
 		style:transform="translate3d({x}px, {y}px, 0)"
-		on:click={onClickContent}
 	>
 		{#each $contextmenu.items as [component, props] (component)}
 			<ul>
@@ -118,18 +109,12 @@
 
 <style>
 	.contextmenu {
-		--icon_size: var(--icon_size_sm);
+		--icon_size: var(--icon_size_xs);
 		position: fixed;
 		left: 0;
 		top: 0;
 		z-index: 9;
 		width: var(--contextmenu_width);
 		border: var(--border);
-	}
-	ul {
-		border-bottom: var(--border);
-	}
-	ul:last-child {
-		border-bottom: none;
 	}
 </style>

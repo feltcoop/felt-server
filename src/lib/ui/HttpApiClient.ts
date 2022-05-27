@@ -11,6 +11,7 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 import type {ApiClient} from '$lib/ui/ApiClient';
 import type {ServiceEventInfo} from '$lib/vocab/event/event';
 import type {Deserialize} from '$lib/util/deserialize';
+import {ERROR_MESSAGE_UNKNOWN} from '$lib/util/error';
 
 const log = new Logger('[http]');
 
@@ -46,7 +47,7 @@ export const toHttpApiClient = <
 				return {
 					ok: false,
 					status: null,
-					message: 'unknown error',
+					message: ERROR_MESSAGE_UNKNOWN,
 				};
 			}
 			let json;
@@ -65,7 +66,7 @@ export const toHttpApiClient = <
 				return {
 					ok: false,
 					status: res.status,
-					message: json.message || res.statusText || 'unknown error',
+					message: json.message || res.statusText || ERROR_MESSAGE_UNKNOWN,
 				};
 			}
 			deserialize(json);

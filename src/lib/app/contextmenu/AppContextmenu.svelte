@@ -15,23 +15,28 @@
 </script>
 
 <ContextmenuSubmenu>
-	<svelte:fragment slot="entry">
-		<span class="menu-item-entry">
-			<UnicodeIcon icon="⚙️" /><span class="title">Account</span></span
-		>
+	<svelte:fragment slot="icon">
+		<UnicodeIcon icon="⚙️" />
 	</svelte:fragment>
+	Account
 	<svelte:fragment slot="menu">
 		{#each $sessionPersonas as sessionPersona (sessionPersona)}
 			{#if $personaSelection === sessionPersona}
 				<li class="menu-item panel-inset" role="none">
-					<PersonaAvatar persona={sessionPersona} />
+					<div class="content">
+						<div class="icon"><PersonaAvatar persona={sessionPersona} showName={false} /></div>
+						<div class="title"><PersonaAvatar persona={sessionPersona} showIcon={false} /></div>
+					</div>
 				</li>
 			{:else}
 				<!-- TODO support store param? only? -->
 				<ContextmenuEntry
 					action={() => dispatch.SelectPersona({persona_id: sessionPersona.get().persona_id})}
 				>
-					<PersonaAvatar persona={sessionPersona} />
+					<svelte:fragment slot="icon"
+						><PersonaAvatar persona={sessionPersona} showName={false} /></svelte:fragment
+					>
+					<PersonaAvatar persona={sessionPersona} showIcon={false} />
 				</ContextmenuEntry>
 			{/if}
 		{/each}
@@ -42,20 +47,13 @@
 					props: {done: () => dispatch.CloseDialog()},
 				})}
 		>
-			<span class="title">Create Persona</span>
+			Create Persona
 		</ContextmenuEntry>
-		<ContextmenuEntry
-			action={() =>
-				dispatch.OpenDialog({
-					Component: About,
-				})}
-		>
-			<span class="title">About</span>
+		<ContextmenuEntry action={() => dispatch.OpenDialog({Component: About})}>
+			About
 		</ContextmenuEntry>
 		{#if !$session.guest}
-			<ContextmenuEntry action={() => dispatch.LogoutAccount()}>
-				<span class="title">Log out</span>
-			</ContextmenuEntry>
+			<ContextmenuEntry action={() => dispatch.LogoutAccount()}>Log out</ContextmenuEntry>
 		{/if}
 	</svelte:fragment>
 </ContextmenuSubmenu>
