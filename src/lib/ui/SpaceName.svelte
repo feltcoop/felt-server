@@ -11,6 +11,7 @@
 	} = getApp();
 
 	//TODO replace selected with more cohesive control in Update mutation
+	//TODO BLOCK still an issue where if you're in the space it doesn't clear properly
 	$: selected = $spaceSelection === space;
 	$: directory = entityById.get($space.directory_id)!;
 	$: lastSeen = $lastSeenByDirectoryId.value.get($space.directory_id)!;
