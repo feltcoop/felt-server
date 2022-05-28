@@ -2,14 +2,22 @@ import {writable, type Writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
+import type {Dispatch} from '$lib/app/eventTypes';
 
-export const updateEntity = ({entityById}: WritableUi, $entity: Entity): Writable<Entity> => {
+export const updateEntity = (
+	{entityById, spaceSelection}: WritableUi,
+	dispatch: Dispatch,
+	$entity: Entity,
+): Writable<Entity> => {
 	const {entity_id} = $entity;
 	let entity = entityById.get(entity_id);
 	if (entity) {
 		entity.set($entity);
 	} else {
 		entityById.set(entity_id, (entity = writable($entity)));
+	}
+	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
+		dispatch.UpdateLastSeen({directory_id: $entity.entity_id});
 	}
 	return entity;
 };
