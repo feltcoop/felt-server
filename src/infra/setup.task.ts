@@ -12,7 +12,7 @@ export const task: Task<SetupTaskArgs> = {
 	summary: 'setup a clean server to prepare for a felt-server deploy',
 	production: true,
 	args: SetupTaskArgsSchema,
-	run: async ({log, args: {dry}}) => {
+	run: async ({log, args: {dry}, invokeTask}) => {
 		// TODO env vars are currently messy with 3 strategies:
 		// 1 - calling `fromEnv('VAR')`
 		// 2 - defaults setup by `$lib/config.js`
@@ -135,19 +135,20 @@ export const task: Task<SetupTaskArgs> = {
 				//
 				// All done!
 				logSequence(`Success! Server is now setup for deployment.`),
-		].map((s) => s + '\n\n');
+		];
+		const script = steps.map((s) => s + '\n\n').join('');
 		if (dry) {
-			log.info(
-				green(`\n\ndry run! here's the script ↓\n\n`),
-				`ssh ${deployLogin} ${steps.join('')}`,
-			);
+			log.info(green(`\n\ndry run! here's the script ↓\n\n`), `ssh ${deployLogin} ${script}`);
 			log.info(green('\n\ndry run done ↑\n\n'));
 			return;
 		}
-		const result = await spawn('ssh', [deployLogin, steps.join('')]);
+		const result = await spawn('ssh', [deployLogin, script]);
 		if (!result.ok) {
 			if (result.signal) log.error('spawn failed with signal', result.signal);
 			throw Error('Failed setup task');
 		}
+
+		// TODO BLOCK
+		// await invokeTask('infra/serverDeploy');
 	},
 };
