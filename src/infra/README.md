@@ -51,15 +51,36 @@ PORT=3003 gro start
 
 ## deploy
 
+To self-host on a VPS:
+
+Create `.env.production` at the root of a cloned instance
+of this repo with the appropriate values filled in.
+For an example with default values see
+[`src/infra/.env.production.default`](/src/infra/.env.production.default).
+Be sure to change the secrets/keys and host!
+
+Then:
+
+```bash
+gro infra/setup
+gro infra/serverDeploy
+# TODO automate all of this
+# manually setup the database user/password
+# manually run `gro lib/db/migrate` from a cloned instance of felt-server
+# manually run `pm2 start npm -- run start --prefix ~/current_felt_server_deploy`
+```
+
+TODO:
+
+- streamline the above
+
 > Deploy will execute a build on the local machine, package the output into a tar, and attempt to deploy it to a remote instance:
 
 ```bash
+# TODO maybe something like this:
 npm run deploy
 # or
 gro deploy
-
-# TODO support custom deployment URLs
-
 ```
 
 ## manually upgrading cloud instances
