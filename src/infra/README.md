@@ -8,13 +8,19 @@ but can easily be adapted for local use & deployment.
 To start, clone the repo locally and make sure
 [Gro](https://github.com/feltcoop/gro) is installed globally.
 
+```bash
+git clone https://github.com/feltcoop/felt-server
+npm i -g @feltcoop/gro
+```
+
 ## initializing
 
 Before building & deploying, a fresh instance of Linux needs to be configured.
 We currently use Ubuntu 22.04 (LTS) x64
 
-Update your [config](src/lib/config.js) and replace the placeholder values with your target info,
-then run
+Add or edit `.env.production` at the root of your felt-server repo
+(here's the [default example](src/infra/.env.production.default)),
+replace the placeholder values with yours, and then run:
 
 ```bash
 gro infra/setup
