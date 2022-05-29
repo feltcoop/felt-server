@@ -88,6 +88,14 @@ npm run deploy
 gro deploy
 ```
 
+## redeploy
+
+TODO document this
+
+```bash
+gro infra/restartProd
+```
+
 ## manually upgrading cloud instances
 
 If upgrading your underlying cloud OS,
