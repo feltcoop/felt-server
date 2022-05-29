@@ -17,7 +17,6 @@ Update your [config](src/lib/config.js) and replace the placeholder values with 
 then run
 
 ```bash
-gro gen
 gro infra/setup
 ```
 
