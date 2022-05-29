@@ -6,7 +6,7 @@ These documents and tools were built with the assumption of remote cloud infrast
 but can easily be adapted for local use & deployment.
 
 To start, clone the repo locally and make sure
-[Gro](https://github.com/feltcoop/gro) is installed globally.
+[Gro](https://github.com/feltcoop/gro) is installed globally:
 
 ```bash
 git clone https://github.com/feltcoop/felt-server
