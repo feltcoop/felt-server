@@ -129,7 +129,7 @@ export const createContextmenuStore = ({
 						.then(
 							(result) => {
 								if (promise !== item.promise) return;
-								if ('ok' in result) {
+								if (typeof result?.ok === 'boolean') {
 									if (result.ok) {
 										store.close();
 									} else {
