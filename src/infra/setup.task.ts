@@ -12,7 +12,7 @@ export const task: Task<SetupTaskArgs> = {
 	summary: 'setup a clean server to prepare for a felt-server deploy',
 	production: true,
 	args: SetupTaskArgsSchema,
-	run: async ({log, args: {dry}, invokeTask}) => {
+	run: async ({log, args: {dry}}) => {
 		// TODO env vars are currently messy with 3 strategies:
 		// 1 - calling `fromEnv('VAR')`
 		// 2 - defaults setup by `$lib/config.js`
