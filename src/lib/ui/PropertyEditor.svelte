@@ -82,7 +82,7 @@
 </script>
 
 <div class="field">{field}</div>
-<div class="preview markup panel-inset">
+<div class="preview markup padded-xl panel-inset">
 	<pre>{currentSerialized}</pre>
 </div>
 {#if editing}
@@ -107,7 +107,7 @@
 	{#if errorMessage}
 		<Message status="error">{errorMessage}</Message>
 	{:else if changed}
-		<div class="preview markup panel-outset">
+		<div class="preview markup padded-xl panel-outset">
 			<p>
 				{#if fieldValue}<pre>{serialized}</pre>{:else}<em>(empty)</em>{/if}
 			</p>

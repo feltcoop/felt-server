@@ -47,7 +47,7 @@
 	};
 </script>
 
-<div class="markup">
+<div class="markup padded-xl">
 	<h1>Delete Space?</h1>
 	<section class="row" style:font-size="var(--font_size_xl)">
 		<SpaceName {space} />

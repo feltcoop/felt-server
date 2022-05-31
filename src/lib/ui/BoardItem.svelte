@@ -28,7 +28,7 @@
 		[EntityContextmenu, {entity}],
 	]}
 >
-	<div class="markup formatted">
+	<div class="markup padded-md formatted">
 		<EntityContent {entity} />
 	</div>
 	<PersonaAvatar {persona} />

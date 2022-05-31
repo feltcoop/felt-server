@@ -85,7 +85,7 @@
 	};
 </script>
 
-<div class="markup">
+<div class="markup padded-xl">
 	<h1>Create a new Space</h1>
 	<section class="row">
 		<span class="spaced">in</span>

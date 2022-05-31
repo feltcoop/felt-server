@@ -10,7 +10,7 @@
 </script>
 
 <div class="community-editor column">
-	<div class="markup">
+	<div class="markup padded-xl">
 		<h1>Edit Community</h1>
 		<section class="row" style:font-size="var(--font_size_xl)">
 			<CommunityAvatar {community} />

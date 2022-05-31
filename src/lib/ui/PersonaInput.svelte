@@ -57,7 +57,7 @@
 	};
 </script>
 
-<div class="markup">
+<div class="markup padded-xl">
 	<h1>Create a Persona</h1>
 	<form>
 		<input

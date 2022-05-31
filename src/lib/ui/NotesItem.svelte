@@ -22,7 +22,7 @@
 		[EntityContextmenu, {entity}],
 	]}
 >
-	<div class="markup formatted">
+	<div class="markup padded-xl formatted">
 		<EntityContent {entity} />
 	</div>
 </li>

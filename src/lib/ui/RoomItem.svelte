@@ -34,7 +34,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	<div class="signature">
 		<PersonaAvatar {persona} showName={false} />
 	</div>
-	<div class="markup formatted">
+	<div class="markup padded-md formatted">
 		<div class="signature">
 			<PersonaAvatar {persona} showIcon={false} />
 			{format($entity.created, 'Pp')}

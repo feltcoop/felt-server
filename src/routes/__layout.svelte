@@ -139,7 +139,7 @@
 	{/if}
 	<main>
 		{#if guest}
-			<div class="account column markup">
+			<div class="account column markup padded-xl">
 				<AccountForm {guest} />
 			</div>
 		{:else if onboarding}

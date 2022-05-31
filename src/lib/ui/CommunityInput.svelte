@@ -73,7 +73,7 @@
 	};
 </script>
 
-<div class="markup">
+<div class="markup padded-xl">
 	<h1>Create a new Community</h1>
 	<section class="row">
 		<span class="spaced">as</span>

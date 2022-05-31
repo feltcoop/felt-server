@@ -16,13 +16,13 @@
 
 <div class="wrapper">
 	<div class="column">
-		<div class="markup">
+		<div class="markup padded-xl">
 			<h1 id="docs">docs</h1>
 		</div>
 		<!-- TODO extract an accessible menu component, see PRS
 		https://github.com/feltcoop/felt-server/pull/362
 		and https://github.com/feltcoop/felt/pull/197 -->
-		<div class="menu-wrapper markup column-sm">
+		<div class="menu-wrapper markup padded-xl column-sm">
 			<ul class="menu">
 				<li><h3><a href="#docs" class:selected={hash === 'docs'}>docs</a></h3></li>
 				<li><h4><a href="#vocab" class:selected={hash === 'vocab'}>vocab</a></h4></li>
@@ -45,7 +45,7 @@
 				</ul>
 			</ul>
 		</div>
-		<div class="markup">
+		<div class="markup padded-xl">
 			<h2 id="vocab">vocab</h2>
 		</div>
 		<ul>
@@ -55,7 +55,7 @@
 				</li>
 			{/each}
 		</ul>
-		<div class="markup">
+		<div class="markup padded-xl">
 			<h2 id="events">events</h2>
 		</div>
 		<ul>
@@ -86,7 +86,7 @@
 				</li>
 			{/each}
 		</ul>
-		<div class="markup">
+		<div class="markup padded-xl">
 			<ul>
 				<li><h3><a href="#docs" class:selected={hash === 'docs'}>docs</a></h3></li>
 				<ul>

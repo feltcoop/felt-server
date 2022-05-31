@@ -23,7 +23,7 @@
 		: [];
 </script>
 
-<div class="markup">
+<div class="markup padded-xl">
 	<h1>Invite Members</h1>
 	<section class="row">
 		<span class="spaced">to</span>

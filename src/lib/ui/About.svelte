@@ -2,7 +2,7 @@
 	import {VITE_GIT_HASH} from '$lib/config';
 </script>
 
-<div class="markup">
+<div class="markup padded-xl">
 	<h1>About this Instance</h1>
 	<p class="title">
 		💚

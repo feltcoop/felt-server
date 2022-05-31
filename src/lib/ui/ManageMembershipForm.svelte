@@ -11,7 +11,7 @@
 	$: communities = $communitiesBySessionPersona.get(persona)!;
 </script>
 
-<div class="markup">
+<div class="markup padded-xl">
 	<h1>Manage Memberships</h1>
 	<section class="row">
 		<!-- TODO likely make these a `select` or picker -->

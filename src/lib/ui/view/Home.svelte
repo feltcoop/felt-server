@@ -77,7 +77,7 @@
 </script>
 
 <div class="home">
-	<section class="markup">
+	<section class="markup padded-xl">
 		<p>
 			<strong>
 				Check out our community rules and norms!<br />
@@ -92,7 +92,7 @@
 		</p>
 	</section>
 	<section class="rules-and-norms">
-		<div class="rules markup panel-inset">
+		<div class="rules markup padded-xl panel-inset">
 			<div class="header">
 				<h4>rules</h4>
 				<button
@@ -107,7 +107,7 @@
 			</div>
 			{#if rules && $rules}<EntityContent entity={rules} />{:else}rules not found{/if}
 		</div>
-		<div class="norms markup panel-inset">
+		<div class="norms markup padded-xl panel-inset">
 			<div class="header">
 				<h4>norms</h4>
 				<button
