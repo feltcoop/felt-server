@@ -73,7 +73,7 @@ export interface Ui {
 	communitySelection: Readable<Readable<Community> | null>;
 	spaceIdSelectionByCommunityId: Mutable<Map<number, number | null>>;
 	spaceSelection: Readable<Readable<Space> | null>;
-	lastSeenByDirectoryId: Mutable<Map<number, Writable<string> | null>>;
+	lastSeenByDirectoryId: Mutable<Map<number, Writable<number> | null>>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
@@ -217,7 +217,7 @@ export const toUi = (
 				)) ||
 			null,
 	);
-	const lastSeenByDirectoryId = mutable<Map<number, Writable<string> | null>>(new Map());
+	const lastSeenByDirectoryId = mutable<Map<number, Writable<number> | null>>(new Map());
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const entityById: Map<number, Writable<Entity>> = new Map();
 	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
@@ -326,8 +326,9 @@ export const toUi = (
 						: $session.spaces.map(($space) => [
 								$space.directory_id,
 								writable(
-									(browser && localStorage.getItem(`${LAST_SEEN_KEY}${$space.directory_id}`)) ||
-										new Date().toString(),
+									(browser &&
+										Number(localStorage.getItem(`${LAST_SEEN_KEY}${$space.directory_id}`))) ||
+										new Date().getTime(),
 								),
 						  ]),
 				),

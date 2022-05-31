@@ -17,7 +17,7 @@ export const updateEntity = (
 		entityById.set(entity_id, (entity = writable($entity)));
 	}
 	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
-		dispatch.UpdateLastSeen({directory_id: $entity.entity_id});
+		dispatch.UpdateLastSeen({directory_id: $entity.entity_id, time: $entity.updated!.getTime()});
 	}
 	return entity;
 };

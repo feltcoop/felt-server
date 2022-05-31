@@ -13,7 +13,6 @@
 	$: directory = entityById.get($space.directory_id)!;
 	$: lastSeen = $lastSeenByDirectoryId.value.get($space.directory_id)!;
 	$: systemTime = $directory.updated ?? $directory.created;
-	//TODO replace string date w/ epoch ms
 	$: clientTime = new Date($lastSeen);
 	$: fresh = clientTime < systemTime;
 </script>

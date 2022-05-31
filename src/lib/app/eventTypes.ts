@@ -423,6 +423,7 @@ export interface ViewSpaceParams {
 
 export interface UpdateLastSeenParams {
 	directory_id: number;
+	time?: number;
 }
 
 export interface Dispatch {
