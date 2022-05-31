@@ -75,22 +75,16 @@ gro infra/serverDeploy
 # manually run `pm2 start npm -- run start --prefix ~/current_felt_server_deploy`
 ```
 
-TODO:
-
-- streamline the above
-
 > Deploy will execute a build on the local machine, package the output into a tar, and attempt to deploy it to a remote instance:
 
 ```bash
-# TODO maybe something like this:
+# TODO this currently doesn't work, but could probably be streamlined to:
 npm run deploy
 # or
 gro deploy
 ```
 
 ## redeploy
-
-TODO document this
 
 ```bash
 gro infra/restartProd

@@ -77,4 +77,5 @@ See [Gro's build docs](https://github.com/feltcoop/gro/blob/main/src/docs/build.
 
 ## Deploying
 
-Self-hosting instructions at [`src/infra/README.md`](/src/infra/README.md) 🌲🌳
+To deploy a self-hosted instance
+see the instructions at [`src/infra/README.md`](/src/infra/README.md).

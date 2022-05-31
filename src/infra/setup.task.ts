@@ -148,7 +148,7 @@ export const task: Task<SetupTaskArgs> = {
 			throw Error('Failed setup task');
 		}
 
-		// TODO BLOCK
+		// TODO streamline the deployment, also see `/src/infra/README.md` and the above DB setup TODO
 		// await invokeTask('infra/serverDeploy');
 	},
 };
