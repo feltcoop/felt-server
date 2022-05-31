@@ -40,15 +40,17 @@
 				</ContextmenuEntry>
 			{/if}
 		{/each}
-		<ContextmenuEntry
-			action={() =>
-				dispatch.OpenDialog({
-					Component: PersonaInput,
-					props: {done: () => dispatch.CloseDialog()},
-				})}
-		>
-			Create Persona
-		</ContextmenuEntry>
+		{#if !$session.guest}
+			<ContextmenuEntry
+				action={() =>
+					dispatch.OpenDialog({
+						Component: PersonaInput,
+						props: {done: () => dispatch.CloseDialog()},
+					})}
+			>
+				Create Persona
+			</ContextmenuEntry>
+		{/if}
 		<ContextmenuEntry action={() => dispatch.OpenDialog({Component: About})}>
 			About
 		</ContextmenuEntry>
