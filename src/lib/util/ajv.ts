@@ -14,7 +14,6 @@ export const ajv = (opts?: Options): Ajv => {
 	addFormats(ajvInstance);
 	const registered = new Set<string>();
 	for (const schema of schemas) {
-		//TODO BIG HACK HERE; should use references in anyOf, and then call `addSchema` with only `schema`
 		traverse(schema, (key, value, obj) => {
 			if (key === '$id' && !registered.has(value)) {
 				registered.add(value);
