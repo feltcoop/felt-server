@@ -95,6 +95,7 @@
 		<div class="rules markup padded-xl panel-inset">
 			<div class="header">
 				<h4>rules</h4>
+				<!--TODO how to trigger a directory freshen from result of this dialogue-->
 				<button
 					on:click={() =>
 						dispatch.OpenDialog({

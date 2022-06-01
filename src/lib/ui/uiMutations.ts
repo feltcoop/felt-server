@@ -84,17 +84,17 @@ export const ViewSpace: Mutations['ViewSpace'] = async ({
 };
 
 export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
-	params: {directory_id},
+	params: {directory_id, time},
 	ui: {lastSeenByDirectoryId},
 }) => {
-	const time = new Date().toString();
+	const timestamp = time ?? Date.now();
 
 	lastSeenByDirectoryId.mutate(($v) => {
-		$v.get(directory_id)?.set(time) || $v.set(directory_id, writable(time));
+		$v.get(directory_id)?.set(timestamp) || $v.set(directory_id, writable(timestamp));
 	});
 
 	if (browser) {
-		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, time);
+		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, `${timestamp}`);
 	}
 	//TODO maybe turn this into a service event & make a server call too?
 };

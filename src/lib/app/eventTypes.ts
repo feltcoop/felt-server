@@ -310,7 +310,7 @@ export type CreateEntityResponseResult = ApiResult<CreateEntityResponse>;
 
 export interface UpdateEntityParams {
 	entity_id: number;
-	data: EntityData;
+	data: EntityData | null;
 }
 export interface UpdateEntityResponse {
 	entity: Entity;
@@ -423,6 +423,7 @@ export interface ViewSpaceParams {
 
 export interface UpdateLastSeenParams {
 	directory_id: number;
+	time?: number;
 }
 
 export interface Dispatch {

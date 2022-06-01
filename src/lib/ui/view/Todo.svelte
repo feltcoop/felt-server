@@ -74,6 +74,10 @@
 			persona_id: $persona.persona_id,
 			source_id: selectedList.entity_id,
 		});
+		await dispatch.UpdateEntity({
+			data: null,
+			entity_id: $space.directory_id,
+		});
 		text = '';
 	};
 	const onKeydown = async (e: KeyboardEvent) => {
@@ -91,6 +95,10 @@
 			if (doneItems.length > 0) {
 				const entity_ids = doneItems.map((i) => i.get().entity_id);
 				await dispatch.DeleteEntities({entity_ids});
+				await dispatch.UpdateEntity({
+					data: null,
+					entity_id: $space.directory_id,
+				});
 			}
 		}
 	};
@@ -100,7 +108,15 @@
 	<div class="entities">
 		<!-- TODO handle failures here-->
 		{#if entities && ties && itemsByEntity && entityById}
-			<TodoItems {entities} {ties} {itemsByEntity} {entityById} {selectedList} {selectList} />
+			<TodoItems
+				{entities}
+				{space}
+				{ties}
+				{itemsByEntity}
+				{entityById}
+				{selectedList}
+				{selectList}
+			/>
 			<button
 				on:click={() =>
 					dispatch.OpenDialog({

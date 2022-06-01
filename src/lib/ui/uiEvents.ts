@@ -129,6 +129,7 @@ export const UpdateLastSeen: ClientEventInfo = {
 		type: 'object',
 		properties: {
 			directory_id: {type: 'number'},
+			time: {type: 'number'},
 		},
 		required: ['directory_id'],
 		additionalProperties: false,

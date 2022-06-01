@@ -43,7 +43,7 @@ export const UpdateEntity: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			entity_id: {type: 'number'},
-			data: {type: 'object', tsType: 'EntityData'},
+			data: {anyOf: [{type: 'object', tsType: 'EntityData'}, {type: 'null'}]},
 		},
 		required: ['entity_id', 'data'],
 		additionalProperties: false,
