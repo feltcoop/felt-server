@@ -16,15 +16,7 @@ npm i -g @feltcoop/gro
 ## initializing
 
 Before building & deploying, a fresh instance of Linux needs to be configured.
-We currently use Ubuntu 22.04 (LTS) x64
-
-Add or edit `.env.production` at the root of your felt-server repo
-(here's the [default example](src/infra/.env.production.default)),
-replace the placeholder values with yours, and then run:
-
-```bash
-gro infra/setup
-```
+We currently use Ubuntu 22.04 (LTS) x64.
 
 ## database
 
