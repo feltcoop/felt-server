@@ -22,6 +22,7 @@ import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
+import {loadFromStorage, setInStorage} from '$lib/util/storage';
 
 if (browser) initBrowser();
 
@@ -207,6 +208,8 @@ export const toUi = (
 				: null,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
+	// TODO BLOCK should the helper do the mutable/new Map? or maybe we construct a wrapped value that has serialize/deserialize etc?
+	// can we just wrap it with `persisted` or `storable` or `stored`?
 	const spaceIdSelectionByCommunityId = mutable<Map<number, number | null>>(new Map());
 	const spaceSelection = derived(
 		[communitySelection, spaceIdSelectionByCommunityId],
@@ -303,6 +306,7 @@ export const toUi = (
 					$session.guest ? null : $sessionPersonas.map(($p) => [$p.persona_id, $p.community_id]),
 				),
 			);
+			const loaded_spaceIdSelectionByCommunityId = loadSpaceIdSelectionByCommunityId();
 			spaceIdSelectionByCommunityId.swap(
 				//TODO lookup space by community_id+url (see this comment in multiple places)
 				new Map(
@@ -310,9 +314,14 @@ export const toUi = (
 						? null
 						: $session.communities.map(($community) => [
 								$community.community_id,
-								$session.spaces.find(
-									(s) => s.community_id === $community.community_id && isHomeSpace(s),
-								)!.space_id,
+								// TODO BLOCK hacky
+								loaded_spaceIdSelectionByCommunityId.reduce(
+									(space_id, v) => space_id || (v[0] === $community.community_id ? v[1] : null),
+									null as number | null,
+								) ||
+									$session.spaces.find(
+										(s) => s.community_id === $community.community_id && isHomeSpace(s),
+									)!.space_id,
 						  ]),
 				),
 			);
@@ -359,3 +368,12 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 // TODO try to improve this to 1) be generic, 2) not export, and 3) have no runtime representation
 type Typecheck<T extends Ui> = T;
 export type Typechecked = Typecheck<WritableUi>;
+
+// TODO refactor
+const spaceIdSelectionByCommunityId_KEY = 'spaceIdSelectionByCommunityId';
+const loadSpaceIdSelectionByCommunityId = (): Array<[number, number | null]> =>
+	browser ? loadFromStorage(spaceIdSelectionByCommunityId_KEY, []) : [];
+export const setSpaceIdSelectionByCommunityId = (value: Array<[number, number | null]>): void => {
+	if (!browser) return;
+	setInStorage(spaceIdSelectionByCommunityId_KEY, value);
+};
