@@ -22,6 +22,7 @@ import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
+import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 
 if (browser) initBrowser();
 
@@ -289,7 +290,8 @@ export const toUi = (
 			spaces.swap($spaces);
 
 			const $directoriesArray = $session.guest ? [] : $session.directories;
-			$directoriesArray.forEach((d) => entityById.set(d.entity_id, writable(d)));
+
+			$directoriesArray.forEach((d) => updateEntity(ui, d));
 
 			memberships.swap($session.guest ? [] : $session.memberships.map((s) => writable(s)));
 

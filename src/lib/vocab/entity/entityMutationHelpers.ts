@@ -2,13 +2,13 @@ import {writable, type Writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
-import type {Dispatch} from '$lib/app/eventTypes';
+import {getApp} from '$lib/ui/app';
 
 export const updateEntity = (
 	{entityById, spaceSelection}: WritableUi,
-	dispatch: Dispatch,
 	$entity: Entity,
 ): Writable<Entity> => {
+	const {dispatch} = getApp();
 	const {entity_id} = $entity;
 	let entity = entityById.get(entity_id);
 	if (entity) {
