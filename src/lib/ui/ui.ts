@@ -328,7 +328,7 @@ export const toUi = (
 								writable(
 									(browser &&
 										Number(localStorage.getItem(`${LAST_SEEN_KEY}${$space.directory_id}`))) ||
-										new Date().getTime(),
+										Date.now(),
 								),
 						  ]),
 				),
