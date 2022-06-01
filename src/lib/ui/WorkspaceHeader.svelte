@@ -53,12 +53,12 @@
 	}
 	.luggage-placeholder {
 		width: var(--luggage_size);
-		min-width: var(--luggage_size);
+		flex-shrink: 0;
 		height: var(--navbar_size);
 	}
 	.marquee-button-placeholder {
 		width: var(--navbar_size);
-		min-width: var(--navbar_size);
+		flex-shrink: 0;
 		height: var(--navbar_size);
 	}
 	.expanded-nav .luggage-placeholder,
