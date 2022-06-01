@@ -33,11 +33,16 @@ main {
 	margin-right: var(--spacing_lg);
 }
 
-/* TODO refactor or upstream -- `navbar_size` maybe should be `input_height` */
+/* TODO upstream these to Felt, consider other button variants too */
 .icon-button {
 	width: var(--icon_size);
 	height: var(--icon_size);
 	flex-shrink: 0;
+}
+.plain-button {
+	border: none;
+	box-shadow: none;
+	background: transparent;
 }
 
 .buttons {
@@ -110,11 +115,4 @@ maybe upstream to Felt? think about how to upstream without bloating bundles tha
 		https://caniuse.com/mdn-css_properties_white-space_break-spaces */
 	white-space: pre-wrap;
 	white-space: break-spaces;
-}
-
-/* TODO upstream to Felt? consider other button variants too */
-.plain-button {
-	border: none;
-	box-shadow: none;
-	background: transparent;
 }
