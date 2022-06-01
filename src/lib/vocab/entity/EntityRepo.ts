@@ -5,46 +5,20 @@ import {blue, gray} from 'kleur/colors';
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {EntityData} from '$lib/vocab/entity/entityData';
-import type {RowList} from 'postgres';
 import type {ErrorResponse} from '$lib/util/error';
 
 const log = new Logger(gray('[') + blue('EntityRepo') + gray(']'));
 
 export class EntityRepo extends PostgresRepo {
-	async create(
-		actor_id: number,
-		data: EntityData,
-		space_id?: number,
-	): Promise<Result<{value: Entity}>> {
-		log.trace('[create]', space_id, actor_id);
-		let entity: RowList<Entity[]>;
-		if (space_id) {
-			entity = await this.db.sql<Entity[]>`
-			INSERT INTO entities (actor_id, space_id, data) VALUES (
-				${actor_id},${space_id},${this.db.sql.json(data)}
+	async create(persona_id: number, data: EntityData): Promise<Result<{value: Entity}>> {
+		log.trace('[createEntity]', persona_id);
+		const entity = await this.db.sql<Entity[]>`
+			INSERT INTO entities (persona_id, data) VALUES (
+				${persona_id},${this.db.sql.json(data as any)}
 			) RETURNING *
 		`;
-		} else {
-			entity = await this.db.sql<Entity[]>`
-			INSERT INTO entities (actor_id, data) VALUES (
-				${actor_id},${this.db.sql.json(data)}
-			) RETURNING *
-		`;
-		}
 		// log.trace('create entity', data);
 		return {ok: true, value: entity[0]};
-	}
-
-	// TODO maybe `EntityQuery`?
-	async filterBySpace(space_id: number): Promise<Result<{value: Entity[]}>> {
-		log.trace('[filterBySpace]', space_id);
-		const entities = await this.db.sql<Entity[]>`
-			SELECT entity_id, data, actor_id, space_id, created, updated 
-			FROM entities WHERE space_id= ${space_id}
-			ORDER BY entity_id ASC
-		`;
-		log.trace('filterBySpace entity count:', entities.length);
-		return {ok: true, value: entities};
 	}
 
 	// TODO maybe `EntityQuery`?
@@ -52,7 +26,7 @@ export class EntityRepo extends PostgresRepo {
 		if (entityIds.length === 0) return {ok: true, value: []};
 		log.trace('[findBySet]', entityIds);
 		const entities = await this.db.sql<Entity[]>`
-			SELECT entity_id, data, actor_id, space_id, created, updated 
+			SELECT entity_id, data, persona_id, created, updated 
 			FROM entities WHERE entity_id IN ${this.db.sql(entityIds)}
 			ORDER BY entity_id DESC
 		`;
@@ -66,10 +40,15 @@ export class EntityRepo extends PostgresRepo {
 		return {ok: true, value: entities};
 	}
 
-	async updateEntityData(entity_id: number, data: EntityData): Promise<Result<{value: Entity}>> {
+	async updateEntityData(
+		entity_id: number,
+		data: EntityData | null,
+	): Promise<Result<{value: Entity}>> {
 		log.trace('[updateEntityData]', entity_id);
 		const _data = await this.db.sql<Entity[]>`
-			UPDATE entities SET data=${this.db.sql.json(data)}, updated=NOW()
+			UPDATE entities SET ${
+				data ? this.db.sql`data=${this.db.sql.json(data as any)},` : this.db.sql``
+			} updated=NOW()
 			WHERE entity_id= ${entity_id} AND data->>'type' != 'Tombstone'
 			RETURNING *
 		`;

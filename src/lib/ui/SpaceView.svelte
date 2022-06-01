@@ -9,6 +9,7 @@
 	import SvastText from '$lib/ui/SvastText.svelte';
 
 	const {
+		dispatch,
 		ui: {viewBySpace},
 	} = getApp();
 
@@ -16,8 +17,15 @@
 	export let community: Readable<Community>;
 	export let space: Readable<Space>;
 
+	$: directory_id = $space.directory_id;
+	$: dispatch.UpdateLastSeen({directory_id});
+	// const updateLastSeen = (directory_id: number) => {
+	// 	dispatch.UpdateLastSeen({directory_id});
+	// };
+
 	const viewContext = writable({persona, community, space});
 	setViewContext(viewContext);
+
 	let ready = false; // avoids a wasteful `viewContext` change on mount
 	$: if (ready) {
 		viewContext.set({persona, community, space});

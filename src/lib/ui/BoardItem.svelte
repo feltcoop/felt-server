@@ -15,9 +15,9 @@
 
 	export let entity: Readable<Entity>;
 
-	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
+	$: persona = personaById.get($entity.persona_id)!;
 
-	// TODO refactor to some client view-model for the actor
+	// TODO refactor to some client view-model for the persona
 	$: hue = randomHue($persona.name);
 </script>
 
@@ -28,7 +28,7 @@
 		[EntityContextmenu, {entity}],
 	]}
 >
-	<div class="markup formatted">
+	<div class="markup padded-md formatted">
 		<EntityContent {entity} />
 	</div>
 	<PersonaAvatar {persona} />

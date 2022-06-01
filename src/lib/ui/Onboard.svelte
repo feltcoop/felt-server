@@ -2,7 +2,7 @@
 	import PersonaInput from '$lib/ui/PersonaInput.svelte';
 </script>
 
-<div class="markup">
+<div class="markup padded-xl">
 	<div class="welcome">👋</div>
 	<PersonaInput />
 </div>

@@ -16,10 +16,20 @@ test__TieRepo('check tie queries', async ({db, random}) => {
 	//Gen space
 	//Gen dir entity -> thread entity -> post -> reply
 	const {persona, account, community, space} = await random.space();
-	const {entity: entityDir} = await random.entity(persona, account, community, space);
-	const {entity: entityThread} = await random.entity(persona, account, community, space);
-	const {entity: entityPost} = await random.entity(persona, account, community, space);
-	const {entity: entityReply} = await random.entity(persona, account, community, space);
+	const {entity: entityDir} = await random.entity(persona, account, community, space.directory_id);
+	const {entity: entityThread} = await random.entity(
+		persona,
+		account,
+		community,
+		space.directory_id,
+	);
+	const {entity: entityPost} = await random.entity(persona, account, community, space.directory_id);
+	const {entity: entityReply} = await random.entity(
+		persona,
+		account,
+		community,
+		space.directory_id,
+	);
 
 	const tie1 = unwrap(
 		await db.repos.tie.create(entityDir.entity_id, entityThread.entity_id, 'HasThread'),
@@ -32,15 +42,11 @@ test__TieRepo('check tie queries', async ({db, random}) => {
 	const tie3 = unwrap(
 		await db.repos.tie.create(entityPost.entity_id, entityReply.entity_id, 'HasReply'),
 	);
+	const query1 = unwrap(await db.repos.tie.filterBySourceId(entityDir.entity_id));
+	assert.equal(query1.length, 3);
 
-	const query1 = unwrap(await db.repos.tie.filterBySpace(space.space_id));
-	assert.equal(query1.length, 7);
-	assert.ok(query1.find((t) => isDeepStrictEqual(t, tie1)));
-	assert.ok(query1.find((t) => isDeepStrictEqual(t, tie2)));
-	assert.ok(query1.find((t) => isDeepStrictEqual(t, tie3)));
-
-	const query2 = unwrap(await db.repos.tie.filterBySourceId(entityDir.entity_id));
-	assert.equal(query2.length, 3);
+	const query2 = unwrap(await db.repos.tie.filterBySourceId(space.directory_id));
+	assert.equal(query2.length, 7);
 	assert.ok(query2.find((t) => isDeepStrictEqual(t, tie1)));
 	assert.ok(query2.find((t) => isDeepStrictEqual(t, tie2)));
 	assert.ok(query2.find((t) => isDeepStrictEqual(t, tie3)));

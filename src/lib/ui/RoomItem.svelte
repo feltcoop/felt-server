@@ -16,9 +16,9 @@
 
 	export let entity: Readable<Entity>;
 
-	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
+	$: persona = personaById.get($entity.persona_id)!;
 
-	// TODO refactor to some client view-model for the actor
+	// TODO refactor to some client view-model for the persona
 	$: hue = randomHue($persona.name);
 </script>
 
@@ -34,7 +34,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	<div class="signature">
 		<PersonaAvatar {persona} showName={false} />
 	</div>
-	<div class="markup formatted">
+	<div class="markup padded-md formatted">
 		<div class="signature">
 			<PersonaAvatar {persona} showIcon={false} />
 			{format($entity.created, 'Pp')}

@@ -131,6 +131,7 @@ export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddl
 			};
 			const serializedBroadcastMessage = JSON.stringify(broadcastMessage);
 
+			// TODO scope to community and/or account
 			for (const client of server.websocketServer.wss.clients) {
 				if (client !== socket) {
 					client.send(serializedBroadcastMessage);

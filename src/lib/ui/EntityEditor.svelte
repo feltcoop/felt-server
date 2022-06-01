@@ -20,7 +20,7 @@
 		ui: {personaById},
 	} = getApp();
 
-	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
+	$: persona = personaById.get($entity.persona_id)!;
 
 	const updateEntityDataProperty = async (updated: any, field: string) =>
 		dispatch.UpdateEntity({
@@ -45,7 +45,7 @@
 </script>
 
 <div class="entity-editor column">
-	<div class="markup">
+	<div class="markup padded-xl">
 		<h1>Edit Entity</h1>
 		<section class="row">
 			<span class="spaced">created by</span>

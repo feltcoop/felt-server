@@ -4,6 +4,7 @@ node_modules
 /build
 
 /.gro
+/worktree
 /dist
 felt_server*.tar
 *.pem

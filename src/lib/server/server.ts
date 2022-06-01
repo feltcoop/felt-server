@@ -3,7 +3,7 @@ import type {Server as HttpServer} from 'http';
 import type {Server as HttpsServer} from 'https';
 import {createServer as create_http_server} from 'http';
 import {createServer as create_https_server} from 'https';
-import fs from 'fs'; // eslint-disable-line @typescript-eslint/no-restricted-imports
+import fs from 'fs';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import {ApiServer} from '$lib/server/ApiServer.js';

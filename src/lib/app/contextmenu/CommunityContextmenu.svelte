@@ -19,9 +19,10 @@
 </script>
 
 <ContextmenuSubmenu>
-	<svelte:fragment slot="entry">
-		<CommunityAvatar {community} />
+	<svelte:fragment slot="icon">
+		<CommunityAvatar {community} showName={false} />
 	</svelte:fragment>
+	<CommunityAvatar {community} showIcon={false} />
 	<svelte:fragment slot="menu">
 		<ContextmenuEntry
 			action={() =>
@@ -30,7 +31,7 @@
 					props: {community},
 				})}
 		>
-			<span class="title"> Edit Community </span>
+			Edit Community
 		</ContextmenuEntry>
 		<ContextmenuEntry
 			action={() =>
@@ -39,7 +40,7 @@
 					props: {persona, community, done: () => dispatch.CloseDialog()},
 				})}
 		>
-			<span class="title">Create Space</span>
+			Create Space
 		</ContextmenuEntry>
 		{#if $community.type !== 'personal'}
 			<ContextmenuEntry
@@ -49,7 +50,7 @@
 						props: {community},
 					})}
 			>
-				<span class="title">Invite Members</span>
+				Invite Members
 			</ContextmenuEntry>
 			<ContextmenuEntry
 				action={() =>
@@ -58,7 +59,7 @@
 						props: {persona, community, done: () => dispatch.CloseDialog()},
 					})}
 			>
-				<span class="title">Delete Community</span>
+				Delete Community
 			</ContextmenuEntry>
 		{/if}
 	</svelte:fragment>

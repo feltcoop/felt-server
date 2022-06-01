@@ -44,7 +44,7 @@
 	};
 </script>
 
-<div class="markup">
+<div class="markup padded-xl">
 	<h1>Delete Community?</h1>
 	<section class="row">
 		<CommunityAvatar {community} />

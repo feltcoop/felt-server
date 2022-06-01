@@ -9,14 +9,12 @@ export const CreateEntity: ServiceEventInfo = {
 		$id: '/schemas/CreateEntityParams.json',
 		type: 'object',
 		properties: {
-			actor_id: {type: 'number'},
-			//TODO remove
-			space_id: {type: 'number'},
+			persona_id: {type: 'number'},
 			data: {type: 'object', tsType: 'EntityData'},
 			source_id: {type: 'number'},
-			type: {type: 'string'},
+			type: {type: 'string'}, //defaults to 'HasItem'
 		},
-		required: ['actor_id', 'space_id', 'data', 'source_id'],
+		required: ['persona_id', 'data', 'source_id'],
 		additionalProperties: false,
 	},
 	response: {
@@ -24,13 +22,14 @@ export const CreateEntity: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			entity: {$ref: '/schemas/Entity.json', tsType: 'Entity'},
+			tie: {$ref: '/schemas/Tie.json', tsType: 'Tie'},
 		},
-		required: ['entity'],
+		required: ['entity', 'tie'],
 		additionalProperties: false,
 	},
 	returns: 'Promise<CreateEntityResponseResult>',
 	route: {
-		path: '/api/v1/spaces/:space_id/entities',
+		path: '/api/v1/entities',
 		method: 'POST',
 	},
 };
@@ -44,7 +43,7 @@ export const UpdateEntity: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			entity_id: {type: 'number'},
-			data: {type: 'object', tsType: 'EntityData'},
+			data: {anyOf: [{type: 'object', tsType: 'EntityData'}, {type: 'null'}]},
 		},
 		required: ['entity_id', 'data'],
 		additionalProperties: false,

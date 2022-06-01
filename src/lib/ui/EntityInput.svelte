@@ -14,9 +14,8 @@
 	export let done: (() => void) | undefined = undefined;
 
 	$: selectedPersona = $personaSelection;
-	$: actor_id = $selectedPersona!.persona_id;
+	$: persona_id = $selectedPersona!.persona_id;
 	$: selectedSpace = $spaceSelection;
-	$: space_id = $selectedSpace!.space_id;
 	$: source_id = $selectedSpace!.directory_id;
 
 	let name = '';
@@ -36,8 +35,7 @@
 		}
 		status = 'pending';
 		const result = await dispatch.CreateEntity({
-			actor_id,
-			space_id,
+			persona_id,
 			data: {type: 'Collection', name},
 			source_id,
 		});
@@ -59,7 +57,7 @@
 	};
 </script>
 
-<div class="markup">
+<div class="markup padded-xl">
 	<h1>New list</h1>
 	<form>
 		<input

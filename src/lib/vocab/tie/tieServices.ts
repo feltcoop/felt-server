@@ -24,13 +24,14 @@ export const CreateTieService: ServiceByName['CreateTie'] = {
 	},
 };
 
+//TODO may want to remove this & collapse behavior into ReadEntities(Paginated)
 export const ReadTiesService: ServiceByName['ReadTies'] = {
 	event: ReadTies,
 	perform: async ({repos, params}) => {
-		const findTiesResult = await repos.tie.filterBySpace(params.space_id);
+		const findTiesResult = await repos.tie.filterBySourceId(params.source_id);
 		if (!findTiesResult.ok) {
-			log.trace('[ReadEntities] error searching for entities');
-			return {ok: false, status: 500, message: 'error searching for entities'};
+			log.trace('[ReadTies] error searching for ties');
+			return {ok: false, status: 500, message: 'error searching for ties'};
 		}
 		return {ok: true, status: 200, value: {ties: findTiesResult.value}};
 	},

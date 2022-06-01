@@ -75,6 +75,9 @@ export const task: Task<SetupTaskArgs> = {
 				`apt install -y unzip;
 				curl -fsSL https://fnm.vercel.app/install | bash;
 				export PATH=/root/.fnm:$PATH;
+				echo 'export PATH='$PATH'
+				  eval "\`fnm env\`"
+				  '$(cat ~/.bashrc) > ~/.bashrc;
 				eval "\`fnm env\`";`,
 			//
 			//
@@ -90,7 +93,8 @@ export const task: Task<SetupTaskArgs> = {
 			logSequence('Installing pm2 and gro...') +
 				`export NODE_ENV=production;
 				echo "export NODE_ENV=production" >> ~/.profile;
-				echo "export NODE_ENV=production" >> ~/.bashrc;
+				echo "export NODE_ENV=production
+				  $(cat ~/.bashrc)" > ~/.bashrc;
 				npm i -g pm2 @feltcoop/gro;`,
 			//
 			//
@@ -131,19 +135,20 @@ export const task: Task<SetupTaskArgs> = {
 				//
 				// All done!
 				logSequence(`Success! Server is now setup for deployment.`),
-		].map((s) => s + '\n\n');
+		];
+		const script = steps.map((s) => s + '\n\n').join('');
 		if (dry) {
-			log.info(
-				green(`\n\ndry run! here's the script ↓\n\n`),
-				`ssh ${deployLogin} ${steps.join('')}`,
-			);
+			log.info(green(`\n\ndry run! here's the script ↓\n\n`), `ssh ${deployLogin} ${script}`);
 			log.info(green('\n\ndry run done ↑\n\n'));
 			return;
 		}
-		const result = await spawn('ssh', [deployLogin, steps.join('')]);
+		const result = await spawn('ssh', [deployLogin, script]);
 		if (!result.ok) {
 			if (result.signal) log.error('spawn failed with signal', result.signal);
 			throw Error('Failed setup task');
 		}
+
+		// TODO streamline the deployment, also see `/src/infra/README.md` and the above DB setup TODO
+		// await invokeTask('infra/serverDeploy');
 	},
 };

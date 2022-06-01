@@ -21,6 +21,8 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
+import {LAST_SEEN_KEY} from '$lib/ui/app';
+import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 
 if (browser) initBrowser();
 
@@ -72,6 +74,7 @@ export interface Ui {
 	communitySelection: Readable<Readable<Community> | null>;
 	spaceIdSelectionByCommunityId: Mutable<Map<number, number | null>>;
 	spaceSelection: Readable<Readable<Space> | null>;
+	lastSeenByDirectoryId: Mutable<Map<number, Writable<number> | null>>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
@@ -86,6 +89,7 @@ export const toUi = (
 	session: SvelteWritable<ClientSession>,
 	initialMobile: boolean,
 	components: {[key: string]: typeof SvelteComponent},
+	onError: (message: string | undefined) => void,
 ) => {
 	const account = writable<AccountModel | null>(null);
 	// Importantly, these collections only change when items are added or removed,
@@ -145,7 +149,7 @@ export const toUi = (
 
 	const mobile = writable(initialMobile);
 	const layout = writable({width: 0, height: 0});
-	const contextmenu = createContextmenuStore(layout);
+	const contextmenu = createContextmenuStore({layout, onError});
 	const dialogs = writable<DialogData[]>([]);
 	const viewBySpace = mutable(new WeakMap());
 
@@ -214,6 +218,7 @@ export const toUi = (
 				)) ||
 			null,
 	);
+	const lastSeenByDirectoryId = mutable<Map<number, Writable<number> | null>>(new Map());
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const entityById: Map<number, Writable<Entity>> = new Map();
 	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
@@ -254,6 +259,7 @@ export const toUi = (
 		communitySelection,
 		spaceIdSelectionByCommunityId,
 		spaceSelection,
+		lastSeenByDirectoryId,
 		destroy: () => {
 			unsubscribeSession();
 		},
@@ -283,6 +289,10 @@ export const toUi = (
 			$spaces.forEach((s, i) => spaceById.set($spaceArray[i].space_id, s));
 			spaces.swap($spaces);
 
+			const $directoriesArray = $session.guest ? [] : $session.directories;
+
+			$directoriesArray.forEach((d) => updateEntity(ui, d));
+
 			memberships.swap($session.guest ? [] : $session.memberships.map((s) => writable(s)));
 
 			// TODO fix this and the 2 below to use the URL to initialize the correct persona+community+space
@@ -308,6 +318,20 @@ export const toUi = (
 								$session.spaces.find(
 									(s) => s.community_id === $community.community_id && isHomeSpace(s),
 								)!.space_id,
+						  ]),
+				),
+			);
+			lastSeenByDirectoryId.swap(
+				new Map(
+					$session.guest
+						? null
+						: $session.spaces.map(($space) => [
+								$space.directory_id,
+								writable(
+									(browser &&
+										Number(localStorage.getItem(`${LAST_SEEN_KEY}${$space.directory_id}`))) ||
+										Date.now(),
+								),
 						  ]),
 				),
 			);

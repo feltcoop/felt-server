@@ -9,6 +9,7 @@
 	import PersonaContextmenu from '$lib/app/contextmenu/PersonaContextmenu.svelte';
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
 	import EntityContent from '$lib/ui/EntityContent.svelte';
+	import type {Space} from '$lib/vocab/space/space';
 
 	const {
 		ui: {contextmenu, personaById},
@@ -16,6 +17,7 @@
 	} = getApp();
 
 	export let entity: Readable<Entity>;
+	export let space: Readable<Space>;
 	export let ties: Tie[];
 	export let itemsByEntity: Map<Readable<Entity>, Array<Readable<Entity>>>;
 	export let entityById: Map<number, Readable<Entity>>;
@@ -29,9 +31,9 @@
 
 	$: ({checked} = $entity.data);
 
-	$: persona = personaById.get($entity.actor_id)!; // TODO should this be `Actor` and `actor`?
+	$: persona = personaById.get($entity.persona_id)!;
 
-	// TODO refactor to some client view-model for the actor
+	// TODO refactor to some client view-model for the persona
 	$: hue = randomHue($persona.name);
 
 	$: checked !== undefined && updateEntity(checked);
@@ -45,6 +47,10 @@
 		await dispatch.UpdateEntity({
 			entity_id: $entity.entity_id,
 			data: {...$entity.data, checked},
+		});
+		await dispatch.UpdateEntity({
+			data: null,
+			entity_id: $space.directory_id,
 		});
 		pending = false;
 	};

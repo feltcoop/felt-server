@@ -51,5 +51,17 @@ test_communityServices('disallow duplicate community names', async ({db, random}
 	);
 });
 
+test_communityServices('disallow reserved community names', async ({db, random}) => {
+	const {persona, account} = await random.persona();
+	const serviceRequest = toServiceRequest(account.account_id, db);
+
+	const params = randomCommunityParams(persona.persona_id);
+	params.name = 'docs';
+	assert.is(
+		unwrapError(await CreateCommunityService.perform({params, ...serviceRequest})).status,
+		409,
+	);
+});
+
 test_communityServices.run();
 /* test_communityServices */

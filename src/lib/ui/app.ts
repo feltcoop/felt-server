@@ -14,6 +14,8 @@ export interface AppStores {
 	devmode: SvelteWritable<boolean>;
 }
 
+export const LAST_SEEN_KEY = 'lastseen:';
+
 const KEY = Symbol();
 
 export const getApp = (): AppStores => getContext(KEY);

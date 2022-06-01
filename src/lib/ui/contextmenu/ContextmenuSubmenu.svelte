@@ -18,7 +18,7 @@
 		// fires immediately when the contextmenu appears,
 		// and then the newly mounted selected entry immediately receives a click event.
 		// The timeout ensures the click event is not passed through.
-		setTimeout(() => contextmenu.selectItem(submenu));
+		setTimeout(() => contextmenu.select(submenu));
 	};
 
 	$: ({layout} = contextmenu);
@@ -70,7 +70,10 @@
 		on:mousemove={onMousemove}
 		aria-expanded={selected}
 	>
-		<slot name="entry" />
+		<div class="content">
+			<div class="icon"><slot name="icon" /></div>
+			<div class="title"><slot /></div>
+		</div>
 		<div class="chevron" />
 	</div>
 	{#if selected}

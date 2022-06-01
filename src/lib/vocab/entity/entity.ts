@@ -4,8 +4,7 @@ import type {EntityData} from '$lib/vocab/entity/entityData';
 
 export interface Entity {
 	entity_id: number;
-	actor_id: number;
-	space_id: number;
+	persona_id: number;
 	data: EntityData;
 	created: Date;
 	updated: Date | null;
