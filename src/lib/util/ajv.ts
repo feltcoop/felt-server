@@ -13,14 +13,12 @@ export const ajv = (opts?: Options): Ajv => {
 	ajvInstance.addKeyword('tsType').addKeyword('tsImport');
 	addFormats(ajvInstance);
 	const registered = new Set<string>();
-	for (const schema of schemas) {
-		traverse(schema, (key, value, obj) => {
-			if (key === '$id' && !registered.has(value)) {
-				registered.add(value);
-				ajvInstance!.addSchema(obj);
-			}
-		});
-	}
+	traverse(schemas, (key, value, obj) => {
+		if (key === '$id' && !registered.has(value)) {
+			registered.add(value);
+			ajvInstance!.addSchema(obj);
+		}
+	});
 	return ajvInstance;
 };
 
