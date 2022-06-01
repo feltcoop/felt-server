@@ -8,7 +8,7 @@ export const updateEntity = (
 	{entityById, spaceSelection}: WritableUi,
 	$entity: Entity,
 ): Writable<Entity> => {
-	// const {dispatch} = getApp();
+	const {dispatch} = getApp();
 	const {entity_id} = $entity;
 	let entity = entityById.get(entity_id);
 	if (entity) {
@@ -16,7 +16,7 @@ export const updateEntity = (
 	} else {
 		entityById.set(entity_id, (entity = writable($entity)));
 	}
-	if (false && spaceSelection.get()?.get().directory_id === $entity.entity_id) {
+	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
 		dispatch.UpdateLastSeen({directory_id: $entity.entity_id, time: $entity.updated!.getTime()});
 	}
 	return entity;
