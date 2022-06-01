@@ -4,6 +4,7 @@ import type {RandomVocab, RandomVocabContext} from '$lib/util/randomVocab';
 import type {
 	LoginAccountParams,
 	LogoutAccountParams,
+	SetSessionParams,
 	CreateCommunityParams,
 	ReadCommunityParams,
 	ReadCommunitiesParams,
@@ -50,6 +51,7 @@ export interface RandomEventParams {
 		random: RandomVocabContext,
 		randomVocab?: RandomVocab,
 	) => Promise<LogoutAccountParams>;
+	SetSession: (random: RandomVocabContext, randomVocab?: RandomVocab) => Promise<SetSessionParams>;
 	CreateCommunity: (
 		random: RandomVocabContext,
 		randomVocab?: RandomVocab,

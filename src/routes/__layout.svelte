@@ -55,7 +55,7 @@
 			() => dispatch.Ping(),
 		),
 	);
-	const ui = toUi(session, initialMobileValue, components, (errorMessage) => {
+	const ui = toUi(initialMobileValue, components, (errorMessage) => {
 		dispatch.OpenDialog({Component: ErrorMessage, props: {text: errorMessage}});
 	});
 	setUi(ui);
@@ -90,6 +90,7 @@
 		log.trace('app', app);
 	}
 	$: browser && log.trace('$session', $session);
+	$: dispatch.SetSession({session: $session});
 
 	const {mobile, layout, contextmenu, dialogs, account, sessionPersonas, personaSelection} = ui;
 

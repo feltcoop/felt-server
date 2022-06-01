@@ -45,6 +45,7 @@ export type ServiceEventName =
 	| 'Ping';
 
 export type ClientEventName =
+	| 'SetSession'
 	| 'QueryEntities'
 	| 'ToggleMainNav'
 	| 'ToggleSecondaryNav'
@@ -60,6 +61,7 @@ export type ClientEventName =
 export interface EventParamsByName {
 	LoginAccount: LoginAccountParams;
 	LogoutAccount: LogoutAccountParams;
+	SetSession: SetSessionParams;
 	CreateCommunity: CreateCommunityParams;
 	ReadCommunity: ReadCommunityParams;
 	ReadCommunities: ReadCommunitiesParams;
@@ -169,6 +171,10 @@ export type LoginAccountResponseResult = ApiResult<LoginAccountResponse>;
 export type LogoutAccountParams = null;
 export type LogoutAccountResponse = null;
 export type LogoutAccountResponseResult = ApiResult<LogoutAccountResponse>;
+
+export interface SetSessionParams {
+	[k: string]: unknown;
+}
 
 export interface CreateCommunityParams {
 	name: string;
@@ -428,6 +434,7 @@ export interface UpdateLastSeenParams {
 export interface Dispatch {
 	LoginAccount: (params: LoginAccountParams) => Promise<LoginAccountResponseResult>;
 	LogoutAccount: () => Promise<LogoutAccountResponseResult>;
+	SetSession: (params: SetSessionParams) => void;
 	CreateCommunity: (params: CreateCommunityParams) => Promise<CreateCommunityResponseResult>;
 	ReadCommunity: (params: ReadCommunityParams) => Promise<ReadCommunityResponseResult>;
 	ReadCommunities: (params: ReadCommunitiesParams) => Promise<ReadCommunitiesResponseResult>;
@@ -478,6 +485,7 @@ export interface Mutations {
 	LogoutAccount: (
 		ctx: DispatchContext<LogoutAccountParams, LogoutAccountResponseResult>,
 	) => Promise<LogoutAccountResponseResult>;
+	SetSession: (ctx: DispatchContext<SetSessionParams, void>) => void;
 	CreateCommunity: (
 		ctx: DispatchContext<CreateCommunityParams, CreateCommunityResponseResult>,
 	) => Promise<CreateCommunityResponseResult>;

@@ -6,11 +6,9 @@ import {
 	mutable,
 	type Mutable,
 } from '@feltcoop/svelte-gettable-stores';
-import type {Readable as SvelteReadable, Writable as SvelteWritable} from 'svelte/store';
 import {setContext, getContext, type SvelteComponent} from 'svelte';
 import type {DialogData} from '@feltcoop/felt/ui/dialog/dialog.js';
 import {browser} from '$app/env';
-import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {Community} from '$lib/vocab/community/community';
 import type {Space} from '$lib/vocab/space/space';
@@ -21,11 +19,8 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
-import {LAST_SEEN_KEY} from '$lib/ui/app';
 
 if (browser) initBrowser();
-
-const log = new Logger('[ui]');
 
 const KEY = Symbol();
 
@@ -37,10 +32,6 @@ export const setUi = (store: Ui): Ui => {
 };
 
 export interface Ui {
-	session: SvelteReadable<ClientSession>;
-	setSession: ($session: ClientSession) => void;
-	destroy: () => void;
-
 	// TODO instead of eagerly loading these components,
 	// this should be an interface to lazy-load UI components
 	components: {[key: string]: typeof SvelteComponent};
@@ -85,7 +76,6 @@ export type WritableUi = ReturnType<typeof toUi>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const toUi = (
-	session: SvelteWritable<ClientSession>,
 	initialMobile: boolean,
 	components: {[key: string]: typeof SvelteComponent},
 	onError: (message: string | undefined) => void,
@@ -259,99 +249,10 @@ export const toUi = (
 		spaceIdSelectionByCommunityId,
 		spaceSelection,
 		lastSeenByDirectoryId,
-		destroy: () => {
-			unsubscribeSession();
-		},
-		session,
-		setSession: ($session: ClientSession) => {
-			if (browser) log.trace('[setSession]', $session);
-			account.set($session.guest ? null : $session.account);
-
-			const $personaArray = $session.guest ? [] : toInitialPersonas($session);
-			const $personas = $personaArray.map((p) => writable(p));
-			personaById.clear();
-			$personas.forEach((p, i) => personaById.set($personaArray[i].persona_id, p));
-			personas.swap($personas);
-
-			const $sessionPersonas = $session.guest ? [] : $session.sessionPersonas;
-			sessionPersonas.set($sessionPersonas.map((p) => personaById.get(p.persona_id)!));
-
-			const $communityArray = $session.guest ? [] : $session.communities;
-			const $communities = $communityArray.map((p) => writable(p));
-			communityById.clear();
-			$communities.forEach((c, i) => communityById.set($communityArray[i].community_id, c));
-			communities.swap($communities);
-
-			const $spaceArray = $session.guest ? [] : $session.spaces;
-			const $spaces = $spaceArray.map((s) => writable(s));
-			spaceById.clear();
-			$spaces.forEach((s, i) => spaceById.set($spaceArray[i].space_id, s));
-			spaces.swap($spaces);
-
-			memberships.swap($session.guest ? [] : $session.memberships.map((s) => writable(s)));
-
-			// TODO fix this and the 2 below to use the URL to initialize the correct persona+community+space
-			const $firstSessionPersona = $session.guest ? null : $sessionPersonas[0];
-			personaIdSelection.set($firstSessionPersona?.persona_id ?? null);
-
-			// TODO these two selections are hacky because using the derived stores
-			// was causing various confusing issues, so they find stuff directly on the session objects
-			// instead of using derived stores like `sessionPersonas` and `spacesByCommunityId`.
-			communityIdSelectionByPersonaId.swap(
-				// TODO first try to load this from localStorage
-				new Map(
-					$session.guest ? null : $sessionPersonas.map(($p) => [$p.persona_id, $p.community_id]),
-				),
-			);
-			spaceIdSelectionByCommunityId.swap(
-				//TODO lookup space by community_id+url (see this comment in multiple places)
-				new Map(
-					$session.guest
-						? null
-						: $session.communities.map(($community) => [
-								$community.community_id,
-								$session.spaces.find(
-									(s) => s.community_id === $community.community_id && isHomeSpace(s),
-								)!.space_id,
-						  ]),
-				),
-			);
-			lastSeenByDirectoryId.swap(
-				new Map(
-					$session.guest
-						? null
-						: $session.spaces.map(($space) => [
-								$space.directory_id,
-								writable(
-									(browser && localStorage.getItem(`${LAST_SEEN_KEY}${$space.directory_id}`)) ||
-										new Date().toString(),
-								),
-						  ]),
-				),
-			);
-		},
 	} as const;
-
-	const unsubscribeSession = session.subscribe(($session) => {
-		ui.setSession($session);
-	});
 
 	return ui;
 };
-
-// TODO this is a hack until we figure out how to handle "session personas" differently from the rest --
-// the issue is that the "session personas" have their `community_ids` populated,
-// so as a hack we prefer that instance in the global,
-// but these probably need to be split into two separate collections --
-// notice that comparison checks between the two types of personas will not be able to use store reference equality
-const toInitialPersonas = (session: ClientSession): Persona[] =>
-	session.guest
-		? []
-		: session.sessionPersonas.concat(
-				session.personas.filter(
-					(p1) => !session.sessionPersonas.find((p2) => p2.persona_id === p1.persona_id),
-				),
-		  );
 
 // This ensures that the inferred `WritableUi` is assignable to `Ui`.
 // The latter type is used in components and it exposes its data as `Readable` stores,
