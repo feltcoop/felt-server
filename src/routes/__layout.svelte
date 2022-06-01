@@ -4,7 +4,6 @@
 	import {setDevmode} from '@feltcoop/felt/ui/devmode.js';
 	import DevmodeControls from '@feltcoop/felt/ui/DevmodeControls.svelte';
 	import FeltWindowHost from '@feltcoop/felt/ui/FeltWindowHost.svelte';
-	import {onMount} from 'svelte';
 	import {session, page} from '$app/stores';
 	import {browser} from '$app/env';
 	import Dialogs from '@feltcoop/felt/ui/dialog/Dialogs.svelte';
@@ -97,24 +96,6 @@
 	$: selectedPersona = $personaSelection; // must be after `updateStateFromPageParams`
 
 	$: syncUiToUrl(ui, dispatch, $page.params, $page.url);
-
-	let mounted = false;
-
-	onMount(() => {
-		mounted = true;
-		return () => {
-			socket.disconnect();
-		};
-	});
-
-	// Keep the socket connected when logged in, and disconnect when logged out.
-	$: if (mounted) {
-		if (guest) {
-			socket.disconnect();
-		} else {
-			socket.connect(WEBSOCKET_URL);
-		}
-	}
 
 	let clientWidth: number;
 	let clientHeight: number;
