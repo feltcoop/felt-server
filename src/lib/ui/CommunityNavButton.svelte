@@ -60,7 +60,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: var(--icon_size_md);
+		height: var(--luggage_size);
 		width: 100%;
 		--icon_size: var(--icon_size_sm);
 	}

@@ -11,7 +11,7 @@
 </script>
 
 <button
-	class="icon-button"
+	class="plain-button icon-button"
 	class:expanded={$expandMarquee}
 	style="transform: translate3d({right}px, 0, 0)"
 	aria-label="toggle marquee"

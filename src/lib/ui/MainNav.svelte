@@ -101,7 +101,7 @@
 	}
 	.luggage-placeholder {
 		width: var(--luggage_size);
-		height: var(--luggage_size);
+		height: var(--navbar_size);
 		flex-shrink: 0;
 	}
 	.explorer {

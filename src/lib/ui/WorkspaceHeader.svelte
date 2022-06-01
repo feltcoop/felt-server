@@ -49,12 +49,17 @@
 		display: flex;
 		align-items: center;
 		padding-left: var(--spacing_xs);
+		overflow: hidden;
 	}
-	.luggage-placeholder,
-	.marquee-button-placeholder {
+	.luggage-placeholder {
 		width: var(--luggage_size);
 		min-width: var(--luggage_size);
-		height: var(--luggage_size);
+		height: var(--navbar_size);
+	}
+	.marquee-button-placeholder {
+		width: var(--navbar_size);
+		min-width: var(--navbar_size);
+		height: var(--navbar_size);
 	}
 	.expanded-nav .luggage-placeholder,
 	.expanded-marquee .marquee-button-placeholder {

@@ -111,3 +111,10 @@ maybe upstream to Felt? think about how to upstream without bloating bundles tha
 	white-space: pre-wrap;
 	white-space: break-spaces;
 }
+
+/* TODO upstream to Felt? consider other button variants too */
+.plain-button {
+	border: none;
+	box-shadow: none;
+	background: transparent;
+}
