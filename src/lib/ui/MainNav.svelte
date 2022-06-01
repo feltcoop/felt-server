@@ -5,18 +5,10 @@
 	import {getApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import {toName} from '$lib/vocab/entity/entityHelpers';
-	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
 	const {
 		dispatch,
-		ui: {
-			expandMainNav,
-			contextmenu,
-			spaceSelection,
-			personaSelection,
-			communitySelection,
-			spacesByCommunityId,
-		},
+		ui: {expandMainNav, spaceSelection, personaSelection, communitySelection, spacesByCommunityId},
 	} = getApp();
 
 	$: selectedPersona = $personaSelection!;
@@ -38,9 +30,9 @@
 	<div class="main-nav">
 		<div class="header">
 			<div class="luggage-placeholder" />
-			<button class="explorer-button" on:click={(e) => onContextmenu(e, contextmenu)}>
-				<PersonaAvatar persona={selectedPersona} contextmenuAction={null} />
-			</button>
+			<div class="explorer-button">
+				<PersonaAvatar persona={selectedPersona} />
+			</div>
 		</div>
 		<div class="explorer">
 			<CommunityNav />
@@ -119,6 +111,9 @@
 	.explorer-button {
 		--icon_size: var(--icon_size_sm);
 		justify-content: flex-start;
+		display: flex;
+		align-items: center;
 		flex: 1;
+		padding-left: var(--spacing_xs);
 	}
 </style>
