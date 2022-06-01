@@ -87,7 +87,7 @@ export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
 	params: {directory_id, time},
 	ui: {lastSeenByDirectoryId},
 }) => {
-	const timestamp = time ?? new Date().getTime();
+	const timestamp = time ?? Date.now();
 
 	lastSeenByDirectoryId.mutate(($v) => {
 		$v.get(directory_id)?.set(timestamp) || $v.set(directory_id, writable(timestamp));
