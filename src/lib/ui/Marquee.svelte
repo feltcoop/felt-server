@@ -7,7 +7,7 @@
 	import MarqueeNav from '$lib/ui/MarqueeNav.svelte';
 	import SpaceEditor from '$lib/ui/SpaceEditor.svelte';
 	import {getApp} from '$lib/ui/app';
-	import SocketConnection from '$lib/ui/SocketConnection.svelte';
+	import SocketConnectionControls from '$lib/ui/SocketConnectionControls.svelte';
 
 	const {
 		dispatch,
@@ -48,7 +48,7 @@
 			</section>
 		{/if}
 		<section>
-			<SocketConnection {socket} />
+			<SocketConnectionControls {socket} />
 		</section>
 	{/if}
 {/if}

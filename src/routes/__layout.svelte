@@ -10,7 +10,7 @@
 	import Dialogs from '@feltcoop/felt/ui/dialog/Dialogs.svelte';
 	import {Logger} from '@feltcoop/felt/util/log.js';
 
-	import {setSocket, toSocketStore} from '$lib/ui/socket';
+	import {toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
 	import MainNav from '$lib/ui/MainNav.svelte';
 	import Onboard from '$lib/ui/Onboard.svelte';
@@ -30,6 +30,7 @@
 	import {mutations} from '$lib/app/mutations';
 	import AppContextmenu from '$lib/app/contextmenu/AppContextmenu.svelte';
 	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
+	import SocketConnection from '$lib/ui/SocketConnection.svelte';
 	import LinkContextmenu from '$lib/app/contextmenu/LinkContextmenu.svelte';
 	import ErrorMessage from '$lib/ui/ErrorMessage.svelte';
 	import {deserialize, deserializers} from '$lib/util/deserialize';
@@ -49,11 +50,9 @@
 	}
 
 	const devmode = setDevmode();
-	const socket = setSocket(
-		toSocketStore(
-			(message) => websocketClient.handle(message.data),
-			() => dispatch.Ping(),
-		),
+	const socket = toSocketStore(
+		(message) => websocketClient.handle(message.data),
+		() => dispatch.Ping(),
 	);
 	const ui = toUi(session, initialMobileValue, components, (errorMessage) => {
 		dispatch.OpenDialog({Component: ErrorMessage, props: {text: errorMessage}});
@@ -131,6 +130,8 @@
 <svelte:head>
 	<link rel="shortcut icon" href="/favicon.png" />
 </svelte:head>
+
+<SocketConnection {socket} url={WEBSOCKET_URL} />
 
 <div class="layout" class:mobile={$mobile} bind:clientHeight bind:clientWidth>
 	{#if !guest && !onboarding}
