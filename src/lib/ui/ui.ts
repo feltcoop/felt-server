@@ -211,12 +211,13 @@ export const toUi = (
 	// TODO consider making this the space store so we don't have to chase id references
 	// TODO BLOCK should the helper do the mutable/new Map? or maybe we construct a wrapped value that has serialize/deserialize etc?
 	// can we just wrap it with `persisted` or `storable` or `stored`?
-	const spaceIdSelectionByCommunityId = locallyStored(
-		mutable<Map<number, number | null>>(new Map()),
-		spaceIdSelectionByCommunityId_KEY,
-		($v) => Array.from($v.entries()),
-		(serialized) => new Map(serialized),
-	);
+	const spaceIdSelectionByCommunityId = mutable<Map<number, number | null>>(new Map());
+	// locallyStored(
+	// 	mutable<Map<number, number | null>>(new Map()),
+	// 	spaceIdSelectionByCommunityId_KEY,
+	// 	($v) => Array.from($v.entries()),
+	// 	(serialized) => new Map(serialized),
+	// );
 	const spaceSelection = derived(
 		[communitySelection, spaceIdSelectionByCommunityId],
 		([$communitySelection, $spaceIdSelectionByCommunityId]) =>
