@@ -2,13 +2,13 @@ import {writable, type Writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
-import {getDispatch} from '$lib/app/dispatch';
+import type {Dispatch} from '$lib/app/eventTypes';
 
 export const updateEntity = (
 	{entityById, spaceSelection}: WritableUi,
+	dispatch: Dispatch,
 	$entity: Entity,
 ): Writable<Entity> => {
-	const dispatch = getDispatch();
 	const {entity_id} = $entity;
 	let entity = entityById.get(entity_id);
 	if (entity) {
@@ -17,6 +17,7 @@ export const updateEntity = (
 		entityById.set(entity_id, (entity = writable($entity)));
 	}
 	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
+		//TODO having dispatch here may be a code smell; need to rethink either passing full event context or adding listeners
 		dispatch.UpdateLastSeen({directory_id: $entity.entity_id, time: $entity.updated!.getTime()});
 	}
 	return entity;
