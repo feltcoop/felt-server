@@ -7,20 +7,16 @@
 	export let space: Readable<Space>;
 
 	const {
-		ui: {lastSeenByDirectoryId, entityById},
+		ui: {freshnessByDirectoryId},
 	} = getApp();
 
-	$: directory = entityById.get($space.directory_id)!;
-	$: lastSeen = $lastSeenByDirectoryId.value.get($space.directory_id)!;
-	$: systemTime = $directory.updated ?? $directory.created;
-	$: clientTime = new Date($lastSeen);
-	$: fresh = clientTime < systemTime;
+	$: fresh = $freshnessByDirectoryId.get($space.directory_id)!;
 </script>
 
 <SpaceIcon {space} />
 <span
 	>{$space.name}
-	{#if fresh}❗{/if}
+	{#if $fresh}❗{/if}
 </span>
 
 <style>

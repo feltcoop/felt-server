@@ -41,7 +41,7 @@ export const DeleteEntities: Mutations['DeleteEntities'] = async ({
 	//TODO update ties once stores are in place
 	const {entity_ids} = params;
 	for (const entity_id of entity_ids) {
-		entityById.delete(entity_id);
+		entityById.get().value.delete(entity_id);
 	}
 	//TODO extract all this to a helper sibling like updateEntityCaches
 	for (const spaceEntities of entitiesBySourceId.values()) {

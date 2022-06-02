@@ -59,7 +59,7 @@ export interface Ui {
 	//TODO maybe refactor to remove store around map? Like personaById
 	spacesByCommunityId: Readable<Map<number, Array<Readable<Space>>>>;
 	personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>>;
-	entityById: Map<number, Readable<Entity>>; // TODO mutable inner store
+	entityById: Mutable<Map<number, Readable<Entity>>>; // TODO mutable inner store
 	entitiesBySourceId: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
 	// view state
 	expandMainNav: Readable<boolean>;
@@ -74,6 +74,7 @@ export interface Ui {
 	spaceIdSelectionByCommunityId: Mutable<Map<number, number | null>>;
 	spaceSelection: Readable<Readable<Space> | null>;
 	lastSeenByDirectoryId: Mutable<Map<number, Writable<number> | null>>;
+	freshnessByDirectoryId: Readable<Map<number, Writable<boolean>>>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
@@ -219,7 +220,25 @@ export const toUi = (
 	);
 	const lastSeenByDirectoryId = mutable<Map<number, Writable<number> | null>>(new Map());
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
-	const entityById: Map<number, Writable<Entity>> = new Map();
+	const entityById = mutable<Map<number, Writable<Entity>>>(new Map());
+
+	const freshnessByDirectoryId: Readable<Map<number, Writable<boolean>>> = derived(
+		[spaces, lastSeenByDirectoryId, entityById],
+		([$spaces, $lastSeenByDirectoryId, $entityById]) => {
+			const map: Map<number, Writable<boolean>> = new Map();
+			for (const space of $spaces.value) {
+				const $space = space.get();
+				const $directory = $entityById.value.get($space.directory_id)!.get();
+				const $lastSeen = $lastSeenByDirectoryId.value.get($space.directory_id)!.get();
+				const systemTime = $directory.updated ?? $directory.created;
+
+				const clientTime = new Date($lastSeen);
+				const freshness = clientTime.getTime() < new Date(systemTime).getTime();
+				map.set($space.directory_id, writable(freshness));
+			}
+			return map;
+		},
+	);
 	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
 
 	const expandMainNav = writable(!initialMobile);
@@ -259,6 +278,7 @@ export const toUi = (
 		spaceIdSelectionByCommunityId,
 		spaceSelection,
 		lastSeenByDirectoryId,
+		freshnessByDirectoryId,
 		destroy: () => {
 			unsubscribeSession();
 		},
@@ -290,7 +310,7 @@ export const toUi = (
 
 			const $directoriesArray = $session.guest ? [] : $session.directories;
 
-			$directoriesArray.forEach((d) => entityById.set(d.entity_id, writable(d)));
+			$directoriesArray.forEach((d) => entityById.get().value.set(d.entity_id, writable(d)));
 
 			memberships.swap($session.guest ? [] : $session.memberships.map((s) => writable(s)));
 
