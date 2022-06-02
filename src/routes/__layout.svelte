@@ -124,7 +124,7 @@
 	let clientHeight: number;
 	$: $layout = {width: clientWidth, height: clientHeight}; // TODO event? `UpdateLayout`?
 
-	let toggleTesting = true;
+	let toggleTesting = false;
 	const testing = locallyStored(
 		mutable<Map<number, number | null>>(new Map()),
 		'TODO_KEY',
@@ -150,7 +150,7 @@
 	{/if}
 	<main>
 		<div
-			style="display: flex; height: 150px; position: absolute; top: 0; background: #fff; z-index: 100;"
+			style="display: flex; height: 150px; position: absolute; top: 0; right:0; background: #fff; z-index: 100;"
 		>
 			{#if toggleTesting}
 				<TESTING {testing} />
