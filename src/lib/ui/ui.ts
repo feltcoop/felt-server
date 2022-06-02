@@ -22,7 +22,7 @@ import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
-import {loadFromStorage, locallyStored, setInStorage} from '$lib/util/storage';
+import {locallyStored} from '$lib/util/storage';
 import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 
 if (browser) initBrowser();
@@ -214,7 +214,7 @@ export const toUi = (
 	const spaceIdSelectionByCommunityId = locallyStored(
 		mutable<Map<number, number | null>>(new Map()),
 		spaceIdSelectionByCommunityId_KEY,
-		($v) => Array.from($v.value.entries()),
+		($v) => Array.from($v.entries()),
 		(serialized) => new Map(serialized),
 	);
 	const spaceSelection = derived(
@@ -316,7 +316,7 @@ export const toUi = (
 					$session.guest ? null : $sessionPersonas.map(($p) => [$p.persona_id, $p.community_id]),
 				),
 			);
-			const loaded_spaceIdSelectionByCommunityId = loadSpaceIdSelectionByCommunityId();
+			const loaded_spaceIdSelectionByCommunityId = []; // loadSpaceIdSelectionByCommunityId();
 			spaceIdSelectionByCommunityId.swap(
 				//TODO lookup space by community_id+url (see this comment in multiple places)
 				new Map(
@@ -382,9 +382,3 @@ export type Typechecked = Typecheck<WritableUi>;
 
 // TODO refactor
 const spaceIdSelectionByCommunityId_KEY = 'spaceIdSelectionByCommunityId';
-const loadSpaceIdSelectionByCommunityId = (): Array<[number, number | null]> =>
-	browser ? loadFromStorage(spaceIdSelectionByCommunityId_KEY, []) : [];
-export const setSpaceIdSelectionByCommunityId = (value: Array<[number, number | null]>): void => {
-	if (!browser) return;
-	setInStorage(spaceIdSelectionByCommunityId_KEY, value);
-};
