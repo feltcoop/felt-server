@@ -1,11 +1,12 @@
 import {browser} from '$app/env';
 import type {Mutable, Writable} from '@feltcoop/svelte-gettable-stores';
+import {identity} from '@feltcoop/felt/util/function.js';
 
 export const locallyStored = <T extends Writable<U> | Mutable<U>, U>(
 	store: T,
 	key: string,
-	serialize: (v: U) => any,
-	deserialize: (v: any) => U,
+	serialize: (v: U) => any = identity,
+	deserialize: (v: any) => U = identity,
 ): T => {
 	if (!browser) return store;
 	const defaultValue = []; // TODO
