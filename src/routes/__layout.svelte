@@ -34,6 +34,8 @@
 	import ErrorMessage from '$lib/ui/ErrorMessage.svelte';
 	import TESTING from '$lib/ui/TESTING.svelte';
 	import {deserialize, deserializers} from '$lib/util/deserialize';
+	import {locallyStored} from '$lib/util/storage';
+	import {mutable} from '@feltcoop/svelte-gettable-stores';
 
 	const log = new Logger('[layout]');
 
@@ -122,7 +124,13 @@
 	let clientHeight: number;
 	$: $layout = {width: clientWidth, height: clientHeight}; // TODO event? `UpdateLayout`?
 
-	let testing = true;
+	let toggleTesting = true;
+	const testing = locallyStored(
+		mutable<Map<number, number | null>>(new Map()),
+		'TODO_KEY',
+		($v) => Array.from($v.entries()),
+		(serialized) => new Map(serialized),
+	);
 </script>
 
 <svelte:body
@@ -144,10 +152,10 @@
 		<div
 			style="display: flex; height: 150px; position: absolute; top: 0; background: #fff; z-index: 100;"
 		>
-			{#if testing}
-				<TESTING />
+			{#if toggleTesting}
+				<TESTING {testing} />
 			{/if}
-			<button on:click={() => (testing = !testing)}>TOGGLE</button>
+			<button on:click={() => (toggleTesting = !toggleTesting)}>TOGGLE</button>
 		</div>
 		{#if guest}
 			<div class="account column markup padded-xl">
