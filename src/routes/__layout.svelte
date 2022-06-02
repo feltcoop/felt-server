@@ -32,9 +32,8 @@
 	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
 	import LinkContextmenu from '$lib/app/contextmenu/LinkContextmenu.svelte';
 	import ErrorMessage from '$lib/ui/ErrorMessage.svelte';
+	import TESTING from '$lib/ui/TESTING.svelte';
 	import {deserialize, deserializers} from '$lib/util/deserialize';
-	import {locallyStored} from '$lib/util/storage';
-	import {mutable} from '@feltcoop/svelte-gettable-stores';
 
 	const log = new Logger('[layout]');
 
@@ -123,12 +122,7 @@
 	let clientHeight: number;
 	$: $layout = {width: clientWidth, height: clientHeight}; // TODO event? `UpdateLayout`?
 
-	const testing = locallyStored(
-		mutable<Map<number, number | null>>(new Map()),
-		'TODO_KEY',
-		($v) => Array.from($v.entries()),
-		(serialized) => new Map(serialized),
-	);
+	let testing = true;
 </script>
 
 <svelte:body
@@ -150,12 +144,10 @@
 		<div
 			style="display: flex; height: 150px; position: absolute; top: 0; background: #fff; z-index: 100;"
 		>
-			<div>{JSON.stringify(Array.from($testing.value.entries()))}</div>
-			<button
-				on:click={() => {
-					testing.mutate(($v) => $v.set($v.size, $v.size));
-				}}>testing</button
-			>
+			{#if testing}
+				<TESTING />
+			{/if}
+			<button on:click={() => (testing = !testing)}>TOGGLE</button>
 		</div>
 		{#if guest}
 			<div class="account column markup padded-xl">
