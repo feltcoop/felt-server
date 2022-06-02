@@ -16,7 +16,6 @@ export const locallyStored = <T extends Writable<U> | Mutable<U>, U>(
 	fromJson: (v: Json) => U = identity as any,
 ): T => {
 	if (!browser) return store;
-	const defaultValue = []; // TODO BLOCK
 	// TODO BLOCK is this right, set it immediately?
 	const loaded = loadFromStorage(key); // TODO BLOCK also validate?
 	// TODO BLOCK should this always set? how to efficiently get the default?
