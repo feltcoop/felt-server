@@ -22,7 +22,7 @@ import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
-import {loadFromStorage, setInStorage} from '$lib/util/storage';
+import {loadFromStorage, locallyStored, setInStorage} from '$lib/util/storage';
 import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 
 if (browser) initBrowser();
@@ -211,7 +211,12 @@ export const toUi = (
 	// TODO consider making this the space store so we don't have to chase id references
 	// TODO BLOCK should the helper do the mutable/new Map? or maybe we construct a wrapped value that has serialize/deserialize etc?
 	// can we just wrap it with `persisted` or `storable` or `stored`?
-	const spaceIdSelectionByCommunityId = mutable<Map<number, number | null>>(new Map());
+	const spaceIdSelectionByCommunityId = locallyStored(
+		mutable<Map<number, number | null>>(new Map()),
+		spaceIdSelectionByCommunityId_KEY,
+		($v) => Array.from($v.value.entries()),
+		(serialized) => new Map(serialized),
+	);
 	const spaceSelection = derived(
 		[communitySelection, spaceIdSelectionByCommunityId],
 		([$communitySelection, $spaceIdSelectionByCommunityId]) =>

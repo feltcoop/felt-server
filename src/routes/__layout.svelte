@@ -30,7 +30,6 @@
 	import {mutations} from '$lib/app/mutations';
 	import AppContextmenu from '$lib/app/contextmenu/AppContextmenu.svelte';
 	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
-	import BrowserStorage from '$lib/ui/BrowserStorage.svelte';
 	import LinkContextmenu from '$lib/app/contextmenu/LinkContextmenu.svelte';
 	import ErrorMessage from '$lib/ui/ErrorMessage.svelte';
 	import {deserialize, deserializers} from '$lib/util/deserialize';
@@ -132,10 +131,6 @@
 <svelte:head>
 	<link rel="shortcut icon" href="/favicon.png" />
 </svelte:head>
-
-{#if browser}
-	<BrowserStorage {ui} />
-{/if}
 
 <div class="layout" class:mobile={$mobile} bind:clientHeight bind:clientWidth>
 	{#if !guest && !onboarding}
