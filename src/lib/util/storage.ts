@@ -14,19 +14,18 @@ export const locallyStored = <T extends Writable<U> | Mutable<U>, U>(
 	// TODO BLOCK should this always set? how to efficiently get the default?
 	// should the default already be in the store? return undefined and make default value optional to loadFromStorage?
 	if (loaded !== defaultValue) ('swap' in store ? store.swap : store.set)(deserialize(loaded));
-	const unsubscribe = store.subscribe((value) => {
-		// TODO BLOCK batch these over a frame, `batchBy(key, () => ...)`
-		console.log(`CHANGED value`, value);
-		console.log(`'swap' in store ? value.value : value`, 'swap' in store ? value.value : value);
-		setInStorage(key, serialize('swap' in store ? value.value : value));
-	});
 	// TODO BLOCK or derived?
 	const subscribe: T['subscribe'] = (run: any, invalidate: any) => {
+		const unsubscribe1 = store.subscribe((value) => {
+			// TODO BLOCK batch these over a frame, `batchBy(key, () => ...)`
+			console.log(`CHANGED value`, 'swap' in store ? value.value : value);
+			setInStorage(key, serialize('swap' in store ? value.value : value));
+		});
 		const unsubscribe2 = store.subscribe(run, invalidate);
 		console.log('SUBSCRIBING');
 		return () => {
 			console.log('UNSUBSCRIBING');
-			unsubscribe();
+			unsubscribe1();
 			unsubscribe2();
 		};
 	};
