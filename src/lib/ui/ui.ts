@@ -327,10 +327,12 @@ export const toUi = (
 								$community.community_id,
 								// TODO BLOCK hacky
 								// TODO BLOCK maybe make the json available in a getter?
-								Array.from(spaceIdSelectionByCommunityId.get().value.entries()).reduce(
-									(space_id, v) => space_id || (v[0] === $community.community_id ? v[1] : null),
-									null as number | null,
-								) ||
+								spaceIdSelectionByCommunityId
+									.getJson()
+									.reduce(
+										(space_id, v) => space_id || (v[0] === $community.community_id ? v[1] : null),
+										null as number | null,
+									) ||
 									$session.spaces.find(
 										(s) => s.community_id === $community.community_id && isHomeSpace(s),
 									)!.space_id,
