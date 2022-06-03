@@ -1,24 +1,14 @@
 import type {AsyncStatus} from '@feltcoop/felt';
-import {setContext, getContext} from 'svelte';
 
 import {writable, type Readable} from '@feltcoop/svelte-gettable-stores';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 const log = new Logger('[socket]');
 
-const KEY = Symbol();
-
 export const HEARTBEAT_INTERVAL = 300000;
 
 const RECONNECT_DELAY = 1000; // matches the current Vite/SvelteKit retry rate, but we use a counter to back off
 const RECONNECT_DELAY_MAX = 60000;
-
-export const getSocket = (): SocketStore => getContext(KEY);
-
-export const setSocket = (store: SocketStore): SocketStore => {
-	setContext(KEY, store);
-	return store;
-};
 
 // TODO consider extracting a higher order store or component
 // to handle reconnection and heartbeat. Connection? SocketConnection?

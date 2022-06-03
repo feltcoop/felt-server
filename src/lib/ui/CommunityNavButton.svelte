@@ -72,9 +72,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		/* TODO do this layout without calculating */
-		width: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
-		height: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
+		height: var(--luggage_size);
 		--icon_size: var(--icon_size_sm);
 	}
 	/* TODO figure out why selected doesn't override highlighted */

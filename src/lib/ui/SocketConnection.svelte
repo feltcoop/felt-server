@@ -1,16 +1,25 @@
 <script lang="ts">
+	import {onDestroy} from 'svelte';
+	import {session} from '$app/stores';
+	import {browser} from '$app/env';
+
 	import type {SocketStore} from '$lib/ui/socket';
 
 	export let socket: SocketStore;
+	export let url: string;
 
-	const connect = () => socket.connect($socket.url!); // TODO maybe make the socket state a union type for connected/disconnected states?
-	const disconnect = () => socket.disconnect();
+	$: ({guest} = $session);
+
+	onDestroy(() => {
+		socket.disconnect();
+	});
+
+	// Keep the socket connected when logged in, and disconnect when logged out.
+	$: if (browser) {
+		if (guest) {
+			socket.disconnect();
+		} else {
+			socket.connect(url);
+		}
+	}
 </script>
-
-<form>
-	<input value={$socket.url} on:input={(e) => socket.updateUrl(e.currentTarget.value)} />
-	<button type="button" on:click={$socket.ws ? disconnect : connect}>
-		{#if $socket.ws}disconnect{:else}connect{/if}
-	</button>
-</form>
-<div>status: <code>'{$socket.status}'</code></div>

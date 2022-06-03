@@ -5,18 +5,10 @@
 	import {getApp} from '$lib/ui/app';
 	import {randomHue} from '$lib/ui/color';
 	import {toName} from '$lib/vocab/entity/entityHelpers';
-	import {onContextmenu} from '$lib/ui/contextmenu/contextmenu';
 
 	const {
 		dispatch,
-		ui: {
-			expandMainNav,
-			contextmenu,
-			spaceSelection,
-			personaSelection,
-			communitySelection,
-			spacesByCommunityId,
-		},
+		ui: {expandMainNav, spaceSelection, personaSelection, communitySelection, spacesByCommunityId},
 	} = getApp();
 
 	$: selectedPersona = $personaSelection!;
@@ -37,12 +29,10 @@
 <div class="main-nav-panel" class:expanded={$expandMainNav} style="--hue: {hue}">
 	<div class="main-nav">
 		<div class="header">
-			<!-- TODO how to do this? -->
-			<div class="icon-button button-placeholder" />
-			<!-- TODO or maybe `selectedPersona.id` ? can't be `$selectedPersona.persona_id` as a serial value -->
-			<button class="explorer-button" on:click={(e) => onContextmenu(e, contextmenu)}>
-				<PersonaAvatar persona={selectedPersona} contextmenuAction={null} />
-			</button>
+			<div class="luggage-placeholder" />
+			<div class="explorer-button">
+				<PersonaAvatar persona={selectedPersona} />
+			</div>
 		</div>
 		<div class="explorer">
 			<CommunityNav />
@@ -107,17 +97,23 @@
 		position: sticky;
 		top: 0;
 		display: flex;
-		height: var(--navbar_size);
 		width: 100%;
+	}
+	.luggage-placeholder {
+		width: var(--luggage_size);
+		height: var(--navbar_size);
+		flex-shrink: 0;
 	}
 	.explorer {
 		display: flex;
 		flex: 1;
 	}
 	.explorer-button {
+		--icon_size: var(--icon_size_sm);
 		justify-content: flex-start;
-		height: var(--navbar_size);
+		display: flex;
+		align-items: center;
 		flex: 1;
-		padding: 0;
+		padding-left: var(--spacing_xs);
 	}
 </style>

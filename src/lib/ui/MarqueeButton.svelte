@@ -11,7 +11,7 @@
 </script>
 
 <button
-	class="icon-button"
+	class="plain-button icon-button"
 	class:expanded={$expandMarquee}
 	style="transform: translate3d({right}px, 0, 0)"
 	aria-label="toggle marquee"
@@ -29,6 +29,7 @@
 		/* TODO this is janky because it can go offscreen for a bit,
 		though it's a nice idea because it maintains object permanence */
 		/* transition: transform var(--duration_1) ease-out; */
+		--icon_size: var(--navbar_size);
 	}
 	.content {
 		transition: transform var(--duration_4) ease-in-out;
