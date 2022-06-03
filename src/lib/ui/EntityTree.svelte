@@ -32,7 +32,9 @@
 		const result = await dispatch.ReadEntitiesPaginated({source_id: $entity.entity_id});
 		if (result.ok) {
 			// TODO refactor using a query interface (with data, status)
-			destEntities = writable(result.value.entities.map((e) => entityById.get(e.entity_id)!));
+			destEntities = writable(
+				result.value.entities.map((e) => $entityById.value.get(e.entity_id)!),
+			);
 			// destTies = writable(result.value.ties.map((t) => writable(t)));
 		}
 	};

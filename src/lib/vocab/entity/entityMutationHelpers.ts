@@ -20,6 +20,7 @@ export const updateEntity = (
 		//TODO having dispatch here may be a code smell; need to rethink either passing full event context or adding listeners
 		dispatch.UpdateLastSeen({directory_id: $entity.entity_id, time: $entity.updated!.getTime()});
 	}
+	entityById.mutate();
 	return entity;
 };
 

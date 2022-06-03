@@ -11,7 +11,14 @@
 
 	const {
 		dispatch,
-		ui: {contextmenu, spaceIdSelectionByCommunityId, spaceById, sessionPersonaIndices},
+		ui: {
+			contextmenu,
+			spaceIdSelectionByCommunityId,
+			spaceById,
+			sessionPersonaIndices,
+			spacesByCommunityId,
+			freshnessByDirectoryId,
+		},
 	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
@@ -27,6 +34,10 @@
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
 
 	$: personaIndex = $sessionPersonaIndices.get(persona)!;
+
+	$: spaces = $spacesByCommunityId.get($community.community_id);
+	$: highlighted =
+		spaces && !spaces.every((s) => !$freshnessByDirectoryId.get(s.get().directory_id)!.get());
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
@@ -36,6 +47,7 @@
 		persona: personaIndex + '',
 	})}
 	class:selected
+	class:highlighted
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {$community.settings.hue}"
 	use:contextmenu.action={[[CommunityContextmenu, {community, persona}]]}
@@ -64,5 +76,10 @@
 		width: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
 		height: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
 		--icon_size: var(--icon_size_sm);
+	}
+	/* TODO figure out why selected doesn't override highlighted */
+	.highlighted {
+		border-left: 2px;
+		background-color: grey;
 	}
 </style>

@@ -28,7 +28,7 @@
 		const result = await dispatch.ReadEntitiesPaginated({source_id: $space.directory_id});
 		if (result.ok) {
 			// TODO refactor using a query interface (with data, status)
-			entities2 = writable(result.value.entities.map((e) => entityById.get(e.entity_id)!));
+			entities2 = writable(result.value.entities.map((e) => $entityById.value.get(e.entity_id)!));
 			ties2 = writable(result.value.ties.map((t) => writable(t)));
 		}
 	};
