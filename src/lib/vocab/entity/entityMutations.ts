@@ -1,7 +1,11 @@
 import {writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {Mutations} from '$lib/app/eventTypes';
-import {updateEntity, updateEntityCaches} from '$lib/vocab/entity/entityMutationHelpers';
+import {
+	updateEntity,
+	updateEntityCaches,
+	updateTieCaches,
+} from '$lib/vocab/entity/entityMutationHelpers';
 
 // TODO if `Create/Update/Erase` remain identical, probably make them use a single helper
 // `updateEntity` or more likely `updateEntities`
@@ -9,8 +13,10 @@ import {updateEntity, updateEntityCaches} from '$lib/vocab/entity/entityMutation
 export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, params, ui, dispatch}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	updateEntity(ui, dispatch, result.value.entity);
-	updateEntityCaches(ui, result.value.entity, params.source_id);
+	const {tie, entity} = result.value;
+	updateEntity(ui, dispatch, entity);
+	updateEntityCaches(ui, entity, params.source_id);
+	updateTieCaches(ui, tie);
 	return result;
 };
 
@@ -56,10 +62,13 @@ export const DeleteEntities: Mutations['DeleteEntities'] = async ({
 export const ReadEntities: Mutations['ReadEntities'] = async ({invoke, params, ui, dispatch}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	//TODO update ties once stores are in place: `result.value.ties`
-	for (const $entity of result.value.entities) {
+	const {ties, entities} = result.value;
+	for (const $entity of entities) {
 		updateEntity(ui, dispatch, $entity);
 		updateEntityCaches(ui, $entity, params.source_id);
+	}
+	for (const $tie of ties) {
+		updateTieCaches(ui, $tie);
 	}
 	return result;
 };
@@ -73,10 +82,13 @@ export const ReadEntitiesPaginated: Mutations['ReadEntitiesPaginated'] = async (
 }) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	// //TODO update ties once stores are in place: `result.value.ties`
-	for (const $entity of result.value.entities) {
+	const {ties, entities} = result.value;
+	for (const $entity of entities) {
 		updateEntity(ui, dispatch, $entity);
 		updateEntityCaches(ui, $entity, params.source_id);
+	}
+	for (const $tie of ties) {
+		updateTieCaches(ui, $tie);
 	}
 	return result;
 };

@@ -1,8 +1,9 @@
-import {writable, type Writable} from '@feltcoop/svelte-gettable-stores';
+import {writable, mutable, type Writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Dispatch} from '$lib/app/eventTypes';
+import type {Tie} from '$lib/vocab/tie/tie';
 
 export const updateEntity = (
 	{entityById, spaceSelection}: WritableUi,
@@ -42,4 +43,45 @@ export const updateEntityCaches = (
 		entitiesBySourceId.set(source_id, writable([entity]));
 	}
 	return entity;
+};
+
+export const updateTieCaches = (
+	{sourceTiesByDestEntityId, destTiesBySourceEntityId}: WritableUi,
+	$tie: Tie,
+): void => {
+	const $sourceTiesByDestEntityId = sourceTiesByDestEntityId.get().value;
+	//TODO this mutablity may be better served by a LookupTiesHelper
+	let sourceTies = $sourceTiesByDestEntityId.get($tie.dest_id);
+	if (!sourceTies) {
+		sourceTiesByDestEntityId.mutate(($v) => {
+			$v.set($tie.dest_id, (sourceTies = mutable([])));
+		});
+	}
+	const $sourceTies = sourceTies!.get().value;
+	if (
+		!$sourceTies.find(
+			($t) =>
+				$t.dest_id === $tie.dest_id && $t.source_id === $tie.source_id && $t.type === $tie.type,
+		)
+	) {
+		sourceTies!.mutate(($v) => $v.push($tie));
+	}
+
+	const $destTiesBySourceEntityId = destTiesBySourceEntityId.get().value;
+	//TODO this mutablity may be better served by a LookupTiesHelper
+	let destTies = $destTiesBySourceEntityId.get($tie.source_id);
+	if (!destTies) {
+		destTiesBySourceEntityId.mutate(($v) => {
+			$v.set($tie.source_id, (destTies = mutable([])));
+		});
+	}
+	const $destTies = destTies!.get().value;
+	if (
+		!$destTies.find(
+			($t) =>
+				$t.dest_id === $tie.dest_id && $t.source_id === $tie.source_id && $t.type === $tie.type,
+		)
+	) {
+		destTies!.mutate(($v) => $v.push($tie));
+	}
 };
