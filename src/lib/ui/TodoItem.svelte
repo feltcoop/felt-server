@@ -17,10 +17,10 @@
 
 	export let entity: Readable<Entity>;
 	export let space: Readable<Space>;
-	export let selectedList: Entity | null;
-	export let selectList: (list: Entity) => void;
+	export let selectedList: Readable<Entity> | null;
+	export let selectList: (list: Readable<Entity>) => void;
 
-	$: selected = selectedList ? selectedList === $entity : false;
+	$: selected = selectedList ? selectedList === entity : false;
 	let pending = false;
 
 	$: destTies = $destTiesBySourceEntityId.value.get($entity.entity_id);
@@ -76,7 +76,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			[EntityContextmenu, {entity}],
 		]}
 	>
-		<div on:click={() => selectList($entity)} class="entity markup formatted">
+		<div on:click={() => selectList(entity)} class="entity markup formatted">
 			{#if hasItems}
 				<div class="icon-button">
 					{#if selected}👉{:else}📝{/if}

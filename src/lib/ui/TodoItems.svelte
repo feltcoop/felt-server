@@ -7,8 +7,8 @@
 
 	export let entities: Readable<Array<Readable<Entity>>>;
 	export let space: Readable<Space>;
-	export let selectedList: Entity | null;
-	export let selectList: (list: Entity) => void;
+	export let selectedList: Readable<Entity> | null;
+	export let selectList: (list: Readable<Entity>) => void;
 
 	//TODO in directory structure, this would just grab the "lists" collection from the dir
 	$: collectionEntities = $entities?.filter((e) => e.get().data.type === 'Collection');

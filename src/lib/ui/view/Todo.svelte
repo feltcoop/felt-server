@@ -7,11 +7,16 @@
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import {getViewContext} from '$lib/vocab/view/view';
 	import EntityInput from '$lib/ui/EntityInput.svelte';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	const viewContext = getViewContext();
 	$: ({persona, space} = $viewContext);
 
-	const {dispatch, socket} = getApp();
+	const {
+		dispatch,
+		socket,
+		ui: {destTiesBySourceEntityId, entityById},
+	} = getApp();
 
 	$: shouldLoadEntities = browser && $socket.open;
 	$: entities = shouldLoadEntities
@@ -20,9 +25,9 @@
 	let text = '';
 
 	//TODO this should be readable
-	let selectedList: Entity | null = null;
-	const selectList = (list: Entity) => {
-		if (list.data.type !== 'Collection') return;
+	let selectedList: Readable<Entity> | null = null as any;
+	const selectList = (list: Readable<Entity>) => {
+		if (list.get().data.type !== 'Collection') return;
 		if (selectedList === list) {
 			selectedList = null;
 		} else {
@@ -38,7 +43,7 @@
 		await dispatch.CreateEntity({
 			data: {type: 'Note', content, checked: false},
 			persona_id: $persona.persona_id,
-			source_id: selectedList.entity_id,
+			source_id: $selectedList!.entity_id,
 		});
 		await dispatch.UpdateEntity({
 			data: null,
@@ -53,20 +58,24 @@
 	};
 
 	const clearDone = async () => {
-		// if (!selectedList) return;
-		// const entityList = entityById.get(selectedList.entity_id);
-		// const items = itemsByEntity?.get(entityList!);
-		// if (items) {
-		// 	const doneItems = items.filter((i) => i.get().data.checked === true);
-		// 	if (doneItems.length > 0) {
-		// 		const entity_ids = doneItems.map((i) => i.get().entity_id);
-		// 		await dispatch.DeleteEntities({entity_ids});
-		// 		await dispatch.UpdateEntity({
-		// 			data: null,
-		// 			entity_id: $space.directory_id,
-		// 		});
-		// 	}
-		// }
+		if (!selectedList) return;
+		const destTies = $destTiesBySourceEntityId.value.get($selectedList!.entity_id);
+		const items = destTies?.get().value.reduce((acc, tie) => {
+			if (tie.type === 'HasItem') {
+				const entity = entityById.get(tie.dest_id)!;
+				if (entity.get().data.checked) {
+					acc.push(entity);
+				}
+			}
+			return acc;
+		}, [] as Array<Readable<Entity>>);
+		if (!items?.length) return;
+		const entity_ids = items.map((i) => i.get().entity_id);
+		await dispatch.DeleteEntities({entity_ids});
+		await dispatch.UpdateEntity({
+			data: null,
+			entity_id: $space.directory_id,
+		});
 	};
 </script>
 
