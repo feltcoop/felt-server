@@ -93,12 +93,14 @@ export const evictTieCachesForEntity = (
 	const sources = sourceTiesByDestEntityId.get().value.get(entity_id);
 	if (sources) {
 		for (const source of sources.get().value) {
-			const ties = destTiesBySourceEntityId.get().value.get(source.source_id)!;
-			ties.mutate(($ties) => {
-				for (let i = $ties.length - 1; i >= 0; i--) {
-					if ($ties[i].dest_id === entity_id) $ties.splice(i, 1);
-				}
-			});
+			const ties = destTiesBySourceEntityId.get().value.get(source.source_id);
+			if (ties) {
+				ties.mutate(($ties) => {
+					for (let i = $ties.length - 1; i >= 0; i--) {
+						if ($ties[i].dest_id === entity_id) $ties.splice(i, 1);
+					}
+				});
+			}
 		}
 		sourceTiesByDestEntityId.mutate(($v) => $v.delete(entity_id));
 	}
@@ -106,12 +108,14 @@ export const evictTieCachesForEntity = (
 	const destinations = destTiesBySourceEntityId.get().value.get(entity_id);
 	if (destinations) {
 		for (const dest of destinations.get().value) {
-			const ties = sourceTiesByDestEntityId.get().value.get(dest.source_id)!;
-			ties.mutate(($ties) => {
-				for (let i = $ties.length - 1; i >= 0; i--) {
-					if ($ties[i].source_id === entity_id) $ties.splice(i, 1);
-				}
-			});
+			const ties = sourceTiesByDestEntityId.get().value.get(dest.source_id);
+			if (ties) {
+				ties.mutate(($ties) => {
+					for (let i = $ties.length - 1; i >= 0; i--) {
+						if ($ties[i].source_id === entity_id) $ties.splice(i, 1);
+					}
+				});
+			}
 		}
 		sourceTiesByDestEntityId.mutate(($v) => $v.delete(entity_id));
 	}
