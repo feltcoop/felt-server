@@ -20,24 +20,17 @@
 	export let selectedList: Readable<Entity> | null;
 	export let selectList: (list: Readable<Entity>) => void;
 
-	$: console.log('%%% : entity', entity);
-	$: console.log('%%% : $entity', $entity);
-
 	$: selected = selectedList ? selectedList === entity : false;
 	let pending = false;
 
 	$: destTies = $destTiesBySourceEntityId.value.get($entity.entity_id);
 
 	$: items = $destTies?.value.reduce((acc, tie) => {
-		console.log('rebuilding ties');
 		if (tie.type === 'HasItem') {
 			acc.push(entityById.get(tie.dest_id)!);
 		}
 		return acc;
 	}, [] as Array<Readable<Entity>>);
-
-	$: console.log('%%% : items', items);
-	//$: console.log('%%% : $items', items ? $items : '');
 
 	$: ({checked} = $entity.data);
 

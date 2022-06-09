@@ -2,6 +2,7 @@ import {writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {
+	evictTieCachesForEntity,
 	updateEntity,
 	updateEntityCaches,
 	updateTieCaches,
@@ -37,33 +38,18 @@ export const EraseEntities: Mutations['EraseEntities'] = async ({invoke, ui, dis
 	return result;
 };
 
-export const DeleteEntities: Mutations['DeleteEntities'] = async ({
-	invoke,
-	params,
-	ui: {entityById, entitiesBySourceId, destTiesBySourceEntityId, sourceTiesByDestEntityId},
-}) => {
+export const DeleteEntities: Mutations['DeleteEntities'] = async ({invoke, params, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	//TODO update ties once stores are in place
 	const {entity_ids} = params;
 	for (const entity_id of entity_ids) {
-		entityById.delete(entity_id);
-
-		const sources = sourceTiesByDestEntityId.get().value.get(entity_id);
-		if (sources) {
-			for (const source of sources.get().value) {
-				const ties = destTiesBySourceEntityId.get().value.get(source.source_id)!;
-				ties.mutate(($ties) => {
-					for (let i = $ties.length - 1; i >= 0; i--) {
-						if ($ties[i].dest_id === entity_id) $ties.splice(i, 1);
-					}
-				});
-			}
-			sourceTiesByDestEntityId.mutate(($v) => $v.delete(entity_id));
-		}
+		ui.entityById.delete(entity_id);
+		evictTieCachesForEntity(ui, entity_id);
 	}
+
 	//TODO extract all this to a helper sibling like updateEntityCaches
-	for (const spaceEntities of entitiesBySourceId.values()) {
+	for (const spaceEntities of ui.entitiesBySourceId.values()) {
 		// TODO this is very inefficient
 		if (spaceEntities.get().find((e) => entity_ids.includes(e.get().entity_id))) {
 			spaceEntities.update(($s) => $s.filter(($e) => !entity_ids.includes($e.get().entity_id)));
