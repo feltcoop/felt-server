@@ -48,16 +48,18 @@ export const DeleteEntities: Mutations['DeleteEntities'] = async ({
 	const {entity_ids} = params;
 	for (const entity_id of entity_ids) {
 		entityById.delete(entity_id);
-		console.log('###', entity_id);
+
 		const sources = sourceTiesByDestEntityId.get().value.get(entity_id);
-		if (sources && sources.get().value.length > 0) {
+		if (sources) {
 			for (const source of sources.get().value) {
-				console.log('###', source.source_id);
 				const ties = destTiesBySourceEntityId.get().value.get(source.source_id)!;
-				console.log('###', ties.get().value);
-				ties.mutate(($ties) => $ties.filter(($t) => $t && $t.dest_id !== entity_id));
-				console.log('###', ties.get().value);
+				ties.mutate(($ties) => {
+					for (let i = $ties.length - 1; i >= 0; i--) {
+						if ($ties[i].dest_id === entity_id) $ties.splice(i, 1);
+					}
+				});
 			}
+			sourceTiesByDestEntityId.mutate(($v) => $v.delete(entity_id));
 		}
 	}
 	//TODO extract all this to a helper sibling like updateEntityCaches

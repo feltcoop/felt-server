@@ -31,10 +31,7 @@
 	$: items = $destTies?.value.reduce((acc, tie) => {
 		console.log('rebuilding ties');
 		if (tie.type === 'HasItem') {
-			const item = entityById.get(tie.dest_id);
-			if (item) {
-				acc.push(item);
-			}
+			acc.push(entityById.get(tie.dest_id)!);
 		}
 		return acc;
 	}, [] as Array<Readable<Entity>>);
