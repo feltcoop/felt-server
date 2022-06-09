@@ -2,7 +2,7 @@
 	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	import type {Community} from '$lib/vocab/community/community.js';
-	import CommunityNavButton from '$lib/ui/CommunityNavButton.svelte';
+	import CommunityNavItem from '$lib/ui/CommunityNavItem.svelte';
 	import type {Persona} from '$lib/vocab/persona/persona';
 	import {getApp} from '$lib/ui/app';
 	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
@@ -40,7 +40,7 @@
 	{#each $sessionPersonas as persona (persona)}
 		<div class="persona-group" use:contextmenu.action={[[ActingPersonaContextmenu, {persona}]]}>
 			<!-- TODO refactor this hacky usage of `get` -->
-			<CommunityNavButton
+			<CommunityNavItem
 				community={toPersonaCommunity(persona, $communitiesBySessionPersona)}
 				{persona}
 				selected={persona === selectedPersona &&
@@ -48,7 +48,7 @@
 			/>
 			{#each toStandardCommunities(persona, $communitiesBySessionPersona) as community (community)}
 				{#if community.get().name !== persona.get().name}
-					<CommunityNavButton
+					<CommunityNavItem
 						{community}
 						{persona}
 						selected={persona === selectedPersona && community === selectedCommunity}
