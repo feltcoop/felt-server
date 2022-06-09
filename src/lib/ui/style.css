@@ -121,7 +121,8 @@ maybe upstream to Felt? think about how to upstream without bloating bundles tha
 .selectable:hover {
 	background-color: var(--interactive_color_hover);
 }
-.selectable:active,.selectable.selected {
+.selectable:active,
+.selectable.selected {
 	/* TODO probably want `--interactive_color_selected` so it's different than active */
 	background-color: var(--interactive_color_active);
 }
