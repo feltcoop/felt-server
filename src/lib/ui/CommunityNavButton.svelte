@@ -31,7 +31,7 @@
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
 <a
-	class="community"
+	class="community selectable"
 	href={toSpaceUrl($community, selectedSpace && $selectedSpace, $page.url.searchParams, {
 		persona: personaIndex + '',
 	})}
@@ -51,10 +51,6 @@
 		/* TODO better way to have active state? this makes the community nav wider than the luggage button! */
 		padding: var(--spacing_xs);
 		text-decoration: none;
-	}
-	/* TODO jucier selected state, maybe scaling up 10ish percent */
-	.selected {
-		background-color: var(--bg);
 	}
 	.persona {
 		display: flex;
