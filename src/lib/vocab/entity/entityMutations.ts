@@ -55,7 +55,8 @@ export const DeleteEntities: Mutations['DeleteEntities'] = async ({
 				console.log('###', source.source_id);
 				const ties = destTiesBySourceEntityId.get().value.get(source.source_id)!;
 				console.log('###', ties.get().value);
-				ties.mutate(($ties) => $ties.filter(($t) => $t.dest_id !== entity_id));
+				ties.mutate(($ties) => $ties.filter(($t) => $t && $t.dest_id !== entity_id));
+				console.log('###', ties.get().value);
 			}
 		}
 	}
