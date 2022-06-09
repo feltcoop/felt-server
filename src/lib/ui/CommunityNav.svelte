@@ -70,6 +70,7 @@
 		align-items: center;
 	}
 	.persona-group {
+		width: 100%;
 		margin-bottom: var(--navbar_size);
 	}
 	.persona-group:last-child {
