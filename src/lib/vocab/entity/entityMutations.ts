@@ -40,7 +40,7 @@ export const EraseEntities: Mutations['EraseEntities'] = async ({invoke, ui, dis
 export const DeleteEntities: Mutations['DeleteEntities'] = async ({
 	invoke,
 	params,
-	ui: {entityById, entitiesBySourceId},
+	ui: {entityById, entitiesBySourceId, destTiesBySourceEntityId, sourceTiesByDestEntityId},
 }) => {
 	const result = await invoke();
 	if (!result.ok) return result;
@@ -48,6 +48,16 @@ export const DeleteEntities: Mutations['DeleteEntities'] = async ({
 	const {entity_ids} = params;
 	for (const entity_id of entity_ids) {
 		entityById.delete(entity_id);
+		console.log('###', entity_id);
+		const sources = sourceTiesByDestEntityId.get().value.get(entity_id);
+		if (sources && sources.get().value.length > 0) {
+			for (const source of sources.get().value) {
+				console.log('###', source.source_id);
+				const ties = destTiesBySourceEntityId.get().value.get(source.source_id)!;
+				console.log('###', ties.get().value);
+				ties.mutate(($ties) => $ties.filter(($t) => $t.dest_id !== entity_id));
+			}
+		}
 	}
 	//TODO extract all this to a helper sibling like updateEntityCaches
 	for (const spaceEntities of entitiesBySourceId.values()) {
@@ -56,6 +66,7 @@ export const DeleteEntities: Mutations['DeleteEntities'] = async ({
 			spaceEntities.update(($s) => $s.filter(($e) => !entity_ids.includes($e.get().entity_id)));
 		}
 	}
+
 	return result;
 };
 
