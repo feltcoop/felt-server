@@ -24,5 +24,6 @@
 	}
 	button {
 		height: var(--navbar_size);
+		border-radius: 0;
 	}
 </style>

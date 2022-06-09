@@ -26,6 +26,7 @@
 		position: absolute;
 		right: 0;
 		top: 0;
+		border-radius: 0;
 		/* TODO this is janky because it can go offscreen for a bit,
 		though it's a nice idea because it maintains object permanence */
 		/* transition: transform var(--duration_1) ease-out; */
