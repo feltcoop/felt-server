@@ -53,12 +53,15 @@ export const task: Task = {
 		//TEMP: move .env files into root
 		await spawn('scp', [`src/infra/.env.default`, `${deployLogin}:${currentDeploy}/.env`]);
 		await spawn('scp', [ENV_PROD, `${deployLogin}:${currentDeploy}/${ENV_PROD}`]);
-		//TODO: re/start the server via pm2
-		// pm2 start npm -- run start --prefix ${currentDeploy}
-		// await invokeTask('infra/restartProd')
 		/*
 
-		TODO then these manual steps:
+		TODO start the server:
+
+		```bash
+			pm2 start npm -- run start --prefix ${currentDeploy}
+		```
+
+		TODO restart the server with these manual steps:
 
 		```bash
 			gro infra/serverDeploy
