@@ -58,7 +58,7 @@ export const task: Task = {
 		// await invokeTask('infra/restartProd')
 		/*
 
-		currently running these manual steps:
+		TODO then these manual steps:
 
 		```bash
 			gro infra/serverDeploy
