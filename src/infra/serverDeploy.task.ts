@@ -65,7 +65,7 @@ export const task: Task = {
 
 		```bash
 			gro infra/serverDeploy
-			ssh ...
+			ssh ${DEPLOY_USER}@${DEPLOY_IP}
 			cd ~/felt-server
 			git pull
 			NODE_ENV=development npm i
