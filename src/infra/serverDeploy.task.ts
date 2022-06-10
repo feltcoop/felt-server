@@ -70,6 +70,7 @@ export const task: Task = {
 			git pull
 			NODE_ENV=development npm i
 			NODE_ENV=development gro lib/db/migrate
+			exit # disconnect SSH
 			gro infra/restartProd
 		```
 
