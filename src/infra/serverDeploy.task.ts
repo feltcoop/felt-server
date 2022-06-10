@@ -56,6 +56,21 @@ export const task: Task = {
 		//TODO: re/start the server via pm2
 		// pm2 start npm -- run start --prefix ${currentDeploy}
 		// await invokeTask('infra/restartProd')
+		/*
+
+		currently running these manual steps:
+
+		```bash
+			gro infra/serverDeploy
+			ssh ...
+			cd ~/felt-server
+			git pull
+			NODE_ENV=development npm i
+			NODE_ENV=development gro lib/db/migrate
+			gro infra/restartProd
+		```
+
+		*/
 	},
 };
 
