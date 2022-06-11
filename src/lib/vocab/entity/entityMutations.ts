@@ -41,7 +41,6 @@ export const EraseEntities: Mutations['EraseEntities'] = async ({invoke, ui, dis
 export const DeleteEntities: Mutations['DeleteEntities'] = async ({invoke, params, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	//TODO update ties once stores are in place
 	const {entity_ids} = params;
 	for (const entity_id of entity_ids) {
 		ui.entityById.delete(entity_id);
