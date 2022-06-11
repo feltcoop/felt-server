@@ -117,6 +117,6 @@ export const evictTieCachesForEntity = (
 				});
 			}
 		}
-		sourceTiesByDestEntityId.mutate(($v) => $v.delete(entity_id));
+		destTiesBySourceEntityId.mutate(($v) => $v.delete(entity_id));
 	}
 };
