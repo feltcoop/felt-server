@@ -120,3 +120,36 @@ export const evictTiesForEntity = (
 		destTiesBySourceEntityId.mutate(($v) => $v.delete(entity_id));
 	}
 };
+
+export const evictTie = (
+	{sourceTiesByDestEntityId, destTiesBySourceEntityId}: WritableUi,
+	source_id: number,
+	dest_id: number,
+	type: string,
+): void => {
+	const sources = sourceTiesByDestEntityId.get().value.get(dest_id);
+	if (sources) {
+		sources.mutate(($sources) => {
+			for (let i = $sources.length - 1; i >= 0; i--) {
+				const sourceTie = $sources[i];
+				if (
+					sourceTie.source_id === source_id &&
+					sourceTie.dest_id === dest_id &&
+					sourceTie.type === type
+				)
+					$sources.splice(i, 1);
+			}
+		});
+	}
+
+	const destinations = destTiesBySourceEntityId.get().value.get(source_id);
+	if (destinations) {
+		destinations.mutate(($destinations) => {
+			for (let i = $destinations.length - 1; i >= 0; i--) {
+				const destTie = $destinations[i];
+				if (destTie.source_id === source_id && destTie.dest_id === dest_id && destTie.type === type)
+					$destinations.splice(i, 1);
+			}
+		});
+	}
+};
