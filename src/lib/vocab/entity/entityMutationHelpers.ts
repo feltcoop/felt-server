@@ -108,7 +108,7 @@ export const evictTieCachesForEntity = (
 	const destinations = destTiesBySourceEntityId.get().value.get(entity_id);
 	if (destinations) {
 		for (const dest of destinations.get().value) {
-			const ties = sourceTiesByDestEntityId.get().value.get(dest.source_id);
+			const ties = sourceTiesByDestEntityId.get().value.get(dest.dest_id);
 			if (ties) {
 				ties.mutate(($ties) => {
 					for (let i = $ties.length - 1; i >= 0; i--) {
