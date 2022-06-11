@@ -86,7 +86,7 @@ export const updateTieCaches = (
 	}
 };
 
-export const evictTieCachesForEntity = (
+export const evictTiesForEntity = (
 	{sourceTiesByDestEntityId, destTiesBySourceEntityId}: WritableUi,
 	entity_id: number,
 ): void => {

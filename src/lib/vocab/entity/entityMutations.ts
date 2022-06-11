@@ -2,7 +2,7 @@ import {writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {
-	evictTieCachesForEntity,
+	evictTiesForEntity,
 	updateEntity,
 	updateEntityCaches,
 	updateTieCaches,
@@ -44,7 +44,7 @@ export const DeleteEntities: Mutations['DeleteEntities'] = async ({invoke, param
 	const {entity_ids} = params;
 	for (const entity_id of entity_ids) {
 		ui.entityById.delete(entity_id);
-		evictTieCachesForEntity(ui, entity_id);
+		evictTiesForEntity(ui, entity_id);
 	}
 
 	//TODO extract all this to a helper sibling like updateEntityCaches
