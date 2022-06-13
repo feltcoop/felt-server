@@ -12,6 +12,7 @@
 
 	const {
 		ui: {contextmenu, personaById, destTiesBySourceEntityId, entityById},
+		dispatch,
 	} = getApp();
 
 	export let entity: Readable<Entity>;
@@ -36,12 +37,36 @@
 	$: hue = randomHue($persona.name);
 
 	$: hasItems = items !== undefined || $entity.data.type === 'Collection';
+	let openReply = false;
+	let text = '';
 
 	const renderEntity = (entity: Entity): boolean => {
 		const type = entity.data.type;
 		//1) Only render Collections or Notes
 		if (!(type === 'Collection' || type === 'Note')) return false;
 		return true;
+	};
+	const createEntity = async () => {
+		const content = text.trim(); // TODO parse to trim? regularize step?
+		if (!content || !selectedPost) return;
+
+		//TODO better error handling
+		await dispatch.CreateEntity({
+			data: {type: 'Note', content},
+			persona_id: $persona.persona_id,
+			source_id: $entity.entity_id,
+		});
+		await dispatch.UpdateEntity({
+			data: null,
+			entity_id: $space.directory_id,
+		});
+		text = '';
+		openReply = false;
+	};
+	const onKeydown = async (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			await createEntity();
+		}
 	};
 </script>
 
@@ -56,7 +81,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		]}
 	>
 		<div on:click={() => selectPost(entity)} class="entity markup formatted">
-			{#if hasItems}
+			{#if $entity.data.name}
 				<div class="icon-button">
 					{#if selected}👉{:else}📝{/if}
 				</div>
@@ -69,14 +94,17 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 					{/if}
 				{:else}
 					<EntityContent {entity} />
-					<br />reply
+					<br /><a on:click={() => (openReply = !openReply)}>reply</a>
+					{#if openReply}
+						<input placeholder="> replying to comment" on:keydown={onKeydown} bind:value={text} />
+					{/if}
 				{/if}
 			</div>
 			<div class="signature">
 				<PersonaAvatar {persona} showName={false} />
 			</div>
 		</div>
-		{#if items && selected}
+		{#if items && selectedPost}
 			<div class="items panel-inset">
 				<ul>
 					{#each items as item (item)}
