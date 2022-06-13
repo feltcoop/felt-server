@@ -132,14 +132,14 @@ export const evictTie = (
 		sources.mutate(($sources) => {
 			for (let i = $sources.length - 1; i >= 0; i--) {
 				const sourceTie = $sources[i];
-				if (
-					sourceTie.source_id === source_id &&
-					sourceTie.dest_id === dest_id &&
-					sourceTie.type === type
-				)
-					$sources.splice(i, 1);
+				if (sourceTie.source_id === source_id && sourceTie.type === type) $sources.splice(i, 1);
 			}
 		});
+		if (sources.get().value.length === 0) {
+			sourceTiesByDestEntityId.mutate(($v) => {
+				$v.delete(dest_id);
+			});
+		}
 	}
 
 	const destinations = destTiesBySourceEntityId.get().value.get(source_id);
@@ -147,9 +147,13 @@ export const evictTie = (
 		destinations.mutate(($destinations) => {
 			for (let i = $destinations.length - 1; i >= 0; i--) {
 				const destTie = $destinations[i];
-				if (destTie.source_id === source_id && destTie.dest_id === dest_id && destTie.type === type)
-					$destinations.splice(i, 1);
+				if (destTie.dest_id === dest_id && destTie.type === type) $destinations.splice(i, 1);
 			}
 		});
+		if (destinations.get().value.length === 0) {
+			destTiesBySourceEntityId.mutate(($v) => {
+				$v.delete(source_id);
+			});
+		}
 	}
 };
