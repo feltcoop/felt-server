@@ -64,8 +64,12 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			<div class="text">
 				{#if $entity.data.type === 'Collection'}
 					{$entity.data.name}
+					{#if selected}
+						<br /><EntityContent {entity} />
+					{/if}
 				{:else}
 					<EntityContent {entity} />
+					<br />reply
 				{/if}
 			</div>
 			<div class="signature">
@@ -103,10 +107,6 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	}
 	.entity:hover {
 		background-color: var(--tint_dark_1);
-	}
-	.entity form input {
-		width: 50px;
-		min-width: auto;
 	}
 	.items {
 		width: 100%;

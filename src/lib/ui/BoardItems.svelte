@@ -16,7 +16,11 @@
 
 <!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->
 <ul>
-	{#each collectionEntities as entity (entity)}
-		<BoardItem {entity} {space} {selectedPost} {selectPost} />
-	{/each}
+	{#if selectedPost}
+		<BoardItem entity={selectedPost} {space} {selectedPost} {selectPost} />
+	{:else}
+		{#each collectionEntities as entity (entity)}
+			<BoardItem {entity} {space} {selectedPost} {selectPost} />
+		{/each}
+	{/if}
 </ul>

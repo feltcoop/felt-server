@@ -32,7 +32,7 @@
 	const create = async () => {
 		//TODO validate inputs
 		name = name.trim();
-		content = name.trim();
+		content = content.trim();
 		if (!name) {
 			errorMessage = `please enter a name for your new ${entityName}`;
 			nameEl.focus();
@@ -47,7 +47,7 @@
 		const result = await dispatch.CreateEntity({
 			persona_id,
 			//TODO genericize type for this form
-			data: {type: 'Collection', name},
+			data: {type: 'Collection', name, content},
 			source_id,
 		});
 		status = 'success'; // TODO handle failure (also refactor to be generic)
