@@ -23,6 +23,7 @@ import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
 import type {Tie} from '$lib/vocab/tie/tie';
+import {deserialize, deserializers} from '$lib/util/deserialize';
 
 if (browser) initBrowser();
 
@@ -60,7 +61,7 @@ export interface Ui {
 	//TODO maybe refactor to remove store around map? Like personaById
 	spacesByCommunityId: Readable<Map<number, Array<Readable<Space>>>>;
 	personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>>;
-	entityById: Mutable<Map<number, Readable<Entity>>>; // TODO mutable inner store
+	entityById: Map<number, Readable<Entity>>; // TODO mutable inner store
 	entitiesBySourceId: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
 	sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>>;
 	destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>>;
@@ -77,7 +78,7 @@ export interface Ui {
 	spaceIdSelectionByCommunityId: Mutable<Map<number, number | null>>;
 	spaceSelection: Readable<Readable<Space> | null>;
 	lastSeenByDirectoryId: Mutable<Map<number, Writable<number> | null>>;
-	freshnessByDirectoryId: Readable<Map<number, Writable<boolean>>>;
+	freshnessByDirectoryId: Map<number, Readable<boolean>>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
@@ -223,23 +224,10 @@ export const toUi = (
 	);
 	const lastSeenByDirectoryId = mutable<Map<number, Writable<number> | null>>(new Map());
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
-	const entityById = mutable<Map<number, Writable<Entity>>>(new Map());
+	const entityById: Map<number, Writable<Entity>> = new Map();
 
-	const freshnessByDirectoryId: Readable<Map<number, Writable<boolean>>> = derived(
-		[spaces, lastSeenByDirectoryId, entityById],
-		([$spaces, $lastSeenByDirectoryId, $entityById]) => {
-			const map: Map<number, Writable<boolean>> = new Map();
-			for (const space of $spaces.value) {
-				const $space = space.get();
-				const $directory = $entityById.value.get($space.directory_id)!.get();
-				const $lastSeen = $lastSeenByDirectoryId.value.get($space.directory_id)!.get();
-				const systemTime = $directory.updated ?? $directory.created;
-				const freshness = $lastSeen < systemTime.getTime();
-				map.set($space.directory_id, writable(freshness));
-			}
-			return map;
-		},
-	);
+	const freshnessByDirectoryId: Map<number, Readable<boolean>> = new Map();
+
 	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
 	const sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
 	const destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
@@ -290,6 +278,7 @@ export const toUi = (
 		session,
 		setSession: ($session: ClientSession) => {
 			if (browser) log.trace('[setSession]', $session);
+			deserialize(deserializers)($session);
 			account.set($session.guest ? null : $session.account);
 
 			const $personaArray = $session.guest ? [] : toInitialPersonas($session);
@@ -312,10 +301,6 @@ export const toUi = (
 			spaceById.clear();
 			$spaces.forEach((s, i) => spaceById.set($spaceArray[i].space_id, s));
 			spaces.swap($spaces);
-
-			const $directoriesArray = $session.guest ? [] : $session.directories;
-
-			$directoriesArray.forEach((d) => entityById.get().value.set(d.entity_id, writable(d)));
 
 			memberships.swap($session.guest ? [] : $session.memberships.map((s) => writable(s)));
 
@@ -359,6 +344,24 @@ export const toUi = (
 						  ]),
 				),
 			);
+			const $directoriesArray = $session.guest ? [] : $session.directories;
+
+			$directoriesArray.forEach((d) => {
+				const entity = writable(d);
+				entityById.set(d.entity_id, entity);
+				freshnessByDirectoryId.set(
+					d.entity_id,
+					derived(
+						[entity, lastSeenByDirectoryId.get().value.get(d.entity_id)!],
+						([$entity, $lastSeen]) => {
+							console.log('@@@ e', $entity);
+							console.log('@@@ l', $lastSeen);
+							console.log('@@@ r', $lastSeen < ($entity.updated ?? $entity.created).getTime());
+							return $lastSeen < ($entity.updated ?? $entity.created).getTime();
+						},
+					),
+				);
+			});
 		},
 	} as const;
 

@@ -10,7 +10,7 @@
 		ui: {freshnessByDirectoryId},
 	} = getApp();
 
-	$: fresh = $freshnessByDirectoryId.get($space.directory_id)!;
+	$: fresh = freshnessByDirectoryId.get($space.directory_id)!;
 </script>
 
 <SpaceIcon {space} />

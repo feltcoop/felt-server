@@ -11,17 +11,16 @@ export const updateEntity = (
 	$entity: Entity,
 ): Writable<Entity> => {
 	const {entity_id} = $entity;
-	let entity = entityById.get().value.get(entity_id);
+	let entity = entityById.get(entity_id);
 	if (entity) {
 		entity.set($entity);
 	} else {
-		entityById.get().value.set(entity_id, (entity = writable($entity)));
+		entityById.set(entity_id, (entity = writable($entity)));
 	}
 	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
 		//TODO having dispatch here may be a code smell; need to rethink either passing full event context or adding listeners
 		dispatch.UpdateLastSeen({directory_id: $entity.entity_id, time: $entity.updated!.getTime()});
 	}
-	entityById.mutate();
 	return entity;
 };
 
@@ -31,7 +30,7 @@ export const updateEntityCaches = (
 	source_id: number,
 ): Writable<Entity> => {
 	const {entity_id} = $entity;
-	const entity = entityById.get().value.get(entity_id)!;
+	const entity = entityById.get(entity_id)!;
 	const existingSpaceEntities = entitiesBySourceId.get(source_id);
 	if (existingSpaceEntities) {
 		if (!existingSpaceEntities.get().includes(entity)) {

@@ -43,7 +43,8 @@ export const DeleteEntities: Mutations['DeleteEntities'] = async ({invoke, param
 	if (!result.ok) return result;
 	const {entity_ids} = params;
 	for (const entity_id of entity_ids) {
-		ui.entityById.get().value.delete(entity_id);
+		ui.entityById.delete(entity_id);
+		ui.freshnessByDirectoryId.delete(entity_id);
 		evictTiesForEntity(ui, entity_id);
 	}
 

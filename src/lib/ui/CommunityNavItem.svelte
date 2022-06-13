@@ -37,7 +37,7 @@
 
 	$: spaces = $spacesByCommunityId.get($community.community_id);
 	$: highlighted =
-		spaces && !spaces.every((s) => !$freshnessByDirectoryId.get(s.get().directory_id)!.get());
+		spaces && !spaces.every((s) => freshnessByDirectoryId.get(s.get().directory_id)!.get());
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
