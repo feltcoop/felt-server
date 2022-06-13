@@ -89,10 +89,9 @@ export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
 }) => {
 	const timestamp = time ?? Date.now();
 
-	//TODO this probably doesn't need to be reactive
-	lastSeenByDirectoryId.mutate(($v) => {
-		$v.get(directory_id)?.set(timestamp) || $v.set(directory_id, writable(timestamp));
-	});
+	lastSeenByDirectoryId.get(directory_id)
+		? lastSeenByDirectoryId.get(directory_id)!.set(timestamp)
+		: lastSeenByDirectoryId.set(directory_id, writable(timestamp));
 
 	if (browser) {
 		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, `${timestamp}`);

@@ -77,7 +77,7 @@ export interface Ui {
 	communitySelection: Readable<Readable<Community> | null>;
 	spaceIdSelectionByCommunityId: Mutable<Map<number, number | null>>;
 	spaceSelection: Readable<Readable<Space> | null>;
-	lastSeenByDirectoryId: Mutable<Map<number, Writable<number> | null>>;
+	lastSeenByDirectoryId: Map<number, Writable<number> | null>;
 	freshnessByDirectoryId: Map<number, Readable<boolean>>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
@@ -222,7 +222,7 @@ export const toUi = (
 				)) ||
 			null,
 	);
-	const lastSeenByDirectoryId = mutable<Map<number, Writable<number> | null>>(new Map());
+	const lastSeenByDirectoryId: Map<number, Writable<number> | null> = new Map();
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const entityById: Map<number, Writable<Entity>> = new Map();
 
@@ -299,7 +299,17 @@ export const toUi = (
 			const $spaceArray = $session.guest ? [] : $session.spaces;
 			const $spaces = $spaceArray.map((s) => writable(s));
 			spaceById.clear();
-			$spaces.forEach((s, i) => spaceById.set($spaceArray[i].space_id, s));
+			$spaces.forEach((s, i) => {
+				spaceById.set($spaceArray[i].space_id, s);
+				lastSeenByDirectoryId.set(
+					s.get().directory_id,
+					writable(
+						(browser && Number(localStorage.getItem(`${LAST_SEEN_KEY}${s.get().directory_id}`))) ||
+							Date.now(),
+					),
+				);
+			});
+
 			spaces.swap($spaces);
 
 			memberships.swap($session.guest ? [] : $session.memberships.map((s) => writable(s)));
@@ -330,20 +340,7 @@ export const toUi = (
 						  ]),
 				),
 			);
-			lastSeenByDirectoryId.swap(
-				new Map(
-					$session.guest
-						? null
-						: $session.spaces.map(($space) => [
-								$space.directory_id,
-								writable(
-									(browser &&
-										Number(localStorage.getItem(`${LAST_SEEN_KEY}${$space.directory_id}`))) ||
-										Date.now(),
-								),
-						  ]),
-				),
-			);
+
 			const $directoriesArray = $session.guest ? [] : $session.directories;
 
 			$directoriesArray.forEach((d) => {
@@ -351,15 +348,12 @@ export const toUi = (
 				entityById.set(d.entity_id, entity);
 				freshnessByDirectoryId.set(
 					d.entity_id,
-					derived(
-						[entity, lastSeenByDirectoryId.get().value.get(d.entity_id)!],
-						([$entity, $lastSeen]) => {
-							console.log('@@@ e', $entity);
-							console.log('@@@ l', $lastSeen);
-							console.log('@@@ r', $lastSeen < ($entity.updated ?? $entity.created).getTime());
-							return $lastSeen < ($entity.updated ?? $entity.created).getTime();
-						},
-					),
+					derived([entity, lastSeenByDirectoryId.get(d.entity_id)!], ([$entity, $lastSeen]) => {
+						console.log('@@@ e', $entity);
+						console.log('@@@ l', $lastSeen);
+						console.log('@@@ r', $lastSeen < ($entity.updated ?? $entity.created).getTime());
+						return $lastSeen < ($entity.updated ?? $entity.created).getTime();
+					}),
 				);
 			});
 		},
