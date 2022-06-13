@@ -349,9 +349,6 @@ export const toUi = (
 				freshnessByDirectoryId.set(
 					d.entity_id,
 					derived([entity, lastSeenByDirectoryId.get(d.entity_id)!], ([$entity, $lastSeen]) => {
-						console.log('@@@ e', $entity);
-						console.log('@@@ l', $lastSeen);
-						console.log('@@@ r', $lastSeen < ($entity.updated ?? $entity.created).getTime());
 						return $lastSeen < ($entity.updated ?? $entity.created).getTime();
 					}),
 				);

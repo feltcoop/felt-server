@@ -8,7 +8,7 @@ export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui: {spaceB
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {space: $space} = result.value;
-	//TODO BLOCK add directory updating here
+	//TODO add directory updating here
 	const space = writable($space);
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));

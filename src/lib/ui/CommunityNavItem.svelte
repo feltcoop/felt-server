@@ -35,9 +35,10 @@
 
 	$: personaIndex = $sessionPersonaIndices.get(persona)!;
 
-	$: spaces = $spacesByCommunityId.get($community.community_id);
-	$: highlighted =
-		spaces && !spaces.every((s) => freshnessByDirectoryId.get(s.get().directory_id)!.get());
+	$: spaces = $spacesByCommunityId.get($community.community_id) || [];
+
+	$: highlighted = !spaces.every((s) => !freshnessByDirectoryId.get(s.get().directory_id)!.get());
+	$: console.log(`% ${$community.community_id}`, highlighted);
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
