@@ -2,7 +2,6 @@
 	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
-	import type {Tie} from '$lib/vocab/tie/tie';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
 	import {randomHue} from '$lib/ui/color';
 	import {getApp} from '$lib/ui/app';
@@ -12,22 +11,26 @@
 	import type {Space} from '$lib/vocab/space/space';
 
 	const {
-		ui: {contextmenu, personaById},
+		ui: {contextmenu, personaById, destTiesBySourceEntityId, entityById},
 		dispatch,
 	} = getApp();
 
 	export let entity: Readable<Entity>;
 	export let space: Readable<Space>;
-	export let ties: Tie[];
-	export let itemsByEntity: Map<Readable<Entity>, Array<Readable<Entity>>>;
-	export let entityById: Map<number, Readable<Entity>>;
-	export let selectedList: Entity | null;
-	export let selectList: (list: Entity) => void;
+	export let selectedList: Readable<Entity> | null;
+	export let selectList: (list: Readable<Entity>) => void;
 
-	$: selected = selectedList ? selectedList === $entity : false;
+	$: selected = selectedList ? selectedList === entity : false;
 	let pending = false;
 
-	$: items = itemsByEntity.get(entity);
+	$: destTies = $destTiesBySourceEntityId.value.get($entity.entity_id);
+
+	$: items = $destTies?.value.reduce((acc, tie) => {
+		if (tie.type === 'HasItem') {
+			acc.push(entityById.get(tie.dest_id)!);
+		}
+		return acc;
+	}, [] as Array<Readable<Entity>>);
 
 	$: ({checked} = $entity.data);
 
@@ -73,7 +76,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			[EntityContextmenu, {entity}],
 		]}
 	>
-		<div on:click={() => selectList($entity)} class="entity markup formatted">
+		<div on:click={() => selectList(entity)} class="entity markup formatted">
 			{#if hasItems}
 				<div class="icon-button">
 					{#if selected}👉{:else}📝{/if}
@@ -99,14 +102,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			<div class="items panel-inset">
 				<ul>
 					{#each items as item (item)}
-						<svelte:self
-							entity={item}
-							{ties}
-							{itemsByEntity}
-							{entityById}
-							{selectedList}
-							{selectList}
-						/>
+						<svelte:self entity={item} {space} {selectedList} {selectList} />
 					{/each}
 				</ul>
 			</div>

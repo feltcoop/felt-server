@@ -116,3 +116,13 @@ maybe upstream to Felt? think about how to upstream without bloating bundles tha
 	white-space: pre-wrap;
 	white-space: break-spaces;
 }
+
+/* TODO this probably isn't the best name for this class -- upstream to Felt when ready */
+.selectable:hover {
+	background-color: var(--interactive_color_hover);
+}
+.selectable:active,
+.selectable.selected {
+	/* TODO probably want `--interactive_color_selected` so it's different than active */
+	background-color: var(--interactive_color_active);
+}

@@ -22,6 +22,7 @@ import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
+import type {Tie} from '$lib/vocab/tie/tie';
 
 if (browser) initBrowser();
 
@@ -61,6 +62,8 @@ export interface Ui {
 	personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>>;
 	entityById: Mutable<Map<number, Readable<Entity>>>; // TODO mutable inner store
 	entitiesBySourceId: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
+	sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>>;
+	destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>>;
 	// view state
 	expandMainNav: Readable<boolean>;
 	expandMarquee: Readable<boolean>;
@@ -240,6 +243,8 @@ export const toUi = (
 		},
 	);
 	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
+	const sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
+	const destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
 
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
@@ -261,6 +266,8 @@ export const toUi = (
 		personasByCommunityId,
 		entityById,
 		entitiesBySourceId,
+		sourceTiesByDestEntityId,
+		destTiesBySourceEntityId,
 		communitiesBySessionPersona,
 		// view state
 		mobile,
