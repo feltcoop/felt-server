@@ -234,9 +234,7 @@ export const toUi = (
 				const $directory = $entityById.value.get($space.directory_id)!.get();
 				const $lastSeen = $lastSeenByDirectoryId.value.get($space.directory_id)!.get();
 				const systemTime = $directory.updated ?? $directory.created;
-
-				const clientTime = new Date($lastSeen);
-				const freshness = clientTime.getTime() < new Date(systemTime).getTime();
+				const freshness = $lastSeen < systemTime.getTime();
 				map.set($space.directory_id, writable(freshness));
 			}
 			return map;
