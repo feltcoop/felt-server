@@ -125,8 +125,8 @@ export const CreateSpaceService: ServiceByName['CreateSpace'] = {
 export const UpdateSpaceService: ServiceByName['UpdateSpace'] = {
 	event: UpdateSpace,
 	perform: async ({repos, params}) => {
-		const {space_id, ...uninitialized} = params;
-		const updateEntitiesResult = await repos.space.update(space_id, uninitialized);
+		const {space_id, ...partial} = params;
+		const updateEntitiesResult = await repos.space.update(space_id, partial);
 		if (!updateEntitiesResult.ok) {
 			log.trace('[UpdateSpace] error updating space');
 			return {ok: false, status: 500, message: 'failed to update space'};
