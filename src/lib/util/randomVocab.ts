@@ -15,7 +15,7 @@ import type {
 	CreateTieParams,
 } from '$lib/app/eventTypes';
 import type {Database} from '$lib/db/Database';
-import type {EntityData} from '$lib/vocab/entity/entityData';
+import type {DirectoryEntityData, EntityData} from '$lib/vocab/entity/entityData';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {CreateAccountPersonaService} from '$lib/vocab/persona/personaServices';
@@ -158,7 +158,7 @@ export class RandomVocabContext {
 		community?: Community,
 	): Promise<{
 		space: Space;
-		directory: Entity;
+		directory: Entity & {data: DirectoryEntityData};
 		persona: Persona;
 		account: Account;
 		community: Community;

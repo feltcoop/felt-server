@@ -23,7 +23,7 @@ export const CreateSpace: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			space: {$ref: '/schemas/Space.json', tsType: 'Space'},
-			directory: {$ref: '/schemas/Entity.json', tsType: 'Entity'},
+			directory: {$ref: '/schemas/Entity.json', tsType: 'Entity & {data: DirectoryEntityData}'}, // TODO make this a generic instead?
 		},
 		required: ['space', 'directory'],
 		additionalProperties: false,

@@ -1,4 +1,5 @@
 export type EntityData =
+	| DirectoryEntityData
 	| NoteEntityData
 	| ArticleEntityData
 	| CollectionEntityData
@@ -9,8 +10,12 @@ export interface BaseEntityData {
 	content?: string;
 	name?: string;
 	checked?: boolean;
-	community_id?: number; // populated for directories, absent for all other entities
-	space_id?: number; // populated for directories, absent for all other entities
+}
+
+export interface DirectoryEntityData extends BaseEntityData {
+	type: 'Collection';
+	community_id: number;
+	space_id: number;
 }
 
 export interface NoteEntityData extends BaseEntityData {

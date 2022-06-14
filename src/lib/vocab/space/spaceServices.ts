@@ -16,6 +16,8 @@ import type {Result} from '@feltcoop/felt';
 import type {Space} from '$lib/vocab/space/space';
 import type {ErrorResponse} from '$lib/util/error';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
+import type {DirectoryEntityData} from '../entity/entityData';
+import type {Entity} from '$lib/vocab/entity/entity';
 
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
@@ -80,15 +82,14 @@ export const CreateSpaceService: ServiceByName['CreateSpace'] = {
 		log.trace('[CreateSpace] initializing directory for space');
 		const createDirectoryResult = await repos.entity.create(communityPersona.value.persona_id, {
 			type: 'Collection',
-			name: 'directory',
 			community_id,
-			// `space_id` gets added below, after the space is created
+			space_id: undefined as any, // `space_id` gets added below, after the space is created
 		});
 		if (!createDirectoryResult.ok) {
 			log.error('[CreateSpace] error creating directory for space', params.name);
 			return {ok: false, status: 500, message: 'error creating directory for space'};
 		}
-		const directory = createDirectoryResult.value;
+		const partialDirectory = createDirectoryResult.value as Entity & {data: DirectoryEntityData};
 
 		log.trace('[CreateSpace] creating space for community', community_id);
 		const createSpaceResult = await repos.space.create(
@@ -97,7 +98,7 @@ export const CreateSpaceService: ServiceByName['CreateSpace'] = {
 			params.url,
 			params.icon,
 			community_id,
-			directory.entity_id,
+			partialDirectory.entity_id,
 		);
 		if (!createSpaceResult.ok) {
 			log.trace('[CreateSpace] error searching for community spaces');
@@ -105,17 +106,18 @@ export const CreateSpaceService: ServiceByName['CreateSpace'] = {
 		}
 		const space = createSpaceResult.value;
 
-		// set `directory.data.space_id` now that the space has been created
-		const updatedDirectoryResult = await repos.entity.updateEntityData(directory.entity_id, {
-			...directory.data,
+		// set `partialDirectory.data.space_id` now that the space has been created
+		const updatedDirectoryResult = await repos.entity.updateEntityData(partialDirectory.entity_id, {
+			...partialDirectory.data,
 			space_id: space.space_id,
 		});
 		if (!updatedDirectoryResult.ok) {
 			log.trace('[CreateSpace] error updating the directory for space');
 			return {ok: false, status: 500, message: 'error updating directory with new space'};
 		}
+		const updatedDirectory = updatedDirectoryResult.value as Entity & {data: DirectoryEntityData};
 
-		return {ok: true, status: 200, value: {space, directory: updatedDirectoryResult.value}};
+		return {ok: true, status: 200, value: {space, directory: updatedDirectory}};
 	},
 };
 
