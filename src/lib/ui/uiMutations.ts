@@ -97,6 +97,7 @@ export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
 		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, `${timestamp}`);
 	}
 	//TODO maybe turn this into a service event & make a server call too?
+	//TODO BLOCK call the community upsert here, maybe require Entity call too?
 };
 
 export const ToggleMainNav: Mutations['ToggleMainNav'] = ({ui: {expandMainNav}}) => {

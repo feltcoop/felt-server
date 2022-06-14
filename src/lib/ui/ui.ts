@@ -81,7 +81,7 @@ export interface Ui {
 	spaceSelection: Readable<Readable<Space> | null>;
 	lastSeenByDirectoryId: Map<number, Writable<number> | null>;
 	freshnessByDirectoryId: Map<number, Readable<boolean>>;
-	freshnessByCommunityId: Map<number, Readable<boolean>>;
+	freshnessByCommunityId: Map<number, Writable<boolean>>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
@@ -230,7 +230,7 @@ export const toUi = (
 	const entityById: Map<number, Writable<Entity>> = new Map();
 
 	const freshnessByDirectoryId: Map<number, Readable<boolean>> = new Map();
-	const freshnessByCommunityId: Map<number, Readable<boolean>> = new Map();
+	const freshnessByCommunityId: Map<number, Writable<boolean>> = new Map();
 
 	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
 	const sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());

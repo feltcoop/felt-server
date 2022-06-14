@@ -1,9 +1,9 @@
 import type {Entity} from '$lib/vocab/entity/entity';
-import {derived, type Writable} from '@feltcoop/svelte-gettable-stores';
+import {derived, writable, type Writable} from '@feltcoop/svelte-gettable-stores';
 import type {WritableUi} from './ui';
 
 export const setFreshnessDerived = (ui: WritableUi, directory: Writable<Entity>): void => {
-	const {freshnessByDirectoryId, lastSeenByDirectoryId, freshnessByCommunityId} = ui;
+	const {freshnessByDirectoryId, lastSeenByDirectoryId} = ui;
 	const {entity_id} = directory.get();
 	const lastSeen = lastSeenByDirectoryId.get(entity_id);
 	if (!lastSeen) throw Error(`no lastSeenByDirectoryId for directory:${entity_id}`);
@@ -15,8 +15,13 @@ export const setFreshnessDerived = (ui: WritableUi, directory: Writable<Entity>)
 			return $lastSeen < ($directory.updated ?? $directory.created).getTime();
 		}),
 	);
+};
 
-	//for a community, get all spaces
-	//for each space, find freshness
-	//if at least 1 is fresh, set community fresh
+export const upsertCommunityFreshnessById = (ui: WritableUi, community_id: number): void => {
+	const {spacesByCommunityId, freshnessByCommunityId, freshnessByDirectoryId} = ui;
+	const spaces = spacesByCommunityId.get().get(community_id) || [];
+	const fresh = !spaces.every((s) => !freshnessByDirectoryId.get(s.get().directory_id)!.get());
+	freshnessByCommunityId.get(community_id)
+		? freshnessByCommunityId.get(community_id)?.set(fresh)
+		: freshnessByCommunityId.set(community_id, writable(fresh));
 };
