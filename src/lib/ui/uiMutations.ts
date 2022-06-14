@@ -6,6 +6,7 @@ import {writable} from '@feltcoop/svelte-gettable-stores';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
 
 import type {Mutations} from '$lib/app/eventTypes';
+import {upsertCommunityFreshnessById} from './uiMutationHelper';
 
 const log = new Logger('[uiMutations]');
 
@@ -83,10 +84,12 @@ export const ViewSpace: Mutations['ViewSpace'] = async ({
 	}
 };
 
+//TODO maybe turn this into a service event & make a server call too?
 export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
 	params: {directory_id, time},
-	ui: {lastSeenByDirectoryId},
+	ui,
 }) => {
+	const {lastSeenByDirectoryId, entityById, spaceById} = ui;
 	const timestamp = time ?? Date.now();
 
 	lastSeenByDirectoryId.get(directory_id)
@@ -96,8 +99,11 @@ export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
 	if (browser) {
 		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, `${timestamp}`);
 	}
-	//TODO maybe turn this into a service event & make a server call too?
-	//TODO BLOCK call the community upsert here, maybe require Entity call too?
+
+	upsertCommunityFreshnessById(
+		ui,
+		spaceById.get(entityById.get(directory_id)?.get().data.space_id)?.get().community_id,
+	);
 };
 
 export const ToggleMainNav: Mutations['ToggleMainNav'] = ({ui: {expandMainNav}}) => {

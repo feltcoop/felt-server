@@ -24,7 +24,8 @@ import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {deserialize, deserializers} from '$lib/util/deserialize';
-import {setFreshnessDerived} from './uiMutationHelper';
+import {setFreshnessDerived, upsertCommunityFreshnessById} from './uiMutationHelper';
+import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 
 if (browser) initBrowser();
 
@@ -350,7 +351,12 @@ export const toUi = (
 			$directoriesArray.forEach((d) => {
 				//TODO clean this up with updateEntity once dispatch/updateLastSeen is resolved
 				const entity = writable(d);
+				entityById.set(d.entity_id, entity);
 				setFreshnessDerived(ui, entity);
+			});
+
+			$communityArray.forEach((c) => {
+				upsertCommunityFreshnessById(ui, c.community_id);
 			});
 		},
 	} as const;

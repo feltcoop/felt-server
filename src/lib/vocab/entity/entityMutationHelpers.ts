@@ -4,13 +4,15 @@ import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Dispatch} from '$lib/app/eventTypes';
 import type {Tie} from '$lib/vocab/tie/tie';
+import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
+import {upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelper';
 
 export const updateEntity = (
 	ui: WritableUi,
 	dispatch: Dispatch,
 	$entity: Entity,
 ): Writable<Entity> => {
-	const {entityById, spaceSelection} = ui;
+	const {entityById, spaceSelection, spaceById} = ui;
 	const {entity_id} = $entity;
 	let entity = entityById.get(entity_id);
 	if (entity) {
@@ -18,7 +20,13 @@ export const updateEntity = (
 	} else {
 		entityById.set(entity_id, (entity = writable($entity)));
 	}
-	//TODO BLOCK check for entity space_id, then trace up to community_id & call upsert
+
+	const entityData = entity.get().data as DirectoryEntityData;
+
+	if (entityData.space_id) {
+		upsertCommunityFreshnessById(ui, spaceById.get(entityData.space_id)!.get().community_id);
+	}
+
 	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
 		//TODO turn UpdateLastSeen into mutation helper & change event to "ClearFreshness"
 		dispatch.UpdateLastSeen({directory_id: $entity.entity_id, time: $entity.updated!.getTime()});

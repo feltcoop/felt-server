@@ -20,6 +20,7 @@ export const setFreshnessDerived = (ui: WritableUi, directory: Writable<Entity>)
 export const upsertCommunityFreshnessById = (ui: WritableUi, community_id: number): void => {
 	const {spacesByCommunityId, freshnessByCommunityId, freshnessByDirectoryId} = ui;
 	const spaces = spacesByCommunityId.get().get(community_id) || [];
+	console.log('upserting freshenss for communtiy', community_id);
 	const fresh = !spaces.every((s) => !freshnessByDirectoryId.get(s.get().directory_id)!.get());
 	freshnessByCommunityId.get(community_id)
 		? freshnessByCommunityId.get(community_id)?.set(fresh)

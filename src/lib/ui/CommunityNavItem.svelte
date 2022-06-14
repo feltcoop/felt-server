@@ -35,7 +35,7 @@
 	$: personaIndex = $sessionPersonaIndices.get(persona)!;
 
 	$: fresh = freshnessByCommunityId.get($community.community_id);
-	$: console.log(`% ${$community.community_id}`, fresh);
+	$: console.log(`% ${$community.community_id}`, $fresh);
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
