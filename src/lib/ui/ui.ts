@@ -25,6 +25,7 @@ import {LAST_SEEN_KEY} from '$lib/ui/app';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {deserialize, deserializers} from '$lib/util/deserialize';
 import {setFreshnessDerived} from './uiMutationHelper';
+import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 
 if (browser) initBrowser();
 
@@ -348,9 +349,8 @@ export const toUi = (
 			const $directoriesArray = $session.guest ? [] : $session.directories;
 
 			$directoriesArray.forEach((d) => {
-				const entity = writable(d);
-				entityById.set(d.entity_id, entity);
-				setFreshnessDerived(ui, entity);
+				//TODO clean this up once dispatch/updateLastSeen is resolved
+				setFreshnessDerived(ui, updateEntity(ui, Function.prototype as any, d));
 			});
 		},
 	} as const;

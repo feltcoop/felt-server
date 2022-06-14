@@ -18,7 +18,7 @@ export const updateEntity = (
 		entityById.set(entity_id, (entity = writable($entity)));
 	}
 	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
-		//TODO having dispatch here may be a code smell; need to rethink either passing full event context or adding listeners
+		//TODO turn UpdateLastSeen into mutation helper & change event to "ClearFreshness"
 		dispatch.UpdateLastSeen({directory_id: $entity.entity_id, time: $entity.updated!.getTime()});
 	}
 	return entity;
