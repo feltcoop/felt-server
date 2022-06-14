@@ -9,8 +9,8 @@ export interface BaseEntityData {
 	content?: string;
 	name?: string;
 	checked?: boolean;
-	community_id?: number; // populated for directories, `undefined` for all other entities
-	space_id?: number; // populated for directories, `undefined` for all other entities
+	community_id?: number; // populated for directories, absent for all other entities
+	space_id?: number; // populated for directories, absent for all other entities
 }
 
 export interface NoteEntityData extends BaseEntityData {
