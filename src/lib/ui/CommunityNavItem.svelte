@@ -45,7 +45,7 @@
 		persona: personaIndex + '',
 	})}
 	class:selected
-	class:highlighted={fresh}
+	class:highlighted={$fresh}
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {$community.settings.hue}"
 	use:contextmenu.action={[[CommunityContextmenu, {community, persona}]]}
