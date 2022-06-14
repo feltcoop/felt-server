@@ -87,7 +87,7 @@ export const CreateSpaceService: ServiceByName['CreateSpace'] = {
 			log.error('[CreateSpace] error creating directory for space', params.name);
 			return {ok: false, status: 500, message: 'error creating directory for space'};
 		}
-
+		const directory = createDirectoryResult.value;
 		log.trace('[CreateSpace] creating space for community', params.community_id);
 		const createSpaceResult = await repos.space.create(
 			params.name,
@@ -95,13 +95,13 @@ export const CreateSpaceService: ServiceByName['CreateSpace'] = {
 			params.url,
 			params.icon,
 			params.community_id,
-			createDirectoryResult.value.entity_id,
+			directory.entity_id,
 		);
 		if (!createSpaceResult.ok) {
 			log.trace('[CreateSpace] error searching for community spaces');
 			return {ok: false, status: 500, message: 'error searching for community spaces'};
 		}
-		return {ok: true, status: 200, value: {space: createSpaceResult.value}};
+		return {ok: true, status: 200, value: {space: createSpaceResult.value, directory}};
 	},
 };
 

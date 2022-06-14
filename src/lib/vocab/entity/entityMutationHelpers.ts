@@ -157,3 +157,10 @@ export const evictTie = (
 		}
 	}
 };
+
+export const deleteEntity = (ui: WritableUi, entity_id: number): void => {
+	const {entityById, freshnessByDirectoryId} = ui;
+	entityById.delete(entity_id);
+	freshnessByDirectoryId.delete(entity_id);
+	evictTiesForEntity(ui, entity_id);
+};

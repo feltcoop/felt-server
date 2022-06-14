@@ -24,6 +24,7 @@ import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {deserialize, deserializers} from '$lib/util/deserialize';
+import {setFreshnessDerived} from './uiMutationHelper';
 
 if (browser) initBrowser();
 
@@ -79,6 +80,7 @@ export interface Ui {
 	spaceSelection: Readable<Readable<Space> | null>;
 	lastSeenByDirectoryId: Map<number, Writable<number> | null>;
 	freshnessByDirectoryId: Map<number, Readable<boolean>>;
+	freshnessByCommunityId: Map<number, Readable<boolean>>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
@@ -227,6 +229,7 @@ export const toUi = (
 	const entityById: Map<number, Writable<Entity>> = new Map();
 
 	const freshnessByDirectoryId: Map<number, Readable<boolean>> = new Map();
+	const freshnessByCommunityId: Map<number, Readable<boolean>> = new Map();
 
 	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
 	const sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
@@ -272,6 +275,7 @@ export const toUi = (
 		spaceSelection,
 		lastSeenByDirectoryId,
 		freshnessByDirectoryId,
+		freshnessByCommunityId,
 		destroy: () => {
 			unsubscribeSession();
 		},
@@ -346,12 +350,7 @@ export const toUi = (
 			$directoriesArray.forEach((d) => {
 				const entity = writable(d);
 				entityById.set(d.entity_id, entity);
-				freshnessByDirectoryId.set(
-					d.entity_id,
-					derived([entity, lastSeenByDirectoryId.get(d.entity_id)!], ([$entity, $lastSeen]) => {
-						return $lastSeen < ($entity.updated ?? $entity.created).getTime();
-					}),
-				);
+				setFreshnessDerived(ui, entity);
 			});
 		},
 	} as const;
