@@ -16,7 +16,6 @@ test__spaceServices.after(teardownDb);
 test__spaceServices('space directory data has community and space ids', async ({random}) => {
 	const {space, directory} = await random.space();
 	assert.is(space.space_id, directory.data.space_id);
-	assert.is(space.community_id, directory.data.community_id);
 });
 
 test__spaceServices('delete a space in multiple communities', async ({db, random}) => {

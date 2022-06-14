@@ -14,7 +14,6 @@ export interface BaseEntityData {
 
 export interface DirectoryEntityData extends BaseEntityData {
 	type: 'Collection';
-	community_id: number;
 	space_id: number;
 }
 
