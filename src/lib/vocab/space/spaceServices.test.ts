@@ -13,7 +13,7 @@ const test__spaceServices = suite<TestDbContext & TestAppContext>('spaceServices
 test__spaceServices.before(setupDb);
 test__spaceServices.after(teardownDb);
 
-test__spaceServices('create a space with directory data', async ({random}) => {
+test__spaceServices('space directory data has community and space ids', async ({random}) => {
 	const {space, directory} = await random.space();
 	assert.is(space.space_id, directory.data.space_id);
 	assert.is(space.community_id, directory.data.community_id);
