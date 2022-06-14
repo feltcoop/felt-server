@@ -259,6 +259,7 @@ export interface CreateSpaceParams {
 }
 export interface CreateSpaceResponse {
 	space: Space;
+	directory: Entity;
 }
 export type CreateSpaceResponseResult = ApiResult<CreateSpaceResponse>;
 

@@ -97,7 +97,7 @@ export const CreateSpaceService: ServiceByName['CreateSpace'] = {
 			params.url,
 			params.icon,
 			community_id,
-			createDirectoryResult.value.entity_id,
+			directory.entity_id,
 		);
 		if (!createSpaceResult.ok) {
 			log.trace('[CreateSpace] error searching for community spaces');
@@ -106,13 +106,16 @@ export const CreateSpaceService: ServiceByName['CreateSpace'] = {
 		const space = createSpaceResult.value;
 
 		// set `directory.data.space_id` now that the space has been created
-		// TODO for merge, `const updatedDirectory = `
-		await repos.entity.updateEntityData(directory.entity_id, {
+		const updatedDirectoryResult = await repos.entity.updateEntityData(directory.entity_id, {
 			...directory.data,
 			space_id: space.space_id,
 		});
+		if (!updatedDirectoryResult.ok) {
+			log.trace('[CreateSpace] error updating the directory for space');
+			return {ok: false, status: 500, message: 'error updating directory with new space'};
+		}
 
-		return {ok: true, status: 200, value: {space}};
+		return {ok: true, status: 200, value: {space, directory: updatedDirectoryResult.value}};
 	},
 };
 
