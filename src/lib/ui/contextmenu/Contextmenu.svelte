@@ -30,7 +30,21 @@
 		}
 	};
 
+	// TODO maybe hoist these values to the context like `$layout`?
+	let mousePageX = 0;
+	let mousePageY = 0;
+
 	const onWindowKeydown = async (e: KeyboardEvent) => {
+		if (!open) {
+			if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
+				const el = document.elementFromPoint(mousePageX, mousePageY) as HTMLElement;
+				if (!el) return;
+				swallow(e);
+				// TODO BLOCK dispatch right click event if isEditable(el)?
+				onContextmenu(el, mousePageX, mousePageY, contextmenu, LinkContextmenu);
+			}
+			return;
+		}
 		if (e.key === 'Escape' && !isEditable(e.target)) {
 			contextmenu.close();
 			swallow(e);
@@ -53,6 +67,7 @@
 			contextmenu.selectLast();
 			swallow(e);
 		} else if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
+			// TODO BLOCK make this select the first thing if none
 			await contextmenu.activateSelected();
 			swallow(e);
 		}
@@ -76,7 +91,9 @@
 			if (!e.target.closest('a')) swallow(e);
 			return;
 		}
-		onContextmenu(e, contextmenu, LinkContextmenu);
+		if (e.shiftKey || isEditable(e.target)) return;
+		swallow(e);
+		onContextmenu(e.target as HTMLElement, e.clientX, e.clientY, contextmenu, LinkContextmenu);
 	};
 </script>
 
@@ -86,7 +103,11 @@
 <svelte:window
 	on:contextmenu|capture={onWindowContextmenu}
 	on:mousedown|capture={open ? onWindowMousedown : undefined}
-	on:keydown|capture={open ? onWindowKeydown : undefined}
+	on:mousemove|capture={(e) => {
+		mousePageX = e.pageX;
+		mousePageY = e.pageY;
+	}}
+	on:keydown|capture={onWindowKeydown}
 />
 
 <!-- TODO Maybe animate a subtle highlight around the contextmenu as it appears? -->

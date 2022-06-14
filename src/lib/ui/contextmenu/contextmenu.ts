@@ -270,17 +270,16 @@ const contextmenuAction = (el: HTMLElement | SVGElement, params: ContextmenuItem
  * @returns An event handler that opens the contextmenu, unless the target is inside `excludeEl`.
  */
 export const onContextmenu = (
-	e: MouseEvent,
+	target: HTMLElement | SVGElement,
+	x: number,
+	y: number,
 	contextmenu: ContextmenuStore,
 	LinkContextmenu?: typeof SvelteComponent,
 ): void => {
-	if (e.shiftKey) return;
-	swallow(e);
-	const target = e.target as HTMLElement | SVGElement;
 	const items = queryContextmenuItems(target, LinkContextmenu);
 	if (!items || isEditable(target)) return;
 	// TODO dispatch a UI event, like OpenContextmenu
-	contextmenu.open(items, e.clientX, e.clientY);
+	contextmenu.open(items, x, y);
 };
 
 const queryContextmenuItems = (
