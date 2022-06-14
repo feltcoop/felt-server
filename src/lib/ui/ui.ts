@@ -349,8 +349,9 @@ export const toUi = (
 			const $directoriesArray = $session.guest ? [] : $session.directories;
 
 			$directoriesArray.forEach((d) => {
-				//TODO clean this up once dispatch/updateLastSeen is resolved
-				setFreshnessDerived(ui, updateEntity(ui, Function.prototype as any, d));
+				//TODO clean this up with updateEntity once dispatch/updateLastSeen is resolved
+				const entity = writable(d);
+				setFreshnessDerived(ui, entity);
 			});
 		},
 	} as const;
