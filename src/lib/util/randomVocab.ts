@@ -156,12 +156,18 @@ export class RandomVocabContext {
 		persona?: Persona,
 		account?: Account,
 		community?: Community,
-	): Promise<{space: Space; persona: Persona; account: Account; community: Community}> {
+	): Promise<{
+		space: Space;
+		directory: Entity;
+		persona: Persona;
+		account: Account;
+		community: Community;
+	}> {
 		if (!account) account = await this.account();
 		if (!persona) ({persona} = await this.persona(account));
 		if (!community) ({community} = await this.community(persona, account));
 		const params = randomSpaceParams(persona.persona_id, community.community_id);
-		const {space} = unwrap(
+		const {space, directory} = unwrap(
 			await CreateSpaceService.perform({
 				params,
 				account_id: account.account_id,
@@ -169,7 +175,7 @@ export class RandomVocabContext {
 				session,
 			}),
 		);
-		return {space, persona, account, community};
+		return {space, directory, persona, account, community};
 	}
 
 	//TODO do we need space now? Should be source_id
