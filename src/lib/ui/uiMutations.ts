@@ -2,11 +2,13 @@ import {goto} from '$app/navigation';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {round} from '@feltcoop/felt/util/maths.js';
 import {browser} from '$app/env';
-import {writable} from '@feltcoop/svelte-gettable-stores';
+import {writable, type Readable} from '@feltcoop/svelte-gettable-stores';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {upsertCommunityFreshnessById} from './uiMutationHelper';
+import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
+import type {Entity} from '$lib/vocab/entity/entity';
 
 const log = new Logger('[uiMutations]');
 
@@ -92,18 +94,27 @@ export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
 	const {lastSeenByDirectoryId, entityById, spaceById} = ui;
 	const timestamp = time ?? Date.now();
 
-	lastSeenByDirectoryId.get(directory_id)
-		? lastSeenByDirectoryId.get(directory_id)!.set(timestamp)
-		: lastSeenByDirectoryId.set(directory_id, writable(timestamp));
+	if (lastSeenByDirectoryId.has(directory_id)) {
+		lastSeenByDirectoryId.get(directory_id)!.set(timestamp);
+	} else {
+		lastSeenByDirectoryId.set(directory_id, writable(timestamp));
+	}
 
 	if (browser) {
 		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, `${timestamp}`);
 	}
 
-	upsertCommunityFreshnessById(
-		ui,
-		spaceById.get(entityById.get(directory_id)?.get().data.space_id)?.get().community_id,
-	);
+	const directory = entityById.get(directory_id) as
+		| Readable<Entity & {data: DirectoryEntityData}>
+		| undefined;
+
+	if (directory) {
+		upsertCommunityFreshnessById(
+			ui,
+			//TODO add directory field to space & vice versa to avoid this mess below
+			spaceById.get(directory.get().data.space_id)!.get().community_id,
+		);
+	}
 };
 
 export const ToggleMainNav: Mutations['ToggleMainNav'] = ({ui: {expandMainNav}}) => {
