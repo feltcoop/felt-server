@@ -8,6 +8,7 @@
 	import {getApp} from '$lib/ui/app';
 	import {toSpaceUrl} from '$lib/ui/url';
 	import CommunityContextmenu from '$lib/app/contextmenu/CommunityContextmenu.svelte';
+	import FreshnessIndicator from '$lib/ui/FreshnessIndicator.svelte';
 
 	const {
 		dispatch,
@@ -35,7 +36,6 @@
 	$: personaIndex = $sessionPersonaIndices.get(persona)!;
 
 	$: fresh = freshnessByCommunityId.get($community.community_id);
-	$: console.log(`% ${$community.community_id}`, $fresh);
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
@@ -45,12 +45,14 @@
 		persona: personaIndex + '',
 	})}
 	class:selected
-	class:highlighted={$fresh}
 	class:persona={isPersonaHomeCommunity}
 	style="--hue: {$community.settings.hue}"
 	use:contextmenu.action={[[CommunityContextmenu, {community, persona}]]}
 	on:click={() => dispatch.SelectPersona({persona_id: $persona.persona_id})}
 >
+	{#if $fresh}
+		<FreshnessIndicator />
+	{/if}
 	<!-- TODO maybe use `Avatar`? does `hue` need to be on the link? -->
 	<EntityIcon name={$community.name} type="Community" />
 </a>
@@ -61,6 +63,7 @@
 		/* TODO better way to have active state? this makes the community nav wider than the luggage button! */
 		padding: var(--spacing_xs);
 		text-decoration: none;
+		position: relative;
 	}
 	.persona {
 		display: flex;
@@ -68,10 +71,5 @@
 		align-items: center;
 		height: var(--luggage_size);
 		--icon_size: var(--icon_size_sm);
-	}
-	/* TODO figure out why selected doesn't override highlighted */
-	.highlighted {
-		border-left: 2px;
-		background-color: grey;
 	}
 </style>

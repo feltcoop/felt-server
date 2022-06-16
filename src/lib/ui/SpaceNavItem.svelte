@@ -9,10 +9,11 @@
 	import {getApp} from '$lib/ui/app';
 	import SpaceContextmenu from '$lib/app/contextmenu/SpaceContextmenu.svelte';
 	import SpaceName from '$lib/ui/SpaceName.svelte';
+	import FreshnessIndicator from '$lib/ui/FreshnessIndicator.svelte';
 
 	const {
 		dispatch,
-		ui: {contextmenu, mobile, expandMainNav, sessionPersonaIndices},
+		ui: {contextmenu, mobile, expandMainNav, sessionPersonaIndices, freshnessByDirectoryId},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -21,6 +22,7 @@
 	export let selected: boolean;
 
 	$: personaIndex = $sessionPersonaIndices.get(persona)!;
+	$: fresh = freshnessByDirectoryId.get($space.directory_id)!;
 </script>
 
 <a
@@ -38,11 +40,15 @@
 		if ($mobile && $expandMainNav) dispatch.ToggleMainNav();
 	}}
 >
+	{#if $fresh}
+		<FreshnessIndicator />
+	{/if}
 	<SpaceName {space} />
 </a>
 
 <style>
 	a {
+		position: relative;
 		display: flex;
 		align-items: center;
 		text-decoration: none;
