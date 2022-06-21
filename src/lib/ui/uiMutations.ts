@@ -81,7 +81,7 @@ export const ViewSpace: Mutations['ViewSpace'] = async ({
 	}
 };
 
-//TODO maybe turn this into a service event & make a server call too?
+//TODO ranem like ClearFreshness
 export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
 	params: {directory_id, time},
 	ui,

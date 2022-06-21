@@ -11,29 +11,29 @@ import {
 // TODO if `Create/Update/Erase` remain identical, probably make them use a single helper
 // `updateEntity` or more likely `updateEntities`
 
-export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, params, ui, dispatch}) => {
+export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, params, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {tie, entity} = result.value;
-	updateEntity(ui, dispatch, entity);
+	updateEntity(ui, entity);
 	updateEntityCaches(ui, entity, params.source_id);
 	updateTieCaches(ui, tie);
 	return result;
 };
 
 //TODO should this be UpdateEntities & batch?
-export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui, dispatch}) => {
+export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	updateEntity(ui, dispatch, result.value.entity);
+	updateEntity(ui, result.value.entity);
 	return result;
 };
 
-export const EraseEntities: Mutations['EraseEntities'] = async ({invoke, ui, dispatch}) => {
+export const EraseEntities: Mutations['EraseEntities'] = async ({invoke, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	for (const $entity of result.value.entities) {
-		updateEntity(ui, dispatch, $entity);
+		updateEntity(ui, $entity);
 	}
 	return result;
 };
@@ -57,12 +57,12 @@ export const DeleteEntities: Mutations['DeleteEntities'] = async ({invoke, param
 	return result;
 };
 
-export const ReadEntities: Mutations['ReadEntities'] = async ({invoke, params, ui, dispatch}) => {
+export const ReadEntities: Mutations['ReadEntities'] = async ({invoke, params, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {ties, entities} = result.value;
 	for (const $entity of entities) {
-		updateEntity(ui, dispatch, $entity);
+		updateEntity(ui, $entity);
 		updateEntityCaches(ui, $entity, params.source_id);
 	}
 	for (const $tie of ties) {
@@ -75,14 +75,13 @@ export const ReadEntities: Mutations['ReadEntities'] = async ({invoke, params, u
 export const ReadEntitiesPaginated: Mutations['ReadEntitiesPaginated'] = async ({
 	invoke,
 	ui,
-	dispatch,
 	params,
 }) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {ties, entities} = result.value;
 	for (const $entity of entities) {
-		updateEntity(ui, dispatch, $entity);
+		updateEntity(ui, $entity);
 		updateEntityCaches(ui, $entity, params.source_id);
 	}
 	for (const $tie of ties) {
