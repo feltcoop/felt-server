@@ -19,9 +19,6 @@
 
 	$: directory_id = $space.directory_id;
 	$: dispatch.UpdateLastSeen({directory_id});
-	// const updateLastSeen = (directory_id: number) => {
-	// 	dispatch.UpdateLastSeen({directory_id});
-	// };
 
 	const viewContext = writable({persona, community, space});
 	setViewContext(viewContext);
