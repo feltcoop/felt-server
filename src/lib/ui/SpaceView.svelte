@@ -18,7 +18,7 @@
 	export let space: Readable<Space>;
 
 	$: directory_id = $space.directory_id;
-	$: dispatch.UpdateLastSeen({directory_id});
+	$: dispatch.ClearFreshness({directory_id});
 
 	const viewContext = writable({persona, community, space});
 	setViewContext(viewContext);

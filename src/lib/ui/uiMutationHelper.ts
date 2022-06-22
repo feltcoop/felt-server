@@ -20,6 +20,7 @@ export const setFreshnessDerived = (ui: WritableUi, directory: Writable<Entity>)
 	);
 };
 
+//TODO this could probably a derived store (see above) based on something like "directoriesByCommunityId"
 export const upsertCommunityFreshnessById = (ui: WritableUi, community_id: number): void => {
 	const {spacesByCommunityId, freshnessByCommunityId, freshnessByDirectoryId} = ui;
 	const spaces = spacesByCommunityId.get().get(community_id) || [];

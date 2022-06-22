@@ -82,7 +82,7 @@ export const ViewSpace: Mutations['ViewSpace'] = async ({
 };
 
 //TODO ranem like ClearFreshness
-export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
+export const ClearFreshness: Mutations['ClearFreshness'] = async ({
 	params: {directory_id, time},
 	ui,
 }) => {

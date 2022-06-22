@@ -6,7 +6,7 @@ import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {deleteEntity, updateEntity} from '../entity/entityMutationHelpers';
 import {setFreshnessDerived} from '$lib/ui/uiMutationHelper';
 
-export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui, dispatch}) => {
+export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui}) => {
 	const {spaceById, spaces} = ui;
 	const result = await invoke();
 	if (!result.ok) return result;
@@ -15,7 +15,7 @@ export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui, dispatc
 	const space = writable($space);
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
-	const directory = updateEntity(ui, dispatch, $directory);
+	const directory = updateEntity(ui, $directory);
 	setFreshnessDerived(ui, directory);
 	return result;
 };
