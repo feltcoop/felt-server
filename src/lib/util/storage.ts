@@ -3,42 +3,65 @@ import type {Mutable, Writable} from '@feltcoop/svelte-gettable-stores';
 import {identity} from '@feltcoop/felt/util/function.js';
 import type {Json} from '@feltcoop/felt/util/json.js';
 
-// TODO BLOCK is the limitation that it won't save on `set/update/swap/mutate` a problem?
-// should we override each of those too? then we wouldn't have to subscribe, right?
-// we just intercept the values? but that wouldn't work for derived,
-// but derived doesn't work for this anyway because there's no set? yeah derived makes no sense,
-// nor does readable with its own `set` -- in that case it can use `loadFromStorage` directly
-
-// TODO BLOCK different ones for each?
-// storedWritable
-// storedMutable
-
+// TODO BLOCK support writable without `update` in the type
 export const locallyStored = <T extends Writable<U> | Mutable<U>, U, V extends Json = Json>(
 	store: T,
 	key: string,
-	toJson: (v: U) => V = identity as any,
-	fromJson: (v: V) => U = identity as any,
+	toJson: (v: U) => V = identity as any, // TODO maybe these should be optional
+	fromJson: (v: V) => U = identity as any, // TODO maybe these should be optional
 ): T & {getJson: () => V} => {
-	// TODO BLOCK is this right, set it immediately?
+	const hasSet = 'set' in store;
+	const hasUpdate = 'update' in store;
+	const hasMutate = 'mutate' in store;
+	const hasSwap = 'swap' in store;
+
 	let json = loadFromStorage(key); // TODO BLOCK also validate?
-	// TODO BLOCK should this always set? how to efficiently get the default?
-	// should the default already be in the store? return undefined and make default value optional to loadFromStorage?
-	if (json) ('swap' in store ? store.swap : store.set)(fromJson(json));
-	const subscribe: T['subscribe'] = (run: any, invalidate: any) => {
-		const unsubscribe1 = store.subscribe((value) => {
-			// TODO BLOCK batch these over a frame, `batchBy(key, () => ...)`
-			console.log(`CHANGED value`, 'swap' in store ? value.value : value);
-			setInStorage(key, (json = toJson('swap' in store ? value.value : value)));
-		});
-		const unsubscribe2 = store.subscribe(run, invalidate);
-		console.log('SUBSCRIBING');
-		return () => {
-			console.log('UNSUBSCRIBING');
-			unsubscribe1();
-			unsubscribe2();
-		};
+	if (json !== undefined) {
+		const value = fromJson(json);
+		if (hasSet) store.set(value);
+		else if (hasSwap) store.swap(value);
+		else if (hasUpdate) (store as any).update(() => value); // TODO BLOCK typecast needed because of lack of support for writable without update, see above
+	}
+
+	// TODO BLOCK debounce by key to prevent setting more than once in the same frame
+	const save = (value: any) => {
+		// TODO BLOCK should this check if the value changed? would need the serialized version
+		setInStorage(key, (json = toJson(value)));
 	};
-	return {...store, subscribe, getJson: () => json}; // TODO maybe add a getter for the json value?
+	const stored: T & {getJson: () => V} = {...store, getJson: () => json};
+	// Support stores that have at least one of the following methods:
+	if (hasSet) {
+		const _set = store.set;
+		store.set = (value) => {
+			_set(value);
+			save(value);
+		};
+	}
+	if (hasUpdate) {
+		const _update = store.update;
+		store.update = (updater) => {
+			const updated = updater(store.get());
+			_update(() => updated);
+			save(updated);
+		};
+	}
+	if (hasMutate) {
+		const _mutate = store.mutate;
+		store.mutate = (mutator) => {
+			const value = store.get().value;
+			mutator?.(value);
+			_mutate();
+			save(value);
+		};
+	}
+	if (hasSwap) {
+		const _swap = store.swap;
+		store.swap = (value) => {
+			_swap(value);
+			save(value);
+		};
+	}
+	return stored;
 };
 
 /**

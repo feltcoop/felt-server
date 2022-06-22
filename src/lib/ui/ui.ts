@@ -218,13 +218,13 @@ export const toUi = (
 	// TODO consider making this the space store so we don't have to chase id references
 	// TODO BLOCK should the helper do the mutable/new Map? or maybe we construct a wrapped value that has serialize/deserialize etc?
 	// can we just wrap it with `persisted` or `storable` or `stored`?
-	const spaceIdSelectionByCommunityId = mutable<Map<number, number | null>>(new Map());
-	// locallyStored(
-	// 	mutable<Map<number, number | null>>(new Map()),
-	// 	spaceIdSelectionByCommunityId_KEY,
-	// 	($v) => Array.from($v.entries()),
-	// 	(serialized) => new Map(serialized),
-	// );
+	const spaceIdSelectionByCommunityId = //mutable<Map<number, number | null>>(new Map());
+		locallyStored(
+			mutable<Map<number, number | null>>(new Map()),
+			'spaceIdSelectionByCommunityId',
+			($v) => Array.from($v.entries()),
+			(json) => new Map(json),
+		);
 	const spaceSelection = derived(
 		[communitySelection, spaceIdSelectionByCommunityId],
 		([$communitySelection, $spaceIdSelectionByCommunityId]) =>
@@ -341,7 +341,6 @@ export const toUi = (
 					$session.guest ? null : $sessionPersonas.map(($p) => [$p.persona_id, $p.community_id]),
 				),
 			);
-			const loaded_spaceIdSelectionByCommunityId = []; // loadSpaceIdSelectionByCommunityId();
 			spaceIdSelectionByCommunityId.swap(
 				//TODO lookup space by community_id+url (see this comment in multiple places)
 				new Map(
@@ -353,7 +352,7 @@ export const toUi = (
 								// TODO BLOCK maybe make the json available in a getter?
 								spaceIdSelectionByCommunityId
 									.getJson()
-									.reduce(
+									?.reduce(
 										(space_id, v) => space_id || (v[0] === $community.community_id ? v[1] : null),
 										null as number | null,
 									) ||
@@ -407,6 +406,3 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 // TODO try to improve this to 1) be generic, 2) not export, and 3) have no runtime representation
 type Typecheck<T extends Ui> = T;
 export type Typechecked = Typecheck<WritableUi>;
-
-// TODO refactor
-const spaceIdSelectionByCommunityId_KEY = 'spaceIdSelectionByCommunityId';
