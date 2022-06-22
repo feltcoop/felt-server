@@ -23,7 +23,7 @@
     "@feltcoop/eslint-config": "^0.1.7",
     "@feltcoop/gro": "^0.56.0",
     "@sveltejs/adapter-node": "^1.0.0-next.78",
-    "@sveltejs/kit": "^1.0.0-next.350",
+    "@sveltejs/kit": "^1.0.0-next.351",
     "@types/body-parser": "^1.19.2",
     "@types/cookie": "^0.4.1",
     "@types/cookie-signature": "^1.0.4",
