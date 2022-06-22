@@ -5,16 +5,25 @@
 </script>
 
 <div class="luggage">
-	<button class="icon-button" aria-label="toggle luggage" on:click={() => dispatch.ToggleMainNav()}>
+	<button
+		class="icon-button plain-button"
+		aria-label="toggle luggage"
+		on:click={() => dispatch.ToggleMainNav()}
+	>
 		☰
 	</button>
 </div>
 
 <style>
 	.luggage {
+		--icon_size: var(--luggage_size);
 		z-index: 3;
 		position: absolute;
 		left: 0;
 		top: 0;
+	}
+	button {
+		height: var(--navbar_size);
+		border-radius: 0;
 	}
 </style>

@@ -53,9 +53,28 @@ export const task: Task = {
 		//TEMP: move .env files into root
 		await spawn('scp', [`src/infra/.env.default`, `${deployLogin}:${currentDeploy}/.env`]);
 		await spawn('scp', [ENV_PROD, `${deployLogin}:${currentDeploy}/${ENV_PROD}`]);
-		//TODO: re/start the server via pm2
-		// pm2 start npm -- run start --prefix ${currentDeploy}
-		// await invokeTask('infra/restartProd')
+		/*
+
+		TODO start the server:
+
+		```bash
+			pm2 start npm -- run start --prefix ${currentDeploy}
+		```
+
+		TODO restart the server with these manual steps:
+
+		```bash
+			gro infra/serverDeploy
+			ssh ${DEPLOY_USER}@${DEPLOY_IP}
+			cd ~/felt-server
+			git pull
+			NODE_ENV=development npm i
+			NODE_ENV=development gro lib/db/migrate
+			exit # disconnect SSH
+			gro infra/restartProd
+		```
+
+		*/
 	},
 };
 

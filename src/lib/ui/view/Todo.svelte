@@ -1,67 +1,38 @@
 <script lang="ts">
 	import {browser} from '$app/env';
 	import PendingAnimation from '@feltcoop/felt/ui/PendingAnimation.svelte';
-	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	import TodoItems from '$lib/ui/TodoItems.svelte';
 	import {getApp} from '$lib/ui/app';
-	import type {Tie} from '$lib/vocab/tie/tie';
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import {getViewContext} from '$lib/vocab/view/view';
 	import EntityInput from '$lib/ui/EntityInput.svelte';
+	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	const viewContext = getViewContext();
 	$: ({persona, space} = $viewContext);
 
-	const {dispatch, socket} = getApp();
+	const {
+		dispatch,
+		socket,
+		ui: {destTiesBySourceEntityId, entityById},
+	} = getApp();
 
 	$: shouldLoadEntities = browser && $socket.open;
 	$: entities = shouldLoadEntities
 		? dispatch.QueryEntities({source_id: $space.directory_id})
 		: null;
-	$: tiesResult = shouldLoadEntities ? dispatch.ReadTies({source_id: $space.directory_id}) : null;
-	let ties: Tie[] | undefined;
 	let text = '';
 
-	//TODO move this call to the UI to get arch & caching
-	$: void tiesResult?.then((data) => {
-		if (data.ok) {
-			ties = data.value.ties;
-		}
-	});
-
-	$: itemsByEntity = $entities && ties ? toItemsByEntity($entities, ties) : null;
-
-	let entityById: Map<number, Readable<Entity>> | null = null;
-	$: entityById = $entities && new Map($entities.map((e) => [e.get().entity_id, e]));
-
-	let selectedList: Entity | null = null;
-	const selectList = (list: Entity) => {
-		if (list.data.type !== 'Collection') return;
+	//TODO this should be readable
+	let selectedList: Readable<Entity> | null = null as any;
+	const selectList = (list: Readable<Entity>) => {
+		if (list.get().data.type !== 'Collection') return;
 		if (selectedList === list) {
 			selectedList = null;
 		} else {
 			selectedList = list;
 		}
-	};
-
-	//TODO do caching here
-	const toItemsByEntity = (
-		entities: Array<Readable<Entity>>,
-		ties: Tie[],
-	): Map<Readable<Entity>, Array<Readable<Entity>>> => {
-		const map: Map<Readable<Entity>, Array<Readable<Entity>>> = new Map();
-		for (const tie of ties) {
-			if (tie.type !== 'HasItem') continue;
-			const source = entities.find((e) => e.get().entity_id === tie.source_id)!;
-			const dest = entities.find((e) => e.get().entity_id === tie.dest_id)!;
-			let items = map.get(source);
-			if (!items) {
-				map.set(source, (items = []));
-			}
-			items.push(dest);
-		}
-		return map;
 	};
 
 	const createEntity = async () => {
@@ -72,7 +43,7 @@
 		await dispatch.CreateEntity({
 			data: {type: 'Note', content, checked: false},
 			persona_id: $persona.persona_id,
-			source_id: selectedList.entity_id,
+			source_id: $selectedList!.entity_id,
 		});
 		await dispatch.UpdateEntity({
 			data: null,
@@ -88,35 +59,31 @@
 
 	const clearDone = async () => {
 		if (!selectedList) return;
-		const entityList = entityById!.get(selectedList.entity_id);
-		const items = itemsByEntity?.get(entityList!);
-		if (items) {
-			const doneItems = items.filter((i) => i.get().data.checked === true);
-			if (doneItems.length > 0) {
-				const entity_ids = doneItems.map((i) => i.get().entity_id);
-				await dispatch.DeleteEntities({entity_ids});
-				await dispatch.UpdateEntity({
-					data: null,
-					entity_id: $space.directory_id,
-				});
+		const destTies = $destTiesBySourceEntityId.value.get($selectedList!.entity_id);
+		const items = destTies?.get().value.reduce((acc, tie) => {
+			if (tie.type === 'HasItem') {
+				const entity = entityById.get(tie.dest_id)!;
+				if (entity.get().data.checked) {
+					acc.push(entity);
+				}
 			}
-		}
+			return acc;
+		}, [] as Array<Readable<Entity>>);
+		if (!items?.length) return;
+		const entity_ids = items.map((i) => i.get().entity_id);
+		await dispatch.DeleteEntities({entity_ids});
+		await dispatch.UpdateEntity({
+			data: null,
+			entity_id: $space.directory_id,
+		});
 	};
 </script>
 
 <div class="room">
 	<div class="entities">
 		<!-- TODO handle failures here-->
-		{#if entities && ties && itemsByEntity && entityById}
-			<TodoItems
-				{entities}
-				{space}
-				{ties}
-				{itemsByEntity}
-				{entityById}
-				{selectedList}
-				{selectList}
-			/>
+		{#if entities}
+			<TodoItems {entities} {space} {selectedList} {selectList} />
 			<button
 				on:click={() =>
 					dispatch.OpenDialog({

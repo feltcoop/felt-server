@@ -24,6 +24,9 @@ import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
 import {locallyStored} from '$lib/util/storage';
 import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
+import type {Tie} from '$lib/vocab/tie/tie';
+import {deserialize, deserializers} from '$lib/util/deserialize';
+import {setFreshnessDerived, upsertCommunityFreshnessById} from './uiMutationHelper';
 
 if (browser) initBrowser();
 
@@ -63,6 +66,8 @@ export interface Ui {
 	personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>>;
 	entityById: Map<number, Readable<Entity>>; // TODO mutable inner store
 	entitiesBySourceId: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
+	sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>>;
+	destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>>;
 	// view state
 	expandMainNav: Readable<boolean>;
 	expandMarquee: Readable<boolean>;
@@ -75,7 +80,9 @@ export interface Ui {
 	communitySelection: Readable<Readable<Community> | null>;
 	spaceIdSelectionByCommunityId: Mutable<Map<number, number | null>>;
 	spaceSelection: Readable<Readable<Space> | null>;
-	lastSeenByDirectoryId: Mutable<Map<number, Writable<number> | null>>;
+	lastSeenByDirectoryId: Map<number, Writable<number> | null>;
+	freshnessByDirectoryId: Map<number, Readable<boolean>>;
+	freshnessByCommunityId: Map<number, Writable<boolean>>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
@@ -227,10 +234,16 @@ export const toUi = (
 				)) ||
 			null,
 	);
-	const lastSeenByDirectoryId = mutable<Map<number, Writable<number> | null>>(new Map());
+	const lastSeenByDirectoryId: Map<number, Writable<number> | null> = new Map();
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const entityById: Map<number, Writable<Entity>> = new Map();
+
+	const freshnessByDirectoryId: Map<number, Readable<boolean>> = new Map();
+	const freshnessByCommunityId: Map<number, Writable<boolean>> = new Map();
+
 	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
+	const sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
+	const destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
 
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
@@ -252,6 +265,8 @@ export const toUi = (
 		personasByCommunityId,
 		entityById,
 		entitiesBySourceId,
+		sourceTiesByDestEntityId,
+		destTiesBySourceEntityId,
 		communitiesBySessionPersona,
 		// view state
 		mobile,
@@ -269,12 +284,15 @@ export const toUi = (
 		spaceIdSelectionByCommunityId,
 		spaceSelection,
 		lastSeenByDirectoryId,
+		freshnessByDirectoryId,
+		freshnessByCommunityId,
 		destroy: () => {
 			unsubscribeSession();
 		},
 		session,
 		setSession: ($session: ClientSession) => {
 			if (browser) log.trace('[setSession]', $session);
+			deserialize(deserializers)($session);
 			account.set($session.guest ? null : $session.account);
 
 			const $personaArray = $session.guest ? [] : toInitialPersonas($session);
@@ -295,12 +313,18 @@ export const toUi = (
 			const $spaceArray = $session.guest ? [] : $session.spaces;
 			const $spaces = $spaceArray.map((s) => writable(s));
 			spaceById.clear();
-			$spaces.forEach((s, i) => spaceById.set($spaceArray[i].space_id, s));
+			$spaces.forEach((s, i) => {
+				spaceById.set($spaceArray[i].space_id, s);
+				lastSeenByDirectoryId.set(
+					s.get().directory_id,
+					writable(
+						(browser && Number(localStorage.getItem(`${LAST_SEEN_KEY}${s.get().directory_id}`))) ||
+							Date.now(),
+					),
+				);
+			});
+
 			spaces.swap($spaces);
-
-			const $directoriesArray = $session.guest ? [] : $session.directories;
-
-			$directoriesArray.forEach((d) => updateEntity(ui, d));
 
 			memberships.swap($session.guest ? [] : $session.memberships.map((s) => writable(s)));
 
@@ -339,20 +363,20 @@ export const toUi = (
 						  ]),
 				),
 			);
-			lastSeenByDirectoryId.swap(
-				new Map(
-					$session.guest
-						? null
-						: $session.spaces.map(($space) => [
-								$space.directory_id,
-								writable(
-									(browser &&
-										Number(localStorage.getItem(`${LAST_SEEN_KEY}${$space.directory_id}`))) ||
-										Date.now(),
-								),
-						  ]),
-				),
-			);
+
+			//TODO directories should probably live in their own store
+			const $directoriesArray = $session.guest ? [] : $session.directories;
+
+			$directoriesArray.forEach((d) => {
+				//TODO clean this up with updateEntity once dispatch/updateLastSeen is resolved
+				const entity = writable(d);
+				entityById.set(d.entity_id, entity);
+				setFreshnessDerived(ui, entity);
+			});
+
+			$communityArray.forEach((c) => {
+				upsertCommunityFreshnessById(ui, c.community_id);
+			});
 		},
 	} as const;
 

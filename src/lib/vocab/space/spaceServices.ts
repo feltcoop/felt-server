@@ -16,6 +16,8 @@ import type {Result} from '@feltcoop/felt';
 import type {Space} from '$lib/vocab/space/space';
 import type {ErrorResponse} from '$lib/util/error';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
+import type {DirectoryEntityData} from '../entity/entityData';
+import type {Entity} from '$lib/vocab/entity/entity';
 
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
@@ -56,10 +58,9 @@ export const CreateSpaceService: ServiceByName['CreateSpace'] = {
 	// TODO verify `params.persona_id` is  one of the `account_id`'s personas
 	perform: async ({repos, params}) => {
 		log.trace('[CreateSpace] validating space url uniqueness');
-		const findByCommunityUrlResult = await repos.space.findByCommunityUrl(
-			params.community_id,
-			params.url,
-		);
+		const {community_id} = params;
+
+		const findByCommunityUrlResult = await repos.space.findByCommunityUrl(community_id, params.url);
 
 		if (!findByCommunityUrlResult.ok) {
 			log.trace('[CreateSpace] error validating unique url for new space');
@@ -72,36 +73,52 @@ export const CreateSpaceService: ServiceByName['CreateSpace'] = {
 		}
 
 		log.trace('[CreateSpace] finding community space for dir actor');
-		const communityPersona = await repos.persona.findByCommunityId(params.community_id);
+		const communityPersona = await repos.persona.findByCommunityId(community_id);
 		if (!communityPersona.ok) {
-			log.error('[CreateSpace] error finding persona for provided community', params.community_id);
+			log.error('[CreateSpace] error finding persona for provided community', community_id);
 			return {ok: false, status: 500, message: 'error looking up community persona'};
 		}
 
 		log.trace('[CreateSpace] initializing directory for space');
 		const createDirectoryResult = await repos.entity.create(communityPersona.value.persona_id, {
 			type: 'Collection',
-			name: 'directory',
+			space_id: undefined as any, // `space_id` gets added below, after the space is created
 		});
 		if (!createDirectoryResult.ok) {
 			log.error('[CreateSpace] error creating directory for space', params.name);
 			return {ok: false, status: 500, message: 'error creating directory for space'};
 		}
+		const uninitializedDirectory = createDirectoryResult.value as Entity & {
+			data: DirectoryEntityData;
+		};
 
-		log.trace('[CreateSpace] creating space for community', params.community_id);
+		log.trace('[CreateSpace] creating space for community', community_id);
 		const createSpaceResult = await repos.space.create(
 			params.name,
 			params.view,
 			params.url,
 			params.icon,
-			params.community_id,
-			createDirectoryResult.value.entity_id,
+			community_id,
+			uninitializedDirectory.entity_id,
 		);
 		if (!createSpaceResult.ok) {
 			log.trace('[CreateSpace] error searching for community spaces');
 			return {ok: false, status: 500, message: 'error searching for community spaces'};
 		}
-		return {ok: true, status: 200, value: {space: createSpaceResult.value}};
+		const space = createSpaceResult.value;
+
+		// set `uninitializedDirectory.data.space_id` now that the space has been created
+		const directoryResult = await repos.entity.updateEntityData(uninitializedDirectory.entity_id, {
+			...uninitializedDirectory.data,
+			space_id: space.space_id,
+		});
+		if (!directoryResult.ok) {
+			log.trace('[CreateSpace] error updating the directory for space');
+			return {ok: false, status: 500, message: 'error updating directory with new space'};
+		}
+		const directory = directoryResult.value as Entity & {data: DirectoryEntityData};
+
+		return {ok: true, status: 200, value: {space, directory}};
 	},
 };
 

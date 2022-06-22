@@ -23,8 +23,9 @@ export const CreateSpace: ServiceEventInfo = {
 		type: 'object',
 		properties: {
 			space: {$ref: '/schemas/Space.json', tsType: 'Space'},
+			directory: {$ref: '/schemas/Entity.json', tsType: 'Entity & {data: DirectoryEntityData}'}, // TODO make this a generic instead?
 		},
-		required: ['space'],
+		required: ['space', 'directory'],
 		additionalProperties: false,
 	},
 	returns: 'Promise<CreateSpaceResponseResult>',
