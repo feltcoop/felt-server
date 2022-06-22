@@ -3,26 +3,35 @@ import type {Mutable, Writable} from '@feltcoop/svelte-gettable-stores';
 import {identity} from '@feltcoop/felt/util/function.js';
 import type {Json} from '@feltcoop/felt/util/json.js';
 
-export const locallyStored = <T extends Writable<U> | Mutable<U>, U, V extends Json = Json>(
-	store: T,
+// TODO BLOCK how to improve this type so we don't need manual declaration? or at least the duplicate?
+// The problem I'm having is that `U` cannot be inferred.
+export const locallyStored = <
+	TStore extends {
+		get: Writable<TValue>['get'] | Mutable<TValue>['get'];
+		set?: Writable<TValue>['set'];
+		update?: Writable<TValue>['update'];
+		mutate?: Mutable<TValue>['mutate'];
+		swap?: Mutable<TValue>['swap'];
+	},
+	TValue,
+	TJson extends Json = Json,
+>(
+	store: TStore,
 	key: string,
-	toJson: (v: U) => V = identity as any, // TODO maybe these should be optional
-	fromJson: (v: V) => U = identity as any, // TODO maybe these should be optional
-	// TODO BLOCK
-	// validate: (v: any) => asserts v is U,
-): T & {getJson: () => V} => {
+	toJson: (v: TValue) => TJson = identity as any,
+	fromJson: (v: TJson) => TValue | undefined = identity as any,
+): TStore & {getJson: () => TJson} => {
 	// Support stores that have at least one of the following methods:
-	const {set, update, mutate, swap} = store as any as Record<
-		string,
-		((...args: any[]) => any) | undefined
-	>;
+	const {set, update, mutate, swap} = store;
 
-	let json = loadFromStorage(key) as V; // TODO BLOCK also validate? would fix versioning breakages
+	let json = loadFromStorage(key) as TJson;
 	if (json !== undefined) {
 		const value = fromJson(json);
-		if (set) (store as any).set(value);
-		else if (update) (store as any).update(() => value);
-		else if (swap) (store as any).swap(value);
+		if (value !== undefined) {
+			if (set) set(value);
+			else if (update) update(() => value);
+			else if (swap) swap(value);
+		}
 	}
 
 	// TODO BLOCK debounce by key to prevent setting more than once in the same frame
@@ -30,34 +39,34 @@ export const locallyStored = <T extends Writable<U> | Mutable<U>, U, V extends J
 		// TODO BLOCK should this check if the value changed? would need the serialized version
 		setInStorage(key, (json = toJson(value)));
 	};
-	const stored: T & {getJson: () => V} = {
+	const stored: TStore & {getJson: () => TJson} = {
 		...store,
-		getJson: () =>
+		getJson: (): TJson =>
 			json === undefined
 				? (json = toJson(mutate || swap ? (store.get() as any).value : store.get()))
 				: json,
 	};
 	if (set) {
-		(store as any).set = (...args: any[]) => {
-			set(...args);
+		stored.set = function () {
+			set.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
 			save(store.get());
 		};
 	}
 	if (update) {
-		(store as any).update = (...args: any[]) => {
-			update(...args);
+		stored.update = function () {
+			update.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
 			save(store.get());
 		};
 	}
 	if (mutate) {
-		(store as any).mutate = (...args: any[]) => {
-			mutate(...args);
+		stored.mutate = function () {
+			mutate.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
 			save((store as any).get().value);
 		};
 	}
 	if (swap) {
-		(store as any).swap = (...args: any[]) => {
-			swap(...args);
+		stored.swap = function () {
+			swap.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
 			save((store as any).get().value);
 		};
 	}

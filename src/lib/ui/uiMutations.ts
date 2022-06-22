@@ -1,7 +1,6 @@
 import {goto} from '$app/navigation';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {round} from '@feltcoop/felt/util/maths.js';
-import {browser} from '$app/env';
 import {writable, type Readable} from '@feltcoop/svelte-gettable-stores';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
 
@@ -9,6 +8,7 @@ import type {Mutations} from '$lib/app/eventTypes';
 import {upsertCommunityFreshnessById} from './uiMutationHelper';
 import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
 import type {Entity} from '$lib/vocab/entity/entity';
+import {locallyStored} from '$lib/util/storage';
 
 const log = new Logger('[uiMutations]');
 
@@ -97,11 +97,10 @@ export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
 	if (lastSeenByDirectoryId.has(directory_id)) {
 		lastSeenByDirectoryId.get(directory_id)!.set(timestamp);
 	} else {
-		lastSeenByDirectoryId.set(directory_id, writable(timestamp));
-	}
-
-	if (browser) {
-		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, `${timestamp}`);
+		lastSeenByDirectoryId.set(
+			directory_id,
+			locallyStored(writable(timestamp), LAST_SEEN_KEY + directory_id),
+		);
 	}
 
 	const directory = entityById.get(directory_id) as

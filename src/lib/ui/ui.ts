@@ -23,7 +23,6 @@ import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
 import {locallyStored} from '$lib/util/storage';
-import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {deserialize, deserializers} from '$lib/util/deserialize';
 import {setFreshnessDerived, upsertCommunityFreshnessById} from './uiMutationHelper';
@@ -216,8 +215,12 @@ export const toUi = (
 				: null,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
-	const spaceIdSelectionByCommunityId = locallyStored(
-		mutable<Map<number, number | null>>(new Map()),
+	const spaceIdSelectionByCommunityId = locallyStored<
+		Mutable<Map<number, number | null>>,
+		Map<number, number | null>,
+		Array<[number, number | null]>
+	>(
+		mutable(new Map()),
 		'spaceIdSelectionByCommunityId',
 		($v) => Array.from($v.entries()),
 		(json) => new Map(json),
@@ -314,10 +317,7 @@ export const toUi = (
 				spaceById.set($spaceArray[i].space_id, s);
 				lastSeenByDirectoryId.set(
 					s.get().directory_id,
-					writable(
-						(browser && Number(localStorage.getItem(`${LAST_SEEN_KEY}${s.get().directory_id}`))) ||
-							Date.now(),
-					),
+					locallyStored(writable(Date.now()), LAST_SEEN_KEY + s.get().directory_id),
 				);
 			});
 
@@ -345,8 +345,6 @@ export const toUi = (
 						? null
 						: $session.communities.map(($community) => [
 								$community.community_id,
-								// TODO BLOCK hacky
-								// TODO BLOCK maybe make the json available in a getter?
 								spaceIdSelectionByCommunityId
 									.getJson()
 									?.reduce(
