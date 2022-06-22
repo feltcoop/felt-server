@@ -1,5 +1,5 @@
 import type {Mutations} from '$lib/app/eventTypes';
-import {updateTieCaches} from '$lib/vocab/entity/entityMutationHelpers';
+import {evictTie, updateTieCaches} from '$lib/vocab/entity/entityMutationHelpers';
 
 export const CreateTie: Mutations['CreateTie'] = async ({invoke, ui}) => {
 	const result = await invoke();
@@ -18,9 +18,9 @@ export const ReadTies: Mutations['ReadTies'] = async ({invoke, ui}) => {
 	return result;
 };
 
-export const DeleteTie: Mutations['DeleteTie'] = async ({invoke}) => {
+export const DeleteTie: Mutations['DeleteTie'] = async ({invoke, params, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	//TODO figure out front end state for Ties
+	evictTie(ui, params.source_id, params.dest_id, params.type);
 	return result;
 };

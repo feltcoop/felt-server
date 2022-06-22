@@ -8,10 +8,17 @@
 	import {getApp} from '$lib/ui/app';
 	import {toSpaceUrl} from '$lib/ui/url';
 	import CommunityContextmenu from '$lib/app/contextmenu/CommunityContextmenu.svelte';
+	import FreshnessIndicator from '$lib/ui/FreshnessIndicator.svelte';
 
 	const {
 		dispatch,
-		ui: {contextmenu, spaceIdSelectionByCommunityId, spaceById, sessionPersonaIndices},
+		ui: {
+			contextmenu,
+			spaceIdSelectionByCommunityId,
+			spaceById,
+			sessionPersonaIndices,
+			freshnessByCommunityId,
+		},
 	} = getApp();
 
 	// TODO should this just use `ui` instead of taking all of these props?
@@ -27,6 +34,8 @@
 	$: isPersonaHomeCommunity = $community.name === $persona.name;
 
 	$: personaIndex = $sessionPersonaIndices.get(persona)!;
+
+	$: fresh = freshnessByCommunityId.get($community.community_id);
 </script>
 
 <!-- TODO can this be well abstracted via the Entity with a `link` prop? -->
@@ -41,6 +50,9 @@
 	use:contextmenu.action={[[CommunityContextmenu, {community, persona}]]}
 	on:click={() => dispatch.SelectPersona({persona_id: $persona.persona_id})}
 >
+	{#if $fresh}
+		<FreshnessIndicator />
+	{/if}
 	<!-- TODO maybe use `Avatar`? does `hue` need to be on the link? -->
 	<EntityIcon name={$community.name} type="Community" />
 </a>
@@ -51,6 +63,7 @@
 		/* TODO better way to have active state? this makes the community nav wider than the luggage button! */
 		padding: var(--spacing_xs);
 		text-decoration: none;
+		position: relative;
 	}
 	.persona {
 		display: flex;

@@ -11,7 +11,7 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import type {Space} from '$lib/vocab/space/space';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
-import type {EntityData} from '$lib/vocab/entity/entityData';
+import type {EntityData, DirectoryEntityData} from '$lib/vocab/entity/entityData';
 import type {DispatchContext} from '$lib/app/dispatch';
 
 /* eslint-disable @typescript-eslint/no-empty-interface, @typescript-eslint/array-type */
@@ -259,6 +259,7 @@ export interface CreateSpaceParams {
 }
 export interface CreateSpaceResponse {
 	space: Space;
+	directory: Entity & {data: DirectoryEntityData};
 }
 export type CreateSpaceResponseResult = ApiResult<CreateSpaceResponse>;
 

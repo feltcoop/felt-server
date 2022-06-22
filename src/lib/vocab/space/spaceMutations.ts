@@ -3,29 +3,32 @@ import {goto} from '$app/navigation';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
+import {deleteEntity, updateEntity} from '../entity/entityMutationHelpers';
+import {setFreshnessDerived} from '$lib/ui/uiMutationHelper';
 
-export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui: {spaceById, spaces}}) => {
+export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui, dispatch}) => {
+	const {spaceById, spaces} = ui;
 	const result = await invoke();
 	if (!result.ok) return result;
-	const {space: $space} = result.value;
+	const {space: $space, directory: $directory} = result.value;
+	//TODO add directory updating here
 	const space = writable($space);
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
+	const directory = updateEntity(ui, dispatch, $directory);
+	setFreshnessDerived(ui, directory);
 	return result;
 };
 
-export const DeleteSpace: Mutations['DeleteSpace'] = async ({
-	params,
-	invoke,
-	ui: {
+export const DeleteSpace: Mutations['DeleteSpace'] = async ({params, invoke, ui}) => {
+	const {
 		communityById,
 		spaceIdSelectionByCommunityId,
 		spacesByCommunityId,
 		spaceById,
 		spaces,
 		communitySelection,
-	},
-}) => {
+	} = ui;
 	const result = await invoke();
 	if (!result.ok) return result;
 
@@ -53,6 +56,7 @@ export const DeleteSpace: Mutations['DeleteSpace'] = async ({
 
 	spaceById.delete(space_id);
 	spaces.mutate(($spaces) => $spaces.splice($spaces.indexOf(space), 1));
+	deleteEntity(ui, $space.directory_id);
 
 	return result;
 };

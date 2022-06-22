@@ -1,4 +1,5 @@
 export type EntityData =
+	| DirectoryEntityData
 	| NoteEntityData
 	| ArticleEntityData
 	| CollectionEntityData
@@ -9,6 +10,11 @@ export interface BaseEntityData {
 	content?: string;
 	name?: string;
 	checked?: boolean;
+}
+
+export interface DirectoryEntityData extends BaseEntityData {
+	type: 'Collection';
+	space_id: number;
 }
 
 export interface NoteEntityData extends BaseEntityData {
