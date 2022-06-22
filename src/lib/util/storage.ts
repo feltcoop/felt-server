@@ -40,18 +40,15 @@ export const locallyStored = <T extends Writable<U> | Mutable<U>, U, V extends J
 	if (hasUpdate) {
 		const _update = store.update;
 		store.update = (updater) => {
-			const updated = updater(store.get());
-			_update(() => updated);
-			save(updated);
+			_update(updater);
+			save(store.get());
 		};
 	}
 	if (hasMutate) {
 		const _mutate = store.mutate;
 		store.mutate = (mutator) => {
-			const value = store.get().value;
-			mutator?.(value);
-			_mutate();
-			save(value);
+			_mutate(mutator);
+			save(store.get().value);
 		};
 	}
 	if (hasSwap) {
