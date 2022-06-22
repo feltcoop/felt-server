@@ -3,17 +3,21 @@ import type {Mutable, Writable} from '@feltcoop/svelte-gettable-stores';
 import {identity} from '@feltcoop/felt/util/function.js';
 import type {Json} from '@feltcoop/felt/util/json.js';
 
-// TODO BLOCK support writable without `update` in the type
 export const locallyStored = <T extends Writable<U> | Mutable<U>, U, V extends Json = Json>(
 	store: T,
 	key: string,
 	toJson: (v: U) => V = identity as any, // TODO maybe these should be optional
 	fromJson: (v: V) => U = identity as any, // TODO maybe these should be optional
+	// TODO BLOCK
+	// validate: (v: any) => asserts v is U,
 ): T & {getJson: () => V} => {
 	// Support stores that have at least one of the following methods:
-	const {set, update, mutate, swap} = store as any;
+	const {set, update, mutate, swap} = store as any as Record<
+		string,
+		((...args: any[]) => any) | undefined
+	>;
 
-	let json = loadFromStorage(key); // TODO BLOCK also validate?
+	let json = loadFromStorage(key) as V; // TODO BLOCK also validate? would fix versioning breakages
 	if (json !== undefined) {
 		const value = fromJson(json);
 		if (set) (store as any).set(value);
