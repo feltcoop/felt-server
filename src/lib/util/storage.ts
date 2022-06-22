@@ -10,17 +10,14 @@ export const locallyStored = <T extends Writable<U> | Mutable<U>, U, V extends J
 	toJson: (v: U) => V = identity as any, // TODO maybe these should be optional
 	fromJson: (v: V) => U = identity as any, // TODO maybe these should be optional
 ): T & {getJson: () => V} => {
-	const hasSet = 'set' in store;
-	const hasUpdate = 'update' in store;
-	const hasMutate = 'mutate' in store;
-	const hasSwap = 'swap' in store;
+	const {set, update, mutate, swap} = store as any;
 
 	let json = loadFromStorage(key); // TODO BLOCK also validate?
 	if (json !== undefined) {
 		const value = fromJson(json);
-		if (hasSet) store.set(value);
-		else if (hasSwap) store.swap(value);
-		else if (hasUpdate) (store as any).update(() => value); // TODO BLOCK typecast needed because of lack of support for writable without update, see above
+		if (set) (store as any).set(value);
+		else if (swap) (store as any).swap(value);
+		else if (update) (store as any).update(() => value);
 	}
 
 	// TODO BLOCK debounce by key to prevent setting more than once in the same frame
@@ -30,32 +27,28 @@ export const locallyStored = <T extends Writable<U> | Mutable<U>, U, V extends J
 	};
 	const stored: T & {getJson: () => V} = {...store, getJson: () => json};
 	// Support stores that have at least one of the following methods:
-	if (hasSet) {
-		const _set = store.set;
-		store.set = (value) => {
-			_set(value);
-			save(value);
-		};
-	}
-	if (hasUpdate) {
-		const _update = store.update;
-		store.update = (updater) => {
-			_update(updater);
+	if (set) {
+		(store as any).set = (...args: any[]) => {
+			set(...args);
 			save(store.get());
 		};
 	}
-	if (hasMutate) {
-		const _mutate = store.mutate;
-		store.mutate = (mutator) => {
-			_mutate(mutator);
-			save(store.get().value);
+	if (update) {
+		(store as any).update = (...args: any[]) => {
+			update(...args);
+			save(store.get());
 		};
 	}
-	if (hasSwap) {
-		const _swap = store.swap;
-		store.swap = (value) => {
-			_swap(value);
-			save(value);
+	if (mutate) {
+		(store as any).mutate = (...args: any[]) => {
+			mutate(...args);
+			save((store as any).get().value);
+		};
+	}
+	if (swap) {
+		(store as any).swap = (...args: any[]) => {
+			swap(...args);
+			save((store as any).get().value);
 		};
 	}
 	return stored;
