@@ -10,14 +10,15 @@ export const locallyStored = <T extends Writable<U> | Mutable<U>, U, V extends J
 	toJson: (v: U) => V = identity as any, // TODO maybe these should be optional
 	fromJson: (v: V) => U = identity as any, // TODO maybe these should be optional
 ): T & {getJson: () => V} => {
+	// Support stores that have at least one of the following methods:
 	const {set, update, mutate, swap} = store as any;
 
 	let json = loadFromStorage(key); // TODO BLOCK also validate?
 	if (json !== undefined) {
 		const value = fromJson(json);
 		if (set) (store as any).set(value);
-		else if (swap) (store as any).swap(value);
 		else if (update) (store as any).update(() => value);
+		else if (swap) (store as any).swap(value);
 	}
 
 	// TODO BLOCK debounce by key to prevent setting more than once in the same frame
@@ -25,8 +26,13 @@ export const locallyStored = <T extends Writable<U> | Mutable<U>, U, V extends J
 		// TODO BLOCK should this check if the value changed? would need the serialized version
 		setInStorage(key, (json = toJson(value)));
 	};
-	const stored: T & {getJson: () => V} = {...store, getJson: () => json};
-	// Support stores that have at least one of the following methods:
+	const stored: T & {getJson: () => V} = {
+		...store,
+		getJson: () =>
+			json === undefined
+				? (json = toJson(mutate || swap ? (store.get() as any).value : store.get()))
+				: json,
+	};
 	if (set) {
 		(store as any).set = (...args: any[]) => {
 			set(...args);
