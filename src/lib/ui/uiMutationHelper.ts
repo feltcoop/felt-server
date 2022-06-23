@@ -35,19 +35,18 @@ export const upsertCommunityFreshnessById = (ui: WritableUi, community_id: numbe
 export const updateLastSeen = (
 	ui: WritableUi,
 	directory_id: number,
-	time: number | undefined,
+	time = Date.now(),
 ): void => {
 	const {lastSeenByDirectoryId, entityById, spaceById} = ui;
-	const timestamp = time ?? Date.now();
 
 	if (lastSeenByDirectoryId.has(directory_id)) {
-		lastSeenByDirectoryId.get(directory_id)!.set(timestamp);
+		lastSeenByDirectoryId.get(directory_id)!.set(time);
 	} else {
-		lastSeenByDirectoryId.set(directory_id, writable(timestamp));
+		lastSeenByDirectoryId.set(directory_id, writable(time));
 	}
 
 	if (browser) {
-		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, `${timestamp}`);
+		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, `${time}`);
 	}
 
 	const directory = entityById.get(directory_id) as
