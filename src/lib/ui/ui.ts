@@ -25,7 +25,7 @@ import {LAST_SEEN_KEY} from '$lib/ui/app';
 import {locallyStored} from '$lib/util/storage';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {deserialize, deserializers} from '$lib/util/deserialize';
-import {setFreshnessDerived, upsertCommunityFreshnessById} from './uiMutationHelpers';
+import {setFreshnessDerived, upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelpers';
 
 if (browser) initBrowser();
 

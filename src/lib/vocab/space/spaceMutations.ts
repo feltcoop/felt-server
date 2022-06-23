@@ -3,7 +3,7 @@ import {goto} from '$app/navigation';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
-import {deleteEntity, updateEntity} from '../entity/entityMutationHelpers';
+import {deleteEntity, updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 import {setFreshnessDerived} from '$lib/ui/uiMutationHelpers';
 
 export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui}) => {

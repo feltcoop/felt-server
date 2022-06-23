@@ -9,7 +9,7 @@
 	import {parseJson, serializeJson} from '$lib/util/json';
 	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
-	import TombstoneContent from './TombstoneContent.svelte';
+	import TombstoneContent from '$lib/ui/TombstoneContent.svelte';
 
 	export let entity: Readable<Entity>;
 	export let done: (() => void) | undefined = undefined;

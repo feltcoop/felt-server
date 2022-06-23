@@ -1,9 +1,10 @@
-import {browser} from '$app/env';
+import {derived, writable, type Readable, type Writable} from '@feltcoop/svelte-gettable-stores';
+
+import {locallyStored} from '$lib/util/storage';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
-import {derived, writable, type Readable, type Writable} from '@feltcoop/svelte-gettable-stores';
-import {LAST_SEEN_KEY} from './app';
-import type {WritableUi} from './ui';
+import {LAST_SEEN_KEY} from '$lib/ui/app';
+import type {WritableUi} from '$lib/ui/ui';
 
 export const setFreshnessDerived = (ui: WritableUi, directory: Writable<Entity>): void => {
 	const {freshnessByDirectoryId, lastSeenByDirectoryId} = ui;
@@ -38,12 +39,10 @@ export const updateLastSeen = (ui: WritableUi, directory_id: number, time = Date
 	if (lastSeenByDirectoryId.has(directory_id)) {
 		lastSeenByDirectoryId.get(directory_id)!.set(time);
 	} else {
-		lastSeenByDirectoryId.set(directory_id, writable(time));
-		// locallyStored(writable(timestamp), LAST_SEEN_KEY + directory_id),
-	}
-
-	if (browser) {
-		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, `${time}`);
+		lastSeenByDirectoryId.set(
+			directory_id,
+			locallyStored(writable(time), LAST_SEEN_KEY + directory_id),
+		);
 	}
 
 	const directory = entityById.get(directory_id) as

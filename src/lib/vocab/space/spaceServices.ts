@@ -16,7 +16,7 @@ import type {Result} from '@feltcoop/felt';
 import type {Space} from '$lib/vocab/space/space';
 import type {ErrorResponse} from '$lib/util/error';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
-import type {DirectoryEntityData} from '../entity/entityData';
+import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
 import type {Entity} from '$lib/vocab/entity/entity';
 
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
