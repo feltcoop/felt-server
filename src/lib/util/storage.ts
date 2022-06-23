@@ -2,6 +2,9 @@ import {browser} from '$app/env';
 import type {Mutable, Writable} from '@feltcoop/svelte-gettable-stores';
 import {identity} from '@feltcoop/felt/util/function.js';
 import type {Json} from '@feltcoop/felt/util/json.js';
+import {Logger} from '@feltcoop/felt/util/log.js';
+
+const log = new Logger('[storage]');
 
 // TODO BLOCK how to improve this type so we don't need manual declaration? or at least the duplicate?
 // The problem I'm having is that `U` cannot be inferred.
@@ -85,7 +88,7 @@ export const loadFromStorage = <T extends Json>(
 	validate?: (value: any) => asserts value is T,
 ): T | undefined => {
 	if (!browser) return;
-	console.log('LOAD FROM STORAGE', key);
+	log.trace('load', key);
 	const stored = localStorage.getItem(key);
 	if (!stored) return;
 	try {
@@ -107,7 +110,7 @@ export const loadFromStorage = <T extends Json>(
  */
 export const setInStorage = (key: string, value: Json): void => {
 	if (!browser) return;
-	console.log('SET IN STORAGE', key);
+	log.trace('set', key);
 	if (value === undefined) {
 		localStorage.removeItem(key);
 	} else {
