@@ -1,11 +1,9 @@
 import {goto} from '$app/navigation';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {round} from '@feltcoop/felt/util/maths.js';
-import {browser} from '$app/env';
-import {writable} from '@feltcoop/svelte-gettable-stores';
-import {LAST_SEEN_KEY} from '$lib/ui/app';
 
 import type {Mutations} from '$lib/app/eventTypes';
+import {updateLastSeen} from './uiMutationHelpers';
 
 const log = new Logger('[uiMutations]');
 
@@ -83,20 +81,12 @@ export const ViewSpace: Mutations['ViewSpace'] = async ({
 	}
 };
 
-export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
+//TODO ranem like ClearFreshness
+export const ClearFreshness: Mutations['ClearFreshness'] = async ({
 	params: {directory_id, time},
-	ui: {lastSeenByDirectoryId},
+	ui,
 }) => {
-	const timestamp = time ?? Date.now();
-
-	lastSeenByDirectoryId.mutate(($v) => {
-		$v.get(directory_id)?.set(timestamp) || $v.set(directory_id, writable(timestamp));
-	});
-
-	if (browser) {
-		localStorage.setItem(`${LAST_SEEN_KEY}${directory_id}`, `${timestamp}`);
-	}
-	//TODO maybe turn this into a service event & make a server call too?
+	updateLastSeen(ui, directory_id, time);
 };
 
 export const ToggleMainNav: Mutations['ToggleMainNav'] = ({ui: {expandMainNav}}) => {

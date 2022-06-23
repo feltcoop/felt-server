@@ -36,7 +36,6 @@
 	// TODO refactor to some client view-model for the persona
 	$: hue = randomHue($persona.name);
 
-	$: hasItems = items !== undefined || $entity.data.type === 'Collection';
 	let openReply = false;
 	let text = '';
 

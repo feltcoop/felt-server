@@ -121,11 +121,11 @@ export const ViewSpace: ClientEventInfo = {
 	returns: 'void',
 };
 
-export const UpdateLastSeen: ClientEventInfo = {
+export const ClearFreshness: ClientEventInfo = {
 	type: 'ClientEvent',
-	name: 'UpdateLastSeen',
+	name: 'ClearFreshness',
 	params: {
-		$id: '/schemas/UpdateLastSeenParams.json',
+		$id: '/schemas/ClearFreshnessParams.json',
 		type: 'object',
 		properties: {
 			directory_id: {type: 'number'},

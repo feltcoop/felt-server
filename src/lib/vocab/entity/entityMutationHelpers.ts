@@ -2,14 +2,12 @@ import {writable, mutable, type Writable} from '@feltcoop/svelte-gettable-stores
 
 import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
-import type {Dispatch} from '$lib/app/eventTypes';
 import type {Tie} from '$lib/vocab/tie/tie';
+import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
+import {updateLastSeen, upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelpers';
 
-export const updateEntity = (
-	{entityById, spaceSelection}: WritableUi,
-	dispatch: Dispatch,
-	$entity: Entity,
-): Writable<Entity> => {
+export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> => {
+	const {entityById, spaceSelection, spaceById} = ui;
 	const {entity_id} = $entity;
 	let entity = entityById.get(entity_id);
 	if (entity) {
@@ -17,9 +15,15 @@ export const updateEntity = (
 	} else {
 		entityById.set(entity_id, (entity = writable($entity)));
 	}
+
+	const entityData = entity.get().data as DirectoryEntityData;
+
+	if (entityData.space_id) {
+		upsertCommunityFreshnessById(ui, spaceById.get(entityData.space_id)!.get().community_id);
+	}
+
 	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
-		//TODO having dispatch here may be a code smell; need to rethink either passing full event context or adding listeners
-		dispatch.UpdateLastSeen({directory_id: $entity.entity_id, time: $entity.updated!.getTime()});
+		updateLastSeen(ui, $entity.entity_id, $entity.updated!.getTime());
 	}
 	return entity;
 };
@@ -132,14 +136,14 @@ export const evictTie = (
 		sources.mutate(($sources) => {
 			for (let i = $sources.length - 1; i >= 0; i--) {
 				const sourceTie = $sources[i];
-				if (
-					sourceTie.source_id === source_id &&
-					sourceTie.dest_id === dest_id &&
-					sourceTie.type === type
-				)
-					$sources.splice(i, 1);
+				if (sourceTie.source_id === source_id && sourceTie.type === type) $sources.splice(i, 1);
 			}
 		});
+		if (sources.get().value.length === 0) {
+			sourceTiesByDestEntityId.mutate(($v) => {
+				$v.delete(dest_id);
+			});
+		}
 	}
 
 	const destinations = destTiesBySourceEntityId.get().value.get(source_id);
@@ -147,9 +151,20 @@ export const evictTie = (
 		destinations.mutate(($destinations) => {
 			for (let i = $destinations.length - 1; i >= 0; i--) {
 				const destTie = $destinations[i];
-				if (destTie.source_id === source_id && destTie.dest_id === dest_id && destTie.type === type)
-					$destinations.splice(i, 1);
+				if (destTie.dest_id === dest_id && destTie.type === type) $destinations.splice(i, 1);
 			}
 		});
+		if (destinations.get().value.length === 0) {
+			destTiesBySourceEntityId.mutate(($v) => {
+				$v.delete(source_id);
+			});
+		}
 	}
+};
+
+export const deleteEntity = (ui: WritableUi, entity_id: number): void => {
+	const {entityById, freshnessByDirectoryId} = ui;
+	entityById.delete(entity_id);
+	freshnessByDirectoryId.delete(entity_id);
+	evictTiesForEntity(ui, entity_id);
 };
