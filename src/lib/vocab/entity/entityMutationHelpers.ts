@@ -2,16 +2,11 @@ import {writable, mutable, type Writable} from '@feltcoop/svelte-gettable-stores
 
 import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
-import type {Dispatch} from '$lib/app/eventTypes';
 import type {Tie} from '$lib/vocab/tie/tie';
 import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
-import {upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelper';
+import {updateLastSeen, upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelpers';
 
-export const updateEntity = (
-	ui: WritableUi,
-	dispatch: Dispatch,
-	$entity: Entity,
-): Writable<Entity> => {
+export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> => {
 	const {entityById, spaceSelection, spaceById} = ui;
 	const {entity_id} = $entity;
 	let entity = entityById.get(entity_id);
@@ -28,8 +23,7 @@ export const updateEntity = (
 	}
 
 	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
-		//TODO turn UpdateLastSeen into mutation helper & change event to "ClearFreshness"
-		dispatch.UpdateLastSeen({directory_id: $entity.entity_id, time: $entity.updated!.getTime()});
+		updateLastSeen(ui, $entity.entity_id, $entity.updated!.getTime());
 	}
 	return entity;
 };

@@ -1,14 +1,9 @@
 import {goto} from '$app/navigation';
 import {Logger} from '@feltcoop/felt/util/log.js';
 import {round} from '@feltcoop/felt/util/maths.js';
-import {writable, type Readable} from '@feltcoop/svelte-gettable-stores';
-import {LAST_SEEN_KEY} from '$lib/ui/app';
 
 import type {Mutations} from '$lib/app/eventTypes';
-import {upsertCommunityFreshnessById} from './uiMutationHelper';
-import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
-import type {Entity} from '$lib/vocab/entity/entity';
-import {locallyStored} from '$lib/util/storage';
+import {updateLastSeen} from '$lib/ui/uiMutationHelpers';
 
 const log = new Logger('[uiMutations]');
 
@@ -86,34 +81,12 @@ export const ViewSpace: Mutations['ViewSpace'] = async ({
 	}
 };
 
-//TODO maybe turn this into a service event & make a server call too?
-export const UpdateLastSeen: Mutations['UpdateLastSeen'] = async ({
+//TODO ranem like ClearFreshness
+export const ClearFreshness: Mutations['ClearFreshness'] = async ({
 	params: {directory_id, time},
 	ui,
 }) => {
-	const {lastSeenByDirectoryId, entityById, spaceById} = ui;
-	const timestamp = time ?? Date.now();
-
-	if (lastSeenByDirectoryId.has(directory_id)) {
-		lastSeenByDirectoryId.get(directory_id)!.set(timestamp);
-	} else {
-		lastSeenByDirectoryId.set(
-			directory_id,
-			locallyStored(writable(timestamp), LAST_SEEN_KEY + directory_id),
-		);
-	}
-
-	const directory = entityById.get(directory_id) as
-		| Readable<Entity & {data: DirectoryEntityData}>
-		| undefined;
-
-	if (directory) {
-		upsertCommunityFreshnessById(
-			ui,
-			//TODO add directory field to space & vice versa to avoid this mess below
-			spaceById.get(directory.get().data.space_id)!.get().community_id,
-		);
-	}
+	updateLastSeen(ui, directory_id, time);
 };
 
 export const ToggleMainNav: Mutations['ToggleMainNav'] = ({ui: {expandMainNav}}) => {
