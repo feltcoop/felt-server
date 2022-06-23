@@ -32,11 +32,7 @@ export const upsertCommunityFreshnessById = (ui: WritableUi, community_id: numbe
 	}
 };
 
-export const updateLastSeen = (
-	ui: WritableUi,
-	directory_id: number,
-	time = Date.now(),
-): void => {
+export const updateLastSeen = (ui: WritableUi, directory_id: number, time = Date.now()): void => {
 	const {lastSeenByDirectoryId, entityById, spaceById} = ui;
 
 	if (lastSeenByDirectoryId.has(directory_id)) {
