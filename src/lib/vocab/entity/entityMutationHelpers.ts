@@ -4,7 +4,7 @@ import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
 import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
-import {updateLastSeen, upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelper';
+import {updateLastSeen, upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelpers';
 
 export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> => {
 	const {entityById, spaceSelection, spaceById} = ui;

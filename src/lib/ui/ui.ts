@@ -24,7 +24,7 @@ import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {deserialize, deserializers} from '$lib/util/deserialize';
-import {setFreshnessDerived, upsertCommunityFreshnessById} from './uiMutationHelper';
+import {setFreshnessDerived, upsertCommunityFreshnessById} from './uiMutationHelpers';
 
 if (browser) initBrowser();
 

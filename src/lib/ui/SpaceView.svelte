@@ -18,6 +18,7 @@
 	export let space: Readable<Space>;
 
 	$: directory_id = $space.directory_id;
+	//TODO we might want to just roll the logic from this event into the SelectSpace mutation
 	$: dispatch.ClearFreshness({directory_id});
 
 	const viewContext = writable({persona, community, space});
