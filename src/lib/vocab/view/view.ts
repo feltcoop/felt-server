@@ -52,14 +52,17 @@ const allowedHtmlAttributes = new Set([
  * @param view
  * @returns Props object that can be splatted into a Svelte component.
  */
-export const toViewProps = (view: ViewNode): Record<string, any> | undefined => {
+export const toViewProps = (
+	view: ViewNode,
+	allowedAttributes: Set<string> = allowedHtmlAttributes,
+): Record<string, any> | undefined => {
 	let props: Record<string, any> | undefined;
 	if ('properties' in view) {
 		for (const prop of view.properties) {
 			const v = prop.value[0];
 			if (
 				v?.type === 'text' &&
-				(view.type === 'svelteComponent' || allowedHtmlAttributes.has(prop.name))
+				(view.type === 'svelteComponent' || allowedAttributes.has(prop.name))
 			) {
 				(props || (props = {}))[prop.name] = v.value;
 			}
