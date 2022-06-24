@@ -33,6 +33,7 @@ export const viewTemplates: Array<{
 	{name: 'Todo', view: '<Todo />', icon: '🗒'},
 ];
 
+// TODO where should this go? export it so code can modify it? make it an arg of `toViewProps`?
 const allowedHtmlAttributes = new Set(['class', 'href']);
 
 /**
