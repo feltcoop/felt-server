@@ -33,7 +33,7 @@ export const viewTemplates: Array<{
 	{name: 'Todo', view: '<Todo />', icon: '🗒'},
 ];
 
-export const allowedHtmlAttributes = new Set([
+export const DEFAULT_ALLOWED_HTML_ATTRIBUTES = new Set([
 	'class',
 	'href',
 	'src',
@@ -53,7 +53,7 @@ export const allowedHtmlAttributes = new Set([
  */
 export const toViewProps = (
 	view: ViewNode,
-	allowedAttributes: Set<string> = allowedHtmlAttributes,
+	allowedHtmlAttributes: Set<string> = DEFAULT_ALLOWED_HTML_ATTRIBUTES,
 ): Record<string, any> | undefined => {
 	let props: Record<string, any> | undefined;
 	if ('properties' in view) {
@@ -61,7 +61,7 @@ export const toViewProps = (
 			const v = prop.value[0];
 			if (
 				v?.type === 'text' &&
-				(view.type === 'svelteComponent' || allowedAttributes.has(prop.name))
+				(view.type === 'svelteComponent' || allowedHtmlAttributes.has(prop.name))
 			) {
 				(props || (props = {}))[prop.name] = v.value;
 			}
