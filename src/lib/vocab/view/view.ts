@@ -38,6 +38,7 @@ const allowedHtmlAttributes = new Set([
 	'class',
 	'href',
 	'src',
+	'srcset',
 	'alt',
 	'title',
 	'name',
