@@ -66,7 +66,11 @@
 			contextmenu.selectLast();
 			swallow(e);
 		} else if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
-			// TODO make this select the first thing if none
+			// TODO BLOCK buggy, also does this logic belong in one of the contextmenu methods?
+			// maybe `activateSelected` always selects the first item if none selected?
+			if (!contextmenu.selections.length) {
+				contextmenu.selectNext();
+			}
 			await contextmenu.activateSelected();
 			swallow(e);
 		}

@@ -192,6 +192,7 @@ export const createContextmenuStore = ({
 			const parent = selections.at(-1);
 			if (!parent?.isMenu) return;
 			const selected = parent.items[0];
+			debugger;
 			selected.selected = true;
 			selections.push(selected);
 			forceUpdate();
