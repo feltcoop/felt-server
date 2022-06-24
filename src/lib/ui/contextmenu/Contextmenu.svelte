@@ -66,7 +66,7 @@
 			contextmenu.selectLast();
 			swallow(e);
 		} else if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
-			// TODO BLOCK make this select the first thing if none
+			// TODO make this select the first thing if none
 			await contextmenu.activateSelected();
 			swallow(e);
 		}
