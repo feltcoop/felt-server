@@ -1,5 +1,5 @@
 import {writable, type Readable, type Writable} from '@feltcoop/svelte-gettable-stores';
-import {isEditable, swallow} from '@feltcoop/felt/util/dom.js';
+import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
 import type {Result} from '@feltcoop/felt';
 
