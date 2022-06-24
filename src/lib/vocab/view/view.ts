@@ -34,7 +34,7 @@ export const viewTemplates: Array<{
 ];
 
 // TODO where should this go? export it so it can be mutated at runtime? make it an arg of `toViewProps`?
-const allowedHtmlAttributes = new Set(['class', 'href']);
+const allowedHtmlAttributes = new Set(['class', 'href', 'src']);
 
 /**
  * Returns the props object for a Svelte component SVAST,
@@ -47,7 +47,10 @@ export const toViewProps = (view: ViewNode): Record<string, any> | undefined => 
 	if ('properties' in view) {
 		for (const prop of view.properties) {
 			const v = prop.value[0];
-			if (v?.type === 'text' && allowedHtmlAttributes.has(prop.name)) {
+			if (
+				v?.type === 'text' &&
+				(view.type === 'svelteComponent' || allowedHtmlAttributes.has(prop.name))
+			) {
 				(props || (props = {}))[prop.name] = v.value;
 			}
 		}
