@@ -33,8 +33,7 @@ export const viewTemplates: Array<{
 	{name: 'Todo', view: '<Todo />', icon: '🗒'},
 ];
 
-// TODO where should this go? export it so it can be mutated at runtime? make it an arg of `toViewProps`?
-const allowedHtmlAttributes = new Set([
+export const allowedHtmlAttributes = new Set([
 	'class',
 	'href',
 	'src',
