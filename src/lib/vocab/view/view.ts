@@ -45,10 +45,10 @@ const allowedHtmlAttributes = new Set(['class', 'href']);
 export const toViewProps = (view: ViewNode): Record<string, any> | undefined => {
 	let props: Record<string, any> | undefined;
 	if ('properties' in view) {
-		for (const {name, value} of view.properties) {
-			const v = value[0];
-			if (v?.type === 'text' && allowedHtmlAttributes.has(name)) {
-				(props || (props = {}))[name] = v.value;
+		for (const prop of view.properties) {
+			const v = prop.value[0];
+			if (v?.type === 'text' && allowedHtmlAttributes.has(prop.name)) {
+				(props || (props = {}))[prop.name] = v.value;
 			}
 		}
 	}
