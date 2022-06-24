@@ -40,7 +40,6 @@
 				const el = document.elementFromPoint(mousePageX, mousePageY) as HTMLElement;
 				if (!el) return;
 				swallow(e);
-				// TODO BLOCK dispatch right click event if isEditable(el)?
 				onContextmenu(el, mousePageX, mousePageY, contextmenu, LinkContextmenu);
 			}
 			return;
