@@ -66,7 +66,7 @@
 			swallow(e);
 			contextmenu.selectLast();
 		} else if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
-			// TODO BLOCK does this logic belong in one of the contextmenu methods?
+			// TODO does this logic belong in one of the contextmenu methods?
 			// maybe `activateSelected` always selects the first item if none selected?
 			swallow(e);
 			if (contextmenu.selections.length) {
