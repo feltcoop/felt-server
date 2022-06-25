@@ -45,34 +45,35 @@
 			return;
 		}
 		if (e.key === 'Escape' && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.close();
-			swallow(e);
 		} else if (e.key === 'ArrowLeft' && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.collapseSelected();
-			swallow(e);
 		} else if (e.key === 'ArrowRight' && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.expandSelected();
-			swallow(e);
 		} else if ((e.key === 'ArrowDown' || e.key === 'PageDown') && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.selectNext();
-			swallow(e);
 		} else if ((e.key === 'ArrowUp' || e.key === 'PageUp') && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.selectPrevious();
-			swallow(e);
 		} else if (e.key === 'Home' && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.selectFirst();
-			swallow(e);
 		} else if (e.key === 'End' && !isEditable(e.target)) {
-			contextmenu.selectLast();
 			swallow(e);
+			contextmenu.selectLast();
 		} else if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
-			// TODO BLOCK buggy, also does this logic belong in one of the contextmenu methods?
+			// TODO BLOCK does this logic belong in one of the contextmenu methods?
 			// maybe `activateSelected` always selects the first item if none selected?
-			if (!contextmenu.selections.length) {
+			swallow(e);
+			if (contextmenu.selections.length) {
+				await contextmenu.activateSelected();
+			} else {
 				contextmenu.selectNext();
 			}
-			await contextmenu.activateSelected();
-			swallow(e);
 		}
 	};
 
