@@ -64,6 +64,7 @@ export const toViewProps = (
 			const v = prop.value[0];
 			if (
 				v?.type === 'text' &&
+				// Allow all component props but allowlist element attributes.
 				(view.type === 'svelteComponent' || allowedHtmlAttributes.has(prop.name))
 			) {
 				(props || (props = {}))[prop.name] = v.value;
