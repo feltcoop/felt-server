@@ -12,7 +12,7 @@
 	// TODO upstream to Felt
 
 	// The `contextmenu` prop cannot be changed because that's a rare corner case and
-	// it's easier to put the `contextmenu` directly in the context.
+	// it's easier to put the `contextmenu` directly in the context rather than wrapping with a store.
 	// If you need to change the contextmenu prop for some reason, use a `{#key contextmenu}` block:
 	// https://svelte.dev/docs#template-syntax-key
 	export let contextmenu: ContextmenuStore;
