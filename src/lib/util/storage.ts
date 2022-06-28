@@ -4,6 +4,8 @@ import {identity} from '@feltcoop/felt/util/function.js';
 import type {Json} from '@feltcoop/felt/util/json.js';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
+// TODO refactor this to use IndexedDB instead of localStorage, maybe with a wrapper library
+
 const log = new Logger('[storage]');
 
 // TODO BLOCK how to improve this type so we don't need manual declaration? or at least the duplicate?
