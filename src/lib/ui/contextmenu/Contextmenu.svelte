@@ -89,13 +89,15 @@
 	$: y = contextmenuY + Math.min(0, $layout.height - (contextmenuY + $dimensions.height));
 
 	const onWindowContextmenu = (e: MouseEvent) => {
-		if (e.target instanceof Element && el?.contains(e.target)) {
-			if (!e.target.closest('a')) swallow(e);
+		const {target} = e;
+		if (!(target instanceof HTMLElement || target instanceof SVGElement)) return;
+		if (el?.contains(target)) {
+			if (!target.closest('a')) swallow(e); // pass through default contextmenu behavior for links
 			return;
 		}
-		if (e.shiftKey || isEditable(e.target)) return;
+		if (e.shiftKey || isEditable(target)) return;
 		swallow(e);
-		onContextmenu(e.target as HTMLElement, e.clientX, e.clientY, contextmenu, LinkContextmenu);
+		onContextmenu(target, e.clientX, e.clientY, contextmenu, LinkContextmenu);
 	};
 </script>
 
