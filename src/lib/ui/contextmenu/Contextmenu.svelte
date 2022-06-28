@@ -30,7 +30,7 @@
 		}
 	};
 
-	// TODO maybe hoist these values to the context like `$layout`?
+	// TODO maybe put these values on the contextmenu object like `$layout`?
 	let mousePageX = 0;
 	let mousePageY = 0;
 
@@ -66,8 +66,6 @@
 			swallow(e);
 			contextmenu.selectLast();
 		} else if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
-			// TODO does this logic belong in one of the contextmenu methods?
-			// maybe `activateSelected` always selects the first item if none selected?
 			swallow(e);
 			if (contextmenu.selections.length) {
 				await contextmenu.activateSelected();
