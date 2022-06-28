@@ -35,10 +35,10 @@ export const viewTemplates: Array<{
 
 export const DEFAULT_ALLOWED_HTML_ATTRIBUTES = new Set([
 	'class',
-	'href',
-	// TODO handle external links differently from internal ones,
+	// TODO handle external links (href/src/srcset) differently from internal ones,
 	// so for example external images are not auto-embedded
 	// unless the domain is allowlisted by the user
+	'href',
 	'src',
 	'srcset',
 	'alt',
