@@ -18,3 +18,10 @@
 >
 	<PersonaAvatar {persona} />
 </li>
+
+<style>
+	li {
+		--icon_size: var(--icon_size_sm);
+		padding: var(--spacing_xs3) var(--spacing_xs);
+	}
+</style>

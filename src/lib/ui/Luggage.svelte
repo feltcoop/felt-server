@@ -10,7 +10,7 @@
 		aria-label="toggle luggage"
 		on:click={() => dispatch.ToggleMainNav()}
 	>
-		☰
+		<span>☰</span>
 	</button>
 </div>
 
@@ -25,5 +25,8 @@
 	button {
 		height: var(--navbar_size);
 		border-radius: 0;
+	}
+	button:active span {
+		transform: scale3d(1.16, 1.16, 1.16);
 	}
 </style>

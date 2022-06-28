@@ -33,18 +33,40 @@ export const viewTemplates: Array<{
 	{name: 'Todo', view: '<Todo />', icon: '🗒'},
 ];
 
+export const DEFAULT_ALLOWED_HTML_ATTRIBUTES = new Set([
+	'class',
+	// TODO handle external links (href/src/srcset) differently from internal ones,
+	// so for example external images are not auto-embedded
+	// unless the domain is allowlisted by the user
+	'href',
+	'src',
+	'srcset',
+	'alt',
+	'title',
+	'name',
+	'width',
+	'height',
+]);
+
 /**
  * Returns the props object for a Svelte component SVAST,
  * e.g. `<Foo a="A" b="B" />` returns `{a: 'A', b: 'B'}`.
  * @param view
  * @returns Props object that can be splatted into a Svelte component.
  */
-export const toViewProps = (view: ViewNode): Record<string, any> | undefined => {
+export const toViewProps = (
+	view: ViewNode,
+	allowedHtmlAttributes: Set<string> = DEFAULT_ALLOWED_HTML_ATTRIBUTES,
+): Record<string, any> | undefined => {
 	let props: Record<string, any> | undefined;
 	if ('properties' in view) {
 		for (const prop of view.properties) {
 			const v = prop.value[0];
-			if (v?.type === 'text') {
+			if (
+				v?.type === 'text' &&
+				// Allow all component props but allowlist element attributes.
+				(view.type === 'svelteComponent' || allowedHtmlAttributes.has(prop.name))
+			) {
 				(props || (props = {}))[prop.name] = v.value;
 			}
 		}
