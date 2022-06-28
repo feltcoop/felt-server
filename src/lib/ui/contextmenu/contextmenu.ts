@@ -1,5 +1,4 @@
 import {writable, type Readable, type Writable} from '@feltcoop/svelte-gettable-stores';
-import {isEditable} from '@feltcoop/felt/util/dom.js';
 import {getContext, onDestroy, setContext, type SvelteComponent} from 'svelte';
 import type {Result} from '@feltcoop/felt';
 
@@ -264,12 +263,12 @@ const contextmenuAction = (el: HTMLElement | SVGElement, params: ContextmenuItem
 };
 
 /**
- * Creates an event handler callback that opens the contextmenu, if appropriate,
+ * Opens the contextmenu, if appropriate,
  * querying the menu items from the DOM starting at the event target.
  * @param contextmenu
  * @returns An event handler that opens the contextmenu, unless the target is inside `excludeEl`.
  */
-export const onContextmenu = (
+export const openContextmenu = (
 	target: HTMLElement | SVGElement,
 	x: number,
 	y: number,
@@ -277,7 +276,7 @@ export const onContextmenu = (
 	LinkContextmenu?: typeof SvelteComponent,
 ): void => {
 	const items = queryContextmenuItems(target, LinkContextmenu);
-	if (!items || isEditable(target)) return;
+	if (!items) return;
 	// TODO dispatch a UI event, like OpenContextmenu
 	contextmenu.open(items, x, y);
 };

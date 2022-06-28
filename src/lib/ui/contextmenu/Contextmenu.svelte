@@ -6,7 +6,7 @@
 		setContextmenu,
 		setContextmenuDimensions,
 		type ContextmenuStore,
-		onContextmenu,
+		openContextmenu,
 	} from '$lib/ui/contextmenu/contextmenu';
 
 	// TODO upstream to Felt
@@ -40,7 +40,7 @@
 				const el = document.elementFromPoint(mousePageX, mousePageY) as HTMLElement;
 				if (!el) return;
 				swallow(e);
-				onContextmenu(el, mousePageX, mousePageY, contextmenu, LinkContextmenu);
+				openContextmenu(el, mousePageX, mousePageY, contextmenu, LinkContextmenu);
 			}
 			return;
 		}
@@ -97,7 +97,7 @@
 		}
 		if (e.shiftKey || isEditable(target)) return;
 		swallow(e);
-		onContextmenu(target, e.clientX, e.clientY, contextmenu, LinkContextmenu);
+		openContextmenu(target, e.clientX, e.clientY, contextmenu, LinkContextmenu);
 	};
 </script>
 
