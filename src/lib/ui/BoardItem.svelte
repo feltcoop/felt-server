@@ -67,6 +67,7 @@
 			await createEntity();
 		}
 	};
+	//TODO BLOCK add cursor: pointer style for clickable posts (and update Todo view too)
 </script>
 
 <!-- TODO delete `PersonaContextmenu` ? should that be handled by the entity contextmenu?

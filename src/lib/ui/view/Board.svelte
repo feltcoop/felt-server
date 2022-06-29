@@ -14,7 +14,7 @@
 
 	const {dispatch, socket} = getApp();
 
-	//TODO BLOCK this should force a "post" or "thread" collection like how "home" views do it
+	//TODO once QueryEntities interface is in place this should initialize a "posts" collection
 	$: shouldLoadEntities = browser && $socket.open;
 	$: entities = shouldLoadEntities
 		? dispatch.QueryEntities({source_id: $space.directory_id})
