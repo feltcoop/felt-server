@@ -6,13 +6,13 @@
 		setContextmenu,
 		setContextmenuDimensions,
 		type ContextmenuStore,
-		onContextmenu,
+		openContextmenu,
 	} from '$lib/ui/contextmenu/contextmenu';
 
 	// TODO upstream to Felt
 
 	// The `contextmenu` prop cannot be changed because that's a rare corner case and
-	// it's easier to put the `contextmenu` directly in the context.
+	// it's easier to put the `contextmenu` directly in the context rather than wrapping with a store.
 	// If you need to change the contextmenu prop for some reason, use a `{#key contextmenu}` block:
 	// https://svelte.dev/docs#template-syntax-key
 	export let contextmenu: ContextmenuStore;
@@ -30,31 +30,48 @@
 		}
 	};
 
+	// TODO maybe put these values on the contextmenu object like `$layout`?
+	let mousePageX = 0;
+	let mousePageY = 0;
+
 	const onWindowKeydown = async (e: KeyboardEvent) => {
+		if (!open) {
+			if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
+				const el = document.elementFromPoint(mousePageX, mousePageY) as HTMLElement;
+				if (!el) return;
+				swallow(e);
+				openContextmenu(el, mousePageX, mousePageY, contextmenu, LinkContextmenu);
+			}
+			return;
+		}
 		if (e.key === 'Escape' && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.close();
-			swallow(e);
 		} else if (e.key === 'ArrowLeft' && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.collapseSelected();
-			swallow(e);
 		} else if (e.key === 'ArrowRight' && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.expandSelected();
-			swallow(e);
 		} else if ((e.key === 'ArrowDown' || e.key === 'PageDown') && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.selectNext();
-			swallow(e);
 		} else if ((e.key === 'ArrowUp' || e.key === 'PageUp') && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.selectPrevious();
-			swallow(e);
 		} else if (e.key === 'Home' && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.selectFirst();
-			swallow(e);
 		} else if (e.key === 'End' && !isEditable(e.target)) {
+			swallow(e);
 			contextmenu.selectLast();
-			swallow(e);
 		} else if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
-			await contextmenu.activateSelected();
 			swallow(e);
+			if (contextmenu.selections.length) {
+				await contextmenu.activateSelected();
+			} else {
+				contextmenu.selectNext();
+			}
 		}
 	};
 
@@ -72,11 +89,15 @@
 	$: y = contextmenuY + Math.min(0, $layout.height - (contextmenuY + $dimensions.height));
 
 	const onWindowContextmenu = (e: MouseEvent) => {
-		if (e.target instanceof Element && el?.contains(e.target)) {
-			if (!e.target.closest('a')) swallow(e);
+		const {target} = e;
+		if (!(target instanceof HTMLElement || target instanceof SVGElement)) return;
+		if (el?.contains(target)) {
+			if (!target.closest('a')) swallow(e); // pass through default contextmenu behavior for links
 			return;
 		}
-		onContextmenu(e, contextmenu, LinkContextmenu);
+		if (e.shiftKey || isEditable(target)) return;
+		swallow(e);
+		openContextmenu(target, e.clientX, e.clientY, contextmenu, LinkContextmenu);
 	};
 </script>
 
@@ -86,7 +107,11 @@
 <svelte:window
 	on:contextmenu|capture={onWindowContextmenu}
 	on:mousedown|capture={open ? onWindowMousedown : undefined}
-	on:keydown|capture={open ? onWindowKeydown : undefined}
+	on:mousemove|capture={(e) => {
+		mousePageX = e.pageX;
+		mousePageY = e.pageY;
+	}}
+	on:keydown|capture={onWindowKeydown}
 />
 
 <!-- TODO Maybe animate a subtle highlight around the contextmenu as it appears? -->
