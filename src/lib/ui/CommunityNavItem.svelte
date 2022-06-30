@@ -62,6 +62,7 @@
 		display: block;
 		/* TODO better way to have active state? this makes the community nav wider than the luggage button! */
 		padding: var(--spacing_xs);
+		padding-left: calc(var(--indicator_size) + var(--indicator_padding) * 2);
 		text-decoration: none;
 		position: relative;
 	}

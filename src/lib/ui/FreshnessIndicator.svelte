@@ -8,14 +8,14 @@
 
 <style>
 	.freshness-indicator {
-		width: 12px;
-		height: 12px;
-		background-color: white;
+		width: var(--indicator_size);
+		height: var(--indicator_size);
+		background-color: #fff;
 		border-radius: 50%;
 	}
 	.freshness-indicator-wrapper {
 		position: absolute;
-		left: 0;
+		left: var(--indicator_padding);
 		top: 0;
 		height: 100%;
 		display: flex;

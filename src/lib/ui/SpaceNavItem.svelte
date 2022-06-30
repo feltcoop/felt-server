@@ -52,5 +52,6 @@
 		display: flex;
 		align-items: center;
 		text-decoration: none;
+		padding-left: calc(var(--indicator_size) + var(--indicator_padding) * 2);
 	}
 </style>
