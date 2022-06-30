@@ -22,7 +22,7 @@ import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
-import {locallyStored} from '$lib/util/storage';
+import {locallyStored} from '$lib/ui/locallyStored';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {deserialize, deserializers} from '$lib/util/deserialize';
 import {setFreshnessDerived, upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelpers';

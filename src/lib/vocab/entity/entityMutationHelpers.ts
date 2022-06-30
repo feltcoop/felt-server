@@ -17,7 +17,6 @@ export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> 
 	}
 
 	const entityData = entity.get().data as DirectoryEntityData;
-
 	if (entityData.space_id) {
 		upsertCommunityFreshnessById(ui, spaceById.get(entityData.space_id)!.get().community_id);
 	}

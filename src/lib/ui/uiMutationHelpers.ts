@@ -1,6 +1,6 @@
 import {derived, writable, type Readable, type Writable} from '@feltcoop/svelte-gettable-stores';
 
-import {locallyStored} from '$lib/util/storage';
+import {locallyStored} from '$lib/ui/locallyStored';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
@@ -15,9 +15,10 @@ export const setFreshnessDerived = (ui: WritableUi, directory: Writable<Entity>)
 
 	freshnessByDirectoryId.set(
 		entity_id,
-		derived([directory, lastSeen], ([$directory, $lastSeen]) => {
-			return $lastSeen < ($directory.updated ?? $directory.created).getTime();
-		}),
+		derived(
+			[directory, lastSeen],
+			([$directory, $lastSeen]) => $lastSeen < ($directory.updated ?? $directory.created).getTime(),
+		),
 	);
 };
 
