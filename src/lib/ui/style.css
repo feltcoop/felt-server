@@ -6,8 +6,8 @@
 	--luggage_size: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
 	--navbar_size: calc(var(--icon_size_sm) + var(--spacing_xs) * 2);
 	--contextmenu_width: 360px;
-	--indicator_size: 7px;
-	--indicator_padding: 3px;
+	--freshness_indicator_size: 7px;
+	--freshness_indicator_padding: 3px;
 }
 
 html {
