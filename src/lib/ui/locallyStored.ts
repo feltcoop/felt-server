@@ -4,7 +4,7 @@ import type {Json} from '@feltcoop/felt/util/json.js';
 
 import {loadFromStorage, setInStorage} from '$lib/util/storage';
 
-// TODO BLOCK how to improve this type so we don't need manual declaration? or at least the duplicate?
+// TODO how to improve this type so we don't need manual declaration? or at least the duplicate?
 // The problem I'm having is that `U` cannot be inferred.
 export const locallyStored = <
 	TStore extends {
@@ -35,9 +35,9 @@ export const locallyStored = <
 		}
 	}
 
-	// TODO BLOCK debounce by key to prevent setting more than once in the same frame
+	// TODO debounce by key to prevent setting more than once in the same frame
 	const save = (value: any) => {
-		// TODO BLOCK should this check if the value changed? would need the serialized version
+		// TODO should this check if the value changed? would need the serialized version
 		setInStorage(key, (json = toJson(value)));
 	};
 	const stored: TStore & {getJson: () => TJson} = {
