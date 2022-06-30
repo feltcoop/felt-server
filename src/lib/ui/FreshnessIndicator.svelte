@@ -10,7 +10,7 @@
 	.freshness-indicator {
 		width: var(--indicator_size);
 		height: var(--indicator_size);
-		background-color: #fff;
+		background-color: white;
 		border-radius: 50%;
 	}
 	.freshness-indicator-wrapper {
