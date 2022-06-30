@@ -18,9 +18,11 @@ export const loadFromStorage = <T extends Json>(
 	validate?: (value: any) => asserts value is T,
 ): T | undefined => {
 	if (!browser) return;
-	log.trace('load', key);
 	const stored = localStorage.getItem(key);
-	if (!stored) return;
+	if (!stored) {
+		log.trace('loaded nothing', key);
+		return;
+	}
 	try {
 		const parsed = JSON.parse(stored);
 		validate?.(parsed);
@@ -41,10 +43,11 @@ export const loadFromStorage = <T extends Json>(
  */
 export const setInStorage = (key: string, value: Json): void => {
 	if (!browser) return;
-	log.trace('set', key);
 	if (value === undefined) {
+		log.trace('removing', key);
 		localStorage.removeItem(key);
 	} else {
+		log.trace('setting', key, value);
 		localStorage.setItem(key, JSON.stringify(value));
 	}
 };
