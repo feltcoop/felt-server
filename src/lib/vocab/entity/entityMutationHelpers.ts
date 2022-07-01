@@ -23,7 +23,7 @@ export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> 
 	}
 
 	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
-		updateLastSeen(ui, $entity.entity_id, $entity.updated!.getTime());
+		updateLastSeen(ui, $entity.entity_id);
 	}
 	return entity;
 };
