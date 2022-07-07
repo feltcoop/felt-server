@@ -8,6 +8,7 @@
 	import {browser} from '$app/env';
 	import Dialogs from '@feltcoop/felt/ui/dialog/Dialogs.svelte';
 	import {Logger} from '@feltcoop/felt/util/log.js';
+	import {isEditable, swallow} from '@feltcoop/felt/util/dom.js';
 
 	import {toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
@@ -100,6 +101,14 @@
 	let clientWidth: number;
 	let clientHeight: number;
 	$: $layout = {width: clientWidth, height: clientHeight}; // TODO event? `UpdateLayout`?
+
+	// TODO BLOCK `ShortcutKeys` or `Hotkeys` component with some interface
+	const onWindowKeydown = async (e: KeyboardEvent) => {
+		if (e.key === '`') {
+			swallow(e);
+			dispatch.ToggleMainNav();
+		}
+	};
 </script>
 
 <svelte:body
@@ -111,6 +120,8 @@
 <svelte:head>
 	<link rel="shortcut icon" href="/favicon.png" />
 </svelte:head>
+
+<svelte:window on:keydown|capture={onWindowKeydown} />
 
 <SocketConnection {socket} url={WEBSOCKET_URL} />
 

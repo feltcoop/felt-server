@@ -36,7 +36,8 @@
 
 	const onWindowKeydown = async (e: KeyboardEvent) => {
 		if (!open) {
-			if ((e.key === ' ' || e.key === 'Enter') && !isEditable(e.target)) {
+			// TODO extract this or make it a prop (maybe include `export const openContextmenu = (x: number, y: number) => ...`)
+			if (e.key === '`' && e.ctrlKey && e.shiftKey && !isEditable(e.target)) {
 				const el = document.elementFromPoint(mousePageX, mousePageY) as HTMLElement;
 				if (!el) return;
 				swallow(e);
