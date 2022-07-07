@@ -109,7 +109,7 @@ export const EraseEntitiesService: ServiceByName['EraseEntities'] = {
 	},
 };
 
-//hard deletes a single entity, removing the record of it from the DB
+//hard deletes one to many entities, removing the records from the DB
 export const DeleteEntitiesService: ServiceByName['DeleteEntities'] = {
 	event: DeleteEntities,
 	perform: async ({repos, params}) => {
@@ -117,6 +117,23 @@ export const DeleteEntitiesService: ServiceByName['DeleteEntities'] = {
 		if (!result.ok) {
 			return {ok: false, status: 500, message: 'failed to delete entity'};
 		}
+
+		let noOrphans = false;
+		while (!noOrphans) {
+			const orphans = await repos.entity.findOrphanedEntities();
+			if (!orphans.ok) {
+				return {ok: false, status: 500, message: 'failed to find orphans'};
+			}
+			if (orphans.value.length === 0) {
+				noOrphans = true;
+			} else {
+				const removedOrphans = await repos.entity.deleteByIds(orphans.value);
+				if (!removedOrphans.ok) {
+					return {ok: false, status: 500, message: 'failed to cleanup orphans'};
+				}
+			}
+		}
+
 		return {ok: true, status: 200, value: null};
 	},
 };
