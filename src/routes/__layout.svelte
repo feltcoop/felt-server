@@ -102,7 +102,7 @@
 	let clientHeight: number;
 	$: $layout = {width: clientWidth, height: clientHeight}; // TODO event? `UpdateLayout`?
 
-	// TODO BLOCK `ShortcutKeys` or `Hotkeys` component with some interface
+	// TODO `ShortcutKeys` or `Hotkeys` component with some interface
 	const onWindowKeydown = async (e: KeyboardEvent) => {
 		if (e.key === '`') {
 			swallow(e);
