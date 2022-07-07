@@ -8,7 +8,7 @@
 	import {browser} from '$app/env';
 	import Dialogs from '@feltcoop/felt/ui/dialog/Dialogs.svelte';
 	import {Logger} from '@feltcoop/felt/util/log.js';
-	import {isEditable, swallow} from '@feltcoop/felt/util/dom.js';
+	import {swallow} from '@feltcoop/felt/util/dom.js';
 
 	import {toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
