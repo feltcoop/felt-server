@@ -36,7 +36,7 @@
 
 	const onWindowKeydown = async (e: KeyboardEvent) => {
 		if (!open) {
-			// TODO extract this or make it a prop (maybe include `export const openContextmenu = (x: number, y: number) => ...`)
+			// TODO extract this so it can be used with a global hotkey system
 			if (e.key === '`' && e.ctrlKey && e.shiftKey && !isEditable(e.target)) {
 				const el = document.elementFromPoint(mousePageX, mousePageY) as HTMLElement;
 				if (!el) return;
