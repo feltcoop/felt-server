@@ -4,19 +4,19 @@ import type {Json} from '@feltcoop/felt/util/json.js';
 
 import {loadFromStorage, setInStorage} from '$lib/util/storage';
 
+// TODO BLOCK problem is this doesn't compose with custom stores that internally use `set` from a writable
+
+type Storable<TValue> = {
+	get: Writable<TValue>['get'] | Mutable<TValue>['get'];
+	set?: Writable<TValue>['set'];
+	update?: Writable<TValue>['update'];
+	mutate?: Mutable<TValue>['mutate'];
+	swap?: Mutable<TValue>['swap'];
+};
+
 // TODO how to improve this type so we don't need manual declaration? or at least the duplicate?
 // The problem I'm having is that `U` cannot be inferred.
-export const locallyStored = <
-	TStore extends {
-		get: Writable<TValue>['get'] | Mutable<TValue>['get'];
-		set?: Writable<TValue>['set'];
-		update?: Writable<TValue>['update'];
-		mutate?: Mutable<TValue>['mutate'];
-		swap?: Mutable<TValue>['swap'];
-	},
-	TValue,
-	TJson extends Json = Json,
->(
+export const locallyStored = <TStore extends Storable<TValue>, TValue, TJson extends Json>(
 	store: TStore,
 	key: string,
 	toJson: (v: TValue) => TJson = identity as any,
@@ -73,3 +73,14 @@ export const locallyStored = <
 	}
 	return stored;
 };
+
+export const locallyStoredMap = <TStore extends Storable<TValue>, TValue, TJson extends Json>(
+	store: TStore,
+	key: string,
+): TStore & {getJson: () => TJson} =>
+	locallyStored(
+		store,
+		key,
+		($v: any) => Array.from($v.entries()) as any,
+		(json) => new Map(json) as any,
+	);

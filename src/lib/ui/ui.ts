@@ -22,7 +22,7 @@ import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
-import {locallyStored} from '$lib/ui/locallyStored';
+import {locallyStored, locallyStoredMap} from '$lib/ui/locallyStored';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {deserialize, deserializers} from '$lib/util/deserialize';
 import {setFreshnessDerived, upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelpers';
@@ -215,15 +215,14 @@ export const toUi = (
 				: null,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
-	const spaceIdSelectionByCommunityId = locallyStored<
-		Mutable<Map<number, number | null>>,
-		Map<number, number | null>,
-		Array<[number, number | null]>
-	>(
-		mutable(new Map()),
+	// <
+	// 	Mutable<Map<number, number | null>>,
+	// 	Map<number, number | null>,
+	// 	Array<[number, number | null]>
+	// >
+	const spaceIdSelectionByCommunityId = locallyStoredMap(
+		mutable(new Map<number, number | null>()),
 		'spaceIdSelectionByCommunityId',
-		($v) => Array.from($v.entries()),
-		(json) => new Map(json),
 	);
 	const spaceSelection = derived(
 		[communitySelection, spaceIdSelectionByCommunityId],
