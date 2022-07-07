@@ -32,16 +32,19 @@
 		if (!q1) {
 			errorMessage = 'please answer all questions';
 			q1El.focus();
+			status = 'initial';
 			return;
 		}
 		if (!q2) {
 			errorMessage = 'please answer all questions';
 			q2El.focus();
+			status = 'initial';
 			return;
 		}
 		if (!q3) {
 			errorMessage = 'please answer all questions';
 			q3El.focus();
+			status = 'initial';
 			return;
 		}
 		//TODO actually submit a form to the server for downstream review
@@ -58,7 +61,7 @@
 </script>
 
 <section class="panel-inset">
-	<!-- TODO BLOCK CommunityAvatar ends up on newline-->
+	<!-- TODO fix CommunityAvatar on newline-->
 	<div class="title">
 		<h4>
 			📝 Sign up for <CommunityAvatar {community} showName={true} contextmenuAction={null} />
@@ -139,7 +142,6 @@
 		min-height: 50px;
 		--icon_size: var(--icon_size_sm);
 	}
-	/*TODO BLOCK how to get question insets to 100% */
 	.question {
 		display: flex;
 		flex-direction: row;

@@ -31,7 +31,6 @@ export const viewTemplates: Array<{
 	{name: 'Iframe', view: '<Iframe />', icon: '💻'}, // TODO does this need a default `src`?
 	{name: 'EntityExplorer', view: '<EntityExplorer />', icon: '✏️'},
 	{name: 'Todo', view: '<Todo />', icon: '🗒'},
-	{name: 'Signup', view: '<Signup />', icon: '📝'}, //TODO should this be creatable? Or 1 & done like Home
 ];
 
 /**

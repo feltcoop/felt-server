@@ -8,7 +8,6 @@ import Notes from '$lib/ui/view/Notes.svelte';
 import Iframe from '$lib/ui/view/Iframe.svelte';
 import EntityExplorer from '$lib/ui/view/EntityExplorer.svelte';
 import Todo from '$lib/ui/view/Todo.svelte';
-import Signup from '$lib/ui/view/Signup.svelte';
 
 export const viewComponents: Record<string, typeof SvelteComponent> = {
 	Home,
@@ -19,5 +18,4 @@ export const viewComponents: Record<string, typeof SvelteComponent> = {
 	Iframe,
 	EntityExplorer,
 	Todo,
-	Signup,
 };
