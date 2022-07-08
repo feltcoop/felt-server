@@ -33,7 +33,7 @@ export const locallyStored = <TStore extends Storable<TValue>, TValue, TJson ext
 	fromJson: (v: TJson) => TValue | undefined = identity as any,
 ): TStore & {getJson: () => TJson} => {
 	// Support stores that have at least one of the following methods:
-	const {set, update, mutate, swap} = store as any;
+	const {set, update, mutate, swap} = store;
 
 	let json = loadFromStorage(key) as TJson;
 	if (json !== undefined) {
@@ -48,14 +48,12 @@ export const locallyStored = <TStore extends Storable<TValue>, TValue, TJson ext
 
 	// TODO debounce by key to prevent setting more than once in the same frame
 	const save = (value: any) => {
-		// TODO should this check if the value changed? would need the serialized version
+		// TODO should this check if the value changed?
 		setInStorage(key, (json = toJson(value)));
 	};
 
 	(store as TStore & {getJson: () => TJson}).getJson = (): TJson =>
-		json === undefined
-			? (json = toJson(mutate || swap ? (store.get() as any).value : store.get()))
-			: json;
+		json === undefined ? (json = toJson(mutate ? (store.get() as any).value : store.get())) : json;
 	if (set) {
 		store.set = function () {
 			const returned = set.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
