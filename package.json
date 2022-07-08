@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@feltcoop/eslint-config": "^0.1.7",
-    "@feltcoop/gro": "^0.56.0",
+    "@feltcoop/gro": "^0.57.0",
     "@sveltejs/adapter-node": "^1.0.0-next.78",
     "@sveltejs/kit": "^1.0.0-next.351",
     "@types/body-parser": "^1.19.2",
@@ -35,7 +35,7 @@
     "eslint": "^8.13.0",
     "eslint-plugin-svelte3": "^3.4.1",
     "ley": "^0.7.1",
-    "prettier": "^2.6.2",
+    "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
     "strict-event-emitter-types": "^2.0.0",
     "svast": "^0.2.0",
