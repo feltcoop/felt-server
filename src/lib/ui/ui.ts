@@ -342,10 +342,7 @@ export const toUi = (
 								$community.community_id,
 								spaceIdSelectionByCommunityId
 									.getJson()
-									?.reduce(
-										(space_id, v) => space_id || (v[0] === $community.community_id ? v[1] : null),
-										null as number | null,
-									) ||
+									?.find((v) => v[0] === $community.community_id)?.[1] ||
 									$session.spaces.find(
 										(s) => s.community_id === $community.community_id && isHomeSpace(s),
 									)!.space_id,
