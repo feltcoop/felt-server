@@ -9,6 +9,7 @@
 	import EntityEditor from '$lib/ui/EntityEditor.svelte';
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import EntityContent from '$lib/ui/EntityContent.svelte';
+	import NewcomerSubmission from '$lib/ui/NewcomerSubmission.svelte';
 
 	const viewContext = getViewContext();
 	$: ({community, space, persona} = $viewContext);
@@ -74,73 +75,84 @@
 			void createEntity(DEFAULT_NORMS, 'norms');
 		}
 	}
+
+	let newcomer = false;
 </script>
 
-<div class="home">
-	<section class="markup padded-xl">
-		<p>
-			<strong>
-				Check out our community rules and norms!<br />
-				Please feel free to voice your thoughts about them. Deliberation is always helpful for maintaining
-				a healthy community.
-			</strong>
-		</p>
+<label>
+	<input type="checkbox" bind:checked={newcomer} />
+	Toggle newcomer view
+</label>
+{#if newcomer}
+	<NewcomerSubmission />
+{:else}
+	<!--TODO extract stuff below into new component-->
+	<div class="home">
+		<section class="markup padded-xl">
+			<p>
+				<strong>
+					Check out our community rules and norms!<br />
+					Please feel free to voice your thoughts about them. Deliberation is always helpful for maintaining
+					a healthy community.
+				</strong>
+			</p>
 
-		<p>
-			You can also check out other communities’ governance structures here (limited to those that
-			are public). You can fork other types of governance here.
-		</p>
-	</section>
-	<section class="rules-and-norms">
-		<div class="rules markup padded-xl panel-inset">
-			<div class="header">
-				<h4>rules</h4>
-				<!--TODO how to trigger a directory freshen from result of this dialogue-->
-				<button
-					on:click={() =>
-						dispatch.OpenDialog({
-							Component: EntityEditor,
-							props: {entity: rules},
-							dialogProps: {layout: 'page'},
-						})}
-					>propose change ✍️
-				</button>
+			<p>
+				You can also check out other communities’ governance structures here (limited to those that
+				are public). You can fork other types of governance here.
+			</p>
+		</section>
+		<section class="rules-and-norms">
+			<div class="rules markup padded-xl panel-inset">
+				<div class="header">
+					<h4>rules</h4>
+					<!--TODO how to trigger a directory freshen from result of this dialogue-->
+					<button
+						on:click={() =>
+							dispatch.OpenDialog({
+								Component: EntityEditor,
+								props: {entity: rules},
+								dialogProps: {layout: 'page'},
+							})}
+						>propose change ✍️
+					</button>
+				</div>
+				{#if rules && $rules}<EntityContent entity={rules} />{:else}rules not found{/if}
 			</div>
-			{#if rules && $rules}<EntityContent entity={rules} />{:else}rules not found{/if}
-		</div>
-		<div class="norms markup padded-xl panel-inset">
-			<div class="header">
-				<h4>norms</h4>
-				<button
-					on:click={() =>
-						dispatch.OpenDialog({
-							Component: EntityEditor,
-							props: {entity: norms},
-							dialogProps: {layout: 'page'},
-						})}
-					>propose change ✍️
-				</button>
+			<div class="norms markup padded-xl panel-inset">
+				<div class="header">
+					<h4>norms</h4>
+					<button
+						on:click={() =>
+							dispatch.OpenDialog({
+								Component: EntityEditor,
+								props: {entity: norms},
+								dialogProps: {layout: 'page'},
+							})}
+						>propose change ✍️
+					</button>
+				</div>
+				{#if norms && $norms}<EntityContent entity={norms} />{:else}norms not found{/if}
 			</div>
-			{#if norms && $norms}<EntityContent entity={norms} />{:else}norms not found{/if}
-		</div>
-	</section>
-	<section class="roles">
-		<div class="panel-inset">
-			<h4>roles</h4>
-			<ul>
-				<li>
-					<span class="role-name">member</span>
-					<ul class="role-members">
-						{#each communityPersonas as persona (persona)}
-							<li><PersonaAvatar {persona} showIcon={false} /></li>
-						{/each}
-					</ul>
-				</li>
-			</ul>
-		</div>
-	</section>
-	<Forum />
-</div>
+		</section>
+		<section class="roles">
+			<div class="panel-inset">
+				<h4>roles</h4>
+				<ul>
+					<li>
+						<span class="role-name">member</span>
+						<ul class="role-members">
+							{#each communityPersonas as persona (persona)}
+								<li><PersonaAvatar {persona} showIcon={false} /></li>
+							{/each}
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</section>
+		<Forum />
+	</div>
+{/if}
 
 <style>
 	.header {
