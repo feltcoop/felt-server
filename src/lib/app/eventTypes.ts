@@ -353,7 +353,9 @@ export type EraseEntitiesResponseResult = ApiResult<EraseEntitiesResponse>;
 export interface DeleteEntitiesParams {
 	entity_ids: number[];
 }
-export type DeleteEntitiesResponse = null;
+export interface DeleteEntitiesResponse {
+	removed_entity_ids: number[];
+}
 export type DeleteEntitiesResponseResult = ApiResult<DeleteEntitiesResponse>;
 
 export interface CreateTieParams {

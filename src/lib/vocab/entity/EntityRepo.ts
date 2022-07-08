@@ -76,6 +76,7 @@ export class EntityRepo extends PostgresRepo {
 			DELETE FROM entities WHERE entity_id IN ${this.db.sql(entity_ids)}
 		`;
 		if (!data.count) return NOT_OK;
+		if (data.count !== entity_ids.length) return NOT_OK;
 		return OK;
 	}
 

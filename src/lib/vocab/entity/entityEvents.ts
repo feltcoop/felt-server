@@ -188,7 +188,12 @@ export const DeleteEntities: ServiceEventInfo = {
 	},
 	response: {
 		$id: '/schemas/DeleteEntitiesResponse.json',
-		type: 'null',
+		type: 'object',
+		properties: {
+			removed_entity_ids: {type: 'array', items: {type: 'number'}},
+		},
+		required: ['removed_entity_ids'],
+		additionalProperties: false,
 	},
 	returns: 'Promise<DeleteEntitiesResponseResult>',
 	route: {
