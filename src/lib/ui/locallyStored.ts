@@ -2,7 +2,7 @@ import type {Mutable, Writable} from '@feltcoop/svelte-gettable-stores';
 import {identity} from '@feltcoop/felt/util/function.js';
 import type {Json} from '@feltcoop/felt/util/json.js';
 
-import {loadFromStorage, setInStorage} from '$lib/util/localStorage';
+import {loadFromStorage, setInStorage} from '$lib/ui/localStorage';
 
 // TODO problem is this doesn't compose with custom stores that internally use `set` from a writable
 
