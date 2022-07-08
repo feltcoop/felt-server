@@ -215,15 +215,11 @@ export const toUi = (
 				: null,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
-	// <
-	// 	Mutable<Map<number, number | null>>,
-	// 	Map<number, number | null>,
-	// 	Array<[number, number | null]>
-	// >
-	const spaceIdSelectionByCommunityId = locallyStoredMap(
-		mutable(new Map<number, number | null>()),
-		'spaceIdSelectionByCommunityId',
-	);
+	const spaceIdSelectionByCommunityId = locallyStoredMap<
+		Mutable<Map<number, number | null>>,
+		Map<number, number | null>,
+		Array<[number, number | null]>
+	>(mutable(new Map()), 'spaceIdSelectionByCommunityId');
 	const spaceSelection = derived(
 		[communitySelection, spaceIdSelectionByCommunityId],
 		([$communitySelection, $spaceIdSelectionByCommunityId]) =>

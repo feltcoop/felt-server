@@ -4,7 +4,7 @@ import type {Json} from '@feltcoop/felt/util/json.js';
 
 import {loadFromStorage, setInStorage} from '$lib/util/localStorage';
 
-// TODO BLOCK problem is this doesn't compose with custom stores that internally use `set` from a writable
+// TODO problem is this doesn't compose with custom stores that internally use `set` from a writable
 
 type Storable<TValue> = {
 	get: Writable<TValue>['get'] | Mutable<TValue>['get'];
@@ -14,14 +14,14 @@ type Storable<TValue> = {
 	swap?: Mutable<TValue>['swap'];
 };
 
-// TODO how to improve this type so we don't need manual declaration? or at least the duplicate?
-// The problem I'm having is that `U` cannot be inferred.
 /**
  * Mutates `store`, wrapping the common store change functions (set/update and mutate/swap)
  * with versions that write to `localStorage`,
  * and initializes the store value from storage if available.
+ *
+ * TODO try to improve the type so they don't need manual declarations
  * @param store
- * @param key
+ * @param key localStorage key
  * @param toJson
  * @param fromJson
  * @returns
@@ -33,7 +33,7 @@ export const locallyStored = <TStore extends Storable<TValue>, TValue, TJson ext
 	fromJson: (v: TJson) => TValue | undefined = identity as any,
 ): TStore & {getJson: () => TJson} => {
 	// Support stores that have at least one of the following methods:
-	const {set, update, mutate, swap} = store;
+	const {set, update, mutate, swap} = store as any;
 
 	let json = loadFromStorage(key) as TJson;
 	if (json !== undefined) {
@@ -51,42 +51,40 @@ export const locallyStored = <TStore extends Storable<TValue>, TValue, TJson ext
 		// TODO should this check if the value changed? would need the serialized version
 		setInStorage(key, (json = toJson(value)));
 	};
-	const stored: TStore & {getJson: () => TJson} = {
-		...store,
-		getJson: (): TJson =>
-			json === undefined
-				? (json = toJson(mutate || swap ? (store.get() as any).value : store.get()))
-				: json,
-	};
+
+	(store as TStore & {getJson: () => TJson}).getJson = (): TJson =>
+		json === undefined
+			? (json = toJson(mutate || swap ? (store.get() as any).value : store.get()))
+			: json;
 	if (set) {
-		stored.set = function () {
+		store.set = function () {
 			const returned = set.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
 			save(store.get());
 			return returned;
 		};
 	}
 	if (update) {
-		stored.update = function () {
+		store.update = function () {
 			const returned = update.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
 			save(store.get());
 			return returned;
 		};
 	}
 	if (mutate) {
-		stored.mutate = function () {
+		store.mutate = function () {
 			const returned = mutate.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
 			save((store as any).get().value);
 			return returned;
 		};
 	}
 	if (swap) {
-		stored.swap = function () {
+		store.swap = function () {
 			const returned = swap.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
 			save((store as any).get().value);
 			return returned;
 		};
 	}
-	return stored;
+	return store as TStore & {getJson: () => TJson};
 };
 
 export const locallyStoredMap = <TStore extends Storable<TValue>, TValue, TJson extends Json>(
