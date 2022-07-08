@@ -104,7 +104,7 @@
 
 	// TODO `ShortcutKeys` or `Hotkeys` component with some interface
 	const onWindowKeydown = async (e: KeyboardEvent) => {
-		if (e.key === '`' && !isEditable(e.target)) {
+		if (e.key === '`' && !e.ctrlKey && !isEditable(e.target)) {
 			swallow(e);
 			dispatch.ToggleMainNav();
 		}
