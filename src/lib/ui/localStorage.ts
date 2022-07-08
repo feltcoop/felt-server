@@ -34,7 +34,7 @@ export const loadFromStorage = <T extends Json>(
 
 /**
  * Sets `value` at `key`.
- * Importantly, if `value` is `undefined` the `key` is removed,
+ * If `value` is `undefined` the `key` is removed,
  * but a `value` of `null` is stored.
  * @param key
  * @param value
