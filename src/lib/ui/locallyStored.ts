@@ -64,7 +64,7 @@ export const locallyStored = <TStore extends Storable<TValue>, TValue, TJson ext
 	};
 
 	(store as TStore & {getJson: () => TJson}).getJson = (): TJson =>
-		json === undefined ? (json = toJson(mutate ? (store.get() as any).value : store.get())) : json;
+		json === undefined ? (json = toJson(mutable ? store.get().value : store.get())) : json;
 	if (mutable) {
 		if (mutate) {
 			store.mutate = function () {
