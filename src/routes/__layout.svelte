@@ -8,7 +8,7 @@
 	import {browser} from '$app/env';
 	import Dialogs from '@feltcoop/felt/ui/dialog/Dialogs.svelte';
 	import {Logger} from '@feltcoop/felt/util/log.js';
-	import {swallow} from '@feltcoop/felt/util/dom.js';
+	import {isEditable, swallow} from '@feltcoop/felt/util/dom.js';
 
 	import {toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
@@ -104,7 +104,7 @@
 
 	// TODO `ShortcutKeys` or `Hotkeys` component with some interface
 	const onWindowKeydown = async (e: KeyboardEvent) => {
-		if (e.key === '`') {
+		if (e.key === '`' && !isEditable(e.target)) {
 			swallow(e);
 			dispatch.ToggleMainNav();
 		}
