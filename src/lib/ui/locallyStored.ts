@@ -16,6 +16,16 @@ type Storable<TValue> = {
 
 // TODO how to improve this type so we don't need manual declaration? or at least the duplicate?
 // The problem I'm having is that `U` cannot be inferred.
+/**
+ * Mutates `store`, wrapping the common store change functions (set/update and mutate/swap)
+ * with versions that write to `localStorage`,
+ * and initializes the store value from storage if available.
+ * @param store
+ * @param key
+ * @param toJson
+ * @param fromJson
+ * @returns
+ */
 export const locallyStored = <TStore extends Storable<TValue>, TValue, TJson extends Json>(
 	store: TStore,
 	key: string,
@@ -32,6 +42,7 @@ export const locallyStored = <TStore extends Storable<TValue>, TValue, TJson ext
 			if (set) set(value);
 			else if (update) update(() => value);
 			else if (swap) swap(value);
+			else throw Error('invalid store, expected either a set, update, or swap function');
 		}
 	}
 
@@ -49,26 +60,30 @@ export const locallyStored = <TStore extends Storable<TValue>, TValue, TJson ext
 	};
 	if (set) {
 		stored.set = function () {
-			set.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
+			const returned = set.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
 			save(store.get());
+			return returned;
 		};
 	}
 	if (update) {
 		stored.update = function () {
-			update.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
+			const returned = update.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
 			save(store.get());
+			return returned;
 		};
 	}
 	if (mutate) {
 		stored.mutate = function () {
-			mutate.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
+			const returned = mutate.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
 			save((store as any).get().value);
+			return returned;
 		};
 	}
 	if (swap) {
 		stored.swap = function () {
-			swap.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
+			const returned = swap.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
 			save((store as any).get().value);
+			return returned;
 		};
 	}
 	return stored;
