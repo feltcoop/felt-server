@@ -6,18 +6,18 @@ import {loadFromStorage, setInStorage} from '$lib/ui/localStorage';
 
 // TODO problem is this doesn't compose with custom stores that internally use `set` from a writable
 
-type Storable<TValue> = {
-	get: Writable<TValue>['get'] | Mutable<TValue>['get'];
-	set?: Writable<TValue>['set'];
-	update?: Writable<TValue>['update'];
-	mutate?: Mutable<TValue>['mutate'];
-	swap?: Mutable<TValue>['swap'];
-};
+// TODO ideally this type would work with `any` return values, not the default `void`,
+// so custom stores can have whatever impl
+type Storable<TValue> = Writable<TValue> | Mutable<TValue>;
 
 /**
  * Mutates `store`, wrapping the common store change functions (set/update and mutate/swap)
  * with versions that write to `localStorage`,
  * and initializes the store value from storage if available.
+ *
+ * The change functions are overridden because we want to ensure
+ * stores can be unsubscribed to go cold and get garbage collected.
+ * There may be a way to get the best of both worlds and use `subscribe`.
  *
  * TODO try to improve the type so they need fewer or zero manual declarations
  * @param store
@@ -33,7 +33,18 @@ export const locallyStored = <TStore extends Storable<TValue>, TValue, TJson ext
 	fromJson: (v: TJson) => TValue | undefined = identity as any,
 ): TStore & {getJson: () => TJson} => {
 	// Support stores that have at least one of the following methods:
-	const {set, update, mutate, swap} = store;
+	let set: undefined | Writable<TValue>['set'];
+	let update: undefined | Writable<TValue>['update'];
+	let mutate: undefined | Mutable<TValue>['mutate'];
+	let swap: undefined | Mutable<TValue>['swap'];
+	const mutable = 'mutate' in store;
+	if (mutable) {
+		mutate = store.mutate;
+		swap = store.swap;
+	} else {
+		set = store.set;
+		update = store.update;
+	}
 
 	let json = loadFromStorage(key) as TJson;
 	if (json !== undefined) {
@@ -54,33 +65,36 @@ export const locallyStored = <TStore extends Storable<TValue>, TValue, TJson ext
 
 	(store as TStore & {getJson: () => TJson}).getJson = (): TJson =>
 		json === undefined ? (json = toJson(mutate ? (store.get() as any).value : store.get())) : json;
-	if (set) {
-		store.set = function () {
-			const returned = set.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
-			save(store.get());
-			return returned;
-		};
-	}
-	if (update) {
-		store.update = function () {
-			const returned = update.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
-			save(store.get());
-			return returned;
-		};
-	}
-	if (mutate) {
-		store.mutate = function () {
-			const returned = mutate.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
-			save((store as any).get().value);
-			return returned;
-		};
-	}
-	if (swap) {
-		store.swap = function () {
-			const returned = swap.apply(this, arguments as any); // eslint-disable-line prefer-rest-params
-			save((store as any).get().value);
-			return returned;
-		};
+	if (mutable) {
+		if (mutate) {
+			store.mutate = function () {
+				const returned = (mutate as any).apply(this, arguments); // eslint-disable-line prefer-rest-params
+				save((store as any).get().value);
+				return returned;
+			};
+		}
+		if (swap) {
+			store.swap = function () {
+				const returned = (swap as any).apply(this, arguments); // eslint-disable-line prefer-rest-params
+				save((store as any).get().value);
+				return returned;
+			};
+		}
+	} else {
+		if (set) {
+			store.set = function () {
+				const returned = (set as any).apply(this, arguments); // eslint-disable-line prefer-rest-params
+				save(store.get());
+				return returned;
+			};
+		}
+		if (update) {
+			store.update = function () {
+				const returned = (update as any).apply(this, arguments); // eslint-disable-line prefer-rest-params
+				save(store.get());
+				return returned;
+			};
+		}
 	}
 	return store as TStore & {getJson: () => TJson};
 };
