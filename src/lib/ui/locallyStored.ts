@@ -19,7 +19,7 @@ type Storable<TValue> = {
  * with versions that write to `localStorage`,
  * and initializes the store value from storage if available.
  *
- * TODO try to improve the type so they don't need manual declarations
+ * TODO try to improve the type so they need fewer or zero manual declarations
  * @param store
  * @param key localStorage key
  * @param toJson
