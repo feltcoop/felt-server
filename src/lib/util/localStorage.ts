@@ -1,10 +1,8 @@
 import {browser} from '$app/env';
 import type {Json} from '@feltcoop/felt/util/json.js';
-import {Logger} from '@feltcoop/felt/util/log.js';
+// import {Logger} from '@feltcoop/felt/util/log.js';
 
-// TODO refactor this to use IndexedDB instead of localStorage, maybe with a wrapper library
-
-const log = new Logger('[storage]');
+// const log = new Logger('[storage]');
 
 /**
  * Loads `key` and parses it as JSON.
@@ -20,13 +18,13 @@ export const loadFromStorage = <T extends Json>(
 	if (!browser) return;
 	const stored = localStorage.getItem(key);
 	if (!stored) {
-		log.trace('loaded nothing', key);
+		// log.trace('loaded nothing', key);
 		return;
 	}
 	try {
 		const parsed = JSON.parse(stored);
 		validate?.(parsed);
-		log.trace('loaded', key, parsed);
+		// log.trace('loaded', key, parsed);
 		return parsed;
 	} catch (err) {
 		localStorage.removeItem(key);
@@ -44,10 +42,10 @@ export const loadFromStorage = <T extends Json>(
 export const setInStorage = (key: string, value: Json): void => {
 	if (!browser) return;
 	if (value === undefined) {
-		log.trace('removing', key);
+		// log.trace('removing', key);
 		localStorage.removeItem(key);
 	} else {
-		log.trace('setting', key, value);
+		// log.trace('setting', key, value);
 		localStorage.setItem(key, JSON.stringify(value));
 	}
 };
