@@ -26,6 +26,7 @@ export const setFreshnessDerived = (ui: WritableUi, directory: Writable<Entity>)
 export const upsertCommunityFreshnessById = (ui: WritableUi, community_id: number): void => {
 	const {spacesByCommunityId, freshnessByCommunityId, freshnessByDirectoryId} = ui;
 	const spaces = spacesByCommunityId.get().get(community_id) || [];
+	// TODO BLOCK this dependency on `freshnessByDirectoryId` is the problem
 	const fresh = spaces.some((s) => freshnessByDirectoryId.get(s.get().directory_id)!.get());
 	if (freshnessByCommunityId.has(community_id)) {
 		freshnessByCommunityId.get(community_id)!.set(fresh);

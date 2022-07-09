@@ -16,7 +16,7 @@ export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui}) => {
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
 	const directory = updateEntity(ui, $directory);
-	setFreshnessDerived(ui, directory);
+	setFreshnessDerived(ui, directory); // TODO BLOCK this needs to go before
 	return result;
 };
 

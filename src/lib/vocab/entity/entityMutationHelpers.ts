@@ -17,6 +17,8 @@ export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> 
 	}
 
 	const entityData = entity.get().data as DirectoryEntityData;
+	// TODO BLOCK this is the problem, needs to go after `setFreshnessDerived`,
+	// so should probably rethink it completely now
 	if (entityData.space_id) {
 		upsertCommunityFreshnessById(ui, spaceById.get(entityData.space_id)!.get().community_id);
 	}
