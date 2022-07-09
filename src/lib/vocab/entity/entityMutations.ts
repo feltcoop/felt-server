@@ -38,19 +38,21 @@ export const EraseEntities: Mutations['EraseEntities'] = async ({invoke, ui}) =>
 	return result;
 };
 
-export const DeleteEntities: Mutations['DeleteEntities'] = async ({invoke, params, ui}) => {
+export const DeleteEntities: Mutations['DeleteEntities'] = async ({invoke, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	const {entity_ids} = params;
-	for (const entity_id of entity_ids) {
+	const {removed_entity_ids} = result.value;
+	for (const entity_id of removed_entity_ids) {
 		deleteEntity(ui, entity_id);
 	}
 
 	//TODO extract all this to a helper sibling like updateEntityCaches
 	for (const spaceEntities of ui.entitiesBySourceId.values()) {
 		// TODO this is very inefficient
-		if (spaceEntities.get().find((e) => entity_ids.includes(e.get().entity_id))) {
-			spaceEntities.update(($s) => $s.filter(($e) => !entity_ids.includes($e.get().entity_id)));
+		if (spaceEntities.get().find((e) => removed_entity_ids.includes(e.get().entity_id))) {
+			spaceEntities.update(($s) =>
+				$s.filter(($e) => !removed_entity_ids.includes($e.get().entity_id)),
+			);
 		}
 	}
 
