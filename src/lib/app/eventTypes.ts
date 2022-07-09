@@ -294,7 +294,10 @@ export type UpdateSpaceResponseResult = ApiResult<UpdateSpaceResponse>;
 export interface DeleteSpaceParams {
 	space_id: number;
 }
-export type DeleteSpaceResponse = null;
+export interface DeleteSpaceResponse {
+	removed_entity_ids: number[];
+	[k: string]: unknown;
+}
 export type DeleteSpaceResponseResult = ApiResult<DeleteSpaceResponse>;
 
 export interface CreateEntityParams {
