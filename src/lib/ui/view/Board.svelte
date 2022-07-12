@@ -19,7 +19,6 @@
 	$: entities = shouldLoadEntities
 		? dispatch.QueryEntities({source_id: $space.directory_id})
 		: null;
-	let text = '';
 
 	//TODO this should be readable
 	let selectedPost: Readable<Entity> | null = null as any;
@@ -31,35 +30,13 @@
 			selectedPost = post;
 		}
 	};
-
-	const createEntity = async () => {
-		const content = text.trim(); // TODO parse to trim? regularize step?
-		if (!content || !selectedPost) return;
-
-		//TODO better error handling
-		await dispatch.CreateEntity({
-			data: {type: 'Note', content, checked: false},
-			persona_id: $persona.persona_id,
-			source_id: $selectedPost!.entity_id,
-		});
-		await dispatch.UpdateEntity({
-			data: null,
-			entity_id: $space.directory_id,
-		});
-		text = '';
-	};
-	const onKeydown = async (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			await createEntity();
-		}
-	};
 </script>
 
 <div class="room">
 	<div class="entities">
 		<!-- TODO handle failures here-->
 		{#if entities}
-			<BoardItems {entities} {space} {selectedPost} {selectPost} />
+			<BoardItems {entities} {space} {persona} {selectedPost} {selectPost} />
 			{#if !selectedPost}
 				<button
 					on:click={() =>
@@ -68,11 +45,6 @@
 							props: {done: () => dispatch.CloseDialog(), entityName: 'Post', contentForm: true},
 						})}>Submit a new post</button
 				>
-			{/if}
-			{#if selectedPost}
-				<div class="selected-tools">
-					<input placeholder="> create new comment" on:keydown={onKeydown} bind:value={text} />
-				</div>
 			{/if}
 		{:else}
 			<PendingAnimation />
@@ -94,8 +66,5 @@
 		display: flex;
 		/* makes scrolling start at the bottom */
 		flex-direction: column;
-	}
-	.selected-tools {
-		display: flex;
 	}
 </style>

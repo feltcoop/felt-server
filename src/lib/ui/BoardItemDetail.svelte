@@ -10,6 +10,7 @@
 	import EntityContextmenu from '$lib/app/contextmenu/EntityContextmenu.svelte';
 	import EntityContent from '$lib/ui/EntityContent.svelte';
 	import type {Space} from '$lib/vocab/space/space';
+	import type {Persona} from '$lib/vocab/persona/persona';
 
 	const {
 		ui: {contextmenu, personaById, destTiesBySourceEntityId, entityById},
@@ -17,6 +18,7 @@
 	} = getApp();
 
 	export let entity: Readable<Entity>;
+	export let persona: Readable<Persona>;
 	export let space: Readable<Space>;
 
 	$: destTies = $destTiesBySourceEntityId.value.get($entity.entity_id);
@@ -28,10 +30,10 @@
 		return acc;
 	}, [] as Array<Readable<Entity>>);
 
-	$: persona = personaById.get($entity.persona_id)!;
+	$: authorPersona = personaById.get($entity.persona_id)!;
 
 	// TODO refactor to some client view-model for the persona
-	$: hue = randomHue($persona.name);
+	$: hue = randomHue($authorPersona.name);
 
 	let openReply = false;
 	let text = '';
@@ -72,13 +74,13 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	<li
 		style="--hue: {hue}"
 		use:contextmenu.action={[
-			[PersonaContextmenu, {persona}],
+			[PersonaContextmenu, {persona: authorPersona}],
 			[EntityContextmenu, {entity}],
 		]}
 	>
 		<div class="wrapper">
 			<div class="signature">
-				<PersonaAvatar {persona} />
+				<PersonaAvatar persona={authorPersona} />
 				{format($entity.created, 'Pp')}
 			</div>
 
@@ -102,7 +104,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			<div class="items">
 				<ul class="panel-inset">
 					{#each items as item (item)}
-						<svelte:self entity={item} {space} />
+						<svelte:self entity={item} {space} {persona} />
 					{/each}
 				</ul>
 			</div>
@@ -124,6 +126,8 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	}
 	ul {
 		padding: var(--spacing_md);
+		padding-right: var(--spacing_xs);
+		padding-bottom: var(--spacing_xs);
 	}
 	.signature {
 		display: flex;
@@ -135,5 +139,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		width: 100%;
 		padding: var(--spacing_xs);
 		padding-left: var(--spacing_xl3);
+		padding-right: 0;
+		padding-bottom: 0;
 	}
 </style>

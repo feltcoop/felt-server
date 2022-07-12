@@ -5,9 +5,11 @@
 	import BoardItemSummary from '$lib/ui/BoardItemSummary.svelte';
 	import BoardItemDetail from '$lib/ui/BoardItemDetail.svelte';
 	import type {Space} from '$lib/vocab/space/space';
+	import type {Persona} from '$lib/vocab/persona/persona';
 
 	export let entities: Readable<Array<Readable<Entity>>>;
 	export let space: Readable<Space>;
+	export let persona: Readable<Persona>;
 	export let selectedPost: Readable<Entity> | null;
 	export let selectPost: (post: Readable<Entity>) => void;
 
@@ -24,7 +26,7 @@
 {#if selectedPost}
 	<button on:click={goBack}>Go Back</button>
 	<div class="wrapper">
-		<BoardItemDetail entity={selectedPost} {space} />
+		<BoardItemDetail entity={selectedPost} {space} {persona} />
 	</div>
 {:else}
 	<ul>
