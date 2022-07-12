@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type {Readable} from '@feltcoop/svelte-gettable-stores';
+	import {format} from 'date-fns';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
@@ -17,10 +18,6 @@
 
 	export let entity: Readable<Entity>;
 	export let space: Readable<Space>;
-	export let selectedPost: Readable<Entity> | null;
-	export let selectPost: (post: Readable<Entity>) => void;
-
-	$: selected = selectedPost ? selectedPost === entity : false;
 
 	$: destTies = $destTiesBySourceEntityId.value.get($entity.entity_id);
 
@@ -47,7 +44,7 @@
 	};
 	const createEntity = async () => {
 		const content = text.trim(); // TODO parse to trim? regularize step?
-		if (!content || !selectedPost) return;
+		if (!content) return;
 
 		//TODO better error handling
 		await dispatch.CreateEntity({
@@ -67,7 +64,6 @@
 			await createEntity();
 		}
 	};
-	//TODO BLOCK add cursor: pointer style for clickable posts (and update Todo view too)
 </script>
 
 <!-- TODO delete `PersonaContextmenu` ? should that be handled by the entity contextmenu?
@@ -80,35 +76,33 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			[EntityContextmenu, {entity}],
 		]}
 	>
-		<div on:click={() => selectPost(entity)} class="entity markup formatted">
-			{#if $entity.data.name}
-				<div class="icon-button">
-					{#if selected}👉{:else}📝{/if}
-				</div>
-			{/if}
-			<div class="text">
+		<div>
+			<div class="signature">
+				<PersonaAvatar {persona} />
+				{format($entity.created, 'Pp')}
+			</div>
+
+			<div class="markup formatted">
 				{#if $entity.data.type === 'Collection'}
 					{$entity.data.name}
-					{#if selected}
-						<br /><EntityContent {entity} />
-					{/if}
+					<EntityContent {entity} />
 				{:else}
 					<EntityContent {entity} />
-					<br /><a on:click={() => (openReply = !openReply)}>reply</a>
-					{#if openReply}
-						<input placeholder="> replying to comment" on:keydown={onKeydown} bind:value={text} />
-					{/if}
 				{/if}
 			</div>
-			<div class="signature">
-				<PersonaAvatar {persona} showName={false} />
+
+			<div>
+				<button on:click={() => (openReply = !openReply)}>reply</button>
+				{#if openReply}
+					<input placeholder="> replying to comment" on:keydown={onKeydown} bind:value={text} />
+				{/if}
 			</div>
 		</div>
-		{#if items && selectedPost}
+		{#if items}
 			<div class="items panel-inset">
 				<ul>
 					{#each items as item (item)}
-						<svelte:self entity={item} {space} {selectedPost} {selectPost} />
+						<svelte:self entity={item} {space} />
 					{/each}
 				</ul>
 			</div>
@@ -126,31 +120,10 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	.signature {
 		display: flex;
 		align-items: center;
+		--icon_size: var(--icon_size_xs);
 		justify-content: space-between;
-	}
-	.entity {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-	}
-	.entity:hover {
-		background-color: var(--tint_dark_1);
 	}
 	.items {
 		width: 100%;
-	}
-	.markup {
-		padding: 0 0 0 var(--spacing_md);
-	}
-	.icon-button {
-		font-size: var(--font_size_xl);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		line-height: 0;
-	}
-	.text {
-		text-align: center;
-		flex-grow: 2;
 	}
 </style>
