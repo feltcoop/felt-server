@@ -20,13 +20,22 @@
 </script>
 
 <!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->
-<ul>
-	{#if selectedPost}
-		<button on:click={goBack}>Go Back</button>
+
+{#if selectedPost}
+	<button on:click={goBack}>Go Back</button>
+	<div class="wrapper">
 		<BoardItemDetail entity={selectedPost} {space} />
-	{:else}
+	</div>
+{:else}
+	<ul>
 		{#each collectionEntities as entity (entity)}
 			<BoardItemSummary {entity} {selectPost} />
 		{/each}
-	{/if}
-</ul>
+	</ul>
+{/if}
+
+<style>
+	.wrapper {
+		padding: var(--spacing_md);
+	}
+</style>

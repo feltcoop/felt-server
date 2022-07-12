@@ -76,7 +76,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			[EntityContextmenu, {entity}],
 		]}
 	>
-		<div>
+		<div class="wrapper">
 			<div class="signature">
 				<PersonaAvatar {persona} />
 				{format($entity.created, 'Pp')}
@@ -99,8 +99,8 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 			</div>
 		</div>
 		{#if items}
-			<div class="items panel-inset">
-				<ul>
+			<div class="items">
+				<ul class="panel-inset">
 					{#each items as item (item)}
 						<svelte:self entity={item} {space} />
 					{/each}
@@ -111,11 +111,19 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 {/if}
 
 <style>
+	.wrapper {
+		width: 100%;
+	}
 	li {
 		align-items: flex-start;
 		flex-direction: column;
-		padding: var(--spacing_xs);
-		padding-left: var(--spacing_xl3);
+		margin-bottom: var(--spacing_xl3);
+	}
+	li:last-child {
+		margin-bottom: 0;
+	}
+	ul {
+		padding: var(--spacing_md);
 	}
 	.signature {
 		display: flex;
@@ -125,5 +133,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 	}
 	.items {
 		width: 100%;
+		padding: var(--spacing_xs);
+		padding-left: var(--spacing_xl3);
 	}
 </style>
