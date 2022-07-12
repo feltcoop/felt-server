@@ -296,7 +296,6 @@ export interface DeleteSpaceParams {
 }
 export interface DeleteSpaceResponse {
 	removed_entity_ids: number[];
-	[k: string]: unknown;
 }
 export type DeleteSpaceResponseResult = ApiResult<DeleteSpaceResponse>;
 
