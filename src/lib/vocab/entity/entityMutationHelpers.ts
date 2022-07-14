@@ -4,10 +4,15 @@ import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
 import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
-import {updateLastSeen, upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelpers';
+import {
+	setLastSeen,
+	updateLastSeen,
+	upsertCommunityFreshnessById,
+	setFreshnessDerived,
+} from '$lib/ui/uiMutationHelpers';
 
 export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> => {
-	const {entityById, spaceSelection, spaceById} = ui;
+	const {entityById, spaceSelection, spaceById, freshnessByDirectoryId} = ui;
 	const {entity_id} = $entity;
 	let entity = entityById.get(entity_id);
 	if (entity) {
@@ -17,9 +22,13 @@ export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> 
 	}
 
 	const entityData = entity.get().data as DirectoryEntityData;
-	// TODO BLOCK this is the problem, needs to go after `setFreshnessDerived`,
-	// so should probably rethink it completely now
 	if (entityData.space_id) {
+		console.log('entity is directory');
+		if (!freshnessByDirectoryId.get(entity_id)) {
+			console.log('freshnessByDirectoryId uninitialized for directory', entity_id);
+			setLastSeen(ui, $entity.entity_id, $entity.updated!.getTime());
+			setFreshnessDerived(ui, entity);
+		}
 		upsertCommunityFreshnessById(ui, spaceById.get(entityData.space_id)!.get().community_id);
 	}
 
