@@ -157,16 +157,17 @@ test_entityServices('deleting entities and cleaning orphans', async ({random, db
 	const result = unwrap(
 		await DeleteEntitiesService.perform({
 			params: {
-				entity_ids: [list.entity_id],
+				entityIds: [list.entity_id],
 			},
 			...serviceRequest,
 		}),
 	);
 	//confirm all four entity ids come back
-	assert.ok(result.removed_entity_ids.includes(list.entity_id));
-	assert.ok(result.removed_entity_ids.includes(todo1.entity_id));
-	assert.ok(result.removed_entity_ids.includes(todo2.entity_id));
-	assert.ok(result.removed_entity_ids.includes(todo3.entity_id));
+	assert.equal(result.deletedEntityIds.length, 4);
+	assert.ok(result.deletedEntityIds.includes(list.entity_id));
+	assert.ok(result.deletedEntityIds.includes(todo1.entity_id));
+	assert.ok(result.deletedEntityIds.includes(todo2.entity_id));
+	assert.ok(result.deletedEntityIds.includes(todo3.entity_id));
 });
 
 test_entityServices.run();

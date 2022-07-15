@@ -295,7 +295,7 @@ export interface DeleteSpaceParams {
 	space_id: number;
 }
 export interface DeleteSpaceResponse {
-	removed_entity_ids: number[];
+	deletedEntityIds: number[];
 }
 export type DeleteSpaceResponseResult = ApiResult<DeleteSpaceResponse>;
 
@@ -353,10 +353,10 @@ export interface EraseEntitiesResponse {
 export type EraseEntitiesResponseResult = ApiResult<EraseEntitiesResponse>;
 
 export interface DeleteEntitiesParams {
-	entity_ids: number[];
+	entityIds: number[];
 }
 export interface DeleteEntitiesResponse {
-	removed_entity_ids: number[];
+	deletedEntityIds: number[];
 }
 export type DeleteEntitiesResponseResult = ApiResult<DeleteEntitiesResponse>;
 
