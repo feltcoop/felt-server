@@ -26,7 +26,9 @@
 				{community}
 				showName={false}
 				contextmenuAction={null}
-			/><span class="title">{$community.name}</span>{/if}{#if space}<SpaceIcon {space} />
+			/><span class="title">{$community.name}</span>{/if}{#if space}<span
+				style:font-size="var(--font_size_lg)"><SpaceIcon {space} /></span
+			>
 			<span class="title">{$space?.url.split('/').filter(Boolean).join(' / ') || ''}</span>{/if}
 	</li>
 	<li class="marquee-button-placeholder" />
@@ -41,17 +43,23 @@
 		width: 100%;
 		overflow: hidden;
 		background-color: var(--tint_dark_1);
-		font-size: var(--font_size_lg);
 	}
 	.breadcrumbs {
+		--icon_size: var(--icon_size_sm);
 		display: flex;
 		align-items: center;
+		padding-left: var(--spacing_xs);
+		overflow: hidden;
 	}
-	.luggage-placeholder,
-	.marquee-button-placeholder {
+	.luggage-placeholder {
 		width: var(--luggage_size);
-		min-width: var(--luggage_size);
-		height: var(--luggage_size);
+		flex-shrink: 0;
+		height: var(--navbar_size);
+	}
+	.marquee-button-placeholder {
+		width: var(--navbar_size);
+		flex-shrink: 0;
+		height: var(--navbar_size);
 	}
 	.expanded-nav .luggage-placeholder,
 	.expanded-marquee .marquee-button-placeholder {

@@ -27,6 +27,10 @@
 			persona_id: $persona.persona_id,
 			source_id: $space.directory_id,
 		});
+		await dispatch.UpdateEntity({
+			data: null,
+			entity_id: $space.directory_id,
+		});
 		text = '';
 	};
 

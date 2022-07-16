@@ -9,10 +9,11 @@
 	import {getApp} from '$lib/ui/app';
 	import SpaceContextmenu from '$lib/app/contextmenu/SpaceContextmenu.svelte';
 	import SpaceName from '$lib/ui/SpaceName.svelte';
+	import FreshnessIndicator from '$lib/ui/FreshnessIndicator.svelte';
 
 	const {
 		dispatch,
-		ui: {contextmenu, mobile, expandMainNav, sessionPersonaIndices},
+		ui: {contextmenu, mobile, expandMainNav, sessionPersonaIndices, freshnessByDirectoryId},
 	} = getApp();
 
 	export let persona: Readable<Persona>;
@@ -21,10 +22,12 @@
 	export let selected: boolean;
 
 	$: personaIndex = $sessionPersonaIndices.get(persona)!;
+	$: fresh = freshnessByDirectoryId.get($space.directory_id)!;
 </script>
 
 <a
 	href={toSpaceUrl($community, $space, $page.url.searchParams, {persona: personaIndex + ''})}
+	class="selectable"
 	class:selected
 	use:contextmenu.action={[[SpaceContextmenu, {persona, community, space}]]}
 	on:click={() => {
@@ -37,20 +40,17 @@
 		if ($mobile && $expandMainNav) dispatch.ToggleMainNav();
 	}}
 >
+	{#if $fresh}
+		<FreshnessIndicator />
+	{/if}
 	<SpaceName {space} />
 </a>
 
 <style>
 	a {
+		position: relative;
 		display: flex;
 		align-items: center;
 		text-decoration: none;
-	}
-	a:hover {
-		/* TODO update Felt and use `--tint_light_N` */
-		background-color: rgba(255, 255, 255, 50%);
-	}
-	a.selected {
-		background-color: var(--interactive_color_active);
 	}
 </style>

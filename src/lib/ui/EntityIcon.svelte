@@ -20,7 +20,7 @@
 	.entity-icon {
 		height: var(--icon_size);
 		width: var(--icon_size);
-		min-width: var(--icon_size);
+		flex-shrink: 0;
 	}
 	div.entity-icon {
 		background-color: hsl(var(--hue), 50%, 50%);

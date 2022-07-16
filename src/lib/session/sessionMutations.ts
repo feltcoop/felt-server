@@ -4,6 +4,8 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
+import {deserialize, deserializers} from '$lib/util/deserialize';
+import {setFreshnessDerived, upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelpers';
 
 const log = new Logger('[ui]');
 
@@ -31,6 +33,7 @@ export const SetSession: Mutations['SetSession'] = async ({
 		communities,
 		spaceById,
 		spaces,
+		entityById,
 		memberships,
 		personaIdSelection,
 		communityIdSelectionByPersonaId,
@@ -41,33 +44,41 @@ export const SetSession: Mutations['SetSession'] = async ({
 	const {guest} = session;
 
 	if (browser) log.trace('[setSession]', session);
-	account.set(guest ? null : session.account);
+	deserialize(deserializers)(session);
+	account.set(session.guest ? null : session.account);
 
-	const $personaArray = guest ? [] : toInitialPersonas(session);
+	const $personaArray = session.guest ? [] : toInitialPersonas(session);
 	const $personas = $personaArray.map((p) => writable(p));
 	personaById.clear();
 	$personas.forEach((p, i) => personaById.set($personaArray[i].persona_id, p));
 	personas.swap($personas);
 
-	const sessionPersonas = guest ? [] : session.sessionPersonas;
+	const sessionPersonas = session.guest ? [] : session.sessionPersonas;
 	sessionPersonas.set(sessionPersonas.map((p) => personaById.get(p.persona_id)!));
 
-	const $communityArray = guest ? [] : session.communities;
+	const $communityArray = session.guest ? [] : session.communities;
 	const $communities = $communityArray.map((p) => writable(p));
 	communityById.clear();
 	$communities.forEach((c, i) => communityById.set($communityArray[i].community_id, c));
 	communities.swap($communities);
 
-	const $spaceArray = guest ? [] : session.spaces;
+	const $spaceArray = session.guest ? [] : session.spaces;
 	const $spaces = $spaceArray.map((s) => writable(s));
 	spaceById.clear();
-	$spaces.forEach((s, i) => spaceById.set($spaceArray[i].space_id, s));
+	$spaces.forEach((s, i) => {
+		spaceById.set($spaceArray[i].space_id, s);
+		lastSeenByDirectoryId.set(
+			s.get().directory_id,
+			locallyStored(writable(Date.now()), LAST_SEEN_KEY + s.get().directory_id),
+		);
+	});
+
 	spaces.swap($spaces);
 
-	memberships.swap(guest ? [] : session.memberships.map((s) => writable(s)));
+	memberships.swap(session.guest ? [] : session.memberships.map((s) => writable(s)));
 
 	// TODO fix this and the 2 below to use the URL to initialize the correct persona+community+space
-	const $firstSessionPersona = guest ? null : $sessionPersonas[0];
+	const $firstSessionPersona = session.guest ? null : sessionPersonas[0];
 	personaIdSelection.set($firstSessionPersona?.persona_id ?? null);
 
 	// TODO these two selections are hacky because using the derived stores
@@ -75,34 +86,38 @@ export const SetSession: Mutations['SetSession'] = async ({
 	// instead of using derived stores like `sessionPersonas` and `spacesByCommunityId`.
 	communityIdSelectionByPersonaId.swap(
 		// TODO first try to load this from localStorage
-		new Map(guest ? null : $sessionPersonas.map(($p) => [$p.persona_id, $p.community_id])),
+		new Map(session.guest ? null : sessionPersonas.map(($p) => [$p.persona_id, $p.community_id])),
 	);
 	spaceIdSelectionByCommunityId.swap(
 		//TODO lookup space by community_id+url (see this comment in multiple places)
 		new Map(
-			guest
+			session.guest
 				? null
 				: session.communities.map(($community) => [
 						$community.community_id,
-						session.spaces.find(
-							(s) => s.community_id === $community.community_id && isHomeSpace(s),
-						)!.space_id,
+						spaceIdSelectionByCommunityId
+							.getJson()
+							?.find((v) => v[0] === $community.community_id)?.[1] ||
+							session.spaces.find(
+								(s) => s.community_id === $community.community_id && isHomeSpace(s),
+							)!.space_id,
 				  ]),
 		),
 	);
-	lastSeenByDirectoryId.swap(
-		new Map(
-			guest
-				? null
-				: session.spaces.map(($space) => [
-						$space.directory_id,
-						writable(
-							(browser && localStorage.getItem(`${LAST_SEEN_KEY}${$space.directory_id}`)) ||
-								new Date().toString(),
-						),
-				  ]),
-		),
-	);
+
+	//TODO directories should probably live in their own store
+	const $directoriesArray = session.guest ? [] : session.directories;
+
+	$directoriesArray.forEach((d) => {
+		//TODO we had talked about replacing this with updateEntity, but it currently assumes setFreshnessDerived has already been called
+		const entity = writable(d);
+		entityById.set(d.entity_id, entity);
+		setFreshnessDerived(ui, entity);
+	});
+
+	$communityArray.forEach((c) => {
+		upsertCommunityFreshnessById(ui, c.community_id);
+	});
 };
 
 // TODO this is a hack until we figure out how to handle "session personas" differently from the rest --

@@ -195,7 +195,7 @@ export const randomEventParams: RandomEventParams = {
 			view: '<EntityExplorer />',
 		};
 	},
-	UpdateLastSeen: async (random, {account, persona, community} = {}) => {
+	ClearFreshness: async (random, {account, persona, community} = {}) => {
 		return {
 			directory_id: (await random.space(persona, account, community)).space.directory_id,
 		};

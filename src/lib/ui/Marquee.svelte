@@ -5,12 +5,10 @@
 	import type {Community} from '$lib/vocab/community/community';
 	import MemberItem from '$lib/ui/MemberItem.svelte';
 	import MarqueeNav from '$lib/ui/MarqueeNav.svelte';
-	import SpaceEditor from '$lib/ui/SpaceEditor.svelte';
 	import {getApp} from '$lib/ui/app';
-	import SocketConnection from '$lib/ui/SocketConnection.svelte';
+	import SocketConnectionControls from '$lib/ui/SocketConnectionControls.svelte';
 
 	const {
-		dispatch,
 		ui: {expandMarquee, personasByCommunityId},
 		socket,
 		devmode,
@@ -40,15 +38,8 @@
 				<li><a href="/docs">/docs</a></li>
 			</ul>
 		</section>
-		{#if $space}
-			<section>
-				<button on:click={() => dispatch.OpenDialog({Component: SpaceEditor, props: {space}})}
-					>Edit Space</button
-				>
-			</section>
-		{/if}
 		<section>
-			<SocketConnection {socket} />
+			<SocketConnectionControls {socket} />
 		</section>
 	{/if}
 {/if}

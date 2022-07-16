@@ -1,7 +1,12 @@
 import {writable} from '@feltcoop/svelte-gettable-stores';
 
 import type {Mutations} from '$lib/app/eventTypes';
-import {updateEntity, updateEntityCaches} from '$lib/vocab/entity/entityMutationHelpers';
+import {
+	deleteEntity,
+	updateEntity,
+	updateEntityCaches,
+	updateTieCaches,
+} from '$lib/vocab/entity/entityMutationHelpers';
 
 // TODO if `Create/Update/Erase` remain identical, probably make them use a single helper
 // `updateEntity` or more likely `updateEntities`
@@ -9,8 +14,10 @@ import {updateEntity, updateEntityCaches} from '$lib/vocab/entity/entityMutation
 export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, params, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	updateEntity(ui, result.value.entity);
-	updateEntityCaches(ui, result.value.entity, params.source_id);
+	const {tie, entity} = result.value;
+	updateEntity(ui, entity);
+	updateEntityCaches(ui, entity, params.source_id);
+	updateTieCaches(ui, tie);
 	return result;
 };
 
@@ -31,35 +38,35 @@ export const EraseEntities: Mutations['EraseEntities'] = async ({invoke, ui}) =>
 	return result;
 };
 
-export const DeleteEntities: Mutations['DeleteEntities'] = async ({
-	invoke,
-	params,
-	ui: {entityById, entitiesBySourceId},
-}) => {
+export const DeleteEntities: Mutations['DeleteEntities'] = async ({invoke, params, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	//TODO update ties once stores are in place
 	const {entity_ids} = params;
 	for (const entity_id of entity_ids) {
-		entityById.delete(entity_id);
+		deleteEntity(ui, entity_id);
 	}
+
 	//TODO extract all this to a helper sibling like updateEntityCaches
-	for (const spaceEntities of entitiesBySourceId.values()) {
+	for (const spaceEntities of ui.entitiesBySourceId.values()) {
 		// TODO this is very inefficient
 		if (spaceEntities.get().find((e) => entity_ids.includes(e.get().entity_id))) {
 			spaceEntities.update(($s) => $s.filter(($e) => !entity_ids.includes($e.get().entity_id)));
 		}
 	}
+
 	return result;
 };
 
 export const ReadEntities: Mutations['ReadEntities'] = async ({invoke, params, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	//TODO update ties once stores are in place: `result.value.ties`
-	for (const $entity of result.value.entities) {
+	const {ties, entities} = result.value;
+	for (const $entity of entities) {
 		updateEntity(ui, $entity);
 		updateEntityCaches(ui, $entity, params.source_id);
+	}
+	for (const $tie of ties) {
+		updateTieCaches(ui, $tie);
 	}
 	return result;
 };
@@ -72,10 +79,13 @@ export const ReadEntitiesPaginated: Mutations['ReadEntitiesPaginated'] = async (
 }) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	// //TODO update ties once stores are in place: `result.value.ties`
-	for (const $entity of result.value.entities) {
+	const {ties, entities} = result.value;
+	for (const $entity of entities) {
 		updateEntity(ui, $entity);
 		updateEntityCaches(ui, $entity, params.source_id);
+	}
+	for (const $tie of ties) {
+		updateTieCaches(ui, $tie);
 	}
 	return result;
 };

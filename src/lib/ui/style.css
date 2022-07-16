@@ -3,8 +3,8 @@
 	--bg_hue: 24;
 	--bg_saturation: 23%;
 	--bg_lightness: 96%;
-	--luggage_size: var(--icon_size_md);
-	--navbar_size: var(--luggage_size);
+	--luggage_size: calc(var(--icon_size_md) + var(--spacing_xs) * 2);
+	--navbar_size: calc(var(--icon_size_sm) + var(--spacing_xs) * 2);
 	--contextmenu_width: 360px;
 }
 
@@ -33,17 +33,24 @@ main {
 	margin-right: var(--spacing_lg);
 }
 
-/* TODO refactor or upstream -- `navbar_size` maybe should be `input_height` */
+/* TODO upstream these to Felt, consider other button variants too */
 .icon-button {
-	width: var(--navbar_size);
-	height: var(--navbar_size);
+	width: var(--icon_size);
+	height: var(--icon_size);
 	flex-shrink: 0;
+}
+.plain-button {
+	border: none;
+	box-shadow: none;
+	background: transparent;
 }
 
 .buttons {
 	width: 100%;
 	display: flex;
-	justify-content: space-between;
+}
+.buttons > * {
+	flex: 1;
 }
 
 /* TODO upstream? */
@@ -110,4 +117,14 @@ maybe upstream to Felt? think about how to upstream without bloating bundles tha
 		https://caniuse.com/mdn-css_properties_white-space_break-spaces */
 	white-space: pre-wrap;
 	white-space: break-spaces;
+}
+
+/* TODO this probably isn't the best name for this class -- upstream to Felt when ready */
+.selectable:hover {
+	background-color: var(--interactive_color_hover);
+}
+.selectable:active,
+.selectable.selected {
+	/* TODO probably want `--interactive_color_selected` so it's different than active */
+	background-color: var(--interactive_color_active);
 }

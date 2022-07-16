@@ -40,10 +40,15 @@ export class EntityRepo extends PostgresRepo {
 		return {ok: true, value: entities};
 	}
 
-	async updateEntityData(entity_id: number, data: EntityData): Promise<Result<{value: Entity}>> {
+	async updateEntityData(
+		entity_id: number,
+		data: EntityData | null,
+	): Promise<Result<{value: Entity}>> {
 		log.trace('[updateEntityData]', entity_id);
 		const _data = await this.db.sql<Entity[]>`
-			UPDATE entities SET data=${this.db.sql.json(data as any)}, updated=NOW()
+			UPDATE entities SET ${
+				data ? this.db.sql`data=${this.db.sql.json(data as any)},` : this.db.sql``
+			} updated=NOW()
 			WHERE entity_id= ${entity_id} AND data->>'type' != 'Tombstone'
 			RETURNING *
 		`;

@@ -102,8 +102,8 @@
 		padding: var(--spacing_lg);
 	}
 	.icon img {
-		width: var(--icon_size_md);
-		height: var(--icon_size_md);
+		width: var(--icon_size);
+		height: var(--icon_size);
 	}
 
 	.centered-block {

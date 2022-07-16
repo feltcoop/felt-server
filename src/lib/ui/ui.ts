@@ -19,6 +19,8 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
+import {locallyStoredMap} from '$lib/ui/locallyStored';
+import type {Tie} from '$lib/vocab/tie/tie';
 
 if (browser) initBrowser();
 
@@ -52,6 +54,8 @@ export interface Ui {
 	personasByCommunityId: Readable<Map<number, Array<Readable<Persona>>>>;
 	entityById: Map<number, Readable<Entity>>; // TODO mutable inner store
 	entitiesBySourceId: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
+	sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>>;
+	destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>>;
 	// view state
 	expandMainNav: Readable<boolean>;
 	expandMarquee: Readable<boolean>;
@@ -64,7 +68,9 @@ export interface Ui {
 	communitySelection: Readable<Readable<Community> | null>;
 	spaceIdSelectionByCommunityId: Mutable<Map<number, number | null>>;
 	spaceSelection: Readable<Readable<Space> | null>;
-	lastSeenByDirectoryId: Mutable<Map<number, Writable<string> | null>>;
+	lastSeenByDirectoryId: Map<number, Writable<number> | null>;
+	freshnessByDirectoryId: Map<number, Readable<boolean>>;
+	freshnessByCommunityId: Map<number, Writable<boolean>>;
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
 	contextmenu: ContextmenuStore;
@@ -197,7 +203,11 @@ export const toUi = (
 				: null,
 	);
 	// TODO consider making this the space store so we don't have to chase id references
-	const spaceIdSelectionByCommunityId = mutable<Map<number, number | null>>(new Map());
+	const spaceIdSelectionByCommunityId = locallyStoredMap<
+		Mutable<Map<number, number | null>>,
+		Map<number, number | null>,
+		Array<[number, number | null]>
+	>(mutable(new Map()), 'spaceIdSelectionByCommunityId');
 	const spaceSelection = derived(
 		[communitySelection, spaceIdSelectionByCommunityId],
 		([$communitySelection, $spaceIdSelectionByCommunityId]) =>
@@ -207,10 +217,16 @@ export const toUi = (
 				)) ||
 			null,
 	);
-	const lastSeenByDirectoryId = mutable<Map<number, Writable<string> | null>>(new Map());
+	const lastSeenByDirectoryId: Map<number, Writable<number> | null> = new Map();
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const entityById: Map<number, Writable<Entity>> = new Map();
+
+	const freshnessByDirectoryId: Map<number, Readable<boolean>> = new Map();
+	const freshnessByCommunityId: Map<number, Writable<boolean>> = new Map();
+
 	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
+	const sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
+	const destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
 
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
@@ -232,6 +248,8 @@ export const toUi = (
 		personasByCommunityId,
 		entityById,
 		entitiesBySourceId,
+		sourceTiesByDestEntityId,
+		destTiesBySourceEntityId,
 		communitiesBySessionPersona,
 		// view state
 		mobile,
@@ -249,6 +267,8 @@ export const toUi = (
 		spaceIdSelectionByCommunityId,
 		spaceSelection,
 		lastSeenByDirectoryId,
+		freshnessByDirectoryId,
+		freshnessByCommunityId,
 	} as const;
 
 	return ui;

@@ -4,13 +4,13 @@
 	import {setDevmode} from '@feltcoop/felt/ui/devmode.js';
 	import DevmodeControls from '@feltcoop/felt/ui/DevmodeControls.svelte';
 	import FeltWindowHost from '@feltcoop/felt/ui/FeltWindowHost.svelte';
-	import {onMount} from 'svelte';
 	import {session, page} from '$app/stores';
 	import {browser} from '$app/env';
 	import Dialogs from '@feltcoop/felt/ui/dialog/Dialogs.svelte';
 	import {Logger} from '@feltcoop/felt/util/log.js';
+	import {isEditable, swallow} from '@feltcoop/felt/util/dom.js';
 
-	import {setSocket, toSocketStore} from '$lib/ui/socket';
+	import {toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
 	import MainNav from '$lib/ui/MainNav.svelte';
 	import Onboard from '$lib/ui/Onboard.svelte';
@@ -30,6 +30,7 @@
 	import {mutations} from '$lib/app/mutations';
 	import AppContextmenu from '$lib/app/contextmenu/AppContextmenu.svelte';
 	import ActingPersonaContextmenu from '$lib/app/contextmenu/ActingPersonaContextmenu.svelte';
+	import SocketConnection from '$lib/ui/SocketConnection.svelte';
 	import LinkContextmenu from '$lib/app/contextmenu/LinkContextmenu.svelte';
 	import ErrorMessage from '$lib/ui/ErrorMessage.svelte';
 	import {deserialize, deserializers} from '$lib/util/deserialize';
@@ -49,11 +50,9 @@
 	}
 
 	const devmode = setDevmode();
-	const socket = setSocket(
-		toSocketStore(
-			(message) => websocketClient.handle(message.data),
-			() => dispatch.Ping(),
-		),
+	const socket = toSocketStore(
+		(message) => websocketClient.handle(message.data),
+		() => dispatch.Ping(),
 	);
 	const ui = toUi(initialMobileValue, components, (errorMessage) => {
 		dispatch.OpenDialog({Component: ErrorMessage, props: {text: errorMessage}});
@@ -100,27 +99,17 @@
 
 	$: syncUiToUrl(ui, dispatch, $page.params, $page.url);
 
-	let mounted = false;
-
-	onMount(() => {
-		mounted = true;
-		return () => {
-			socket.disconnect();
-		};
-	});
-
-	// Keep the socket connected when logged in, and disconnect when logged out.
-	$: if (mounted) {
-		if (guest) {
-			socket.disconnect();
-		} else {
-			socket.connect(WEBSOCKET_URL);
-		}
-	}
-
 	let clientWidth: number;
 	let clientHeight: number;
 	$: $layout = {width: clientWidth, height: clientHeight}; // TODO event? `UpdateLayout`?
+
+	// TODO `ShortcutKeys` or `Hotkeys` component with some interface
+	const onWindowKeydown = async (e: KeyboardEvent) => {
+		if (e.key === '`' && !e.ctrlKey && !isEditable(e.target)) {
+			swallow(e);
+			dispatch.ToggleMainNav();
+		}
+	};
 </script>
 
 <svelte:body
@@ -132,6 +121,10 @@
 <svelte:head>
 	<link rel="shortcut icon" href="/favicon.png" />
 </svelte:head>
+
+<svelte:window on:keydown|capture={onWindowKeydown} />
+
+<SocketConnection {socket} url={WEBSOCKET_URL} />
 
 <div class="layout" class:mobile={$mobile} bind:clientHeight bind:clientWidth>
 	{#if !guest && !onboarding}
