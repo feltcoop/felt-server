@@ -7,8 +7,8 @@ import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
 import {
 	setLastSeen,
 	updateLastSeen,
-	upsertCommunityFreshnessById,
-	setFreshnessDerived,
+	upsertFreshnessByCommunityId,
+	setFreshnessByDirectoryId,
 } from '$lib/ui/uiMutationHelpers';
 
 export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> => {
@@ -21,13 +21,14 @@ export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> 
 		entityById.set(entity_id, (entity = writable($entity)));
 	}
 
+	// Handle directories.
 	const entityData = entity.get().data as DirectoryEntityData;
 	if (entityData.space_id) {
 		if (!freshnessByDirectoryId.get(entity_id)) {
 			setLastSeen(ui, $entity.entity_id, $entity.updated!.getTime());
-			setFreshnessDerived(ui, entity);
+			setFreshnessByDirectoryId(ui, entity);
 		}
-		upsertCommunityFreshnessById(ui, spaceById.get(entityData.space_id)!.get().community_id);
+		upsertFreshnessByCommunityId(ui, spaceById.get(entityData.space_id)!.get().community_id);
 	}
 
 	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {

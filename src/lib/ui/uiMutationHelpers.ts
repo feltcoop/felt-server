@@ -6,7 +6,7 @@ import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
 import type {WritableUi} from '$lib/ui/ui';
 
-export const setFreshnessDerived = (ui: WritableUi, directory: Writable<Entity>): void => {
+export const setFreshnessByDirectoryId = (ui: WritableUi, directory: Writable<Entity>): void => {
 	const {freshnessByDirectoryId, lastSeenByDirectoryId} = ui;
 	const {entity_id} = directory.get();
 	const lastSeen = lastSeenByDirectoryId.get(entity_id);
@@ -23,7 +23,7 @@ export const setFreshnessDerived = (ui: WritableUi, directory: Writable<Entity>)
 };
 
 //TODO this could probably a derived store (see above) based on something like "directoriesByCommunityId"
-export const upsertCommunityFreshnessById = (ui: WritableUi, community_id: number): void => {
+export const upsertFreshnessByCommunityId = (ui: WritableUi, community_id: number): void => {
 	const {spacesByCommunityId, freshnessByCommunityId, freshnessByDirectoryId} = ui;
 	const spaces = spacesByCommunityId.get().get(community_id) || [];
 	const fresh = spaces.some((s) => {
@@ -62,7 +62,7 @@ export const updateLastSeen = (ui: WritableUi, directory_id: number, time = Date
 		| undefined;
 
 	if (directory) {
-		upsertCommunityFreshnessById(
+		upsertFreshnessByCommunityId(
 			ui,
 			//TODO add directory field to space & vice versa to avoid this mess below
 			spaceById.get(directory.get().data.space_id)!.get().community_id,
