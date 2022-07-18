@@ -122,9 +122,11 @@ export const SetSession: Mutations['SetSession'] = async ({
 
 // TODO this is a hack until we figure out how to handle "session personas" differently from the rest --
 // the issue is that the "session personas" have their `community_ids` populated,
-// so as a hack we prefer that instance in the global,
-// but these probably need to be split into two separate collections --
-// notice that comparison checks between the two types of personas will not be able to use store reference equality
+// so as a hack we swap the session personas in for the regular personas,
+// but these probably need to be split into two separate collections.
+// Any code that needs session personas given a regular persona could do a lookup,
+// but otherwise we'd be passing around the `Persona` objects in most cases.
+// This would make things typesafe as well.
 const toInitialPersonas = (session: ClientSession): Persona[] =>
 	session.guest
 		? []
