@@ -47,6 +47,7 @@ export const OpenDialog: ClientEventInfo = {
 	name: 'OpenDialog',
 	params: {
 		$id: '/schemas/OpenDialogParams.json',
+		// TODO BLOCK simplify
 		allOf: [{$ref: '/schemas/DialogData.json'}],
 	},
 	returns: 'void',

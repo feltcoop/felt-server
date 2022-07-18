@@ -173,7 +173,7 @@ export type LogoutAccountResponse = null;
 export type LogoutAccountResponseResult = ApiResult<LogoutAccountResponse>;
 
 export interface SetSessionParams {
-	[k: string]: unknown;
+	session: ClientSession;
 }
 
 export interface CreateCommunityParams {
