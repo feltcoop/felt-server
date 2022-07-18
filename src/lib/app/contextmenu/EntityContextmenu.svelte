@@ -35,7 +35,7 @@
 				Erase Entity
 			</ContextmenuEntry>
 		{/if}
-		<ContextmenuEntry action={() => dispatch.DeleteEntities({entity_ids: [$entity.entity_id]})}>
+		<ContextmenuEntry action={() => dispatch.DeleteEntities({entityIds: [$entity.entity_id]})}>
 			Delete Entity
 		</ContextmenuEntry>
 	</svelte:fragment>

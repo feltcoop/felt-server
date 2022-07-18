@@ -76,6 +76,18 @@ export class EntityRepo extends PostgresRepo {
 			DELETE FROM entities WHERE entity_id IN ${this.db.sql(entity_ids)}
 		`;
 		if (!data.count) return NOT_OK;
+		if (data.count !== entity_ids.length) return NOT_OK;
 		return OK;
+	}
+
+	//This function finds all non-directory entities with no ties pointing to them & returns an array of their ids
+	async findOrphanedEntities(): Promise<Result<{value: number[]}>> {
+		const data = await this.db.sql<Entity[]>`
+			SELECT entity_id FROM entities e
+			LEFT JOIN ties t
+			ON e.entity_id = t.dest_id
+			WHERE e.data->>'space_id' IS NULL AND t.dest_id IS NULL;
+		`;
+		return {ok: true, value: data.flatMap((e) => e.entity_id)};
 	}
 }

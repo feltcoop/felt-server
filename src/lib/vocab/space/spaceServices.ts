@@ -18,6 +18,7 @@ import type {ErrorResponse} from '$lib/util/error';
 import {toDefaultSpaces} from '$lib/vocab/space/defaultSpaces';
 import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
 import type {Entity} from '$lib/vocab/entity/entity';
+import {DeleteEntitiesService} from '$lib/vocab/entity/entityServices';
 
 const log = new Logger(gray('[') + blue('spaceServices') + gray(']'));
 
@@ -138,9 +139,10 @@ export const UpdateSpaceService: ServiceByName['UpdateSpace'] = {
 //deletes a single space
 export const DeleteSpaceService: ServiceByName['DeleteSpace'] = {
 	event: DeleteSpace,
-	perform: async ({repos, params}) => {
+	perform: async (serviceRequest) => {
+		const {repos, params} = serviceRequest;
 		log.trace('[DeleteSpace] deleting space with id:', params.space_id);
-
+		const deletedEntityIds: number[] = [];
 		// Check that the space can be deleted.
 		const findSpaceResult = await repos.space.findById(params.space_id);
 		if (!findSpaceResult.ok) {
@@ -157,7 +159,24 @@ export const DeleteSpaceService: ServiceByName['DeleteSpace'] = {
 			log.trace('[DeleteSpace] error removing space: ', params.space_id);
 			return {ok: false, status: 500, message: 'failed to delete space'};
 		}
-		return {ok: true, status: 200, value: null};
+
+		deletedEntityIds.push(space.directory_id);
+		const orphanedEntities = await DeleteEntitiesService.perform({
+			...serviceRequest,
+			params: {entityIds: [space.directory_id]},
+		});
+
+		if (!orphanedEntities.ok) {
+			log.trace('[DeleteSpace] error cleaning up space entities: ', params.space_id);
+			return {
+				ok: false,
+				status: 500,
+				message: `failed to clean up space entities; ${orphanedEntities.message}`,
+			};
+		}
+		deletedEntityIds.push(...orphanedEntities.value.deletedEntityIds);
+
+		return {ok: true, status: 200, value: {deletedEntityIds}};
 	},
 };
 

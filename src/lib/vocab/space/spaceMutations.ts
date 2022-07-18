@@ -36,6 +36,7 @@ export const DeleteSpace: Mutations['DeleteSpace'] = async ({params, invoke, ui}
 	const space = spaceById.get(space_id)!;
 	const $space = space.get();
 	const {community_id} = $space;
+	const {deletedEntityIds} = result.value;
 
 	// If the deleted space is selected, select the home space as a fallback.
 	if (space_id === spaceIdSelectionByCommunityId.get().value.get(community_id)) {
@@ -56,7 +57,9 @@ export const DeleteSpace: Mutations['DeleteSpace'] = async ({params, invoke, ui}
 
 	spaceById.delete(space_id);
 	spaces.mutate(($spaces) => $spaces.splice($spaces.indexOf(space), 1));
-	deleteEntity(ui, $space.directory_id);
+	for (const entity_id of deletedEntityIds) {
+		deleteEntity(ui, entity_id);
+	}
 
 	return result;
 };

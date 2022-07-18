@@ -139,7 +139,11 @@ export const DeleteSpace: ServiceEventInfo = {
 	},
 	response: {
 		$id: '/schemas/DeleteSpaceResponse.json',
-		type: 'null',
+		properties: {
+			deletedEntityIds: {type: 'array', items: {type: 'number'}},
+		},
+		required: ['deletedEntityIds'],
+		additionalProperties: false,
 	},
 	returns: 'Promise<DeleteSpaceResponseResult>',
 	route: {
