@@ -89,6 +89,8 @@
 		log.trace('app', app);
 	}
 
+	// TODO might need to dispatch during initialization:
+	// https://github.com/feltcoop/felt-server/pull/397/files#r923790411
 	$: dispatch.SetSession({session: $session});
 
 	const {mobile, layout, contextmenu, dialogs, account, sessionPersonas, personaSelection} = ui;
