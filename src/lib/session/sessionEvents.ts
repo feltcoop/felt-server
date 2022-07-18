@@ -10,7 +10,9 @@ export const SetSession: ClientEventInfo = {
 			session: {
 				type: 'object',
 				// TODO it'd be nice to have schema validation here,
-				// but currently the `ClientSession` is a manually-synced type
+				// but currently the `ClientSession` is a manually-synced type.
+				// This would be good for security because the server could validate the data
+				// returned from `loadClientSession`.
 				tsType: 'ClientSession',
 			},
 		},
