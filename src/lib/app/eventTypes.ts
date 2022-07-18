@@ -59,9 +59,9 @@ export type ClientEventName =
 	| 'ClearFreshness';
 
 export interface EventParamsByName {
+	SetSession: SetSessionParams;
 	LoginAccount: LoginAccountParams;
 	LogoutAccount: LogoutAccountParams;
-	SetSession: SetSessionParams;
 	CreateCommunity: CreateCommunityParams;
 	ReadCommunity: ReadCommunityParams;
 	ReadCommunities: ReadCommunitiesParams;
@@ -159,6 +159,10 @@ export interface ServiceByName {
 	DeleteTie: Service<DeleteTieParams, DeleteTieResponseResult>;
 }
 
+export interface SetSessionParams {
+	session: ClientSession;
+}
+
 export interface LoginAccountParams {
 	username: string;
 	password: string;
@@ -171,10 +175,6 @@ export type LoginAccountResponseResult = ApiResult<LoginAccountResponse>;
 export type LogoutAccountParams = null;
 export type LogoutAccountResponse = null;
 export type LogoutAccountResponseResult = ApiResult<LogoutAccountResponse>;
-
-export interface SetSessionParams {
-	session: ClientSession;
-}
 
 export interface CreateCommunityParams {
 	name: string;
@@ -438,9 +438,9 @@ export interface ClearFreshnessParams {
 }
 
 export interface Dispatch {
+	SetSession: (params: SetSessionParams) => void;
 	LoginAccount: (params: LoginAccountParams) => Promise<LoginAccountResponseResult>;
 	LogoutAccount: () => Promise<LogoutAccountResponseResult>;
-	SetSession: (params: SetSessionParams) => void;
 	CreateCommunity: (params: CreateCommunityParams) => Promise<CreateCommunityResponseResult>;
 	ReadCommunity: (params: ReadCommunityParams) => Promise<ReadCommunityResponseResult>;
 	ReadCommunities: (params: ReadCommunitiesParams) => Promise<ReadCommunitiesResponseResult>;
@@ -485,13 +485,13 @@ export interface Dispatch {
 }
 
 export interface Mutations {
+	SetSession: (ctx: DispatchContext<SetSessionParams, void>) => void;
 	LoginAccount: (
 		ctx: DispatchContext<LoginAccountParams, LoginAccountResponseResult>,
 	) => Promise<LoginAccountResponseResult>;
 	LogoutAccount: (
 		ctx: DispatchContext<LogoutAccountParams, LogoutAccountResponseResult>,
 	) => Promise<LogoutAccountResponseResult>;
-	SetSession: (ctx: DispatchContext<SetSessionParams, void>) => void;
 	CreateCommunity: (
 		ctx: DispatchContext<CreateCommunityParams, CreateCommunityResponseResult>,
 	) => Promise<CreateCommunityResponseResult>;
