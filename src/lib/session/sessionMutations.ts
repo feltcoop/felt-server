@@ -1,4 +1,5 @@
 import {browser} from '$app/env';
+import {session as svelteSession} from '$app/stores';
 import {writable} from '@feltcoop/svelte-gettable-stores';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
@@ -12,17 +13,17 @@ import type {Persona} from '$lib/vocab/persona/persona';
 
 const log = new Logger('[ui]');
 
-export const LoginAccount: Mutations['LoginAccount'] = async ({invoke, ui: {session}}) => {
+export const LoginAccount: Mutations['LoginAccount'] = async ({invoke}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	session.set(result.value.session);
+	svelteSession.set(result.value.session);
 	return result;
 };
 
-export const LogoutAccount: Mutations['LogoutAccount'] = async ({invoke, ui: {session}}) => {
+export const LogoutAccount: Mutations['LogoutAccount'] = async ({invoke}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	session.set({guest: true});
+	svelteSession.set({guest: true});
 	return result;
 };
 
@@ -38,6 +39,7 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 		entityById,
 		memberships,
 		personaIdSelection,
+		sessionPersonas,
 		communityIdSelectionByPersonaId,
 		spaceIdSelectionByCommunityId,
 		lastSeenByDirectoryId,
@@ -48,14 +50,13 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 	deserialize(deserializers)(session);
 	account.set(guest ? null : session.account);
 
-	const $personaArray = guest ? [] : toInitialPersonas(session);
-	const $personas = $personaArray.map((p) => writable(p));
+	const $personas = (guest ? [] : toInitialPersonas(session)).map((p) => writable(p));
 	personaById.clear();
-	$personas.forEach((p, i) => personaById.set($personaArray[i].persona_id, p));
+	$personas.forEach((p, i) => personaById.set(p.get().persona_id, p));
 	personas.swap($personas);
 
-	const sessionPersonas = guest ? [] : session.sessionPersonas;
-	sessionPersonas.set(sessionPersonas.map((p) => personaById.get(p.persona_id)!));
+	const $sessionPersonas = guest ? [] : session.sessionPersonas;
+	sessionPersonas.set($sessionPersonas.map((p) => personaById.get(p.persona_id)!));
 
 	const $communityArray = guest ? [] : session.communities;
 	const $communities = $communityArray.map((p) => writable(p));
@@ -79,7 +80,7 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 	memberships.swap(guest ? [] : session.memberships.map((s) => writable(s)));
 
 	// TODO fix this and the 2 below to use the URL to initialize the correct persona+community+space
-	const $firstSessionPersona = guest ? null : sessionPersonas[0];
+	const $firstSessionPersona = guest ? null : $sessionPersonas[0];
 	personaIdSelection.set($firstSessionPersona?.persona_id ?? null);
 
 	// TODO these two selections are hacky because using the derived stores
@@ -87,7 +88,7 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 	// instead of using derived stores like `sessionPersonas` and `spacesByCommunityId`.
 	communityIdSelectionByPersonaId.swap(
 		// TODO first try to load this from localStorage
-		new Map(guest ? null : sessionPersonas.map(($p) => [$p.persona_id, $p.community_id])),
+		new Map(guest ? null : $sessionPersonas.map(($p) => [$p.persona_id, $p.community_id])),
 	);
 	spaceIdSelectionByCommunityId.swap(
 		//TODO lookup space by community_id+url (see this comment in multiple places)

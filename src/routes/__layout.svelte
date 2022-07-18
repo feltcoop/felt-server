@@ -58,7 +58,6 @@
 		dispatch.OpenDialog({Component: ErrorMessage, props: {text: errorMessage}});
 	});
 	setUi(ui);
-	$: dispatch.SetSession({session: $session});
 
 	const dispatch = toDispatch(ui, mutations, (e) =>
 		websocketClient.find(e) ? websocketClient : httpClient.find(e) ? httpClient : null,
@@ -89,6 +88,9 @@
 		Object.assign(window, app);
 		log.trace('app', app);
 	}
+
+	// dispatch.SetSession({session: $session});
+	$: dispatch.SetSession({session: $session});
 
 	const {mobile, layout, contextmenu, dialogs, account, sessionPersonas, personaSelection} = ui;
 
