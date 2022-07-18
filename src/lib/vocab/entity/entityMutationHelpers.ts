@@ -27,7 +27,8 @@ export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> 
 			setFreshnessByDirectoryId(ui, entity);
 		}
 		upsertFreshnessByCommunityId(ui, spaceById.get($entity.data.space_id)!.get().community_id);
-		if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
+		// Is the directory selected? If so we don't want a notification.
+		if ($entity.entity_id === spaceSelection.get()?.get().directory_id) {
 			updateLastSeen(ui, $entity.entity_id, $entity.updated!.getTime());
 		}
 	}
