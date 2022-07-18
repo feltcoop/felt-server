@@ -6,6 +6,9 @@ import type {Mutations} from '$lib/app/eventTypes';
 import {LAST_SEEN_KEY} from '$lib/ui/app';
 import {deserialize, deserializers} from '$lib/util/deserialize';
 import {setFreshnessDerived, upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelpers';
+import {locallyStored} from '$lib/ui/locallyStored';
+import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
+import type {Persona} from '$lib/vocab/persona/persona';
 
 const log = new Logger('[ui]');
 
@@ -23,9 +26,8 @@ export const LogoutAccount: Mutations['LogoutAccount'] = async ({invoke, ui: {se
 	return result;
 };
 
-export const SetSession: Mutations['SetSession'] = async ({
-	params: {session},
-	ui: {
+export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui}) => {
+	const {
 		account,
 		personaById,
 		communityById,
@@ -39,30 +41,29 @@ export const SetSession: Mutations['SetSession'] = async ({
 		communityIdSelectionByPersonaId,
 		spaceIdSelectionByCommunityId,
 		lastSeenByDirectoryId,
-	},
-}) => {
+	} = ui;
 	const {guest} = session;
 
 	if (browser) log.trace('[setSession]', session);
 	deserialize(deserializers)(session);
-	account.set(session.guest ? null : session.account);
+	account.set(guest ? null : session.account);
 
-	const $personaArray = session.guest ? [] : toInitialPersonas(session);
+	const $personaArray = guest ? [] : toInitialPersonas(session);
 	const $personas = $personaArray.map((p) => writable(p));
 	personaById.clear();
 	$personas.forEach((p, i) => personaById.set($personaArray[i].persona_id, p));
 	personas.swap($personas);
 
-	const sessionPersonas = session.guest ? [] : session.sessionPersonas;
+	const sessionPersonas = guest ? [] : session.sessionPersonas;
 	sessionPersonas.set(sessionPersonas.map((p) => personaById.get(p.persona_id)!));
 
-	const $communityArray = session.guest ? [] : session.communities;
+	const $communityArray = guest ? [] : session.communities;
 	const $communities = $communityArray.map((p) => writable(p));
 	communityById.clear();
 	$communities.forEach((c, i) => communityById.set($communityArray[i].community_id, c));
 	communities.swap($communities);
 
-	const $spaceArray = session.guest ? [] : session.spaces;
+	const $spaceArray = guest ? [] : session.spaces;
 	const $spaces = $spaceArray.map((s) => writable(s));
 	spaceById.clear();
 	$spaces.forEach((s, i) => {
@@ -75,10 +76,10 @@ export const SetSession: Mutations['SetSession'] = async ({
 
 	spaces.swap($spaces);
 
-	memberships.swap(session.guest ? [] : session.memberships.map((s) => writable(s)));
+	memberships.swap(guest ? [] : session.memberships.map((s) => writable(s)));
 
 	// TODO fix this and the 2 below to use the URL to initialize the correct persona+community+space
-	const $firstSessionPersona = session.guest ? null : sessionPersonas[0];
+	const $firstSessionPersona = guest ? null : sessionPersonas[0];
 	personaIdSelection.set($firstSessionPersona?.persona_id ?? null);
 
 	// TODO these two selections are hacky because using the derived stores
@@ -86,12 +87,12 @@ export const SetSession: Mutations['SetSession'] = async ({
 	// instead of using derived stores like `sessionPersonas` and `spacesByCommunityId`.
 	communityIdSelectionByPersonaId.swap(
 		// TODO first try to load this from localStorage
-		new Map(session.guest ? null : sessionPersonas.map(($p) => [$p.persona_id, $p.community_id])),
+		new Map(guest ? null : sessionPersonas.map(($p) => [$p.persona_id, $p.community_id])),
 	);
 	spaceIdSelectionByCommunityId.swap(
 		//TODO lookup space by community_id+url (see this comment in multiple places)
 		new Map(
-			session.guest
+			guest
 				? null
 				: session.communities.map(($community) => [
 						$community.community_id,
@@ -106,7 +107,7 @@ export const SetSession: Mutations['SetSession'] = async ({
 	);
 
 	//TODO directories should probably live in their own store
-	const $directoriesArray = session.guest ? [] : session.directories;
+	const $directoriesArray = guest ? [] : session.directories;
 
 	$directoriesArray.forEach((d) => {
 		//TODO we had talked about replacing this with updateEntity, but it currently assumes setFreshnessDerived has already been called
@@ -120,8 +121,9 @@ export const SetSession: Mutations['SetSession'] = async ({
 	});
 };
 
-// TODO this is a hack until we figure out how to handle "session personas" differently from the rest --
-// the issue is that the "session personas" have their `community_ids` populated,
+// TODO This is a hack until we figure out how to handle "session personas" differently from the rest.
+// The issue is that the "session personas" have private fields populated
+// but we don't treat them separately from regular personas when using them,
 // so as a hack we swap the session personas in for the regular personas,
 // but these probably need to be split into two separate collections.
 // Any code that needs session personas given a regular persona could do a lookup,
