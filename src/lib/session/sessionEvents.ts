@@ -6,7 +6,7 @@ export const SetSession: ClientEventInfo = {
 	params: {
 		$id: '/schemas/ClientSession.json',
 		type: 'object',
-		// TODO need schema
+		// TODO BLOCK need schema
 		// properties: {
 		// 	source_id: {type: 'number'},
 		// },
