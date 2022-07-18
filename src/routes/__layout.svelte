@@ -89,7 +89,6 @@
 		log.trace('app', app);
 	}
 
-	// TODO might need to synchronously dispatch on component initialization and then avoid the second re-init
 	$: dispatch.SetSession({session: $session});
 
 	const {mobile, layout, contextmenu, dialogs, account, sessionPersonas, personaSelection} = ui;
