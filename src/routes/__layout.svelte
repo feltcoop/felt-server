@@ -89,6 +89,7 @@
 		log.trace('app', app);
 	}
 
+	// TODO BLOCK can we remove this? or do we need to initialize immediately? do we need a `ready` state?
 	// dispatch.SetSession({session: $session});
 	$: dispatch.SetSession({session: $session});
 
