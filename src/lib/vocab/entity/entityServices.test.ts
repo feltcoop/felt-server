@@ -6,7 +6,10 @@ import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import type {NoteEntityData} from '$lib/vocab/entity/entityData';
 import {toServiceRequest} from '$lib/util/testHelpers';
-import {ReadEntitiesPaginatedService} from '$lib/vocab/entity/entityServices';
+import {
+	ReadEntitiesPaginatedService,
+	DeleteEntitiesService,
+} from '$lib/vocab/entity/entityServices';
 import {DEFAULT_PAGE_SIZE} from '$lib/server/constants';
 import {validateSchema} from '$lib/util/ajv';
 
@@ -129,6 +132,42 @@ test_entityServices('assert default as max pageSize', async ({random}) => {
 
 	const validateParams = validateSchema(ReadEntitiesPaginatedService.event.params);
 	assert.ok(!validateParams({source_id: space.directory_id, pageSize: DEFAULT_PAGE_SIZE + 1}));
+});
+
+test_entityServices('deleting entities and cleaning orphans', async ({random, db}) => {
+	const {space, persona, account, community} = await random.space();
+	const serviceRequest = toServiceRequest(account.account_id, db);
+	//generate a collection with 3 notes
+	const {entity: list} = await random.entity(persona, account, community, space.directory_id, {
+		data: {type: 'Collection', name: `grocery list`},
+	});
+	const {entity: todo1} = await random.entity(persona, account, community, space.directory_id, {
+		source_id: list.entity_id,
+		data: {type: 'Note', content: `eggs`},
+	});
+	const {entity: todo2} = await random.entity(persona, account, community, space.directory_id, {
+		source_id: list.entity_id,
+		data: {type: 'Note', content: `bread`},
+	});
+	const {entity: todo3} = await random.entity(persona, account, community, space.directory_id, {
+		source_id: list.entity_id,
+		data: {type: 'Note', content: `milk`},
+	});
+	//delete the collection
+	const result = unwrap(
+		await DeleteEntitiesService.perform({
+			params: {
+				entityIds: [list.entity_id],
+			},
+			...serviceRequest,
+		}),
+	);
+	//confirm all four entity ids come back
+	assert.equal(result.deletedEntityIds.length, 4);
+	assert.ok(result.deletedEntityIds.includes(list.entity_id));
+	assert.ok(result.deletedEntityIds.includes(todo1.entity_id));
+	assert.ok(result.deletedEntityIds.includes(todo2.entity_id));
+	assert.ok(result.deletedEntityIds.includes(todo3.entity_id));
 });
 
 test_entityServices.run();

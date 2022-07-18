@@ -109,14 +109,34 @@ export const EraseEntitiesService: ServiceByName['EraseEntities'] = {
 	},
 };
 
-//hard deletes a single entity, removing the record of it from the DB
+//hard deletes one to many entities, removing the records from the DB
 export const DeleteEntitiesService: ServiceByName['DeleteEntities'] = {
 	event: DeleteEntities,
 	perform: async ({repos, params}) => {
-		const result = await repos.entity.deleteByIds(params.entity_ids);
+		const deletedEntityIds: number[] = [];
+		const result = await repos.entity.deleteByIds(params.entityIds);
 		if (!result.ok) {
 			return {ok: false, status: 500, message: 'failed to delete entity'};
 		}
-		return {ok: true, status: 200, value: null};
+		deletedEntityIds.push(...params.entityIds);
+
+		let noOrphans = false;
+		while (!noOrphans) {
+			const orphans = await repos.entity.findOrphanedEntities(); // eslint-disable-line no-await-in-loop
+			if (!orphans.ok) {
+				return {ok: false, status: 500, message: 'failed to find orphans'};
+			}
+			if (orphans.value.length === 0) {
+				noOrphans = true;
+			} else {
+				const deletedOrphans = await repos.entity.deleteByIds(orphans.value); // eslint-disable-line no-await-in-loop
+				if (!deletedOrphans.ok) {
+					return {ok: false, status: 500, message: 'failed to delete orphans'};
+				}
+				deletedEntityIds.push(...orphans.value);
+			}
+		}
+
+		return {ok: true, status: 200, value: {deletedEntityIds}};
 	},
 };

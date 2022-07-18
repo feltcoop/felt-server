@@ -38,7 +38,7 @@
 	let deletePending = false;
 	const deleteEntity = async () => {
 		deletePending = true;
-		await dispatch.DeleteEntities({entity_ids: [$entity.entity_id]});
+		await dispatch.DeleteEntities({entityIds: [$entity.entity_id]});
 		deletePending = false;
 		done?.();
 	};

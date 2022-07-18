@@ -71,6 +71,7 @@
 	$: if (entities) {
 		const result = entities.filter((e) => e.data.name === 'rules' || e.data.name === 'norms');
 		if (result.length === 0) {
+			//TODO initialize these with community, not user persona
 			void createEntity(DEFAULT_RULES, 'rules');
 			void createEntity(DEFAULT_NORMS, 'norms');
 		}

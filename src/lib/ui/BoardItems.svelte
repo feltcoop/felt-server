@@ -2,22 +2,42 @@
 	import type {Readable} from '@feltcoop/svelte-gettable-stores';
 
 	import type {Entity} from '$lib/vocab/entity/entity';
-	import BoardItem from '$lib/ui/BoardItem.svelte';
-
-	// TODO this should possibly be a generic component instead of this named one
+	import BoardItemSummary from '$lib/ui/BoardItemSummary.svelte';
+	import BoardItemDetail from '$lib/ui/BoardItemDetail.svelte';
+	import type {Space} from '$lib/vocab/space/space';
+	import type {Persona} from '$lib/vocab/persona/persona';
 
 	export let entities: Readable<Array<Readable<Entity>>>;
+	export let space: Readable<Space>;
+	export let persona: Readable<Persona>;
+	export let selectedPost: Readable<Entity> | null;
+	export let selectPost: (post: Readable<Entity>) => void;
+
+	const goBack = () => {
+		selectPost(selectedPost!);
+	};
+
+	//TODO in directory structure, this would just grab the "lists" collection from the dir
+	$: collectionEntities = $entities?.filter((e) => e.get().data.type === 'Collection');
 </script>
 
 <!-- TODO possibly remove the `ul` wrapper and change the `li`s to `div`s -->
-<ul>
-	{#each $entities as entity (entity)}
-		<BoardItem {entity} />
-	{/each}
-</ul>
+
+{#if selectedPost}
+	<button on:click={goBack}>Go Back</button>
+	<div class="wrapper">
+		<BoardItemDetail entity={selectedPost} {space} {persona} />
+	</div>
+{:else}
+	<ul>
+		{#each collectionEntities as entity (entity)}
+			<BoardItemSummary {entity} {selectPost} />
+		{/each}
+	</ul>
+{/if}
 
 <style>
-	ul {
-		flex-direction: column-reverse;
+	.wrapper {
+		padding: var(--spacing_md);
 	}
 </style>
