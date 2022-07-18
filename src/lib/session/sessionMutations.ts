@@ -58,17 +58,15 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 	const $sessionPersonas = guest ? [] : session.sessionPersonas;
 	sessionPersonas.set($sessionPersonas.map((p) => personaById.get(p.persona_id)!));
 
-	const $communityArray = guest ? [] : session.communities;
-	const $communities = $communityArray.map((p) => writable(p));
+	const $communities = (guest ? [] : session.communities).map((p) => writable(p));
 	communityById.clear();
-	$communities.forEach((c, i) => communityById.set($communityArray[i].community_id, c));
+	$communities.forEach((c) => communityById.set(c.get().community_id, c));
 	communities.swap($communities);
 
-	const $spaceArray = guest ? [] : session.spaces;
-	const $spaces = $spaceArray.map((s) => writable(s));
+	const $spaces = (guest ? [] : session.spaces).map((s) => writable(s));
 	spaceById.clear();
-	$spaces.forEach((s, i) => {
-		spaceById.set($spaceArray[i].space_id, s);
+	$spaces.forEach((s) => {
+		spaceById.set(s.get().space_id, s);
 		lastSeenByDirectoryId.set(
 			s.get().directory_id,
 			locallyStored(writable(Date.now()), LAST_SEEN_KEY + s.get().directory_id),
@@ -108,17 +106,15 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 	);
 
 	//TODO directories should probably live in their own store
-	const $directoriesArray = guest ? [] : session.directories;
-
-	$directoriesArray.forEach((d) => {
+	(guest ? [] : session.directories).forEach((d) => {
 		//TODO we had talked about replacing this with updateEntity, but it currently assumes setFreshnessDerived has already been called
 		const entity = writable(d);
 		entityById.set(d.entity_id, entity);
 		setFreshnessDerived(ui, entity);
 	});
 
-	$communityArray.forEach((c) => {
-		upsertCommunityFreshnessById(ui, c.community_id);
+	$communities.forEach((c) => {
+		upsertCommunityFreshnessById(ui, c.get().community_id);
 	});
 };
 
