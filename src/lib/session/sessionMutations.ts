@@ -1,5 +1,5 @@
 import {browser} from '$app/env';
-import {session as svelteSession} from '$app/stores';
+import {session as sveltekitSession} from '$app/stores';
 import {writable} from '@feltcoop/svelte-gettable-stores';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
@@ -16,14 +16,14 @@ const log = new Logger('[ui]');
 export const LoginAccount: Mutations['LoginAccount'] = async ({invoke}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	svelteSession.set(result.value.session);
+	sveltekitSession.set(result.value.session);
 	return result;
 };
 
 export const LogoutAccount: Mutations['LogoutAccount'] = async ({invoke}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	svelteSession.set({guest: true});
+	sveltekitSession.set({guest: true});
 	return result;
 };
 
