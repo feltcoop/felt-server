@@ -43,9 +43,9 @@ import {
 
 export const eventInfos: EventInfo[] = [
 	// sessionEvents
+	SetSession,
 	LoginAccount,
 	LogoutAccount,
-	SetSession,
 	// communityEvents
 	CreateCommunity,
 	ReadCommunity,

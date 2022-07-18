@@ -9,6 +9,8 @@ export const SetSession: ClientEventInfo = {
 		properties: {
 			session: {
 				type: 'object',
+				// TODO it'd be nice to have schema validation here,
+				// but currently the `ClientSession` is a manually-synced type
 				tsType: 'ClientSession',
 			},
 		},
