@@ -23,9 +23,7 @@ export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> 
 
 	const entityData = entity.get().data as DirectoryEntityData;
 	if (entityData.space_id) {
-		console.log('entity is directory');
 		if (!freshnessByDirectoryId.get(entity_id)) {
-			console.log('freshnessByDirectoryId uninitialized for directory', entity_id);
 			setLastSeen(ui, $entity.entity_id, $entity.updated!.getTime());
 			setFreshnessDerived(ui, entity);
 		}
