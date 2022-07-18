@@ -402,7 +402,7 @@ export type ToggleSecondaryNavParams = void;
 
 export type SetMobileParams = boolean;
 
-export type OpenDialogParams = {
+export interface OpenDialogParams {
 	Component: typeof SvelteComponent;
 	props?: {
 		[k: string]: unknown;
@@ -410,7 +410,7 @@ export type OpenDialogParams = {
 	dialogProps?: {
 		[k: string]: unknown;
 	};
-};
+}
 
 export type CloseDialogParams = void;
 
