@@ -52,7 +52,7 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 
 	const $personas = (guest ? [] : toInitialPersonas(session)).map((p) => writable(p));
 	personaById.clear();
-	$personas.forEach((p, i) => personaById.set(p.get().persona_id, p));
+	$personas.forEach((p) => personaById.set(p.get().persona_id, p));
 	personas.swap($personas);
 
 	const $sessionPersonas = guest ? [] : session.sessionPersonas;
