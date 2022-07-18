@@ -3,7 +3,6 @@ import {writable, mutable, type Writable} from '@feltcoop/svelte-gettable-stores
 import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
-import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
 import {
 	setLastSeen,
 	updateLastSeen,
@@ -22,18 +21,17 @@ export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> 
 	}
 
 	// Handle directories.
-	const entityData = entity.get().data as DirectoryEntityData;
-	if (entityData.space_id) {
+	if ('space_id' in $entity.data) {
 		if (!freshnessByDirectoryId.get(entity_id)) {
 			setLastSeen(ui, $entity.entity_id, $entity.updated!.getTime());
 			setFreshnessByDirectoryId(ui, entity);
 		}
-		upsertFreshnessByCommunityId(ui, spaceById.get(entityData.space_id)!.get().community_id);
+		upsertFreshnessByCommunityId(ui, spaceById.get($entity.data.space_id)!.get().community_id);
+		if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
+			updateLastSeen(ui, $entity.entity_id, $entity.updated!.getTime());
+		}
 	}
 
-	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
-		updateLastSeen(ui, $entity.entity_id, $entity.updated!.getTime());
-	}
 	return entity;
 };
 
