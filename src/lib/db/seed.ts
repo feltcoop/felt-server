@@ -7,7 +7,7 @@ import type {Database} from '$lib/db/Database.js';
 import type {Account} from '$lib/vocab/account/account.js';
 import type {Space} from '$lib/vocab/space/space.js';
 import type {Community} from '$lib/vocab/community/community';
-import type {CreateCommunityParams, LoginAccountParams} from '$lib/app/eventTypes';
+import type {CreateCommunityParams, LoginParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
 import {parseView, type ViewData} from '$lib/vocab/view/view';
 import {CreateAccountPersonaService} from '$lib/vocab/persona/personaServices';
@@ -35,7 +35,7 @@ export const seed = async (db: Database): Promise<void> => {
 	}
 
 	// example: insert literal values
-	const accountsParams: LoginAccountParams[] = [
+	const accountsParams: LoginParams[] = [
 		{username: 'a', password: 'a'},
 		{username: 'b', password: 'b'},
 	];

@@ -12,7 +12,7 @@ import type {
 	CreateSpaceParams,
 	CreateMembershipParams,
 	CreateTieParams,
-	LoginAccountParams,
+	LoginParams,
 } from '$lib/app/eventTypes';
 import type {Database} from '$lib/db/Database';
 import type {DirectoryEntityData, EntityData} from '$lib/vocab/entity/entityData';
@@ -40,7 +40,7 @@ export const randomSpaceName = randomString;
 export const randomView = (): string => '<Room />';
 export const randomEntityData = (): EntityData => ({type: 'Note', content: randomString()});
 export const randomTieType = randomString;
-export const randomAccountParams = (): LoginAccountParams => ({
+export const randomAccountParams = (): LoginParams => ({
 	username: randomAccountName(),
 	password: randomPassword(),
 });

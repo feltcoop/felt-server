@@ -71,7 +71,7 @@
 				// this condition occurs when the server fails to parse and validate session cookies
 				// TODO maybe display an error on the login screen
 				if ($session.guest) {
-					await dispatch.LogoutAccount();
+					await dispatch.Logout();
 				} else {
 					$session = {guest: true};
 				}

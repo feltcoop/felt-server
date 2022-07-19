@@ -22,12 +22,12 @@ export const SetSession: ClientEventInfo = {
 	returns: 'void',
 };
 
-export const LoginAccount: ServiceEventInfo = {
+export const Login: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'LoginAccount',
+	name: 'Login',
 	authenticate: false,
 	params: {
-		$id: '/schemas/LoginAccountParams.json',
+		$id: '/schemas/LoginParams.json',
 		type: 'object',
 		properties: {
 			username: {type: 'string'},
@@ -37,7 +37,7 @@ export const LoginAccount: ServiceEventInfo = {
 		additionalProperties: false,
 	},
 	response: {
-		$id: '/schemas/LoginAccountResponse.json',
+		$id: '/schemas/LoginResponse.json',
 		type: 'object',
 		properties: {
 			// TODO this wasn't being used ?
@@ -48,26 +48,26 @@ export const LoginAccount: ServiceEventInfo = {
 		required: ['session'],
 		additionalProperties: false,
 	},
-	returns: 'Promise<LoginAccountResponseResult>',
+	returns: 'Promise<LoginResponseResult>',
 	route: {
 		path: '/api/v1/login',
 		method: 'POST',
 	},
 };
 
-export const LogoutAccount: ServiceEventInfo = {
+export const Logout: ServiceEventInfo = {
 	type: 'ServiceEvent',
-	name: 'LogoutAccount',
+	name: 'Logout',
 	websockets: false,
 	params: {
-		$id: '/schemas/LogoutAccountParams.json',
+		$id: '/schemas/LogoutParams.json',
 		type: 'null',
 	},
 	response: {
-		$id: '/schemas/LogoutAccountResponse.json',
+		$id: '/schemas/LogoutResponse.json',
 		type: 'null',
 	},
-	returns: 'Promise<LogoutAccountResponseResult>',
+	returns: 'Promise<LogoutResponseResult>',
 	route: {
 		path: '/api/v1/logout',
 		method: 'POST',

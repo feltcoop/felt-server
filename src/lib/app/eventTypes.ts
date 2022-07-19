@@ -17,8 +17,8 @@ import type {DispatchContext} from '$lib/app/dispatch';
 /* eslint-disable @typescript-eslint/no-empty-interface, @typescript-eslint/array-type */
 
 export type ServiceEventName =
-	| 'LoginAccount'
-	| 'LogoutAccount'
+	| 'Login'
+	| 'Logout'
 	| 'CreateCommunity'
 	| 'ReadCommunity'
 	| 'ReadCommunities'
@@ -60,8 +60,8 @@ export type ClientEventName =
 
 export interface EventParamsByName {
 	SetSession: SetSessionParams;
-	LoginAccount: LoginAccountParams;
-	LogoutAccount: LogoutAccountParams;
+	Login: LoginParams;
+	Logout: LogoutParams;
 	CreateCommunity: CreateCommunityParams;
 	ReadCommunity: ReadCommunityParams;
 	ReadCommunities: ReadCommunitiesParams;
@@ -99,8 +99,8 @@ export interface EventParamsByName {
 	ClearFreshness: ClearFreshnessParams;
 }
 export interface EventResponseByName {
-	LoginAccount: LoginAccountResponse;
-	LogoutAccount: LogoutAccountResponse;
+	Login: LoginResponse;
+	Logout: LogoutResponse;
 	CreateCommunity: CreateCommunityResponse;
 	ReadCommunity: ReadCommunityResponse;
 	ReadCommunities: ReadCommunitiesResponse;
@@ -129,8 +129,8 @@ export interface EventResponseByName {
 
 export interface ServiceByName {
 	Ping: Service<PingParams, PingResponseResult>;
-	LoginAccount: Service<LoginAccountParams, LoginAccountResponseResult>;
-	LogoutAccount: Service<LogoutAccountParams, LogoutAccountResponseResult>;
+	Login: Service<LoginParams, LoginResponseResult>;
+	Logout: Service<LogoutParams, LogoutResponseResult>;
 	CreateAccountPersona: Service<CreateAccountPersonaParams, CreateAccountPersonaResponseResult>;
 	ReadPersona: Service<ReadPersonaParams, ReadPersonaResponseResult>;
 	CreateCommunity: Service<CreateCommunityParams, CreateCommunityResponseResult>;
@@ -163,18 +163,18 @@ export interface SetSessionParams {
 	session: ClientSession;
 }
 
-export interface LoginAccountParams {
+export interface LoginParams {
 	username: string;
 	password: string;
 }
-export interface LoginAccountResponse {
+export interface LoginResponse {
 	session: ClientAccountSession;
 }
-export type LoginAccountResponseResult = ApiResult<LoginAccountResponse>;
+export type LoginResponseResult = ApiResult<LoginResponse>;
 
-export type LogoutAccountParams = null;
-export type LogoutAccountResponse = null;
-export type LogoutAccountResponseResult = ApiResult<LogoutAccountResponse>;
+export type LogoutParams = null;
+export type LogoutResponse = null;
+export type LogoutResponseResult = ApiResult<LogoutResponse>;
 
 export interface CreateCommunityParams {
 	name: string;
@@ -439,8 +439,8 @@ export interface ClearFreshnessParams {
 
 export interface Dispatch {
 	SetSession: (params: SetSessionParams) => void;
-	LoginAccount: (params: LoginAccountParams) => Promise<LoginAccountResponseResult>;
-	LogoutAccount: () => Promise<LogoutAccountResponseResult>;
+	Login: (params: LoginParams) => Promise<LoginResponseResult>;
+	Logout: () => Promise<LogoutResponseResult>;
 	CreateCommunity: (params: CreateCommunityParams) => Promise<CreateCommunityResponseResult>;
 	ReadCommunity: (params: ReadCommunityParams) => Promise<ReadCommunityResponseResult>;
 	ReadCommunities: (params: ReadCommunitiesParams) => Promise<ReadCommunitiesResponseResult>;
@@ -486,12 +486,10 @@ export interface Dispatch {
 
 export interface Mutations {
 	SetSession: (ctx: DispatchContext<SetSessionParams, void>) => void;
-	LoginAccount: (
-		ctx: DispatchContext<LoginAccountParams, LoginAccountResponseResult>,
-	) => Promise<LoginAccountResponseResult>;
-	LogoutAccount: (
-		ctx: DispatchContext<LogoutAccountParams, LogoutAccountResponseResult>,
-	) => Promise<LogoutAccountResponseResult>;
+	Login: (ctx: DispatchContext<LoginParams, LoginResponseResult>) => Promise<LoginResponseResult>;
+	Logout: (
+		ctx: DispatchContext<LogoutParams, LogoutResponseResult>,
+	) => Promise<LogoutResponseResult>;
 	CreateCommunity: (
 		ctx: DispatchContext<CreateCommunityParams, CreateCommunityResponseResult>,
 	) => Promise<CreateCommunityResponseResult>;

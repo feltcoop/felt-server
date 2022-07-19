@@ -103,14 +103,14 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 				),
 		  );
 
-export const LoginAccount: Mutations['LoginAccount'] = async ({invoke}) => {
+export const Login: Mutations['Login'] = async ({invoke}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	sveltekitSession.set(result.value.session);
 	return result;
 };
 
-export const LogoutAccount: Mutations['LogoutAccount'] = async ({invoke}) => {
+export const Logout: Mutations['Logout'] = async ({invoke}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	sveltekitSession.set({guest: true});
