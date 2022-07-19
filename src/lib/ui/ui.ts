@@ -305,7 +305,7 @@ export const toUi = (
 			communities.swap($communities);
 
 			// TODO maybe do an `if` around the entire `setSession` and clear if guest,
-			// or to support guests with data, duck type
+			// or to support guests with data in the future, duck type
 			if (!$session.guest) {
 				const $spaces = $session.spaces.map((s) => writable(s));
 				spaceById.clear();

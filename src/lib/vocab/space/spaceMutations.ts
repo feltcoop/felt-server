@@ -10,6 +10,7 @@ export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {space: $space, directory: $directory} = result.value;
+	// TODO use an `updateSpace` helper here like with entities and use it in `SetSession`
 	const space = writable($space);
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
