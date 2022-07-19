@@ -45,15 +45,10 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 	$communities.forEach((c) => communityById.set(c.get().community_id, c));
 	communities.swap($communities);
 
-	// TODO maybe do an `if` around the entire `setSession` and clear if guest,
-	// or to support guests with data in the future, duck type
-	if (!guest) {
-		const $spaces = session.spaces.map((s) => writable(s));
-		spaceById.clear();
-		$spaces.forEach((s) => spaceById.set(s.get().space_id, s));
-		spaces.swap($spaces);
-		session.directories.forEach((d) => updateEntity(ui, d));
-	}
+	const $spaces = guest ? [] : session.spaces.map((s) => writable(s));
+	spaceById.clear();
+	$spaces.forEach((s) => spaceById.set(s.get().space_id, s));
+	spaces.swap($spaces);
 
 	memberships.swap(guest ? [] : session.memberships.map((s) => writable(s)));
 
@@ -84,6 +79,9 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 				  ]),
 		),
 	);
+
+	// Add entities after the other stores are ready.
+	if (!guest) session.directories.forEach((d) => updateEntity(ui, d));
 };
 
 // TODO This is a hack until we figure out how to handle "session personas" differently from the rest.
