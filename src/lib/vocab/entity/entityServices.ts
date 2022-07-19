@@ -120,6 +120,7 @@ export const DeleteEntitiesService: ServiceByName['DeleteEntities'] = {
 		}
 		deletedEntityIds.push(...params.entityIds);
 
+		// Loop until all orphans are deleted because deleting one entity may orphan others.
 		while (true) {
 			const orphans = await repos.entity.findOrphanedEntities(); // eslint-disable-line no-await-in-loop
 			if (!orphans.ok) {
