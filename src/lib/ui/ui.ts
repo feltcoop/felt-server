@@ -304,13 +304,15 @@ export const toUi = (
 			$communities.forEach((c, i) => communityById.set($communityArray[i].community_id, c));
 			communities.swap($communities);
 
-			const $spaceArray = $session.guest ? [] : $session.spaces;
-			const $spaces = $spaceArray.map((s) => writable(s));
-			spaceById.clear();
-			$spaces.forEach((s, i) => {
-				spaceById.set($spaceArray[i].space_id, s);
-			});
-			spaces.swap($spaces);
+			// TODO maybe do an `if` around the entire `setSession` and clear if guest,
+			// or to support guests with data, duck type
+			if (!$session.guest) {
+				const $spaces = $session.spaces.map((s) => writable(s));
+				spaceById.clear();
+				$spaces.forEach((s) => spaceById.set(s.get().space_id, s));
+				spaces.swap($spaces);
+				$session.directories.forEach((d) => updateEntity(ui, d));
+			}
 
 			memberships.swap($session.guest ? [] : $session.memberships.map((s) => writable(s)));
 
@@ -343,10 +345,6 @@ export const toUi = (
 						  ]),
 				),
 			);
-
-			if (!$session.guest) {
-				$session.directories.forEach((d) => updateEntity(ui, d));
-			}
 		},
 	} as const;
 
