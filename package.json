@@ -74,9 +74,6 @@
   "eslintConfig": {
     "root": true,
     "extends": "@feltcoop",
-    "ignorePatterns": [
-      "svelte.config.js"
-    ],
     "rules": {
       "no-console": 1
     }
