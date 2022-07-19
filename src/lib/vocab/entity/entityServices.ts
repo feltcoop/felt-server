@@ -101,7 +101,7 @@ export const UpdateEntityService: ServiceByName['UpdateEntity'] = {
 export const EraseEntitiesService: ServiceByName['EraseEntities'] = {
 	event: EraseEntities,
 	perform: async ({repos, params}) => {
-		const result = await repos.entity.eraseByIds(params.entity_ids);
+		const result = await repos.entity.eraseByIds(params.entityIds);
 		if (!result.ok) {
 			return {ok: false, status: 500, message: 'failed to soft delete entity'};
 		}
