@@ -1,0 +1,21 @@
+import {sveltekit} from '@sveltejs/kit/vite';
+
+import {API_SERVER_HOST} from './src/lib/config.js';
+
+/** @type {import('vite').UserConfig} */
+const config = {
+	plugins: [sveltekit()],
+	server: {
+		proxy: {
+			'/api': `http://${API_SERVER_HOST}`,
+		},
+	},
+	ssr: {
+		noExternal: ['@feltcoop/felt'],
+	},
+	optimizeDeps: {
+		exclude: ['@feltcoop/felt'],
+	},
+};
+
+export default config;
