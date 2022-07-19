@@ -6,6 +6,7 @@ import {API_SERVER_HOST} from './src/lib/config.js';
 const config = {
 	plugins: [sveltekit()],
 	server: {
+		port: 3000,
 		proxy: {
 			'/api': `http://${API_SERVER_HOST}`,
 		},
