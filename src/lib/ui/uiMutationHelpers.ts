@@ -12,7 +12,6 @@ export const setFreshnessByDirectoryId = (ui: WritableUi, directory: Writable<En
 	const lastSeen = lastSeenByDirectoryId.get(entity_id);
 	if (!lastSeen) throw Error(`no lastSeenByDirectoryId for directory:${entity_id}`);
 	if (freshnessByDirectoryId.has(entity_id)) throw Error(`derived already exists dir:${entity_id}`);
-
 	freshnessByDirectoryId.set(
 		entity_id,
 		derived(
@@ -26,13 +25,7 @@ export const setFreshnessByDirectoryId = (ui: WritableUi, directory: Writable<En
 export const upsertFreshnessByCommunityId = (ui: WritableUi, community_id: number): void => {
 	const {spacesByCommunityId, freshnessByCommunityId, freshnessByDirectoryId} = ui;
 	const spaces = spacesByCommunityId.get().get(community_id) || [];
-	const fresh = spaces.some((s) => {
-		const directory_id = s.get().directory_id;
-		const freshness = freshnessByDirectoryId.get(directory_id);
-		if (!freshness) throw Error(`no freshnessByDirectoryId for directory:${directory_id}`);
-		return freshness.get();
-	});
-
+	const fresh = spaces.some((s) => freshnessByDirectoryId.get(s.get().directory_id)?.get());
 	if (freshnessByCommunityId.has(community_id)) {
 		freshnessByCommunityId.get(community_id)!.set(fresh);
 	} else {
@@ -42,6 +35,9 @@ export const upsertFreshnessByCommunityId = (ui: WritableUi, community_id: numbe
 
 export const setLastSeen = (ui: WritableUi, directory_id: number, time = Date.now()): void => {
 	const {lastSeenByDirectoryId} = ui;
+	if (lastSeenByDirectoryId.has(directory_id)) {
+		throw Error(`lastSeenByDirectoryId has already been set for directory ${directory_id}`);
+	}
 	lastSeenByDirectoryId.set(
 		directory_id,
 		locallyStored(writable(time), LAST_SEEN_KEY + directory_id),

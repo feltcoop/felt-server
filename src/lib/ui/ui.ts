@@ -21,8 +21,7 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
-import {LAST_SEEN_KEY} from '$lib/ui/app';
-import {locallyStored, locallyStoredMap} from '$lib/ui/locallyStored';
+import {locallyStoredMap} from '$lib/ui/locallyStored';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {deserialize, deserializers} from '$lib/util/deserialize';
 import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
@@ -310,12 +309,7 @@ export const toUi = (
 			spaceById.clear();
 			$spaces.forEach((s, i) => {
 				spaceById.set($spaceArray[i].space_id, s);
-				lastSeenByDirectoryId.set(
-					s.get().directory_id,
-					locallyStored(writable(Date.now()), LAST_SEEN_KEY + s.get().directory_id),
-				);
 			});
-
 			spaces.swap($spaces);
 
 			memberships.swap($session.guest ? [] : $session.memberships.map((s) => writable(s)));
