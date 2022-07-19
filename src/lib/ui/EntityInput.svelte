@@ -73,7 +73,7 @@
 	<h1>New {entityName}</h1>
 	<form>
 		<input
-			placeholder="> name"
+			placeholder="> title"
 			bind:this={nameEl}
 			bind:value={name}
 			use:autofocus
