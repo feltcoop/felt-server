@@ -11,20 +11,6 @@ import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 
 const log = new Logger('[ui]');
 
-export const LoginAccount: Mutations['LoginAccount'] = async ({invoke}) => {
-	const result = await invoke();
-	if (!result.ok) return result;
-	sveltekitSession.set(result.value.session);
-	return result;
-};
-
-export const LogoutAccount: Mutations['LogoutAccount'] = async ({invoke}) => {
-	const result = await invoke();
-	if (!result.ok) return result;
-	sveltekitSession.set({guest: true});
-	return result;
-};
-
 export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui}) => {
 	const {
 		account,
@@ -116,3 +102,17 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 					(p1) => !session.sessionPersonas.find((p2) => p2.persona_id === p1.persona_id),
 				),
 		  );
+
+export const LoginAccount: Mutations['LoginAccount'] = async ({invoke}) => {
+	const result = await invoke();
+	if (!result.ok) return result;
+	sveltekitSession.set(result.value.session);
+	return result;
+};
+
+export const LogoutAccount: Mutations['LogoutAccount'] = async ({invoke}) => {
+	const result = await invoke();
+	if (!result.ok) return result;
+	sveltekitSession.set({guest: true});
+	return result;
+};

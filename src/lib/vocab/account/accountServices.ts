@@ -1,6 +1,6 @@
 import type {Account} from '$lib/vocab/account/account.js';
 import {verifyPassword} from '$lib/util/password';
-import {LoginAccount, LogoutAccount} from '$lib/vocab/account/accountEvents';
+import {LoginAccount, LogoutAccount} from '$lib/session/sessionEvents';
 import type {ServiceByName} from '$lib/app/eventTypes';
 
 export const LoginAccountService: ServiceByName['LoginAccount'] = {
