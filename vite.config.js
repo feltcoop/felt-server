@@ -11,6 +11,7 @@ const config = {
 		},
 	},
 	ssr: {
+		// TODO BLOCK ensure we need this still
 		noExternal: ['@feltcoop/felt'],
 	},
 	optimizeDeps: {
