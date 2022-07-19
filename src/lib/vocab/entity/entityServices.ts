@@ -120,21 +120,19 @@ export const DeleteEntitiesService: ServiceByName['DeleteEntities'] = {
 		}
 		deletedEntityIds.push(...params.entityIds);
 
-		let noOrphans = false;
-		while (!noOrphans) {
+		while (true) {
 			const orphans = await repos.entity.findOrphanedEntities(); // eslint-disable-line no-await-in-loop
 			if (!orphans.ok) {
 				return {ok: false, status: 500, message: 'failed to find orphans'};
 			}
 			if (orphans.value.length === 0) {
-				noOrphans = true;
-			} else {
-				const deletedOrphans = await repos.entity.deleteByIds(orphans.value); // eslint-disable-line no-await-in-loop
-				if (!deletedOrphans.ok) {
-					return {ok: false, status: 500, message: 'failed to delete orphans'};
-				}
-				deletedEntityIds.push(...orphans.value);
+				break;
 			}
+			const deletedOrphans = await repos.entity.deleteByIds(orphans.value); // eslint-disable-line no-await-in-loop
+			if (!deletedOrphans.ok) {
+				return {ok: false, status: 500, message: 'failed to delete orphans'};
+			}
+			deletedEntityIds.push(...orphans.value);
 		}
 
 		return {ok: true, status: 200, value: {deletedEntityIds}};
