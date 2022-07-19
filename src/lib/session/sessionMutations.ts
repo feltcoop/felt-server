@@ -94,6 +94,7 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 		),
 	);
 
+	// Add entities after the other stores are ready.
 	if (!guest) session.directories.forEach((d) => updateEntity(ui, d));
 };
 
