@@ -1,6 +1,5 @@
 import {suite} from 'uvu';
 import * as assert from 'uvu/assert';
-import {noop} from '@feltcoop/felt/util/function.js';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
@@ -14,7 +13,7 @@ const test__eventInfos = suite<TestDbContext & TestAppContext>('eventInfos');
 
 test__eventInfos.before(setupDb);
 test__eventInfos.after(teardownDb);
-test__eventInfos.before(setupApp(noop as any)); // TODO either use `node-fetch` or mock
+test__eventInfos.before(setupApp());
 test__eventInfos.after(teardownApp);
 
 for (const eventInfo of eventInfos.values()) {

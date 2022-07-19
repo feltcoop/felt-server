@@ -15,15 +15,12 @@ import {ERROR_MESSAGE_UNKNOWN} from '$lib/util/error';
 
 const log = new Logger('[http]');
 
-// TODO make `fetch` a parameter once the client isn't created for SSR
-// fetch: typeof window.fetch,
 export const toHttpApiClient = <
 	TParamsMap extends Record<string, any>,
 	TResultMap extends Record<string, any>,
 >(
 	findService: (name: string) => ServiceEventInfo | undefined,
 	deserialize: Deserialize,
-	fetch: typeof globalThis.fetch = globalThis.fetch,
 ): ApiClient<TParamsMap, TResultMap> => {
 	const client: ApiClient<TParamsMap, TResultMap> = {
 		find: (name) => findService(name),
