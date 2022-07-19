@@ -231,7 +231,7 @@ export const toUi = (
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
 
-	const ui = {
+	return {
 		// db data
 		components,
 		account,
@@ -269,9 +269,7 @@ export const toUi = (
 		lastSeenByDirectoryId,
 		freshnessByDirectoryId,
 		freshnessByCommunityId,
-	} as const;
-
-	return ui;
+	};
 };
 
 // This ensures that the inferred `WritableUi` is assignable to `Ui`.

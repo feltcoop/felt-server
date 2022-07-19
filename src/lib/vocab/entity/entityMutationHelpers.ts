@@ -3,11 +3,15 @@ import {writable, mutable, type Writable} from '@feltcoop/svelte-gettable-stores
 import type {WritableUi} from '$lib/ui/ui';
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
-import type {DirectoryEntityData} from '$lib/vocab/entity/entityData';
-import {updateLastSeen, upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelpers';
+import {
+	setLastSeen,
+	updateLastSeen,
+	upsertFreshnessByCommunityId,
+	setFreshnessByDirectoryId,
+} from '$lib/ui/uiMutationHelpers';
 
 export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> => {
-	const {entityById, spaceSelection, spaceById} = ui;
+	const {entityById, spaceSelection, spaceById, freshnessByDirectoryId} = ui;
 	const {entity_id} = $entity;
 	let entity = entityById.get(entity_id);
 	if (entity) {
@@ -16,14 +20,19 @@ export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> 
 		entityById.set(entity_id, (entity = writable($entity)));
 	}
 
-	const entityData = entity.get().data as DirectoryEntityData;
-	if (entityData.space_id) {
-		upsertCommunityFreshnessById(ui, spaceById.get(entityData.space_id)!.get().community_id);
+	// Handle directories.
+	if ('space_id' in $entity.data) {
+		if (!freshnessByDirectoryId.get(entity_id)) {
+			setLastSeen(ui, entity_id, $entity.updated!.getTime());
+			setFreshnessByDirectoryId(ui, entity);
+		}
+		upsertFreshnessByCommunityId(ui, spaceById.get($entity.data.space_id)!.get().community_id);
+		// Is the directory's space selected? If so we don't want a notification.
+		if (entity_id === spaceSelection.get()?.get().directory_id) {
+			updateLastSeen(ui, entity_id, $entity.updated!.getTime());
+		}
 	}
 
-	if (spaceSelection.get()?.get().directory_id === $entity.entity_id) {
-		updateLastSeen(ui, $entity.entity_id, $entity.updated!.getTime());
-	}
 	return entity;
 };
 
@@ -32,8 +41,7 @@ export const updateEntityCaches = (
 	$entity: Entity,
 	source_id: number,
 ): Writable<Entity> => {
-	const {entity_id} = $entity;
-	const entity = entityById.get(entity_id)!;
+	const entity = entityById.get($entity.entity_id)!;
 	const existingSpaceEntities = entitiesBySourceId.get(source_id);
 	if (existingSpaceEntities) {
 		if (!existingSpaceEntities.get().includes(entity)) {

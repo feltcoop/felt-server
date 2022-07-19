@@ -4,19 +4,17 @@ import {goto} from '$app/navigation';
 import type {Mutations} from '$lib/app/eventTypes';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import {deleteEntity, updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
-import {setFreshnessDerived} from '$lib/ui/uiMutationHelpers';
 
 export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui}) => {
 	const {spaceById, spaces} = ui;
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {space: $space, directory: $directory} = result.value;
-	//TODO add directory updating here
+	// TODO use an `updateSpace` helper here like with entities and use it in `UpdateSpace` and `SetSession`
 	const space = writable($space);
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
-	const directory = updateEntity(ui, $directory);
-	setFreshnessDerived(ui, directory);
+	updateEntity(ui, $directory);
 	return result;
 };
 

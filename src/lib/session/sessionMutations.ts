@@ -4,12 +4,10 @@ import {writable} from '@feltcoop/svelte-gettable-stores';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {Mutations} from '$lib/app/eventTypes';
-import {LAST_SEEN_KEY} from '$lib/ui/app';
 import {deserialize, deserializers} from '$lib/util/deserialize';
-import {setFreshnessDerived, upsertCommunityFreshnessById} from '$lib/ui/uiMutationHelpers';
-import {locallyStored} from '$lib/ui/locallyStored';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import type {Persona} from '$lib/vocab/persona/persona';
+import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 
 const log = new Logger('[ui]');
 
@@ -36,13 +34,11 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 		communities,
 		spaceById,
 		spaces,
-		entityById,
 		memberships,
 		personaIdSelection,
 		sessionPersonas,
 		communityIdSelectionByPersonaId,
 		spaceIdSelectionByCommunityId,
-		lastSeenByDirectoryId,
 	} = ui;
 	const {guest} = session;
 
@@ -63,17 +59,15 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 	$communities.forEach((c) => communityById.set(c.get().community_id, c));
 	communities.swap($communities);
 
-	const $spaces = (guest ? [] : session.spaces).map((s) => writable(s));
-	spaceById.clear();
-	$spaces.forEach((s) => {
-		spaceById.set(s.get().space_id, s);
-		lastSeenByDirectoryId.set(
-			s.get().directory_id,
-			locallyStored(writable(Date.now()), LAST_SEEN_KEY + s.get().directory_id),
-		);
-	});
-
-	spaces.swap($spaces);
+	// TODO maybe do an `if` around the entire `setSession` and clear if guest,
+	// or to support guests with data in the future, duck type
+	if (!guest) {
+		const $spaces = session.spaces.map((s) => writable(s));
+		spaceById.clear();
+		$spaces.forEach((s) => spaceById.set(s.get().space_id, s));
+		spaces.swap($spaces);
+		session.directories.forEach((d) => updateEntity(ui, d));
+	}
 
 	memberships.swap(guest ? [] : session.memberships.map((s) => writable(s)));
 
@@ -104,18 +98,6 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 				  ]),
 		),
 	);
-
-	//TODO directories should probably live in their own store
-	(guest ? [] : session.directories).forEach((d) => {
-		//TODO we had talked about replacing this with updateEntity, but it currently assumes setFreshnessDerived has already been called
-		const entity = writable(d);
-		entityById.set(d.entity_id, entity);
-		setFreshnessDerived(ui, entity);
-	});
-
-	$communities.forEach((c) => {
-		upsertCommunityFreshnessById(ui, c.get().community_id);
-	});
 };
 
 // TODO This is a hack until we figure out how to handle "session personas" differently from the rest.
