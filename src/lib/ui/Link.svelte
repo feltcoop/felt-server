@@ -6,4 +6,4 @@
 	$: target = external ? '_blank' : undefined;
 </script>
 
-<a {...$$restProps} {href} {target} {rel}><slot /></a>
+<a {...$$restProps} {href} {rel} {target}><slot /></a>
