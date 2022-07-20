@@ -2,7 +2,7 @@
 	export let href: string;
 
 	$: external = !(href.startsWith('/') || href.startsWith('.'));
-	$: rel = external ? 'noreferrer' : undefined;
+	$: rel = external ? 'external noreferrer' : undefined;
 	$: target = external ? '_blank' : undefined;
 </script>
 
