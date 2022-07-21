@@ -142,12 +142,6 @@ export const toUi = (
 		},
 	);
 
-	const mobile = writable(initialMobile);
-	const layout = writable({width: 0, height: 0});
-	const contextmenu = createContextmenuStore({layout, onError});
-	const dialogs = writable<DialogData[]>([]);
-	const viewBySpace = mutable(new WeakMap());
-
 	// derived state
 	// TODO speed up these lookups with id maps
 	// TODO remove it from `state`
@@ -217,17 +211,22 @@ export const toUi = (
 				)) ||
 			null,
 	);
-	const lastSeenByDirectoryId: Map<number, Writable<number> | null> = new Map();
+
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const entityById: Map<number, Writable<Entity>> = new Map();
-
-	const freshnessByDirectoryId: Map<number, Readable<boolean>> = new Map();
-	const freshnessByCommunityId: Map<number, Writable<boolean>> = new Map();
-
 	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
 	const sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
 	const destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
 
+	const lastSeenByDirectoryId: Map<number, Writable<number> | null> = new Map();
+	const freshnessByDirectoryId: Map<number, Readable<boolean>> = new Map();
+	const freshnessByCommunityId: Map<number, Writable<boolean>> = new Map();
+
+	const mobile = writable(initialMobile);
+	const layout = writable({width: 0, height: 0});
+	const contextmenu = createContextmenuStore({layout, onError});
+	const dialogs = writable<DialogData[]>([]);
+	const viewBySpace = mutable(new WeakMap());
 	const expandMainNav = writable(!initialMobile);
 	const expandMarquee = writable(!initialMobile);
 
