@@ -2,6 +2,7 @@
 
 import type {RandomVocab, RandomVocabContext} from '$lib/util/randomVocab';
 import type {
+	SetSessionParams,
 	LoginAccountParams,
 	LogoutAccountParams,
 	CreateCommunityParams,
@@ -42,6 +43,7 @@ import type {
 } from '$lib/app/eventTypes';
 
 export interface RandomEventParams {
+	SetSession: (random: RandomVocabContext, randomVocab?: RandomVocab) => Promise<SetSessionParams>;
 	LoginAccount: (
 		random: RandomVocabContext,
 		randomVocab?: RandomVocab,

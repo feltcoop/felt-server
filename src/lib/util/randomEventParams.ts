@@ -28,6 +28,9 @@ export const randomEventParams: RandomEventParams = {
 	LogoutAccount: async () => {
 		return null;
 	},
+	SetSession: async () => {
+		return {session: {guest: true}};
+	},
 	CreateCommunity: async (random, {account, persona} = {}) => {
 		if (!persona) ({persona} = await random.persona(account));
 		return randomCommunityParams(persona.persona_id);
@@ -114,7 +117,7 @@ export const randomEventParams: RandomEventParams = {
 		const entity1 = await random.entity(persona, account, community, space?.directory_id);
 		const entity2 = await random.entity(persona, account, community, space?.directory_id);
 		return {
-			entity_ids: [entity1.entity.entity_id, entity2.entity.entity_id],
+			entityIds: [entity1.entity.entity_id, entity2.entity.entity_id],
 		};
 	},
 	DeleteEntities: async (random, {account, persona, community, space} = {}) => {
