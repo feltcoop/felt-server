@@ -152,9 +152,9 @@ export const EraseEntities: ServiceEventInfo = {
 		$id: '/schemas/EraseEntitiesParams.json',
 		type: 'object',
 		properties: {
-			entity_ids: {type: 'array', items: {type: 'number'}},
+			entityIds: {type: 'array', items: {type: 'number'}},
 		},
-		required: ['entity_ids'],
+		required: ['entityIds'],
 		additionalProperties: false,
 	},
 	response: {

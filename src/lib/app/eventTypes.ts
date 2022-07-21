@@ -45,6 +45,7 @@ export type ServiceEventName =
 	| 'Ping';
 
 export type ClientEventName =
+	| 'SetSession'
 	| 'QueryEntities'
 	| 'ToggleMainNav'
 	| 'ToggleSecondaryNav'
@@ -58,6 +59,7 @@ export type ClientEventName =
 	| 'ClearFreshness';
 
 export interface EventParamsByName {
+	SetSession: SetSessionParams;
 	LoginAccount: LoginAccountParams;
 	LogoutAccount: LogoutAccountParams;
 	CreateCommunity: CreateCommunityParams;
@@ -155,6 +157,10 @@ export interface ServiceByName {
 	CreateTie: Service<CreateTieParams, CreateTieResponseResult>;
 	ReadTies: Service<ReadTiesParams, ReadTiesResponseResult>;
 	DeleteTie: Service<DeleteTieParams, DeleteTieResponseResult>;
+}
+
+export interface SetSessionParams {
+	session: ClientSession;
 }
 
 export interface LoginAccountParams {
@@ -345,7 +351,7 @@ export interface QueryEntitiesParams {
 }
 
 export interface EraseEntitiesParams {
-	entity_ids: number[];
+	entityIds: number[];
 }
 export interface EraseEntitiesResponse {
 	entities: Entity[];
@@ -396,7 +402,7 @@ export type ToggleSecondaryNavParams = void;
 
 export type SetMobileParams = boolean;
 
-export type OpenDialogParams = {
+export interface OpenDialogParams {
 	Component: typeof SvelteComponent;
 	props?: {
 		[k: string]: unknown;
@@ -404,7 +410,7 @@ export type OpenDialogParams = {
 	dialogProps?: {
 		[k: string]: unknown;
 	};
-};
+}
 
 export type CloseDialogParams = void;
 
@@ -432,6 +438,7 @@ export interface ClearFreshnessParams {
 }
 
 export interface Dispatch {
+	SetSession: (params: SetSessionParams) => void;
 	LoginAccount: (params: LoginAccountParams) => Promise<LoginAccountResponseResult>;
 	LogoutAccount: () => Promise<LogoutAccountResponseResult>;
 	CreateCommunity: (params: CreateCommunityParams) => Promise<CreateCommunityResponseResult>;
@@ -478,6 +485,7 @@ export interface Dispatch {
 }
 
 export interface Mutations {
+	SetSession: (ctx: DispatchContext<SetSessionParams, void>) => void;
 	LoginAccount: (
 		ctx: DispatchContext<LoginAccountParams, LoginAccountResponseResult>,
 	) => Promise<LoginAccountResponseResult>;

@@ -101,7 +101,7 @@ export const UpdateEntityService: ServiceByName['UpdateEntity'] = {
 export const EraseEntitiesService: ServiceByName['EraseEntities'] = {
 	event: EraseEntities,
 	perform: async ({repos, params}) => {
-		const result = await repos.entity.eraseByIds(params.entity_ids);
+		const result = await repos.entity.eraseByIds(params.entityIds);
 		if (!result.ok) {
 			return {ok: false, status: 500, message: 'failed to soft delete entity'};
 		}
@@ -120,21 +120,20 @@ export const DeleteEntitiesService: ServiceByName['DeleteEntities'] = {
 		}
 		deletedEntityIds.push(...params.entityIds);
 
-		let noOrphans = false;
-		while (!noOrphans) {
+		// Deleting one entity may orphan others, so loop until there are no more orphans.
+		while (true) {
 			const orphans = await repos.entity.findOrphanedEntities(); // eslint-disable-line no-await-in-loop
 			if (!orphans.ok) {
 				return {ok: false, status: 500, message: 'failed to find orphans'};
 			}
 			if (orphans.value.length === 0) {
-				noOrphans = true;
-			} else {
-				const deletedOrphans = await repos.entity.deleteByIds(orphans.value); // eslint-disable-line no-await-in-loop
-				if (!deletedOrphans.ok) {
-					return {ok: false, status: 500, message: 'failed to delete orphans'};
-				}
-				deletedEntityIds.push(...orphans.value);
+				break;
 			}
+			const deletedOrphans = await repos.entity.deleteByIds(orphans.value); // eslint-disable-line no-await-in-loop
+			if (!deletedOrphans.ok) {
+				return {ok: false, status: 500, message: 'failed to delete orphans'};
+			}
+			deletedEntityIds.push(...orphans.value);
 		}
 
 		return {ok: true, status: 200, value: {deletedEntityIds}};

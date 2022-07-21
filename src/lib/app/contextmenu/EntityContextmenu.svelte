@@ -31,7 +31,7 @@
 		</ContextmenuEntry>
 		<!-- TODO add confirmation dialogs to both delete and erase actions -->
 		{#if $entity.data.type !== 'Tombstone'}
-			<ContextmenuEntry action={() => dispatch.EraseEntities({entity_ids: [$entity.entity_id]})}>
+			<ContextmenuEntry action={() => dispatch.EraseEntities({entityIds: [$entity.entity_id]})}>
 				Erase Entity
 			</ContextmenuEntry>
 		{/if}
