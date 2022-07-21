@@ -351,7 +351,7 @@ export interface QueryEntitiesParams {
 }
 
 export interface EraseEntitiesParams {
-	entity_ids: number[];
+	entityIds: number[];
 }
 export interface EraseEntitiesResponse {
 	entities: Entity[];

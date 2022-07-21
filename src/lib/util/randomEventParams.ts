@@ -117,7 +117,7 @@ export const randomEventParams: RandomEventParams = {
 		const entity1 = await random.entity(persona, account, community, space?.directory_id);
 		const entity2 = await random.entity(persona, account, community, space?.directory_id);
 		return {
-			entity_ids: [entity1.entity.entity_id, entity2.entity.entity_id],
+			entityIds: [entity1.entity.entity_id, entity2.entity.entity_id],
 		};
 	},
 	DeleteEntities: async (random, {account, persona, community, space} = {}) => {
