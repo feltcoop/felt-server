@@ -9,7 +9,7 @@ import {EntityRepo} from '$lib/vocab/entity/EntityRepo';
 import {TieRepo} from '$lib/vocab/tie/TieRepo';
 
 /**
- * `Repos` are instantiated with a `postgres.Sql` instance,
+ * The `Repos` is instantiated with a `postgres.Sql` instance,
  * which can be a normal connection or transaction.
  */
 export class Repos {
