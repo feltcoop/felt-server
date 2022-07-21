@@ -4,7 +4,7 @@ import {toEnvNumber, toEnvString} from '@feltcoop/felt/util/env.js';
 // Postgres.js - PostgreSQL client for Node.js
 // https://github.com/porsager/postgres
 
-export type PostgresSql = Sql<any>;
+export type PostgresSql = Sql<any>; // TODO type
 
 // was using a type helper here, but worsens usage because of the complexity
 export interface PostgresOptions extends Options<any> {

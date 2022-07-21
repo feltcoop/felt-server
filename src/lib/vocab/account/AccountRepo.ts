@@ -11,7 +11,7 @@ const log = new Logger(gray('[') + blue('AccountRepo') + gray(']'));
 export class AccountRepo extends PostgresRepo {
 	async create(name: string, password: string): Promise<Result<{value: Account}>> {
 		const passwordKey = await toPasswordKey(password);
-		const data = await this.db.sql<Account[]>`
+		const data = await this.sql<Account[]>`
 			INSERT INTO accounts (name, password) VALUES (
 				${name}, ${passwordKey}
 			) RETURNING *
@@ -23,7 +23,7 @@ export class AccountRepo extends PostgresRepo {
 
 	async findById(account_id: number): Promise<Result<{value: AccountModel}>> {
 		log.trace('loading account', account_id);
-		const data = await this.db.sql<AccountModel[]>`
+		const data = await this.sql<AccountModel[]>`
 			SELECT account_id, name, created, updated
 			FROM accounts WHERE account_id = ${account_id}
 		`;
@@ -32,7 +32,7 @@ export class AccountRepo extends PostgresRepo {
 	}
 
 	async findByName(name: string): Promise<Result<{value: Account}>> {
-		const data = await this.db.sql<Account[]>`
+		const data = await this.sql<Account[]>`
 			SELECT account_id, name, password, created, updated
 			FROM accounts WHERE name = ${name}
 		`;

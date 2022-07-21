@@ -12,9 +12,9 @@ const log = new Logger(gray('[') + blue('EntityRepo') + gray(']'));
 export class EntityRepo extends PostgresRepo {
 	async create(persona_id: number, data: EntityData): Promise<Result<{value: Entity}>> {
 		log.trace('[createEntity]', persona_id);
-		const entity = await this.db.sql<Entity[]>`
+		const entity = await this.sql<Entity[]>`
 			INSERT INTO entities (persona_id, data) VALUES (
-				${persona_id},${this.db.sql.json(data as any)}
+				${persona_id},${this.sql.json(data as any)}
 			) RETURNING *
 		`;
 		// log.trace('create entity', data);
@@ -25,9 +25,9 @@ export class EntityRepo extends PostgresRepo {
 	async filterByIds(entityIds: number[]): Promise<Result<{value: Entity[]}, ErrorResponse>> {
 		if (entityIds.length === 0) return {ok: true, value: []};
 		log.trace('[findBySet]', entityIds);
-		const entities = await this.db.sql<Entity[]>`
+		const entities = await this.sql<Entity[]>`
 			SELECT entity_id, data, persona_id, created, updated 
-			FROM entities WHERE entity_id IN ${this.db.sql(entityIds)}
+			FROM entities WHERE entity_id IN ${this.sql(entityIds)}
 			ORDER BY entity_id DESC
 		`;
 		log.trace('filterByIds entity count:', entities.length);
@@ -45,9 +45,9 @@ export class EntityRepo extends PostgresRepo {
 		data: EntityData | null,
 	): Promise<Result<{value: Entity}>> {
 		log.trace('[updateEntityData]', entity_id);
-		const _data = await this.db.sql<Entity[]>`
+		const _data = await this.sql<Entity[]>`
 			UPDATE entities SET ${
-				data ? this.db.sql`data=${this.db.sql.json(data as any)},` : this.db.sql``
+				data ? this.sql`data=${this.sql.json(data as any)},` : this.sql``
 			} updated=NOW()
 			WHERE entity_id= ${entity_id} AND data->>'type' != 'Tombstone'
 			RETURNING *
@@ -59,10 +59,10 @@ export class EntityRepo extends PostgresRepo {
 	//This function is an idempotent soft delete, that leaves behind a Tombstone entity per Activity-Streams spec
 	async eraseByIds(entityIds: number[]): Promise<Result<{value: Entity[]}>> {
 		log.trace('[eraseById]', entityIds);
-		const data = await this.db.sql<any[]>`
+		const data = await this.sql<any[]>`
 			UPDATE entities
 			SET data = jsonb_build_object('type','Tombstone','formerType',data->>'type','deleted',NOW())
-			WHERE entity_id IN ${this.db.sql(entityIds)} AND data->>'type' != 'Tombstone'
+			WHERE entity_id IN ${this.sql(entityIds)} AND data->>'type' != 'Tombstone'
 			RETURNING *;
 		`;
 		if (!data.count) return NOT_OK;
@@ -72,8 +72,8 @@ export class EntityRepo extends PostgresRepo {
 	//This function actually deletes the records in the DB
 	async deleteByIds(entityIds: number[]): Promise<Result<object>> {
 		log.trace('[deleteByIds]', entityIds);
-		const data = await this.db.sql<any[]>`
-			DELETE FROM entities WHERE entity_id IN ${this.db.sql(entityIds)}
+		const data = await this.sql<any[]>`
+			DELETE FROM entities WHERE entity_id IN ${this.sql(entityIds)}
 		`;
 		if (!data.count) return NOT_OK;
 		if (data.count !== entityIds.length) return NOT_OK;
@@ -82,7 +82,7 @@ export class EntityRepo extends PostgresRepo {
 
 	//This function finds all non-directory entities with no ties pointing to them & returns an array of their ids
 	async findOrphanedEntities(): Promise<Result<{value: number[]}>> {
-		const data = await this.db.sql<Entity[]>`
+		const data = await this.sql<Entity[]>`
 			SELECT entity_id FROM entities e
 			LEFT JOIN ties t
 			ON e.entity_id = t.dest_id

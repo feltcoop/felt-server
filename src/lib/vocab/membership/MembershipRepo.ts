@@ -9,7 +9,7 @@ const log = new Logger(gray('[') + blue('MembershipRepo') + gray(']'));
 
 export class MembershipRepo extends PostgresRepo {
 	async create(persona_id: number, community_id: number): Promise<Result<{value: Membership}>> {
-		const data = await this.db.sql<Membership[]>`
+		const data = await this.sql<Membership[]>`
 			INSERT INTO memberships (persona_id, community_id) VALUES (
 				${persona_id},${community_id}
 			) RETURNING *
@@ -19,7 +19,7 @@ export class MembershipRepo extends PostgresRepo {
 	}
 
 	async findById(persona_id: number, community_id: number): Promise<Result<{value: Membership}>> {
-		const data = await this.db.sql<Membership[]>`
+		const data = await this.sql<Membership[]>`
 			SELECT persona_id, community_id, created, updated
 			FROM memberships
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
@@ -30,7 +30,7 @@ export class MembershipRepo extends PostgresRepo {
 
 	async filterByAccount(account_id: number): Promise<Result<{value: Membership[]}>> {
 		log.trace(`[filterByAccount] ${account_id}`);
-		const data = await this.db.sql<Membership[]>`
+		const data = await this.sql<Membership[]>`
 			SELECT m.persona_id, m.community_id, m.created, m.updated 
 			FROM memberships m JOIN (
 				SELECT DISTINCT m.community_id FROM personas p 
@@ -44,7 +44,7 @@ export class MembershipRepo extends PostgresRepo {
 
 	async filterByCommunityId(community_id: number): Promise<Result<{value: Membership[]}>> {
 		log.trace(`[filterByCommunityId] ${community_id}`);
-		const data = await this.db.sql<Membership[]>`
+		const data = await this.sql<Membership[]>`
 			SELECT m.persona_id, m.community_id, m.created, m.updated 
 			FROM memberships m 
 			WHERE m.community_id=${community_id};
@@ -57,7 +57,7 @@ export class MembershipRepo extends PostgresRepo {
 		community_id: number,
 	): Promise<Result<{value: Membership[]}>> {
 		log.trace(`[filterByCommunityId] ${community_id}`);
-		const data = await this.db.sql<Membership[]>`
+		const data = await this.sql<Membership[]>`
 			SELECT m.persona_id, m.community_id, m.created, m.updated 
 			FROM personas p JOIN (
 				SELECT persona_id, community_id, created, updated 
@@ -69,7 +69,7 @@ export class MembershipRepo extends PostgresRepo {
 	}
 
 	async deleteById(persona_id: number, community_id: number): Promise<Result<object>> {
-		const data = await this.db.sql<any[]>`
+		const data = await this.sql<any[]>`
 			DELETE FROM memberships 
 			WHERE ${persona_id}=persona_id AND ${community_id}=community_id
 		`;

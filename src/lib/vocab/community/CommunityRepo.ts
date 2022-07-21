@@ -13,9 +13,9 @@ export class CommunityRepo extends PostgresRepo {
 		name: string,
 		settings: Community['settings'],
 	): Promise<Result<{value: Community}>> {
-		const data = await this.db.sql<Community[]>`
+		const data = await this.sql<Community[]>`
 			INSERT INTO communities (type, name, settings) VALUES (
-				${type}, ${name}, ${this.db.sql.json(settings)}
+				${type}, ${name}, ${this.sql.json(settings)}
 			) RETURNING *
 		`;
 		log.trace('[db] created community', data[0]);
@@ -25,7 +25,7 @@ export class CommunityRepo extends PostgresRepo {
 
 	async findById(community_id: number): Promise<Result<{value: Community}>> {
 		log.trace(`[findById] ${community_id}`);
-		const data = await this.db.sql<Community[]>`
+		const data = await this.sql<Community[]>`
 			SELECT community_id, type, name, settings, created, updated
 			FROM communities WHERE community_id=${community_id}
 		`;
@@ -36,7 +36,7 @@ export class CommunityRepo extends PostgresRepo {
 
 	async findByName(name: string): Promise<Result<{value: Community | undefined}>> {
 		log.trace('[findByName]', name);
-		const data = await this.db.sql<Community[]>`
+		const data = await this.sql<Community[]>`
 			SELECT community_id, type, name, settings, created, updated
 			FROM communities WHERE LOWER(name) = LOWER(${name})
 		`;
@@ -45,7 +45,7 @@ export class CommunityRepo extends PostgresRepo {
 
 	async filterByAccount(account_id: number): Promise<Result<{value: Community[]}>> {
 		log.trace(`[filterByAccount] ${account_id}`);
-		const data = await this.db.sql<Community[]>`
+		const data = await this.sql<Community[]>`
 			SELECT c.community_id, c.type, c.name, c.settings, c.created, c.updated							
 			FROM communities c JOIN (
 				SELECT DISTINCT m.community_id FROM personas p
@@ -58,8 +58,8 @@ export class CommunityRepo extends PostgresRepo {
 	}
 
 	async updateSettings(community_id: number, settings: Community['settings']): Promise<Result> {
-		const data = await this.db.sql<any[]>`
-			UPDATE communities SET settings=${this.db.sql.json(settings)} WHERE community_id=${community_id}
+		const data = await this.sql<any[]>`
+			UPDATE communities SET settings=${this.sql.json(settings)} WHERE community_id=${community_id}
 		`;
 		if (!data.count) return NOT_OK;
 		return OK;
@@ -67,7 +67,7 @@ export class CommunityRepo extends PostgresRepo {
 
 	async deleteById(community_id: number): Promise<Result<object>> {
 		log.trace('[deleteById]', community_id);
-		const data = await this.db.sql<any[]>`
+		const data = await this.sql<any[]>`
 			DELETE FROM communities WHERE community_id=${community_id}
 		`;
 		if (!data.count) return NOT_OK;

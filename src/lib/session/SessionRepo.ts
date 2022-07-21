@@ -9,7 +9,7 @@ const log = new Logger(gray('[') + blue('SessionRepo') + gray(']'));
 export class SessionRepo extends PostgresRepo {
 	async loadClientSession(account_id: number): Promise<Result<{value: ClientAccountSession}>> {
 		log.trace('loadClientSession', account_id);
-		const accountResult = await this.db.repos.account.findById(account_id);
+		const accountResult = await this.repos.account.findById(account_id);
 		if (!accountResult.ok) return accountResult;
 		const account = accountResult.value;
 
@@ -21,11 +21,11 @@ export class SessionRepo extends PostgresRepo {
 			membershipsResult,
 			personasResult,
 		] = await Promise.all([
-			this.db.repos.space.filterByAccountWithDirectories(account.account_id),
-			this.db.repos.persona.filterByAccount(account.account_id),
-			this.db.repos.community.filterByAccount(account.account_id),
-			this.db.repos.membership.filterByAccount(account.account_id),
-			this.db.repos.persona.getAll(), //TODO don't getAll
+			this.repos.space.filterByAccountWithDirectories(account.account_id),
+			this.repos.persona.filterByAccount(account.account_id),
+			this.repos.community.filterByAccount(account.account_id),
+			this.repos.membership.filterByAccount(account.account_id),
+			this.repos.persona.getAll(), //TODO don't getAll
 		]);
 		if (!spacesResult.ok) return spacesResult;
 		if (!sessionPersonasResult.ok) return sessionPersonasResult;
