@@ -5,7 +5,7 @@ import {unwrap} from '@feltcoop/felt';
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import type {NoteEntityData} from '$lib/vocab/entity/entityData';
-import {toServiceRequest} from '$lib/util/testHelpers';
+import {toServiceRequestMock} from '$lib/util/testHelpers';
 import {
 	ReadEntitiesPaginatedService,
 	DeleteEntitiesService,
@@ -50,7 +50,7 @@ test_entityServices('create entities with data', async ({random}) => {
 
 test_entityServices('read paginated entities by source_id', async ({db, random}) => {
 	const {space, persona, account, community} = await random.space();
-	const serviceRequest = toServiceRequest(account.account_id, db);
+	const serviceRequest = toServiceRequestMock(account.account_id, db);
 
 	//first query on the space dir and expect an empty set
 	const {entities: filtered} = unwrap(
@@ -136,7 +136,7 @@ test_entityServices('assert default as max pageSize', async ({random}) => {
 
 test_entityServices('deleting entities and cleaning orphans', async ({random, db}) => {
 	const {space, persona, account, community} = await random.space();
-	const serviceRequest = toServiceRequest(account.account_id, db);
+	const serviceRequest = toServiceRequestMock(account.account_id, db);
 	//generate a collection with 3 notes
 	const {entity: list} = await random.entity(persona, account, community, space.directory_id, {
 		data: {type: 'Collection', name: `grocery list`},

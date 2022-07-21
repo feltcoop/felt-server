@@ -8,6 +8,7 @@ import {toValidationErrorMessage, validateSchema} from '$lib/util/ajv';
 import {SessionApiDisabled} from '$lib/session/SessionApiDisabled';
 import {authorize} from '$lib/server/authorize';
 import type {BroadcastMessage, WebsocketResult} from '$lib/util/websocket';
+import {toServiceRequest} from '$lib/server/service';
 
 const log = new Logger(gray('[') + blue('websocketServiceMiddleware') + gray(']'));
 
@@ -73,12 +74,9 @@ export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddl
 				};
 			} else {
 				try {
-					result = await service.perform({
-						repos: server.db.repos,
-						params,
-						account_id,
-						session,
-					});
+					result = await service.perform(
+						toServiceRequest(server.db.sql, params, account_id, session),
+					);
 				} catch (err) {
 					log.error('service.perform failed', err);
 					result = {

@@ -19,7 +19,7 @@ export const installSourceMaps = (): void => {
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const toServiceRequest = (
+export const toServiceRequestMock = (
 	account_id: number,
 	db: Database,
 	session = new SessionApiMock(),
