@@ -57,12 +57,12 @@ export class EntityRepo extends PostgresRepo {
 	}
 
 	//This function is an idempotent soft delete, that leaves behind a Tombstone entity per Activity-Streams spec
-	async eraseByIds(entity_ids: number[]): Promise<Result<{value: Entity[]}>> {
-		log.trace('[eraseById]', entity_ids);
+	async eraseByIds(entityIds: number[]): Promise<Result<{value: Entity[]}>> {
+		log.trace('[eraseById]', entityIds);
 		const data = await this.db.sql<any[]>`
 			UPDATE entities
 			SET data = jsonb_build_object('type','Tombstone','formerType',data->>'type','deleted',NOW())
-			WHERE entity_id IN ${this.db.sql(entity_ids)} AND data->>'type' != 'Tombstone'
+			WHERE entity_id IN ${this.db.sql(entityIds)} AND data->>'type' != 'Tombstone'
 			RETURNING *;
 		`;
 		if (!data.count) return NOT_OK;
@@ -70,12 +70,24 @@ export class EntityRepo extends PostgresRepo {
 	}
 
 	//This function actually deletes the records in the DB
-	async deleteByIds(entity_ids: number[]): Promise<Result<object>> {
-		log.trace('[deleteByIds]', entity_ids);
+	async deleteByIds(entityIds: number[]): Promise<Result<object>> {
+		log.trace('[deleteByIds]', entityIds);
 		const data = await this.db.sql<any[]>`
-			DELETE FROM entities WHERE entity_id IN ${this.db.sql(entity_ids)}
+			DELETE FROM entities WHERE entity_id IN ${this.db.sql(entityIds)}
 		`;
 		if (!data.count) return NOT_OK;
+		if (data.count !== entityIds.length) return NOT_OK;
 		return OK;
+	}
+
+	//This function finds all non-directory entities with no ties pointing to them & returns an array of their ids
+	async findOrphanedEntities(): Promise<Result<{value: number[]}>> {
+		const data = await this.db.sql<Entity[]>`
+			SELECT entity_id FROM entities e
+			LEFT JOIN ties t
+			ON e.entity_id = t.dest_id
+			WHERE e.data->>'space_id' IS NULL AND t.dest_id IS NULL;
+		`;
+		return {ok: true, value: data.flatMap((e) => e.entity_id)};
 	}
 }

@@ -45,7 +45,7 @@ export const toDispatch = (
 			log.trace(
 				'%c[dispatch.%c' + eventName + '%c]',
 				'color: gray',
-				'color: cyan',
+				'color: cornflowerblue',
 				'color: gray',
 				params === undefined ? '' : params, // print null but not undefined
 			);

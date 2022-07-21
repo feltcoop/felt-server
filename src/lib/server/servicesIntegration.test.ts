@@ -129,18 +129,17 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	// TODO delete entities here
 
 	// delete spaces except the home space
-	await Promise.all(
-		filteredSpaces
-			.filter((s) => !isHomeSpace(s))
-			.map(async (space) =>
-				unwrap(
-					await DeleteSpaceService.perform({
-						params: {space_id: space.space_id},
-						...serviceRequest,
-					}),
-				),
-			),
-	);
+	for (const space of filteredSpaces) {
+		if (!isHomeSpace(space)) {
+			unwrap(
+				// eslint-disable-next-line no-await-in-loop
+				await DeleteSpaceService.perform({
+					params: {space_id: space.space_id},
+					...serviceRequest,
+				}),
+			);
+		}
+	}
 	assert.is(unwrap(await db.repos.space.filterByCommunity(community.community_id)).length, 1);
 
 	// delete membership

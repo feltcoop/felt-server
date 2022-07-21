@@ -90,7 +90,7 @@ const cleanOrphanCommunities = async (community_id: number, repos: Database['rep
 		log.trace('[membershipServices] no memberships found, cleaning up', community_id);
 		const cleanupResult = await repos.community.deleteById(community_id);
 		if (cleanupResult.ok) {
-			log.trace('[membershipServices] orphan community successfully removed', community_id);
+			log.trace('[membershipServices] orphan community successfully deleted', community_id);
 		} else {
 			log.trace('[membershipServices] issue deleting orphaned community', community_id);
 		}

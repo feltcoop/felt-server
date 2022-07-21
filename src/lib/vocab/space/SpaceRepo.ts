@@ -4,7 +4,7 @@ import {blue, gray} from 'kleur/colors';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Space} from '$lib/vocab/space/space.js';
-import type {Entity} from '../entity/entity';
+import type {Entity} from '$lib/vocab/entity/entity';
 
 const log = new Logger(gray('[') + blue('SpaceRepo') + gray(']'));
 

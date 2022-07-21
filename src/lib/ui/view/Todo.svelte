@@ -70,8 +70,8 @@
 			return acc;
 		}, [] as Array<Readable<Entity>>);
 		if (!items?.length) return;
-		const entity_ids = items.map((i) => i.get().entity_id);
-		await dispatch.DeleteEntities({entity_ids});
+		const entityIds = items.map((i) => i.get().entity_id);
+		await dispatch.DeleteEntities({entityIds});
 		await dispatch.UpdateEntity({
 			data: null,
 			entity_id: $space.directory_id,

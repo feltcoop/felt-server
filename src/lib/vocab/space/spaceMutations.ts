@@ -3,20 +3,18 @@ import {goto} from '$app/navigation';
 
 import type {Mutations} from '$lib/app/eventTypes';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
-import {deleteEntity, updateEntity} from '../entity/entityMutationHelpers';
-import {setFreshnessDerived} from '$lib/ui/uiMutationHelpers';
+import {deleteEntity, updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
 
 export const CreateSpace: Mutations['CreateSpace'] = async ({invoke, ui}) => {
 	const {spaceById, spaces} = ui;
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {space: $space, directory: $directory} = result.value;
-	//TODO add directory updating here
+	// TODO use an `updateSpace` helper here like with entities and use it in `UpdateSpace` and `SetSession`
 	const space = writable($space);
 	spaceById.set($space.space_id, space);
 	spaces.mutate(($spaces) => $spaces.push(space));
-	const directory = updateEntity(ui, $directory);
-	setFreshnessDerived(ui, directory);
+	updateEntity(ui, $directory);
 	return result;
 };
 
@@ -36,6 +34,7 @@ export const DeleteSpace: Mutations['DeleteSpace'] = async ({params, invoke, ui}
 	const space = spaceById.get(space_id)!;
 	const $space = space.get();
 	const {community_id} = $space;
+	const {deletedEntityIds} = result.value;
 
 	// If the deleted space is selected, select the home space as a fallback.
 	if (space_id === spaceIdSelectionByCommunityId.get().value.get(community_id)) {
@@ -56,7 +55,9 @@ export const DeleteSpace: Mutations['DeleteSpace'] = async ({params, invoke, ui}
 
 	spaceById.delete(space_id);
 	spaces.mutate(($spaces) => $spaces.splice($spaces.indexOf(space), 1));
-	deleteEntity(ui, $space.directory_id);
+	for (const entity_id of deletedEntityIds) {
+		deleteEntity(ui, entity_id);
+	}
 
 	return result;
 };

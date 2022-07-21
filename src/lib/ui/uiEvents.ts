@@ -47,7 +47,8 @@ export const OpenDialog: ClientEventInfo = {
 	name: 'OpenDialog',
 	params: {
 		$id: '/schemas/OpenDialogParams.json',
-		allOf: [{$ref: '/schemas/DialogData.json'}],
+		// TODO probably extend this type with the project-level dialog types
+		$ref: '/schemas/DialogData.json',
 	},
 	returns: 'void',
 };

@@ -48,7 +48,9 @@ main {
 .buttons {
 	width: 100%;
 	display: flex;
-	justify-content: space-between;
+}
+.buttons > * {
+	flex: 1;
 }
 
 /* TODO upstream? */

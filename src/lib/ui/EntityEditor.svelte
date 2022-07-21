@@ -9,7 +9,7 @@
 	import {parseJson, serializeJson} from '$lib/util/json';
 	import PropertyEditor from '$lib/ui/PropertyEditor.svelte';
 	import PersonaAvatar from '$lib/ui/PersonaAvatar.svelte';
-	import TombstoneContent from './TombstoneContent.svelte';
+	import TombstoneContent from '$lib/ui/TombstoneContent.svelte';
 
 	export let entity: Readable<Entity>;
 	export let done: (() => void) | undefined = undefined;
@@ -38,7 +38,7 @@
 	let deletePending = false;
 	const deleteEntity = async () => {
 		deletePending = true;
-		await dispatch.DeleteEntities({entity_ids: [$entity.entity_id]});
+		await dispatch.DeleteEntities({entityIds: [$entity.entity_id]});
 		deletePending = false;
 		done?.();
 	};

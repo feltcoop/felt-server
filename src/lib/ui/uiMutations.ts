@@ -3,7 +3,7 @@ import {Logger} from '@feltcoop/felt/util/log.js';
 import {round} from '@feltcoop/felt/util/maths.js';
 
 import type {Mutations} from '$lib/app/eventTypes';
-import {updateLastSeen} from './uiMutationHelpers';
+import {updateLastSeen} from '$lib/ui/uiMutationHelpers';
 
 const log = new Logger('[uiMutations]');
 

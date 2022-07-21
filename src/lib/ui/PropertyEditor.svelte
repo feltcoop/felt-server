@@ -86,16 +86,7 @@
 	<pre>{currentSerialized}</pre>
 </div>
 {#if editing}
-	{#if changed}
-		<div class="buttons">
-			<button type="button" on:click={reset}> reset </button>
-			<PendingButton on:click={save} {pending} disabled={pending || !!errorMessage}>
-				save
-			</PendingButton>
-		</div>
-	{:else}
-		<button type="button" on:click={stopEditing}>cancel</button>
-	{/if}
+	<button type="button" on:click={stopEditing}>cancel</button>
 	<textarea
 		placeholder="> value"
 		bind:this={fieldValueEl}
@@ -104,6 +95,14 @@
 		disabled={pending}
 		on:keydown={onKeydown}
 	/>
+	{#if changed}
+		<div class="buttons">
+			<button type="button" on:click={reset}> reset </button>
+			<PendingButton on:click={save} {pending} disabled={pending || !!errorMessage}>
+				save
+			</PendingButton>
+		</div>
+	{/if}
 	{#if errorMessage}
 		<Message status="error">{errorMessage}</Message>
 	{:else if changed}
@@ -124,5 +123,9 @@
 	}
 	.preview {
 		overflow: auto;
+	}
+	textarea {
+		/* TODO customize this for different values */
+		height: 120px;
 	}
 </style>

@@ -8,6 +8,7 @@
 	import {browser} from '$app/env';
 	import Dialogs from '@feltcoop/felt/ui/dialog/Dialogs.svelte';
 	import {Logger} from '@feltcoop/felt/util/log.js';
+	import {isEditable, swallow} from '@feltcoop/felt/util/dom.js';
 
 	import {toSocketStore} from '$lib/ui/socket';
 	import Luggage from '$lib/ui/Luggage.svelte';
@@ -53,7 +54,7 @@
 		(message) => websocketClient.handle(message.data),
 		() => dispatch.Ping(),
 	);
-	const ui = toUi(session, initialMobileValue, components, (errorMessage) => {
+	const ui = toUi(initialMobileValue, components, (errorMessage) => {
 		dispatch.OpenDialog({Component: ErrorMessage, props: {text: errorMessage}});
 	});
 	setUi(ui);
@@ -87,7 +88,10 @@
 		Object.assign(window, app);
 		log.trace('app', app);
 	}
-	$: browser && log.trace('$session', $session);
+
+	// TODO might need to dispatch during initialization:
+	// https://github.com/feltcoop/felt-server/pull/397/files#r923790411
+	$: dispatch.SetSession({session: $session});
 
 	const {mobile, layout, contextmenu, dialogs, account, sessionPersonas, personaSelection} = ui;
 
@@ -100,6 +104,14 @@
 	let clientWidth: number;
 	let clientHeight: number;
 	$: $layout = {width: clientWidth, height: clientHeight}; // TODO event? `UpdateLayout`?
+
+	// TODO `ShortcutKeys` or `Hotkeys` component with some interface
+	const onWindowKeydown = async (e: KeyboardEvent) => {
+		if (e.key === '`' && !e.ctrlKey && !isEditable(e.target)) {
+			swallow(e);
+			dispatch.ToggleMainNav();
+		}
+	};
 </script>
 
 <svelte:body
@@ -111,6 +123,8 @@
 <svelte:head>
 	<link rel="shortcut icon" href="/favicon.png" />
 </svelte:head>
+
+<svelte:window on:keydown|capture={onWindowKeydown} />
 
 <SocketConnection {socket} url={WEBSOCKET_URL} />
 
