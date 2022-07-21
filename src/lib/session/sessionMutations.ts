@@ -110,10 +110,6 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 	freshnessByDirectoryId.clear();
 	freshnessByCommunityId.clear();
 
-	// TODO BLOCK how to handle these?
-	// expandMainNav;
-	// expandMarquee;
-
 	// Add entities after the other stores are ready.
 	if (!guest) session.directories.forEach((d) => updateEntity(ui, d));
 };
