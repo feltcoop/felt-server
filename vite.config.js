@@ -11,13 +11,6 @@ const config = {
 			'/api': `http://${API_SERVER_HOST}`,
 		},
 	},
-	ssr: {
-		// TODO BLOCK ensure we need this still
-		noExternal: ['@feltcoop/felt'],
-	},
-	optimizeDeps: {
-		exclude: ['@feltcoop/felt'],
-	},
 };
 
 export default config;
