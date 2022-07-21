@@ -10,7 +10,7 @@ import {
 	setFreshnessByDirectoryId,
 } from '$lib/ui/uiMutationHelpers';
 
-export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> => {
+export const upsertEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> => {
 	const {entityById, spaceSelection, spaceById, freshnessByDirectoryId} = ui;
 	const {entity_id} = $entity;
 	let entity = entityById.get(entity_id);
