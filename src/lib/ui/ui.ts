@@ -19,7 +19,7 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
-import {locallyStoredMap} from '$lib/ui/locallyStored';
+import {locallyStored, locallyStoredMap} from '$lib/ui/locallyStored';
 import type {Tie} from '$lib/vocab/tie/tie';
 
 if (browser) initBrowser();
@@ -228,8 +228,8 @@ export const toUi = (
 	const sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
 	const destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
 
-	const expandMainNav = writable(!initialMobile);
-	const expandMarquee = writable(!initialMobile);
+	const expandMainNav = locallyStored(writable(!initialMobile), 'expandMainNav');
+	const expandMarquee = locallyStored(writable(!initialMobile), 'expandMarquee');
 
 	return {
 		// db data
