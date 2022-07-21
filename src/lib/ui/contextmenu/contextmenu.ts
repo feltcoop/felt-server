@@ -5,7 +5,7 @@ import type {Result} from '@feltcoop/felt';
 // Items with `undefined` props are ignored.
 export type ContextmenuItems = Array<[typeof SvelteComponent, object | null | undefined]>;
 
-type ActivateResult = Result<any, {message?: string}> | unknown;
+type ActivateResult = Result<any, {message?: string}> | any; // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
 
 export type ItemState = SubmenuState | EntryState;
 export interface EntryState {
