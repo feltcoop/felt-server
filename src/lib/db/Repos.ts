@@ -1,5 +1,4 @@
-import type {PostgresSql} from './postgres';
-
+import type {PostgresSql} from '$lib/db/postgres';
 import {SessionRepo} from '$lib/session/SessionRepo';
 import {AccountRepo} from '$lib/vocab/account/AccountRepo';
 import {PersonaRepo} from '$lib/vocab/persona/PersonaRepo';
