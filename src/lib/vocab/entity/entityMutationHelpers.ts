@@ -29,7 +29,7 @@ export const upsertEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> 
 		upsertFreshnessByCommunityId(ui, spaceById.get($entity.data.space_id)!.get().community_id);
 		// Is the directory's space selected? If so we don't want a notification.
 		if (entity_id === spaceSelection.get()?.get().directory_id) {
-			updateLastSeen(ui, entity_id, ($entity.updated || $entity.created).getTime());
+			updateLastSeen(ui, entity_id);
 		}
 	}
 
