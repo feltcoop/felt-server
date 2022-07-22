@@ -38,7 +38,7 @@ export const toServiceRequest = <TParams = any>(
 	session: ISessionApi,
 ): ServiceRequest<TParams> => ({
 	repos: db.repos,
-	transact: (cb) => db.sql.begin((sql) => cb(new Repos(sql))) as any, // TODO BLOCK typecast may be hiding a bug
+	transact: (cb) => db.sql.begin((sql) => cb(new Repos(sql))) as any, // typecast is due to postgres' more flexible API
 	params,
 	account_id, // TODO how to handle this type for services that don't require an account_id?
 	session,
