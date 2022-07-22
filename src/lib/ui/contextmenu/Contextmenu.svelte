@@ -126,9 +126,9 @@
 		style:transform="translate3d({x}px, {y}px, 0)"
 	>
 		{#each $contextmenu.items as [component, props] (component)}
-			<ul>
+			<menu>
 				<svelte:component this={component} {...props} />
-			</ul>
+			</menu>
 		{/each}
 	</div>
 {/if}

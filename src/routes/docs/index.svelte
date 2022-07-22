@@ -23,18 +23,18 @@
 		https://github.com/feltcoop/felt-server/pull/362
 		and https://github.com/feltcoop/felt/pull/197 -->
 		<div class="menu-wrapper markup padded-xl column-sm">
-			<ul class="menu">
+			<menu class="menu">
 				<li><h3><a href="#docs" class:selected={hash === 'docs'}>docs</a></h3></li>
 				<li><h4><a href="#vocab" class:selected={hash === 'vocab'}>vocab</a></h4></li>
-				<ul>
+				<menu>
 					{#each vocabSchemas as schema (schema)}
 						<li>
 							<a href="#{schema.name}" class:selected={hash === schema.name}>{schema.name}</a>
 						</li>
 					{/each}
-				</ul>
+				</menu>
 				<li><h4><a href="#events" class:selected={hash === 'events'}>events</a></h4></li>
-				<ul>
+				<menu>
 					{#each eventInfos as eventInfo (eventInfo.name)}
 						<li>
 							<a href="#{eventInfo.name}" class:selected={hash === eventInfo.name}
@@ -42,8 +42,8 @@
 							>
 						</li>
 					{/each}
-				</ul>
-			</ul>
+				</menu>
+			</menu>
 		</div>
 		<div class="markup padded-xl">
 			<h2 id="vocab">vocab</h2>
@@ -87,9 +87,9 @@
 			{/each}
 		</ul>
 		<div class="markup padded-xl">
-			<ul>
+			<menu>
 				<li><h3><a href="#docs" class:selected={hash === 'docs'}>docs</a></h3></li>
-				<ul>
+				<menu>
 					<li>
 						<h4>
 							<a href="#vocab" class:selected={hash === 'vocab'}>vocab</a>
@@ -100,8 +100,8 @@
 							<a href="#events" class:selected={hash === 'events'}>events</a>
 						</h4>
 					</li>
-				</ul>
-			</ul>
+				</menu>
+			</menu>
 		</div>
 	</div>
 </div>

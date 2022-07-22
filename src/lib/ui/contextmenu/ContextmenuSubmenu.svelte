@@ -58,6 +58,8 @@
 		}
 		translateY = Math.min(0, $layout.height - (baseY + height));
 	};
+
+	// TODO BLOCK replace the `div` with the `li`? do we need the wrapper?
 </script>
 
 <!-- TODO what's the right structure for a11y? -->
@@ -77,15 +79,14 @@
 		<div class="chevron" />
 	</div>
 	{#if selected}
-		<ul
+		<menu
 			bind:this={el}
 			class="pane"
-			role="menu"
 			style:transform="translate3d({translateX}px, {translateY}px, 0)"
 			style:max-height="{$layout.height}px"
 		>
 			<slot name="menu" />
-		</ul>
+		</menu>
 	{/if}
 </li>
 
@@ -96,7 +97,7 @@
 	.chevron {
 		padding-left: 5px;
 	}
-	ul {
+	menu {
 		z-index: 1;
 		position: absolute;
 		/* TODO this is a hack to avoid the pixel gap, probably change to 0 after adding transparent bg hitbox */
