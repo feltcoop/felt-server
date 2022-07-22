@@ -25,11 +25,10 @@ export interface Service<TParams, TResult extends Result> {
 
 export interface ServiceRequest<TParams> {
 	repos: Repos;
-	transact: () => Promise<Repos>;
+	transact: <T>(cb: (repos: Repos) => Promise<T>) => Promise<T>;
 	params: TParams;
 	account_id: number;
 	session: ISessionApi;
-	promise: Promise<void> | null;
 }
 
 export const toServiceRequest = <TParams = any>(
@@ -39,10 +38,8 @@ export const toServiceRequest = <TParams = any>(
 	session: ISessionApi,
 ): ServiceRequest<TParams> => ({
 	repos: db.repos,
-	// TODO BLOCK the transaction ends immediately here, how to do return value correctly?
-	transact: () => db.sql.begin((sql) => new Repos(sql)),
+	transact: (cb) => db.sql.begin((sql) => cb(new Repos(sql))) as any, // TODO BLOCK typecast may be hiding a bug
 	params,
 	account_id, // TODO how to handle this type for services that don't require an account_id?
 	session,
-	promise: null,
 });

@@ -1,9 +1,10 @@
 import sourcemapSupport from 'source-map-support';
 import {configureLogLevel, Logger, LogLevel} from '@feltcoop/felt/util/log.js';
+import type {OmitStrict} from '@feltcoop/felt';
 
 import {SessionApiMock} from '$lib/session/SessionApiMock';
 import type {Database} from '$lib/db/Database';
-import {Repos} from '$lib/db/Repos';
+import {toServiceRequest} from '$lib/server/service';
 
 configureLogLevel(LogLevel.Info);
 
@@ -19,16 +20,11 @@ export const installSourceMaps = (): void => {
 	});
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const toServiceRequestMock = (
 	account_id: number,
 	db: Database,
-	session = new SessionApiMock(),
-) => ({
-	repos: db.repos,
-	// TODO BLOCK maybe use `toServiceRequest` here
-	transact: () => db.sql.begin((sql) => new Repos(sql)),
-	account_id,
-	session,
-	promise: null,
-});
+	session = new SessionApiMock(), // some tests need to reuse the same mock session
+): OmitStrict<ReturnType<typeof toServiceRequest>, 'params'> => {
+	const {params: _, ...rest} = toServiceRequest(db, undefined, account_id, session);
+	return rest;
+};
