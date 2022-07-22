@@ -22,7 +22,7 @@ export class Repos {
 	entity: EntityRepo;
 	tie: TieRepo;
 
-	constructor(sql: PostgresSql) {
+	constructor(public readonly sql: PostgresSql) {
 		this.session = new SessionRepo(this, sql);
 		this.account = new AccountRepo(this, sql);
 		this.persona = new PersonaRepo(this, sql);
