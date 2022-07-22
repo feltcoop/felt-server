@@ -63,7 +63,7 @@ export const toHttpServiceMiddleware =
 		let result;
 		try {
 			result = await service.perform(
-				toServiceRequest(server.db.sql, params, req.account_id!, new SessionApi(req, res)),
+				toServiceRequest(server.db, params, req.account_id!, new SessionApi(req, res)),
 			);
 		} catch (err) {
 			log.error(err);

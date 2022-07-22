@@ -3,6 +3,7 @@ import {configureLogLevel, Logger, LogLevel} from '@feltcoop/felt/util/log.js';
 
 import {SessionApiMock} from '$lib/session/SessionApiMock';
 import type {Database} from '$lib/db/Database';
+import {Repos} from '$lib/db/Repos';
 
 configureLogLevel(LogLevel.Info);
 
@@ -24,7 +25,10 @@ export const toServiceRequestMock = (
 	db: Database,
 	session = new SessionApiMock(),
 ) => ({
-	account_id,
 	repos: db.repos,
+	// TODO BLOCK maybe use `toServiceRequest` here
+	transact: () => db.sql.begin((sql) => new Repos(sql)),
+	account_id,
 	session,
+	promise: null,
 });
