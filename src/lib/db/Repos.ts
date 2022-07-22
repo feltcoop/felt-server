@@ -22,8 +22,7 @@ export class Repos {
 	entity: EntityRepo;
 	tie: TieRepo;
 
-	// TODO BLOCK should `repos.sql` be exposed directly like this, or should we export only `savepoint`? see https://github.com/porsager/postgres#transactions
-	constructor(public readonly sql: PostgresSql) {
+	constructor(sql: PostgresSql) {
 		this.session = new SessionRepo(this, sql);
 		this.account = new AccountRepo(this, sql);
 		this.persona = new PersonaRepo(this, sql);

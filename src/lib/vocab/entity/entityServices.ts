@@ -60,82 +60,89 @@ export const ReadEntitiesPaginatedService: ServiceByName['ReadEntitiesPaginated'
 
 export const CreateEntityService: ServiceByName['CreateEntity'] = {
 	event: CreateEntity,
-	perform: async ({repos, params}) => {
-		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
-		const insertEntitiesResult = await repos.entity.create(params.persona_id, params.data);
-		if (!insertEntitiesResult.ok) {
-			return {ok: false, status: 500, message: 'failed to create entity'};
-		}
+	perform: ({transact, params}) =>
+		transact(async (repos) => {
+			// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
+			const insertEntitiesResult = await repos.entity.create(params.persona_id, params.data);
+			if (!insertEntitiesResult.ok) {
+				return {ok: false, status: 500, message: 'failed to create entity'};
+			}
 
-		const insertTieResult = await repos.tie.create(
-			params.source_id,
-			insertEntitiesResult.value.entity_id,
-			params.type ? params.type : 'HasItem',
-		);
+			const insertTieResult = await repos.tie.create(
+				params.source_id,
+				insertEntitiesResult.value.entity_id,
+				params.type ? params.type : 'HasItem',
+			);
 
-		if (!insertTieResult.ok) {
-			return {ok: false, status: 500, message: 'failed to tie entity to graph'};
-		}
+			if (!insertTieResult.ok) {
+				return {ok: false, status: 500, message: 'failed to tie entity to graph'};
+			}
 
-		return {
-			ok: true,
-			status: 200,
-			value: {entity: insertEntitiesResult.value, tie: insertTieResult.value},
-		};
-	},
+			return {
+				ok: true,
+				status: 200,
+				value: {entity: insertEntitiesResult.value, tie: insertTieResult.value},
+			};
+		}),
 };
 
 export const UpdateEntityService: ServiceByName['UpdateEntity'] = {
 	event: UpdateEntity,
-	perform: async ({repos, params}) => {
-		// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
-		const updateEntitiesResult = await repos.entity.updateEntityData(params.entity_id, params.data);
-		if (!updateEntitiesResult.ok) {
-			return {ok: false, status: 500, message: 'failed to update entity'};
-		}
-		return {ok: true, status: 200, value: {entity: updateEntitiesResult.value}};
-	},
+	perform: ({transact, params}) =>
+		transact(async (repos) => {
+			// TODO security: validate `account_id` against the persona -- maybe as an optimized standalone method?
+			const updateEntitiesResult = await repos.entity.updateEntityData(
+				params.entity_id,
+				params.data,
+			);
+			if (!updateEntitiesResult.ok) {
+				return {ok: false, status: 500, message: 'failed to update entity'};
+			}
+			return {ok: true, status: 200, value: {entity: updateEntitiesResult.value}};
+		}),
 };
 
 //soft deletes a single entity, leaving behind a Tombstone entity
 export const EraseEntitiesService: ServiceByName['EraseEntities'] = {
 	event: EraseEntities,
-	perform: async ({repos, params}) => {
-		const result = await repos.entity.eraseByIds(params.entityIds);
-		if (!result.ok) {
-			return {ok: false, status: 500, message: 'failed to soft delete entity'};
-		}
-		return {ok: true, status: 200, value: {entities: result.value}};
-	},
+	perform: ({transact, params}) =>
+		transact(async (repos) => {
+			const result = await repos.entity.eraseByIds(params.entityIds);
+			if (!result.ok) {
+				return {ok: false, status: 500, message: 'failed to soft delete entity'};
+			}
+			return {ok: true, status: 200, value: {entities: result.value}};
+		}),
 };
 
 //hard deletes one to many entities, removing the records from the DB
 export const DeleteEntitiesService: ServiceByName['DeleteEntities'] = {
 	event: DeleteEntities,
-	perform: async ({repos, params}) => {
-		const deletedEntityIds: number[] = [];
-		const result = await repos.entity.deleteByIds(params.entityIds);
-		if (!result.ok) {
-			return {ok: false, status: 500, message: 'failed to delete entity'};
-		}
-		deletedEntityIds.push(...params.entityIds);
+	perform: ({transact, params}) =>
+		transact(async (repos) => {
+			const deletedEntityIds: number[] = [];
+			const result = await repos.entity.deleteByIds(params.entityIds);
+			if (!result.ok) {
+				return {ok: false, status: 500, message: 'failed to delete entity'};
+			}
+			deletedEntityIds.push(...params.entityIds);
 
-		// Deleting one entity may orphan others, so loop until there are no more orphans.
-		while (true) {
-			const orphans = await repos.entity.findOrphanedEntities(); // eslint-disable-line no-await-in-loop
-			if (!orphans.ok) {
-				return {ok: false, status: 500, message: 'failed to find orphans'};
+			// Deleting one entity may orphan others, so loop until there are no more orphans.
+			while (true) {
+				const orphans = await repos.entity.findOrphanedEntities(); // eslint-disable-line no-await-in-loop
+				if (!orphans.ok) {
+					return {ok: false, status: 500, message: 'failed to find orphans'};
+				}
+				if (orphans.value.length === 0) {
+					break;
+				}
+				const deletedOrphans = await repos.entity.deleteByIds(orphans.value); // eslint-disable-line no-await-in-loop
+				if (!deletedOrphans.ok) {
+					return {ok: false, status: 500, message: 'failed to delete orphans'};
+				}
+				deletedEntityIds.push(...orphans.value);
 			}
-			if (orphans.value.length === 0) {
-				break;
-			}
-			const deletedOrphans = await repos.entity.deleteByIds(orphans.value); // eslint-disable-line no-await-in-loop
-			if (!deletedOrphans.ok) {
-				return {ok: false, status: 500, message: 'failed to delete orphans'};
-			}
-			deletedEntityIds.push(...orphans.value);
-		}
 
-		return {ok: true, status: 200, value: {deletedEntityIds}};
-	},
+			return {ok: true, status: 200, value: {deletedEntityIds}};
+		}),
 };
