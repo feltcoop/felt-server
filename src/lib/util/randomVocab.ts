@@ -19,16 +19,12 @@ import type {DirectoryEntityData, EntityData} from '$lib/vocab/entity/entityData
 import type {Entity} from '$lib/vocab/entity/entity';
 import type {Tie} from '$lib/vocab/tie/tie';
 import {CreateAccountPersonaService} from '$lib/vocab/persona/personaServices';
-import {SessionApiMock} from '$lib/session/SessionApiMock';
 import {CreateCommunityService} from '$lib/vocab/community/communityServices';
 import {CreateSpaceService} from '$lib/vocab/space/spaceServices';
 import type {Membership} from '$lib/vocab/membership/membership';
 import {CreateEntityService} from '$lib/vocab/entity/entityServices';
 import {CreateTieService} from '$lib/vocab/tie/tieServices';
-import {toServiceRequest} from '$lib/server/service';
-
-// TODO BLOCK when everything else works, change this to `toServiceRequestMock`
-const session = new SessionApiMock();
+import {toServiceRequestMock} from './testHelpers';
 
 // TODO automate these from schemas, also use seeded rng
 export const randomString = (): string => Math.random().toString().slice(2);
@@ -119,9 +115,10 @@ export class RandomVocabContext {
 			membership,
 			spaces,
 		} = unwrap(
-			await CreateAccountPersonaService.perform(
-				toServiceRequest(this.db, {name: randomPersonaParams().name}, account.account_id, session),
-			),
+			await CreateAccountPersonaService.perform({
+				...toServiceRequestMock(account.account_id, this.db),
+				params: {name: randomPersonaParams().name},
+			}),
 		);
 		return {persona, personalCommunity, membership, spaces, account};
 	}
@@ -141,9 +138,10 @@ export class RandomVocabContext {
 		if (!persona) ({persona, account} = await this.persona(account));
 		const params = randomCommunityParams(persona.persona_id);
 		const {community, communityPersona, memberships, spaces} = unwrap(
-			await CreateCommunityService.perform(
-				toServiceRequest(this.db, params, account.account_id, session),
-			),
+			await CreateCommunityService.perform({
+				...toServiceRequestMock(account.account_id, this.db),
+				params,
+			}),
 		);
 		return {community, communityPersona, memberships, spaces, persona, account};
 	}
@@ -164,9 +162,10 @@ export class RandomVocabContext {
 		if (!community) ({community} = await this.community(persona, account));
 		const params = randomSpaceParams(persona.persona_id, community.community_id);
 		const {space, directory} = unwrap(
-			await CreateSpaceService.perform(
-				toServiceRequest(this.db, params, account.account_id, session),
-			),
+			await CreateSpaceService.perform({
+				...toServiceRequestMock(account.account_id, this.db),
+				params,
+			}),
 		);
 		return {space, directory, persona, account, community};
 	}
@@ -193,17 +192,13 @@ export class RandomVocabContext {
 			source_id = space.directory_id;
 		}
 		const {entity, tie} = unwrap(
-			await CreateEntityService.perform(
-				toServiceRequest(
-					this.db,
-					{
-						...randomEntityParams(persona.persona_id, source_id),
-						...paramsPartial,
-					},
-					account.account_id,
-					session,
-				),
-			),
+			await CreateEntityService.perform({
+				...toServiceRequestMock(account.account_id, this.db),
+				params: {
+					...randomEntityParams(persona.persona_id, source_id),
+					...paramsPartial,
+				},
+			}),
 		);
 		return {entity, persona, account, community, tie};
 	}
@@ -241,9 +236,10 @@ export class RandomVocabContext {
 		const params = randomTieParams(sourceEntity.entity_id, destEntity.entity_id);
 		if (type) params.type = type;
 		const {tie} = unwrap(
-			await CreateTieService.perform(
-				toServiceRequest(this.db, params, account.account_id, session),
-			),
+			await CreateTieService.perform({
+				...toServiceRequestMock(account.account_id, this.db),
+				params,
+			}),
 		);
 		return {tie, sourceEntity, destEntity, persona, account, community, parentSourceId};
 	}
