@@ -56,7 +56,7 @@ export const CreateAccountPersonaService: ServiceByName['CreateAccountPersona'] 
 			const persona = createPersonaResult.value;
 
 			const createDefaultSpaceResult = await createDefaultSpaces(
-				{...serviceRequest, repos}, // forward the transaction
+				serviceRequest,
 				persona.persona_id,
 				community,
 			);

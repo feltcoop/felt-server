@@ -117,7 +117,7 @@ export const CreateCommunityService: ServiceByName['CreateCommunity'] = {
 			const communityPersona = communityPersonaResult.value;
 
 			const createDefaultSpaceResult = await createDefaultSpaces(
-				{...serviceRequest, repos}, // forward the transaction
+				serviceRequest,
 				params.persona_id,
 				community,
 			);

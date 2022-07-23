@@ -54,10 +54,13 @@ export const DeleteMembershipService: ServiceByName['DeleteMembership'] = {
 				persona_id,
 				community_id,
 			);
-			const [personaResult, communityResult] = await Promise.all([
-				repos.persona.findById(persona_id),
-				repos.community.findById(community_id),
-			]);
+			// TODO BLOCK why can't this be parallelized? bug in our code? or the driver?
+			const personaResult = await repos.persona.findById(persona_id);
+			const communityResult = await repos.community.findById(community_id);
+			// const [personaResult, communityResult] = await Promise.all([
+			// 	repos.persona.findById(persona_id),
+			// 	repos.community.findById(community_id),
+			// ]);
 			if (!personaResult.ok) {
 				return {ok: false, status: 404, message: 'no persona found'};
 			}

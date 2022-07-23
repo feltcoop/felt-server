@@ -27,6 +27,7 @@ import {CreateEntityService} from '$lib/vocab/entity/entityServices';
 import {CreateTieService} from '$lib/vocab/tie/tieServices';
 import {toServiceRequest} from '$lib/server/service';
 
+// TODO BLOCK when everything else works, change this to `toServiceRequestMock`
 const session = new SessionApiMock();
 
 // TODO automate these from schemas, also use seeded rng

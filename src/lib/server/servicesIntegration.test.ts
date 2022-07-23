@@ -141,18 +141,19 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 		}
 	}
 	assert.is(unwrap(await db.repos.space.filterByCommunity(community.community_id)).length, 1);
-
 	// delete membership
 	assert.is(
 		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
 		3,
 	);
+	console.log(4);
 	unwrap(
 		await DeleteMembershipService.perform({
 			params: {persona_id: persona2.persona_id, community_id: community.community_id},
 			...serviceRequest,
 		}),
 	);
+	console.log(5);
 	assert.is(
 		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,
 		2,

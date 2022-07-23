@@ -170,7 +170,6 @@ export const DeleteSpaceService: ServiceByName['DeleteSpace'] = {
 			}
 
 			deletedEntityIds.push(space.directory_id);
-			// TODO BLOCK problem is this creates a new transaction ...
 			const orphanedEntities = await DeleteEntitiesService.perform({
 				...serviceRequest,
 				params: {entityIds: [space.directory_id]},
@@ -197,7 +196,6 @@ export const createDefaultSpaces = async (
 ): Promise<Result<{value: Space[]}, ErrorResponse>> => {
 	const spaces: Space[] = [];
 	for (const params of toDefaultSpaces(persona_id, community)) {
-		// TODO BLOCK nested transaction problem
 		// eslint-disable-next-line no-await-in-loop
 		const result = await CreateSpaceService.perform({
 			...serviceRequest,
