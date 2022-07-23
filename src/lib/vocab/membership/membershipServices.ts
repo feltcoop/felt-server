@@ -54,7 +54,7 @@ export const DeleteMembershipService: ServiceByName['DeleteMembership'] = {
 				persona_id,
 				community_id,
 			);
-			// TODO BLOCK why can't this be parallelized? bug in our code? or the driver?
+			// TODO BLOCK why can't this be parallelized? bug in our code? or the driver? failed to reproduce in the driver.
 			const personaResult = await repos.persona.findById(persona_id);
 			const communityResult = await repos.community.findById(community_id);
 			// const [personaResult, communityResult] = await Promise.all([
