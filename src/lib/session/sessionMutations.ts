@@ -7,23 +7,9 @@ import type {Mutations} from '$lib/app/eventTypes';
 import {deserialize, deserializers} from '$lib/util/deserialize';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
 import type {Persona} from '$lib/vocab/persona/persona';
-import {updateEntity} from '$lib/vocab/entity/entityMutationHelpers';
+import {upsertEntity} from '$lib/vocab/entity/entityMutationHelpers';
 
 const log = new Logger('[ui]');
-
-export const LoginAccount: Mutations['LoginAccount'] = async ({invoke}) => {
-	const result = await invoke();
-	if (!result.ok) return result;
-	sveltekitSession.set(result.value.session);
-	return result;
-};
-
-export const LogoutAccount: Mutations['LogoutAccount'] = async ({invoke}) => {
-	const result = await invoke();
-	if (!result.ok) return result;
-	sveltekitSession.set({guest: true});
-	return result;
-};
 
 export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui}) => {
 	const {
@@ -111,7 +97,7 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 	freshnessByCommunityId.clear();
 
 	// Add entities after the other stores are ready.
-	if (!guest) session.directories.forEach((d) => updateEntity(ui, d));
+	if (!guest) session.directories.forEach((d) => upsertEntity(ui, d));
 };
 
 // TODO This is a hack until we figure out how to handle "session personas" differently from the rest.
@@ -130,3 +116,17 @@ const toInitialPersonas = (session: ClientSession): Persona[] =>
 					(p1) => !session.sessionPersonas.find((p2) => p2.persona_id === p1.persona_id),
 				),
 		  );
+
+export const Login: Mutations['Login'] = async ({invoke}) => {
+	const result = await invoke();
+	if (!result.ok) return result;
+	sveltekitSession.set(result.value.session);
+	return result;
+};
+
+export const Logout: Mutations['Logout'] = async ({invoke}) => {
+	const result = await invoke();
+	if (!result.ok) return result;
+	sveltekitSession.set({guest: true});
+	return result;
+};

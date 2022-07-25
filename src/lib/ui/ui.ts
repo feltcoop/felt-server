@@ -19,7 +19,7 @@ import type {Membership} from '$lib/vocab/membership/membership';
 import {createContextmenuStore, type ContextmenuStore} from '$lib/ui/contextmenu/contextmenu';
 import {initBrowser} from '$lib/ui/init';
 import {isHomeSpace} from '$lib/vocab/space/spaceHelpers';
-import {locallyStoredMap} from '$lib/ui/locallyStored';
+import {locallyStored, locallyStoredMap} from '$lib/ui/locallyStored';
 import type {Tie} from '$lib/vocab/tie/tie';
 
 if (browser) initBrowser();
@@ -56,9 +56,6 @@ export interface Ui {
 	entitiesBySourceId: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
 	sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>>;
 	destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>>;
-	// view state
-	expandMainNav: Readable<boolean>;
-	expandMarquee: Readable<boolean>;
 	// derived state
 	personaIdSelection: Readable<number | null>;
 	personaSelection: Readable<Readable<Persona> | null>;
@@ -71,8 +68,11 @@ export interface Ui {
 	lastSeenByDirectoryId: Map<number, Writable<number> | null>;
 	freshnessByDirectoryId: Map<number, Readable<boolean>>;
 	freshnessByCommunityId: Map<number, Writable<boolean>>;
+	// view state
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
+	expandMainNav: Readable<boolean>;
+	expandMarquee: Readable<boolean>;
 	contextmenu: ContextmenuStore;
 	dialogs: Readable<DialogData[]>;
 	viewBySpace: Mutable<WeakMap<Readable<Space>, string>>; // client overrides for the views set by the community
@@ -224,11 +224,11 @@ export const toUi = (
 
 	const mobile = writable(initialMobile);
 	const layout = writable({width: 0, height: 0});
+	const expandMainNav = locallyStored(writable(!initialMobile), 'expandMainNav');
+	const expandMarquee = locallyStored(writable(!initialMobile), 'expandMarquee');
 	const contextmenu = createContextmenuStore({layout, onError});
 	const dialogs = writable<DialogData[]>([]);
 	const viewBySpace = mutable(new WeakMap());
-	const expandMainNav = writable(!initialMobile);
-	const expandMarquee = writable(!initialMobile);
 
 	return {
 		// db data

@@ -15,7 +15,7 @@
 	};
 
 	// the `$contextmenu` is needed because `entry` is not reactive
-	$: ({selected, pending, errorMessage} = ($contextmenu, entry));
+	$: ({selected, pending, errorMessage} = $contextmenu && entry);
 </script>
 
 <!-- TODO should be <a> ? But they don't have a `href` currently which is an a11y warning -- should they?
