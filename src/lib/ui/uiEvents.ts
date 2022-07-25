@@ -130,7 +130,6 @@ export const ClearFreshness: ClientEventInfo = {
 		type: 'object',
 		properties: {
 			directory_id: {type: 'number'},
-			time: {type: 'number'},
 		},
 		required: ['directory_id'],
 		additionalProperties: false,

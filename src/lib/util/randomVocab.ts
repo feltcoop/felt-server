@@ -4,7 +4,6 @@ import type {Space} from '$lib/vocab/space/space';
 import type {Community} from '$lib/vocab/community/community';
 import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
 import type {Account} from '$lib/vocab/account/account';
-import type {CreateAccountParams} from '$lib/vocab/account/account.schema';
 import type {Persona} from '$lib/vocab/persona/persona';
 import type {
 	CreateCommunityParams,
@@ -13,6 +12,7 @@ import type {
 	CreateSpaceParams,
 	CreateMembershipParams,
 	CreateTieParams,
+	LoginParams,
 } from '$lib/app/eventTypes';
 import type {Database} from '$lib/db/Database';
 import type {DirectoryEntityData, EntityData} from '$lib/vocab/entity/entityData';
@@ -40,8 +40,8 @@ export const randomSpaceName = randomString;
 export const randomView = (): string => '<Room />';
 export const randomEntityData = (): EntityData => ({type: 'Note', content: randomString()});
 export const randomTieType = randomString;
-export const randomAccountParams = (): CreateAccountParams => ({
-	name: randomAccountName(),
+export const randomAccountParams = (): LoginParams => ({
+	username: randomAccountName(),
 	password: randomPassword(),
 });
 export const randomPersonaParams = (): CreateAccountPersonaParams => ({
@@ -99,8 +99,7 @@ export class RandomVocabContext {
 
 	async account(): Promise<Account> {
 		const params = randomAccountParams();
-		const account = unwrap(await this.db.repos.account.create(params.name, params.password));
-		return account;
+		return unwrap(await this.db.repos.account.create(params.username, params.password));
 	}
 
 	async persona(account?: Account): Promise<{
