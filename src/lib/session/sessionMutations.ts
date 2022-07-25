@@ -25,6 +25,13 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 		sessionPersonas,
 		communityIdSelectionByPersonaId,
 		spaceIdSelectionByCommunityId,
+		entityById,
+		entitiesBySourceId,
+		sourceTiesByDestEntityId,
+		destTiesBySourceEntityId,
+		lastSeenByDirectoryId,
+		freshnessByDirectoryId,
+		freshnessByCommunityId,
 	} = ui;
 	const {guest} = session;
 
@@ -79,6 +86,15 @@ export const SetSession: Mutations['SetSession'] = async ({params: {session}, ui
 				  ]),
 		),
 	);
+
+	entityById.clear();
+	entitiesBySourceId.clear();
+	sourceTiesByDestEntityId.mutate(($v) => $v.clear());
+	destTiesBySourceEntityId.mutate(($v) => $v.clear());
+
+	lastSeenByDirectoryId.clear();
+	freshnessByDirectoryId.clear();
+	freshnessByCommunityId.clear();
 
 	// Add entities after the other stores are ready.
 	if (!guest) session.directories.forEach((d) => upsertEntity(ui, d));

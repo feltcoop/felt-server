@@ -56,9 +56,6 @@ export interface Ui {
 	entitiesBySourceId: Map<number, Readable<Array<Readable<Entity>>>>; // TODO mutable inner store
 	sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>>;
 	destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>>;
-	// view state
-	expandMainNav: Readable<boolean>;
-	expandMarquee: Readable<boolean>;
 	// derived state
 	personaIdSelection: Readable<number | null>;
 	personaSelection: Readable<Readable<Persona> | null>;
@@ -71,8 +68,11 @@ export interface Ui {
 	lastSeenByDirectoryId: Map<number, Writable<number> | null>;
 	freshnessByDirectoryId: Map<number, Readable<boolean>>;
 	freshnessByCommunityId: Map<number, Writable<boolean>>;
+	// view state
 	mobile: Readable<boolean>;
 	layout: Writable<{width: number; height: number}>; // TODO maybe make `Readable` and update with an event? `resizeLayout`?
+	expandMainNav: Readable<boolean>;
+	expandMarquee: Readable<boolean>;
 	contextmenu: ContextmenuStore;
 	dialogs: Readable<DialogData[]>;
 	viewBySpace: Mutable<WeakMap<Readable<Space>, string>>; // client overrides for the views set by the community
@@ -141,12 +141,6 @@ export const toUi = (
 			return map;
 		},
 	);
-
-	const mobile = writable(initialMobile);
-	const layout = writable({width: 0, height: 0});
-	const contextmenu = createContextmenuStore({layout, onError});
-	const dialogs = writable<DialogData[]>([]);
-	const viewBySpace = mutable(new WeakMap());
 
 	// derived state
 	// TODO speed up these lookups with id maps
@@ -217,19 +211,24 @@ export const toUi = (
 				)) ||
 			null,
 	);
-	const lastSeenByDirectoryId: Map<number, Writable<number> | null> = new Map();
+
 	// TODO this does not have an outer `Writable` -- do we want that much reactivity?
 	const entityById: Map<number, Writable<Entity>> = new Map();
-
-	const freshnessByDirectoryId: Map<number, Readable<boolean>> = new Map();
-	const freshnessByCommunityId: Map<number, Writable<boolean>> = new Map();
-
 	const entitiesBySourceId: Map<number, Writable<Array<Writable<Entity>>>> = new Map();
 	const sourceTiesByDestEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
 	const destTiesBySourceEntityId: Mutable<Map<number, Mutable<Tie[]>>> = mutable(new Map());
 
+	const lastSeenByDirectoryId: Map<number, Writable<number> | null> = new Map();
+	const freshnessByDirectoryId: Map<number, Readable<boolean>> = new Map();
+	const freshnessByCommunityId: Map<number, Writable<boolean>> = new Map();
+
+	const mobile = writable(initialMobile);
+	const layout = writable({width: 0, height: 0});
 	const expandMainNav = locallyStored(writable(!initialMobile), 'expandMainNav');
 	const expandMarquee = locallyStored(writable(!initialMobile), 'expandMarquee');
+	const contextmenu = createContextmenuStore({layout, onError});
+	const dialogs = writable<DialogData[]>([]);
+	const viewBySpace = mutable(new WeakMap());
 
 	return {
 		// db data

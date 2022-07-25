@@ -9,7 +9,7 @@ const log = new Logger('[TieRepo]');
 
 export class TieRepo extends PostgresRepo {
 	async create(source_id: number, dest_id: number, type: string): Promise<Result<{value: Tie}>> {
-		const tie = await this.db.sql<Tie[]>`
+		const tie = await this.sql<Tie[]>`
 			INSERT INTO ties (source_id, dest_id, type) VALUES (
 				${source_id},${dest_id},${type}
 			) RETURNING source_id,dest_id,type,created
@@ -20,7 +20,7 @@ export class TieRepo extends PostgresRepo {
 
 	async filterBySourceId(directory_id: number): Promise<Result<{value: Tie[]}>> {
 		log.trace(`preparing to walk graph starting with directory: ${directory_id}`);
-		const ties = await this.db.sql<Tie[]>`
+		const ties = await this.sql<Tie[]>`
 			WITH RECURSIVE paths (source_id, dest_id, type, created, path) AS (
 				SELECT t.source_id, t.dest_id, t.type, t.created, ARRAY[t.source_id, t.dest_id]
 					FROM ties t WHERE source_id=${directory_id}
@@ -46,10 +46,10 @@ export class TieRepo extends PostgresRepo {
 		pageKey?: number,
 	): Promise<Result<{value: Tie[]}>> {
 		log.trace(`paginated query of tie dests`, source_id, pageKey, pageSize);
-		const ties = await this.db.sql<Tie[]>`
+		const ties = await this.sql<Tie[]>`
 			SELECT t.source_id, t.dest_id, t.type, t.created
 			FROM ties t WHERE source_id=${source_id} ${
-			pageKey ? this.db.sql`AND dest_id < ${pageKey}` : this.db.sql``
+			pageKey ? this.sql`AND dest_id < ${pageKey}` : this.sql``
 		} 
 			ORDER BY dest_id DESC LIMIT ${pageSize};
 		`;
@@ -59,7 +59,7 @@ export class TieRepo extends PostgresRepo {
 
 	async deleteTie(source_id: number, dest_id: number, type: string): Promise<Result<object>> {
 		log.trace('[deleteTie]', source_id, dest_id);
-		const data = await this.db.sql<any[]>`
+		const data = await this.sql<any[]>`
 			DELETE FROM ties WHERE ${source_id}=source_id AND ${dest_id}=dest_id AND ${type}=type
 		`;
 		if (!data.count) return NOT_OK;

@@ -11,7 +11,7 @@ const log = new Logger(gray('[') + blue('SpaceRepo') + gray(']'));
 export class SpaceRepo extends PostgresRepo {
 	async findById(space_id: number): Promise<Result<{value: Space}>> {
 		log.trace(`[findById] ${space_id}`);
-		const data = await this.db.sql<Space[]>`
+		const data = await this.sql<Space[]>`
 			SELECT space_id, name, url, icon, view, updated, created, community_id, directory_id
 			FROM spaces WHERE space_id=${space_id}
 		`;
@@ -22,7 +22,7 @@ export class SpaceRepo extends PostgresRepo {
 
 	async filterByAccount(account_id: number): Promise<Result<{value: Space[]}>> {
 		log.trace('[filterByAccount]', account_id);
-		const data = await this.db.sql<Space[]>`
+		const data = await this.sql<Space[]>`
 			SELECT s.space_id, s.name, s.url, icon, s.view, s.updated, s.created, s.community_id, s.directory_id
 			FROM spaces s JOIN (
 				SELECT DISTINCT m.community_id FROM personas p
@@ -36,7 +36,7 @@ export class SpaceRepo extends PostgresRepo {
 	async filterByAccountWithDirectories(
 		account_id: number,
 	): Promise<Result<{value: Array<{space: Space; entity: Entity}>}>> {
-		const data = await this.db.sql<Array<{space: Space; entity: Entity}>>`
+		const data = await this.sql<Array<{space: Space; entity: Entity}>>`
 		SELECT json_build_object('space_id',s.space_id,'name',s.name,'url',s.url,'icon',s.icon,'view',s.view,'created',s.created,'updated',s.updated,'community_id',s.community_id,'directory_id',s.directory_id) space, 
 		json_build_object('entity_id',e.entity_id,'data',e.data,'persona_id',e.persona_id,'created',e.created,'updated',e.updated) entity  
 		FROM entities e JOIN (			     
@@ -53,7 +53,7 @@ export class SpaceRepo extends PostgresRepo {
 
 	async filterByCommunity(community_id: number): Promise<Result<{value: Space[]}>> {
 		log.trace('[filterByCommunity]', community_id);
-		const data = await this.db.sql<Space[]>`
+		const data = await this.sql<Space[]>`
 			SELECT space_id, name, url, icon, view, updated, created, community_id, directory_id
 			FROM spaces WHERE community_id=${community_id}
 		`;
@@ -65,7 +65,7 @@ export class SpaceRepo extends PostgresRepo {
 		url: string,
 	): Promise<Result<{value: Space | undefined}>> {
 		log.trace('[findByCommunityUrl]', community_id, url);
-		const data = await this.db.sql<Space[]>`
+		const data = await this.sql<Space[]>`
 			SELECT space_id, name, url, icon, view, updated, created, community_id, directory_id
 			FROM spaces WHERE community_id=${community_id} AND url=${url}
 		`;
@@ -81,7 +81,7 @@ export class SpaceRepo extends PostgresRepo {
 		community_id: number,
 		directory_id: number,
 	): Promise<Result<{value: Space}>> {
-		const data = await this.db.sql<Space[]>`
+		const data = await this.sql<Space[]>`
 			INSERT INTO spaces (name, url, icon, view, community_id, directory_id) VALUES (
 				${name},${url},${icon},${view},${community_id}, ${directory_id}
 			) RETURNING *
@@ -94,9 +94,9 @@ export class SpaceRepo extends PostgresRepo {
 		partial: Partial<Pick<Space, 'name' | 'url' | 'icon' | 'view'>>,
 	): Promise<Result<{value: Space}>> {
 		log.trace(`updating data for space: ${space_id}`);
-		const data = await this.db.sql<Space[]>`
+		const data = await this.sql<Space[]>`
 			UPDATE spaces
-			SET updated=NOW(), ${this.db.sql(partial as any, ...Object.keys(partial))}
+			SET updated=NOW(), ${this.sql(partial as any, ...Object.keys(partial))}
 			WHERE space_id= ${space_id}
 			RETURNING *
 		`;
@@ -106,7 +106,7 @@ export class SpaceRepo extends PostgresRepo {
 
 	async deleteById(space_id: number): Promise<Result<object>> {
 		log.trace('[deleteById]', space_id);
-		const data = await this.db.sql<any[]>`
+		const data = await this.sql<any[]>`
 			DELETE FROM spaces WHERE space_id=${space_id}
 		`;
 		if (!data.count) return NOT_OK;

@@ -14,7 +14,7 @@ export class PersonaRepo extends PostgresRepo {
 		account_id: number,
 		community_id: number,
 	): Promise<Result<{value: AccountPersona}>> {
-		const data = await this.db.sql<AccountPersona[]>`
+		const data = await this.sql<AccountPersona[]>`
 			INSERT INTO personas (type, name, account_id, community_id) VALUES (
 				'account', ${name}, ${account_id}, ${community_id}
 			) RETURNING *
@@ -28,7 +28,7 @@ export class PersonaRepo extends PostgresRepo {
 		name: string,
 		community_id: number,
 	): Promise<Result<{value: CommunityPersona}>> {
-		const data = await this.db.sql<CommunityPersona[]>`
+		const data = await this.sql<CommunityPersona[]>`
 			INSERT INTO personas (type, name, community_id) VALUES (
 				'community', ${name}, ${community_id}
 			) RETURNING *
@@ -40,7 +40,7 @@ export class PersonaRepo extends PostgresRepo {
 
 	async filterByAccount(account_id: number): Promise<Result<{value: Persona[]}>> {
 		log.trace('[filterByAccount]', account_id);
-		const data = await this.db.sql<Persona[]>`
+		const data = await this.sql<Persona[]>`
 			SELECT persona_id, type, name, account_id, community_id, created, updated
 			FROM personas WHERE account_id=${account_id}
 		`;
@@ -50,7 +50,7 @@ export class PersonaRepo extends PostgresRepo {
 	// TODO `findById` could be constructed by a generic function with id/columns params
 	async findById(persona_id: number): Promise<Result<{value: Persona}>> {
 		log.trace('[findById]', persona_id);
-		const data = await this.db.sql<Persona[]>`
+		const data = await this.sql<Persona[]>`
 			SELECT persona_id, type, name, account_id, community_id, created, updated 
 			FROM personas WHERE persona_id=${persona_id}
 		`;
@@ -60,7 +60,7 @@ export class PersonaRepo extends PostgresRepo {
 
 	async findByCommunityId(community_id: number): Promise<Result<{value: Persona}>> {
 		log.trace('[findByCommunityId]', community_id);
-		const data = await this.db.sql<Persona[]>`
+		const data = await this.sql<Persona[]>`
 			SELECT persona_id, type, name, account_id, community_id, created, updated 
 			FROM personas WHERE community_id=${community_id}
 		`;
@@ -70,7 +70,7 @@ export class PersonaRepo extends PostgresRepo {
 
 	async findByName(name: string): Promise<Result<{value: Persona | undefined}>> {
 		log.trace('[findByName]', name);
-		const data = await this.db.sql<Persona[]>`
+		const data = await this.sql<Persona[]>`
 			SELECT persona_id, type, name, account_id, community_id, created, updated
 			FROM personas WHERE LOWER(name) = LOWER(${name})
 		`;
@@ -80,7 +80,7 @@ export class PersonaRepo extends PostgresRepo {
 	// TODO needs to be a subset just for the session, maybe either `community_ids` or `account_id` as a param
 	// TODO this type isn't `Persona`, it's a public subset of fields
 	async getAll(): Promise<Result<{value: Persona[]}>> {
-		const data = await this.db.sql<Persona[]>`
+		const data = await this.sql<Persona[]>`
 			SELECT persona_id, name, type FROM personas
 		`;
 		return {ok: true, value: data};
