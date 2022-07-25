@@ -10,7 +10,7 @@ import {
 	setFreshnessByDirectoryId,
 } from '$lib/ui/uiMutationHelpers';
 
-export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> => {
+export const upsertEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> => {
 	const {entityById, spaceSelection, spaceById, freshnessByDirectoryId} = ui;
 	const {entity_id} = $entity;
 	let entity = entityById.get(entity_id);
@@ -23,13 +23,13 @@ export const updateEntity = (ui: WritableUi, $entity: Entity): Writable<Entity> 
 	// Handle directories.
 	if ('space_id' in $entity.data) {
 		if (!freshnessByDirectoryId.get(entity_id)) {
-			setLastSeen(ui, entity_id, $entity.updated!.getTime());
+			setLastSeen(ui, entity_id, ($entity.updated || $entity.created).getTime());
 			setFreshnessByDirectoryId(ui, entity);
 		}
 		upsertFreshnessByCommunityId(ui, spaceById.get($entity.data.space_id)!.get().community_id);
 		// Is the directory's space selected? If so we don't want a notification.
 		if (entity_id === spaceSelection.get()?.get().directory_id) {
-			updateLastSeen(ui, entity_id, $entity.updated!.getTime());
+			updateLastSeen(ui, entity_id);
 		}
 	}
 

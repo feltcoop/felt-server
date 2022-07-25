@@ -24,7 +24,7 @@
 	$: ({layout} = contextmenu);
 
 	// the `$contextmenu` is needed because `submenu` is not reactive
-	$: ({selected} = ($contextmenu, submenu));
+	$: ({selected} = $contextmenu && submenu);
 
 	let el: HTMLElement;
 

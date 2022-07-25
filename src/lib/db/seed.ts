@@ -5,10 +5,9 @@ import {traverse} from '@feltcoop/felt/util/object.js';
 
 import type {Database} from '$lib/db/Database.js';
 import type {Account} from '$lib/vocab/account/account.js';
-import type {CreateAccountParams} from '$lib/vocab/account/account.schema.js';
 import type {Space} from '$lib/vocab/space/space.js';
 import type {Community} from '$lib/vocab/community/community';
-import type {CreateCommunityParams} from '$lib/app/eventTypes';
+import type {CreateCommunityParams, LoginParams} from '$lib/app/eventTypes';
 import type {Persona} from '$lib/vocab/persona/persona';
 import {parseView, type ViewData} from '$lib/vocab/view/view';
 import {CreateAccountPersonaService} from '$lib/vocab/persona/personaServices';
@@ -36,9 +35,9 @@ export const seed = async (db: Database): Promise<void> => {
 	}
 
 	// example: insert literal values
-	const accountsParams: CreateAccountParams[] = [
-		{name: 'a', password: 'a'},
-		{name: 'b', password: 'b'},
+	const accountsParams: LoginParams[] = [
+		{username: 'a', password: 'a'},
+		{username: 'b', password: 'b'},
 	];
 	const personasParams: {[key: string]: string[]} = {
 		a: ['alice', 'andy'],
@@ -48,7 +47,7 @@ export const seed = async (db: Database): Promise<void> => {
 	const personas: Persona[] = [];
 	for (const accountParams of accountsParams) {
 		const account = unwrap(
-			await db.repos.account.create(accountParams.name, accountParams.password),
+			await db.repos.account.create(accountParams.username, accountParams.password),
 		);
 		log.trace('created account', account);
 		accounts.push(account);

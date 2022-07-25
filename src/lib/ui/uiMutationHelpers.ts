@@ -47,8 +47,10 @@ export const setLastSeen = (ui: WritableUi, directory_id: number, time = Date.no
 export const updateLastSeen = (ui: WritableUi, directory_id: number, time = Date.now()): void => {
 	const {lastSeenByDirectoryId, entityById, spaceById} = ui;
 
-	if (lastSeenByDirectoryId.has(directory_id)) {
-		lastSeenByDirectoryId.get(directory_id)!.set(time);
+	const lastSeen = lastSeenByDirectoryId.get(directory_id);
+	if (lastSeen && lastSeen.get() >= time) return;
+	if (lastSeen) {
+		lastSeen.set(time);
 	} else {
 		setLastSeen(ui, directory_id, time);
 	}
