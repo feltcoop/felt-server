@@ -3,8 +3,8 @@
 import type {RandomVocab, RandomVocabContext} from '$lib/util/randomVocab';
 import type {
 	SetSessionParams,
-	LoginAccountParams,
-	LogoutAccountParams,
+	LoginParams,
+	LogoutParams,
 	CreateCommunityParams,
 	ReadCommunityParams,
 	ReadCommunitiesParams,
@@ -44,14 +44,8 @@ import type {
 
 export interface RandomEventParams {
 	SetSession: (random: RandomVocabContext, randomVocab?: RandomVocab) => Promise<SetSessionParams>;
-	LoginAccount: (
-		random: RandomVocabContext,
-		randomVocab?: RandomVocab,
-	) => Promise<LoginAccountParams>;
-	LogoutAccount: (
-		random: RandomVocabContext,
-		randomVocab?: RandomVocab,
-	) => Promise<LogoutAccountParams>;
+	Login: (random: RandomVocabContext, randomVocab?: RandomVocab) => Promise<LoginParams>;
+	Logout: (random: RandomVocabContext, randomVocab?: RandomVocab) => Promise<LogoutParams>;
 	CreateCommunity: (
 		random: RandomVocabContext,
 		randomVocab?: RandomVocab,

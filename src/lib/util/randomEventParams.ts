@@ -19,13 +19,13 @@ export const randomEventParams: RandomEventParams = {
 	Ping: async () => {
 		return null;
 	},
-	LoginAccount: async () => {
+	Login: async () => {
 		return {
 			username: randomString(),
 			password: randomString(),
 		};
 	},
-	LogoutAccount: async () => {
+	Logout: async () => {
 		return null;
 	},
 	SetSession: async () => {
