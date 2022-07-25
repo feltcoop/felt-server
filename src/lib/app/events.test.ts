@@ -13,7 +13,7 @@ const test__eventInfos = suite<TestDbContext & TestAppContext>('eventInfos');
 
 test__eventInfos.before(setupDb);
 test__eventInfos.after(teardownDb);
-test__eventInfos.before(setupApp());
+test__eventInfos.before(setupApp);
 test__eventInfos.after(teardownApp);
 
 for (const eventInfo of eventInfos.values()) {

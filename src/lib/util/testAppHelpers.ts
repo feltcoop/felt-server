@@ -16,23 +16,21 @@ export interface TestAppContext {
 	app: AppStores;
 }
 
-export const setupApp =
-	() =>
-	async (context: TestAppContext): Promise<void> => {
-		const ui = toUi(false, {}, (_) => _);
-		const httpApiClient = toHttpApiClient<EventParamsByName, EventResponseByName>(
-			findHttpService,
-			deserialize(deserializers),
-		);
-		context.app = {
-			ui,
-			dispatch: toDispatch(ui, mutations, () => httpApiClient),
-			devmode: writable(false),
-			// TODO refactor this so the socket isn't an app dependency,
-			// instead the socket should only exist for the websocket client
-			socket: null as any,
-		};
+export const setupApp = async (context: TestAppContext): Promise<void> => {
+	const ui = toUi(false, {}, (_) => _);
+	const httpApiClient = toHttpApiClient<EventParamsByName, EventResponseByName>(
+		findHttpService,
+		deserialize(deserializers),
+	);
+	context.app = {
+		ui,
+		dispatch: toDispatch(ui, mutations, () => httpApiClient),
+		devmode: writable(false),
+		// TODO refactor this so the socket isn't an app dependency,
+		// instead the socket should only exist for the websocket client
+		socket: null as any,
 	};
+};
 
 export const teardownApp = async (context: TestAppContext): Promise<void> => {
 	context.app = null!;
