@@ -20,7 +20,7 @@ import {
 	CreateMembershipService,
 	DeleteMembershipService,
 } from '$lib/vocab/membership/membershipServices';
-import {toServiceRequest} from '$lib/util/testHelpers';
+import {toServiceRequestMock} from '$lib/util/testHelpers';
 
 /* test_servicesIntegration */
 const test_servicesIntegration = suite<TestDbContext>('repos');
@@ -36,7 +36,7 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 	const account = await random.account();
 
 	// This is a reusable request context for all `service.perform` calls.
-	const serviceRequest = toServiceRequest(account.account_id, db);
+	const serviceRequest = toServiceRequestMock(account.account_id, db);
 
 	// create a persona
 	const {persona, personalCommunity} = await random.persona(account);

@@ -5,7 +5,7 @@ import * as assert from 'uvu/assert';
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
 import type {TestAppContext} from '$lib/util/testAppHelpers';
 import {DeleteSpaceService} from '$lib/vocab/space/spaceServices';
-import {toServiceRequest} from '$lib/util/testHelpers';
+import {toServiceRequestMock} from '$lib/util/testHelpers';
 
 /* test__spaceServices */
 const test__spaceServices = suite<TestDbContext & TestAppContext>('spaceServices');
@@ -24,7 +24,7 @@ test__spaceServices('delete a space in multiple communities', async ({db, random
 	unwrap(
 		await DeleteSpaceService.perform({
 			params: {space_id: space.space_id},
-			...toServiceRequest(account.account_id, db),
+			...toServiceRequestMock(account.account_id, db),
 		}),
 	);
 

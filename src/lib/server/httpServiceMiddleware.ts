@@ -3,7 +3,7 @@ import {red, blue, gray} from 'kleur/colors';
 import {Logger} from '@feltcoop/felt/util/log.js';
 
 import type {ApiServer, HttpMiddleware} from '$lib/server/ApiServer.js';
-import type {Service} from '$lib/server/service';
+import {type Service, toServiceRequest} from '$lib/server/service';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {SessionApi} from '$lib/session/SessionApi';
 import {authorize} from '$lib/server/authorize';
@@ -62,12 +62,9 @@ export const toHttpServiceMiddleware =
 
 		let result;
 		try {
-			result = await service.perform({
-				repos: server.db.repos,
-				params,
-				account_id: req.account_id!, // TODO how to handle this type for services that don't require an account_id?
-				session: new SessionApi(req, res),
-			});
+			result = await service.perform(
+				toServiceRequest(server.db.sql, params, req.account_id!, new SessionApi(req, res)),
+			);
 		} catch (err) {
 			log.error(err);
 			send(res, 500, {message: 'unknown server error'});

@@ -12,7 +12,7 @@ import type {Persona} from '$lib/vocab/persona/persona';
 import {parseView, type ViewData} from '$lib/vocab/view/view';
 import {CreateAccountPersonaService} from '$lib/vocab/persona/personaServices';
 import {CreateCommunityService} from '$lib/vocab/community/communityServices';
-import {toServiceRequest} from '$lib/util/testHelpers';
+import {toServiceRequestMock} from '$lib/util/testHelpers';
 import {CreateMembershipService} from '$lib/vocab/membership/membershipServices';
 import {CreateEntityService} from '$lib/vocab/entity/entityServices';
 
@@ -55,13 +55,13 @@ export const seed = async (db: Database): Promise<void> => {
 			const {persona, spaces} = unwrap(
 				await CreateAccountPersonaService.perform({
 					params: {name: personaName},
-					...toServiceRequest(account.account_id, db),
+					...toServiceRequestMock(account.account_id, db),
 				}),
 			);
 
 			log.trace('created persona', persona);
 			personas.push(persona);
-			await createDefaultEntities(toServiceRequest(account.account_id, db), spaces, [persona]);
+			await createDefaultEntities(toServiceRequestMock(account.account_id, db), spaces, [persona]);
 		}
 	}
 
@@ -69,7 +69,7 @@ export const seed = async (db: Database): Promise<void> => {
 	const mainPersonaCreator = personas[0];
 	const otherPersonas = personas.slice(1);
 
-	const serviceRequest = toServiceRequest(mainAccountCreator.account_id, db);
+	const serviceRequest = toServiceRequestMock(mainAccountCreator.account_id, db);
 
 	const communitiesParams: CreateCommunityParams[] = [
 		{name: 'felt', persona_id: mainPersonaCreator.persona_id},
@@ -99,7 +99,7 @@ export const seed = async (db: Database): Promise<void> => {
 };
 
 const createDefaultEntities = async (
-	serviceRequest: ReturnType<typeof toServiceRequest>,
+	serviceRequest: ReturnType<typeof toServiceRequestMock>,
 	spaces: Space[],
 	personas: Persona[],
 ) => {
@@ -149,7 +149,7 @@ const entitiesContents: Record<string, string[]> = {
 };
 
 const generateTodo = async (
-	serviceRequest: ReturnType<typeof toServiceRequest>,
+	serviceRequest: ReturnType<typeof toServiceRequestMock>,
 	persona_id: number,
 	space: Space,
 ) => {

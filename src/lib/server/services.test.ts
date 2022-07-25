@@ -3,7 +3,7 @@ import * as assert from 'uvu/assert';
 import {red} from 'kleur/colors';
 
 import {setupDb, teardownDb, type TestDbContext} from '$lib/util/testDbHelpers';
-import {log, toServiceRequest} from '$lib/util/testHelpers';
+import {log, toServiceRequestMock} from '$lib/util/testHelpers';
 import {validateSchema, toValidationErrorMessage} from '$lib/util/ajv';
 import {services} from '$lib/server/services';
 import {randomEventParams} from '$lib/util/randomEventParams';
@@ -30,7 +30,7 @@ for (const service of services.values()) {
 		}
 		const result = await service.perform({
 			params,
-			...toServiceRequest(
+			...toServiceRequestMock(
 				// TODO what's the proper type here? should `account_id` be optional?
 				service.event.authenticate === false ? (null as any) : account.account_id,
 				db,

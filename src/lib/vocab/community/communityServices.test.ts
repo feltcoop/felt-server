@@ -9,7 +9,7 @@ import {
 	DeleteCommunityService,
 	CreateCommunityService,
 } from '$lib/vocab/community/communityServices';
-import {toServiceRequest} from '$lib/util/testHelpers';
+import {toServiceRequestMock} from '$lib/util/testHelpers';
 
 /* test_communityServices */
 const test_communityServices = suite<TestDbContext & TestAppContext>('communityRepo');
@@ -23,7 +23,7 @@ test_communityServices('unable to delete personal community', async ({db, random
 		unwrapError(
 			await DeleteCommunityService.perform({
 				params: {community_id: persona.community_id},
-				...toServiceRequest(account.account_id, db),
+				...toServiceRequestMock(account.account_id, db),
 			}),
 		).status,
 		405,
@@ -32,7 +32,7 @@ test_communityServices('unable to delete personal community', async ({db, random
 
 test_communityServices('disallow duplicate community names', async ({db, random}) => {
 	const {persona, account} = await random.persona();
-	const serviceRequest = toServiceRequest(account.account_id, db);
+	const serviceRequest = toServiceRequestMock(account.account_id, db);
 
 	const params = randomCommunityParams(persona.persona_id);
 	params.name += 'Aa';
@@ -53,7 +53,7 @@ test_communityServices('disallow duplicate community names', async ({db, random}
 
 test_communityServices('disallow reserved community names', async ({db, random}) => {
 	const {persona, account} = await random.persona();
-	const serviceRequest = toServiceRequest(account.account_id, db);
+	const serviceRequest = toServiceRequestMock(account.account_id, db);
 
 	const params = randomCommunityParams(persona.persona_id);
 	params.name = 'docs';
