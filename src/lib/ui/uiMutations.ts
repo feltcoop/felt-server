@@ -82,11 +82,8 @@ export const ViewSpace: Mutations['ViewSpace'] = async ({
 };
 
 //TODO ranem like ClearFreshness
-export const ClearFreshness: Mutations['ClearFreshness'] = async ({
-	params: {directory_id, time},
-	ui,
-}) => {
-	updateLastSeen(ui, directory_id, time);
+export const ClearFreshness: Mutations['ClearFreshness'] = async ({params: {directory_id}, ui}) => {
+	updateLastSeen(ui, directory_id);
 };
 
 export const ToggleMainNav: Mutations['ToggleMainNav'] = ({ui: {expandMainNav}}) => {

@@ -3,7 +3,7 @@ import {writable} from '@feltcoop/svelte-gettable-stores';
 import type {Mutations} from '$lib/app/eventTypes';
 import {
 	deleteEntity,
-	updateEntity,
+	upsertEntity,
 	updateEntityCaches,
 	updateTieCaches,
 } from '$lib/vocab/entity/entityMutationHelpers';
@@ -15,7 +15,7 @@ export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, params, u
 	const result = await invoke();
 	if (!result.ok) return result;
 	const {tie, entity} = result.value;
-	updateEntity(ui, entity);
+	upsertEntity(ui, entity);
 	updateEntityCaches(ui, entity, params.source_id);
 	updateTieCaches(ui, tie);
 	return result;
@@ -25,7 +25,7 @@ export const CreateEntity: Mutations['CreateEntity'] = async ({invoke, params, u
 export const UpdateEntity: Mutations['UpdateEntity'] = async ({invoke, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
-	updateEntity(ui, result.value.entity);
+	upsertEntity(ui, result.value.entity);
 	return result;
 };
 
@@ -33,7 +33,7 @@ export const EraseEntities: Mutations['EraseEntities'] = async ({invoke, ui}) =>
 	const result = await invoke();
 	if (!result.ok) return result;
 	for (const $entity of result.value.entities) {
-		updateEntity(ui, $entity);
+		upsertEntity(ui, $entity);
 	}
 	return result;
 };
@@ -64,7 +64,7 @@ export const ReadEntities: Mutations['ReadEntities'] = async ({invoke, params, u
 	if (!result.ok) return result;
 	const {ties, entities} = result.value;
 	for (const $entity of entities) {
-		updateEntity(ui, $entity);
+		upsertEntity(ui, $entity);
 		updateEntityCaches(ui, $entity, params.source_id);
 	}
 	for (const $tie of ties) {
@@ -83,7 +83,7 @@ export const ReadEntitiesPaginated: Mutations['ReadEntitiesPaginated'] = async (
 	if (!result.ok) return result;
 	const {ties, entities} = result.value;
 	for (const $entity of entities) {
-		updateEntity(ui, $entity);
+		upsertEntity(ui, $entity);
 		updateEntityCaches(ui, $entity, params.source_id);
 	}
 	for (const $tie of ties) {
