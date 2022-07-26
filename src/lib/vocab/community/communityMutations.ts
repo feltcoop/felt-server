@@ -6,7 +6,11 @@ import {addCommunity} from '$lib/vocab/community/communityMutationHelpers';
 
 export const ReadCommunities: Mutations['ReadCommunities'] = async ({invoke}) => {
 	const result = await invoke();
-	// These aren't cached like normal session communities.
+	// TODO These aren't cached like normal session communities.
+	// However if they were, we would be able to get things like contextmenu actions for them.
+	// But they'd conflict with existing data --
+	// for example, these communities shouldn't be added to the main nav,
+	// but that's what would happen if added to the current data stuctures.
 	return result;
 };
 
