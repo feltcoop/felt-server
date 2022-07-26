@@ -4,6 +4,12 @@ import type {Mutations} from '$lib/app/eventTypes';
 import {addPersona} from '$lib/vocab/persona/personaMutationHelpers';
 import {addCommunity} from '$lib/vocab/community/communityMutationHelpers';
 
+export const ReadCommunities: Mutations['ReadCommunities'] = async ({invoke}) => {
+	const result = await invoke();
+	// These aren't cached like normal session communities.
+	return result;
+};
+
 export const CreateCommunity: Mutations['CreateCommunity'] = async ({invoke, ui}) => {
 	const result = await invoke();
 	if (!result.ok) return result;
