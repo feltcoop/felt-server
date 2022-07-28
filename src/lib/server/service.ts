@@ -41,8 +41,24 @@ export const toServiceRequest = <TParams = any>(
 	return {
 		repos: db.repos,
 		// TODO BLOCK how to support creating new transactions? `cbOrCreateNew`?
-		transact: (cb) =>
-			repos ? cb(repos) : (db.sql.begin((sql) => cb((repos = new Repos(sql)))) as any), // typecast is due to postgres' more flexible API
+		transact: async (cb) => {
+			try {
+				const result2 = await (repos
+					? //  TODO does this composed callback also need a try/catch?
+					  cb(repos)
+					: (db.sql.begin(async (sql) => {
+							const result = await cb((repos = new Repos(sql)));
+							if (!result.ok) {
+								throw Error('Failed transction');
+							}
+							return result;
+					  }) as any));
+			} catch (err) {
+				//
+			} finally {
+				//
+			}
+		}, // typecast is due to postgres' more flexible API
 		params,
 		account_id, // TODO how to handle this type for services that don't require an account_id?
 		session,
