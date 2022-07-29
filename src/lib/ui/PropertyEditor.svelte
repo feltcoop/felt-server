@@ -3,6 +3,7 @@
 	import {identity} from '@feltcoop/felt/util/function.js';
 	import type {Result} from '@feltcoop/felt';
 	import PendingButton from '@feltcoop/felt/ui/PendingButton.svelte';
+	import {afterUpdate} from 'svelte';
 
 	import {autofocus} from '$lib/ui/actions';
 
@@ -37,6 +38,7 @@
 	}
 	let pending = false;
 	let fieldValueEl: HTMLTextAreaElement;
+	let shouldFocusEl = false;
 	let errorMessage: string | null = null;
 
 	const reset = () => {
@@ -46,11 +48,18 @@
 
 	const edit = () => {
 		editing = true;
-		setTimeout(() => fieldValueEl.focus());
+		shouldFocusEl = true;
 	};
 	const stopEditing = () => {
 		editing = false;
 	};
+
+	afterUpdate(() => {
+		if (editing && shouldFocusEl) {
+			shouldFocusEl = false;
+			fieldValueEl.focus();
+		}
+	});
 
 	const save = async () => {
 		errorMessage = null;
