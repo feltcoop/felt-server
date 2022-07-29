@@ -4,6 +4,8 @@ import {blue, gray} from 'kleur/colors';
 
 import {PostgresRepo} from '$lib/db/PostgresRepo';
 import type {Community} from '$lib/vocab/community/community';
+import {toDefaultCommunitySettings} from '$lib/vocab/community/community.schema';
+import {ADMIN_COMMUNITY_NAME} from '$lib/app/admin';
 
 const log = new Logger(gray('[') + blue('CommunityRepo') + gray(']'));
 
@@ -72,5 +74,17 @@ export class CommunityRepo extends PostgresRepo {
 		`;
 		if (!data.count) return NOT_OK;
 		return OK;
+	}
+
+	async initAdminCommunity(): Promise<Result<{value: Community | null}>> {
+		// TODO BLOCK this.repos.cache -- is safe to cache
+		// const adminCommunity = this.repos.cache.adminCommunity ||
+		const r = await this.create(
+			'standard',
+			ADMIN_COMMUNITY_NAME,
+			toDefaultCommunitySettings(ADMIN_COMMUNITY_NAME),
+		);
+		if (!r.ok) return NOT_OK;
+		return {ok: true, value: r.value};
 	}
 }

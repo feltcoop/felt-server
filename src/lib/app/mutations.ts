@@ -2,6 +2,7 @@ import type {Mutation} from '$lib/ui/mutation';
 import {Login, Logout, SetSession} from '$lib/session/sessionMutations';
 import {CreateAccountPersona} from '$lib/vocab/persona/personaMutations';
 import {
+	ReadCommunities,
 	CreateCommunity,
 	UpdateCommunitySettings,
 	DeleteCommunity,
@@ -40,6 +41,7 @@ export const mutations: Record<string, Mutation> = {
 	// personaMutations
 	CreateAccountPersona,
 	// communityMutations
+	ReadCommunities,
 	CreateCommunity,
 	UpdateCommunitySettings,
 	DeleteCommunity,
