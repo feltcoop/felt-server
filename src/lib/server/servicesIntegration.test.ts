@@ -141,7 +141,6 @@ test_servicesIntegration('services integration test', async ({db, random}) => {
 		}
 	}
 	assert.is(unwrap(await db.repos.space.filterByCommunity(community.community_id)).length, 1);
-
 	// delete membership
 	assert.is(
 		unwrap(await db.repos.membership.filterByCommunityId(community.community_id)).length,

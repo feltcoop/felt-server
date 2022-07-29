@@ -74,9 +74,7 @@ export const toWebsocketServiceMiddleware: (server: ApiServer) => WebsocketMiddl
 				};
 			} else {
 				try {
-					result = await service.perform(
-						toServiceRequest(server.db.sql, params, account_id, session),
-					);
+					result = await service.perform(toServiceRequest(server.db, params, account_id, session));
 				} catch (err) {
 					log.error('service.perform failed', err);
 					result = {
