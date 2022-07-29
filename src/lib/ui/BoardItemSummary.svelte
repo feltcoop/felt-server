@@ -73,6 +73,7 @@ And then PersonaContextmenu would be only for *session* personas? `SessionPerson
 		background-color: var(--tint_dark_1);
 	}
 	.markup {
-		padding: 0 0 0 var(--spacing_md);
+		/* the bottom padding prevents chars like y and g from being cut off */
+		padding: 0 0 var(--spacing_xs) var(--spacing_md);
 	}
 </style>
