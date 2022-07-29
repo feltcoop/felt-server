@@ -5,9 +5,9 @@
 
 	const {dispatch} = getApp();
 
+	// TODO this is just stubbing out some admin-like UI
 	let communities: Community[] | undefined;
-
-	const loadAll = async () => {
+	const loadAllCommunities = async () => {
 		// TODO need to cache this data in the `ui` somehow -- see comment below
 		const result = await dispatch.ReadCommunities({});
 		if (!result.ok) throw Error(); // TODO querying helpers
@@ -28,7 +28,7 @@
 		</ul>
 	{:else}
 		<!-- TODO pending status with query state -->
-		<button on:click={loadAll}>load all communities</button>
+		<button on:click={loadAllCommunities}>load all communities</button>
 	{/if}
 </div>
 

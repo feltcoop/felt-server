@@ -23,7 +23,8 @@ export const viewTemplates: Array<{
 	icon: string;
 	creatable?: boolean;
 }> = [
-	{name: 'Home', view: '<Home />', icon: '🏠', creatable: false}, // TODO better name?
+	{name: 'Admin', view: '<Admin />', icon: '🪄', creatable: false},
+	{name: 'Home', view: '<Home />', icon: '🏠', creatable: false},
 	{name: 'Room', view: '<Room />', icon: '🗨'},
 	{name: 'Board', view: '<Board />', icon: '📚'},
 	{name: 'Forum', view: '<Forum />', icon: '📋'},

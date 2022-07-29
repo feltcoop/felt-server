@@ -31,6 +31,13 @@ export const CreateAccountPersonaService: ServiceByName['CreateAccountPersona'] 
 			return {ok: false, status: 409, message: 'a persona with that name already exists'};
 		}
 
+		// First check if this is the very first persona being created.
+		// If so, create the admin community.
+		const initAdminCommunityResult = await repos.community.initAdminCommunity();
+		if (!initAdminCommunityResult.ok) {
+			return {ok: false, status: 500, message: 'failed to init admin community'};
+		}
+
 		const createCommunityResult = await repos.community.create(
 			'personal',
 			name,
@@ -53,6 +60,7 @@ export const CreateAccountPersonaService: ServiceByName['CreateAccountPersona'] 
 		}
 		const persona = createPersonaResult.value;
 
+		// TODO BLOCK different for admin
 		const createDefaultSpaceResult = await createDefaultSpaces(
 			serviceRequest,
 			persona.persona_id,
